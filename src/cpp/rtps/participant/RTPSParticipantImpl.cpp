@@ -975,6 +975,7 @@ bool RTPSParticipantImpl::create_writer(
         if (!m_security_manager.register_local_writer(SWriter->getGuid(),
                 param.endpoint.properties, SWriter->getAttributes().security_attributes()))
         {
+            SWriter->local_actions_on_writer_removed();
             delete(SWriter);
             return false;
         }
@@ -984,6 +985,7 @@ bool RTPSParticipantImpl::create_writer(
         if (!m_security_manager.register_local_builtin_writer(SWriter->getGuid(),
                 SWriter->getAttributes().security_attributes()))
         {
+            SWriter->local_actions_on_writer_removed();
             delete(SWriter);
             return false;
         }
@@ -1111,6 +1113,7 @@ bool RTPSParticipantImpl::create_reader(
         if (!m_security_manager.register_local_reader(SReader->getGuid(),
                 param.endpoint.properties, SReader->getAttributes().security_attributes()))
         {
+            SReader->local_actions_on_reader_removed();
             delete(SReader);
             return false;
         }
@@ -1120,6 +1123,7 @@ bool RTPSParticipantImpl::create_reader(
         if (!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
                 SReader->getAttributes().security_attributes()))
         {
+            SReader->local_actions_on_reader_removed();
             delete(SReader);
             return false;
         }
