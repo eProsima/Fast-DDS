@@ -48,7 +48,7 @@ public:
     }
 
     /**
-     * * @brief Fill a QosPolicy with the data found in a CDR message.
+     * @brief Fill a QosPolicy with the data found in a CDR message.
      * @param vendor_id VendorId to check if specific Fast DDS fields need to be read.
      * @param qos_policy QosPolicy to be filled.
      * @param cdr_message CDRMessage to read from.
@@ -56,17 +56,16 @@ public:
      * @return true if the CDR message reading was successful.
      */
     static bool read_from_cdr_message(
-            const fastdds::rtps::VendorId_t& vendor_id,
+            const fastdds::rtps::VendorId_t&,
             QosPolicy& qos_policy,
             rtps::CDRMessage_t* cdr_message,
             const uint16_t parameter_length)
     {
-        void(vendor_id);
         return read_from_cdr_message(qos_policy, cdr_message, parameter_length);
     }
 
     /**
-     * * @brief Fill a QosPolicy with the data found in a CDR message.
+     * @brief Fill a QosPolicy with the data found in a CDR message.
      * @param qos_policy QosPolicy to be filled.
      * @param cdr_message CDRMessage to read from.
      * @param parameter_length Length of the QosPolicy in the CDRMessage.
@@ -89,7 +88,7 @@ public:
     }
 
     /**
-     * * @brief Check if the QosPolicy should be sent by checking if it is default.
+     * @brief Check if the QosPolicy should be sent by checking if it is default.
      * @param qos_policy QosPolicy to check
      * @return true if the QosPolicy should be sent, false otherwise.
      */
@@ -100,7 +99,7 @@ public:
     }
 
     /**
-     * * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default
+     * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default
      *          by calling the should_be_sent method.
      * @param qos_policy QosPolicy to check
      * @param is_writer  Flag to indicate if the QosPolicy is for a writer. This flag is only used in overwritten methods
@@ -116,7 +115,7 @@ public:
     }
 
     /**
-     * * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default.
+     * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default.
      * @param optional_qos_policy Optional QosPolicy to check.
      * @return true if the QosPolicy should be sent, false otherwise.
      */
@@ -141,7 +140,7 @@ private:
     }
 
     /**
-     * * @brief Read the content of a CDR message and write it to a QosPolicy.
+     * @brief Read the content of a CDR message and write it to a QosPolicy.
      * @param qos_policy QosPolicy to be filled.
      * @param cdr_message CDRMessage to read from.
      * @param parameter_length Length of the QosPolicy in the CDRMessage.
@@ -157,7 +156,7 @@ private:
     }
 
     /**
-     * * @brief Read the content of a CDR message and write it to a QosPolicy.
+     * @brief Read the content of a CDR message and write it to a QosPolicy.
      * @param vendor_id VendorId to check if specific Fast DDS fields need to be read.
      * @param qos_policy QosPolicy to be filled.
      * @param cdr_message CDRMessage to read from.
@@ -165,13 +164,12 @@ private:
      * @return true if the CDR message reading was successful.
      */
     static bool read_content_from_cdr_message(
-        const fastdds::rtps::VendorId_t&,
-        QosPolicy&,
-        rtps::CDRMessage_t*,
-        const uint16_t)
+            const fastdds::rtps::VendorId_t&,
+            QosPolicy& qos_policy,
+            rtps::CDRMessage_t* cdr_message,
+            const uint16_t parameter_length)
     {
-        static_assert(sizeof(QosPolicy) == 0, "Not implemented");
-        return false;
+        return read_content_from_cdr_message(qos_policy, cdr_message, parameter_length);
     }
 
 };
@@ -441,26 +439,6 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::add_content_to_cdr_m
 }
 
 template<>
-inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_from_cdr_message(
-    const fastdds::rtps::VendorId_t& vendor_id,
-    ResourceLimitsQosPolicy& qos_policy,
-    rtps::CDRMessage_t* cdr_message,
-    const uint16_t parameter_length)
-{
-    return read_content_from_cdr_message(vendor_id, qos_policy, cdr_message, parameter_length);
-}
-
-template<>
-inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_from_cdr_message(
-    ResourceLimitsQosPolicy& qos_policy,
-    rtps::CDRMessage_t* cdr_message,
-    const uint16_t parameter_length)
-{
-    EPROSIMA_LOG_ERROR(RTPS_QOS, "ResourceLimitsQosPolicy requires 'vendor_id' to be read from cdr message");
-    return false;
-}
-
-template<>
 inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cdr_message(
         const fastdds::rtps::VendorId_t& vendor_id,
         ResourceLimitsQosPolicy& qos_policy,
@@ -489,6 +467,28 @@ inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_content_from_cd
         }
     }
     return valid;
+}
+
+template<>
+inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_from_cdr_message(
+        const fastdds::rtps::VendorId_t& vendor_id,
+        ResourceLimitsQosPolicy& qos_policy,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    return read_content_from_cdr_message(vendor_id, qos_policy, cdr_message, parameter_length);
+}
+
+template<>
+inline bool QosPoliciesSerializer<ResourceLimitsQosPolicy>::read_from_cdr_message(
+        ResourceLimitsQosPolicy&,
+        rtps::CDRMessage_t*,
+        const uint16_t)
+{
+    EPROSIMA_LOG_ERROR(QOS_POLICIES_SERIALIZER,
+            "ResourceLimitsQosPolicy requires 'vendor_id' to be read from cdr message");
+    assert(false);
+    return false;
 }
 
 template<>
