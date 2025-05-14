@@ -363,8 +363,8 @@ bool CDRMessage::read_locator(
 }
 
 bool CDRMessage::read_locator_list(
-    CDRMessage_t* msg,
-    LocatorList* locator_list)
+        CDRMessage_t* msg,
+        LocatorList* locator_list)
 {
     assert(locator_list != nullptr);
 
@@ -382,10 +382,10 @@ bool CDRMessage::read_locator_list(
 }
 
 bool CDRMessage::read_external_locator(
-    CDRMessage_t* msg,
-    LocatorWithMask* loc,
-    uint8_t* externality,
-    uint8_t* cost)
+        CDRMessage_t* msg,
+        LocatorWithMask* loc,
+        uint8_t* externality,
+        uint8_t* cost)
 {
     bool ret = false;
 
@@ -404,8 +404,8 @@ bool CDRMessage::read_external_locator(
 }
 
 bool CDRMessage::read_external_locator_list(
-    CDRMessage_t* msg,
-    ExternalLocators* external_locators)
+        CDRMessage_t* msg,
+        ExternalLocators* external_locators)
 {
     assert(external_locators != nullptr);
 
@@ -793,8 +793,8 @@ bool CDRMessage::add_locator(
 }
 
 bool CDRMessage::add_locator_list(
-    CDRMessage_t* msg,
-    const LocatorList& locator_list)
+        CDRMessage_t* msg,
+        const LocatorList& locator_list)
 {
     bool valid = rtps::CDRMessage::addUInt32(msg, (uint32_t)locator_list.size());
     for (const auto& locator : locator_list)
@@ -805,10 +805,10 @@ bool CDRMessage::add_locator_list(
 }
 
 bool CDRMessage::add_external_locator(
-        CDRMessage_t *msg,
-        const LocatorWithMask &loc,
-        const uint8_t &externality,
-        const uint8_t &cost)
+        CDRMessage_t* msg,
+        const LocatorWithMask& loc,
+        const uint8_t& externality,
+        const uint8_t& cost)
 {
     bool ret = false;
 
@@ -825,8 +825,8 @@ bool CDRMessage::add_external_locator(
 }
 
 bool CDRMessage::add_external_locator_list(
-    CDRMessage_t* msg,
-    const ExternalLocators& external_locators)
+        CDRMessage_t* msg,
+        const ExternalLocators& external_locators)
 {
     uint32_t external_locator_list_size = 0;
     for (const auto& externality__cost_locator_list : external_locators)

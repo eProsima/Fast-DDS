@@ -1459,7 +1459,8 @@ bool RTPSParticipantImpl::should_send_optional_qos() const
         if (m_att.properties.properties().size() > 0)
         {
             const Property* const serialize_optional_qos_property =
-                    PropertyPolicyHelper::get_property(m_att.properties, fastdds::dds::parameter_serialize_optional_qos);
+                    PropertyPolicyHelper::get_property(m_att.properties,
+                            fastdds::dds::parameter_serialize_optional_qos);
 
             if (serialize_optional_qos_property != nullptr)
             {

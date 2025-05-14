@@ -531,19 +531,19 @@ struct SampleValidator
     }
 
     void register_remote_participant_builtin_topic_data(
-        const ParticipantBuiltinTopicData& data)
+            const ParticipantBuiltinTopicData& data)
     {
         remote_participants_data_[data.guid] = data;
     }
 
     void register_remote_publication_builtin_topic_data(
-        const PublicationBuiltinTopicData& data)
+            const PublicationBuiltinTopicData& data)
     {
         remote_pulications_data_[data.guid] = data;
     }
 
     void register_remote_subscription_builtin_topic_data(
-        const SubscriptionBuiltinTopicData& data)
+            const SubscriptionBuiltinTopicData& data)
     {
         remote_subscriptions_data_[data.guid] = data;
     }
@@ -855,6 +855,7 @@ struct ProxySampleValidator : public SampleValidator
             update_processed_msgs(it, total_msgs, processed_count, cv, msg_was_expected);
         }
     }
+
 };
 
 struct ConnectionListSampleValidator : public SampleValidator
@@ -2938,7 +2939,8 @@ TEST(DDSMonitorServiceTest, monitor_service_proxy_optional_qos)
 
     expected_participant_builtin_topic_data.guid = statistics::to_fastdds_type(MSP.get_participant_guid());
     expected_participant_builtin_topic_data.wire_protocol = participant_qos.wire_protocol();
-    expected_participant_builtin_topic_data.wire_protocol->prefix = expected_participant_builtin_topic_data.guid.guidPrefix;
+    expected_participant_builtin_topic_data.wire_protocol->prefix =
+            expected_participant_builtin_topic_data.guid.guidPrefix;
     expected_participant_builtin_topic_data.wire_protocol->participant_id = 0;
     expected_participant_builtin_topic_data.wire_protocol->builtin.network_configuration = LOCATOR_KIND_SHM;
 

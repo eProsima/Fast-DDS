@@ -2086,11 +2086,12 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::add_to_cdr_message(
             valid &= rtps::CDRMessage::add_duration_t(cdr_message,
                             qos_policy.builtin.discovery_config.discoveryServer_client_syncperiod);
             // m_discovery_servers
-            valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.discovery_config.m_DiscoveryServers);
+            valid &= rtps::CDRMessage::add_locator_list(cdr_message,
+                            qos_policy.builtin.discovery_config.m_DiscoveryServers);
             // ignore_participant_flags
             valid &=
                     rtps::CDRMessage::addUInt32(cdr_message,
-                             qos_policy.builtin.discovery_config.
+                            qos_policy.builtin.discovery_config.
                                     ignoreParticipantFlags);
 
             // static_edp_xml_config
@@ -2114,7 +2115,7 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::add_to_cdr_message(
         valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.metatrafficMulticastLocatorList);
         // metatraffic_external_unicast_locators
         valid &= rtps::CDRMessage::add_external_locator_list(cdr_message,
-            qos_policy.builtin.metatraffic_external_unicast_locators);
+                        qos_policy.builtin.metatraffic_external_unicast_locators);
         // initial_peers_list
         valid &= rtps::CDRMessage::add_locator_list(cdr_message, qos_policy.builtin.initialPeersList);
         // reader_history_memory_policy
@@ -2264,7 +2265,8 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::read_content_from_cdr_
             valid &= rtps::CDRMessage::read_duration_t(cdr_message,
                             qos_policy.builtin.discovery_config.discoveryServer_client_syncperiod);
             // m_discovery_servers
-            valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.discovery_config.m_DiscoveryServers);
+            valid &= rtps::CDRMessage::read_locator_list(cdr_message,
+                            &qos_policy.builtin.discovery_config.m_DiscoveryServers);
             // ignore_participant_flags
             valid &= rtps::CDRMessage::readUInt32(cdr_message,
                             (uint32_t*)&qos_policy.builtin.discovery_config.ignoreParticipantFlags);
@@ -2286,7 +2288,8 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::read_content_from_cdr_
         // metatraffic_multicast_locator_list
         valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.metatrafficMulticastLocatorList);
         // metatraffic_external_unicast_locators
-        valid &= rtps::CDRMessage::read_external_locator_list(cdr_message, &qos_policy.builtin.metatraffic_external_unicast_locators);
+        valid &= rtps::CDRMessage::read_external_locator_list(cdr_message,
+                        &qos_policy.builtin.metatraffic_external_unicast_locators);
         // initial_peers_list
         valid &= rtps::CDRMessage::read_locator_list(cdr_message, &qos_policy.builtin.initialPeersList);
         // reader_history_memory_policy

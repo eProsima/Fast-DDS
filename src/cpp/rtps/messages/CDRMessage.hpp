@@ -309,8 +309,8 @@ bool add_locator_list(
 bool add_external_locator(
         CDRMessage_t* msg,
         const LocatorWithMask& loc,
-        const uint8_t &externality,
-        const uint8_t &cost);
+        const uint8_t& externality,
+        const uint8_t& cost);
 
 bool add_external_locator_list(
         CDRMessage_t* msg,

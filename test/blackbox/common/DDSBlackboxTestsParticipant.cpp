@@ -31,7 +31,8 @@
 #include "PubSubWriter.hpp"
 
 auto check_qos_in_data_p =
-        [](eprosima::fastdds::rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos_found, std::vector<uint16_t>& expected_qos_pids)
+        [](eprosima::fastdds::rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos_found,
+                std::vector<uint16_t>& expected_qos_pids)
         {
             uint32_t qos_size = 0;
             uint32_t original_pos = msg.pos;
@@ -114,7 +115,7 @@ TEST(DDSParticipant, participant_sends_non_default_qos_optional)
 
     // Default participant QoS
     writer.disable_builtin_transport()
-          .add_user_transport_to_pparams(test_transport);
+            .add_user_transport_to_pparams(test_transport);
 
     // a) Init both entities without setting the property
     writer.init();

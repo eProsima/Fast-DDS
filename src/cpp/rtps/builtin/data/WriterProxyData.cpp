@@ -358,7 +358,7 @@ uint32_t WriterProxyData::get_serialized_size(
     }
 
     // Send the optional QoS policies if they are enabled
-    if (force_including_optional_qos || should_send_optional_qos() )
+    if (force_including_optional_qos || should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
