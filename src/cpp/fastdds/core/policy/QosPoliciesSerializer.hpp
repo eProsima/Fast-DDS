@@ -47,6 +47,31 @@ public:
         return valid;
     }
 
+    /**
+     * * @brief Fill a QosPolicy with the data found in a CDR message.
+     * @param vendor_id VendorId to check if specific Fast DDS fields need to be read.
+     * @param qos_policy QosPolicy to be filled.
+     * @param cdr_message CDRMessage to read from.
+     * @param parameter_length Length of the QosPolicy in the CDRMessage.
+     * @return true if the CDR message reading was successful.
+     */
+    static bool read_from_cdr_message(
+            const fastdds::rtps::VendorId_t& vendor_id,
+            QosPolicy& qos_policy,
+            rtps::CDRMessage_t* cdr_message,
+            const uint16_t parameter_length)
+    {
+        void(vendor_id);
+        return read_from_cdr_message(qos_policy, cdr_message, parameter_length);
+    }
+
+    /**
+     * * @brief Fill a QosPolicy with the data found in a CDR message.
+     * @param qos_policy QosPolicy to be filled.
+     * @param cdr_message CDRMessage to read from.
+     * @param parameter_length Length of the QosPolicy in the CDRMessage.
+     * @return true if the CDR message reading was successful.
+     */
     static bool read_from_cdr_message(
             QosPolicy& qos_policy,
             rtps::CDRMessage_t* cdr_message,
@@ -78,7 +103,7 @@ public:
      * * @brief Check if the QosPolicy should be sent. Default implementation checks if the QosPolicy is not default
      *          by calling the should_be_sent method.
      * @param qos_policy QosPolicy to check
-     * @param is_writer  Flag to indicate if the QosPolicy is for a writer. This flag is only used in overwrite methods
+     * @param is_writer  Flag to indicate if the QosPolicy is for a writer. This flag is only used in overwritten methods
      *                   of QosPolicies that have different default values for readers and writers.
      * @return true if the QosPolicy should be sent, false otherwise.
      */
@@ -115,10 +140,35 @@ private:
         return false;
     }
 
+    /**
+     * * @brief Read the content of a CDR message and write it to a QosPolicy.
+     * @param qos_policy QosPolicy to be filled.
+     * @param cdr_message CDRMessage to read from.
+     * @param parameter_length Length of the QosPolicy in the CDRMessage.
+     * @return true if the CDR message reading was successful.
+     */
     static bool read_content_from_cdr_message(
             QosPolicy&,
             rtps::CDRMessage_t*,
             const uint16_t)
+    {
+        static_assert(sizeof(QosPolicy) == 0, "Not implemented");
+        return false;
+    }
+
+    /**
+     * * @brief Read the content of a CDR message and write it to a QosPolicy.
+     * @param vendor_id VendorId to check if specific Fast DDS fields need to be read.
+     * @param qos_policy QosPolicy to be filled.
+     * @param cdr_message CDRMessage to read from.
+     * @param parameter_length Length of the QosPolicy in the CDRMessage.
+     * @return true if the CDR message reading was successful.
+     */
+    static bool read_content_from_cdr_message(
+        const fastdds::rtps::VendorId_t&,
+        QosPolicy&,
+        rtps::CDRMessage_t*,
+        const uint16_t)
     {
         static_assert(sizeof(QosPolicy) == 0, "Not implemented");
         return false;
