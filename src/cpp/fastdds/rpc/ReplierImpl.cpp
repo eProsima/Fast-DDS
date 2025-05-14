@@ -108,7 +108,7 @@ ReturnCode_t ReplierImpl::send_reply(
     {
         // The writer that sent the request has been unmatched.
         EPROSIMA_LOG_WARNING(REPLIER, "Trying to send a reply to a disconnected requester");
-        return RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_NO_DATA;
     }
     else if (RequesterMatchStatus::PARTIALLY_MATCHED == match_status)
     {
@@ -335,6 +335,8 @@ bool ReplierImpl::is_fully_matched() const
     {
         return (pub_status.current_count > 0) && (pub_status.current_count == sub_status.current_count);
     }
+
+    EPROSIMA_LOG_ERROR(REPLIER, "Error getting matched subscriptions or publications");
     return false;
 }
 
