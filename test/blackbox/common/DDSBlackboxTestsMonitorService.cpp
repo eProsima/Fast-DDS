@@ -787,9 +787,9 @@ struct ProxySampleValidator : public SampleValidator
 
                     if (assert_optional_remote_data_)
                     {
-                        auto it = remote_participants_data_.find(guid);
-                        ASSERT_TRUE(it != remote_participants_data_.end());
-                        ASSERT_EQ(it->second.wire_protocol.value(), pdata.wire_protocol.value());
+                        auto it_rpartd = remote_participants_data_.find(guid);
+                        ASSERT_TRUE(it_rpartd != remote_participants_data_.end());
+                        ASSERT_EQ(it_rpartd->second.wire_protocol.value(), pdata.wire_protocol.value());
                     }
                 }
                 else if (guid.entityId.is_reader())
@@ -802,11 +802,12 @@ struct ProxySampleValidator : public SampleValidator
 
                     if (assert_optional_remote_data_)
                     {
-                        auto it = remote_subscriptions_data_.find(guid);
-                        ASSERT_TRUE(it != remote_subscriptions_data_.end());
-                        ASSERT_EQ(it->second.reader_data_lifecycle.value(), sub_data.reader_data_lifecycle.value());
-                        ASSERT_EQ(it->second.rtps_reliable_reader.value(), sub_data.rtps_reliable_reader.value());
-                        ASSERT_EQ(it->second.reader_resource_limits.value(), sub_data.reader_resource_limits.value());
+                        auto it_rsd = remote_subscriptions_data_.find(guid);
+                        ASSERT_TRUE(it_rsd != remote_subscriptions_data_.end());
+                        ASSERT_EQ(it_rsd->second.reader_data_lifecycle.value(), sub_data.reader_data_lifecycle.value());
+                        ASSERT_EQ(it_rsd->second.rtps_reliable_reader.value(), sub_data.rtps_reliable_reader.value());
+                        ASSERT_EQ(it_rsd->second.reader_resource_limits.value(),
+                                sub_data.reader_resource_limits.value());
                     }
 
                 }
@@ -820,12 +821,13 @@ struct ProxySampleValidator : public SampleValidator
 
                     if (assert_optional_remote_data_)
                     {
-                        auto it = remote_pulications_data_.find(guid);
-                        ASSERT_TRUE(it != remote_pulications_data_.end());
-                        ASSERT_EQ(it->second.writer_data_lifecycle.value(), pub_data.writer_data_lifecycle.value());
-                        ASSERT_EQ(it->second.publish_mode.value(), pub_data.publish_mode.value());
-                        ASSERT_EQ(it->second.rtps_reliable_writer.value(), pub_data.rtps_reliable_writer.value());
-                        ASSERT_EQ(it->second.writer_resource_limits.value(), pub_data.writer_resource_limits.value());
+                        auto it_rpd = remote_pulications_data_.find(guid);
+                        ASSERT_TRUE(it_rpd != remote_pulications_data_.end());
+                        ASSERT_EQ(it_rpd->second.writer_data_lifecycle.value(), pub_data.writer_data_lifecycle.value());
+                        ASSERT_EQ(it_rpd->second.publish_mode.value(), pub_data.publish_mode.value());
+                        ASSERT_EQ(it_rpd->second.rtps_reliable_writer.value(), pub_data.rtps_reliable_writer.value());
+                        ASSERT_EQ(it_rpd->second.writer_resource_limits.value(),
+                                pub_data.writer_resource_limits.value());
                     }
                 }
                 else

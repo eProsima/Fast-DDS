@@ -833,7 +833,7 @@ bool CDRMessage::add_external_locator_list(
     {
         for (const auto& cost__locator_list : externality__cost_locator_list.second)
         {
-            external_locator_list_size += cost__locator_list.second.size();
+            external_locator_list_size += static_cast<uint32_t>(cost__locator_list.second.size());
         }
     }
     bool valid =

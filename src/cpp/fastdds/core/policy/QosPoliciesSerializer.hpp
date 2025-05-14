@@ -1942,7 +1942,8 @@ inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_siz
             ret_val += 44;
             // m_discovery_servers
             ret_val += 4;
-            ret_val +=  qos_policy.builtin.discovery_config.m_DiscoveryServers.size() * (4 + 4 + 16); // kind + port + address
+            ret_val +=  static_cast<uint32_t>(qos_policy.builtin.discovery_config.m_DiscoveryServers.size()) *
+                    (4 + 4 + 16);                                                                                            // kind + port + address
             // ignore_participant_flags
             ret_val += 4;
             // easy_mode (str_size + str_data (including null char))
@@ -1957,22 +1958,22 @@ inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_siz
         ret_val += 8;
         // metatraffic_unicast_locator_list
         ret_val += 4;
-        ret_val += qos_policy.builtin.metatrafficUnicastLocatorList.size() * (4 + 4 + 16); // kind + port + address
+        ret_val += static_cast<uint32_t>(qos_policy.builtin.metatrafficUnicastLocatorList.size()) * (4 + 4 + 16); // kind + port + address
         // metatraffic_multicast_locator_list
         ret_val += 4;
-        ret_val += qos_policy.builtin.metatrafficMulticastLocatorList.size() * (4 + 4 + 16); // kind + port + address
+        ret_val += static_cast<uint32_t>(qos_policy.builtin.metatrafficMulticastLocatorList.size()) * (4 + 4 + 16); // kind + port + address
         // metatraffic_external_unicast_locators
         ret_val += 4;
         for (const auto& externality__cost_locator_list : qos_policy.builtin.metatraffic_external_unicast_locators)
         {
             for (const auto& cost__locator_list : externality__cost_locator_list.second)
             {
-                ret_val += cost__locator_list.second.size() * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
+                ret_val += static_cast<uint32_t>(cost__locator_list.second.size()) * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
             }
         }
         // initial_peers_list
         ret_val += 4;
-        ret_val += qos_policy.builtin.initialPeersList.size() * (4 + 4 + 16); // kind + port + address
+        ret_val += static_cast<uint32_t>(qos_policy.builtin.initialPeersList.size()) * (4 + 4 + 16); // kind + port + address
         // up to flow_controller_name
         ret_val += 24;
         // flow_controller_name (str_size + str_data (including null char))
@@ -1984,17 +1985,17 @@ inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_siz
     ret_val += 16;
     // default_unicast_locator_list
     ret_val += 4;
-    ret_val += qos_policy.default_unicast_locator_list.size() * (4 + 4 + 16); // kind + port + address
+    ret_val += static_cast<uint32_t>(qos_policy.default_unicast_locator_list.size()) * (4 + 4 + 16); // kind + port + address
     // default_multicast_locator_list
     ret_val += 4;
-    ret_val += qos_policy.default_multicast_locator_list.size() * (4 + 4 + 16); // kind + port + address
+    ret_val += static_cast<uint32_t>(qos_policy.default_multicast_locator_list.size()) * (4 + 4 + 16); // kind + port + address
     // default_external_unicast_locators
     ret_val += 4;
     for (const auto& externality__cost_locator_list : qos_policy.default_external_unicast_locators)
     {
         for (const auto& cost__locator_list : externality__cost_locator_list.second)
         {
-            ret_val += cost__locator_list.second.size() * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
+            ret_val += static_cast<uint32_t>(cost__locator_list.second.size()) * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
         }
     }
     // + ignore_non_matching_locators
