@@ -29,7 +29,7 @@ endif()
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastdds VERSION "3.2.1" LANGUAGES C CXX)
+project(fastdds VERSION "3.2.2" LANGUAGES C CXX)
 
 set(PROJECT_NAME_LARGE "Fast DDS")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
@@ -395,6 +395,7 @@ endif()
 ###############################################################################
 # Tools default setup
 ###############################################################################
+set(MINGW_COMPILE FALSE)
 if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     execute_process(
         COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
@@ -407,7 +408,7 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         add_definitions(-DMINGW_COMPILER=1)
         set(CMAKE_CXX_FLAGS
             "${CMAKE_CXX_FLAGS} -Wno-attributes -Wno-stringop-overread -Wno-builtin-macro-redefined -Wno-cast-function-type -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-missing-field-initializers")
-        target_link_libraries(fastdds PUBLIC ws2_32 mswsock)
+        set(MINGW_COMPILE TRUE)
     else()
         message(STATUS "Using a GNU compiler on Windows but not MinGW.")
     endif()
@@ -429,6 +430,9 @@ option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" ON)
 # Compile library.
 ###############################################################################
 add_subdirectory(src/cpp)
+if(MINGW_COMPILE)
+    target_link_libraries(fastdds PUBLIC ws2_32 mswsock)
+endif()
 
 ###############################################################################
 # Add http://optionparser.sourceforge.net/ as unified cli parser

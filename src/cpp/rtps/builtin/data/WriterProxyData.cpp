@@ -108,10 +108,7 @@ WriterProxyData& WriterProxyData::operator =(
 
     set_qos(writerInfo, true);
 
-    if (writerInfo.has_type_information())
-    {
-        type_information = writerInfo.type_information;
-    }
+    type_information = writerInfo.type_information;
 
     if (writerInfo.history)
     {
@@ -184,11 +181,6 @@ WriterProxyData& WriterProxyData::operator =(
         m_type = nullptr;
     }
 
-    if (writerInfo.type_information.assigned())
-    {
-        type_information = writerInfo.type_information;
-    }
-
     return *this;
 }
 
@@ -250,79 +242,78 @@ uint32_t WriterProxyData::get_serialized_size(
         // PID_PERSISTENCE_GUID
         ret_val += 4 + PARAMETER_GUID_LENGTH;
     }
-    if (durability.send_always() || durability.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability, true))
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::cdr_serialized_size(durability);
     }
-    if (durability_service.send_always() || durability_service.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::should_be_sent(durability_service))
     {
         ret_val += dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::cdr_serialized_size(
             durability_service);
     }
-    if (deadline.send_always() || deadline.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::should_be_sent(deadline))
     {
         ret_val += dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::cdr_serialized_size(deadline);
     }
-    if (latency_budget.send_always() || latency_budget.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::should_be_sent(latency_budget))
     {
         ret_val += dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::cdr_serialized_size(latency_budget);
     }
-    if (liveliness.send_always() || liveliness.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::should_be_sent(liveliness))
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::cdr_serialized_size(liveliness);
     }
-    if (reliability.send_always() || reliability.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability, true))
     {
         ret_val += dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::cdr_serialized_size(reliability);
     }
-    if (lifespan.send_always() || lifespan.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::should_be_sent(lifespan))
     {
         ret_val += dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::cdr_serialized_size(lifespan);
     }
-    if (user_data.send_always() || user_data.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::should_be_sent(user_data))
     {
         ret_val += dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::cdr_serialized_size(user_data);
     }
-    if (ownership.send_always() || ownership.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::should_be_sent(ownership))
     {
         ret_val += dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::cdr_serialized_size(ownership);
     }
-    if (ownership_strength.send_always() || ownership_strength.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::OwnershipStrengthQosPolicy>::should_be_sent(ownership_strength))
     {
         ret_val += dds::QosPoliciesSerializer<dds::OwnershipStrengthQosPolicy>::cdr_serialized_size(
             ownership_strength);
     }
-    if (destination_order.send_always() || destination_order.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::should_be_sent(destination_order))
     {
         ret_val += dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::cdr_serialized_size(
             destination_order);
     }
-    if (presentation.send_always() || presentation.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::should_be_sent(presentation))
     {
         ret_val +=
                 dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::cdr_serialized_size(presentation);
     }
-    if (partition.send_always() || partition.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::should_be_sent(partition))
     {
         ret_val += dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::cdr_serialized_size(partition);
     }
-    if (topic_data.send_always() || topic_data.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::should_be_sent(topic_data))
     {
         ret_val += dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::cdr_serialized_size(topic_data);
     }
-    if (disable_positive_acks.send_always() || disable_positive_acks.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::should_be_sent(disable_positive_acks))
     {
         ret_val += dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::cdr_serialized_size(
             disable_positive_acks);
     }
-    if ((data_sharing.send_always() || data_sharing.hasChanged) &&
-            data_sharing.kind() != fastdds::dds::OFF)
+    if (dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::should_be_sent(data_sharing))
     {
         ret_val += dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::cdr_serialized_size(data_sharing);
     }
-    if (group_data.send_always() || group_data.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::should_be_sent(group_data))
     {
         ret_val += dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::cdr_serialized_size(group_data);
     }
@@ -348,7 +339,7 @@ uint32_t WriterProxyData::get_serialized_size(
     }
 #endif // if HAVE_SECURITY
 
-    if (representation.send_always() || representation.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::should_be_sent(representation))
     {
         ret_val += dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::cdr_serialized_size(
             representation);
@@ -358,6 +349,56 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val += dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
             type_information);
+    }
+
+    if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history))
+    {
+        ret_val += dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::cdr_serialized_size(history.value());
+    }
+
+    // Send the optional QoS policies if they are enabled
+    if (should_send_optional_qos())
+    {
+        if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::cdr_serialized_size(
+                resource_limits.value());
+        }
+
+        if (dds::QosPoliciesSerializer<dds::TransportPriorityQosPolicy>::should_be_sent(transport_priority))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::TransportPriorityQosPolicy>::cdr_serialized_size(
+                transport_priority.value());
+        }
+
+        if (dds::QosPoliciesSerializer<dds::WriterDataLifecycleQosPolicy>::should_be_sent(writer_data_lifecycle))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::WriterDataLifecycleQosPolicy>::cdr_serialized_size(
+                writer_data_lifecycle.value());
+        }
+
+        if (dds::QosPoliciesSerializer<dds::PublishModeQosPolicy>::should_be_sent(publish_mode))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::PublishModeQosPolicy>::cdr_serialized_size(
+                publish_mode.value());
+        }
+
+        if (dds::QosPoliciesSerializer<dds::RTPSReliableWriterQos>::should_be_sent(rtps_reliable_writer))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::RTPSReliableWriterQos>::cdr_serialized_size(
+                rtps_reliable_writer.value());
+        }
+
+        if (dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::should_be_sent(endpoint))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::cdr_serialized_size(endpoint.value());
+        }
+
+        if (dds::QosPoliciesSerializer<dds::WriterResourceLimitsQos>::should_be_sent(writer_resource_limits))
+        {
+            ret_val += dds::QosPoliciesSerializer<dds::WriterResourceLimitsQos>::cdr_serialized_size(
+                writer_resource_limits.value());
+        }
     }
 
     // PID_SENTINEL
@@ -466,14 +507,14 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (durability.send_always() || durability.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::should_be_sent(durability, true))
     {
         if (!dds::QosPoliciesSerializer<dds::DurabilityQosPolicy>::add_to_cdr_message(durability, msg))
         {
             return false;
         }
     }
-    if (durability_service.send_always() || durability_service.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::should_be_sent(durability_service))
     {
         if (!dds::QosPoliciesSerializer<dds::DurabilityServiceQosPolicy>::add_to_cdr_message(
                     durability_service, msg))
@@ -481,56 +522,56 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (deadline.send_always() ||  deadline.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::should_be_sent(deadline))
     {
         if (!dds::QosPoliciesSerializer<dds::DeadlineQosPolicy>::add_to_cdr_message(deadline, msg))
         {
             return false;
         }
     }
-    if (latency_budget.send_always() ||  latency_budget.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::should_be_sent(latency_budget))
     {
         if (!dds::QosPoliciesSerializer<dds::LatencyBudgetQosPolicy>::add_to_cdr_message(latency_budget, msg))
         {
             return false;
         }
     }
-    if (liveliness.send_always() ||  liveliness.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::should_be_sent(liveliness))
     {
         if (!dds::QosPoliciesSerializer<dds::LivelinessQosPolicy>::add_to_cdr_message(liveliness, msg))
         {
             return false;
         }
     }
-    if (reliability.send_always() ||  reliability.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::should_be_sent(reliability, true))
     {
         if (!dds::QosPoliciesSerializer<dds::ReliabilityQosPolicy>::add_to_cdr_message(reliability, msg))
         {
             return false;
         }
     }
-    if (lifespan.send_always() ||  lifespan.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::should_be_sent(lifespan))
     {
         if (!dds::QosPoliciesSerializer<dds::LifespanQosPolicy>::add_to_cdr_message(lifespan, msg))
         {
             return false;
         }
     }
-    if (user_data.send_always() || user_data.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::should_be_sent(user_data))
     {
         if (!dds::QosPoliciesSerializer<dds::UserDataQosPolicy>::add_to_cdr_message(user_data, msg))
         {
             return false;
         }
     }
-    if (ownership.send_always() ||  ownership.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::should_be_sent(ownership))
     {
         if (!dds::QosPoliciesSerializer<dds::OwnershipQosPolicy>::add_to_cdr_message(ownership, msg))
         {
             return false;
         }
     }
-    if (ownership_strength.send_always() ||  ownership_strength.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::OwnershipStrengthQosPolicy>::should_be_sent(ownership_strength))
     {
         if (!dds::QosPoliciesSerializer<dds::OwnershipStrengthQosPolicy>::add_to_cdr_message(
                     ownership_strength, msg))
@@ -538,7 +579,7 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (destination_order.send_always() ||  destination_order.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::should_be_sent(destination_order))
     {
         if (!dds::QosPoliciesSerializer<dds::DestinationOrderQosPolicy>::add_to_cdr_message(
                     destination_order, msg))
@@ -546,29 +587,28 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if (presentation.send_always() ||  presentation.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::should_be_sent(presentation))
     {
         if (!dds::QosPoliciesSerializer<dds::PresentationQosPolicy>::add_to_cdr_message(presentation, msg))
         {
             return false;
         }
     }
-    if (partition.send_always() ||  partition.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::should_be_sent(partition))
     {
         if (!dds::QosPoliciesSerializer<dds::PartitionQosPolicy>::add_to_cdr_message(partition, msg))
         {
             return false;
         }
     }
-    if (topic_data.send_always() || topic_data.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::should_be_sent(topic_data))
     {
         if (!dds::QosPoliciesSerializer<dds::TopicDataQosPolicy>::add_to_cdr_message(topic_data, msg))
         {
             return false;
         }
     }
-    if ((disable_positive_acks.send_always() || disable_positive_acks.hasChanged) &&
-            disable_positive_acks.enabled)
+    if (dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::should_be_sent(disable_positive_acks))
     {
         if (!dds::QosPoliciesSerializer<dds::DisablePositiveACKsQosPolicy>::add_to_cdr_message(
                     disable_positive_acks, msg))
@@ -576,15 +616,14 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    if ((data_sharing.send_always() || data_sharing.hasChanged) &&
-            data_sharing.kind() != fastdds::dds::OFF)
+    if (dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::should_be_sent(data_sharing))
     {
         if (!dds::QosPoliciesSerializer<dds::DataSharingQosPolicy>::add_to_cdr_message(data_sharing, msg))
         {
             return false;
         }
     }
-    if (group_data.send_always() ||  group_data.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::should_be_sent(group_data))
     {
         if (!dds::QosPoliciesSerializer<dds::GroupDataQosPolicy>::add_to_cdr_message(group_data, msg))
         {
@@ -620,7 +659,7 @@ bool WriterProxyData::write_to_cdr_message(
     }
 #endif // if HAVE_SECURITY
 
-    if (representation.send_always() || representation.hasChanged)
+    if (dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::should_be_sent(representation))
     {
         if (!dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::add_to_cdr_message(
                     representation, msg))
@@ -629,7 +668,81 @@ bool WriterProxyData::write_to_cdr_message(
         }
     }
 
+    if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history))
+    {
+        if (!dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::add_to_cdr_message(
+                    history.value(), msg))
+        {
+            return false;
+        }
+    }
 
+    // Send the optional QoS policies if they are enabled
+    if (should_send_optional_qos())
+    {
+        if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
+        {
+            if (!dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::add_to_cdr_message(
+                        resource_limits.value(), msg))
+            {
+                return false;
+            }
+        }
+
+        if (dds::QosPoliciesSerializer<dds::TransportPriorityQosPolicy>::should_be_sent(transport_priority))
+        {
+            if (!dds::QosPoliciesSerializer<dds::TransportPriorityQosPolicy>::add_to_cdr_message(
+                        transport_priority.value(), msg))
+            {
+                return false;
+            }
+        }
+
+        if (dds::QosPoliciesSerializer<dds::WriterDataLifecycleQosPolicy>::should_be_sent(writer_data_lifecycle))
+        {
+            if (!dds::QosPoliciesSerializer<dds::WriterDataLifecycleQosPolicy>::add_to_cdr_message(
+                        writer_data_lifecycle.value(), msg))
+            {
+                return false;
+            }
+        }
+
+        if (dds::QosPoliciesSerializer<dds::PublishModeQosPolicy>::should_be_sent(publish_mode))
+        {
+            if (!dds::QosPoliciesSerializer<dds::PublishModeQosPolicy>::add_to_cdr_message(
+                        publish_mode.value(), msg))
+            {
+                return false;
+            }
+        }
+
+        if (dds::QosPoliciesSerializer<dds::RTPSReliableWriterQos>::should_be_sent(rtps_reliable_writer))
+        {
+            if (!dds::QosPoliciesSerializer<dds::RTPSReliableWriterQos>::add_to_cdr_message(
+                        rtps_reliable_writer.value(), msg))
+            {
+                return false;
+            }
+        }
+
+        if (dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::should_be_sent(endpoint))
+        {
+            if (!dds::QosPoliciesSerializer<dds::RTPSEndpointQos>::add_to_cdr_message(
+                        endpoint.value(), msg))
+            {
+                return false;
+            }
+        }
+
+        if (dds::QosPoliciesSerializer<dds::WriterResourceLimitsQos>::should_be_sent(writer_resource_limits))
+        {
+            if (!dds::QosPoliciesSerializer<dds::WriterResourceLimitsQos>::add_to_cdr_message(
+                        writer_resource_limits.value(), msg))
+            {
+                return false;
+            }
+        }
+    }
 
     return dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
@@ -1367,65 +1480,53 @@ void WriterProxyData::set_qos(
     if (first_time)
     {
         durability = qos.durability;
-        durability.hasChanged = true;
     }
     if (first_time || deadline.period != qos.deadline.period)
     {
         deadline = qos.deadline;
-        deadline.hasChanged = true;
     }
     if (latency_budget.duration != qos.latency_budget.duration)
     {
         latency_budget = qos.latency_budget;
-        latency_budget.hasChanged = true;
     }
     if (first_time)
     {
         liveliness = qos.liveliness;
-        liveliness.hasChanged = true;
     }
     if (first_time)
     {
         reliability = qos.reliability;
-        reliability.hasChanged = true;
     }
     if (first_time)
     {
         ownership = qos.ownership;
-        ownership.hasChanged = true;
     }
     if (destination_order.kind != qos.destination_order.kind)
     {
         destination_order = qos.destination_order;
-        destination_order.hasChanged = true;
     }
     if (first_time || user_data.data_vec() != qos.user_data.data_vec())
     {
         user_data = qos.user_data;
-        user_data.hasChanged = true;
     }
     if (first_time || presentation.access_scope != qos.presentation.access_scope ||
             presentation.coherent_access != qos.presentation.coherent_access ||
             presentation.ordered_access != qos.presentation.ordered_access)
     {
         presentation = qos.presentation;
-        presentation.hasChanged = true;
     }
     if (first_time || qos.partition.names() != partition.names())
     {
         partition = qos.partition;
-        partition.hasChanged = true;
     }
 
     if (first_time || topic_data.getValue() != qos.topic_data.getValue())
     {
         topic_data = qos.topic_data;
-        topic_data.hasChanged = true;
     }
     if (first_time || group_data.getValue() != qos.group_data.getValue())
     {
         group_data = qos.group_data;
-        group_data.hasChanged = true;
     }
     if (first_time || durability_service.history_kind != qos.durability_service.history_kind ||
             durability_service.history_depth != qos.durability_service.history_depth ||
@@ -1436,22 +1537,18 @@ void WriterProxyData::set_qos(
             )
     {
         durability_service = qos.durability_service;
-        durability_service.hasChanged = true;
     }
     if (lifespan.duration != qos.lifespan.duration)
     {
         lifespan = qos.lifespan;
-        lifespan.hasChanged = true;
     }
     if (qos.ownership_strength.value != ownership_strength.value)
     {
         ownership_strength = qos.ownership_strength;
-        ownership_strength.hasChanged = true;
     }
     if (first_time)
     {
         disable_positive_acks = qos.disable_positive_acks;
-        disable_positive_acks.hasChanged = true;
     }
     // Writers only manages the first element in the list of data representations.
     if (qos.representation.m_value.size() != representation.m_value.size() ||
@@ -1459,17 +1556,42 @@ void WriterProxyData::set_qos(
             *qos.representation.m_value.begin() != *representation.m_value.begin()))
     {
         representation = qos.representation;
-        representation.hasChanged = true;
     }
     if (first_time && !(data_sharing == qos.data_sharing))
     {
         data_sharing = qos.data_sharing;
-        data_sharing.hasChanged = true;
     }
-    if (first_time && qos.publish_mode)
+    if (first_time && qos.history.has_value())
+    {
+        history = qos.history;
+    }
+    if (first_time && qos.resource_limits.has_value())
+    {
+        resource_limits = qos.resource_limits;
+    }
+    if (first_time && qos.transport_priority.has_value())
+    {
+        transport_priority = qos.transport_priority;
+    }
+    if (first_time && qos.writer_data_lifecycle.has_value())
+    {
+        writer_data_lifecycle = qos.writer_data_lifecycle;
+    }
+    if (first_time && qos.publish_mode.has_value())
     {
         publish_mode = qos.publish_mode;
-        publish_mode->hasChanged = true;
+    }
+    if (first_time && qos.rtps_reliable_writer.has_value())
+    {
+        rtps_reliable_writer = qos.rtps_reliable_writer;
+    }
+    if (first_time && qos.endpoint.has_value())
+    {
+        endpoint = qos.endpoint;
+    }
+    if (first_time && qos.writer_resource_limits.has_value())
+    {
+        writer_resource_limits = qos.writer_resource_limits;
     }
 }
 
@@ -1480,65 +1602,53 @@ void WriterProxyData::set_qos(
     if (first_time)
     {
         durability = qos.m_durability;
-        durability.hasChanged = true;
     }
     if (first_time || deadline.period != qos.m_deadline.period)
     {
         deadline = qos.m_deadline;
-        deadline.hasChanged = true;
     }
     if (latency_budget.duration != qos.m_latencyBudget.duration)
     {
         latency_budget = qos.m_latencyBudget;
-        latency_budget.hasChanged = true;
     }
     if (first_time)
     {
         liveliness = qos.m_liveliness;
-        liveliness.hasChanged = true;
     }
     if (first_time)
     {
         reliability = qos.m_reliability;
-        reliability.hasChanged = true;
     }
     if (first_time)
     {
         ownership = qos.m_ownership;
-        ownership.hasChanged = true;
     }
     if (destination_order.kind != qos.m_destinationOrder.kind)
     {
         destination_order = qos.m_destinationOrder;
-        destination_order.hasChanged = true;
     }
     if (first_time || user_data.data_vec() != qos.m_userData.data_vec())
     {
         user_data = qos.m_userData;
-        user_data.hasChanged = true;
     }
     if (first_time || presentation.access_scope != qos.m_presentation.access_scope ||
             presentation.coherent_access != qos.m_presentation.coherent_access ||
             presentation.ordered_access != qos.m_presentation.ordered_access)
     {
         presentation = qos.m_presentation;
-        presentation.hasChanged = true;
     }
     if (first_time || qos.m_partition.names() != partition.names())
     {
         partition = qos.m_partition;
-        partition.hasChanged = true;
     }
 
     if (first_time || topic_data.getValue() != qos.m_topicData.getValue())
     {
         topic_data = qos.m_topicData;
-        topic_data.hasChanged = true;
     }
     if (first_time || group_data.getValue() != qos.m_groupData.getValue())
     {
         group_data = qos.m_groupData;
-        group_data.hasChanged = true;
     }
     if (first_time || durability_service.history_kind != qos.m_durabilityService.history_kind ||
             durability_service.history_depth != qos.m_durabilityService.history_depth ||
@@ -1549,22 +1659,18 @@ void WriterProxyData::set_qos(
             )
     {
         durability_service = qos.m_durabilityService;
-        durability_service.hasChanged = true;
     }
     if (lifespan.duration != qos.m_lifespan.duration)
     {
         lifespan = qos.m_lifespan;
-        lifespan.hasChanged = true;
     }
     if (qos.m_ownershipStrength.value != ownership_strength.value)
     {
         ownership_strength = qos.m_ownershipStrength;
-        ownership_strength.hasChanged = true;
     }
     if (first_time)
     {
         disable_positive_acks = qos.m_disablePositiveACKs;
-        disable_positive_acks.hasChanged = true;
     }
     // Writers only manages the first element in the list of data representations.
     if (qos.representation.m_value.size() != representation.m_value.size() ||
@@ -1572,17 +1678,14 @@ void WriterProxyData::set_qos(
             *qos.representation.m_value.begin() != *representation.m_value.begin()))
     {
         representation = qos.representation;
-        representation.hasChanged = true;
     }
     if (first_time && !(data_sharing == qos.data_sharing))
     {
         data_sharing = qos.data_sharing;
-        data_sharing.hasChanged = true;
     }
     if (first_time)
     {
         publish_mode = qos.m_publishMode;
-        publish_mode->hasChanged = true;
     }
 }
 
@@ -1704,6 +1807,7 @@ void WriterProxyData::clear()
     }
 
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
+    durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 
     guid = c_Guid_Unknown;
     persistence_guid = c_Guid_Unknown;

@@ -861,3 +861,14 @@ jobs:
         with:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
+
+      - name: Clean workspace - Vanilla build
+        run: |
+          cd ${{ github.workspace }}
+          rm -rf build install log
+
+      - name: GCC latest colcon build
+        run: |
+          cd ${{ github.workspace }}/src/fastdds/.github/workflows/docker/ubuntu/alternative_builds
+          docker build -t fastdds_gcc_latest -f fastdds_gcc_latest.Dockerfile .
+          docker run --rm -v ${{ github.workspace }}:/root fastdds_gcc_latest

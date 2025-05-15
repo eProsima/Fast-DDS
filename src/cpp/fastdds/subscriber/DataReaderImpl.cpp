@@ -283,21 +283,11 @@ ReturnCode_t DataReaderImpl::enable()
     topic_desc.type_name = topic_->get_type_name();
     subscriber_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
 
-    ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
-    if (!is_data_sharing_compatible_)
+    SubscriptionBuiltinTopicData subscription_data;
+    if (get_subscription_builtin_topic_data(subscription_data) != RETCODE_OK)
     {
-        rqos.data_sharing.off();
-    }
-    if (endpoint_partitions)
-    {
-        std::istringstream partition_string(*endpoint_partitions);
-        std::string partition_name;
-        rqos.m_partition.clear();
-
-        while (std::getline(partition_string, partition_name, ';'))
-        {
-            rqos.m_partition.push_back(partition_name.c_str());
-        }
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Error getting subscription data. RTPS Writer not enabled.");
+        return RETCODE_ERROR;
     }
 
     rtps::ContentFilterProperty* filter_property = nullptr;
@@ -305,21 +295,19 @@ ReturnCode_t DataReaderImpl::enable()
     {
         filter_property = &content_topic->filter_property;
     }
-    if (!subscriber_->rtps_participant()->register_reader(
-                reader_,
-                topic_desc,
-                rqos,
-                filter_property))
+
+    ReturnCode_t register_reader_code = subscriber_->rtps_participant()->register_reader(reader_, topic_desc,
+                    subscription_data,
+                    filter_property);
+    if (register_reader_code != RETCODE_OK)
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
 
         reader_->set_listener(nullptr);
         stop();
-
-        return RETCODE_ERROR;
     }
 
-    return RETCODE_OK;
+    return register_reader_code;
 }
 
 void DataReaderImpl::disable()
@@ -1697,57 +1685,46 @@ void DataReaderImpl::set_qos(
     if (first_time && to.durability().kind != from.durability().kind)
     {
         to.durability() = from.durability();
-        to.durability().hasChanged = true;
     }
     if (to.deadline().period != from.deadline().period)
     {
         to.deadline() = from.deadline();
-        to.deadline().hasChanged = true;
     }
     if (to.latency_budget().duration != from.latency_budget().duration)
     {
         to.latency_budget() = from.latency_budget();
-        to.latency_budget().hasChanged = true;
     }
     if (first_time && !(to.liveliness() == from.liveliness()))
     {
         to.liveliness() = from.liveliness();
-        to.liveliness().hasChanged = true;
     }
     if (first_time && !(to.reliability() == from.reliability()))
     {
         to.reliability() = from.reliability();
-        to.reliability().hasChanged = true;
     }
     if (first_time && to.ownership().kind != from.ownership().kind)
     {
         to.ownership() = from.ownership();
-        to.ownership().hasChanged = true;
     }
     if (first_time && to.destination_order().kind != from.destination_order().kind)
     {
         to.destination_order() = from.destination_order();
-        to.destination_order().hasChanged = true;
     }
     if (to.user_data().data_vec() != from.user_data().data_vec())
     {
         to.user_data() = from.user_data();
-        to.user_data().hasChanged = true;
     }
     if (to.time_based_filter().minimum_separation != from.time_based_filter().minimum_separation )
     {
         to.time_based_filter() = from.time_based_filter();
-        to.time_based_filter().hasChanged = true;
     }
     if (first_time || !(to.durability_service() == from.durability_service()))
     {
         to.durability_service() = from.durability_service();
-        to.durability_service().hasChanged = true;
     }
     if (to.lifespan().duration != from.lifespan().duration )
     {
         to.lifespan() = from.lifespan();
-        to.lifespan().hasChanged = true;
     }
     if (first_time && !(to.reliable_reader_qos() == from.reliable_reader_qos()))
     {
@@ -1756,23 +1733,19 @@ void DataReaderImpl::set_qos(
     if (first_time || !(to.type_consistency() == from.type_consistency()))
     {
         to.type_consistency() = from.type_consistency();
-        to.type_consistency().hasChanged = true;
     }
     if (first_time || !(to.representation() == from.representation()))
     {
         to.representation() = from.representation();
-        to.representation().hasChanged = true;
     }
     if (first_time && (to.history().kind != from.history().kind ||
             to.history().depth != from.history().depth))
     {
         to.history() = from.history();
-        to.history().hasChanged = true;
     }
     if (first_time && !(to.resource_limits() == from.resource_limits()))
     {
         to.resource_limits() = from.resource_limits();
-        to.resource_limits().hasChanged = true;
     }
     if (!(to.reader_data_lifecycle() == from.reader_data_lifecycle()))
     {
@@ -2294,6 +2267,15 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
             subscription_data.partition.push_back(partition_name.c_str());
         }
     }
+
+    subscription_data.history = qos_.history();
+
+    // Optional QoS
+    subscription_data.resource_limits = qos_.resource_limits();
+    subscription_data.reader_data_lifecycle = qos_.reader_data_lifecycle();
+    subscription_data.rtps_reliable_reader = qos_.reliable_reader_qos();
+    subscription_data.endpoint = qos_.endpoint();
+    subscription_data.reader_resource_limits = qos_.reader_resource_limits();
 
     return RETCODE_OK;
 }

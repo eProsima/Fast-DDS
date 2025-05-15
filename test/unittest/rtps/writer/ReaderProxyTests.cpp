@@ -15,6 +15,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>

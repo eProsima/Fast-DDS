@@ -385,6 +385,23 @@ public:
             const dds::WriterQos& qos,
             bool first_time);
 
+    //! Getter for m_should_send_optional_qos.
+    bool should_send_optional_qos() const
+    {
+        return m_should_send_optional_qos;
+    }
+
+    /**
+     * Set whether optional QoS should be serialized and added to Data(r).
+     * @param should_send_optional_qos Boolean indicating whether optional QoS should be serialized
+     *                                 and added to Data(r).
+     */
+    void should_send_optional_qos(
+            bool should_send_optional_qos)
+    {
+        m_should_send_optional_qos = should_send_optional_qos;
+    }
+
 private:
 
     /**
@@ -419,6 +436,9 @@ private:
 
     //!Type Object
     dds::TypeObjectV1* m_type;
+
+    //!Whether optional QoS should be serialized and added to Data(r)
+    bool m_should_send_optional_qos;
 };
 
 } // namespace rtps

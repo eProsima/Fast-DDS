@@ -1,6 +1,17 @@
 Forthcoming
 -----------
 
+* QoS Policies are now only added to EDP messages if they do not have the default value.
+* HistoryQosPolicy has been included to EDP messages (when non-default value is used).
+* New property to extend EDP messages with eProsima Extensions QoS.
+
+Version v3.2.2
+--------------
+
+* Improve `IDLParser` adding support to new types:
+  * Add support for parsing sequence types.
+  * Move logic for managing `state["type"]` changes to `action<scoped_name>`.
+  * Refactor union types parsing to be similar to array types.
 
 Version v3.2.0
 --------------

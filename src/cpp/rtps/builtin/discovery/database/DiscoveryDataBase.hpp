@@ -294,6 +294,9 @@ public:
     // Check if the data queue is empty
     bool data_queue_empty();
 
+    // Swap both EDP and PDP data queues
+    void swap_data_queues();
+
     void to_json(
             nlohmann::json& j) const;
 
@@ -350,9 +353,6 @@ public:
     void remove_related_alive_from_history_nts(
             fastdds::rtps::WriterHistory* writer_history,
             const fastdds::rtps::GuidPrefix_t& entity_guid_prefix);
-
-    // Add own Data(p) in pdp_to_send if not already in it
-    bool add_own_pdp_to_send_();
 
 protected:
 

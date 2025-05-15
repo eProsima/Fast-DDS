@@ -642,7 +642,7 @@ void PDPServer::assignRemoteEndpoints(
     // Send the Data(p) to the client
     if (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT)
     {
-        discovery_db().add_own_pdp_to_send_();
+        send_own_pdp(pdata);
     }
 }
 
@@ -1081,6 +1081,9 @@ bool PDPServer::remove_remote_participant(
 bool PDPServer::process_data_queues()
 {
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "process_data_queues start");
+    // Swap both as a first step in order to avoid the following race condition: reception of data w/r while processing
+    // the PDP queue, not having processed yet the corresponding data P (also received while processing the queue).
+    discovery_db_.swap_data_queues();
     discovery_db_.process_pdp_data_queue();
     return discovery_db_.process_edp_data_queue();
 }
@@ -1620,7 +1623,26 @@ void PDPServer::send_announcement(
             EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
         }
     }
+}
 
+void PDPServer::send_own_pdp(
+        ParticipantProxyData* pdata)
+{
+    std::vector<GUID_t> remote_readers;
+    LocatorList locators;
+
+    remote_readers.emplace_back(pdata->guid.guidPrefix, c_EntityId_SPDPReader);
+
+    for (auto& locator : pdata->metatraffic_locators.unicast)
+    {
+        locators.push_back(locator);
+    }
+
+    send_announcement(
+        discovery_db().cache_change_own_participant(),
+        remote_readers,
+        locators
+        );
 }
 
 bool PDPServer::read_backup(
