@@ -78,6 +78,14 @@ public:
 
     void matched();
 
+    /**
+     * Sends a request without checking the matching status.
+     *
+     * @param number The number to send.
+     */
+    void direct_send(
+            const uint16_t number);
+
     void send(
             const uint16_t number);
 
