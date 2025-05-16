@@ -250,13 +250,16 @@ TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
 // Regression test of Refs #3376, github ros2/rmw_fastrtps #226
 TEST_P(Volatile, ReqRepVolatileHelloworldRequesterCheckWriteParams)
 {
+    // Note: this test checks that even when not matched, a valid related_sample_identity is set.
+    // Since the new requester API yields an error when not matched, direct_send is used instead of send.
+
     ReqRepHelloWorldRequester requester;
 
     requester.init(true);
 
     ASSERT_TRUE(requester.isInitialized());
 
-    requester.send(1);
+    requester.direct_send(1);
 }
 
 // Test created to check bug #5423, github ros2/ros2 #703
