@@ -428,7 +428,7 @@ TEST_P(DDSStatus, IncompatibleQosGetters)
             .deactivate_status_listener(eprosima::fastdds::dds::StatusMask::requested_incompatible_qos()).init();
     ASSERT_TRUE(compatible_reader.isInitialized());
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(3));
 
     EXPECT_FALSE(writer.is_matched());
     EXPECT_FALSE(incompatible_reliability_reader.is_matched());
