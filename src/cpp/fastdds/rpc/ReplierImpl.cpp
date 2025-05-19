@@ -16,10 +16,14 @@
 
 #include <string>
 
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
@@ -92,12 +96,25 @@ ReturnCode_t ReplierImpl::send_reply(
         void* data,
         const RequestInfo& info)
 {
-    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REPLIER, "Trying to send a reply with a disabled replier");
         return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    FASTDDS_TODO_BEFORE(3, 3, "Wait for the requester to be fully matched");
+    auto match_status = requester_match_status(info);
+    if (RequesterMatchStatus::UNMATCHED == match_status)
+    {
+        // The writer that sent the request has been unmatched.
+        EPROSIMA_LOG_WARNING(REPLIER, "Trying to send a reply to a disconnected requester");
+        return RETCODE_NO_DATA;
+    }
+    else if (RequesterMatchStatus::PARTIALLY_MATCHED == match_status)
+    {
+        // The writer that sent the request is still matched, but the reply topic is not.
+        EPROSIMA_LOG_WARNING(REPLIER, "Trying to send a reply to a partially matched requester");
+        return RETCODE_TIMEOUT;
     }
 
     rtps::WriteParams wparams;
@@ -273,6 +290,54 @@ ReturnCode_t ReplierImpl::delete_contained_entities()
     replier_reader_ = nullptr;
 
     return RETCODE_OK;
+}
+
+ReplierImpl::RequesterMatchStatus ReplierImpl::requester_match_status(
+        const RequestInfo& info) const
+{
+    // Check if the replier is still matched with the requester in the request topic
+    PublicationBuiltinTopicData pub_data;
+    if (RETCODE_OK != replier_reader_->get_matched_publication_data(pub_data, info.sample_identity.writer_guid()))
+    {
+        return RequesterMatchStatus::UNMATCHED;
+    }
+
+    FASTDDS_TODO_BEFORE(3, 3, "Get reply reader GUID from pub_data");
+
+    auto related_guid = info.related_sample_identity.writer_guid();
+    bool reply_topic_matched = false;
+    if (info.sample_identity.writer_guid() != related_guid)
+    {
+        // Custom related GUID (i.e. reply reader GUID) sent with the request.
+        // Check if the replier writer is matched with that specific reader.
+        SubscriptionBuiltinTopicData sub_data;
+        reply_topic_matched = RETCODE_OK == replier_writer_->get_matched_subscription_data(sub_data, related_guid);
+    }
+    else
+    {
+        // No custom related GUID, check if the replier is matched with all the requesters
+        // (same number of matched readers and writers)
+        reply_topic_matched = is_fully_matched();
+    }
+
+    return reply_topic_matched ?
+           RequesterMatchStatus::MATCHED :
+           RequesterMatchStatus::PARTIALLY_MATCHED;
+}
+
+bool ReplierImpl::is_fully_matched() const
+{
+    PublicationMatchedStatus pub_status;
+    SubscriptionMatchedStatus sub_status;
+
+    if ((RETCODE_OK == replier_reader_->get_subscription_matched_status(sub_status)) &&
+            (RETCODE_OK == replier_writer_->get_publication_matched_status(pub_status)))
+    {
+        return (pub_status.current_count > 0) && (pub_status.current_count == sub_status.current_count);
+    }
+
+    EPROSIMA_LOG_ERROR(REPLIER, "Error getting matched subscriptions or publications");
+    return false;
 }
 
 } // namespace rpc

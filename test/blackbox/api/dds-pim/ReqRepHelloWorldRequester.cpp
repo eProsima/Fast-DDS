@@ -28,6 +28,7 @@
 #include <fastdds/dds/rpc/RequestInfo.hpp>
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "ReqRepHelloWorldRequester.hpp"
 #include "ReqRepHelloWorldService.hpp"
@@ -168,6 +169,25 @@ void ReqRepHelloWorldRequester::matched()
     {
         cvDiscovery_.notify_one();
     }
+}
+
+void ReqRepHelloWorldRequester::direct_send(
+        const uint16_t number)
+{
+    WriteParams info;
+    HelloWorld hello;
+    hello.index(number);
+    hello.message("HelloWorld");
+
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        current_number_ = number;
+    }
+
+    ASSERT_EQ(requester_->get_requester_writer()->write((void*)&hello, info), RETCODE_OK);
+    related_sample_identity_ = info.related_sample_identity();
+
+    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
 }
 
 void ReqRepHelloWorldRequester::send(
