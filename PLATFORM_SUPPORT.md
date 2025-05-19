@@ -38,6 +38,8 @@ Community members may provide assistance with these platforms.
 |arm64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
 |arm32       |                    |Tier 3 [^s]         |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|           |
 
+More information about Platforms support and eProsima products compatibility can be found on [Fast DDS Documentation](https://fast-dds.docs.eprosima.com/en/latest/notes/versions.html#dependencies-and-compatibilities).
+
 [^a]: Binary releases are provided as a single archive per platform.
 [^s]: Compilation from source.
 

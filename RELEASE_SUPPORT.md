@@ -27,6 +27,8 @@ This period applies since the end of standard support date to the end of life (E
 
 [^*]: Support may be extended.
 
+A detailed view of the features of each supported version is available at [Fast DDS documentation](https://fast-dds.docs.eprosima.com/en/latest/notes/previous_versions/supported_versions.html).
+
 ## *eProsima Fast DDS* previously supported versions.
 
 |Version|Version branch|Latest Release|Release Date|EOL Date|
@@ -48,3 +50,5 @@ This period applies since the end of standard support date to the end of life (E
 |1.9|[1.9.x](https://github.com/eProsima/Fast-DDS/tree/1.9.x)|[v1.9.5](https://github.com/eProsima/Fast-DDS/releases/tag/v1.9.5)|August 2019|February 2022|
 |1.8|[1.8.x](https://github.com/eProsima/Fast-DDS/tree/1.8.x)|[v1.8.5](https://github.com/eProsima/Fast-DDS/releases/tag/v1.8.5)|May 2019|February 2022|
 |1.7|[1.7.x](https://github.com/eProsima/Fast-DDS/tree/1.7.x)|[v1.7.3](https://github.com/eProsima/Fast-DDS/releases/tag/v1.7.3)|December 2018|February 2022|
+
+A detailed view of the features of each previously supported version is available at [Fast DDS documentation](https://fast-dds.docs.eprosima.com/en/latest/notes/previous_versions/previous_versions.html).
