@@ -1183,13 +1183,19 @@ bool ReaderProxyData::read_from_cdr_message(
 
                     case fastdds::dds::PID_RESOURCE_LIMITS:
                     {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
                         if (!resource_limits)
                         {
                             resource_limits.reset(true);
                         }
 
                         if (!dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::read_from_cdr_message(
-                                    resource_limits.value(), msg, plength))
+                                    local_vendor_id, resource_limits.value(), msg, plength))
                         {
                             EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
                                     "Received with error.");
