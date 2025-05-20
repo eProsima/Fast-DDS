@@ -249,9 +249,11 @@ OperationStatus FibonacciSeq::execute()
 
         // Read the next value from the feed
         int32_t value;
+        Duration_t timeout{1, 0}; // 1s
+
         try
         {
-            if (reader_->read(value))
+            if (reader_->read(value, timeout))
             {
                 client_server_info("ClientApp", "Fibonacci sequence value: " << value);
 
@@ -267,6 +269,12 @@ OperationStatus FibonacciSeq::execute()
 
                 return OperationStatus::SUCCESS;
             }
+        }
+        catch (const RpcTimeoutException& e)
+        {
+            client_server_error("ClientApp", "Operation timed out: " << e.what());
+
+            return OperationStatus::TIMEOUT;
         }
         catch (const RpcException& e)
         {
@@ -343,6 +351,13 @@ OperationStatus SumAll::execute()
                         client_server_error("ClientApp", "Unknown input status.");
                         break;
                 }
+            }
+
+            if (future.wait_for(std::chrono::milliseconds(1000)) != std::future_status::ready)
+            {
+                client_server_error("ClientApp", "Operation timed out");
+
+                return OperationStatus::TIMEOUT;
             }
 
             result_ = future.get();
@@ -432,7 +447,10 @@ OperationStatus Accumulator::execute()
 
             // Read the next value from the output feed
             int32_t value;
-            if (reader_->read(value))
+
+            Duration_t timeout{1, 0}; // 1s
+
+            if (reader_->read(value, timeout))
             {
                 client_server_info("ClientApp", "Accumulated sum: " << value);
 
@@ -448,6 +466,12 @@ OperationStatus Accumulator::execute()
 
                 return OperationStatus::SUCCESS;
             }
+        }
+        catch (const RpcTimeoutException& e)
+        {
+            client_server_error("ClientApp", "Operation timed out: " << e.what());
+
+            return OperationStatus::TIMEOUT;
         }
         catch(const RpcException& e)
         {
@@ -531,7 +555,10 @@ OperationStatus Filter::execute()
 
             // Get the next value from the output feed
             int32_t value;
-            if (reader_->read(value))
+
+            Duration_t timeout{1, 0}; // 1s
+
+            if (reader_->read(value, timeout))
             {
                 client_server_info("ClientApp", "Filtered sequence value: " << value);
 
@@ -548,6 +575,12 @@ OperationStatus Filter::execute()
 
                 return OperationStatus::SUCCESS;
             }
+        }
+        catch (const RpcTimeoutException& e)
+        {
+            client_server_error("ClientApp", "Operation timed out: " << e.what());
+
+            return OperationStatus::TIMEOUT;
         }
         catch (const RpcException& e)
         {
