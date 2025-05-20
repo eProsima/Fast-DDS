@@ -632,33 +632,14 @@ void ClientApp::run()
         return;
     }
 
-    set_operation(true);
-
     // Check if a server is available
-    for (size_t i = 0; i < config_.connection_attempts; ++i)
+    if (!ping_server(config_.connection_attempts))
     {
+        // Stop the client execution
         if (!is_stopped())
         {
-            client_server_debug("ClientApp",
-                "Trying to reach server, attempt " << (i + 1) << "/" << config_.connection_attempts);
-
-            if (OperationStatus::SUCCESS == operation_->execute())
-            {
-                break;
-            }
-
-            // Server not reachable
-            client_server_debug("ClientApp",
-                "Server not reachable, attempt " << (i + 1) << "/" << config_.connection_attempts << " failed.");
-
-            if (i == config_.connection_attempts - 1)
-            {
-                client_server_error("ClientApp", "Failed to connect to server");
-                throw std::runtime_error("Failed to connect to server");
-            }
-
-            // Wait before retrying
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            client_server_info("ClientApp", "Server not reachable. Stopping client execution...");
+            stop();
         }
     }
 
@@ -735,16 +716,8 @@ void ClientApp::create_client(
     }
 }
 
-void ClientApp::set_operation(
-        bool ping /* = false */)
+void ClientApp::set_operation()
 {
-    // If ping is true, set the operation to Ping
-    if (ping)
-    {
-        operation_ = std::unique_ptr<Operation>(new Ping(client_));
-        return;
-    }
-
     // Set the operation based on the user input
     switch (config_.operation)
     {
@@ -772,6 +745,42 @@ void ClientApp::set_operation(
         default:
             throw std::runtime_error("Invalid operation");
     }
+}
+
+bool ClientApp::ping_server(
+        std::size_t attempts)
+{
+    operation_ = std::unique_ptr<Operation>(new Ping(client_));
+
+    for (size_t i = 0; i < attempts; ++i)
+    {
+        if (!is_stopped())
+        {
+            client_server_debug("ClientApp",
+                "Trying to reach server, attempt " << (i + 1) << "/" << attempts);
+
+            if (OperationStatus::SUCCESS == operation_->execute())
+            {
+                return true;
+            }
+
+            // Server not reachable
+            client_server_debug("ClientApp",
+                "Server not reachable, attempt " << (i + 1) << "/" << attempts << " failed.");
+
+            if (i == attempts - 1)
+            {
+                client_server_error("ClientApp", "Failed to connect to server");
+            }
+            else
+            {
+                // Wait before retrying
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            }
+        }
+    }
+
+    return false;
 }
 
 } // namespace rpc_client_server

@@ -229,9 +229,13 @@ protected:
     //! Create a client
     void create_client(const std::string& service_name);
 
-    //! Set the operation to be executed. If ping is true, a ping operation is set
-    void set_operation(
-            bool ping = false);
+    //! Set the operation to be executed.
+    void set_operation();
+
+    //! Check if the a server is reachable. If not, retry until the maximum number of attempts is reached
+    //! @return true if the server is reachable, false otherwise
+    bool ping_server(
+            std::size_t attempts);
 
     bool is_stopped()
     {
