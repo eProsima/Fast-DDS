@@ -1942,11 +1942,12 @@ inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_siz
             ret_val += 44;
             // m_discovery_servers
             ret_val += 4;
+            // size * (kind + port + address)
             ret_val +=  static_cast<uint32_t>(qos_policy.builtin.discovery_config.m_DiscoveryServers.size()) *
-                    (4 + 4 + 16);                                                                                            // kind + port + address
+                    (4 + 4 + 16);
             // ignore_participant_flags
             ret_val += 4;
-            // easy_mode (str_size + str_data (including null char))
+            // static_edp_xml_config
             ret_val += 4 +
                     static_cast<uint32_t>(strlen(qos_policy.builtin.discovery_config.static_edp_xml_config()) +
                     1);
@@ -1968,14 +1969,15 @@ inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_siz
         {
             for (const auto& cost__locator_list : externality__cost_locator_list.second)
             {
-                ret_val += static_cast<uint32_t>(cost__locator_list.second.size()) * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
+                // size * (kind + port + address + (externality + cost + mask + padding))
+                ret_val += static_cast<uint32_t>(cost__locator_list.second.size()) * (4 + 4 + 16 + 4);
             }
         }
         // initial_peers_list
         ret_val += 4;
         ret_val += static_cast<uint32_t>(qos_policy.builtin.initialPeersList.size()) * (4 + 4 + 16); // kind + port + address
         // up to flow_controller_name
-        ret_val += 24;
+        ret_val += 16;
         // flow_controller_name (str_size + str_data (including null char))
         ret_val += 4 + static_cast<uint32_t>(qos_policy.builtin.flow_controller_name.size() + 1);
         // align
@@ -1995,7 +1997,8 @@ inline uint32_t QosPoliciesSerializer<WireProtocolConfigQos>::cdr_serialized_siz
     {
         for (const auto& cost__locator_list : externality__cost_locator_list.second)
         {
-            ret_val += static_cast<uint32_t>(cost__locator_list.second.size()) * (4 + 4 + 16 + 4); // kind + port + address + externality + cost + mask
+            // size * (kind + port + address + (externality + cost + mask + padding))
+            ret_val += static_cast<uint32_t>(cost__locator_list.second.size()) * (4 + 4 + 16 + 4);
         }
     }
     // + ignore_non_matching_locators
@@ -2123,20 +2126,19 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::add_to_cdr_message(
         valid &=
                 rtps::CDRMessage::addOctet(cdr_message,
                         static_cast<fastdds::rtps::octet>(qos_policy.builtin.readerHistoryMemoryPolicy));
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
+        // writer_history_memory_policy
+        valid &=
+                rtps::CDRMessage::addOctet(cdr_message,
+                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.writerHistoryMemoryPolicy));
+        // avoid_builtin_multicast
+        valid &=
+                rtps::CDRMessage::addOctet(cdr_message,
+                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.avoid_builtin_multicast));
         valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
         // reader_payload_size
         valid &=
                 rtps::CDRMessage::addUInt32(cdr_message,
                         qos_policy.builtin.readerPayloadSize);
-        // writer_history_memory_policy
-        valid &=
-                rtps::CDRMessage::addOctet(cdr_message,
-                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.writerHistoryMemoryPolicy));
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
         // writer_payload_size
         valid &=
                 rtps::CDRMessage::addUInt32(cdr_message,
@@ -2145,13 +2147,6 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::add_to_cdr_message(
         valid &=
                 rtps::CDRMessage::addUInt32(cdr_message,
                         qos_policy.builtin.mutation_tries);
-        // avoid_builtin_multicast
-        valid &=
-                rtps::CDRMessage::addOctet(cdr_message,
-                        static_cast<fastdds::rtps::octet>(qos_policy.builtin.avoid_builtin_multicast));
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
-        valid &= rtps::CDRMessage::addOctet(cdr_message, (fastdds::rtps::octet)0x00); // padding
         // flow_controller_name
         valid &= rtps::CDRMessage::add_string(cdr_message, qos_policy.builtin.flow_controller_name);
     }
@@ -2296,24 +2291,22 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::read_content_from_cdr_
         // reader_history_memory_policy
         valid &= rtps::CDRMessage::readOctet(cdr_message,
                         (fastdds::rtps::octet*)&qos_policy.builtin.readerHistoryMemoryPolicy);
-        cdr_message->pos += 3; // padding
-        // reader_payload_size
-        valid &= rtps::CDRMessage::readUInt32(cdr_message,
-                        (uint32_t*)&qos_policy.builtin.readerPayloadSize);
         // writer_history_memory_policy
         valid &= rtps::CDRMessage::readOctet(cdr_message,
                         (fastdds::rtps::octet*)&qos_policy.builtin.writerHistoryMemoryPolicy);
-        cdr_message->pos += 3; // padding
+        // avoid_builtin_multicast
+        valid &= rtps::CDRMessage::readOctet(cdr_message,
+                        (fastdds::rtps::octet*)&qos_policy.builtin.avoid_builtin_multicast);
+        cdr_message->pos += 1; // padding
+        // reader_payload_size
+        valid &= rtps::CDRMessage::readUInt32(cdr_message,
+                        (uint32_t*)&qos_policy.builtin.readerPayloadSize);
         // writer_payload_size
         valid &= rtps::CDRMessage::readUInt32(cdr_message,
                         (uint32_t*)&qos_policy.builtin.writerPayloadSize);
         // mutation_tries
         valid &= rtps::CDRMessage::readUInt32(cdr_message,
                         (uint32_t*)&qos_policy.builtin.mutation_tries);
-        // avoid_builtin_multicast
-        valid &= rtps::CDRMessage::readOctet(cdr_message,
-                        (fastdds::rtps::octet*)&qos_policy.builtin.avoid_builtin_multicast);
-        cdr_message->pos += 3; // padding
         // flow_controller_name
         valid &= rtps::CDRMessage::read_string(cdr_message,
                         &qos_policy.builtin.flow_controller_name);

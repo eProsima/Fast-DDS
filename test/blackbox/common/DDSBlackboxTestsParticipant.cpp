@@ -71,7 +71,6 @@ auto check_qos_in_data_p =
                 }
                 else if (!is_sentinel)
                 {
-                    //std::cout << std::hex << "PID: " << pid << std::endl;
                     if (pid == eprosima::fastdds::dds::PID_WIREPROTOCOL_CONFIG)
                     {
                         std::cout << "WireProtocolConfig found" << std::endl;
@@ -130,7 +129,7 @@ TEST(DDSParticipant, participant_sends_non_default_qos_optional)
     EXPECT_EQ(qos_found.load(), 0u);
     EXPECT_EQ(expected_qos_pids.size(), expected_qos_size);
 
-    // b) Now set the property to serialize optional QoS and re-init the reader
+    // b) Now set the property to serialize optional QoS and re-init the writer
     writer.destroy();
     reader.wait_writer_undiscovery();
     qos_found.store(0);

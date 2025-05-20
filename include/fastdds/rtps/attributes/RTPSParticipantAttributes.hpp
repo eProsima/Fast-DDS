@@ -143,6 +143,7 @@ constexpr uint16_t DEFAULT_ROS2_SERVER_PORT = 11811;
 constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
 
 //! Filtering flags when discovering participants
+FASTDDS_TODO_BEFORE(4, 0, "Change it to uint8_t (implies also changing [de]serializations)");
 enum ParticipantFilteringFlags : uint32_t
 {
     NO_FILTER = 0,
