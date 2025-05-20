@@ -317,8 +317,6 @@ void ClientApp::create_client(
         const std::string& service_name)
 {
     RequesterQos qos;
-    qos.writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    qos.reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
     client_ = create_CalculatorClient(*participant_, service_name.c_str(), qos);
 
     if (!client_)

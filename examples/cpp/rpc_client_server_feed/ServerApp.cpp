@@ -115,8 +115,6 @@ void ServerApp::create_server(
             std::make_shared<CalculatorServerImplementation>();
 
     ReplierQos qos;
-    qos.writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    qos.reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
 
     server_ = create_CalculatorServer(
                     *participant_,
