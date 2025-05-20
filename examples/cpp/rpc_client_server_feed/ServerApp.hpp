@@ -45,7 +45,7 @@ public:
 
     void stop() override;
 
-private:
+protected:
 
     void create_participant();
 

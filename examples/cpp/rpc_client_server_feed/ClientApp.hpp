@@ -62,7 +62,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::weak_ptr<calculator_example::Calculator> client_;
 
@@ -78,7 +78,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::int32_t min_value_;
     std::int32_t max_value_;
@@ -98,7 +98,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::int32_t x_;
     std::int32_t y_;
@@ -119,7 +119,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::int32_t x_;
     std::int32_t y_;
@@ -139,7 +139,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::uint32_t n_results_;
     std::weak_ptr<calculator_example::Calculator> client_;
@@ -157,7 +157,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::weak_ptr<calculator_example::Calculator> client_;
     std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>> writer_;
@@ -176,7 +176,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::weak_ptr<calculator_example::Calculator> client_;
     std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>> writer_;
@@ -196,7 +196,7 @@ public:
 
     OperationStatus execute() override;
 
-private:
+protected:
 
     std::weak_ptr<calculator_example::Calculator> client_;
     std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>> writer_;
@@ -208,6 +208,7 @@ private:
 
 class ClientApp : public Application
 {
+
 public:
 
     ClientApp(
@@ -220,7 +221,7 @@ public:
 
     void stop() override;
 
-private:
+protected:
 
     //! Create a participant for internal RPCDDS entities
     void create_participant();
