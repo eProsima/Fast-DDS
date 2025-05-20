@@ -19,6 +19,12 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+<<<<<<< HEAD
+=======
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
+#include <cstdint>
+>>>>>>> e1524ac9 (Address some compilation warnings with GCC latest (#5796))
 #include <memory>
 #include <regex>
 
