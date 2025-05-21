@@ -350,8 +350,13 @@ public:
 
     // Removes all the changes whose original sender was entity_guid_prefix from writer_history
     void remove_related_alive_from_history_nts(
+<<<<<<< HEAD
             fastrtps::rtps::WriterHistory* writer_history,
             const fastrtps::rtps::GuidPrefix_t& entity_guid_prefix);
+=======
+            fastdds::rtps::WriterHistory* writer_history,
+            const fastdds::rtps::GuidPrefix_t& entity_guid_prefix);
+>>>>>>> 0fa7b1eb (Improve DS routines (#5764))
 
 protected:
 
