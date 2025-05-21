@@ -122,18 +122,24 @@ public:
     /**
      * Get the size in bytes of the CDR serialization of this object.
      * @param include_encapsulation Whether to include the size of the encapsulation info.
+     * @param force_including_optional_qos Whether to force including of the optional Qos.
      * @return size in bytes of the CDR serialization.
      */
     uint32_t get_serialized_size(
-            bool include_encapsulation) const;
+            bool include_encapsulation,
+            bool force_including_optional_qos = false) const;
 
     /**
      * Write as a parameter list on a CDRMessage_t
+     * @param msg CDRMessage_t to write to
+     * @param write_encapsulation Whether to write the encapsulation info.
+     * @param force_write_optional_qos Whether to write the optional Qos.
      * @return True on success
      */
     bool write_to_cdr_message(
             CDRMessage_t* msg,
-            bool write_encapsulation);
+            bool write_encapsulation,
+            bool force_write_optional_qos = false);
 
     /**
      * Read the parameter list from a received CDRMessage_t
@@ -209,6 +215,23 @@ public:
         return last_received_message_tm_;
     }
 
+    //! Getter for m_should_send_optional_qos.
+    bool should_send_optional_qos() const
+    {
+        return m_should_send_optional_qos;
+    }
+
+    /**
+     * Set whether optional QoS should be serialized and added to Data(p).
+     * @param should_send_optional_qos Boolean indicating whether optional QoS should be serialized
+     *                                 and added to Data(p).
+     */
+    void should_send_optional_qos(
+            bool should_send_optional_qos)
+    {
+        m_should_send_optional_qos = should_send_optional_qos;
+    }
+
 private:
 
     //! Store the last timestamp it was received a RTPS message from the remote participant.
@@ -216,6 +239,9 @@ private:
 
     //! Remote participant lease duration in microseconds.
     std::chrono::microseconds lease_duration_;
+
+    //!Whether optional QoS should be serialized and added to Data(p)
+    bool m_should_send_optional_qos{false};
 };
 
 } // namespace rtps

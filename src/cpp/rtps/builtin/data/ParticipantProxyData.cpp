@@ -102,6 +102,7 @@ ParticipantProxyData::ParticipantProxyData(
     , m_writers(nullptr)
     , m_sample_identity(pdata.m_sample_identity)
     , lease_duration_(pdata.lease_duration_)
+    , m_should_send_optional_qos(pdata.m_should_send_optional_qos)
 {
 }
 
@@ -138,7 +139,8 @@ ParticipantProxyData::~ParticipantProxyData()
 }
 
 uint32_t ParticipantProxyData::get_serialized_size(
-        bool include_encapsulation) const
+        bool include_encapsulation,
+        bool force_including_optional_qos) const
 {
     uint32_t ret_val = include_encapsulation ? 4 : 0;
 
@@ -239,13 +241,23 @@ uint32_t ParticipantProxyData::get_serialized_size(
     }
 #endif // if HAVE_SECURITY
 
+    if (force_including_optional_qos || should_send_optional_qos())
+    {
+        // No need for QosPoliciesSerializer::should_be_sent since it is always different from the default.
+        // For instance, the locator lists.
+
+        // PID_WIREPROTOCOL_CONFIG
+        ret_val += fastdds::dds::QosPoliciesSerializer<dds::WireProtocolConfigQos>::cdr_serialized_size(
+            wire_protocol.value());
+    }
     // PID_SENTINEL
     return ret_val + 4;
 }
 
 bool ParticipantProxyData::write_to_cdr_message(
         CDRMessage_t* msg,
-        bool write_encapsulation)
+        bool write_encapsulation,
+        bool force_write_optional_qos)
 {
     if (write_encapsulation)
     {
@@ -446,6 +458,19 @@ bool ParticipantProxyData::write_to_cdr_message(
         }
     }
 #endif // if HAVE_SECURITY
+
+    // serialize optional QoS if present
+    if (force_write_optional_qos || should_send_optional_qos())
+    {
+        // No need for QosPoliciesSerializer::should_be_sent since it is always different from the default.
+        // For instance, the discovery protocol is always different from NONE.
+        if (!fastdds::dds::QosPoliciesSerializer<dds::WireProtocolConfigQos>::add_to_cdr_message(
+                    wire_protocol.value(),
+                    msg))
+        {
+            return false;
+        }
+    }
 
     return fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
@@ -858,6 +883,20 @@ bool ParticipantProxyData::read_from_cdr_message(
 #endif // if HAVE_SECURITY
                         break;
                     }
+                    case fastdds::dds::PID_WIREPROTOCOL_CONFIG:
+                    {
+                        if (!wire_protocol)
+                        {
+                            wire_protocol.reset(true);
+                        }
+
+                        if (!fastdds::dds::QosPoliciesSerializer<dds::WireProtocolConfigQos>::read_from_cdr_message(
+                                    wire_protocol.value(), msg, plength))
+                        {
+                            return false;
+                        }
+                        break;
+                    }
                     default:
                     {
                         break;
@@ -954,6 +993,8 @@ void ParticipantProxyData::copy(
             std::chrono::microseconds(
         fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
             pdata.lease_duration));
+    m_should_send_optional_qos = pdata.m_should_send_optional_qos;
+
     m_key = pdata.m_key;
     is_alive = pdata.is_alive;
     user_data = pdata.user_data;

@@ -620,6 +620,10 @@ private:
     //! Determine if the RTPSParticipantImpl was initialized successfully.
     bool initialized_ = false;
 
+    //! Whether the participant should send optional QoS in the discovery
+    //! This is regulated by the `fastdds.send_optional_qos` property
+    mutable signed char should_send_optional_qos_ = -1;
+
     //! Ignored entities collections
     std::set<GuidPrefix_t> ignored_participants_;
     std::set<GUID_t> ignored_writers_;
