@@ -34,6 +34,7 @@ using namespace eprosima::fastdds::rtps;
 
 //#define cout "Use Log instead!"
 
+const char* certs_path = nullptr;
 uint16_t global_port = 0;
 //bool enable_datasharing;
 
@@ -119,5 +120,11 @@ int main(
     testing::InitGoogleTest(&argc, argv);
     testing::AddGlobalTestEnvironment(new BlackboxEnvironment);
 
+    if (!::testing::GTEST_FLAG(list_tests))
+    {
+#if HAVE_SECURITY
+        blackbox_security_init();
+#endif // if HAVE_SECURITY
+    }
     return RUN_ALL_TESTS();
 }
