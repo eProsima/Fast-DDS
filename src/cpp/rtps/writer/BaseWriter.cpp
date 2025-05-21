@@ -395,7 +395,7 @@ void BaseWriter::init(
     }
 }
 
-void BaseWriter::local_actions_on_writer_removed()
+void BaseWriter::local_actions_on_entity_removed()
 {
     // First, unregister changes from FlowController. This action must be protected.
     {

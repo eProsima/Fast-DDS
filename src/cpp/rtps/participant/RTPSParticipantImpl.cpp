@@ -975,7 +975,7 @@ bool RTPSParticipantImpl::create_writer(
         if (!m_security_manager.register_local_writer(SWriter->getGuid(),
                 param.endpoint.properties, SWriter->getAttributes().security_attributes()))
         {
-            SWriter->local_actions_on_writer_removed();
+            SWriter->local_actions_on_entity_removed();
             delete(SWriter);
             return false;
         }
@@ -985,7 +985,7 @@ bool RTPSParticipantImpl::create_writer(
         if (!m_security_manager.register_local_builtin_writer(SWriter->getGuid(),
                 SWriter->getAttributes().security_attributes()))
         {
-            SWriter->local_actions_on_writer_removed();
+            SWriter->local_actions_on_entity_removed();
             delete(SWriter);
             return false;
         }
@@ -1004,11 +1004,11 @@ bool RTPSParticipantImpl::create_writer(
 
     {
         std::lock_guard<shared_mutex> _(endpoints_list_mutex);
-        m_allWriterList.push_back(SWriter);
+        m_allWriterList.push_back(RTPSEntityDeleter<BaseWriter>(SWriter));
 
         if (!is_builtin)
         {
-            m_userWriterList.push_back(SWriter);
+            m_userWriterList.push_back(RTPSEntityDeleter<BaseWriter>(SWriter));
         }
     }
     *writer_out = SWriter;
@@ -1113,7 +1113,7 @@ bool RTPSParticipantImpl::create_reader(
         if (!m_security_manager.register_local_reader(SReader->getGuid(),
                 param.endpoint.properties, SReader->getAttributes().security_attributes()))
         {
-            SReader->local_actions_on_reader_removed();
+            SReader->local_actions_on_entity_removed();
             delete(SReader);
             return false;
         }
@@ -1123,7 +1123,7 @@ bool RTPSParticipantImpl::create_reader(
         if (!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
                 SReader->getAttributes().security_attributes()))
         {
-            SReader->local_actions_on_reader_removed();
+            SReader->local_actions_on_entity_removed();
             delete(SReader);
             return false;
         }
@@ -1152,11 +1152,11 @@ bool RTPSParticipantImpl::create_reader(
     {
         std::lock_guard<shared_mutex> _(endpoints_list_mutex);
 
-        m_allReaderList.push_back(SReader);
+        m_allReaderList.push_back(RTPSEntityDeleter<BaseReader>(SReader));
 
         if (!is_builtin)
         {
-            m_userReaderList.push_back(SReader);
+            m_userReaderList.push_back(RTPSEntityDeleter<BaseReader>(SReader));
         }
     }
     *reader_out = SReader;
@@ -1385,7 +1385,7 @@ BaseWriter* RTPSParticipantImpl::find_local_writer(
     {
         if (writer->getGuid() == writer_guid)
         {
-            return writer;
+            return &(*writer);
         }
     }
 
@@ -2072,8 +2072,10 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 
     bool found = false, found_in_users = false;
     Endpoint* p_endpoint = nullptr;
-    BaseReader* reader = nullptr;
-    BaseWriter* writer {nullptr};
+    std::vector<RTPSEntityDeleter<BaseReader>>::iterator reader_user_list_it;
+    std::vector<RTPSEntityDeleter<BaseWriter>>::iterator writer_user_list_it;
+    std::vector<RTPSEntityDeleter<BaseReader>>::iterator reader_all_list_it;
+    std::vector<RTPSEntityDeleter<BaseWriter>>::iterator writer_all_list_it;
 
     if (endpoint.entityId.is_writer())
     {
@@ -2083,8 +2085,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*wit)->getGuid().entityId == endpoint.entityId) //Found it
             {
-                writer = *wit;
-                m_userWriterList.erase(wit);
+                writer_user_list_it = wit;
                 found_in_users = true;
                 break;
             }
@@ -2094,9 +2095,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*wit)->getGuid().entityId == endpoint.entityId) //Found it
             {
-                writer = *wit;
-                p_endpoint = *wit;
-                m_allWriterList.erase(wit);
+                p_endpoint = static_cast<Endpoint*>(*wit);
+                writer_all_list_it = wit;
                 found = true;
                 break;
             }
@@ -2110,8 +2110,7 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*rit)->getGuid().entityId == endpoint.entityId) //Found it
             {
-                reader = *rit;
-                m_userReaderList.erase(rit);
+                reader_user_list_it = rit;
                 found_in_users = true;
                 break;
             }
@@ -2121,9 +2120,8 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
         {
             if ((*rit)->getGuid().entityId == endpoint.entityId) //Found it
             {
-                reader = *rit;
-                p_endpoint = *rit;
-                m_allReaderList.erase(rit);
+                p_endpoint = static_cast<Endpoint*>(*rit);
+                reader_all_list_it = rit;
                 found = true;
                 break;
             }
@@ -2180,15 +2178,29 @@ bool RTPSParticipantImpl::deleteUserEndpoint(
 #endif // if HAVE_SECURITY
     }
 
-    if (reader)
+    if (endpoint.entityId.is_reader())
     {
-        reader->local_actions_on_reader_removed();
+        if (found_in_users)
+        {
+            m_userReaderList.erase(reader_user_list_it);
+        }
+        else if (found)
+        {
+            m_allReaderList.erase(reader_all_list_it);
+        }
     }
-    else if (writer)
+    else if (endpoint.entityId.is_writer())
     {
-        writer->local_actions_on_writer_removed();
+        if (found_in_users)
+        {
+            m_userWriterList.erase(writer_user_list_it);
+        }
+        else if (found)
+        {
+            m_allWriterList.erase(writer_all_list_it);
+        }
     }
-    delete(p_endpoint);
+
     return true;
 }
 
@@ -2215,13 +2227,13 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
         sort(m_allWriterList.begin(), m_allWriterList.end());
         sort(m_allReaderList.begin(), m_allReaderList.end());
 
-        vector<BaseWriter*> writers;
+        vector<RTPSEntityDeleter<BaseWriter>> writers;
         set_difference(m_allWriterList.begin(), m_allWriterList.end(),
                 m_userWriterList.begin(), m_userWriterList.end(),
                 back_inserter(writers));
         swap(writers, m_allWriterList);
 
-        vector<BaseReader*> readers;
+        vector<RTPSEntityDeleter<BaseReader>> readers;
         set_difference(m_allReaderList.begin(), m_allReaderList.end(),
                 m_userReaderList.begin(), m_userReaderList.end(),
                 back_inserter(readers));
@@ -2275,17 +2287,6 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
         }
 #endif // if HAVE_SECURITY
 
-        if (kind == READER)
-        {
-            static_cast<BaseReader*>(endpoint)->local_actions_on_reader_removed();
-        }
-        else if (WRITER == kind)
-        {
-            static_cast<BaseWriter*>(endpoint)->local_actions_on_writer_removed();
-        }
-
-        // remove the endpoints
-        delete(endpoint);
     }
 }
 

@@ -63,6 +63,7 @@
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsQueryable.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/types/monitorservice_types.hpp>
+#include <utils/RTPSEntityDeleter.hpp>
 #include <utils/shared_mutex.hpp>
 
 #if HAVE_SECURITY
@@ -570,14 +571,14 @@ private:
     //! Mutex to safely access endpoints collections
     mutable shared_mutex endpoints_list_mutex;
     //!Writer List.
-    std::vector<BaseWriter*> m_allWriterList;
+    std::vector<RTPSEntityDeleter<BaseWriter>> m_allWriterList;
     //!Reader List
-    std::vector<BaseReader*> m_allReaderList;
+    std::vector<RTPSEntityDeleter<BaseReader>> m_allReaderList;
     //!Listen thread list.
     //!Writer List.
-    std::vector<BaseWriter*> m_userWriterList;
+    std::vector<RTPSEntityDeleter<BaseWriter>> m_userWriterList;
     //!Reader List
-    std::vector<BaseReader*> m_userReaderList;
+    std::vector<RTPSEntityDeleter<BaseReader>> m_userReaderList;
     //!Network Factory
     NetworkFactory m_network_Factory;
     //! Type cheking function
@@ -1033,7 +1034,7 @@ public:
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
         // traverse the list
-        for (BaseWriter* pw : m_userWriterList)
+        for (const RTPSEntityDeleter<BaseWriter>& pw : m_userWriterList)
         {
             if (!f(*pw))
             {
@@ -1055,7 +1056,7 @@ public:
         // check if we are reentrying
         shared_lock<shared_mutex> _(endpoints_list_mutex);
 
-        for (BaseReader* pr : m_userReaderList)
+        for (const RTPSEntityDeleter<BaseReader>& pr : m_userReaderList)
         {
             if (!f(*pr))
             {

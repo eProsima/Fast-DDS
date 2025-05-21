@@ -106,7 +106,7 @@ BaseReader::BaseReader(
     setup_datasharing(att);
 }
 
-void BaseReader::local_actions_on_reader_removed()
+void BaseReader::local_actions_on_entity_removed()
 {
     local_ptr_->deactivate();
 }

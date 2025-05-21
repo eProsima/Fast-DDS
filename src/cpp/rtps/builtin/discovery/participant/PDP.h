@@ -56,6 +56,7 @@
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IProxyQueryable.hpp>
 #include <utils/ProxyPool.hpp>
+#include <utils/RTPSEntityDeleter.hpp>
 
 namespace eprosima {
 
@@ -495,8 +496,8 @@ public:
             const RTPSParticipantAttributes& new_atts);
 
     virtual void update_endpoint_locators_if_default_nts(
-            const std::vector<BaseWriter*>& writers,
-            const std::vector<BaseReader*>& readers,
+            const std::vector<RTPSEntityDeleter<BaseWriter>>& writers,
+            const std::vector<RTPSEntityDeleter<BaseReader>>& readers,
             const RTPSParticipantAttributes& old_atts,
             const RTPSParticipantAttributes& new_atts);
 

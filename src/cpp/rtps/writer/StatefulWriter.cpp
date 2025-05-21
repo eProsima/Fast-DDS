@@ -253,9 +253,9 @@ StatefulWriter::~StatefulWriter()
     EPROSIMA_LOG_INFO(RTPS_WRITER, "StatefulWriter destructor");
 }
 
-void StatefulWriter::local_actions_on_writer_removed()
+void StatefulWriter::local_actions_on_entity_removed()
 {
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatefulWriter local_actions_on_writer_removed");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatefulWriter local_actions_on_entity_removed");
 
     // Disable timed events, because their callbacks use cache changes
     if (disable_positive_acks_)
@@ -271,7 +271,7 @@ void StatefulWriter::local_actions_on_writer_removed()
     }
 
     // This must be the next action, as it frees CacheChange_t from the async thread.
-    BaseWriter::local_actions_on_writer_removed();
+    BaseWriter::local_actions_on_entity_removed();
 
     // Stop all active proxies and pass them to the pool
     {

@@ -187,10 +187,10 @@ StatelessWriter::~StatelessWriter()
     EPROSIMA_LOG_INFO(RTPS_WRITER, "StatelessWriter destructor"; );
 }
 
-void StatelessWriter::local_actions_on_writer_removed()
+void StatelessWriter::local_actions_on_entity_removed()
 {
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatelessWriter local_actions_on_writer_removed"; );
-    BaseWriter::local_actions_on_writer_removed();
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "StatelessWriter local_actions_on_entity_removed"; );
+    BaseWriter::local_actions_on_entity_removed();
 }
 
 void StatelessWriter::get_builtin_guid()

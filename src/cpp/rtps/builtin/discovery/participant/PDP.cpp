@@ -1799,8 +1799,8 @@ void PDP::notify_incompatible_qos_matching(
 }
 
 void PDP::update_endpoint_locators_if_default_nts(
-        const std::vector<BaseWriter*>& writers,
-        const std::vector<BaseReader*>& readers,
+        const std::vector<RTPSEntityDeleter<BaseWriter>>& writers,
+        const std::vector<RTPSEntityDeleter<BaseReader>>& readers,
         const RTPSParticipantAttributes& old_atts,
         const RTPSParticipantAttributes& new_atts)
 {
@@ -1819,7 +1819,7 @@ void PDP::update_endpoint_locators_if_default_nts(
 
     // Update proxies of endpoints with default configured locators
     EDP* edp = get_edp();
-    for (BaseWriter* writer : writers)
+    for (const RTPSEntityDeleter<BaseWriter>& writer : writers)
     {
         if ((old_default_multicast == writer->getAttributes().multicastLocatorList) &&
                 (old_default_unicast == writer->getAttributes().unicastLocatorList))
@@ -1842,7 +1842,7 @@ void PDP::update_endpoint_locators_if_default_nts(
             edp->process_writer_proxy_data(writer, wdata);
         }
     }
-    for (BaseReader* reader : readers)
+    for (const RTPSEntityDeleter<BaseReader>& reader : readers)
     {
         if ((old_default_multicast == reader->getAttributes().multicastLocatorList) &&
                 (old_default_unicast == reader->getAttributes().unicastLocatorList))

@@ -79,7 +79,7 @@ public:
 
     bool is_async() const final;
 
-    virtual void local_actions_on_writer_removed();
+    virtual void local_actions_on_entity_removed();
 
 #ifdef FASTDDS_STATISTICS
 
