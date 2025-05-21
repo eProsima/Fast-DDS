@@ -246,16 +246,9 @@ bool WLP::createEndpoints()
     payload_pool_->reserve_history(writer_pool_cfg, false);
 
     // Built-in writer
-    WriterAttributes watt;
-    watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
-    watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
-    watt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    WriterAttributes watt = mp_participant->pdp()->create_builtin_writer_attributes();
     watt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
-    watt.matched_readers_allocation = participants_allocation;
-    watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    watt.endpoint.reliabilityKind = RELIABLE;
+
     RTPSWriter* wout;
     if (mp_participant->createWriter(
                 &wout,
@@ -291,18 +284,10 @@ bool WLP::createEndpoints()
 
     // Built-in reader
 
-    ReaderAttributes ratt;
-    ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.expectsInlineQos = true;
-    ratt.endpoint.unicastLocatorList =  mp_builtinProtocols->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ReaderAttributes ratt = mp_participant->pdp()->create_builtin_reader_attributes();
     ratt.endpoint.remoteLocatorList = mp_builtinProtocols->m_initialPeersList;
-    ratt.matched_writers_allocation = participants_allocation;
-    ratt.endpoint.topicKind = WITH_KEY;
+    ratt.expectsInlineQos = true;
+
     RTPSReader* rout;
     if (mp_participant->createReader(
                 &rout,
@@ -346,17 +331,9 @@ bool WLP::createSecureEndpoints()
     secure_payload_pool_ = TopicPayloadPoolRegistry::get("DCPSParticipantMessageSecure", writer_pool_cfg);
     secure_payload_pool_->reserve_history(writer_pool_cfg, false);
 
-    WriterAttributes watt;
-    watt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
-    watt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
-    watt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.matched_readers_allocation = participants_allocation;
+    WriterAttributes watt = mp_participant->pdp()->create_builtin_writer_attributes();
     //	Wparam.topic.topicName = "DCPSParticipantMessageSecure";
     //	Wparam.topic.topicDataType = "RTPSParticipantMessageData";
-    watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    watt.endpoint.reliabilityKind = RELIABLE;
 
     const security::ParticipantSecurityAttributes& part_attrs = mp_participant->security_attributes();
     security::PluginParticipantSecurityAttributes plugin_attrs(part_attrs.plugin_participant_attributes);
@@ -398,19 +375,11 @@ bool WLP::createSecureEndpoints()
     secure_payload_pool_->reserve_history(reader_pool_cfg, true);
 
     mp_builtinReaderSecureHistory = new ReaderHistory(hatt);
-    ReaderAttributes ratt;
-    ratt.endpoint.topicKind = WITH_KEY;
-    ratt.endpoint.durabilityKind = TRANSIENT_LOCAL;
-    ratt.endpoint.reliabilityKind = RELIABLE;
+    ReaderAttributes ratt = mp_participant->pdp()->create_builtin_reader_attributes();
     ratt.expectsInlineQos = true;
-    ratt.endpoint.unicastLocatorList = mp_builtinProtocols->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.multicastLocatorList = mp_builtinProtocols->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.external_unicast_locators = mp_builtinProtocols->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    ratt.matched_writers_allocation = participants_allocation;
     //Rparam.topic.topicName = "DCPSParticipantMessageSecure";
     //Rparam.topic.topicDataType = "RTPSParticipantMessageData";
-    ratt.endpoint.topicKind = WITH_KEY;
+
     sec_attrs = &ratt.endpoint.security_attributes();
     sec_attrs->is_submessage_protected = part_attrs.is_liveliness_protected;
     if (part_attrs.is_liveliness_protected)
