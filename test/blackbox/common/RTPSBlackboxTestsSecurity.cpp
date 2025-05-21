@@ -65,8 +65,8 @@ void set_participant_crypto_config(
 }
 
 /**
- * This test checks the a StatefulWriter created with security
- * with a wrong permissions on topic, should be properly cleaned up
+ * This test checks that a StatefulWriter created with security,
+ * but with a wrong permissions on topic, is properly cleaned up
  */
 TEST(RTPSSecurityTests, statefulwriter_wrong_permissions_properly_cleaned_up)
 {
