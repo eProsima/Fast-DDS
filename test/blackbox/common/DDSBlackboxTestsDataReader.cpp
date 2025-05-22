@@ -1327,6 +1327,7 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
                           << std::endl;
             }
         }
+
     };
 
     std::atomic<bool> filter_activated { false };
@@ -1374,16 +1375,16 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
 
     // The writer will use the test transport. Both reliable and history depth will be set to 5.
     writer.disable_builtin_transport()
-             .add_user_transport_to_pparams(test_transport)
-             .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
-             .history_kind(KEEP_LAST_HISTORY_QOS)
-             .history_depth(3)
-             .init();
+            .add_user_transport_to_pparams(test_transport)
+            .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .history_kind(KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .init();
     reader.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
-             .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
-             .history_kind(KEEP_LAST_HISTORY_QOS)
-             .history_depth(3)
-             .init();
+            .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .history_kind(KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .init();
 
     ASSERT_TRUE(writer.isInitialized());
     ASSERT_TRUE(reader.isInitialized());
