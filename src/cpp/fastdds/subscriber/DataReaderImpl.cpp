@@ -1094,6 +1094,8 @@ bool DataReaderImpl::on_new_cache_change_added(
     std::lock_guard<RecursiveTimedMutex> guard(reader_->getMutex());
 
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
+    // Update the reception timestamp when the sample is added to the instance
+    rtps::Time_t::now(new_change->reader_info.receptionTimestamp);
     if (!history_.update_instance_nts(new_change))
     {
         history_.remove_change_sub(new_change);
