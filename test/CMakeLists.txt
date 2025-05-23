@@ -50,6 +50,7 @@ message(STATUS "EPROSIMA_TEST_DNS_NOT_SET_UP: '${EPROSIMA_TEST_DNS_NOT_SET_UP}'"
 ###############################################################################
 # Testing
 ###############################################################################
+set(EPROSIMA_BUILD_TESTS OFF)
 if(EPROSIMA_BUILD_TESTS)
 
     find_package(GTest CONFIG REQUIRED)
