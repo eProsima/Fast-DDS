@@ -1793,6 +1793,13 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         DynamicTypeBuilder::_ref_type string_builder = factory->create_string_type(bound);
 
+        if (nullptr == string_builder)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Error creating string type: " << memberType);
+            return {};
+        }
+
         if (!isArray)
         {
             member = string_builder->build();
