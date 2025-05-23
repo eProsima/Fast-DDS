@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import subprocess
+import os
 import pytest
 import re
 
@@ -54,13 +55,17 @@ def test_configuration(pub_args, sub_args):
     out = ''
     pub_requirements = '--reliable --transient-local'
     sub_requirements = '--reliable --transient-local'
+    menv = dict(os.environ)
 
-    command_prerequisites = 'PUB_ARGS="' + pub_requirements + ' ' + pub_args + '" SUB_ARGS="' + sub_requirements + ' ' + sub_args + '" '
+    menv["PUB_ARGS"] =  pub_requirements + ' ' + pub_args
+    menv["SUB_ARGS"] =  sub_requirements + ' ' + sub_args
+
     try:
-        out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml up',
+        out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f configuration.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=20
+            timeout=20,
+            env=menv
         )
         render_out = out.decode().split('\n')
 
@@ -107,13 +112,17 @@ def test_configuration_timeout(pub_args, sub_args):
     """."""
     ret = False
     out = ''
+    menv = dict(os.environ)
 
-    command_prerequisites = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" '
+    menv["PUB_ARGS"] =  pub_args
+    menv["SUB_ARGS"] =  sub_args
+    
     try:
-        out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml up',
+        out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f configuration.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=10
+            timeout=10,
+            env=menv
         )
     except subprocess.CalledProcessError as e:
         print (e.output)
@@ -122,7 +131,8 @@ def test_configuration_timeout(pub_args, sub_args):
         subprocess.check_output('@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml down',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=15
+            timeout=15,
+            env=menv
         )
 
     assert(ret)
@@ -143,12 +153,17 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
     pub_requirements = '--reliable --transient-local --keep-last 10'
     sub_requirements = '--reliable --transient-local --keep-last 10'
 
-    command_prerequisites = 'PUB_ARGS="' + pub_requirements + ' ' + pub_args + '" SUB_ARGS="' + sub_requirements + ' ' + sub_args + '" '
+    menv = dict(os.environ)
+    
+    menv["PUB_ARGS"] =  pub_requirements + ' ' + pub_args
+    menv["SUB_ARGS"] =  sub_requirements + ' ' + sub_args
+
     try:
-        out = subprocess.check_output(command_prerequisites + '@DOCKER_EXECUTABLE@ compose -f configuration.compose.yml up',
+        out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f configuration.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=20
+            timeout=20,
+            env=menv
         )
         render_out = out.decode().split('\n')
 

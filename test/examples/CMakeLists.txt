@@ -63,7 +63,13 @@ if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
 
     set(SUB_ADDITIONAL_ARGS_COMPOSE "$\${SUB_ADDITIONAL_ARGS_COMPOSE}")
     set(PUB_ADDITIONAL_ARGS_COMPOSE "$\${PUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(SERVER1_ADDITIONAL_ARGS_COMPOSE "$\${SERVER1_ADDITIONAL_ARGS_COMPOSE}")
+    set(SERVER2_ADDITIONAL_ARGS_COMPOSE "$\${SERVER2_ADDITIONAL_ARGS_COMPOSE}")
+    set(ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE "$\${ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(PUBSUB_ADDITIONAL_ARGS_COMPOSE "$\${PUBSUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(XML_ARG_COMPOSE "$${XML_FILE}")
     set(SPLIT_ARGS_COMPOSE "")
+    set(NETWORK_MODE_COMPOSE "network_mode: host")
 
 # Windows configurations
 elseif(WIN32)
@@ -104,7 +110,14 @@ elseif(WIN32)
 
     set(SUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:SUB_ADDITIONAL_ARGS_COMPOSE")
     set(PUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:PUB_ADDITIONAL_ARGS_COMPOSE")
+    set(SERVER1_ADDITIONAL_ARGS_COMPOSE "$\$Env:SERVER1_ADDITIONAL_ARGS_COMPOSE")
+    set(SERVER2_ADDITIONAL_ARGS_COMPOSE "$\$Env:SERVER2_ADDITIONAL_ARGS_COMPOSE")
+    set(ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE")
+    set(PUBSUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:PUBSUB_ADDITIONAL_ARGS_COMPOSE")
+    set(XML_ARG_COMPOSE "$\$Env:XML_FILE")
     set(SPLIT_ARGS_COMPOSE ".split(' ')")
+    # network_mode: host is not supported in windows docker containers yet.
+    set(NETWORK_MODE_COMPOSE "")
 
     set(WIN_DOCKERFILE ${CMAKE_CURRENT_LIST_DIR}/windows/Dockerfile)
     # Generate image for testing
@@ -124,13 +137,23 @@ else()
 endif()
 
 if(WIN32)
-    # Temporarily, test hello world
+    # Temporarily, test the following examples
     file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/test_custom_payload_pool.py
         ${CMAKE_CURRENT_SOURCE_DIR}/test_hello_world.py
         ${CMAKE_CURRENT_SOURCE_DIR}/test_rtps.py
         ${CMAKE_CURRENT_SOURCE_DIR}/test_flow_control.py
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_content_filter.py)
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_content_filter.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_configuration.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_topic_instances.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_xtypes_complete.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_xtypes_minimal.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_static_edp_discovery.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_discovery_server.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_security.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_delivery_mechanisms.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_delivery_mechanisms_isolated.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/test_benchmark.py)
 else()
     # Find all pytest files for testing
     file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
