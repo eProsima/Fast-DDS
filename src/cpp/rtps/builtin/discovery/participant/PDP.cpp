@@ -1279,8 +1279,8 @@ bool PDP::remove_remote_participant(
     ParticipantProxyData* pdata = nullptr;
 
     // Remove it from our vector of RTPSParticipantProxies
+    std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     {
-        std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
         for (ResourceLimitedVector<ParticipantProxyData*>::iterator pit = participant_proxies_.begin();
                 pit != participant_proxies_.end(); ++pit)
         {

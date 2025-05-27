@@ -208,6 +208,10 @@ void ServerApp::on_publication_matched(
     {
         request_reply_error("ServerApp", info.current_count_change
                 << " is not a valid value for PublicationMatchedStatus current count change");
+
+        // __FLAG__
+        throw std::runtime_error("ERROR");
+        /////////////////
     }
 }
 
@@ -241,6 +245,9 @@ void ServerApp::on_subscription_matched(
         request_reply_error("ServerApp",
                 info.current_count_change <<
                 " is not a valid value for SubscriptionMatchedStatus current count change");
+        // __FLAG__
+        throw std::runtime_error("ERROR");
+        /////////////////
     }
 }
 
