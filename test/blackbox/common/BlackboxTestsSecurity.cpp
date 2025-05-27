@@ -1205,7 +1205,7 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_partici
     PropertyPolicy pub_property_policy, sub_property_policy,
             property_policy;
 
-    fill_pub_auth(pub_property_policy);
+    fill_pub_auth(property_policy);
     property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
