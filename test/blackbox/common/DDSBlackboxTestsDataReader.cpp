@@ -414,6 +414,249 @@ TEST(DDSDataReader, default_qos_large_history_depth)
     ASSERT_TRUE(reader.isInitialized());
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * Utility class to set some values other than default to those Qos common to Topic and DataReader.
+ *
+ * This is a class instead of a free function to avoid linking with its TestsDataWriter counterpart.
+ */
+class TestsDataReaderQosCommonUtils
+{
+public:
+
+    // Set common Qos values to both TopicQos and DataReaderQos
+    template<typename T>
+    static void set_common_qos(
+            T& qos)
+    {
+        qos.durability_service().history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+        qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+        qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+        qos.deadline().period = {0, 500000000};
+        qos.latency_budget().duration = 0;
+        qos.liveliness().kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+        qos.resource_limits().max_samples = 1000;
+        qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        // Representation is not on the same place in DataReaderQos and TopicQos
+        set_representation_qos(qos);
+        qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    }
+
+private:
+
+    // Set representation Qos (as it is not in the same place in DataReaderQos and TopicQos)
+    template<typename T>
+    static void set_representation_qos(
+            T& qos);
+};
+
+// Specialization for DataReaderQos
+template<>
+void TestsDataReaderQosCommonUtils::set_representation_qos(
+        eprosima::fastdds::dds::DataReaderQos& qos)
+{
+    qos.type_consistency().representation.m_value.push_back(
+        eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+}
+
+// Specialization for TopicQos
+template<>
+void TestsDataReaderQosCommonUtils::set_representation_qos(
+        eprosima::fastdds::dds::TopicQos& qos)
+{
+    qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+}
+
+/*
+ * This test:
+ *   1. Creates a Topic with custom Qos
+ *   2. Updates the default DataReader Qos that are not in common with Topic Qos with non-default values
+ *   3. Creates a DataReader with DATAREADER_QOS_USE_TOPIC_QOS
+ *   4. Checks that the used Qos are the merge between the default ones and the Topic ones
+ */
+TEST(DDSDataReader, datareader_qos_use_topic_qos)
+{
+    using namespace eprosima::fastdds::dds;
+
+    /* Create a topic with custom Qos */
+    // Set Topic Qos different from default
+    TopicQos topic_qos;
+    TestsDataReaderQosCommonUtils::set_common_qos(topic_qos);
+
+    // Create DomainParticipant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Create Topic
+    TypeSupport type_support;
+    type_support.reset(new HelloWorldPubSubType());
+    type_support.register_type(participant, "HelloWorld");
+    Topic* topic = participant->create_topic("HelloWorldTopic", "HelloWorld", topic_qos);
+
+    /* Create a DataReader with modified default Qos using the Topic Qos */
+    // Create the Subscriber
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    // Change default DataReader Qos (only those that are different from Topic Qos)
+    DataReaderQos control_qos;
+    control_qos.reader_data_lifecycle().autopurge_no_writer_samples_delay = {3, 0};
+    control_qos.user_data().push_back(0);
+    control_qos.endpoint().entity_id = 1;
+    control_qos.reader_resource_limits().matched_publisher_allocation =
+            ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    control_qos.data_sharing().off();
+    subscriber->set_default_datareader_qos(control_qos);
+
+    // Create DataReader with DATAREADER_QOS_USE_TOPIC_QOS
+    DataReader* reader = subscriber->create_datareader(topic, DATAREADER_QOS_USE_TOPIC_QOS);
+    ASSERT_NE(reader, nullptr);
+
+    /* Check that used Qos are the merge between the default ones and the Topic ones */
+    // Set the topic values on the control DataReaderQos
+    TestsDataReaderQosCommonUtils::set_common_qos(control_qos);
+
+    // Get used DataReader Qos
+    DataReaderQos test_qos = reader->get_qos();
+
+    // Check that the Qos that are not in common with Topic Qos are correctly set as the default ones,
+    // and that the rest of the Qos are left unmodified
+    ASSERT_EQ(control_qos, test_qos);
+}
+
+// This is a regression test to check the reception time used when Samples are lost and need to be resent.
+TEST(DDSDataReader, reception_timestamp_for_resent_samples)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // A reliable Pub-Sub scenario will be created.
+    // One sample will be filtered out to force the publisher to resend it.
+    // The reception timestamp of the sample will be checked.
+
+    class CustomPubSubReader : public PubSubReader<HelloWorldPubSubType>
+    {
+    public:
+
+        CustomPubSubReader(
+                const std::string& topic_name)
+            : PubSubReader(topic_name)
+        {
+        }
+
+        std::map<uint16_t, rtps::Time_t> reception_timestamps;
+
+    private:
+
+        void postprocess_sample(
+                const type& sample,
+                const SampleInfo& info) override final
+        {
+            if (info.valid_data)
+            {
+                reception_timestamps[sample.index()] = info.reception_timestamp;
+                std::cout << "Sample " << sample.index() << " received at "
+                          << info.reception_timestamp.seconds() << "." << info.reception_timestamp.nanosec()
+                          << std::endl;
+            }
+        }
+
+    };
+
+    std::atomic<bool> filter_activated { false };
+    auto block_data_msgs = [&filter_activated](CDRMessage_t& msg)
+            {
+                // Filter Data messages
+                if (filter_activated.load(std::memory_order::memory_order_seq_cst))
+                {
+                    uint32_t old_pos = msg.pos;
+
+                    SequenceNumber_t sn;
+
+                    msg.pos += 2; // Flags
+                    msg.pos += 2; // Octets to inline QoS
+                    msg.pos += 4; // Reader ID
+                    msg.pos += 4; // Writer ID
+                    CDRMessage::readSequenceNumber(&msg, &sn);
+
+                    // Restore buffer pos
+                    msg.pos = old_pos;
+
+                    // Filter only first Data sent with Sequence number 0-1
+                    if (sn == SequenceNumber_t{0, 1})
+                    {
+                        std::cout << "Blocking Data msg of Sequence number 0-1." << std::endl;
+                        return true;
+                    }
+                }
+                std::cout << "Not blocking Data msg." << std::endl;
+                return false;
+            };
+
+    // Declare a test transport that will block DATA msgs sent
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return block_data_msgs(msg);
+            };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    CustomPubSubReader reader(TEST_TOPIC_NAME);
+
+    // The writer will use the test transport. Both reliable and history depth will be set to 5.
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .init();
+    reader.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Activate the filter and send first sample
+    filter_activated.store(true, std::memory_order::memory_order_seq_cst);
+
+    auto data = default_helloworld_data_generator(3);
+    reader.startReception(data);
+
+    auto samples_it = data.begin();
+    writer.send_sample(*samples_it);
+    std::cout << "First sample sent" << std::endl;
+    // Ensure that the sample has not been received yet
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
+
+    // Send the rest of the samples and then deactivate the filter
+    ++samples_it;
+    for (; samples_it != data.end(); ++samples_it)
+    {
+        writer.send_sample(*samples_it);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    filter_activated.store(false, std::memory_order::memory_order_seq_cst);
+    // Wait for the reception of all samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(5)), 3u);
+
+    // Check timestamps. reception_timestamps map is accesed by index of HelloWorld data
+    ASSERT_EQ(reader.reception_timestamps.size(), 3u);
+    auto reception_ts_1 = reader.reception_timestamps[1];
+    auto reception_ts_2 = reader.reception_timestamps[2];
+    auto reception_ts_3 = reader.reception_timestamps[3];
+    EXPECT_TRUE(reception_ts_1 <= reception_ts_2);
+    EXPECT_TRUE(reception_ts_2 <= reception_ts_3);
+}
+
+>>>>>>> 2f56b5df (Update reception timestamp when it is added to the instance (backport #5819) (#5826))
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
