@@ -6,6 +6,7 @@ Forthcoming
 * New property to extend EDP messages with eProsima Extensions QoS.
   * Added optional serialization of `WireProtocolConfigQos` to the `ParticipantDiscoveryData`.
 * Monitor service now serializes all optional QoS in the ProxyDatas.
+* Removed Request-Reply example in favor of the new RPC over DDS example.
 
 Version v3.2.2
 --------------
