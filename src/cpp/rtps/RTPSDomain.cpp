@@ -875,8 +875,6 @@ void RTPSDomainImpl::find_local_reader(
         }
         // If the reader was not found, local_reader will remain nullptr
     }
-
-    return;
 }
 
 BaseWriter* RTPSDomainImpl::find_local_writer(

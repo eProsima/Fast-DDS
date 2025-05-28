@@ -422,7 +422,6 @@ public:
     }
 
     RTPSReader* find_local_reader(
-            RTPSReader*,
             const GUID_t&)
     {
         return nullptr;
