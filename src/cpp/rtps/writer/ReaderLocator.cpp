@@ -45,6 +45,7 @@ ReaderLocator::ReaderLocator(
     , async_locator_info_(max_unicast_locators, max_multicast_locators)
     , expects_inline_qos_(false)
     , is_local_reader_(false)
+    , local_reader_mutex_(std::make_shared<std::mutex>())
     , local_reader_()
     , guid_prefix_as_vector_(1u)
     , guid_as_vector_(1u)
@@ -208,6 +209,8 @@ bool ReaderLocator::send(
 
 LocalReaderPointer::Instance ReaderLocator::local_reader()
 {
+    std::lock_guard<std::mutex> lock(*local_reader_mutex_);
+
     if (!local_reader_)
     {
         local_reader_ = RTPSDomainImpl::find_local_reader(general_locator_info_.remote_guid);

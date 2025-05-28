@@ -262,6 +262,7 @@ private:
     LocatorSelectorEntry async_locator_info_;
     bool expects_inline_qos_;
     bool is_local_reader_;
+    std::shared_ptr<std::mutex> local_reader_mutex_;
     std::shared_ptr<LocalReaderPointer> local_reader_;
     std::vector<GuidPrefix_t> guid_prefix_as_vector_;
     std::vector<GUID_t> guid_as_vector_;
