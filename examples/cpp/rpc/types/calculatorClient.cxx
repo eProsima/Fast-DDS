@@ -398,7 +398,7 @@ private:
 
 
     //} operation representation_limits
-
+ 
     //{ operation addition
 
 public:
@@ -474,7 +474,7 @@ private:
 
 
     //} operation addition
-
+ 
     //{ operation subtraction
 
 public:
@@ -550,7 +550,7 @@ private:
 
 
     //} operation subtraction
-
+ 
     //{ operation fibonacci_seq
 
 public:
@@ -790,7 +790,7 @@ private:
 
 
     //} operation fibonacci_seq
-
+ 
     //{ operation sum_all
 
 public:
@@ -927,7 +927,7 @@ private:
 
 
     //} operation sum_all
-
+ 
     //{ operation accumulator
 
 public:
@@ -1230,7 +1230,7 @@ private:
 
 
     //} operation accumulator
-
+ 
     //{ operation filter
 
 public:
@@ -1529,7 +1529,7 @@ private:
 
 
     //} operation filter
-
+ 
 
 };
 

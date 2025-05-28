@@ -133,7 +133,7 @@ namespace detail {
 
 struct Calculator_representation_limits_Out;
 
-}
+}  // namespace detail
 
 /*!
  * @brief This class represents the interface Calculator defined by the user in the IDL file.
@@ -186,7 +186,8 @@ struct Calculator_representation_limits_Out
 };
 
 
-}
+}  // namespace detail
+
 
 } // namespace calculator_example
 
