@@ -73,7 +73,7 @@ OperationStatus Ping::execute()
             client_server_info("ClientApp", "Server reachable");
             return OperationStatus::SUCCESS;
         }
-        catch (const RpcBrokenPipeException& e)
+        catch (const RpcBrokenPipeException&)
         {
             client_server_info("ClientApp", "Server not reachable");
             return OperationStatus::ERROR;
