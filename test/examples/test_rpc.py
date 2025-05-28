@@ -20,6 +20,7 @@ rpc_calculator_test_cases = [
     ('-r', 'Representation limits received: min_value = -2147483648, max_value = 2147483647'),
     ('--addition 1 2', 'Addition result: 1 + 2 = 3'),
     ('--substraction 8 5', 'Substraction result: 8 - 5 = 3'),
+    ('--fibonacci 4', 'Fibonacci sequence feed finished'),
     ('--accumulator --feed 1,2,3,4,5', 'Accumulated sum: 15'),
     ('--sum-all --feed 1,2,3', 'Sum result: 6'),
     ('--filter 1 --feed 2,3,4,6', 'Filtered sequence value: 3')
