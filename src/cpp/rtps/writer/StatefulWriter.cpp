@@ -1302,12 +1302,7 @@ bool StatefulWriter::matched_reader_remove(
         {
             // listener is called without locks taken
             lock.unlock();
-<<<<<<< HEAD
-
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
-=======
-            listener_->on_reader_discovery(this, ReaderDiscoveryStatus::REMOVED_READER, reader_guid, nullptr);
->>>>>>> 8fcd7ca48 (Fix tsan potential deadlock between `StatefulWriter` and `FlowController` (#5432))
         }
         return true;
     }
