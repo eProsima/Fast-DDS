@@ -134,8 +134,10 @@ public:
     }
 
     static RTPSReader* find_local_reader(
+            RTPSReader* local_reader,
             const GUID_t& reader_guid)
     {
+        static_cast<void>(local_reader);
         static_cast<void>(reader_guid);
         return nullptr;
     }
