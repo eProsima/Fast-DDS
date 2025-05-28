@@ -23,7 +23,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "types/calculatorServer.hpp"
+#include "types/calculatorServerImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -59,7 +59,7 @@ protected:
 
 private:
 
-    class ServerImpl : public calculator_example::CalculatorServer_IServerImplementation,
+    class ServerImpl : public calculator_example::CalculatorServerImplementation,
         public std::enable_shared_from_this<ServerImpl>
     {
 

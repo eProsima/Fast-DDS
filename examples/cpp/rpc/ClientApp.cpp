@@ -629,8 +629,9 @@ ClientApp::ClientApp(
 
 ClientApp::~ClientApp()
 {
-    // Deleting the client manually here is necessary because participant_->delete_contained_entities()
-    // does not disable the service. Delete the following line when the bug is fixed in RPC internal API
+    // As a precautionary measure, delete the server here because participant_->delete_contained_entities()
+    // does not automatically disable the service. This line can be removed once the RPC internal API
+    // supports service disabling.
     client_.reset();
 
     if (nullptr != participant_)

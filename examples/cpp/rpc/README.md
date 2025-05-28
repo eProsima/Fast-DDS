@@ -1,11 +1,13 @@
 # RPC example
 
-The *eProsima Fast DDS RPC* example shows how to create a service oriented architecture using the *Remote Procedure Call* communication pattern over Fast DDS.
-Remote Procedure Calls (see RPC over DDS specification), also known as RPC, is a type of bidirectional communication used in a request-reply pattern.
-The RPC architecture is based on the client-server model: the client sends a request to the server, and the server sends one or more responses (replies) back to the client.
+The *RPC over DDS* example shows how to create a service oriented architecture using the *Remote Procedure Call* communication pattern over Fast DDS.
+The RPC architecture is based on the client-server model.
+The client sends a request to the server, and the server sends one or more responses (replies) back to the client.
 [eProsima FastDDS-Gen](https://github.com/eProsima/Fast-DDS-Gen) tool allows the generation of source code for a RPC over DDS application from an IDL file.
-The IDL file must contain the operation that can be called on both the client and server sides, and the parameters that can be passed to them.
+The IDL file must define and interface with the operations that can be called on the client and executed by the server.
 These operations are specified using the concept of interfaces defined in the OMG IDL specification.
+
+Please refer to the [RPC over DDS](https://fast-dds.docs.eprosima.com/en/latest/fastdds/rpc_dds/rpc_dds_intro.html) section in the Fast DDS documentation for further information on this topic.
 
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
@@ -17,25 +19,6 @@ This service allows clients to perform some arithmetic operations such as additi
 This *rpc* example shows the two operating modes of *RPC* over DDS:
 
 * Simple request operations:
-
-  ```mermaid
-    sequenceDiagram
-    participant Client
-    participant Client Request Writer
-    participant Client Reply Reader
-
-    participant Server
-    participant Server Request Reader
-    participant Server Reply Writer
-
-    Client->>Client: Wait for server availability
-    Client->>Client Request Writer: request
-    Client Request Writer->>Server Request Reader: request
-    Server Request Reader->>Server: calculate response
-    Server->>Server Reply Writer: response
-    Server Reply Writer->>Client Reply Reader: response
-    Client Reply Reader->>Client: response
-    ```
 
     The following operations available in this mode within the client are:
 
@@ -54,9 +37,8 @@ This *rpc* example shows the two operating modes of *RPC* over DDS:
                                                             of the Fibonacci sequence
     ```
 
-* Streaming operations where data is exchanged between a client and a server in a continuous stream of messages,
-  rather than a single, discrete request-response exchange thanks to the `@feed` annotation in the IDL files.
-  Please refer to the [RPC documentation](https://fast-dds.docs.eprosima.com/en/latest/fastdds/rpc_dds/rpc_dds_intro.html) for more information about this feature.
+* Streaming operations where data is exchanged between a client and a server in a continuous stream of messages, rather than a single, discrete request-response exchange thanks to the `@feed` annotation in the IDL files.
+  Please refer to the [RPC documentation](https://fast-dds.docs.eprosima.com/en/latest/fastdds/rpc_dds/data_streaming/rpc_data_streaming_intro.html) for more information about this feature.
   In this case, the clients can take one of the following operations:
 
   ```

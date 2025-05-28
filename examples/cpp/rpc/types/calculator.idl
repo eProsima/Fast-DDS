@@ -5,7 +5,7 @@ module calculator_example
     {
     };
 
-        // For the filter operation
+    // For the filter operation
     enum FilterKind
     {
 	    EVEN,  // return even numbers
@@ -21,7 +21,7 @@ module calculator_example
         // Returns the result of value1 + value2
         long addition(in long value1, in long value2) raises (OverflowException);
 
-        // Returns the result of value1 + value2
+        // Returns the result of value1 - value2
         long subtraction(in long value1, in long value2) raises (OverflowException);
 
         // Returns a feed of results with the n_results first elements of the Fibonacci sequence
