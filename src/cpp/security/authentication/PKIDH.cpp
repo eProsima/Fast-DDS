@@ -1074,7 +1074,7 @@ ValidationResult_t PKIDH::validate_local_identity(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    bool transmit_legacy_algorithms = false;
+    bool transmit_legacy_algorithms = true;
     std::string* legacy = PropertyPolicyHelper::find_property(auth_properties, "transmit_algorithms_as_legacy");
     if (legacy != nullptr)
     {

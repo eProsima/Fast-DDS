@@ -896,7 +896,7 @@ PermissionsHandle* Permissions::validate_local_permissions(
         return nullptr;
     }
 
-    bool transmit_legacy_algorithms = false;
+    bool transmit_legacy_algorithms = true;
     std::string* legacy = PropertyPolicyHelper::find_property(access_properties, "transmit_algorithms_as_legacy");
     if (legacy != nullptr)
     {
