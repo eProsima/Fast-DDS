@@ -893,6 +893,67 @@ static bool generate_challenge(
     return returnedValue;
 }
 
+/**
+ * @brief Convert a signature algortihm before adding it to an IdentityToken.
+ *
+ * This methods converts the signature algorithm to the format used in the IdentityToken.
+ * Depending on the value of the use_legacy parameter, the algorithm will be converted to the legacy format or to the
+ * one specified in the DDS-SEC 1.1 specification.
+ *
+ * @param algorithm The algorithm to convert.
+ * @param use_legacy Whether to use the legacy format or not.
+ *
+ * @return The converted algorithm.
+ */
+static std::string convert_to_token_algo(
+        const std::string& algorithm,
+        bool use_legacy)
+{
+    // Leave as internal format when legacy is used
+    if (use_legacy)
+    {
+        return algorithm;
+    }
+
+    // Convert to token format
+    if (algorithm == RSA_SHA256)
+    {
+        return RSA_SHA256_FOR_TOKENS;
+    }
+    else if (algorithm == ECDSA_SHA256)
+    {
+        return ECDSA_SHA256_FOR_TOKENS;
+    }
+
+    return algorithm;
+}
+
+/**
+ * @brief Parse a signature algorithm from an IdentityToken.
+ *
+ * This method parses the signature algorithm from an IdentityToken.
+ * It converts the algorithm to the internal (legacy) format used by the library.
+ *
+ * @param algorithm The algorithm to parse.
+ *
+ * @return The parsed algorithm.
+ */
+static std::string parse_token_algo(
+        const std::string& algorithm)
+{
+    // Convert to internal format, allowing both legacy and new formats
+    if (algorithm == RSA_SHA256_FOR_TOKENS)
+    {
+        return RSA_SHA256;
+    }
+    else if (algorithm == ECDSA_SHA256_FOR_TOKENS)
+    {
+        return ECDSA_SHA256;
+    }
+
+    return algorithm;
+}
+
 std::shared_ptr<SecretHandle> PKIDH::generate_sharedsecret(
         EVP_PKEY* private_key,
         EVP_PKEY* public_key,
@@ -963,7 +1024,8 @@ std::shared_ptr<SecretHandle> PKIDH::generate_sharedsecret(
 }
 
 static bool generate_identity_token(
-        PKIIdentityHandle& handle)
+        PKIIdentityHandle& handle,
+        bool transmit_legacy_algorithms)
 {
     Property property;
     IdentityToken& token = handle->identity_token_;
@@ -975,7 +1037,7 @@ static bool generate_identity_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.cert.algo");
-    property.value() = handle->sign_alg_;
+    property.value() = convert_to_token_algo(handle->sign_alg_, transmit_legacy_algorithms);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -985,7 +1047,7 @@ static bool generate_identity_token(
     token.properties().push_back(std::move(property));
 
     property.name("dds.ca.algo");
-    property.value() = handle->algo;
+    property.value() = convert_to_token_algo(handle->algo, transmit_legacy_algorithms);
     property.propagate(true);
     token.properties().push_back(std::move(property));
 
@@ -1010,6 +1072,13 @@ ValidationResult_t PKIDH::validate_local_identity(
         exception = _SecurityException_("Not found any dds.sec.auth.builtin.PKI-DH property");
         EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
         return ValidationResult_t::VALIDATION_FAILED;
+    }
+
+    bool transmit_legacy_algorithms = true;
+    std::string* legacy = PropertyPolicyHelper::find_property(auth_properties, "transmit_algorithms_as_legacy");
+    if (legacy != nullptr)
+    {
+        transmit_legacy_algorithms = (*legacy == "true");
     }
 
     std::string* identity_ca = PropertyPolicyHelper::find_property(auth_properties, "identity_ca");
@@ -1157,7 +1226,7 @@ ValidationResult_t PKIDH::validate_local_identity(
                                     adjusted_participant_key, exception))
                             {
                                 // Generate IdentityToken.
-                                if (generate_identity_token(*ih))
+                                if (generate_identity_token(*ih, transmit_legacy_algorithms))
                                 {
                                     (*ih)->participant_key_ = adjusted_participant_key;
                                     *local_identity_handle = ih;
@@ -1210,7 +1279,7 @@ ValidationResult_t PKIDH::validate_remote_identity(
 
         (*rih)->sn = ca_sn ? *ca_sn : "";
         (*rih)->cert_sn_ = ""; // cert_sn ? *cert_sn : "";
-        (*rih)->algo = cert_algo ? *cert_algo : "";
+        (*rih)->algo = cert_algo ? parse_token_algo(*cert_algo) : "";
         (*rih)->participant_key_ = remote_participant_key;
         *remote_identity_handle = rih;
 
