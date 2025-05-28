@@ -63,21 +63,24 @@ OperationStatus Ping::execute()
         if (future.wait_for(std::chrono::milliseconds(100)) != std::future_status::ready)
         {
             client_server_info("ClientApp", "Server not reachable");
-
             return OperationStatus::TIMEOUT;
         }
 
         try
         {
             future.get();
-            client_server_info("ClientApp", "Server reachable");
 
+            client_server_info("ClientApp", "Server reachable");
             return OperationStatus::SUCCESS;
+        }
+        catch (const RpcBrokenPipeException& e)
+        {
+            client_server_info("ClientApp", "Server not reachable");
+            return OperationStatus::ERROR;
         }
         catch (const RpcException& e)
         {
             client_server_error("ClientApp", "RPC exception occurred: " << e.what());
-
             return OperationStatus::ERROR;
         }
     }
@@ -660,23 +663,32 @@ void ClientApp::run()
 
     if (!is_stopped())
     {
-        // Server available. Execute the operation.
-        set_operation();
-
-        OperationStatus status = operation_->execute();
-
-        while (OperationStatus::PENDING == status && !is_stopped())
+        try
         {
-            // Wait before checking the next value
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            // Get the next value of the feed
-            status = operation_->execute();
+            // Server available. Execute the operation.
+            set_operation();
+
+            OperationStatus status = operation_->execute();
+
+            while (OperationStatus::PENDING == status && !is_stopped())
+            {
+                // Wait before checking the next value
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                // Get the next value of the feed
+                status = operation_->execute();
+            }
+
+            if (OperationStatus::SUCCESS != status)
+            {
+                throw std::runtime_error("Operation failed or interrupted");
+            }
+
         }
-
-        if (OperationStatus::SUCCESS != status)
+        catch (std::runtime_error& e)
         {
-            client_server_error("ClientApp", "Operation failed");
-            throw std::runtime_error("Operation failed");
+            // Stop the client execution
+            client_server_error("ClientApp", std::string(e.what()) +  ". Stopping client execution...");
+            ClientApp::stop();
         }
     }
 
@@ -772,6 +784,8 @@ bool ClientApp::ping_server(
             client_server_debug("ClientApp",
                     "Trying to reach server, attempt " << (i + 1) << "/" << attempts);
 
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
             if (OperationStatus::SUCCESS == operation_->execute())
             {
                 return true;
@@ -784,11 +798,6 @@ bool ClientApp::ping_server(
             if (i == attempts - 1)
             {
                 client_server_error("ClientApp", "Failed to connect to server");
-            }
-            else
-            {
-                // Wait before retrying
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
         }
     }
