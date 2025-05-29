@@ -40,7 +40,7 @@ void test_buffer_setting(
         int minimum_buffer_value)
 {
     asio::io_service io_service;
-    auto socket = std::make_unique<SocketType>(io_service);
+    std::unique_ptr<SocketType> socket(new SocketType(io_service));
 
     // Open the socket with the provided protocol
     socket->open(Protocol::v4());
