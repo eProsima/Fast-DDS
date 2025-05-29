@@ -899,6 +899,44 @@ TEST(DDSBasic, max_output_message_size_writer)
 
 }
 
+TEST(DDSBasic, reliable_volatile_writer_secure_builtin_no_potential_deadlock)
+{
+    // Create
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_no_potential_deadlock");
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_no_potential_deadlock");
+
+    writer.asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE)
+            .durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(20)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(20)
+            .durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    auto data = default_helloworld_data_generator(30);
+
+    std::thread th([&]()
+            {
+                reader.startReception(data);
+                reader.block_for_at_least(5);
+            });
+
+    writer.wait_discovery();
+    writer.send(data);
+
+    th.join();
+    reader.destroy();
+    writer.destroy();
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
