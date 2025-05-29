@@ -107,13 +107,47 @@ PublisherApp::~PublisherApp()
 }
 
 void PublisherApp::on_publication_matched(
-        DataWriter* /*writer*/,
+        DataWriter* writer,
         const PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
         matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher matched." << std::endl;
+
+        if (info.current_count == 1)
+        {
+            std::shared_ptr<CustomDataInfo> custom_data = std::make_shared<CustomDataInfo>();
+            std::vector<InstanceHandle_t> matched_subscriptions;
+            writer->get_matched_subscriptions(matched_subscriptions);
+            if (!matched_subscriptions.empty())
+            {
+                custom_data->participant_guid = rtps::iHandle2GUID(matched_subscriptions.front());
+                params_.custom_data(custom_data);
+
+                writer_->set_prefilter([](const rtps::GUID_t& reader_guid,
+                    const rtps::WriteParams& params)
+                    {
+                        bool sample_should_be_sent = true;
+
+                        // Custom prefilter logic can be added here
+                        std::cout << "Prefilter called for reader: " << reader_guid << std::endl;
+                        auto custom_data =
+                            std::static_pointer_cast<CustomDataInfo>(params.custom_data());
+
+                        std::cout << "Custom data participant GUID: "
+                                << custom_data->participant_guid << std::endl;
+
+                        if (custom_data->participant_guid.guidPrefix == reader_guid.guidPrefix)
+                        {
+                            sample_should_be_sent = false;
+                        }
+
+                        return sample_should_be_sent; // Do not let samples be sent
+                    });
+            }
+        }
+
         cv_.notify_one();
     }
     else if (info.current_count_change == -1)
@@ -171,7 +205,7 @@ bool PublisherApp::publish()
     if (!is_stopped())
     {
         hello_.index(hello_.index() + 1);
-        ret = (RETCODE_OK == writer_->write(&hello_));
+        ret = (RETCODE_OK == writer_->write(&hello_, params_));
     }
     return ret;
 }

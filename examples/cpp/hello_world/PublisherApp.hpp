@@ -25,6 +25,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
@@ -34,6 +35,13 @@ using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
+
+struct CustomDataInfo : rtps::CustomData
+{
+    //! Custom data information for the DataWriter
+    rtps::GUID_t participant_guid;
+};
+
 namespace examples {
 namespace hello_world {
 
@@ -91,6 +99,8 @@ private:
     std::atomic<bool> stop_;
 
     const uint32_t period_ms_ = 100; // in ms
+
+    rtps::WriteParams params_;
 };
 
 } // namespace hello_world
