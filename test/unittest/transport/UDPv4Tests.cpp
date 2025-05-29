@@ -794,8 +794,8 @@ TEST_F(UDPv4Tests, double_binding_fails)
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.maxMessageSize = 5;
-    descriptor.sendBufferSize = 5;
-    descriptor.receiveBufferSize = 5;
+    descriptor.sendBufferSize = 5000;
+    descriptor.receiveBufferSize = 5000;
     descriptor.interfaceWhiteList.clear();
 }
 

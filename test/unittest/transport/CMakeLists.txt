@@ -85,6 +85,28 @@ set(UDPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 
+set(ASIOHELPERSTESTS_SOURCE
+    AsioHelpersTests.cpp
+    mock/MockReceiverResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
+    ${TCPTransportInterface_SOURCE}
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    )
+
+
 set(UDPV6TESTS_SOURCE
     UDPv6Tests.cpp
     mock/MockReceiverResource.cpp
@@ -223,6 +245,9 @@ if(ANDROID)
             ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
             )
         list(APPEND UDPV4TESTS_SOURCE
+            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
+            )
+        list(APPEND ASIOHELPERSTESTS_SOURCE
             ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
             )
         list(APPEND SHAREDMEMTESTS_SOURCE
@@ -399,6 +424,36 @@ foreach(TRANSPORT_XFAIL_TEST ${TRANSPORT_XFAIL_LIST})
     add_xfail_label(${CMAKE_CURRENT_SOURCE_DIR}/${TRANSPORT_XFAIL_TEST}.list)
 endforeach()
 
+#####################################
+# AsioHelpers tests
+#####################################
+add_executable(AsioHelpersTests ${ASIOHELPERSTESTS_SOURCE})
+target_compile_definitions(AsioHelpersTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(AsioHelpersTests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    )
+target_link_libraries(AsioHelpersTests GTest::gtest ${MOCKS}
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+if(QNX)
+    target_link_libraries(AsioHelpersTests socket)
+endif()
+if(MSVC OR MSVC_IDE)
+    target_link_libraries(AsioHelpersTests ${PRIVACY} fastcdr iphlpapi Shlwapi)
+else()
+    target_link_libraries(AsioHelpersTests ${PRIVACY} fastcdr)
+endif()
+add_gtest(AsioHelpersTests SOURCES ${ASIOHELPERSTESTS_SOURCE})
+
 if(ANDROID)
     set_property(TARGET UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET UDPv6Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
@@ -406,4 +461,6 @@ if(ANDROID)
     set_property(TARGET TCPv6Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET SharedMemTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
     set_property(TARGET test_UDPv4Tests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET AsioHelpersTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
+
