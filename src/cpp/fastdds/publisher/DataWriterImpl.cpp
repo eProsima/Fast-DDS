@@ -1500,6 +1500,24 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
     return RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::set_prefilter(
+    std::function<bool(const GUID_t&,
+                       const rtps::WriteParams&)> prefilter)
+{
+    ReturnCode_t ret_code = RETCODE_OK;
+    if(!reader_filters_)
+    {
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Filtering is not enabled for this DataWriter");
+        ret_code = RETCODE_BAD_PARAMETER;
+    }
+    else
+    {
+        prefilter_ = prefilter;
+    }
+
+    return ret_code;
+}
+
 bool DataWriterImpl::deadline_timer_reschedule()
 {
     assert(qos_.deadline().period != dds::c_TimeInfinite);
@@ -2372,9 +2390,23 @@ bool DataWriterImpl::is_relevant(
         const fastdds::rtps::CacheChange_t& change,
         const fastdds::rtps::GUID_t& reader_guid) const
 {
-    assert(reader_filters_);
+    assert(reader_filters_ || prefilter_);
     const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
-    return writer_change.is_relevant_for(reader_guid);
+    bool is_relevant_for_reader = true;
+
+    if (prefilter_)
+    {
+        is_relevant_for_reader = prefilter_(reader_guid, writer_change.write_params);
+    }
+
+    if (is_relevant_for_reader && reader_filters_)
+    {
+        is_relevant_for_reader = writer_change.is_relevant_for(reader_guid);
+    }
+
+    std::cout << "is_relevant_for_reader? " << std::boolalpha << is_relevant_for_reader << std::endl;
+
+    return is_relevant_for_reader;
 }
 
 } // namespace dds

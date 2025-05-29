@@ -417,6 +417,10 @@ public:
     ReturnCode_t get_publication_builtin_topic_data(
             PublicationBuiltinTopicData& publication_data) const;
 
+    ReturnCode_t set_prefilter(
+        std::function<bool(const rtps::GUID_t&,
+        const rtps::WriteParams&)> prefilter);
+
 protected:
 
     using IChangePool = eprosima::fastdds::rtps::IChangePool;
@@ -536,6 +540,9 @@ protected:
     std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
     DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
+
+    std::function<bool(const fastdds::rtps::GUID_t&,
+                  const rtps::WriteParams&)> prefilter_;
 
     ReturnCode_t check_write_preconditions(
             const void* const data,

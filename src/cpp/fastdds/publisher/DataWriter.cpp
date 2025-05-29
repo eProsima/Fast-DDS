@@ -305,6 +305,13 @@ ReturnCode_t DataWriter::get_publication_builtin_topic_data(
     return impl_->get_publication_builtin_topic_data(publication_data);
 }
 
+ReturnCode_t DataWriter::set_prefilter(
+            std::function<bool(const fastdds::rtps::GUID_t&,
+            const rtps::WriteParams&)> prefilter)
+{
+    return impl_->set_prefilter(prefilter);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

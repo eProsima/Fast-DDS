@@ -18,6 +18,8 @@
 #ifndef FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP
 #define FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP
 
+#include <memory>
+
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 
@@ -25,7 +27,12 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-/*!
+struct CustomData
+{
+    virtual ~CustomData() = default;
+};
+
+    /*!
  * @brief This class contains additional information of a CacheChange.
  *
  * @ingroup COMMON_MODULE
@@ -178,6 +185,18 @@ public:
         return *this;
     }
 
+    std::shared_ptr<CustomData> custom_data() const
+    {
+        return custom_data_;
+    }
+
+    WriteParams& custom_data(
+            std::shared_ptr<CustomData> custom_data)
+    {
+        custom_data_ = custom_data;
+        return *this;
+    }
+
     static WriteParams WRITE_PARAM_DEFAULT;
 
     /**
@@ -204,6 +223,8 @@ private:
     SampleIdentity related_sample_identity_;
     /// Attribute that holds source_timestamp member value
     Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
+    /// Extra data
+    std::shared_ptr<CustomData> custom_data_;
 };
 
 }  // namespace rtps

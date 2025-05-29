@@ -37,6 +37,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+struct CacheChange_t;
 class WriteParams;
 struct GUID_t;
 
@@ -595,6 +596,10 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_publication_builtin_topic_data(
             PublicationBuiltinTopicData& publication_data) const;
+
+    FASTDDS_EXPORTED_API ReturnCode_t set_prefilter(
+            std::function<bool(const fastdds::rtps::GUID_t&,
+                              const rtps::WriteParams&)> prefilter);
 
 protected:
 
