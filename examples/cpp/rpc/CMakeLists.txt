@@ -1,4 +1,4 @@
-# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(fastdds_request_reply_example VERSION 1 LANGUAGES CXX)
+project(fastdds_rpc_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -43,21 +43,25 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-message(STATUS "Configuring ${PROJECT_NAME}...")
-file(GLOB REQUEST_REPLY_TYPES_SOURCES_CXX "types/*.cxx")
-file(GLOB REQUEST_REPLY_SOURCES_CXX "*.cxx")
-file(GLOB REQUEST_REPLY_TYPES_SOURCES_CPP "types/*.cpp")
-file(GLOB REQUEST_REPLY_SOURCES_CPP "*.cpp")
+message(STATUS "Configuring rpc calculator example...")
+file(GLOB CLIENT_SERVER_FEED_TYPES_SOURCES_CXX "types/*.cxx")
+file(GLOB CLIENT_SERVER_FEED_TYPES_SOURCES_IPP "types/*.ipp")
+file(GLOB CLIENT_SERVER_FEED_SOURCES_CPP "*.cpp")
 
-add_executable(request_reply ${REQUEST_REPLY_SOURCES_CXX} ${REQUEST_REPLY_SOURCES_CPP} ${REQUEST_REPLY_TYPES_SOURCES_CXX} ${REQUEST_REPLY_TYPES_SOURCES_CPP})
-target_compile_definitions(request_reply PRIVATE
+add_executable(calculator
+    ${CLIENT_SERVER_FEED_TYPES_SOURCES_CXX}
+    ${CLIENT_SERVER_FEED_TYPES_SOURCES_IPP}
+    ${CLIENT_SERVER_FEED_SOURCES_CPP}
+)
+
+target_compile_definitions(calculator PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
 )
-target_link_libraries(request_reply fastdds fastcdr)
-install(TARGETS request_reply
-    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/request_reply/${BIN_INSTALL_DIR})
+target_link_libraries(calculator fastdds fastcdr)
+install(TARGETS calculator
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/rpc/${BIN_INSTALL_DIR})
 
 # Copy the XML files over to the build directory
 file(GLOB_RECURSE XML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.xml)
@@ -71,5 +75,5 @@ foreach(XML_FILE_COMPLETE_PATH ${XML_FILES})
         ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE}.xml # to relative build path
         COPYONLY)
     install(FILES ${XML_FILE_COMPLETE_PATH}
-        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/request_reply/${BIN_INSTALL_DIR})
+        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/rpc/${BIN_INSTALL_DIR})
 endforeach()

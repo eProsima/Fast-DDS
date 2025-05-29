@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@
 
 using eprosima::fastdds::dds::Log;
 
-using namespace eprosima::fastdds::examples::request_reply;
+using namespace eprosima::fastdds::examples::rpc;
 
 std::function<void(int)> stop_app_handler;
 
@@ -46,9 +46,8 @@ int main(
         char** argv)
 {
     auto ret = EXIT_SUCCESS;
-    const std::string service_name = "calculator_service";
+    const std::string service_name = "Calculator_Service";
     CLIParser::config config = CLIParser::parse_cli_options(argc, argv);
-
     std::string app_name = CLIParser::parse_entity_kind(config.entity);
     std::shared_ptr<Application> app;
 
@@ -58,7 +57,7 @@ int main(
     }
     catch (const std::runtime_error& e)
     {
-        request_reply_error("main", e.what());
+        client_server_error("main", e.what());
         ret = EXIT_FAILURE;
     }
 
@@ -68,7 +67,7 @@ int main(
 
         stop_app_handler = [&](int signum)
                 {
-                    request_reply_info("main",
+                    client_server_info("main",
                             CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
 
                     app->stop();
@@ -81,7 +80,7 @@ int main(
         signal(SIGHUP, signal_handler);
     #endif // _WIN32
 
-        request_reply_info("main",
+        client_server_info("main",
                 app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
 
         thread.join();

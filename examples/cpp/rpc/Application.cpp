@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@
 #include "Application.hpp"
 
 #include "CLIParser.hpp"
-#include "ServerApp.hpp"
 #include "ClientApp.hpp"
+#include "ServerApp.hpp"
 
 using namespace eprosima::fastdds::dds;
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace request_reply {
+namespace rpc {
 
 //! Factory method to create a server or client
 std::shared_ptr<Application> Application::make_app(
@@ -38,14 +38,14 @@ std::shared_ptr<Application> Application::make_app(
     std::shared_ptr<Application> entity;
     switch (config.entity)
     {
-        case CLIParser::EntityKind::SERVER:
-        {
-            entity = std::make_shared<ServerApp>(service_name);
-            break;
-        }
         case CLIParser::EntityKind::CLIENT:
         {
             entity = std::make_shared<ClientApp>(config, service_name);
+            break;
+        }
+        case CLIParser::EntityKind::SERVER:
+        {
+            entity = std::make_shared<ServerApp>(config, service_name);
             break;
         }
         case CLIParser::EntityKind::UNDEFINED:
@@ -56,7 +56,7 @@ std::shared_ptr<Application> Application::make_app(
     return entity;
 }
 
-} // namespace request_reply
+} // namespace rpc
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima

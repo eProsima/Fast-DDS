@@ -1,4 +1,4 @@
-# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 services:
-  server-client:
+  server:
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
@@ -22,11 +22,10 @@ services:
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
-      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/request_reply/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/request_reply/request_reply_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/request_reply@FILE_EXTENSION@ client 2 5 @COMMAND_CONCATENATE_COMPOSE@ timeout --preserve-status 3 @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/request_reply@FILE_EXTENSION@ server@COMMAND_BACKGROUND_JOB_COMPOSE@"
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/rpc/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/calculator@FILE_EXTENSION@ server --timeout 10"
 
-  alone-client:
+  client:
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
@@ -35,6 +34,10 @@ services:
       @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
-      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/request_reply/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/request_reply/request_reply_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/request_reply@FILE_EXTENSION@ client 67 24"
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/rpc/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      CLIENT_ADDITIONAL_ARGS_COMPOSE: ${CLIENT_ARGS}
+    stdin_open: true
+    tty: true
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/calculator@FILE_EXTENSION@ client @CLIENT_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
+    depends_on:
+      - server

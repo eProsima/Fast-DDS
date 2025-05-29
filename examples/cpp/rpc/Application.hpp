@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APPLICATION_HPP
-#define FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APPLICATION_HPP
+#ifndef FASTDDS_EXAMPLES_CPP_RPC__APPLICATION_HPP
+#define FASTDDS_EXAMPLES_CPP_RPC__APPLICATION_HPP
 
 #include <memory>
 #include <string>
@@ -28,7 +28,7 @@
 namespace eprosima {
 namespace fastdds {
 namespace examples {
-namespace request_reply {
+namespace rpc {
 
 class Application
 {
@@ -49,9 +49,9 @@ public:
             const std::string& service_name);
 };
 
-} // namespace request_reply
+} // namespace rpc
 } // namespace examples
 } // namespace fastdds
 } // namespace eprosima
 
-#endif /* FASTDDS_EXAMPLES_CPP_REQUEST_REPLY__APPLICATION_HPP */
+#endif // FASTDDS_EXAMPLES_CPP_RPC__APPLICATION_HPP
