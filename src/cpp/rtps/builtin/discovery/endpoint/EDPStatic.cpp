@@ -695,6 +695,8 @@ void EDPStatic::assignRemoteEndpoints(
         for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
                 pit != pdata.properties.end(); ++pit)
         {
+            persistence_guid.entityId.value[3] = 0;
+
             if (0 == pit->first().compare("ESR"))
             {
                 std::vector<uint8_t> bits = string_to_vector(pit->second());
@@ -726,7 +728,12 @@ void EDPStatic::assignRemoteEndpoints(
                     {
                         if (bits[i] && !this->mp_PDP->has_writer_proxy_data(wdataptr->guid))//IF NOT FOUND, we CREATE AND PAIR IT
                         {
-                            newRemoteWriter(pdata.guid, pdata.participant_name, wdataptr->user_defined_id());
+                            if (is_persistent_guid)
+                            {
+                                persistence_guid.entityId.value[3] = static_cast<uint8_t>(wdataptr->user_defined_id());
+                            }
+                            newRemoteWriter(pdata.guid, pdata.participant_name,
+                                    wdataptr->user_defined_id(), wdataptr->guid.entityId, persistence_guid);
                         }
                         else if (!bits[i] && this->mp_PDP->has_writer_proxy_data(wdataptr->guid))
                         {
