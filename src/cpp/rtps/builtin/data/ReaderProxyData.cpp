@@ -997,7 +997,7 @@ bool ReaderProxyData::read_from_cdr_message(
                             return false;
                         }
 
-                        remote_locators.add_unicast_locator(p.locator);
+                        remote_locators.add_multicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
