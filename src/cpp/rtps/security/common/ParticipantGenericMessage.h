@@ -375,6 +375,7 @@ public:
         current_alignment += 16 * 3;
         current_alignment += 4 + alignment(current_alignment, 4) + message.message_class_id().size() + 1;
         current_alignment += DataHolderHelper::serialized_size(message.message_data(), current_alignment);
+        current_alignment += alignment(current_alignment, 4); // TODO: to be coherent this should be done in a different scope
 
         return current_alignment - initial_alignment;
     }
