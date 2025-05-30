@@ -173,11 +173,14 @@ public:
     /**
      * Find a local-process reader.
      *
-     * @param reader_guid GUID of the local reader to search.
+     * @param [in, out] local_reader Reference to the shared pointer to be set.
+     * @param           reader_guid GUID of the local reader to search.
      *
-     * @returns A pointer to a local reader given its endpoint guid, or nullptr if not found.
+     * @post If @c local_reader had a non-null value upon entry, it will not be modified.
+     *       Otherwise, it will be set to point to a local reader whose GUID is the one given in @c reader_guid, or nullptr if not found.
      */
-    static std::shared_ptr<LocalReaderPointer> find_local_reader(
+    static void find_local_reader(
+            std::shared_ptr<LocalReaderPointer>& local_reader,
             const GUID_t& reader_guid);
 
     /**

@@ -204,10 +204,7 @@ bool ReaderLocator::send(
 
 LocalReaderPointer::Instance ReaderLocator::local_reader()
 {
-    if (!local_reader_)
-    {
-        local_reader_ = RTPSDomainImpl::find_local_reader(general_locator_info_.remote_guid);
-    }
+    RTPSDomainImpl::find_local_reader(local_reader_, general_locator_info_.remote_guid);
     return LocalReaderPointer::Instance(local_reader_);
 }
 
