@@ -107,12 +107,7 @@ void ServerApp::create_participant()
         throw std::runtime_error("Failed to get participant factory instance");
     }
 
-    DomainParticipantExtendedQos participant_qos;
-    factory->get_participant_extended_qos_from_default_profile(participant_qos);
-
-    participant_qos.user_data().data_vec().push_back(static_cast<uint8_t>(CLIParser::EntityKind::SERVER));
-
-    participant_ = factory->create_participant(participant_qos.domainId(), participant_qos);
+    participant_ = factory->create_participant_with_default_profile();
 
     if (!participant_)
     {
