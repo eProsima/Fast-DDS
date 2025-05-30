@@ -1,5 +1,5 @@
-Forthcoming
------------
+Version 2.10.7
+--------------
 
 * New property to configure the preferred key agreement algorithm.
 
