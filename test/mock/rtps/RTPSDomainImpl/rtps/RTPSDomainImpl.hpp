@@ -19,6 +19,8 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
+#include <rtps/reader/LocalReaderPointer.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -104,6 +106,41 @@ public:
         return RTPSDomain::createParticipant(domain_id, enabled, att, listen);
     }
 
+<<<<<<< HEAD
+=======
+    static bool get_library_settings(
+            fastdds::LibrarySettings&)
+    {
+        return true;
+    }
+
+    static bool set_library_settings(
+            const fastdds::LibrarySettings&)
+    {
+        return true;
+    }
+
+    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry()
+    {
+        return get_instance()->type_object_registry_;
+    }
+
+    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
+    {
+        return get_instance()->type_object_registry_;
+    }
+
+    static void find_local_reader(
+            std::shared_ptr<LocalReaderPointer>& local_reader,
+            const GUID_t& reader_guid)
+    {
+        static_cast<void>(local_reader);
+        static_cast<void>(reader_guid);
+    }
+
+    eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
+
+>>>>>>> e15acecd (Avoid Data Race in Reader Locator (#5833))
 };
 
 } // namespace rtps
