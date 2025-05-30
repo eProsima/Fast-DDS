@@ -1267,7 +1267,7 @@ public:
         return *this;
     }
 
-    PubSubWriter& multicastLocatorList(
+    PubSubWriter& multicast_locator_list(
             const eprosima::fastdds::rtps::LocatorList& multicastLocators)
     {
         datawriter_qos_.endpoint().multicast_locator_list = multicastLocators;
