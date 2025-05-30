@@ -354,7 +354,6 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
         DiscoveryServerPDPEndpoints& endpoints,
         bool secure)
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
 
     /***********************************
     * PDP READER
@@ -367,18 +366,10 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     endpoints.reader.history_.reset(new ReaderHistory(hatt));
 
     // PDP Reader Attributes
-    ReaderAttributes ratt;
-    ratt.expectsInlineQos = false;
-    ratt.endpoint.endpointKind = READER;
-    ratt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    ratt.endpoint.topicKind = WITH_KEY;
-    // change depending of backup mode
+    ReaderAttributes ratt = create_builtin_reader_attributes();
+    // Change depending on backup mode
     ratt.endpoint.durabilityKind = durability_;
-    ratt.endpoint.reliabilityKind = RELIABLE;
-    ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
+
 #if HAVE_SECURITY
     if (secure)
     {
@@ -435,8 +426,8 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     endpoints.writer.history_.reset(new WriterHistory(hatt));
 
     // PDP Writer Attributes
-    WriterAttributes watt;
-    watt.endpoint.endpointKind = WRITER;
+    WriterAttributes watt = create_builtin_writer_attributes();
+
     // VOLATILE durability to highlight that on steady state the history is empty (except for announcement DATAs)
     // this setting is incompatible with CLIENTs TRANSIENT_LOCAL PDP readers but not validation is done on builitin
     // endpoints
@@ -448,16 +439,8 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
             get_writer_persistence_file_name()));
 #endif // HAVE_SQLITE3
 
-    watt.endpoint.reliabilityKind = RELIABLE;
-    watt.endpoint.topicKind = WITH_KEY;
-    watt.endpoint.multicastLocatorList = mp_builtin->m_metatrafficMulticastLocatorList;
-    watt.endpoint.unicastLocatorList = mp_builtin->m_metatrafficUnicastLocatorList;
-    watt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
-    watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    watt.times.heartbeatPeriod = pdp_heartbeat_period;
-    watt.times.nackResponseDelay = pdp_nack_response_delay;
-    watt.times.nackSupressionDuration = pdp_nack_supression_duration;
     watt.mode = ASYNCHRONOUS_WRITER;
+
 #if HAVE_SECURITY
     if (secure)
     {
