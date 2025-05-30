@@ -34,6 +34,8 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/utils/IPFinder.hpp>
+
 #include <gtest/gtest.h>
 
 #include "../utils/filter_helpers.hpp"
@@ -2479,7 +2481,20 @@ TEST(DDSDiscovery, multicast_only_one_packet_sent_when_multiple_multicast_reader
         ASSERT_EQ(reader->block_for_all(std::chrono::seconds(3)), 1u);
     }
 
+    std::vector<eprosima::fastdds::rtps::IPFinder::info_IP> ips;
+
+    ASSERT_TRUE(IPFinder::getIPs(&ips, true));
+
+    uint8_t n_v4_addresses = 0u;
+    for(const auto& ip : ips)
+    {
+        if (ip.type == eprosima::fastdds::rtps::IPFinder::IP4 ||
+            ip.type == eprosima::fastdds::rtps::IPFinder::IP4_LOCAL)
+        {
+            ++n_v4_addresses;
+        }
+    }
+
     // Check sample was only sent one per interface
-    // 1 via localhost and 1 via local lan interface
-    ASSERT_EQ(n_multicast_times_sent, 2u);
+    ASSERT_EQ(n_multicast_times_sent, n_v4_addresses);
 }
