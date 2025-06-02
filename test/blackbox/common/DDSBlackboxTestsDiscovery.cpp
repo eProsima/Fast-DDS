@@ -2413,7 +2413,7 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
  *
  * This test checks that only one packet is sent to multicast (per interface)
  * when a writer is matched with multiple readers.
- * Typically, it es expected to send one via localhost and another via local lan interface.
+ * Typically, it is expected to send one via localhost and another via local lan interface.
  */
 TEST(DDSDiscovery, multicast_only_one_packet_sent_when_multiple_multicast_readers_matched)
 {
