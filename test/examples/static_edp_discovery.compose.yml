@@ -23,8 +23,8 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/static_edp_discovery/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      XML_FILE: @PROJECT_BINARY_DIR@/examples/cpp/static_edp_discovery/HelloWorld_static_disc.xml
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/static_edp_discovery@FILE_EXTENSION@ subscriber --samples 10 --xml $${XML_FILE}"
+      XML_FILE: @EXAMPLE_PREFIX_DIR_COMPOSE@/static_edp_discovery/HelloWorld_static_disc.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/static_edp_discovery@FILE_EXTENSION@ subscriber --samples 10 --xml @XML_ARG_COMPOSE@"
 
   subscriber-publisher:
     image: @DOCKER_IMAGE_NAME@
@@ -36,7 +36,7 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/static_edp_discovery/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      XML_FILE: @PROJECT_BINARY_DIR@/examples/cpp/static_edp_discovery/HelloWorld_static_disc.xml
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/static_edp_discovery@FILE_EXTENSION@ subscriber --samples 10 --xml $${XML_FILE} @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/static_edp_discovery@FILE_EXTENSION@ publisher --samples 10 --xml $${XML_FILE}@COMMAND_BACKGROUND_JOB_COMPOSE@"
+      XML_FILE: @EXAMPLE_PREFIX_DIR_COMPOSE@/static_edp_discovery/HelloWorld_static_disc.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/static_edp_discovery@FILE_EXTENSION@ subscriber --samples 10 --xml @XML_ARG_COMPOSE@ @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/static_edp_discovery@FILE_EXTENSION@ publisher --samples 10 --xml @XML_ARG_COMPOSE@@COMMAND_BACKGROUND_JOB_COMPOSE@"
     depends_on:
       - subscriber
