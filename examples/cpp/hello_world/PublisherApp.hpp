@@ -24,6 +24,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
@@ -36,10 +37,37 @@ using namespace eprosima::fastdds::dds;
 namespace eprosima {
 namespace fastdds {
 
-struct CustomDataInfo : rtps::CustomData
+struct CustomDataInfo : rtps::WriteParams::CustomData
 {
     //! Custom data information for the DataWriter
     rtps::GUID_t participant_guid;
+};
+
+struct CustomPreFilterImpl : public dds::IContentFilter
+{
+    //! Custom filter for the HelloWorld example
+    bool evaluate(
+            const SerializedPayload& /*payload*/,
+            const FilterSampleInfo& sample_info,
+            const rtps::GUID_t& reader_guid) const override
+    {
+        bool sample_should_be_sent = true;
+
+        // Custom prefilter logic can be added here
+        std::cout << "Prefilter called for reader: " << reader_guid << std::endl;
+        auto custom_data =
+            std::static_pointer_cast<CustomDataInfo>(sample_info.custom_data);
+
+        std::cout << "Custom data participant GUID: "
+                << custom_data->participant_guid << std::endl;
+
+        if (custom_data->participant_guid.guidPrefix == reader_guid.guidPrefix)
+        {
+            sample_should_be_sent = false;
+        }
+
+        return sample_should_be_sent; // Do not let samples be sent
+    }
 };
 
 namespace examples {

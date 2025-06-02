@@ -56,6 +56,8 @@ class DataWriterListener;
 class DataWriterQos;
 class Topic;
 
+struct IContentFilter;
+
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  *
@@ -598,8 +600,7 @@ public:
             PublicationBuiltinTopicData& publication_data) const;
 
     FASTDDS_EXPORTED_API ReturnCode_t set_prefilter(
-            std::function<bool(const fastdds::rtps::GUID_t&,
-                              const rtps::WriteParams&)> prefilter);
+            std::shared_ptr<IContentFilter> prefilter);
 
 protected:
 

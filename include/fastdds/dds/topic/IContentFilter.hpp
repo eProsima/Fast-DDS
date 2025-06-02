@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -45,10 +46,21 @@ struct IContentFilter
     {
         using SampleIdentity = eprosima::fastdds::rtps::SampleIdentity;
 
+        FilterSampleInfo() = default;
+
+        FilterSampleInfo(const rtps::WriteParams &wparams)
+            : sample_identity(wparams.sample_identity())
+            , related_sample_identity(wparams.related_sample_identity())
+            , custom_data(wparams.custom_data())
+        {
+        }
+
         /// Identity of the sample being filtered.
         SampleIdentity sample_identity;
         /// Identity of a sample related to the one being filtered.
         SampleIdentity related_sample_identity;
+        /// Extra custom information that can be used by the content filter.
+        std::shared_ptr<fastdds::rtps::WriteParams::CustomData> custom_data;
     };
 
     /**

@@ -1501,8 +1501,7 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
 }
 
 ReturnCode_t DataWriterImpl::set_prefilter(
-    std::function<bool(const GUID_t&,
-                       const rtps::WriteParams&)> prefilter)
+    std::shared_ptr<IContentFilter> prefilter)
 {
     ReturnCode_t ret_code = RETCODE_OK;
     if(!reader_filters_)
@@ -2396,7 +2395,10 @@ bool DataWriterImpl::is_relevant(
 
     if (prefilter_)
     {
-        is_relevant_for_reader = prefilter_(reader_guid, writer_change.write_params);
+        IContentFilter::FilterSampleInfo filter_sample_info(writer_change.write_params);
+        is_relevant_for_reader = prefilter_->evaluate(writer_change.serializedPayload,
+                                            filter_sample_info,
+                                            reader_guid);
     }
 
     if (is_relevant_for_reader && reader_filters_)

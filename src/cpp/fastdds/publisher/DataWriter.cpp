@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
 
 namespace eprosima {
@@ -306,8 +307,7 @@ ReturnCode_t DataWriter::get_publication_builtin_topic_data(
 }
 
 ReturnCode_t DataWriter::set_prefilter(
-            std::function<bool(const fastdds::rtps::GUID_t&,
-            const rtps::WriteParams&)> prefilter)
+            std::shared_ptr<IContentFilter> prefilter)
 {
     return impl_->set_prefilter(prefilter);
 }

@@ -418,8 +418,7 @@ public:
             PublicationBuiltinTopicData& publication_data) const;
 
     ReturnCode_t set_prefilter(
-        std::function<bool(const rtps::GUID_t&,
-        const rtps::WriteParams&)> prefilter);
+        std::shared_ptr<IContentFilter> prefilter);
 
 protected:
 
@@ -541,8 +540,7 @@ protected:
 
     DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
 
-    std::function<bool(const fastdds::rtps::GUID_t&,
-                  const rtps::WriteParams&)> prefilter_;
+    std::shared_ptr<IContentFilter> prefilter_;
 
     ReturnCode_t check_write_preconditions(
             const void* const data,

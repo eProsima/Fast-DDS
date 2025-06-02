@@ -27,12 +27,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-struct CustomData
-{
-    virtual ~CustomData() = default;
-};
-
-    /*!
+/*!
  * @brief This class contains additional information of a CacheChange.
  *
  * @ingroup COMMON_MODULE
@@ -40,6 +35,11 @@ struct CustomData
 class FASTDDS_EXPORTED_API WriteParams
 {
 public:
+
+    struct CustomData
+    {
+        virtual ~CustomData() = default;
+    };
 
     /**
      * Set the value of the sample_identity member.

@@ -124,27 +124,7 @@ void PublisherApp::on_publication_matched(
             {
                 custom_data->participant_guid = rtps::iHandle2GUID(matched_subscriptions.front());
                 params_.custom_data(custom_data);
-
-                writer_->set_prefilter([](const rtps::GUID_t& reader_guid,
-                    const rtps::WriteParams& params)
-                    {
-                        bool sample_should_be_sent = true;
-
-                        // Custom prefilter logic can be added here
-                        std::cout << "Prefilter called for reader: " << reader_guid << std::endl;
-                        auto custom_data =
-                            std::static_pointer_cast<CustomDataInfo>(params.custom_data());
-
-                        std::cout << "Custom data participant GUID: "
-                                << custom_data->participant_guid << std::endl;
-
-                        if (custom_data->participant_guid.guidPrefix == reader_guid.guidPrefix)
-                        {
-                            sample_should_be_sent = false;
-                        }
-
-                        return sample_should_be_sent; // Do not let samples be sent
-                    });
+                writer_->set_prefilter(std::make_shared<CustomPreFilterImpl>());
             }
         }
 
