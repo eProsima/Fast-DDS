@@ -20,7 +20,7 @@ def test_xtypes():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f xtypes_complete.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f xtypes_complete.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=30
