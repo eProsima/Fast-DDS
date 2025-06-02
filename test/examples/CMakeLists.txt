@@ -63,8 +63,14 @@ if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
 
     set(SUB_ADDITIONAL_ARGS_COMPOSE "$\${SUB_ADDITIONAL_ARGS_COMPOSE}")
     set(PUB_ADDITIONAL_ARGS_COMPOSE "$\${PUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(SERVER1_ADDITIONAL_ARGS_COMPOSE "$\${SERVER1_ADDITIONAL_ARGS_COMPOSE}")
+    set(SERVER2_ADDITIONAL_ARGS_COMPOSE "$\${SERVER2_ADDITIONAL_ARGS_COMPOSE}")
+    set(ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE "$\${ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE}")
+    set(PUBSUB_ADDITIONAL_ARGS_COMPOSE "$\${PUBSUB_ADDITIONAL_ARGS_COMPOSE}")
     set(CLIENT_ADDITIONAL_ARGS_COMPOSE "$\${CLIENT_ADDITIONAL_ARGS_COMPOSE}")
+    set(XML_ARG_COMPOSE "$\${XML_FILE}")
     set(SPLIT_ARGS_COMPOSE "")
+    set(NETWORK_MODE_COMPOSE "network_mode: host")
 
 # Windows configurations
 elseif(WIN32)
@@ -105,8 +111,15 @@ elseif(WIN32)
 
     set(SUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:SUB_ADDITIONAL_ARGS_COMPOSE")
     set(PUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:PUB_ADDITIONAL_ARGS_COMPOSE")
+    set(SERVER1_ADDITIONAL_ARGS_COMPOSE "$\$Env:SERVER1_ADDITIONAL_ARGS_COMPOSE")
+    set(SERVER2_ADDITIONAL_ARGS_COMPOSE "$\$Env:SERVER2_ADDITIONAL_ARGS_COMPOSE")
+    set(ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE")
+    set(PUBSUB_ADDITIONAL_ARGS_COMPOSE "$\$Env:PUBSUB_ADDITIONAL_ARGS_COMPOSE")
     set(CLIENT_ADDITIONAL_ARGS_COMPOSE "$\$Env:CLIENT_ADDITIONAL_ARGS_COMPOSE")
+    set(XML_ARG_COMPOSE "$\$Env:XML_FILE")
     set(SPLIT_ARGS_COMPOSE ".split(' ')")
+    # network_mode: host is not supported in windows docker containers yet.
+    set(NETWORK_MODE_COMPOSE "")
 
     set(WIN_DOCKERFILE ${CMAKE_CURRENT_LIST_DIR}/windows/Dockerfile)
     # Generate image for testing
@@ -125,18 +138,8 @@ else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
 
-if(WIN32)
-    # Temporarily, test hello world
-    file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_custom_payload_pool.py
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_hello_world.py
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_rtps.py
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_flow_control.py
-        ${CMAKE_CURRENT_SOURCE_DIR}/test_content_filter.py)
-else()
-    # Find all pytest files for testing
-    file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
-endif()
+# Find all pytest files for testing
+file(GLOB examples_python_tests RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.py)
 
 # Add security test only if security is enabled
 if (NOT SECURITY)
@@ -150,8 +153,18 @@ foreach(example_test ${examples_python_tests})
     message(STATUS "  Configuring example test: ${example_name}")
     configure_file(${example_test}
                    ${CMAKE_CURRENT_BINARY_DIR}/${example_name}/${example_test} @ONLY)
-    configure_file(${example_name}.compose.yml
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${example_name}.compose.yml")
+
+        configure_file(${example_name}.compose.yml
                    ${CMAKE_CURRENT_BINARY_DIR}/${example_name}/${example_name}.compose.yml @ONLY)
+    else()
+        # Get base example name without suffix (e.g., -I)
+        string(REGEX REPLACE "-.*$" "" base_example_name "${example_name}")
+        if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${base_example_name}.compose.yml")
+            configure_file(${base_example_name}.compose.yml
+                    ${CMAKE_CURRENT_BINARY_DIR}/${example_name}/${base_example_name}.compose.yml @ONLY)
+        endif()
+    endif()
     add_test(NAME example_tests.${example_name}
              COMMAND ${Python3_EXECUTABLE} -m pytest -vrP
              WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${example_name})
