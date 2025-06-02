@@ -15,6 +15,7 @@
 services:
   subscriber:
     image: @DOCKER_IMAGE_NAME@
+    container_name: subscriber_ds_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
@@ -23,15 +24,17 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ subscriber --reliable --transient-local $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
-    network_mode: host
-    ipc: host
+      SUB_ADDITIONAL_ARGS_COMPOSE: ${SUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ subscriber --reliable --transient-local @SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
     depends_on:
       - server_1
+    networks:
+      ds_net:
+        ipv4_address: 172.150.0.2
 
   publisher:
     image: @DOCKER_IMAGE_NAME@
+    container_name: publisher_ds_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
@@ -40,15 +43,17 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ publisher --reliable --transient-local $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
-    network_mode: host
-    ipc: host
+      PUB_ADDITIONAL_ARGS_COMPOSE: ${PUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ publisher --reliable --transient-local @PUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
     depends_on:
       - server_1
+    networks:
+      ds_net:
+        ipv4_address: 172.150.0.3
 
   server_1:
     image: @DOCKER_IMAGE_NAME@
+    container_name: ds1_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
@@ -57,13 +62,15 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      SERVER1_ADDITIONAL_ARGUMENTS: ${SERVER1_ARGS}
-    network_mode: host
-    ipc: host
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ server $${SERVER1_ADDITIONAL_ARGUMENTS}"
+      SERVER1_ADDITIONAL_ARGS_COMPOSE: ${SERVER1_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ server @SERVER1_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
+    networks:
+      ds_net:
+        ipv4_address: 172.150.0.4
 
   server_2:
     image: @DOCKER_IMAGE_NAME@
+    container_name: ds2_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
@@ -72,7 +79,14 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      SERVER2_ADDITIONAL_ARGUMENTS: ${SERVER2_ARGS}
-    network_mode: host
-    ipc: host
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ server $${SERVER2_ADDITIONAL_ARGUMENTS}"
+      SERVER2_ADDITIONAL_ARGS_COMPOSE: ${SERVER2_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/discovery_server@FILE_EXTENSION@ server @SERVER2_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
+    networks:
+      ds_net:
+        ipv4_address: 172.150.0.5
+
+networks:
+  ds_net:
+    ipam:
+      config:
+        - subnet: 172.150.0.0/24
