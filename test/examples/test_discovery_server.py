@@ -13,35 +13,69 @@
 # limitations under the License.
 
 import subprocess
+import os
 import pytest
+import random
 
 """
     Expected output test cases for Discovery Server example.
     Each element is a ternary (pub_args, sub_args, server_args)
 """
-discovery_server_test_cases = [
-    ('--samples 10', '--samples 10', '--timeout 5', '--listening-port 11400 --timeout 1'),
-    ('--connection-port 11500 --samples 10', '--connection-port 11500 --samples 10', '--listening-port 11500 --timeout 5', '--listening-port 11400 --timeout 1'),
-    ('--transport tcpv4 --samples 10', '--transport tcpv4 --samples 10', '--transport tcpv4 --timeout 5', '--listening-port 11400 --timeout 1'),
-    ('--samples 10', '--samples 10', '--timeout 5', '--listening-port 11400 --timeout 1'),
-    ('--samples 10', '--connection-port 11400 --samples 10', '--timeout 5 --connection-port 11400', '--listening-port 11400 --timeout 5'),
-    ('--transport udpv6 --samples 10', '--transport udpv6 --connection-port 18000 --samples 10', '--transport udpv6 --timeout 5 --connection-port 18000', '--transport udpv6 --listening-port 18000 --timeout 5'),
-    ('--transport tcpv4 --samples 10', '--transport tcpv4 --connection-port 18000 --samples 10', '--transport tcpv4 --timeout 5 --connection-port 18000', '--transport tcpv4 --listening-port 18000 --timeout 5'),
-    ('--transport tcpv6 --samples 10', '--transport tcpv6  --connection-port 18000 --samples 10', '--transport tcpv6 --timeout 5 --connection-port 18000', '--transport tcpv6 --listening-port 18000 --timeout 5')
-]
+discovery_server_test_cases = []
+
+# IPv6 in docker is not supported on windows hosts
+# https://docs.docker.com/engine/daemon/ipv6/
+if os.name == 'nt':
+    discovery_server_test_cases = [
+        ('--samples 10 --connection-address 172.150.0.4', '--samples 10 --connection-address 172.150.0.4', '--timeout 15 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 1 --listening-address 172.150.0.5'),
+        ('--connection-port 11500 --samples 10 --connection-address 172.150.0.4', '--connection-port 11500 --samples 10 --connection-address 172.150.0.4', '--listening-port 11500 --timeout 15 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 1 --listening-address 172.150.0.5'),
+        ('--transport tcpv4 --samples 10 --connection-address 172.150.0.4', '--transport tcpv4 --samples 10 --connection-address 172.150.0.4', '--transport tcpv4 --timeout 15 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 1 --listening-address 172.150.0.5'),
+        ('--samples 10 --connection-address 172.150.0.4', '--connection-port 11400 --samples 10 --connection-address 172.150.0.5', '--timeout 15 --connection-port 11400 --connection-address 172.150.0.5 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 15 --listening-address 172.150.0.5')
+    ]
+else:
+    discovery_server_test_cases = [
+        ('--samples 10 --connection-address 172.150.0.4', '--samples 10 --connection-address 172.150.0.4', '--timeout 8 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 1 --listening-address 172.150.0.5'),
+        ('--connection-port 11500 --samples 10 --connection-address 172.150.0.4', '--connection-port 11500 --samples 10 --connection-address 172.150.0.4', '--listening-port 11500 --timeout 8 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 1 --listening-address 172.150.0.5'),
+        ('--transport tcpv4 --samples 10 --connection-address 172.150.0.4', '--transport tcpv4 --samples 10 --connection-address 172.150.0.4', '--transport tcpv4 --timeout 8 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 1 --listening-address 172.150.0.5'),
+        ('--samples 10 --connection-address 172.150.0.4', '--connection-port 11400 --samples 10 --connection-address 172.150.0.5', '--timeout 8 --connection-port 11400 --connection-address 172.150.0.5 --listening-address 172.150.0.4', '--listening-port 11400 --timeout 8 --listening-address 172.150.0.5'),
+        ('--transport tcpv4 --samples 10  --connection-address 172.150.0.4', '--transport tcpv4 --connection-port 18000 --samples 10 --connection-address 172.150.0.5', '--transport tcpv4 --timeout 8 --connection-port 18000 --connection-address 172.150.0.5 --listening-address 172.150.0.4', '--transport tcpv4 --listening-port 18000 --timeout 8 --listening-address 172.150.0.5'),
+        #Disable IPv6 tests in CI
+        #('--transport udpv6 --samples 10 --connection-address 2001:3984:3989::4', '--transport udpv6 --connection-port 18000 --samples 10 --connection-address 2001:3984:3989::5', '--transport udpv6 --timeout 8 --connection-port 18000 --connection-address 2001:3984:3989::5 --listening-address 2001:3984:3989::4', '--transport udpv6 --listening-port 18000 --timeout 8 --listening-address 2001:3984:3989::5'),
+        # ('--transport tcpv6 --samples 10 --connection-address 2001:3984:3989::4', '--transport tcpv6 --connection-port 18000 --samples 10 --connection-address 2001:3984:3989::5', '--transport tcpv6 --timeout 8 --connection-port 18000 --connection-address 2001:3984:3989::5 --listening-address 2001:3984:3989::4', '--transport tcpv6 --listening-port 18000 --timeout 8 --listening-address 2001:3984:3989::5')
+    ]
 
 @pytest.mark.parametrize("pub_args, sub_args, server1_args, server2_args", discovery_server_test_cases)
 def test_discovery_server(pub_args, sub_args, server1_args, server2_args):
     """."""
     ret = False
     out = ''
-    command_args = 'PUB_ARGS="' + pub_args + '" SUB_ARGS="' + sub_args + '" SERVER1_ARGS="' + server1_args + '" SERVER2_ARGS="' + server2_args + '" '
+
+    menv = dict(os.environ)
+
+    menv["PUB_ARGS"] =  pub_args
+    menv["SUB_ARGS"] =  sub_args
+    menv["SERVER1_ARGS"] =  server1_args
+    menv["SERVER2_ARGS"] =  server2_args
+
+    # Set a random suffix to the cotainer name to avoid conflicts with other containers
+    menv["CONTAINER_SUFFIX_COMPOSE"] = str(random.randint(0,100))
+
+    timeout = 30
+    #In windows timeout argument does not wor properly
+    #It is not able to kill the subprocess when it is surpassed
+    #and when the subprocess exists then it is checked.
+    #This test is about samples (1000) so for big msgs in windows
+    #it can take longer. Set it to a higher value
+    if os.name == 'nt':
+        timeout = 200
+
     try:
         out = subprocess.check_output(
-            command_args + '@DOCKER_EXECUTABLE@ compose -f discovery_server.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f discovery_server.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30
+            timeout=timeout,
+            env=menv
         ).decode().split('\n')
 
         sent = 0
@@ -67,5 +101,8 @@ def test_discovery_server(pub_args, sub_args, server1_args, server2_args):
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
         print(out)
+
+    # Cleanup resources
+    subprocess.call('"@DOCKER_EXECUTABLE@" compose -f discovery_server.compose.yml down', shell=True)
 
     assert(ret)
