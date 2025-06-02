@@ -2434,7 +2434,7 @@ TEST(DDSDiscovery, multicast_only_one_packet_sent_when_multiple_multicast_reader
     eprosima::fastdds::rtps::Locator_t new_multicast_locator;
     eprosima::fastdds::rtps::LocatorList multicast_locators;
     eprosima::fastdds::rtps::IPLocator::setIPv4(new_multicast_locator, "239.255.0.4");
-    new_multicast_locator.port = 7900u;
+    new_multicast_locator.port = 6900u;
     multicast_locators.push_back(new_multicast_locator);
 
     writer_test_transport->locator_filter_ = [&n_multicast_times_sent, &new_multicast_locator](
