@@ -670,7 +670,7 @@ bool CDRMessage::addOctetVector(
         size_t rest = ocvec->size() % 4;
         if (rest != 0)
         {
-            rest = 4 - rest; //how many you have to add
+            rest = 4 - rest; // How many you have to add
             final_size += rest;
         }
     }
@@ -683,7 +683,7 @@ bool CDRMessage::addOctetVector(
 
     if (add_final_padding)
     {
-        size_t rest = final_size - msg->pos; //how many you have to add
+        size_t rest = final_size - msg->pos;
         if (rest > 0)
         {
             octet oc = '\0';
