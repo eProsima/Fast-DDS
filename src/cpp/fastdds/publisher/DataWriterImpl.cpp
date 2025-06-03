@@ -1504,6 +1504,17 @@ ReturnCode_t DataWriterImpl::set_sample_prefilter(
         std::shared_ptr<IContentFilter> prefilter)
 {
     ReturnCode_t ret_code = RETCODE_OK;
+    if (!reader_filters_)
+    {
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Filtering is not enabled for this DataWriter");
+        ret_code = RETCODE_PRECONDITION_NOT_MET;
+    }
+    else
+    {
+        std::lock_guard<std::mutex> lock(sample_prefilter_mutex_);
+        sample_prefilter_ = prefilter;
+    }
+
     return ret_code;
 }
 
@@ -2379,9 +2390,27 @@ bool DataWriterImpl::is_relevant(
         const fastdds::rtps::CacheChange_t& change,
         const fastdds::rtps::GUID_t& reader_guid) const
 {
-    assert(reader_filters_);
+    assert(reader_filters_ || sample_prefilter_);
+    bool is_relevant_for_reader = true;
     const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
-    return writer_change.is_relevant_for(reader_guid);
+
+    {
+        std::lock_guard<std::mutex> lock(sample_prefilter_mutex_);
+        if (sample_prefilter_)
+        {
+            IContentFilter::FilterSampleInfo filter_sample_info(writer_change.write_params);
+            is_relevant_for_reader = sample_prefilter_->evaluate(writer_change.serializedPayload,
+                            filter_sample_info,
+                            reader_guid);
+        }
+    }
+
+    if (is_relevant_for_reader && reader_filters_)
+    {
+        is_relevant_for_reader = writer_change.is_relevant_for(reader_guid);
+    }
+
+    return is_relevant_for_reader;
 }
 
 } // namespace dds
