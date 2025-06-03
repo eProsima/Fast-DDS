@@ -306,7 +306,7 @@ ReturnCode_t DataWriter::get_publication_builtin_topic_data(
 }
 
 ReturnCode_t DataWriter::set_sample_prefilter(
-            std::shared_ptr<IContentFilter> prefilter)
+        std::shared_ptr<IContentFilter> prefilter)
 {
     return impl_->set_sample_prefilter(prefilter);
 }

@@ -613,6 +613,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t set_sample_prefilter(
             std::shared_ptr<IContentFilter> prefilter);
+
 protected:
 
     DataWriterImpl* impl_;
