@@ -417,6 +417,20 @@ public:
     ReturnCode_t get_publication_builtin_topic_data(
             PublicationBuiltinTopicData& publication_data) const;
 
+    /**
+     *  @brief Set a sample prefilter to be used. This filter is always
+     *  evaluated before sending the sample to any DataReader and prior to
+     *  any content filtering.
+     *  Reader filters should be enabled in the DataWriter.
+     *
+     * @param prefilter The prefilter to be set.
+     *
+     * @return RETCODE_OK if the prefilter is set correctly,
+     * @return RETCODE_PRECONDITION_NOT_MET if the reader filters are not enabled.
+     */
+    ReturnCode_t set_sample_prefilter(
+            std::shared_ptr<IContentFilter> prefilter);
+
 protected:
 
     using IChangePool = eprosima::fastdds::rtps::IChangePool;
@@ -536,6 +550,9 @@ protected:
     std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
     DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
+
+    mutable std::mutex sample_prefilter_mutex_;
+    std::shared_ptr<IContentFilter> sample_prefilter_;
 
     ReturnCode_t check_write_preconditions(
             const void* const data,

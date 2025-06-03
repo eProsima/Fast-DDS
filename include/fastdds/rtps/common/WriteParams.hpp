@@ -18,6 +18,8 @@
 #ifndef FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP
 #define FASTDDS_RTPS_COMMON__WRITEPARAMS_HPP
 
+#include <memory>
+
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 
@@ -33,6 +35,19 @@ namespace rtps {
 class FASTDDS_EXPORTED_API WriteParams
 {
 public:
+
+    /**
+     * @brief Base class storing custom information in the
+     * WriteParams structure for later filtering.
+     *
+     * This struct serves as a base class that allows derived
+     * classes to be deleted safely through a pointer to this base type.
+     * It is intended to be user-extensible.
+     */
+    struct UserWriteData
+    {
+        virtual ~UserWriteData() = default;
+    };
 
     /**
      * Set the value of the sample_identity member.
@@ -178,6 +193,30 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Retrieves the user write data.
+     *
+     * @return Shared pointer to the user write data.
+     */
+    std::shared_ptr<UserWriteData> user_write_data() const
+    {
+        return user_write_data_;
+    }
+
+    /**
+     * Set the user write data.
+     *
+     * @param write_data  New value for the user_write_data member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& user_write_data(
+            std::shared_ptr<UserWriteData> write_data)
+    {
+        user_write_data_ = write_data;
+        return *this;
+    }
+
     static WriteParams WRITE_PARAM_DEFAULT;
 
     /**
@@ -204,6 +243,8 @@ private:
     SampleIdentity related_sample_identity_;
     /// Attribute that holds source_timestamp member value
     Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
+    /// User write data
+    std::shared_ptr<UserWriteData> user_write_data_ = nullptr;
 };
 
 }  // namespace rtps

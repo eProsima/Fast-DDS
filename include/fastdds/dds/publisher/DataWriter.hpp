@@ -55,6 +55,8 @@ class DataWriterListener;
 class DataWriterQos;
 class Topic;
 
+struct IContentFilter;
+
 /**
  * Class DataWriter, contains the actual implementation of the behaviour of the DataWriter.
  *
@@ -596,6 +598,21 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t get_publication_builtin_topic_data(
             PublicationBuiltinTopicData& publication_data) const;
 
+    /**
+     *  @brief Set a sample prefilter to be used. This filter is always
+     *  evaluated before sending the sample to any DataReader and prior to
+     *  any content filtering.
+     *  Reader filters should be enabled in the DataWriter.
+     *
+     * @param prefilter The prefilter to be set.
+     *
+     * @return RETCODE_OK if the prefilter is set correctly,
+     * @return RETCODE_PRECONDITION_NOT_MET if the reader filters are not enabled.
+     *
+     * @note The prefilter is currently incompatible with DataSharing.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_sample_prefilter(
+            std::shared_ptr<IContentFilter> prefilter);
 protected:
 
     DataWriterImpl* impl_;
