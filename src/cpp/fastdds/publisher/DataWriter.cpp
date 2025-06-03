@@ -305,6 +305,12 @@ ReturnCode_t DataWriter::get_publication_builtin_topic_data(
     return impl_->get_publication_builtin_topic_data(publication_data);
 }
 
+ReturnCode_t DataWriter::set_sample_prefilter(
+            std::shared_ptr<IContentFilter> prefilter)
+{
+    return impl_->set_sample_prefilter(prefilter);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

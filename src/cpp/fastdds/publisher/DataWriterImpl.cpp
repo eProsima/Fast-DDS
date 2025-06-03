@@ -1500,6 +1500,13 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
     return RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::set_sample_prefilter(
+        std::shared_ptr<IContentFilter> prefilter)
+{
+    ReturnCode_t ret_code = RETCODE_OK;
+    return ret_code;
+}
+
 bool DataWriterImpl::deadline_timer_reschedule()
 {
     assert(qos_.deadline().period != dds::c_TimeInfinite);
