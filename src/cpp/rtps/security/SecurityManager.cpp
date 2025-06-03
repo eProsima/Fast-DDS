@@ -236,7 +236,8 @@ bool SecurityManager::init(
                                 part_attributes,
                                 participant_->getGuid(),
                                 exception);
-            } while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
+            }
+            while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
 
             if (ret == VALIDATION_OK)
             {

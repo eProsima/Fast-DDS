@@ -4634,11 +4634,11 @@ TEST(Security, SerializationOfParticipantGenericMessageWhenAddingProperties)
     reader.set_participant_profile(profile_name_1);
 
     reader.setManualTopicName("topic_1")
-          .init();
+            .init();
     ASSERT_TRUE(reader.isInitialized());
 
     writer.setManualTopicName("topic_1")
-          .init();
+            .init();
     ASSERT_TRUE(writer.isInitialized());
 
     // Both should be authorized
