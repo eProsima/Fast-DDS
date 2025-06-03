@@ -514,13 +514,25 @@ public:
 
     void send(
             std::list<type>& msgs,
-            uint32_t milliseconds = 0)
+            uint32_t milliseconds = 0,
+            bool send_with_params = false)
     {
         auto it = msgs.begin();
 
         while (it != msgs.end())
         {
-            if (eprosima::fastdds::dds::RETCODE_OK == datawriter_->write((void*)&(*it)))
+            auto ret = eprosima::fastdds::dds::RETCODE_OK;
+
+            if (send_with_params)
+            {
+                ret = datawriter_->write((void*)&(*it), write_params_);
+            }
+            else
+            {
+                ret = datawriter_->write((void*)&(*it));
+            }
+
+            if (eprosima::fastdds::dds::RETCODE_OK == ret)
             {
                 default_send_print<type>(*it);
                 it = msgs.erase(it);
@@ -1858,6 +1870,19 @@ public:
         return type_;
     }
 
+    eprosima::fastdds::dds::ReturnCode_t set_sample_prefilter(
+            std::shared_ptr<eprosima::fastdds::dds::IContentFilter> prefilter)
+    {
+        return datawriter_->set_sample_prefilter(prefilter);
+    }
+
+    PubSubWriter& write_params(
+            const eprosima::fastdds::rtps::WriteParams& params)
+    {
+        write_params_ = params;
+        return *this;
+    }
+
 protected:
 
     void participant_matched()
@@ -2158,6 +2183,7 @@ protected:
     //! Preferred domain ID
     bool use_preferred_domain_id_;
     uint32_t preferred_domain_id_;
+    eprosima::fastdds::rtps::WriteParams write_params_;
 
 #if HAVE_SECURITY
     std::mutex mutexAuthentication_;
