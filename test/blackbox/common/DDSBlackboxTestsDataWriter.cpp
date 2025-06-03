@@ -1296,6 +1296,219 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_optional)
     EXPECT_EQ(qos_found.load(), 1u);
 }
 
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test checks that setting a prefilter on a DataWriter with no
+ * reader filters returns RETCODE_PRECONDITION_NOT_MET.
+ */
+
+TEST(DDSDataWriter, datawriter_prefilter_precondition_not_met)
+{
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload&,
+                const FilterSampleInfo&,
+                const rtps::GUID_t& ) const override
+        {
+            /* sample_should_be_sent */
+            return true;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    // Set QoS to get no reader_filters on the DataWriter
+    writer.liveliness_lease_duration({10, 0})
+            .liveliness_announcement_period({3, 0})
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Try to set a prefilter without reader filters
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test asserts that prefiltering by write_params on a DataWriter
+ * correctly works. The test sets a prefilter to only send samples
+ * to the second reader discovered.
+ */
+TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_write_params)
+{
+    struct CustomUserWriteData : public rtps::WriteParams::UserWriteData
+    {
+        CustomUserWriteData(
+                const rtps::GuidPrefix_t& guid_prefix)
+            : filtered_out_prefix_(guid_prefix)
+        {
+        }
+
+        rtps::GuidPrefix_t filtered_out_prefix_;
+    };
+
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload&,
+                const FilterSampleInfo& filter_sample_info,
+                const rtps::GUID_t& reader_guid) const override
+        {
+            bool sample_should_be_sent = true;
+
+            auto custom_write_data =
+                    std::static_pointer_cast<CustomUserWriteData>(filter_sample_info.user_write_data);
+
+            // If the reader is the one we want to filter out, do not send the sample
+            if (custom_write_data->filtered_out_prefix_ == reader_guid.guidPrefix)
+            {
+                sample_should_be_sent = false;
+            }
+            return sample_should_be_sent;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> filtered_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> receiving_reader(TEST_TOPIC_NAME);
+
+    // Initialize writer and the filtered reader
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    filtered_reader.init();
+    ASSERT_TRUE(filtered_reader.isInitialized());
+
+    // wait for discovery between writer and filtered reader
+    writer.wait_discovery();
+    filtered_reader.wait_discovery();
+
+    // Set a prefilter on the filtered reader
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Create a second reader that will not be filtered
+    receiving_reader.init();
+    ASSERT_TRUE(receiving_reader.isInitialized());
+
+    // Wait for discovery between the receiving reader and the writer
+    writer.wait_discovery(2);
+    receiving_reader.wait_discovery();
+
+    // Set a user write data on the writer to filter out the filtered reader
+    rtps::WriteParams write_params;
+    write_params.user_write_data(std::make_shared<CustomUserWriteData>(
+                filtered_reader.datareader_guid().guidPrefix));
+    writer.write_params(write_params);
+
+    auto data = default_helloworld_data_generator();
+
+    filtered_reader.startReception(data);
+    receiving_reader.startReception(data);
+
+    writer.send(data, 50, true);
+    // Wait for the filtered reader to timeout receiving the sample
+    ASSERT_EQ(filtered_reader.block_for_all(std::chrono::seconds(1)), 0u);
+    // The receiving reader should have received the samples
+    ASSERT_EQ(receiving_reader.block_for_all(std::chrono::seconds(1)), 10u);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test asserts that prefiltering by payload on a DataWriter
+ * correctly works. The test sets a prefilter to only send samples
+ * with index >= 5 to the discovered reader.
+ */
+TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_payload)
+{
+    // TODO(Mario-DL): Remove when multiple filtering readers case is fixed for data-sharing
+    if (enable_datasharing)
+    {
+        GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
+    }
+
+    struct CustomUserWriteData : public rtps::WriteParams::UserWriteData
+    {
+        CustomUserWriteData(
+                const uint16_t& desired_idx)
+            : desired_idx_(desired_idx)
+        {
+        }
+
+        uint16_t desired_idx_;
+    };
+
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload& payload,
+                const FilterSampleInfo& filter_sample_info,
+                const rtps::GUID_t&) const override
+        {
+            HelloWorldPubSubType hello_world_type_support;
+            HelloWorld hello_world_sample;
+
+            hello_world_type_support.deserialize(*const_cast<SerializedPayload*>(&payload), &hello_world_sample);
+
+            bool sample_should_be_sent = true;
+
+            auto custom_write_data =
+                    std::static_pointer_cast<CustomUserWriteData>(filter_sample_info.user_write_data);
+
+            // Filter out samples <= desired_index
+            if (hello_world_sample.index() <= custom_write_data->desired_idx_)
+            {
+                sample_should_be_sent = false;
+            }
+            return sample_should_be_sent;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Initialize writer and the filtered reader
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // wait for discovery between writer and filtered reader
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Set a prefilter on the filtered reader
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set a user write data on the writer to filter out samples with idx <= 5
+    rtps::WriteParams write_params;
+    write_params.user_write_data(std::make_shared<CustomUserWriteData>(
+                5u));
+    writer.write_params(write_params);
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    writer.send(data, 50, true);
+    // Reader should have received the samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5u);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
