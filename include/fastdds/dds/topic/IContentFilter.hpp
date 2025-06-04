@@ -35,6 +35,8 @@ namespace dds {
  */
 struct IContentFilter
 {
+    virtual ~IContentFilter() = default;
+
     using SerializedPayload = eprosima::fastdds::rtps::SerializedPayload_t;
     using GUID_t = fastdds::rtps::GUID_t;
 

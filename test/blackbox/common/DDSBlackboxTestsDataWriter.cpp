@@ -1307,6 +1307,8 @@ TEST(DDSDataWriter, datawriter_prefilter_precondition_not_met)
 {
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
+        virtual ~CustomPreFilter() = default;
+
         //! Custom filter for the HelloWorld example
         bool evaluate(
                 const SerializedPayload&,
@@ -1356,6 +1358,8 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_write_params)
 
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
+        virtual ~CustomPreFilter() = default;
+
         //! Custom filter for the HelloWorld example
         bool evaluate(
                 const SerializedPayload&,
@@ -1450,6 +1454,8 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_payload)
 
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
+        virtual ~CustomPreFilter() = default;
+
         //! Custom filter for the HelloWorld example
         bool evaluate(
                 const SerializedPayload& payload,

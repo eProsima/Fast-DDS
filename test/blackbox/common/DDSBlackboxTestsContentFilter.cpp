@@ -740,6 +740,8 @@ TEST_P(DDSContentFilter, filter_with_prefilter)
 
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
+        virtual ~CustomPreFilter() = default;
+
         //! Custom filter for the HelloWorld example
         bool evaluate(
                 const SerializedPayload& payload,

@@ -44,9 +44,11 @@ public:
      * classes to be deleted safely through a pointer to this base type.
      * It is intended to be user-extensible.
      */
-    struct UserWriteData
+    struct FASTDDS_EXPORTED_API UserWriteData
     {
-        virtual ~UserWriteData() = default;
+        FASTDDS_EXPORTED_API UserWriteData() = default;
+
+        FASTDDS_EXPORTED_API virtual ~UserWriteData() = default;
     };
 
     /**
