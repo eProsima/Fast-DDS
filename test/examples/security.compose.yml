@@ -23,7 +23,7 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/security/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      CERTS_PATH: @PROJECT_BINARY_DIR@/examples/cpp/security/certs
+      CERTS_PATH: @EXAMPLE_PREFIX_DIR_COMPOSE@/security/certs
       FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/security/secure_subscriber_profile.xml
     command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/security@FILE_EXTENSION@ subscriber --samples 10"
 
@@ -37,7 +37,7 @@ services:
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/security/@EXAMPLE_SUFFIX_DIR_COMPOSE@
-      CERTS_PATH: @PROJECT_BINARY_DIR@/examples/cpp/security/certs
+      CERTS_PATH: @EXAMPLE_PREFIX_DIR_COMPOSE@/security/certs
       FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/security/secure_publisher_profile.xml
     command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/security@FILE_EXTENSION@ publisher --samples 10"
 
