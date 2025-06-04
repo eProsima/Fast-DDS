@@ -2486,10 +2486,10 @@ TEST(DDSDiscovery, multicast_only_one_packet_sent_when_multiple_multicast_reader
     ASSERT_TRUE(IPFinder::getIPs(&ips, true));
 
     uint8_t n_v4_addresses = 0u;
-    for(const auto& ip : ips)
+    for (const auto& ip : ips)
     {
         if (ip.type == eprosima::fastdds::rtps::IPFinder::IP4 ||
-            ip.type == eprosima::fastdds::rtps::IPFinder::IP4_LOCAL)
+                ip.type == eprosima::fastdds::rtps::IPFinder::IP4_LOCAL)
         {
             ++n_v4_addresses;
         }
