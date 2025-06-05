@@ -1503,7 +1503,7 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_payload)
     // Set a user write data on the writer to filter out samples with idx <= 5
     rtps::WriteParams write_params;
     write_params.user_write_data(std::make_shared<CustomUserWriteData>(
-                5u));
+                (uint16_t)5u));
     writer.write_params(write_params);
 
     auto data = default_helloworld_data_generator();

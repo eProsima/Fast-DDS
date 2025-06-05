@@ -46,9 +46,9 @@ public:
      */
     struct FASTDDS_EXPORTED_API UserWriteData
     {
-        FASTDDS_EXPORTED_API UserWriteData() = default;
+        UserWriteData() = default;
 
-        FASTDDS_EXPORTED_API virtual ~UserWriteData() = default;
+        virtual ~UserWriteData() = default;
     };
 
     /**
@@ -239,6 +239,18 @@ public:
 
 private:
 
+    class FASTDDS_EXPORTED_API UserWriteDataPtr : public std::shared_ptr<UserWriteData>
+    {
+    public:
+
+        UserWriteDataPtr(
+                std::shared_ptr<UserWriteData> ptr)
+            : std::shared_ptr<UserWriteData>(ptr)
+        {
+        }
+
+    };
+
     /// Attribute that holds sample_identity member value
     SampleIdentity sample_identity_;
     /// Attribute that holds related_sample_identity member value
@@ -246,7 +258,7 @@ private:
     /// Attribute that holds source_timestamp member value
     Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
     /// User write data
-    std::shared_ptr<UserWriteData> user_write_data_ = nullptr;
+    UserWriteDataPtr user_write_data_{nullptr};
 };
 
 }  // namespace rtps
