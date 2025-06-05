@@ -124,9 +124,54 @@ struct CalculatorServer
      * @brief Stop the server.
      *
      * This method stops the server and releases all resources.
-     * It will cancel all pending requests, and wait for all processing threads to finish before returning.
+     * It will cancel all pending requests, and then @c call server_stopped on the request scheduler to let
+     * it release any resources associated to this server.
+     *
+     * When the server has been created with the factory method that receives a @c thread_pool_size argument,
+     * it will wait for all threads in the pool to finish before returning.
      */
     virtual void stop() = 0;
+
+    /**
+     * @brief Perform execution of a client request.
+     *
+     * @param request The client request to execute.
+     */
+    virtual void execute_request(
+            const std::shared_ptr<CalculatorServer_ClientContext>& request) = 0;
+
+};
+
+struct CalculatorServerSchedulingStrategy
+{
+    virtual ~CalculatorServerSchedulingStrategy() = default;
+
+    /**
+     * @brief Schedule a request for processing.
+     *
+     * This method is called when a request is received and should be processed by the server.
+     * The implementation should decide how to handle the request, whether to process it immediately,
+     * or to queue it for later processing.
+     *
+     * A call to server->execute_request(request) should eventually be made to process the request.
+     *
+     * @note This method is called from the thread that takes requests and input feed values, so it
+     *       should not directly execute the request for operations that have input feed parameters.
+     *
+     * @param request  The request to schedule.
+     * @param server   The server instance that should process the request.
+     */
+    virtual void schedule_request(
+            const std::shared_ptr<CalculatorServer_ClientContext>& request,
+            const std::shared_ptr<CalculatorServer>& server) = 0;
+
+    /**
+     * @brief Informs that a server has been stopped and all its requests have been cancelled.
+     *
+     * @param server  The server instance that has been stopped.
+     */
+    virtual void server_stopped(
+            const std::shared_ptr<CalculatorServer>& server) = 0;
 
 };
 
@@ -137,7 +182,7 @@ struct CalculatorServer
  * @param service_name     The name of the service.
  * @param qos              The QoS settings for the server.
  * @param thread_pool_size The size of the thread pool to use for processing requests.
- *                         When set to 0, a new thread will be created when no threads are available.
+ *                         When set to 0, a pool with a single thread will be created.
  * @param implementation   The implementation of the server interface.
  */
 extern eProsima_user_DllExport std::shared_ptr<CalculatorServer> create_CalculatorServer(
@@ -145,6 +190,22 @@ extern eProsima_user_DllExport std::shared_ptr<CalculatorServer> create_Calculat
         const char* service_name,
         const eprosima::fastdds::dds::ReplierQos& qos,
         size_t thread_pool_size,
+        std::shared_ptr<CalculatorServer_IServerImplementation> implementation);
+
+/**
+ * @brief Create a CalculatorServer instance.
+ *
+ * @param part            The DomainParticipant to use for the server.
+ * @param service_name    The name of the service.
+ * @param qos             The QoS settings for the server.
+ * @param scheduler       The request scheduling strategy to use for the server.
+ * @param implementation  The implementation of the server interface.
+ */
+extern eProsima_user_DllExport std::shared_ptr<CalculatorServer> create_CalculatorServer(
+        eprosima::fastdds::dds::DomainParticipant& part,
+        const char* service_name,
+        const eprosima::fastdds::dds::ReplierQos& qos,
+        std::shared_ptr<CalculatorServerSchedulingStrategy> scheduler,
         std::shared_ptr<CalculatorServer_IServerImplementation> implementation);
 
 
