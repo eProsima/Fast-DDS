@@ -790,7 +790,7 @@ TEST_P(DDSContentFilter, filter_with_prefilter)
     // Set a user write data on the writer to filter out samples 4 < index < 8
     rtps::WriteParams write_params;
     write_params.user_write_data(std::make_shared<CustomUserWriteData>(
-                8u, 4u));
+                (uint16_t)8u, (uint16_t)4u));
     writer.write_params(write_params);
 
     auto data = default_helloworld_data_generator();
