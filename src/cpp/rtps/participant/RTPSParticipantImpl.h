@@ -103,6 +103,12 @@ class MessageReceiver;
 
 namespace rtps {
 
+<<<<<<< HEAD:src/cpp/rtps/participant/RTPSParticipantImpl.h
+=======
+struct PublicationBuiltinTopicData;
+struct TopicDescription;
+struct RemoteLocatorList;
+>>>>>>> 2c7e56f4 (Fix assertion on `OutputTrafficManager` (#5704) (#5711)):src/cpp/rtps/participant/RTPSParticipantImpl.hpp
 class RTPSParticipant;
 class RTPSParticipantListener;
 class BuiltinProtocols;
@@ -1058,6 +1064,10 @@ public:
 
     void createSenderResources(
             const Locator_t& locator);
+
+    void createSenderResources(
+            const RemoteLocatorList& locator_list,
+            const EndpointAttributes& param);
 
     /**
      * Creates sender resources for the given locator selector entry by calling the NetworkFactory's

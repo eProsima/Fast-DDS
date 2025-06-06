@@ -24,9 +24,15 @@
 #include <list>
 #include <utility>
 
+<<<<<<< HEAD
 #include <fastdds/rtps/common/Locator.h>
 
 #include <fastrtps/config.h>
+=======
+#include <fastdds/config.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+>>>>>>> 2c7e56f4 (Fix assertion on `OutputTrafficManager` (#5704) (#5711))
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
@@ -84,8 +90,18 @@ public:
                     return locator == entry.first;
                 };
         auto it = std::find_if(collection_.begin(), collection_.end(), search);
+<<<<<<< HEAD
         assert(it != collection_.end());
         set_statistics_submessage_from_transport(locator, send_buffer, send_buffer_size, it->second);
+=======
+        if (it == collection_.end())
+        {
+            EPROSIMA_LOG_ERROR(RTPS_OUT,
+                    "Locator '" << locator << "' not found in collection. Adding entry.");
+            it = collection_.insert(it, entry_type(locator, value_type{}));
+        }
+        set_statistics_submessage_from_transport(locator, send_buffer, total_bytes, it->second);
+>>>>>>> 2c7e56f4 (Fix assertion on `OutputTrafficManager` (#5704) (#5711))
 #endif // FASTDDS_STATISTICS
     }
 
