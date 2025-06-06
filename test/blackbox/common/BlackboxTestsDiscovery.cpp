@@ -202,7 +202,7 @@ void static_discovery_test(
             .property_policy(writer_property_policy);
     writer.static_discovery("file://PubSubWriter_static_disc.xml").reliability(
         eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+            unicastLocatorList(WriterUnicastLocators).multicast_locator_list(WriterMulticastLocators).
             setPublisherIDs(1,
             2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
@@ -237,7 +237,7 @@ void static_discovery_test(
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .property_policy(reader_property_policy);
     reader.static_discovery("file://PubSubReader_static_disc.xml").
-            unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
+            unicastLocatorList(ReaderUnicastLocators).multicast_locator_list(ReaderMulticastLocators).
             setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 

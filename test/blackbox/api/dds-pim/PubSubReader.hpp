@@ -1263,7 +1263,7 @@ public:
         return *this;
     }
 
-    PubSubReader& multicastLocatorList(
+    PubSubReader& multicast_locator_list(
             const eprosima::fastdds::rtps::LocatorList& multicast_locators)
     {
         datareader_qos_.endpoint().multicast_locator_list = multicast_locators;
