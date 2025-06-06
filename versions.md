@@ -7,6 +7,9 @@ Forthcoming
   * Added optional serialization of `WireProtocolConfigQos` to the `ParticipantDiscoveryData`.
 * Monitor service now serializes all optional QoS in the ProxyDatas.
 * Removed Request-Reply example in favor of the new RPC over DDS example.
+* Add DataWriter Sample Prefilter feature:
+  * New `DataWriter::set_sample_prefilter` method.
+  * New `WriteParams::UserWriteData` extensible struct.
 
 Version v3.2.2
 --------------
