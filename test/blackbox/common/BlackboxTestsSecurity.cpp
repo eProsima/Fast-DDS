@@ -5282,6 +5282,40 @@ TEST(Security, legacy_token_algorithms_communicate)
     test_run(true, true);
 }
 
+/**
+ * This test is a regression test for Redmine issue #23043.
+ * It replicates the behavior observed in the CI of DDS Router.
+ * Test: tool.application.ddsrouter.compose.security_secure_trespassing
+ */
+TEST(Security, SerializationOfParticipantGenericMessageWhenAddingProperties)
+{
+    PubSubReader<HelloWorldPubSubType> reader("topic_1");
+    PubSubWriter<HelloWorldPubSubType> writer("topic_1");
+
+    PropertyPolicy property_policy;
+    std::string xml_file = "security_bug_participant_generic_message.xml";
+    std::string profile_name_1 = "secure_router";
+    std::string profile_name_2 = "secure_local_pub1";
+
+    writer.set_xml_filename(xml_file);
+    writer.set_participant_profile(profile_name_2);
+
+    reader.set_xml_filename(xml_file);
+    reader.set_participant_profile(profile_name_1);
+
+    reader.setManualTopicName("topic_1")
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.setManualTopicName("topic_1")
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Both should be authorized
+    reader.waitAuthorized();
+    writer.waitAuthorized();
+}
+
 void blackbox_security_init()
 {
     certs_path = std::getenv("CERTS_PATH");

@@ -586,13 +586,17 @@ inline bool CDRMessage::addOctetVector(
         const std::vector<octet>* ocvec,
         bool add_final_padding)
 {
-    // TODO Calculate without padding
-    auto final_size = msg->pos + ocvec->size();
+    auto final_size = msg->pos + 4 + ocvec->size();
     if (add_final_padding)
     {
-        final_size += 4;
+        size_t rest = ocvec->size() % 4;
+        if (rest != 0)
+        {
+            rest = 4 - rest; // How many you have to add
+            final_size += rest;
+        }
     }
-    if (final_size >= msg->max_size)
+    if (final_size > msg->max_size)
     {
         return false;
     }
@@ -601,13 +605,11 @@ inline bool CDRMessage::addOctetVector(
 
     if (add_final_padding)
     {
-        int rest = ocvec->size() % 4;
-        if (rest != 0)
+        size_t rest = final_size - msg->pos;
+        if (rest > 0)
         {
-            rest = 4 - rest; //how many you have to add
-
             octet oc = '\0';
-            for (int i = 0; i < rest; i++)
+            for (size_t i = 0; i < rest; i++)
             {
                 valid &= CDRMessage::addOctet(msg, oc);
             }
@@ -621,7 +623,7 @@ inline bool CDRMessage::addEntityId(
         CDRMessage_t* msg,
         const EntityId_t* ID)
 {
-    if (msg->pos + 4 >= msg->max_size)
+    if (msg->pos + 4 > msg->max_size)
     {
         return false;
     }

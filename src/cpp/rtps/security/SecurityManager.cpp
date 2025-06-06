@@ -73,6 +73,19 @@ inline bool usleep_bool()
     return true;
 }
 
+<<<<<<< HEAD
+=======
+static CacheChange_t* create_change_for_message(
+        const ParticipantGenericMessage& message,
+        WriterHistory* history)
+{
+    uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+    cdr_size += (4 - (cdr_size % 4)) & (4 - 1); // Align to 4 bytes
+    cdr_size += 4; // Encapsulation
+    return history->create_change(cdr_size, ALIVE, c_InstanceHandle_Unknown);
+}
+
+>>>>>>> 1bf0040b (Fix ParticipantGenericMessage serialization (#5843))
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
         ISecurityPluginFactory& plugin_factory)
@@ -222,7 +235,8 @@ bool SecurityManager::init(
                                 participant_->getRTPSParticipantAttributes(),
                                 participant_->getGuid(),
                                 exception);
-            } while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
+            }
+            while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
 
             if (ret == VALIDATION_OK)
             {
