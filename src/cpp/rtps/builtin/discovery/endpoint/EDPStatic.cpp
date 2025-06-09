@@ -45,7 +45,7 @@ namespace rtps {
 const char* exchange_format_property_name = "dds.discovery.static_edp.exchange_format";
 const char* exchange_format_property_value_v1 = "v1";
 const char* exchange_format_property_value_v1_reduced = "v1_Reduced";
-const char* exchange_format_property_value_v2_reduced = "v2_Reduced";
+const char* exchange_format_property_value_v2 = "v2";
 
 /**
  * Class Property, used to read and write the strings from the properties used to transmit the EntityId_t.
@@ -142,9 +142,9 @@ bool EDPStatic::initEDP(
     {
         if (0 == property.name().compare(exchange_format_property_name))
         {
-            if (0 == property.value().compare(exchange_format_property_value_v2_reduced))
+            if (0 == property.value().compare(exchange_format_property_value_v2))
             {
-                exchange_format_ = ExchangeFormat::v2_Reduced;
+                exchange_format_ = ExchangeFormat::v2;
             }
             else if (0 == property.value().compare(exchange_format_property_value_v1_reduced))
             {
@@ -350,7 +350,7 @@ std::vector<uint8_t> string_to_vector(
     return bits_vector;
 }
 
-bool EDPStatic::enable_reader_on_v2_reduced_property(
+bool EDPStatic::enable_reader_on_v2_property(
         const std::string& local_participant_name,
         fastdds::dds::ParameterPropertyList_t& pdp_properties,
         uint16_t id,
@@ -406,7 +406,7 @@ bool EDPStatic::enable_reader_on_v2_reduced_property(
     return ret_value;
 }
 
-bool EDPStatic::enable_writer_on_v2_reduced_property(
+bool EDPStatic::enable_writer_on_v2_property(
         const std::string& local_participant_name,
         fastdds::dds::ParameterPropertyList_t& pdp_properties,
         uint16_t id,
@@ -541,9 +541,9 @@ bool EDPStatic::process_reader_proxy_data(
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    if (ExchangeFormat::v2 == exchange_format_)
     {
-        enable_reader_on_v2_reduced_property(localpdata->participant_name.to_string(), localpdata->properties,
+        enable_reader_on_v2_property(localpdata->participant_name.to_string(), localpdata->properties,
                 rdata->user_defined_id(), false);
     }
     else
@@ -564,9 +564,9 @@ bool EDPStatic::process_writer_proxy_data(
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    if (ExchangeFormat::v2 == exchange_format_)
     {
-        enable_writer_on_v2_reduced_property(localpdata->participant_name.to_string(), localpdata->properties,
+        enable_writer_on_v2_property(localpdata->participant_name.to_string(), localpdata->properties,
                 wdata->user_defined_id(), false);
     }
     else
@@ -585,9 +585,9 @@ bool EDPStatic::remove_reader(
     bool ret_value {false};
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    if (ExchangeFormat::v2 == exchange_format_)
     {
-        ret_value = enable_reader_on_v2_reduced_property(
+        ret_value = enable_reader_on_v2_property(
             localpdata->participant_name.to_string(), localpdata->properties,
             rtps_reader->getAttributes().getUserDefinedID(), true);
     }
@@ -626,9 +626,9 @@ bool EDPStatic::remove_writer(
     bool ret_value {false};
     std::lock_guard<std::recursive_mutex> guard(*mp_PDP->getMutex());
     ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
-    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    if (ExchangeFormat::v2 == exchange_format_)
     {
-        ret_value = enable_writer_on_v2_reduced_property(
+        ret_value = enable_writer_on_v2_property(
             localpdata->participant_name.to_string(), localpdata->properties,
             rtps_writer->getAttributes().getUserDefinedID(), true);
     }
@@ -689,7 +689,7 @@ void EDPStatic::assignRemoteEndpoints(
         persistence_guid.entityId.value[2] = pdata.user_data.at(17);
     }
 
-    if (ExchangeFormat::v2_Reduced == exchange_format_)
+    if (ExchangeFormat::v2 == exchange_format_)
     {
         std::string participant_name {pdata.participant_name.to_string()};
         for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
