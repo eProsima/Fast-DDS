@@ -1433,9 +1433,10 @@ void StatefulWriter::check_acked_status()
     bool has_min_low_mark = false;
     // #8945 If no readers matched, notify all old changes.
     SequenceNumber_t min_low_mark = history_->next_sequence_number() - 1;
+    SequenceNumber_t highest_seq_num = history_->next_sequence_number() - 1;
 
     for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-            [&all_acked, &has_min_low_mark, &min_low_mark](ReaderProxy* reader)
+            [&all_acked, &has_min_low_mark, &min_low_mark, highest_seq_num](ReaderProxy* reader)
             {
                 SequenceNumber_t reader_low_mark = reader->changes_low_mark();
                 if (reader_low_mark < min_low_mark || !has_min_low_mark)
@@ -1444,7 +1445,7 @@ void StatefulWriter::check_acked_status()
                     min_low_mark = reader_low_mark;
                 }
 
-                if (reader->has_changes())
+                if (reader->has_changes() || (reader_low_mark < highest_seq_num))
                 {
                     all_acked = false;
                 }
@@ -1452,16 +1453,6 @@ void StatefulWriter::check_acked_status()
                 return false;
             }
             );
-
-    // In situation that there are recently matched readers to the writer has not yet
-    // sent changes, both 'min_low_mark = zero' and 'all_acked == true' will be met.
-    // In this scenario, onWriterChangeReceivedByAll() will be skipped for the acked
-    // changes, that causes the changes to remain in history indefinitely.
-    // To prevent this condition, clip min_low_mark to handle the acked changes.
-    if (all_acked)
-    {
-        min_low_mark = history_->next_sequence_number() - 1;
-    }
 
     bool something_changed = all_acked;
     SequenceNumber_t min_seq = get_seq_num_min();
