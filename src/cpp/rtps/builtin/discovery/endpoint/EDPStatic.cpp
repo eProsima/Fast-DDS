@@ -534,21 +534,21 @@ bool EDPStaticProperty::fromProperty(
 }
 
 bool EDPStatic::process_reader_proxy_data(
-        RTPSReader*,
+        RTPSReader* reader,
         ReaderProxyData* rdata)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata->guid.entityId << " in topic: " << rdata->topic_name);
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
-    ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+    ParticipantProxyData* remote_pdata = mp_PDP->get_participant_proxy_data(reader->getGuid().guidPrefix);
     if (ExchangeFormat::v2 == exchange_format_)
     {
-        enable_reader_on_v2_property(localpdata->participant_name.to_string(), localpdata->properties,
+        enable_reader_on_v2_property(remote_pdata->participant_name.to_string(), remote_pdata->properties,
                 rdata->user_defined_id(), false);
     }
     else
     {
-        localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
+        remote_pdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Reader", "ALIVE",
                 rdata->user_defined_id(), rdata->guid.entityId));
     }
     mp_PDP->getMutex()->unlock();
@@ -557,21 +557,21 @@ bool EDPStatic::process_reader_proxy_data(
 }
 
 bool EDPStatic::process_writer_proxy_data(
-        RTPSWriter*,
+        RTPSWriter* writer,
         WriterProxyData* wdata)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, wdata->guid.entityId << " in topic: " << wdata->topic_name);
     mp_PDP->getMutex()->lock();
     //Add the property list entry to our local pdp
-    ParticipantProxyData* localpdata = this->mp_PDP->getLocalParticipantProxyData();
+    ParticipantProxyData* remote_pdata = mp_PDP->get_participant_proxy_data(writer->getGuid().guidPrefix);
     if (ExchangeFormat::v2 == exchange_format_)
     {
-        enable_writer_on_v2_property(localpdata->participant_name.to_string(), localpdata->properties,
+        enable_writer_on_v2_property(remote_pdata->participant_name.to_string(), remote_pdata->properties,
                 wdata->user_defined_id(), false);
     }
     else
     {
-        localpdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
+        remote_pdata->properties.push_back(EDPStaticProperty::toProperty(exchange_format_, "Writer", "ALIVE",
                 wdata->user_defined_id(), wdata->guid.entityId));
     }
     mp_PDP->getMutex()->unlock();
