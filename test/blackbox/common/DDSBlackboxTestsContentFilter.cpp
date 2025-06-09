@@ -740,7 +740,7 @@ TEST_P(DDSContentFilter, filter_with_prefilter)
 
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
-        virtual ~CustomPreFilter() = default;
+        ~CustomPreFilter() override = default;
 
         //! Custom filter for the HelloWorld example
         bool evaluate(
@@ -791,13 +791,12 @@ TEST_P(DDSContentFilter, filter_with_prefilter)
     rtps::WriteParams write_params;
     write_params.user_write_data(std::make_shared<CustomUserWriteData>(
                 (uint16_t)8u, (uint16_t)4u));
-    writer.write_params(write_params);
 
     auto data = default_helloworld_data_generator();
 
     reader.startReception(data);
 
-    writer.send(data, 50, true);
+    writer.send(data, 50, &write_params);
 
     // Reader should have received 3 samples
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 3u);
