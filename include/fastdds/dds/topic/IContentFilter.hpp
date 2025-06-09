@@ -50,7 +50,7 @@ struct IContentFilter
 
         FilterSampleInfo() = default;
 
-        FilterSampleInfo(
+        explicit FilterSampleInfo(
                 const rtps::WriteParams& wparams)
             : sample_identity(wparams.sample_identity())
             , related_sample_identity(wparams.related_sample_identity())

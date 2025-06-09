@@ -1299,15 +1299,13 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_optional)
 /**
  * @test DataWriter Sample prefilter feature
  *
- * This test checks that setting a prefilter on a DataWriter with no
- * reader filters returns RETCODE_PRECONDITION_NOT_MET.
+ * This test checks that prefilter reset correctly works.
  */
-
-TEST(DDSDataWriter, datawriter_prefilter_precondition_not_met)
+TEST(DDSDataWriter, datawriter_prefilter_reset)
 {
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
-        virtual ~CustomPreFilter() = default;
+        ~CustomPreFilter() override = default;
 
         //! Custom filter for the HelloWorld example
         bool evaluate(
@@ -1315,25 +1313,52 @@ TEST(DDSDataWriter, datawriter_prefilter_precondition_not_met)
                 const FilterSampleInfo&,
                 const rtps::GUID_t& ) const override
         {
-            /* sample_should_be_sent */
-            return true;
+            /* sample should not be sent */
+            return false;
         }
 
     };
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    // Set QoS to get no reader_filters on the DataWriter
-    writer.liveliness_lease_duration({10, 0})
-            .liveliness_announcement_period({3, 0})
-            .init();
-
+    // Initialize writer
+    writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
-    // Try to set a prefilter without reader filters
+    // Set a prefilter on the writer
+    // discarding all samples
     ASSERT_EQ(writer.set_sample_prefilter(
                 std::make_shared<CustomPreFilter>()),
-            eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET);
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Initialize reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // The reader should not receive any sample
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    // Wait for the reader to timeout receiving the samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
+
+    // Reset the prefilter
+    ASSERT_EQ(writer.set_sample_prefilter(
+                nullptr),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    data = default_helloworld_data_generator();
+
+    // The reader should now receive the samples
+    writer.send(data);
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(3)), 10u);
 }
 
 /**
@@ -1358,7 +1383,7 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_write_params)
 
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
-        virtual ~CustomPreFilter() = default;
+        ~CustomPreFilter() override = default;
 
         //! Custom filter for the HelloWorld example
         bool evaluate(
@@ -1412,14 +1437,13 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_write_params)
     rtps::WriteParams write_params;
     write_params.user_write_data(std::make_shared<CustomUserWriteData>(
                 filtered_reader.datareader_guid().guidPrefix));
-    writer.write_params(write_params);
 
     auto data = default_helloworld_data_generator();
 
     filtered_reader.startReception(data);
     receiving_reader.startReception(data);
 
-    writer.send(data, 50, true);
+    writer.send(data, 50, &write_params);
     // Wait for the filtered reader to timeout receiving the sample
     ASSERT_EQ(filtered_reader.block_for_all(std::chrono::seconds(1)), 0u);
     // The receiving reader should have received the samples
@@ -1454,7 +1478,7 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_payload)
 
     struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
     {
-        virtual ~CustomPreFilter() = default;
+        ~CustomPreFilter() override = default;
 
         //! Custom filter for the HelloWorld example
         bool evaluate(
@@ -1504,13 +1528,12 @@ TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_payload)
     rtps::WriteParams write_params;
     write_params.user_write_data(std::make_shared<CustomUserWriteData>(
                 (uint16_t)5u));
-    writer.write_params(write_params);
 
     auto data = default_helloworld_data_generator();
 
     reader.startReception(data);
 
-    writer.send(data, 50, true);
+    writer.send(data, 50, &write_params);
     // Reader should have received the samples
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5u);
 }
