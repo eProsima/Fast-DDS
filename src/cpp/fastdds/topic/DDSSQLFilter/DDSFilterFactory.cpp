@@ -464,8 +464,6 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
         const IContentFilterFactory::ParameterSeq& filter_parameters,
         IContentFilter*& filter_instance)
 {
-    static_cast<void>(data_type);
-
     ReturnCode_t ret = RETCODE_UNSUPPORTED;
 
     if (nullptr == filter_expression)
@@ -522,22 +520,48 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
     }
     else
     {
-        std::shared_ptr<xtypes::TypeObjectPair> type_objects = std::make_shared<xtypes::TypeObjectPair>();
-        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-            type_name, *type_objects);
-        if (RETCODE_OK != ret)
+        std::shared_ptr<xtypes::TypeObject> type_object;
+        {
+            std::shared_ptr<xtypes::TypeObjectPair> type_objects = std::make_shared<xtypes::TypeObjectPair>();
+            ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+                type_name, *type_objects);
+            if (RETCODE_OK == ret)
+            {
+                type_object = std::make_shared<xtypes::TypeObject>(type_objects->complete_type_object);
+            }
+        }
+
+        if (!type_object)
+        {
+            xtypes::TypeObject complete_type_object;
+            if (xtypes::EK_MINIMAL == data_type->type_identifiers().type_identifier1()._d())
+            {
+                ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                    data_type->type_identifiers().type_identifier2(), complete_type_object);
+            }
+            else
+            {
+                ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                    data_type->type_identifiers().type_identifier1(), complete_type_object);
+            }
+
+            if (RETCODE_OK == ret)
+            {
+                type_object = std::make_shared<xtypes::TypeObject>(complete_type_object);
+            }
+        }
+
+        if (!type_object)
         {
             EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
         }
         else
         {
-            auto node =
-                    parser::parse_filter_expression(filter_expression,
-                            std::make_shared<xtypes::TypeObject>(type_objects->complete_type_object));
+            auto node = parser::parse_filter_expression(filter_expression, type_object);
             if (node)
             {
                 DynamicType::_ref_type dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
-                    type_objects->complete_type_object)->build();
+                    *type_object)->build();
                 if (dyn_type)
                 {
                     DDSFilterExpression* expr = get_expression();
@@ -548,8 +572,7 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
                     {
                         expr->parameters.emplace_back();
                     }
-                    ExpressionParsingState state{ std::make_shared<xtypes::TypeObject>(
-                                                      type_objects->complete_type_object),
+                    ExpressionParsingState state{ std::make_shared<xtypes::TypeObject>(*type_object),
                                                   filter_parameters, expr };
                     ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
                     if (RETCODE_OK == ret)
