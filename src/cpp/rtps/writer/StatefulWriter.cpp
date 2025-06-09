@@ -1460,7 +1460,7 @@ void StatefulWriter::check_acked_status()
     // To prevent this condition, clip min_low_mark to handle the acked changes.
     if (all_acked)
     {
-      min_low_mark = mp_history->next_sequence_number() - 1;
+        min_low_mark = history_->next_sequence_number() - 1;
     }
 
     bool something_changed = all_acked;
