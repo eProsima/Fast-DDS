@@ -2944,7 +2944,7 @@ TEST(DDSMonitorServiceTest, monitor_service_proxy_optional_qos)
     expected_participant_builtin_topic_data.wire_protocol->prefix =
             expected_participant_builtin_topic_data.guid.guidPrefix;
     expected_participant_builtin_topic_data.wire_protocol->participant_id = 0;
-    expected_participant_builtin_topic_data.wire_protocol->builtin.network_configuration = LOCATOR_KIND_SHM;
+    expected_participant_builtin_topic_data.wire_protocol->builtin.network_configuration = LOCATOR_KIND_UDPv4;
 
     validator->register_remote_participant_builtin_topic_data(expected_participant_builtin_topic_data);
 
