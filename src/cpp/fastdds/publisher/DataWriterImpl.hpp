@@ -552,7 +552,7 @@ protected:
 
     DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
 
-    mutable std::mutex sample_prefilter_mutex_;
+    mutable std::mutex filters_mtx_;
     std::shared_ptr<IContentFilter> sample_prefilter_;
 
     ReturnCode_t check_write_preconditions(

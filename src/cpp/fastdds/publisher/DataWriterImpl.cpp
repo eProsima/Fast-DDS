@@ -347,9 +347,12 @@ ReturnCode_t DataWriterImpl::enable()
     bool filtering_enabled =
             qos_.liveliness().lease_duration.is_infinite() &&
             (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
-    if (filtering_enabled)
     {
-        reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
+        std::lock_guard<std::mutex> lock(filters_mtx_);
+        if (filtering_enabled && !reader_filters_)
+        {
+            reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
+        }
     }
 
     // Set Datawriter's DataRepresentationId taking into account the QoS.
@@ -1504,24 +1507,8 @@ ReturnCode_t DataWriterImpl::set_sample_prefilter(
         std::shared_ptr<IContentFilter> prefilter)
 {
     {
-        std::lock_guard<std::mutex> lock(sample_prefilter_mutex_);
+        std::lock_guard<std::mutex> lock(filters_mtx_);
         sample_prefilter_ = prefilter;
-    }
-
-    if (writer_ != nullptr)
-    {
-        if (!reader_filters_)
-        {
-            std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
-            if (prefilter)
-            {
-                writer_->reader_data_filter(this);
-            }
-            else
-            {
-                writer_->reader_data_filter(nullptr);
-            }
-        }
     }
 
     return RETCODE_OK;
@@ -2399,18 +2386,15 @@ bool DataWriterImpl::is_relevant(
         const fastdds::rtps::CacheChange_t& change,
         const fastdds::rtps::GUID_t& reader_guid) const
 {
-    assert(reader_filters_ || sample_prefilter_);
     bool is_relevant_for_reader = true;
+    std::lock_guard<std::mutex> lock(filters_mtx_);
 
+    if (sample_prefilter_)
     {
-        std::lock_guard<std::mutex> lock(sample_prefilter_mutex_);
-        if (sample_prefilter_)
-        {
-            IContentFilter::FilterSampleInfo filter_sample_info(change.write_params);
-            is_relevant_for_reader = sample_prefilter_->evaluate(change.serializedPayload,
-                            filter_sample_info,
-                            reader_guid);
-        }
+        IContentFilter::FilterSampleInfo filter_sample_info(change.write_params);
+        is_relevant_for_reader = sample_prefilter_->evaluate(change.serializedPayload,
+                        filter_sample_info,
+                        reader_guid);
     }
 
     if (is_relevant_for_reader && reader_filters_)
