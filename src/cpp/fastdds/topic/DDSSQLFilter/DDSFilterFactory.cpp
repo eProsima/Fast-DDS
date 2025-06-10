@@ -456,6 +456,42 @@ DDSFilterFactory::~DDSFilterFactory()
     pool.clear();
 }
 
+static std::shared_ptr<xtypes::TypeObject> get_complete_type_object(
+        const char* type_name,
+        const TopicDataType* data_type)
+{
+    ReturnCode_t ret;
+
+    // Try to get the complete TypeObject from the type name
+    std::shared_ptr<xtypes::TypeObjectPair> type_objects = std::make_shared<xtypes::TypeObjectPair>();
+    ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+        type_name, *type_objects);
+    if (RETCODE_OK == ret)
+    {
+        return std::make_shared<xtypes::TypeObject>(type_objects->complete_type_object);
+    }
+
+    // If not found, try to get the complete TypeObject from the type identifier
+    xtypes::TypeObject complete_type_object;
+    if (xtypes::EK_MINIMAL == data_type->type_identifiers().type_identifier1()._d())
+    {
+        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+            data_type->type_identifiers().type_identifier2(), complete_type_object);
+    }
+    else
+    {
+        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+            data_type->type_identifiers().type_identifier1(), complete_type_object);
+    }
+
+    if (RETCODE_OK == ret)
+    {
+        return std::make_shared<xtypes::TypeObject>(complete_type_object);
+    }
+
+    return nullptr;
+}
+
 ReturnCode_t DDSFilterFactory::create_content_filter(
         const char* filter_class_name,
         const char* type_name,
@@ -520,36 +556,7 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
     }
     else
     {
-        std::shared_ptr<xtypes::TypeObject> type_object;
-        {
-            std::shared_ptr<xtypes::TypeObjectPair> type_objects = std::make_shared<xtypes::TypeObjectPair>();
-            ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-                type_name, *type_objects);
-            if (RETCODE_OK == ret)
-            {
-                type_object = std::make_shared<xtypes::TypeObject>(type_objects->complete_type_object);
-            }
-        }
-
-        if (!type_object)
-        {
-            xtypes::TypeObject complete_type_object;
-            if (xtypes::EK_MINIMAL == data_type->type_identifiers().type_identifier1()._d())
-            {
-                ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                    data_type->type_identifiers().type_identifier2(), complete_type_object);
-            }
-            else
-            {
-                ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                    data_type->type_identifiers().type_identifier1(), complete_type_object);
-            }
-
-            if (RETCODE_OK == ret)
-            {
-                type_object = std::make_shared<xtypes::TypeObject>(complete_type_object);
-            }
-        }
+        std::shared_ptr<xtypes::TypeObject> type_object = get_complete_type_object(type_name, data_type);
 
         if (!type_object)
         {
