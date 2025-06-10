@@ -247,7 +247,7 @@ void ClientPublisherApp::run()
         {
             std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                       << "' SENT" << std::endl;
-            
+
             if (hello_.index() == 1u)
             {
                 ReturnCode_t acked = RETCODE_ERROR;
