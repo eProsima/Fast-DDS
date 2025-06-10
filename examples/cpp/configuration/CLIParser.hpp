@@ -1043,7 +1043,7 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < 1 || 
+                            if (input < 1 ||
                                     static_cast<unsigned int>(input) > std::numeric_limits<uint32_t>::max())
                             {
                                 throw std::out_of_range("ownership strength argument " + std::string(
