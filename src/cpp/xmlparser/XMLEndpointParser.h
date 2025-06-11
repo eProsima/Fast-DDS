@@ -131,7 +131,8 @@ public:
     XMLP_ret lookforReader(
             const char* partname,
             uint16_t id,
-            rtps::ReaderProxyData** rdataptr);
+            rtps::ReaderProxyData** rdataptr,
+            uint32_t& position);
     /**
      * Look for a writer in the previously loaded endpoints.
      * @param [in] partname RTPSParticipant name
@@ -142,7 +143,24 @@ public:
     XMLP_ret lookforWriter(
             const char* partname,
             uint16_t id,
+            rtps::WriterProxyData** wdataptr,
+            uint32_t& position);
+
+    XMLP_ret get_reader_from_position(
+            const std::string& participant_name,
+            size_t pos,
+            rtps::ReaderProxyData** rdataptr);
+
+    XMLP_ret get_writer_from_position(
+            const std::string& participant_name,
+            size_t pos,
             rtps::WriterProxyData** wdataptr);
+
+    size_t get_number_of_readers(
+            const std::string& participant_name);
+
+    size_t get_number_of_writers(
+            const std::string& participant_name);
 
 private:
 

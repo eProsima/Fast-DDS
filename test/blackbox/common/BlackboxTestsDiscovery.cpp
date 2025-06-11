@@ -200,7 +200,7 @@ void static_discovery_test(
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .property_policy(writer_property_policy);
-    writer.static_discovery("file://PubSubWriter_static_disc.xml").reliability(
+    writer.static_discovery("file://RTPSParticipant_static_disc.xml").reliability(
         eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
             unicastLocatorList(WriterUnicastLocators).multicast_locator_list(WriterMulticastLocators).
             setPublisherIDs(1,
@@ -236,7 +236,7 @@ void static_discovery_test(
             .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .property_policy(reader_property_policy);
-    reader.static_discovery("file://PubSubReader_static_disc.xml").
+    reader.static_discovery("file://RTPSParticipant_static_disc.xml").
             unicastLocatorList(ReaderUnicastLocators).multicast_locator_list(ReaderMulticastLocators).
             setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
@@ -278,6 +278,21 @@ TEST(Discovery, StaticDiscovery_v1_Reduced)
 TEST(Discovery, StaticDiscovery_v1_Mixed)
 {
     static_discovery_test("v1", "v1_Reduced");
+}
+
+TEST(Discovery, StaticDiscovery_v2)
+{
+    static_discovery_test("v2", "v2");
+}
+
+TEST(Discovery, StaticDiscovery_v1_v2)
+{
+    static_discovery_test("v2", "v2");
+}
+
+TEST(Discovery, StaticDiscovery_v1_Reduced_v2)
+{
+    static_discovery_test("v2", "v2");
 }
 
 TEST(Discovery, StaticDiscovery_wrong_exchange_format)
