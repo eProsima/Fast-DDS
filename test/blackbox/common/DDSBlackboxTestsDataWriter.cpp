@@ -1364,6 +1364,65 @@ TEST(DDSDataWriter, datawriter_prefilter_reset)
 /**
  * @test DataWriter Sample prefilter feature
  *
+ * This test checks that prefilter works correctly with standard filtering disabled.
+ */
+TEST(DDSDataWriter, datawriter_prefilter_no_standard_filtering)
+{
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload&,
+                const FilterSampleInfo&,
+                const rtps::GUID_t& ) const override
+        {
+            /* sample should not be sent */
+            return false;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Initialize writer
+    // with no standard filtering enabled (set liveliness lease duration
+    // to something other than infinite)
+    writer.liveliness_lease_duration({2, 0})
+            .liveliness_announcement_period({1, 0 })
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Set a prefilter on the writer
+    // discarding all samples
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Initialize reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // The reader should not receive any sample
+    // As the prefilter is set to discard all samples
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    // Wait for the reader to timeout receiving the samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
  * This test asserts that prefiltering by write_params on a DataWriter
  * correctly works. The test sets a prefilter to only send samples
  * to the second reader discovered.
