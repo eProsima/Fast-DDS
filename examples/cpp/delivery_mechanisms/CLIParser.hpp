@@ -306,6 +306,10 @@ public:
                     {
                         config.delivery_mechanism = DeliveryMechanismKind::SHM;
                     }
+                    else if (mechanism == "DEFAULT" || mechanism == "default")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::DEFAULT;
+                    }
                     else
                     {
                         EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing mechanism argument");
