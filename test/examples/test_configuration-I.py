@@ -44,11 +44,20 @@ def test_configuration(pub_args, sub_args):
     menv["PUB_ARGS"] =  pub_requirements + ' ' + pub_args
     menv["SUB_ARGS"] =  sub_requirements + ' ' + sub_args
 
+    timeout = 30
+    #In windows timeout argument does not wor properly
+    #It is not able to kill the subprocess when it is surpassed
+    #and when the subprocess exists then it is checked.
+    #This test is about samples (1000) so for big msgs in windows
+    #it can take longer. Set it to a higher value
+    if os.name == 'nt':
+        timeout = 200
+
     try:
         out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f configuration.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=40,
+            timeout=timeout,
             env=menv
         )
         render_out = out.decode().split('\n')

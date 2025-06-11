@@ -83,11 +83,20 @@ def test_delivery_mechanisms(pub_args, sub_args, isub_args, pubsub_args, repetit
     # Set a random suffix to the cotainer name to avoid conflicts with other containers
     menv["CONTAINER_SUFFIX_COMPOSE"] = str(random.randint(0,100))
 
+    timeout = 30
+    #In windows timeout argument does not wor properly
+    #It is not able to kill the subprocess when it is surpassed
+    #and when the subprocess exists then it is checked.
+    #This test is about samples (1000) so for big msgs in windows
+    #it can take longer. Set it to a higher value
+    if os.name == 'nt':
+        timeout = 200
+
     try:
         out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f delivery_mechanisms.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=50,
+            timeout=timeout,
             env=menv
         ).decode().split('\n')
 
