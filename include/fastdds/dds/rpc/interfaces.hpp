@@ -22,6 +22,7 @@
 #include <fastdds/dds/rpc/interfaces/RpcClientReader.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcClientWriter.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcFuture.hpp>
+#include <fastdds/dds/rpc/interfaces/RpcRequest.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcServer.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcServerReader.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcServerWriter.hpp>
