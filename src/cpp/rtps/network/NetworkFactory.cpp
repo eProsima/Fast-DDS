@@ -24,6 +24,7 @@
 #include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
+#include <rtps/network/NetworkConfiguration.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 
 using namespace std;
@@ -166,7 +167,9 @@ bool NetworkFactory::RegisterTransport(
 
             if (is_localhost_allowed)
             {
-                network_configuration_ |= kind;
+                network::add_localhost_capability(
+                    kind,
+                    network_configuration_);
             }
         }
     }
