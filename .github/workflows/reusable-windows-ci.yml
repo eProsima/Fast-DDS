@@ -27,7 +27,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: 'master'
+        default: '2.3.x'
       cmake-config:
         description: 'CMake configuration to use'
         required: false

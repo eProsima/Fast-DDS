@@ -31,7 +31,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: 'master'
+        default: '2.3.x'
       security:
         description: 'Enable security features'
         required: false
@@ -476,7 +476,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
-          fallback_branch: master
+          fallback_branch: 3.2.x
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -583,7 +583,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/ShapesDemo
-          fallback_branch: 'master'
+          fallback_branch: '3.2.x'
 
       - name: Download Shapes Demo repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -663,7 +663,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Discovery-Server
-          fallback_branch: 'master'
+          fallback_branch: '2.1.x'
 
       - name: Download Discovery Server repo
         uses: eProsima/eProsima-CI/external/checkout@v0

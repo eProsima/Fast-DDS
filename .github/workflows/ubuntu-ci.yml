@@ -64,7 +64,7 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
-      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '3.2.x' }}
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
       run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
