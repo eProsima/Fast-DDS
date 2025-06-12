@@ -226,6 +226,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageGroup.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/SendBuffersManager.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ReceiverResource.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
@@ -429,6 +430,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageGroup.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/SendBuffersManager.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkConfiguration.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ReceiverResource.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
