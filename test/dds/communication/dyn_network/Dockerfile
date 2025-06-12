@@ -24,7 +24,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install apt dependencies
-RUN apt-get update && apt-get install --yes net-tools python3 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install --yes net-tools && rm -rf /var/lib/apt/lists/*
 
 FROM ubuntu:$ubuntu_version AS ubuntu-cli
 

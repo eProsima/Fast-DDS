@@ -1,4 +1,4 @@
-# Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,14 +25,14 @@ echo "[INFO] Starting discovery server"
 SERVER_PID=$!
 
 
-# Ejecuta el Publisher
+# Publisher
 echo "[INFO] Starting publisher"
 "$EXAMPLE_DIR/DDSCommunicationPublisher" \
   --xmlfile "$EXAMPLE_DIR/ds_client.xml" \
   --wait 1 --samples 10 --loops 1 --seed 0 --magic T &
 PUB_PID=$!
 
-# Ejecuta el Subscriber
+# Subscriber
 echo "[INFO] Starting subscriber"
 "$EXAMPLE_DIR/DDSCommunicationSubscriber" \
   --xmlfile "$EXAMPLE_DIR/ds_client.xml" \
@@ -52,4 +52,3 @@ fi
 wait $PUB_PID
 wait $SUB_PID
 echo "[INFO] Test completed successfully"
-
