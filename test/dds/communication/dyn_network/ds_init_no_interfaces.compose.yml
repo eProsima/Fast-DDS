@@ -1,4 +1,4 @@
-# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ services:
     environment:
       # Load also fastdds libraries to run the CLI
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@:@CMAKE_INSTALL_PREFIX@/lib:$LD_LIBRARY_PATH
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
       SERVER_IP: 127.0.0.1
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/dyn_network/launch_ds_no_interfaces.bash"
+    working_dir: @PROJECT_BINARY_DIR@/test/dds/communication
+    command: @SHELL_EXECUTABLE@ "dyn_network/launch_ds_no_interfaces.bash"
     network_mode: none
