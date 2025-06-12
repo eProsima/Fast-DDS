@@ -347,8 +347,10 @@ ReturnCode_t DataWriterImpl::enable()
     bool filtering_enabled =
             qos_.liveliness().lease_duration.is_infinite() &&
             (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
+
     if (filtering_enabled)
     {
+        std::lock_guard<std::mutex> lock(filters_mtx_);
         reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
     }
 
@@ -427,10 +429,10 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     writer_ = BaseWriter::downcast(writer);
-    if (filtering_enabled)
-    {
-        writer_->reader_data_filter(this);
-    }
+
+    // Set DataWriterImpl as the implementer of the
+    // IReaderDataFilter interface
+    writer_->reader_data_filter(this);
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_->rebuild_instances();
@@ -1500,6 +1502,21 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
     return RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::set_sample_prefilter(
+        std::shared_ptr<IContentFilter> prefilter)
+{
+    if (is_data_sharing_compatible_)
+    {
+        EPROSIMA_LOG_WARNING(DATA_WRITER,
+                "Data-sharing is enabled on this DataWriter, which is not compatible with sample prefiltering. \
+                 Ensure that transport is used for communicating with DataReaders.");
+    }
+
+    std::lock_guard<std::mutex> lock(filters_mtx_);
+    sample_prefilter_ = prefilter;
+    return RETCODE_OK;
+}
+
 bool DataWriterImpl::deadline_timer_reschedule()
 {
     assert(qos_.deadline().period != dds::c_TimeInfinite);
@@ -2372,9 +2389,24 @@ bool DataWriterImpl::is_relevant(
         const fastdds::rtps::CacheChange_t& change,
         const fastdds::rtps::GUID_t& reader_guid) const
 {
-    assert(reader_filters_);
-    const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
-    return writer_change.is_relevant_for(reader_guid);
+    bool is_relevant_for_reader = true;
+    std::lock_guard<std::mutex> lock(filters_mtx_);
+
+    if (sample_prefilter_)
+    {
+        IContentFilter::FilterSampleInfo filter_sample_info(change.write_params);
+        is_relevant_for_reader = sample_prefilter_->evaluate(change.serializedPayload,
+                        filter_sample_info,
+                        reader_guid);
+    }
+
+    if (is_relevant_for_reader && reader_filters_)
+    {
+        const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
+        is_relevant_for_reader = writer_change.is_relevant_for(reader_guid);
+    }
+
+    return is_relevant_for_reader;
 }
 
 } // namespace dds
