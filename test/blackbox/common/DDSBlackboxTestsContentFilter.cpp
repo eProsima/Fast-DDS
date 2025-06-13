@@ -802,6 +802,36 @@ TEST_P(DDSContentFilter, filter_with_prefilter)
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 3u);
 }
 
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/23265
+ *
+ * This test checks that a DDSSQL content filter can be created with a type name that is different from the one
+ * in the generated type support.
+ */
+TEST(DDSContentFilter, filter_other_type_name)
+{
+    using namespace eprosima::fastdds;
+
+    // Create a DomainParticipant
+    DomainParticipant* participant =
+            dds::DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Create a ContentFilteredTopic with a different type name
+    dds::TypeSupport type_support(new HelloWorldPubSubType());
+    ASSERT_EQ(type_support.register_type(participant, "CustomType"), RETCODE_OK);
+    dds::Topic* topic = participant->create_topic(
+        "TestTopic", "CustomType", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    dds::ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic(
+        "FilteredTopic", topic, "index <= %0", { "6" });
+    ASSERT_NE(filtered_topic, nullptr);
+
+    // Delete all entities
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(dds::DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
