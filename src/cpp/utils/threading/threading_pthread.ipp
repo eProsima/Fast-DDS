@@ -19,7 +19,9 @@
 
 #include <pthread.h>
 #include <sys/resource.h>
+#if !defined(__QNX__)
 #include <sys/sysinfo.h>
+#endif  //!defined(__QNX__)
 #include <sys/time.h>
 #include <sys/types.h>
 
@@ -96,9 +98,12 @@ static void configure_current_thread_scheduler(
     // Set Scheduler Class and Priority
     //
 
-    if ((sched_class == SCHED_OTHER) ||
-            (sched_class == SCHED_BATCH) ||
-            (sched_class == SCHED_IDLE))
+    if ((sched_class == SCHED_OTHER)
+#if !defined(__QNX__)
+        || (sched_class == SCHED_BATCH)
+        || (sched_class == SCHED_IDLE)
+#endif  // !defined(__QNX__)
+        )
     {
         //
         // BATCH and IDLE do not have explicit priority values.
@@ -146,6 +151,12 @@ static void configure_current_thread_affinity(
         const char* thread_name,
         uint64_t affinity_mask)
 {
+#if defined(__QNX__)
+    if (affinity_mask > 0)
+    {
+        THREAD_EPROSIMA_LOG_ERROR(thread_name, "Setting thread affinity not supported on QNX");
+    }
+#else
     int a;
     int result;
     int cpu_count;
@@ -196,6 +207,7 @@ static void configure_current_thread_affinity(
         THREAD_EPROSIMA_LOG_ERROR(thread_name, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
                     result) << "'");
     }
+#endif  // defined(__QNX__)
 }
 
 void apply_thread_settings_to_current_thread(
