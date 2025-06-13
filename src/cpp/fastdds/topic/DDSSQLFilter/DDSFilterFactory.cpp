@@ -473,15 +473,15 @@ static std::shared_ptr<xtypes::TypeObject> get_complete_type_object(
 
     // If not found, try to get the complete TypeObject from the type identifier
     xtypes::TypeObject complete_type_object;
-    if (xtypes::EK_MINIMAL == data_type->type_identifiers().type_identifier1()._d())
-    {
-        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-            data_type->type_identifiers().type_identifier2(), complete_type_object);
-    }
-    else
+    if (xtypes::EK_COMPLETE == data_type->type_identifiers().type_identifier1()._d())
     {
         ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
             data_type->type_identifiers().type_identifier1(), complete_type_object);
+    }
+    else if (xtypes::EK_COMPLETE == data_type->type_identifiers().type_identifier2()._d())
+    {
+        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+            data_type->type_identifiers().type_identifier2(), complete_type_object);
     }
 
     if (RETCODE_OK == ret)
