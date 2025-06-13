@@ -319,7 +319,7 @@ public:
     //! Must report whether localhost locator is allowed
     virtual bool is_localhost_allowed() const
     {
-        return true;
+        return false;
     }
 
     //! Returns netmask filter information (transport's netmask filter kind and allowlist)
