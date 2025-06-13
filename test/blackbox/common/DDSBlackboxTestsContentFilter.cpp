@@ -708,6 +708,132 @@ TEST(DDSContentFilter, OnlyFilterAliveChanges)
     ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test asserts that prefiltering with an active content filter works correctly.
+ * It creates a ContentFilteredTopic an expression that only accepts samples with index <= 6.
+ * On its side, the prefilter is set to only accept samples with 4 < index < 8
+ */
+TEST_P(DDSContentFilter, filter_with_prefilter)
+{
+    // TODO(Mario-DL): Remove when multiple filtering readers case is fixed for data-sharing
+    if (enable_datasharing)
+    {
+        GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
+    }
+
+    struct CustomUserWriteData : public rtps::WriteParams::UserWriteData
+    {
+        CustomUserWriteData(
+                const uint16_t& upper_bound_idx,
+                const uint16_t& lower_bound_idx )
+            : upper_bound_idx_(upper_bound_idx)
+            , lower_bound_idx_(lower_bound_idx)
+        {
+        }
+
+        uint16_t upper_bound_idx_;
+        uint16_t lower_bound_idx_;
+    };
+
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload& payload,
+                const FilterSampleInfo& filter_sample_info,
+                const rtps::GUID_t&) const override
+        {
+            HelloWorldPubSubType hello_world_type_support;
+            HelloWorld hello_world_sample;
+            hello_world_type_support.deserialize(*const_cast<SerializedPayload*>(&payload), &hello_world_sample);
+
+            bool sample_should_be_sent = true;
+
+            auto custom_write_data =
+                    std::static_pointer_cast<CustomUserWriteData>(filter_sample_info.user_write_data);
+
+            // Filter out samples
+            if (hello_world_sample.index() > custom_write_data->upper_bound_idx_ ||
+                    hello_world_sample.index() < custom_write_data->lower_bound_idx_)
+            {
+                sample_should_be_sent = false;
+            }
+            return sample_should_be_sent;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index <= %0", {"6"}, true, false, false);
+
+    // Initialize writer and the filtered reader
+    TestState state;
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // wait for discovery between writer and filtered reader
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Set a prefilter on the filtered reader
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set a user write data on the writer to filter out samples 4 < index < 8
+    rtps::WriteParams write_params;
+    write_params.user_write_data(std::make_shared<CustomUserWriteData>(
+                (uint16_t)8u, (uint16_t)4u));
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    writer.send(data, 50, &write_params);
+
+    // Reader should have received 3 samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 3u);
+}
+
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/23265
+ *
+ * This test checks that a DDSSQL content filter can be created with a type name that is different from the one
+ * in the generated type support.
+ */
+TEST(DDSContentFilter, filter_other_type_name)
+{
+    using namespace eprosima::fastdds;
+
+    // Create a DomainParticipant
+    DomainParticipant* participant =
+            dds::DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Create a ContentFilteredTopic with a different type name
+    dds::TypeSupport type_support(new HelloWorldPubSubType());
+    ASSERT_EQ(type_support.register_type(participant, "CustomType"), RETCODE_OK);
+    dds::Topic* topic = participant->create_topic(
+        "TestTopic", "CustomType", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    dds::ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic(
+        "FilteredTopic", topic, "index <= %0", { "6" });
+    ASSERT_NE(filtered_topic, nullptr);
+
+    // Delete all entities
+    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
+    ASSERT_EQ(dds::DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+>>>>>>> 92260c2d (Allow creation of built-in content filters with different type name (#5867))
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
