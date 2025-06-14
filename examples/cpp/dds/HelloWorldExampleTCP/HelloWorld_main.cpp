@@ -29,6 +29,8 @@
 
 namespace option = eprosima::option;
 
+using eprosima::fastrtps::Domain;
+
 struct Arg : public option::Arg
 {
     static void print_error(
@@ -105,8 +107,6 @@ struct Arg : public option::Arg
 
 };
 
-
-
 enum  optionIndex
 {
     UNKNOWN_OPT,
@@ -169,9 +169,6 @@ const option::Descriptor usage[] = {
     { 0, 0, 0, 0, 0, 0 }
 };
 
-using namespace eprosima;
-using namespace fastrtps;
-using namespace rtps;
 int main(
         int argc,
         char** argv)
