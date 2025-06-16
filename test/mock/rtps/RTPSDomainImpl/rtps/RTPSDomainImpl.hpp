@@ -19,7 +19,7 @@
 
 #include <fastdds/rtps/RTPSDomain.h>
 
-#include <rtps/reader/LocalReaderPointer.hpp>
+#include <fastdds/rtps/reader/LocalReaderPointer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
