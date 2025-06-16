@@ -44,6 +44,12 @@ public:
     /**
      * @brief Schedule a request for processing.
      *
+     * This method is called when a request is received and should be processed by the server.
+     * The implementation should decide how to handle the request, whether to process it immediately,
+     * or to queue it for later processing.
+     *
+     * A call to server->execute_request(request) should eventually be made to process the request.
+     *
      * @param request  The request to schedule.
      * @param server   The server instance that should process the request.
      */
