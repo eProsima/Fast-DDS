@@ -120,6 +120,7 @@ list(APPEND TEST_DEFINITIONS
 
 
 list(APPEND XML_CONFIGURATION_FILES
+    ds_client.xml
     simple_reliable_profile.xml
     simple_besteffort_profile.xml
     simple_reliable_zerocopy_profile.xml

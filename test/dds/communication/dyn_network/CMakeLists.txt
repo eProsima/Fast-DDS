@@ -59,3 +59,11 @@ configure_file(launch_subscriber.bash
 add_test(NAME dds.communication.dynamic_interfaces
          COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml up
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+configure_file(ds_init_no_interfaces.compose.yml
+         ${CMAKE_CURRENT_BINARY_DIR}/ds_init_no_interfaces.compose.yml @ONLY)
+configure_file(launch_ds_no_interfaces.bash
+         ${CMAKE_CURRENT_BINARY_DIR}/launch_ds_no_interfaces.bash @ONLY)
+add_test(NAME dds.commmunication.ds_init_with_no_interfaces
+         COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/ds_init_no_interfaces.compose.yml up --exit-code-from server-pub-sub
+         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
