@@ -1357,7 +1357,8 @@ bool TCPTransportInterface::Receive(
         do
         {
             header_found = receive_header(channel, tcp_header, ec);
-        } while (!header_found && !ec && channel->connection_status());
+        }
+        while (!header_found && !ec && channel->connection_status());
 
         if (ec)
         {
