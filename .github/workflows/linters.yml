@@ -1,0 +1,23 @@
+name: Fast DDS Linters CI
+
+on:
+  pull_request:
+    types:
+      - review_requested
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  uncrustify:
+    name: uncrustify
+    runs-on: ubuntu-22.04
+    if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
+    steps:
+    - name: Run Uncrustify Linter
+      uses: eProsima/eProsima-CI/ubuntu/uncrustify@v0
