@@ -164,12 +164,15 @@ jobs:
           - ${{ inputs.cmake-config }}
         test_filter:
           - 'blackbox'
-          - 'unittest'
+          - 'unittest-I'
+          - 'unittest-II'
           - 'examples'
         filter_expression_blackbox:
           - 'BlackboxTests|ParticipantTests|SecureDiscoverServer|SimpleCommunication|system.'
         filter_expression_examples:
           - 'example_tests'
+        filter_expression_unittests_I:
+          - 'DDSSQLFilterValue'
 
     steps:
       - name: Download build artifacts
@@ -274,7 +277,8 @@ jobs:
             ${{ inputs.ctest-args }}
             ${{ matrix.test_filter == 'blackbox' && format('-R "{0}"', matrix.filter_expression_blackbox) ||
                 matrix.test_filter == 'examples' && format('-R "{0}"', matrix.filter_expression_examples) ||
-                format('-E "{0}|{1}"', matrix.filter_expression_blackbox , matrix.filter_expression_examples) }}
+                matrix.test_filter == 'unittest-I' && format('-R "{0}"', matrix.filter_expression_unittests_I) ||
+                format('-E "{0}|{1}|{2}"', matrix.filter_expression_blackbox, matrix.filter_expression_examples, matrix.filter_expression_unittests_I) }}
           packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
