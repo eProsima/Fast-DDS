@@ -277,7 +277,7 @@ jobs:
             ${{ inputs.ctest-args }}
             ${{ matrix.test_filter == 'blackbox' && format('-R "{0}"', matrix.filter_expression_blackbox) ||
                 matrix.test_filter == 'examples' && format('-R "{0}"', matrix.filter_expression_examples) ||
-                matrix.test_filter == 'unittest-I' && format('-R "{0}"', matrix.filter_expression_unittests_I) ||
+                matrix.test_filter == 'unittest-I' && format('-R "{0}" -j 4', matrix.filter_expression_unittests_I) ||
                 format('-E "{0}|{1}|{2}"', matrix.filter_expression_blackbox, matrix.filter_expression_examples, matrix.filter_expression_unittests_I) }}
           packages_names: fastdds
           workspace: ${{ github.workspace }}
