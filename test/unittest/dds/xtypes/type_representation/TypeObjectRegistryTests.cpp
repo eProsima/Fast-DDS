@@ -324,7 +324,7 @@ TEST(TypeObjectRegistryTests, get_type_information)
     TypeObject t;
     t.complete(type_object);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-        DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(t, type_ids));
+            DomainParticipantFactory::get_instance()->type_object_registry().register_type_object(t, type_ids));
 
     TypeInformation type_info;
     EXPECT_EQ(RETCODE_OK, registry.get_type_information(type_ids, type_info, false));
