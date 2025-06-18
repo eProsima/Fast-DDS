@@ -88,7 +88,7 @@ public:
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
      *                      TypeObject.
      */
-    virtual ReturnCode_t register_type_object(
+    virtual FASTDDS_EXPORTED_API ReturnCode_t register_type_object(
             const TypeObject& type_object,
             TypeIdentifierPair& type_ids) = 0;
 
@@ -184,7 +184,7 @@ public:
      *                      RETCODE_BAD_PARAMETER if the given @ref TypeIdentifier corresponds to a indirect hash TypeIdentifier.
      *                      RETCODE_PRECONDITION_NOT_MET if any type_ids is empty.
      */
-    virtual ReturnCode_t get_type_information(
+    virtual FASTDDS_EXPORTED_API ReturnCode_t get_type_information(
             const TypeIdentifierPair& type_ids,
             TypeInformation& type_information,
             bool with_dependencies = false) = 0;
