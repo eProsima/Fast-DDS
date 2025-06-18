@@ -76,6 +76,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/rpc/ServiceImpl.cpp
     fastdds/rpc/ReplierImpl.cpp
     fastdds/rpc/RequesterImpl.cpp
+    fastdds/rpc/RPCTypeObjectSupport.cpp
     fastdds/rpc/ServiceTypeSupport.cpp
     fastdds/subscriber/DataReader.cpp
     fastdds/subscriber/DataReaderImpl.cpp
