@@ -15,7 +15,7 @@
 import subprocess
 import os
 import pytest
-import re
+import random
 
 # Python's check_output() in windows does not kill the shell
 # process on timeout, skip these tests on windowds
@@ -45,6 +45,7 @@ if os.name != 'nt':
 
         menv["PUB_ARGS"] =  pub_args
         menv["SUB_ARGS"] =  sub_args
+        menv["CONTAINER_SUFFIX_COMPOSE"] = str(random.randint(0, 100))
 
         try:
             out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f configuration.compose.yml up',
@@ -89,6 +90,7 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
 
     menv["PUB_ARGS"] =  pub_requirements + ' ' + pub_args
     menv["SUB_ARGS"] =  sub_requirements + ' ' + sub_args
+    menv["CONTAINER_SUFFIX_COMPOSE"] = str(random.randint(0, 100))
 
     try:
         out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f configuration.compose.yml up',
