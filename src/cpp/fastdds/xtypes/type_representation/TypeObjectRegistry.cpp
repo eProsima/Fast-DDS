@@ -336,6 +336,16 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
     return eprosima::fastdds::dds::RETCODE_OK;
 }
 
+ReturnCode_t TypeObjectRegistry::get_complete_type_object(
+        const TypeIdentifierPair& type_identifiers,
+        CompleteTypeObject& type_object)
+{
+    static_cast<void>(type_identifiers);
+    static_cast<void>(type_object);
+
+    return RETCODE_UNSUPPORTED;
+}
+
 ReturnCode_t TypeObjectRegistry::get_type_information(
         const TypeIdentifierPair& type_ids,
         TypeInformation& type_information,

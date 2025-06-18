@@ -172,6 +172,19 @@ public:
             TypeObject& type_object) = 0;
 
     /**
+     * @brief Get the CompleteTypeObject related to the given type identifiers.
+     *
+     * @param [in] type_identifiers Identifiers of the type being queried.
+     * @param [out] type_object CompleteTypeObject related with the given identifiers.
+     * @return ReturnCode_t RETCODE_OK if the CompleteTypeObject are found in the registry.
+     *                      RETCODE_NO_DATA if the given type_identifiers has not been registered.
+     *                      RETCODE_BAD_PARAMETER if the type_identifiers correspond to an indirect hash.
+     */
+    virtual FASTDDS_EXPORTED_API ReturnCode_t get_complete_type_object(
+            const TypeIdentifierPair& type_identifiers,
+            CompleteTypeObject& type_object) = 0;
+
+    /**
      * @brief Get the TypeInformation related to a specific type_name.
      *
      * @pre type_ids must not be empty.
