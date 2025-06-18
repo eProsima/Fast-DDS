@@ -461,32 +461,25 @@ static std::shared_ptr<xtypes::TypeObject> get_complete_type_object(
         const TopicDataType* data_type)
 {
     ReturnCode_t ret;
+    auto& registry = DomainParticipantFactory::get_instance()->type_object_registry();
 
     // Try to get the complete TypeObject from the type name
     std::shared_ptr<xtypes::TypeObjectPair> type_objects = std::make_shared<xtypes::TypeObjectPair>();
-    ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
-        type_name, *type_objects);
+    ret = registry.get_type_objects(type_name, *type_objects);
     if (RETCODE_OK == ret)
     {
         return std::make_shared<xtypes::TypeObject>(type_objects->complete_type_object);
     }
 
     // If not found, try to get the complete TypeObject from the type identifier
-    xtypes::TypeObject complete_type_object;
-    if (xtypes::EK_COMPLETE == data_type->type_identifiers().type_identifier1()._d())
-    {
-        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-            data_type->type_identifiers().type_identifier1(), complete_type_object);
-    }
-    else if (xtypes::EK_COMPLETE == data_type->type_identifiers().type_identifier2()._d())
-    {
-        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-            data_type->type_identifiers().type_identifier2(), complete_type_object);
-    }
+    xtypes::CompleteTypeObject complete_type_object;
+    ret = registry.get_complete_type_object(data_type->type_identifiers(), complete_type_object);
 
     if (RETCODE_OK == ret)
     {
-        return std::make_shared<xtypes::TypeObject>(complete_type_object);
+        auto value = std::make_shared<xtypes::TypeObject>();
+        value->complete(complete_type_object);
+        return value;
     }
 
     return nullptr;
