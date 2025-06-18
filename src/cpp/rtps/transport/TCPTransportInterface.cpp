@@ -319,7 +319,7 @@ ResponseCode TCPTransportInterface::bind_socket(
 
     std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
     // Check if the locator is from an owned interface to link all local interfaces to the channel
-    // Note: Only appliable for TCPv4 until TCPv6 scope selection is implemented
+    // Note: Only applicable for TCPv4 until TCPv6 scope selection is implemented
     if (channel->locator().kind != LOCATOR_KIND_TCPv6)
     {
         is_own_interface(channel->locator(), local_interfaces);
@@ -328,7 +328,7 @@ ResponseCode TCPTransportInterface::bind_socket(
             Locator local_locator(channel->locator());
             for (auto& interface_it : local_interfaces)
             {
-                IPLocator::copyAddress(interface_it.locator, local_locator);
+                IPLocator::copy_address(interface_it.locator, local_locator);
                 const auto insert_ret_local = channel_resources_.insert(
                     decltype(channel_resources_)::value_type{local_locator, channel});
                 if (!insert_ret_local.first->second->connection_established())
@@ -1039,7 +1039,7 @@ bool TCPTransportInterface::CreateInitialConnect(
 
     std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
     // Check if the locator is from an owned interface to link all local interfaces to the channel
-    // Note: Only appliable for TCPv4 until TCPv6 scope selection is implemented
+    // Note: Only applicable for TCPv4 until TCPv6 scope selection is implemented
     if (physical_locator.kind != LOCATOR_KIND_TCPv6)
     {
         is_own_interface(physical_locator, local_interfaces);
@@ -1048,7 +1048,7 @@ bool TCPTransportInterface::CreateInitialConnect(
             Locator local_locator(physical_locator);
             for (auto& interface_it : local_interfaces)
             {
-                IPLocator::copyAddress(interface_it.locator, local_locator);
+                IPLocator::copy_address(interface_it.locator, local_locator);
                 channel_resources_[local_locator] = channel;
             }
         }

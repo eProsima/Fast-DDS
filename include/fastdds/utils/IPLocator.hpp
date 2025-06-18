@@ -258,7 +258,7 @@ public:
      * @param loc2 Locator to copy to.
      * @return True if the copy was successful.
      */
-    FASTDDS_EXPORTED_API static bool copyAddress(
+    FASTDDS_EXPORTED_API static bool copy_address(
             const Locator_t& loc1,
             Locator_t& loc2);
 

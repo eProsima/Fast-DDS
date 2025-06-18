@@ -985,7 +985,7 @@ bool IPLocator::compareAddress(
     }
 }
 
-bool IPLocator::copyAddress(
+bool IPLocator::copy_address(
         const Locator_t& loc1,
         Locator_t& loc2)
 {
@@ -996,7 +996,7 @@ bool IPLocator::copyAddress(
 
     if (loc1.kind == LOCATOR_KIND_UDPv4 || loc1.kind == LOCATOR_KIND_TCPv4)
     {
-        memcpy(loc2.address, loc1.address, 16 * sizeof(char));
+        copyIPv4(loc1, loc2.address);
         return true;
     }
     else if (loc1.kind == LOCATOR_KIND_UDPv6 || loc1.kind == LOCATOR_KIND_TCPv6)

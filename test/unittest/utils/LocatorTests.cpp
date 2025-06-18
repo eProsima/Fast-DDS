@@ -770,31 +770,31 @@ TEST_F(IPLocatorTests, copyIPv6)
 /*
  * Check to copy an address
  */
-TEST_F(IPLocatorTests, copyAddress)
+TEST_F(IPLocatorTests, copy_address)
 {
     // Copy IPv4
     Locator_t locator1(LOCATOR_KIND_UDPv4);
     Locator_t locator2(LOCATOR_KIND_UDPv4);
     IPLocator::setIPv4(locator1, ipv4_lo_address);
     ASSERT_FALSE(IPLocator::compareAddress(locator1, locator2));
-    ASSERT_TRUE(IPLocator::copyAddress(locator1, locator2));
+    ASSERT_TRUE(IPLocator::copy_address(locator1, locator2));
     ASSERT_TRUE(IPLocator::compareAddress(locator1, locator2));
 
     // Check cannot copy between different kinds
     locator1.kind = LOCATOR_KIND_UDPv6;
-    ASSERT_FALSE(IPLocator::copyAddress(locator1, locator2));
+    ASSERT_FALSE(IPLocator::copy_address(locator1, locator2));
 
     // Copy IPv6
     locator2.kind = LOCATOR_KIND_UDPv6;
     IPLocator::setIPv6(locator1, ipv6_lo_address);
     ASSERT_FALSE(IPLocator::compareAddress(locator1, locator2));
-    ASSERT_TRUE(IPLocator::copyAddress(locator1, locator2));
+    ASSERT_TRUE(IPLocator::copy_address(locator1, locator2));
     ASSERT_TRUE(IPLocator::compareAddress(locator1, locator2));
 
     // Check cannot copy between SHM locators
     locator1.kind = LOCATOR_KIND_SHM;
     Locator_t locator3(LOCATOR_KIND_SHM);
-    ASSERT_FALSE(IPLocator::copyAddress(locator1, locator3));
+    ASSERT_FALSE(IPLocator::copy_address(locator1, locator3));
     ASSERT_FALSE(IPLocator::compareAddress(locator1, locator3));
 }
 
