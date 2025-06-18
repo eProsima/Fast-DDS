@@ -15,7 +15,7 @@
 import subprocess
 import os
 import pytest
-import re
+import random
 
 config_test_cases = [
     ('--keep-last 10 --transport DEFAULT', '--keep-last 10 --transport DEFAULT'),           # Builtin transports
@@ -43,6 +43,7 @@ def test_configuration(pub_args, sub_args):
 
     menv["PUB_ARGS"] =  pub_requirements + ' ' + pub_args
     menv["SUB_ARGS"] =  sub_requirements + ' ' + sub_args
+    menv["CONTAINER_SUFFIX_COMPOSE"] = str(random.randint(0, 100))
 
     timeout = 30
     #In windows timeout argument does not wor properly
