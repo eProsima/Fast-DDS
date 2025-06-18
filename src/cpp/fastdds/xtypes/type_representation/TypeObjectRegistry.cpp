@@ -340,10 +340,31 @@ ReturnCode_t TypeObjectRegistry::get_complete_type_object(
         const TypeIdentifierPair& type_identifiers,
         CompleteTypeObject& type_object)
 {
-    static_cast<void>(type_identifiers);
-    static_cast<void>(type_object);
+    TypeIdentifier complete_type_identifier;
+    if (xtypes::EK_COMPLETE == type_identifiers.type_identifier1()._d())
+    {
+        complete_type_identifier = type_identifiers.type_identifier1();
+    }
+    else if (xtypes::EK_COMPLETE == type_identifiers.type_identifier2()._d())
+    {
+        complete_type_identifier = type_identifiers.type_identifier2();
+    }
+    else
+    {
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+    }
 
-    return RETCODE_UNSUPPORTED;
+    try
+    {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        type_object = type_registry_entries_.at(complete_type_identifier).type_object.complete();
+    }
+    catch (std::exception&)
+    {
+        return eprosima::fastdds::dds::RETCODE_NO_DATA;
+    }
+
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_information(
