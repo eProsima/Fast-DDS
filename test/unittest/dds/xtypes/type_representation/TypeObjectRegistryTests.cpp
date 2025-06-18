@@ -134,6 +134,34 @@ TEST(TypeObjectRegistryTests, get_type_objects)
     EXPECT_EQ(type_objects.complete_type_object, type_object);
 }
 
+// Test TypeObjectRegistry::get_complete_type_object
+TEST(TypeObjectRegistryTests, get_complete_type_object)
+{
+    CompleteTypeObject type_object;
+    TypeIdentifierPair type_ids;
+    auto& registry = DomainParticipantFactory::get_instance()->type_object_registry();
+
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, registry.get_complete_type_object(type_ids, type_object));
+
+    EXPECT_EQ(RETCODE_OK, registry.get_type_identifiers(boolean_type_name, type_ids));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, registry.get_complete_type_object(type_ids, type_object));
+
+    TypeIdentifier alias_type_id;
+    alias_type_id._d(TK_BYTE);
+    CompleteAliasType complete_alias_type;
+    complete_alias_type.header().detail().type_name("alias_name");
+    complete_alias_type.body().common().related_type(alias_type_id);
+    CompleteTypeObject input_type_object;
+    input_type_object.alias_type(complete_alias_type);
+    TypeObject reg_type_object;
+    reg_type_object.complete(input_type_object);
+
+    TypeIdentifierPair reg_type_object_ids;
+    EXPECT_EQ(RETCODE_OK, registry.register_type_object(reg_type_object, reg_type_object_ids));
+    EXPECT_EQ(RETCODE_OK, registry.get_complete_type_object(reg_type_object_ids, type_object));
+    EXPECT_EQ(type_object, input_type_object);
+}
+
 // Test TypeObjectRegistry::get_type_identifiers
 TEST(TypeObjectRegistryTests, get_type_identifiers)
 {
