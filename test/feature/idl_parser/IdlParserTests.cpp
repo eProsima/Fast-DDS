@@ -17,7 +17,6 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/dds/xtypes/utils.hpp>
 #include <ScopedLogs.hpp>
 #include "IdlParserTests.hpp"
 
@@ -357,11 +356,11 @@ TEST_F(IdlParserTests, structures)
     DynamicType::_ref_type type18 = builder18->build();
     ASSERT_TRUE(type18);
 
-//     // TODO StructBitMask is skipped since bitmask parsing is not supported.
-//     // DynamicTypeBuilder::_ref_type builder19 = factory->create_type_w_uri("IDL/structures.idl", "StructBitMask", include_paths);
-//     // EXPECT_TRUE(builder19);
-//     // DynamicType::_ref_type type19 = builder19->build();
-//     // ASSERT_TRUE(type19);
+    // TODO StructBitMask is skipped since bitmask parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder19 = factory->create_type_w_uri("IDL/structures.idl", "StructBitMask", include_paths);
+    // EXPECT_TRUE(builder19);
+    // DynamicType::_ref_type type19 = builder19->build();
+    // ASSERT_TRUE(type19);
 
     DynamicTypeBuilder::_ref_type builder20 = factory->create_type_w_uri("IDL/structures.idl", "StructAlias",
                     include_paths);
@@ -410,11 +409,11 @@ TEST_F(IdlParserTests, structures)
     DynamicType::_ref_type type27 = builder27->build();
     ASSERT_TRUE(type27);
 
-//     TODO Structures is skipped since some members parsing is not supported.
-//     DynamicTypeBuilder::_ref_type builder28 = factory->create_type_w_uri("IDL/structures.idl", "Structures", include_paths);
-//     EXPECT_TRUE(builder28);
-//     DynamicType::_ref_type type28 = builder28->build();
-//     ASSERT_TRUE(type28);
+    // TODO Structures is skipped since some members parsing is not supported.
+    // DynamicTypeBuilder::_ref_type builder28 = factory->create_type_w_uri("IDL/structures.idl", "Structures", include_paths);
+    // EXPECT_TRUE(builder28);
+    // DynamicType::_ref_type type28 = builder28->build();
+    // ASSERT_TRUE(type28);
 
     DynamicTypeBuilder::_ref_type builder29 = factory->create_type_w_uri("IDL/structures.idl", "testing_1::foo",
                     include_paths);

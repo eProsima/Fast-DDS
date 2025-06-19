@@ -506,6 +506,7 @@ public:
 
         // Check bitmasks
         // TODO
+
         return builder;
     }
 
@@ -577,18 +578,6 @@ protected:
                 // Maybe the current scope its me?
                 if (inner_scope == name_)
                 {
-                    // std::string innest_scope = inner_scope.substr(0, inner_scope.find("::"));
-                    // if (inner_.count(innest_scope) > 0)
-                    // {
-                    //     std::string inner_name = symbol_name.substr(symbol_name.find("::") + 2);
-                    //     const auto& it = inner_.find(innest_scope);
-                    //     PairModuleSymbol result = it->second->resolve_scope(inner_name, original_name);
-                    //     if (result.first != nullptr)
-                    //     {
-                    //         return result;
-                    //     }
-                    // }
-
                     std::string inner_name = symbol_name.substr(symbol_name.find("::") + 2);
                     // inner_name is a scoped name (i.e: is this in the scope of one my submodules)?
                     if (inner_name.find("::") != std::string::npos)

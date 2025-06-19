@@ -394,9 +394,6 @@ struct action<scoped_name>
     {
         auto module = ctx->modules().current();
         std::string identifier_name = in.string();
-        // const std::string& name_space = module->scope();
-        // const std::string& scoped_identifier_name = name_space.empty() ?
-        //     identifier_name : name_space + "::" + identifier_name;
 
         if (state.count("arithmetic_expr"))
         {
@@ -2276,7 +2273,7 @@ struct action<typedef_dcl>
 
         if (!alias_type)
         {
-            // EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] alias type not supported: " << state["type"]);
+            EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] alias type not supported: " << state["type"]);
             return;
         }
 
