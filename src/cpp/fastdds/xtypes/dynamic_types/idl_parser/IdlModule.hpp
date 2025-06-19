@@ -135,9 +135,6 @@ public:
             const std::string& ident,
             bool extend = true) const
     {
-        // __FLAG__
-        std::cout << "[DEBUG] Checking for symbol: " << ident << " in module: " << scope() << "\n";
-        /////////////////
         bool has_it = structs_.count(ident) > 0
                 || unions_.count(ident) > 0
                 || aliases_.count(ident) > 0
@@ -147,9 +144,6 @@ public:
 
         if (has_it)
         {
-            // __FLAG__
-            std::cout << "[DEBUG] Found symbol: " << ident << " in module: " << scope() << "\n";
-            /////////////////
             return true;
         }
         if (extend && outer_ != nullptr)
@@ -164,10 +158,6 @@ public:
             const std::string& name) const
     {
         // Solve scope
-        // Solve scope
-        // __FLAG__
-        std::cout << "[HAS_STRUCTURE]Resolving scope for: " << name << std::endl;
-        ///////////////////
         PairModuleSymbol module = resolve_scope(name);
         if (module.first == nullptr)
         {
@@ -267,10 +257,6 @@ public:
             const std::string& name) const
     {
         // Solve scope
-        // Solve scope
-        // __FLAG__
-        std::cout << "[HAS_UNION]Resolving scope for: " << name << std::endl;
-        ///////////////////
         PairModuleSymbol module = resolve_scope(name);
         if (module.first == nullptr)
         {
@@ -364,10 +350,6 @@ public:
         DynamicData::_ref_type xdata;
 
         // Solve scope
-        // Solve scope
-        // __FLAG__
-        std::cout << "[CONSTANT]Resolving scope for: " << name << std::endl;
-        ///////////////////
         PairModuleSymbol module = resolve_scope(name);
         if (module.first == nullptr)
         {
@@ -387,10 +369,6 @@ public:
             const std::string& name) const
     {
         // Solve scope
-        // Solve scope
-        // __FLAG__
-        std::cout << "[HAS_CONSTANT]Resolving scope for: " << name << std::endl;
-        ///////////////////
         PairModuleSymbol module = resolve_scope(name);
         if (module.first == nullptr)
         {
@@ -453,10 +431,6 @@ public:
             const std::string& name) const
     {
         // Solve scope
-        // Solve scope
-        // __FLAG__
-        std::cout << "[HAS_ALIAS]Resolving scope for: " << name << std::endl;
-        ///////////////////
         PairModuleSymbol module = resolve_scope(name);
         if (module.first == nullptr)
         {
@@ -497,17 +471,7 @@ public:
         }
 
         // Solve scope
-        // __FLAG__
-        std::cout << "[GET_BUILDER]Resolving scope for: " << name << std::endl;
-        ///////////////////
         PairModuleSymbol module = resolve_scope(name);
-        // __FLAG__
-        if (name == "NoCommon_Module::My_SequenceString" || name == "My_SequenceString")
-        {
-            std::cout << "module.second: " << module.second << std::endl;
-            std::cout << "module.first: " << (module.first ? module.first->name() : "nullptr") << std::endl;
-        }
-        //////////////
         if (module.first == nullptr)
         {
             return builder;
@@ -516,36 +480,24 @@ public:
         // Check enums
         if (module.first->has_enum_32(module.second))
         {
-            // __FLAG__
-            std::cout << "[GET_BUILDER] Found enum: " << module.second << " in module: " << module.first->scope() << std::endl;
-            ///////////////////
             builder = module.first->enumerations_32_.at(module.second);
         }
 
         // Check structs
         if (module.first->has_structure(module.second))
         {
-            // __FLAG__
-            std::cout << "[GET_BUILDER] Found structure: " << module.second << " in module: " << module.first->scope() << std::endl;
-            ///////////////////
             builder = module.first->structs_.at(module.second);
         }
 
         // Check unions
         if (module.first->has_union(module.second))
         {
-            // __FLAG__
-            std::cout << "[GET_BUILDER] Found union: " << module.second << " in module: " << module.first->scope() << std::endl;
-            ///////////////////
             builder = module.first->unions_.at(module.second);
         }
 
         // Check aliases
         if (module.first->has_alias(module.second))
         {
-            // __FLAG__
-            std::cout << "[GET_BUILDER] Found alias: " << module.second << " in module: " << module.first->scope() << std::endl;
-            ///////////////////
             builder = module.first->aliases_.at(module.second);
         }
 
@@ -554,12 +506,6 @@ public:
 
         // Check bitmasks
         // TODO
-        // __FLAG__
-        if (!builder)
-        {
-            std::cout << "Builder is nullptr" << std::endl;
-        }
-        /////////////////
         return builder;
     }
 
@@ -609,11 +555,6 @@ protected:
             return pair;
         }
 
-        // __FLAG__
-        std::cout << "resolve_scope--> symbol_name: " << symbol_name << std::endl;
-        std::cout << "resolve_scope--> original_name: " << original_name << std::endl;
-        std::cout << "resolve_scope--> scope: " << scope() << std::endl;
-        ////////////////
         std::string name = symbol_name;
         std::string name_space = scope();
         // Solve scope

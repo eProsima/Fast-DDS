@@ -451,6 +451,31 @@ TEST_F(IdlParserTests, structures)
     EXPECT_TRUE(builder34);
     DynamicType::_ref_type type34 = builder34->build();
     ASSERT_TRUE(type34);
+
+    /* Additional cases */
+    DynamicTypeBuilder::_ref_type builder35 = factory->create_type_w_uri(
+                "IDL/extra_structures.idl",
+                "Module_1::Module_2::NestedModuleStruct",
+                include_paths);
+    EXPECT_TRUE(builder35);
+    DynamicType::_ref_type type35 = builder35->build();
+    ASSERT_TRUE(type35);
+
+    DynamicTypeBuilder::_ref_type builder36 = factory->create_type_w_uri(
+                "IDL/extra_structures.idl",
+                "Outer::StructWithInnerAlias",
+                include_paths);
+    EXPECT_TRUE(builder36);
+    DynamicType::_ref_type type36 = builder36->build();
+    ASSERT_TRUE(type36);
+
+    DynamicTypeBuilder::_ref_type builder37 = factory->create_type_w_uri(
+                "IDL/extra_structures.idl",
+                "Module::ScopedNamesStruct",
+                include_paths);
+    EXPECT_TRUE(builder37);
+    DynamicType::_ref_type type37 = builder37->build();
+    ASSERT_TRUE(type37);
 }
 
 TEST_F(IdlParserTests, aliases)
@@ -1941,6 +1966,14 @@ TEST_F(IdlParserTests, unions)
     ASSERT_TRUE(data);
 
     builder = factory->create_type_w_uri("IDL/unions.idl", "UnionFixedStringAlias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* Additional cases */
+    builder = factory->create_type_w_uri("IDL/extra_unions.idl", "UnionScopedDiscriminator", include_paths);
     EXPECT_TRUE(builder);
     type = builder->build();
     ASSERT_TRUE(type);
