@@ -102,6 +102,11 @@ public:
             const Locator_t& locator,
             unsigned char* dest);
 
+    //! Copies locator's IPv4.
+    FASTDDS_EXPORTED_API static bool copyIPv4(
+            const Locator_t& locator,
+            Locator_t& dest);
+
     // IPv6
     //! Sets locator's IPv6.
     FASTDDS_EXPORTED_API static bool setIPv6(

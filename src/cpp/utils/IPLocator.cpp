@@ -202,6 +202,14 @@ bool IPLocator::copyIPv4(
     return true;
 }
 
+bool IPLocator::copyIPv4(
+        const Locator_t& locator,
+        Locator_t& dest)
+{
+    copyIPv4(locator, &(dest.address[12]));
+    return true;
+}
+
 // IPv6
 bool IPLocator::setIPv6(
         Locator_t& locator,
@@ -996,7 +1004,7 @@ bool IPLocator::copy_address(
 
     if (loc1.kind == LOCATOR_KIND_UDPv4 || loc1.kind == LOCATOR_KIND_TCPv4)
     {
-        copyIPv4(loc1, loc2.address);
+        copyIPv4(loc1, loc2);
         return true;
     }
     else if (loc1.kind == LOCATOR_KIND_UDPv6 || loc1.kind == LOCATOR_KIND_TCPv6)
