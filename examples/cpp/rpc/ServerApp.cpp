@@ -136,7 +136,7 @@ void ServerApp::create_server(
 }
 
 calculator_example::detail::Calculator_representation_limits_Out ServerApp::ServerImpl::representation_limits(
-        const CalculatorServer_ClientContext& info)
+        const eprosima::fastdds::dds::rpc::RpcRequest& info)
 {
     static_cast<void>(info);
     calculator_example::detail::Calculator_representation_limits_Out limits;
@@ -146,7 +146,7 @@ calculator_example::detail::Calculator_representation_limits_Out ServerApp::Serv
 }
 
 int32_t ServerApp::ServerImpl::addition(
-        const CalculatorServer_ClientContext& info,
+        const eprosima::fastdds::dds::rpc::RpcRequest& info,
         /*in*/ int32_t value1,
         /*in*/ int32_t value2)
 {
@@ -166,7 +166,7 @@ int32_t ServerApp::ServerImpl::addition(
 }
 
 int32_t ServerApp::ServerImpl::subtraction(
-        const CalculatorServer_ClientContext& info,
+        const eprosima::fastdds::dds::rpc::RpcRequest& info,
         /*in*/ int32_t value1,
         /*in*/ int32_t value2)
 {
@@ -186,7 +186,7 @@ int32_t ServerApp::ServerImpl::subtraction(
 }
 
 void ServerApp::ServerImpl::fibonacci_seq(
-        const CalculatorServer_ClientContext& info,
+        const eprosima::fastdds::dds::rpc::RpcRequest& info,
         /*in*/ uint32_t n_results,
         /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer)
 {
@@ -213,7 +213,7 @@ void ServerApp::ServerImpl::fibonacci_seq(
 }
 
 int32_t ServerApp::ServerImpl::sum_all(
-        const CalculatorServer_ClientContext& info,
+        const eprosima::fastdds::dds::rpc::RpcRequest& info,
         /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value)
 {
     static_cast<void>(info);
@@ -246,7 +246,7 @@ int32_t ServerApp::ServerImpl::sum_all(
 }
 
 void ServerApp::ServerImpl::accumulator(
-        const CalculatorServer_ClientContext& info,
+        const eprosima::fastdds::dds::rpc::RpcRequest& info,
         /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
         /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer)
 {
@@ -279,7 +279,7 @@ void ServerApp::ServerImpl::accumulator(
 }
 
 void ServerApp::ServerImpl::filter(
-        const CalculatorServer_ClientContext& info,
+        const eprosima::fastdds::dds::rpc::RpcRequest& info,
         /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
         /*in*/ calculator_example::FilterKind filter_kind,
         /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer)
