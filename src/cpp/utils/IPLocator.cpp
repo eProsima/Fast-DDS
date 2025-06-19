@@ -206,8 +206,7 @@ bool IPLocator::copyIPv4(
         const Locator_t& locator,
         Locator_t& dest)
 {
-    copyIPv4(locator, &(dest.address[12]));
-    return true;
+    return copyIPv4(locator, &(dest.address[12]));
 }
 
 // IPv6
