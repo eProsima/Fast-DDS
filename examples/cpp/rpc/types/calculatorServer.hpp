@@ -35,116 +35,88 @@
 
 namespace calculator_example {
 
-/**
- * @brief Context for a client request.
- */
-struct CalculatorServer_ClientContext
-{
-    virtual ~CalculatorServer_ClientContext() = default;
-
-    /**
-     * @brief Get the GUID of the client that made the request.
-     *
-     * @return The GUID of the client that made the request.
-     */
-    virtual const eprosima::fastdds::rtps::GUID_t& get_client_id() const = 0;
-
-    /**
-     * @brief Get the locators of the client that made the request.
-     *
-     * @return The locators of the client that made the request.
-     */
-    virtual const eprosima::fastdds::rtps::RemoteLocatorList& get_client_locators() const = 0;
-};
-
 struct CalculatorServer_IServerImplementation
 {
     virtual ~CalculatorServer_IServerImplementation() = default;
 
     virtual calculator_example::detail::Calculator_representation_limits_Out representation_limits(
-            const CalculatorServer_ClientContext& info) = 0;
+            const eprosima::fastdds::dds::rpc::RpcRequest& info) = 0;
 
 
 
     virtual int32_t addition(
-            const CalculatorServer_ClientContext& info,
+            const eprosima::fastdds::dds::rpc::RpcRequest& info,
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) = 0;
 
 
 
     virtual int32_t subtraction(
-            const CalculatorServer_ClientContext& info,
+            const eprosima::fastdds::dds::rpc::RpcRequest& info,
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) = 0;
 
 
 
     virtual void fibonacci_seq(
-            const CalculatorServer_ClientContext& info,
+            const eprosima::fastdds::dds::rpc::RpcRequest& info,
             /*in*/ uint32_t n_results,
             /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
 
 
 
     virtual int32_t sum_all(
-            const CalculatorServer_ClientContext& info,
+            const eprosima::fastdds::dds::rpc::RpcRequest& info,
             /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value) = 0;
 
 
 
     virtual void accumulator(
-            const CalculatorServer_ClientContext& info,
+            const eprosima::fastdds::dds::rpc::RpcRequest& info,
             /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
             /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
 
 
 
     virtual void filter(
-            const CalculatorServer_ClientContext& info,
+            const eprosima::fastdds::dds::rpc::RpcRequest& info,
             /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
             /*in*/ calculator_example::FilterKind filter_kind,
             /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
 
 };
 
-struct CalculatorServer
-{
-    virtual ~CalculatorServer() = default;
-
-    /**
-     * @brief Run the server.
-     *
-     * This method starts the server and begins processing requests.
-     * The method will block until the server is stopped.
-     */
-    virtual void run() = 0;
-
-    /**
-     * @brief Stop the server.
-     *
-     * This method stops the server and releases all resources.
-     * It will cancel all pending requests, and wait for all processing threads to finish before returning.
-     */
-    virtual void stop() = 0;
-
-};
-
 /**
- * @brief Create a CalculatorServer instance.
+ * @brief Create a Calculator server instance.
  *
  * @param part             The DomainParticipant to use for the server.
  * @param service_name     The name of the service.
  * @param qos              The QoS settings for the server.
  * @param thread_pool_size The size of the thread pool to use for processing requests.
- *                         When set to 0, a new thread will be created when no threads are available.
+ *                         When set to 0, a pool with a single thread will be created.
  * @param implementation   The implementation of the server interface.
  */
-extern eProsima_user_DllExport std::shared_ptr<CalculatorServer> create_CalculatorServer(
+extern eProsima_user_DllExport std::shared_ptr<eprosima::fastdds::dds::rpc::RpcServer> create_CalculatorServer(
         eprosima::fastdds::dds::DomainParticipant& part,
         const char* service_name,
         const eprosima::fastdds::dds::ReplierQos& qos,
         size_t thread_pool_size,
+        std::shared_ptr<CalculatorServer_IServerImplementation> implementation);
+
+/**
+ * @brief Create a Calculator server instance.
+ *
+ * @param part            The DomainParticipant to use for the server.
+ * @param service_name    The name of the service.
+ * @param qos             The QoS settings for the server.
+ * @param scheduler       The request scheduling strategy to use for the server.
+ * @param implementation  The implementation of the server interface.
+ */
+extern eProsima_user_DllExport std::shared_ptr<eprosima::fastdds::dds::rpc::RpcServer> create_CalculatorServer(
+        eprosima::fastdds::dds::DomainParticipant& part,
+        const char* service_name,
+        const eprosima::fastdds::dds::ReplierQos& qos,
+        std::shared_ptr<eprosima::fastdds::dds::rpc::RpcServerSchedulingStrategy> scheduler,
         std::shared_ptr<CalculatorServer_IServerImplementation> implementation);
 
 
