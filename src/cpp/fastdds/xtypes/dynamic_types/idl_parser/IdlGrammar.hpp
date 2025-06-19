@@ -310,7 +310,7 @@ struct case_label : sor<seq<kw_case, const_expr, colon>, seq<kw_default, colon>>
 struct switch_case : seq<plus<case_label>, element_spec, semicolon> {};
 struct switch_body : plus<switch_case> {};
 struct switch_type_spec : sor<integer_type, char_type, boolean_type, wide_char_type, octet_type, scoped_name> {};
-struct union_def : seq<kw_union, identifier, kw_switch, open_parentheses, switch_type_spec, close_parentheses, open_brace, switch_body, close_brace> {};
+struct union_def : seq<kw_union, identifier, kw_switch, open_parentheses, star<annotation_appl>, switch_type_spec, close_parentheses, open_brace, switch_body, close_brace> {};
 struct union_dcl : sor<union_def, union_forward_dcl> {};
 struct struct_forward_dcl : seq<kw_struct, identifier, not_at<open_brace>> {};
 struct member : seq<star<annotation_appl>, type_spec, declarators, semicolon> {};

@@ -10,6 +10,7 @@ Forthcoming
 * Add DataWriter Sample Prefilter feature:
   * New `DataWriter::set_sample_prefilter` method.
   * New `WriteParams::UserWriteData` extensible struct.
+* Support modules in `IdlParser`
 
 Version v3.2.2
 --------------

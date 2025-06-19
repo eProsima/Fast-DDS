@@ -67,4 +67,6 @@ add_custom_command(
     TARGET IdlParserTests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL ${CMAKE_CURRENT_BINARY_DIR}/IDL
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_structures.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_unions.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
 )
