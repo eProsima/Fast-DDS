@@ -68,7 +68,7 @@ public:
         return inner_.size();
     }
 
-    using ModuleVisitor = std::function<void(const Module& mod)>;
+    using ModuleVisitor = std::function<void (const Module& mod)>;
 
     void for_each_submodule(
             ModuleVisitor visitor,
