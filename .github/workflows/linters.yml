@@ -2,8 +2,7 @@ name: Fast DDS Linters CI
 
 on:
   pull_request:
-    types:
-      - review_requested
+    types: [opened, synchronize]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
