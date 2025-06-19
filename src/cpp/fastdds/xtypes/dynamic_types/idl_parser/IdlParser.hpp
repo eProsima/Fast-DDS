@@ -202,27 +202,6 @@ private:
 }; // class Context
 
 
-
-// __FLAG__
-template<typename Input>
-void debug_action(
-        const std::string& rule_name,
-        const Input& in,
-        const std::map<std::string, std::string>& state)
-{
-    std::cout << "[DEBUG] Rule: " << rule_name << "\n";
-    std::cout << "        Input: \"" << in.string() << "\"\n";
-    std::cout << "        State:\n";
-    for (std::map<std::string, std::string>::const_iterator it = state.begin(); it != state.end(); ++it)
-    {
-        std::cout << "          - " << it->first << ": " << it->second << "\n";
-    }
-
-    std::cout << "-----------------------------------\n";
-}
-
-/////////////////
-
 // Actions
 template<typename Rule>
 struct action
@@ -249,7 +228,11 @@ struct action<identifier>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
+        auto module = ctx->modules().current();
         std::string identifier_name = in.string();
+        const std::string& name_space = module->scope();
+        const std::string& scoped_identifier_name = name_space.empty() ?
+            identifier_name : name_space + "::" + identifier_name;
 
         if (state.count("enum_name"))
         {
@@ -259,7 +242,7 @@ struct action<identifier>
             }
             else
             {
-                state["enum_member_names"] += identifier_name + ";";
+                state["enum_member_names"] += scoped_identifier_name + ";";
             }
         }
         else if (state.count("struct_name"))
@@ -306,7 +289,8 @@ struct action<identifier>
             {
                 if (state["union_discriminant"].empty())
                 {
-                    state["union_discriminant"] = identifier_name;
+                    // Discriminant can be a scoped name. Handle it in action<scoped_name>.
+                    return;
                 }
                 else if (state.count("arithmetic_expr"))
                 {
@@ -434,6 +418,10 @@ struct action<scoped_name>
 
             // Ready to parse the sequence size (if provided)
             state["arithmetic_expr"] = "";
+        }
+        else if (state.count("enum_name") && state["union_discriminant"].empty())
+        {
+            state["union_discriminant"] = identifier_name;
         }
         else if (state.count("alias"))
         {
@@ -1741,7 +1729,7 @@ struct action<struct_def>
 
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -1757,14 +1745,6 @@ struct action<struct_def>
 
         }
         cleanup_guard{state};
-
-        // __FLAG__
-        // static_cast<void>(in);
-        if (state["struct_name"] == "My_Structure")
-        {
-            debug_action("struct_def", in, state);
-        }
-        ///////////////
 
         auto module = ctx->modules().current();
         const std::string& struct_name = state["struct_name"];
@@ -1866,21 +1846,11 @@ struct action<struct_def>
         }
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << struct_name);
-        // __FLAG__
-        
-        ////////////////
         module->structure(builder);
 
         // Check if the scoped name matches the target type name
         if (scoped_struct_name == ctx->target_type_name)
         {
-            // __FLAG__
-            if (!builder)
-            {
-                EPROSIMA_LOG_ERROR(IDLPARSER, "Builder is null for struct: " << scoped_struct_name);
-                throw std::runtime_error("Builder is null for struct: " + scoped_struct_name);
-            }
-            /////////////////
             ctx->builder = builder;
         }
     }
@@ -2065,7 +2035,7 @@ struct action<union_def>
 
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -2081,11 +2051,6 @@ struct action<union_def>
 
         }
         cleanup_guard{state};
-
-        // __FLAG__
-        static_cast<void>(in);
-        // debug_action("union_def", in, state);
-        ///////////////
 
         auto module = ctx->modules().current();
         const std::string& union_name = state["union_name"];
