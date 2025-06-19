@@ -63,7 +63,8 @@ namespace frpc = eprosima::fastdds::dds::rpc;
 namespace frtps = eprosima::fastdds::rtps;
 
 class CalculatorServerLogic
-    : public CalculatorServer
+    : public frpc::RpcServer
+    , public std::enable_shared_from_this<CalculatorServerLogic>
 {
     using RequestType = Calculator_Request;
     using ReplyType = Calculator_Reply;
@@ -71,14 +72,29 @@ class CalculatorServerLogic
 public:
 
     CalculatorServerLogic(
-            eprosima::fastdds::dds::DomainParticipant& part,
+            fdds::DomainParticipant& part,
             const char* service_name,
-            const eprosima::fastdds::dds::ReplierQos& qos,
+            const fdds::ReplierQos& qos,
             size_t thread_pool_size,
             std::shared_ptr<CalculatorServer_IServerImplementation> implementation)
-        : CalculatorServer()
+        : CalculatorServerLogic(
+                part,
+                service_name,
+                qos,
+                std::make_shared<ThreadPool>(*this, thread_pool_size),
+                std::move(implementation))
+    {
+    }
+
+    CalculatorServerLogic(
+            fdds::DomainParticipant& part,
+            const char* service_name,
+            const fdds::ReplierQos& qos,
+            std::shared_ptr<frpc::RpcServerSchedulingStrategy> scheduler,
+            std::shared_ptr<CalculatorServer_IServerImplementation> implementation)
+        : frpc::RpcServer()
         , participant_(part)
-        , thread_pool_(*this, thread_pool_size)
+        , request_scheduler_(scheduler)
         , implementation_(std::move(implementation))
     {
         // Register the service type support
@@ -106,8 +122,6 @@ public:
 
     ~CalculatorServerLogic() override
     {
-        stop();
-
         if (nullptr != replier_)
         {
             participant_.delete_service_replier(service_->get_service_name(), replier_);
@@ -174,7 +188,21 @@ public:
         }
 
         // Wait for all threads to finish
-        thread_pool_.stop();
+        request_scheduler_->server_stopped(shared_from_this());
+    }
+
+    void execute_request(
+            const std::shared_ptr<frpc::RpcRequest>& request) override
+    {
+        auto ctx = std::dynamic_pointer_cast<RequestContext>(request);
+        if (ctx)
+        {
+            execute_request(ctx);
+        }
+        else
+        {
+            throw std::runtime_error("Invalid request context type");
+        }
     }
 
 private:
@@ -724,7 +752,7 @@ private:
 
     //} operation filter
 
-    struct RequestContext : CalculatorServer_ClientContext
+    struct RequestContext : frpc::RpcRequest
     {
         RequestType request;
         frpc::RequestInfo info;
@@ -999,6 +1027,7 @@ private:
     };
 
     struct ThreadPool
+        : public frpc::RpcServerSchedulingStrategy
     {
         ThreadPool(
                 CalculatorServerLogic& server,
@@ -1015,7 +1044,7 @@ private:
                     {
                         while (!finished_)
                         {
-                            std::shared_ptr<RequestContext> req;
+                            std::shared_ptr<frpc::RpcRequest> req;
                             {
                                 std::unique_lock<std::mutex> lock(mtx_);
                                 cv_.wait(lock, [this]()
@@ -1041,9 +1070,12 @@ private:
             }
         }
 
-        void new_request(
-                const std::shared_ptr<RequestContext>& req)
+        void schedule_request(
+                const std::shared_ptr<frpc::RpcRequest>& req,
+                const std::shared_ptr<frpc::RpcServer>& server) override
         {
+            static_cast<void>(server);
+
             std::lock_guard<std::mutex> lock(mtx_);
             if (!finished_)
             {
@@ -1052,8 +1084,11 @@ private:
             }
         }
 
-        void stop()
+        void server_stopped(
+                const std::shared_ptr<frpc::RpcServer>& server) override
         {
+            static_cast<void>(server);
+
             // Notify all threads in the pool to stop
             {
                 std::lock_guard<std::mutex> lock(mtx_);
@@ -1075,7 +1110,7 @@ private:
         CalculatorServerLogic& server_;
         std::mutex mtx_;
         std::condition_variable cv_;
-        std::queue<std::shared_ptr<RequestContext>> requests_;
+        std::queue<std::shared_ptr<frpc::RpcRequest>> requests_;
         bool finished_{ false };
         std::vector<std::thread> threads_;
     };
@@ -1107,7 +1142,7 @@ private:
             processing_requests_[id] = ctx;
         }
 
-        thread_pool_.new_request(ctx);
+        request_scheduler_->schedule_request(ctx, shared_from_this());
     }
 
     void execute_request(
@@ -1312,22 +1347,73 @@ private:
     fdds::GuardCondition finish_condition_;
     std::mutex mtx_;
     std::map<frtps::SampleIdentity, std::shared_ptr<RequestContext>> processing_requests_;
-    ThreadPool thread_pool_;
+    std::shared_ptr<frpc::RpcServerSchedulingStrategy> request_scheduler_;
     std::shared_ptr<CalculatorServer_IServerImplementation> implementation_;
 
 };
 
+struct CalculatorServerProxy
+    : public frpc::RpcServer
+{
+    CalculatorServerProxy(
+            std::shared_ptr<frpc::RpcServer> impl)
+        : impl_(std::move(impl))
+    {
+    }
+
+    ~CalculatorServerProxy() override
+    {
+        if (impl_)
+        {
+            impl_->stop();
+        }
+    }
+
+    void run() override
+    {
+        impl_->run();
+    }
+
+    void stop() override
+    {
+        impl_->stop();
+    }
+
+    void execute_request(
+            const std::shared_ptr<frpc::RpcRequest>& request) override
+    {
+        impl_->execute_request(request);
+    }
+
+private:
+
+   std::shared_ptr<frpc::RpcServer> impl_;
+};
+
 }  // namespace detail
 
-std::shared_ptr<CalculatorServer> create_CalculatorServer(
+std::shared_ptr<eprosima::fastdds::dds::rpc::RpcServer> create_CalculatorServer(
         eprosima::fastdds::dds::DomainParticipant& part,
         const char* service_name,
         const eprosima::fastdds::dds::ReplierQos& qos,
         size_t thread_pool_size,
         std::shared_ptr<CalculatorServer_IServerImplementation> implementation)
 {
-    return std::make_shared<detail::CalculatorServerLogic>(
+    auto ptr = std::make_shared<detail::CalculatorServerLogic>(
         part, service_name, qos, thread_pool_size, implementation);
+    return std::make_shared<detail::CalculatorServerProxy>(ptr);
+}
+
+std::shared_ptr<eprosima::fastdds::dds::rpc::RpcServer> create_CalculatorServer(
+        eprosima::fastdds::dds::DomainParticipant& part,
+        const char* service_name,
+        const eprosima::fastdds::dds::ReplierQos& qos,
+        std::shared_ptr<eprosima::fastdds::dds::rpc::RpcServerSchedulingStrategy> scheduler,
+        std::shared_ptr<CalculatorServer_IServerImplementation> implementation)
+{
+    auto ptr = std::make_shared<detail::CalculatorServerLogic>(
+        part, service_name, qos, scheduler, implementation);
+    return std::make_shared<detail::CalculatorServerProxy>(ptr);
 }
 
 //} interface Calculator
