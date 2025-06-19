@@ -97,10 +97,26 @@ public:
     RTPS_DllAPI static std::string toIPv4string(
             const Locator_t& locator);
 
-    //! Copies locator's IPv4.
+    /**
+     * @brief Copies locator's IPv4 to a destination array.
+     * @param locator Locator from which to copy the IPv4.
+     * @param dest Destination array where the IPv4 will be copied.
+     * @return true if the copy was successful, false otherwise.
+     */
     RTPS_DllAPI static bool copyIPv4(
             const Locator_t& locator,
             unsigned char* dest);
+
+    /**
+     * @brief Copies locator's IPv4 to a destination locator.
+     *        It only copies the IPv4 part (last 4 bytes), leaving other parts unchanged.
+     * @param locator Locator from which to copy the IPv4.
+     * @param dest Destination locator where the IPv4 will be copied.
+     * @return true if the copy was successful, false otherwise.
+     */
+    RTPS_DllAPI static bool copyIPv4(
+            const Locator_t& locator,
+            Locator_t& dest);
 
     // IPv6
     //! Sets locator's IPv6.
@@ -251,6 +267,16 @@ public:
             const Locator_t& loc1,
             const Locator_t& loc2,
             bool fullAddress = false);
+
+    /**
+     * Copies the whole address from one locator to another.
+     * @param loc1 Locator to copy from.
+     * @param loc2 Locator to copy to.
+     * @return True if the copy was successful.
+     */
+    RTPS_DllAPI static bool copy_address(
+            const Locator_t& loc1,
+            Locator_t& loc2);
 
     //! Checks if a both locators has the same IP address and physical port  (as in RTCP protocol).
     RTPS_DllAPI static bool compareAddressAndPhysicalPort(
