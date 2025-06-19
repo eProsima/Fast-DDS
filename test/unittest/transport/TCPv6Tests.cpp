@@ -367,7 +367,7 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2u);
+    EXPECT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2u);
 }
 
 #ifndef _WIN32
