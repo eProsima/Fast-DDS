@@ -1,5 +1,5 @@
 diff --git a/asio/include/asio/detail/impl/posix_thread.ipp b/asio/include/asio/detail/impl/posix_thread.ipp
-index 760237733..71077b33c 100644
+index e401766c7..b7965e990 100644
 --- a/asio/include/asio/detail/impl/posix_thread.ipp
 +++ b/asio/include/asio/detail/impl/posix_thread.ipp
 @@ -47,6 +47,11 @@ std::size_t posix_thread::hardware_concurrency()
@@ -14,90 +14,23 @@ index 760237733..71077b33c 100644
    if (result > 0)
      return result;
  #endif // defined(_SC_NPROCESSORS_ONLN)
-diff --git a/asio/include/asio/detail/socket_types.hpp b/asio/include/asio/detail/socket_types.hpp
-index cf4f746a4..634591534 100644
---- a/asio/include/asio/detail/socket_types.hpp
-+++ b/asio/include/asio/detail/socket_types.hpp
-@@ -411,7 +411,13 @@ const int max_iov_len = IOV_MAX;
- // POSIX platforms are not required to define IOV_MAX.
- const int max_iov_len = 16;
- # endif
--# define ASIO_OS_DEF_SA_RESTART SA_RESTART
-+// Note: QNX does not support SA_RESTART
-+// Therefore they are specifically excluded here.
-+# if defined(__QNX__)
-+#  define ASIO_OS_DEF_SA_RESTART 0
-+# else
-+#  define ASIO_OS_DEF_SA_RESTART SA_RESTART
-+# endif
- # define ASIO_OS_DEF_SA_NOCLDSTOP SA_NOCLDSTOP
- # define ASIO_OS_DEF_SA_NOCLDWAIT SA_NOCLDWAIT
- #endif
 diff --git a/asio/src/Makefile.am b/asio/src/Makefile.am
-index 587bb4935..e86a61ad2 100644
+index e9b20e607..94f13506f 100644
 --- a/asio/src/Makefile.am
 +++ b/asio/src/Makefile.am
-@@ -14,20 +14,6 @@ if HAVE_CXX20
- EXAMPLES_CPP20 = examples/cpp20
+@@ -14,10 +14,6 @@ if HAVE_CXX17
+ EXAMPLES_CPP17 = examples/cpp17
  endif
- 
--SUBDIRS = \
--	$(EXAMPLES_CPP11) \
--	$(EXAMPLES_CPP14) \
--	$(EXAMPLES_CPP17) \
--	$(EXAMPLES_CPP20) \
--	tests
+
+-SUBDIRS = $(EXAMPLES_CPP03) $(EXAMPLES_CPP11) $(EXAMPLES_CPP14) $(EXAMPLES_CPP17) tests
 -
--DIST_SUBDIRS = \
--	examples/cpp11 \
--	examples/cpp14 \
--	examples/cpp17 \
--	examples/cpp20 \
--	tests
+-DIST_SUBDIRS = examples/cpp03 examples/cpp11 examples/cpp14 examples/cpp17 tests
 -
  EXTRA_DIST = \
  	Makefile.mgw \
  	Makefile.msc \
-diff --git a/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp b/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp
-index 229509f1c..6982507b0 100644
---- a/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp
-+++ b/asio/src/examples/cpp11/local/fd_passing_stream_client.cpp
-@@ -23,6 +23,14 @@
- #include <sys/types.h>
- #include <sys/socket.h>
- 
-+#if defined(__QNX__)
-+   #undef CMSG_ALIGN
-+   #define CMSG_ALIGN(len) (((len) + sizeof (size_t) - 1) & (size_t) ~(sizeof (size_t) - 1))
-+
-+   #undef CMSG_SPACE
-+   #define CMSG_SPACE(len) (CMSG_ALIGN (len) + CMSG_ALIGN (sizeof (struct cmsghdr)))
-+#endif //defined(__QNX__)
-+
- using asio::local::stream_protocol;
- 
- constexpr std::size_t max_length = 1024;
-diff --git a/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp b/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp
-index 5082185e7..840646613 100644
---- a/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp
-+++ b/asio/src/examples/cpp11/local/fd_passing_stream_server.cpp
-@@ -22,6 +22,14 @@
- 
- #if defined(ASIO_HAS_LOCAL_SOCKETS)
- 
-+#if defined(__QNX__)
-+   #undef CMSG_ALIGN
-+   #define CMSG_ALIGN(len) (((len) + sizeof (size_t) - 1) & (size_t) ~(sizeof (size_t) - 1))
-+
-+   #undef CMSG_SPACE
-+   #define CMSG_SPACE(len) (CMSG_ALIGN (len) + CMSG_ALIGN (sizeof (struct cmsghdr)))
-+#endif //defined(__QNX__)
-+
- using asio::local::stream_protocol;
- 
- class session
 diff --git a/asio/src/tests/unit/ip/multicast.cpp b/asio/src/tests/unit/ip/multicast.cpp
-index 4f0b3f45e..ced8d1e78 100644
+index 5bc0bf802..8416d7fb1 100644
 --- a/asio/src/tests/unit/ip/multicast.cpp
 +++ b/asio/src/tests/unit/ip/multicast.cpp
 @@ -146,17 +146,20 @@ void test()
@@ -120,10 +53,10 @@ index 4f0b3f45e..ced8d1e78 100644
         //   || defined(__OpenBSD__)
 +       //   || defined(__QNX__)
    ASIO_CHECK(!have_v6 || !ec);
- 
+
    // join_group class.
 @@ -207,11 +210,11 @@ void test()
- 
+
    if (have_v6)
    {
 -#if defined(__hpux)
