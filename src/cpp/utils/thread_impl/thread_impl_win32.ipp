@@ -24,28 +24,28 @@ thread::native_handle_type thread::start_thread_impl(
         thread::start_routine_type start,
         void* arg)
 {
-        // Set the requested stack size, if given.
-        unsigned stack_attr = 0;
-        if (stack_size > 0)
+    // Set the requested stack size, if given.
+    unsigned stack_attr = 0;
+    if (stack_size > 0)
+    {
+        if (sizeof(unsigned) <= sizeof(int32_t) &&
+                stack_size > static_cast<int32_t>(std::numeric_limits<unsigned>::max() / 2))
         {
-            if (sizeof(unsigned) <= sizeof(int32_t) &&
-                    stack_size > static_cast<int32_t>(std::numeric_limits<unsigned>::max() / 2))
-            {
-                throw std::invalid_argument("Cannot cast stack_size into unsigned");
-            }
-
-            stack_attr = static_cast<unsigned>(stack_size);
+            throw std::invalid_argument("Cannot cast stack_size into unsigned");
         }
 
-        // Construct and execute the thread.
-        HANDLE hnd = (HANDLE) ::_beginthreadex(NULL, stack_attr, start, arg, 0, NULL);
-        if(!hnd)
-        {
-            throw std::system_error(std::make_error_code(std::errc::resource_unavailable_try_again));
-        }
-
-        return hnd;
+        stack_attr = static_cast<unsigned>(stack_size);
     }
+
+    // Construct and execute the thread.
+    HANDLE hnd = (HANDLE) ::_beginthreadex(NULL, stack_attr, start, arg, 0, NULL);
+    if (!hnd)
+    {
+        throw std::system_error(std::make_error_code(std::errc::resource_unavailable_try_again));
+    }
+
+    return hnd;
+}
 
 thread::id thread::get_thread_id_impl(
         thread::native_handle_type hnd)
