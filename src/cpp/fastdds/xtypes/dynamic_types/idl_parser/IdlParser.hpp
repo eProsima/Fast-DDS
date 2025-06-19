@@ -121,6 +121,7 @@ public:
     }
 
 private:
+
     std::stack<std::shared_ptr<Module>, std::vector<std::shared_ptr<Module>>> stack_;
 };
 
@@ -232,7 +233,7 @@ struct action<identifier>
         std::string identifier_name = in.string();
         const std::string& name_space = module->scope();
         const std::string& scoped_identifier_name = name_space.empty() ?
-            identifier_name : name_space + "::" + identifier_name;
+                identifier_name : name_space + "::" + identifier_name;
 
         if (state.count("enum_name"))
         {
@@ -456,7 +457,8 @@ struct action<semicolon>
                 state["struct_member_names"] += state["current_struct_member_name"] + ";";
 
                 // Add the array dimensions for this member to `all_array_sizes`
-                std::string current_array_sizes = state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
+                std::string current_array_sizes =
+                        state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
                 if (!state["all_array_sizes"].empty())
                 {
                     state["all_array_sizes"] += ";" + current_array_sizes;
@@ -553,7 +555,8 @@ struct action<semicolon>
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
-            std::string type{#id}; \
+            std::string type{#id \
+            }; \
             if (type == "sequence") \
             { \
                 state["type"] = type; \
@@ -914,6 +917,7 @@ struct action<kw_sequence>
             state.erase("arithmetic_expr");
         }
     }
+
 };
 
 template<>
@@ -1889,6 +1893,7 @@ struct action<kw_module>
     {
         state["parsing_module"] = "true";
     }
+
 };
 
 template<>
@@ -2384,6 +2389,7 @@ struct action<module_dcl>
         // Move scope to the parent module
         ctx->modules().pop();
     }
+
 };
 
 class Parser
