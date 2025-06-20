@@ -1188,21 +1188,21 @@ std::pair<std::set<std::string>, std::set<std::string>> IPLocator::resolveNameDN
     std::set<std::string> ipv4_results;
     std::set<std::string> ipv6_results;
 
-    // Create an instance of io service
-    asio::io_service ios;
-
-    //Create a query to make the DNS petition
-    asio::ip::tcp::resolver::query resolver_query(address_name, "", asio::ip::tcp::resolver::query::numeric_service);
-
+    // Create an instance of io context
+    asio::io_context ioc;
+    
     // Create a resolver instance
-    asio::ip::tcp::resolver resolver(ios);
+    asio::ip::tcp::resolver resolver(ioc);
 
     // Used to store information about error that happens during the resolution process.
     asio::error_code ec;
 
     // Make the DNS petition
-    asio::ip::tcp::resolver::iterator it =
-            resolver.resolve(resolver_query, ec);
+    auto results = resolver.resolve(
+        address_name,
+        "",
+        asio::ip::resolver_base::numeric_service,
+        ec);
 
     // Handling errors if any.
     if (ec)
@@ -1212,20 +1212,20 @@ std::pair<std::set<std::string>, std::set<std::string>> IPLocator::resolveNameDN
         return std::make_pair(ipv4_results, ipv6_results);
     }
 
-    asio::ip::tcp::resolver::iterator end_it;
-    for (; it != end_it; ++it)
+    for (const auto& entry : results)
     {
+        const auto& addr = entry.endpoint().address();
         EPROSIMA_LOG_INFO(IP_LOCATOR,
-                "IP " << it->endpoint().address() << " found by DNS request to address " << address_name);
+                "IP " << addr << " found by DNS request to address " << address_name);
 
         // Check whether the ip get is v4 or v6
-        if (it->endpoint().address().is_v4())
+        if (addr.is_v4())
         {
-            ipv4_results.insert(it->endpoint().address().to_string());
+            ipv4_results.insert(addr.to_string());
         }
         else
         {
-            ipv6_results.insert(it->endpoint().address().to_string());
+            ipv6_results.insert(addr.to_string());
         }
     }
 

@@ -167,7 +167,7 @@ UDPv4Transport::UDPv4Transport(
             }
             else if (descriptor.interfaceWhiteList.empty() && descriptor.interface_allowlist.empty())
             {
-                interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+                interface_whitelist_.emplace_back(ip::make_address_v4(infoIP.name));
                 allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
                         descriptor.netmask_filter);
             }
@@ -186,7 +186,7 @@ UDPv4Transport::UDPv4Transport(
                     if (network::netmask_filter::validate_and_transform(netmask_filter,
                             descriptor.netmask_filter))
                     {
-                        interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+                        interface_whitelist_.emplace_back(ip::make_address_v4(infoIP.name));
                         allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
                                 netmask_filter);
                     }
@@ -207,7 +207,7 @@ UDPv4Transport::UDPv4Transport(
                             return whitelist_element == infoIP.dev || whitelist_element == infoIP.name;
                         }) != white_end )
                 {
-                    interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
+                    interface_whitelist_.emplace_back(ip::make_address_v4(infoIP.name));
                     allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
                             descriptor.netmask_filter);
                 }
@@ -217,7 +217,7 @@ UDPv4Transport::UDPv4Transport(
         if (interface_whitelist_.empty())
         {
             EPROSIMA_LOG_ERROR(TRANSPORT_UDPV4, "All whitelist interfaces were filtered out");
-            interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
+            interface_whitelist_.emplace_back(ip::make_address_v4("192.0.2.0"));
         }
     }
 }
@@ -350,7 +350,7 @@ ip::udp::endpoint UDPv4Transport::generate_endpoint(
         const std::string& sIp,
         uint16_t port)
 {
-    return asio::ip::udp::endpoint(ip::address_v4::from_string(sIp), port);
+    return asio::ip::udp::endpoint(ip::make_address_v4(sIp), port);
 }
 
 ip::udp::endpoint UDPv4Transport::generate_endpoint(
@@ -390,7 +390,7 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
         uint16_t port,
         bool is_multicast)
 {
-    eProsimaUDPSocket socket = createUDPSocket(io_service_);
+    eProsimaUDPSocket socket = createUDPSocket(io_context_);
     getSocketPtr(socket)->open(generate_protocol());
     if (mReceiveBufferSize != 0)
     {
@@ -451,7 +451,7 @@ bool UDPv4Transport::OpenInputChannel(
     if (IPLocator::isMulticast(locator) && IsInputChannelOpen(locator))
     {
         std::string locatorAddressStr = IPLocator::toIPv4string(locator);
-        ip::address_v4 locatorAddress = ip::address_v4::from_string(locatorAddressStr);
+        ip::address_v4 locatorAddress = ip::make_address_v4(locatorAddressStr);
 
 #ifndef _WIN32
         if (!is_interface_whitelist_empty())
@@ -510,7 +510,7 @@ bool UDPv4Transport::OpenInputChannel(
                     get_ipv4s_unique_interfaces(locNames, true, false);
                     for (const auto& infoIP : locNames)
                     {
-                        auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                        auto ip = asio::ip::make_address_v4(infoIP.name);
                         try
                         {
                             channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip));
@@ -525,7 +525,7 @@ bool UDPv4Transport::OpenInputChannel(
                 }
                 else
                 {
-                    auto ip = asio::ip::address_v4::from_string(channelResource->iface());
+                    auto ip = asio::ip::make_address_v4(channelResource->iface());
                     try
                     {
                         channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip));
@@ -565,7 +565,7 @@ std::vector<std::string> UDPv4Transport::get_binding_interfaces_list()
 bool UDPv4Transport::is_interface_allowed(
         const std::string& iface) const
 {
-    return is_interface_allowed(asio::ip::address_v4::from_string(iface));
+    return is_interface_allowed(asio::ip::make_address_v4(iface));
 }
 
 bool UDPv4Transport::is_interface_allowed(
@@ -620,7 +620,7 @@ LocatorList UDPv4Transport::NormalizeLocator(
         get_ipv4s(locNames, false, false);
         for (const auto& infoIP : locNames)
         {
-            auto ip = asio::ip::address_v4::from_string(infoIP.name);
+            auto ip = asio::ip::make_address_v4(infoIP.name);
             if (is_interface_allowed(ip))
             {
                 Locator newloc(locator);
@@ -687,7 +687,7 @@ void UDPv4Transport::SetSocketOutboundInterface(
         eProsimaUDPSocket& socket,
         const std::string& sIp)
 {
-    getSocketPtr(socket)->set_option(ip::multicast::outbound_interface(asio::ip::address_v4::from_string(sIp)));
+    getSocketPtr(socket)->set_option(ip::multicast::outbound_interface(asio::ip::make_address_v4(sIp)));
 }
 
 void UDPv4Transport::update_network_interfaces()
@@ -704,11 +704,11 @@ void UDPv4Transport::update_network_interfaces()
                 get_ipv4s_unique_interfaces(locNames, true, false);
                 for (const auto& infoIP : locNames)
                 {
-                    auto ip = asio::ip::address_v4::from_string(infoIP.name);
+                    auto ip = asio::ip::make_address_v4(infoIP.name);
                     try
                     {
                         channelResource->socket()->set_option(ip::multicast::join_group(
-                                    ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
+                                    ip::make_address_v4(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
                     }
                     catch (std::system_error& ex)
                     {
@@ -720,11 +720,11 @@ void UDPv4Transport::update_network_interfaces()
             }
             else
             {
-                auto ip = asio::ip::address_v4::from_string(channelResource->iface());
+                auto ip = asio::ip::make_address_v4(channelResource->iface());
                 try
                 {
                     channelResource->socket()->set_option(ip::multicast::join_group(
-                                ip::address_v4::from_string(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
+                                ip::make_address_v4(DEFAULT_METATRAFFIC_MULTICAST_ADDRESS), ip));
                 }
                 catch (std::system_error& ex)
                 {
