@@ -69,6 +69,10 @@ public:
                 const TypeIdentifier& /*type_identifier*/,
                 TypeObject & /*type_object*/), (override));
 
+    MOCK_METHOD(ReturnCode_t, get_complete_type_object, (
+                const TypeIdentifierPair& /*type_identifier*/,
+                CompleteTypeObject & /*type_object*/), (override));
+
     MOCK_METHOD(ReturnCode_t, get_type_objects, (
                 const std::string& /*type_name*/,
                 TypeObjectPair & /*type_objects*/), (override));

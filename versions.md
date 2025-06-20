@@ -10,6 +10,7 @@ Forthcoming
 * Add DataWriter Sample Prefilter feature:
   * New `DataWriter::set_sample_prefilter` method.
   * New `WriteParams::UserWriteData` extensible struct.
+* Add `get_complete_type_object` to `ITypeObjectRegistry`
 
 Version v3.2.2
 --------------
