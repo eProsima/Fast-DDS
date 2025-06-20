@@ -25,7 +25,7 @@ namespace rtps {
 
 class TCPChannelResourceBasic : public TCPChannelResource
 {
-    asio::io_service& service_;
+    asio::io_context& context_;
 
     std::mutex send_mutex_;
     std::shared_ptr<asio::ip::tcp::socket> socket_;
@@ -35,14 +35,14 @@ public:
     // Constructor called when trying to connect to a remote server
     TCPChannelResourceBasic(
             TCPTransportInterface* parent,
-            asio::io_service& service,
+            asio::io_context& context,
             const Locator& locator,
             uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
     TCPChannelResourceBasic(
             TCPTransportInterface* parent,
-            asio::io_service& service,
+            asio::io_context& context,
             std::shared_ptr<asio::ip::tcp::socket> socket,
             uint32_t maxMsgSize);
 

@@ -11,6 +11,7 @@ Forthcoming
   * New `DataWriter::set_sample_prefilter` method.
   * New `WriteParams::UserWriteData` extensible struct.
 * Add `get_complete_type_object` to `ITypeObjectRegistry`
+* Bump to asio 1.34.2 release.
 
 Version v3.2.2
 --------------
