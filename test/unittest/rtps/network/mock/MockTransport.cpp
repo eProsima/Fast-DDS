@@ -91,6 +91,10 @@ bool MockTransport::OpenOutputChannel(
     for (auto& send_resource : send_resource_list)
     {
         MockSenderResource* mock_send_resource = dynamic_cast<MockSenderResource*>(send_resource.get());
+        if (nullptr == mock_send_resource)
+        {
+            continue;
+        }
         if (mock_send_resource->locator().port == locator.port)
         {
             return true;
