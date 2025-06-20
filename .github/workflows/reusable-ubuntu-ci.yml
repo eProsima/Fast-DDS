@@ -60,7 +60,6 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
 defaults:
   run:
     shell: bash
@@ -74,6 +73,8 @@ jobs:
       matrix:
         cmake-build-type:
           - 'RelWithDebInfo'
+    env:
+      colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wnull-dereference -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
     steps:
       - name: Add ci-pending label if PR
         if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}

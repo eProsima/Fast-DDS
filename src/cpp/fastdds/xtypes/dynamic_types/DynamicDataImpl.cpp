@@ -1585,6 +1585,10 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
             for (auto& member : enclosing_type_->get_all_members())
             {
                 auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                if (!member_impl)
+                {
+                    continue;
+                }
                 if (member_impl->get_descriptor().is_key())
                 {
                     there_is_keyed_member = true;
@@ -1610,6 +1614,10 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
                 for (auto& member : enclosing_type_->get_all_members())
                 {
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                    if (!member_impl)
+                    {
+                        continue;
+                    }
                     auto member_type {traits<DynamicType>::narrow<DynamicTypeImpl>(member_impl->get_descriptor().type())};
 
                     //TODO(richiware) For the future support of optionals. Optional member cannot be a keyed member.
@@ -1978,6 +1986,10 @@ void DynamicDataImpl::serialize_key(
             for (auto& member : enclosing_type_->get_all_members())
             {
                 auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                if (!member_impl)
+                {
+                    continue;
+                }
                 if (member_impl->get_descriptor().is_key())
                 {
                     there_is_keyed_member = true;
@@ -2002,6 +2014,10 @@ void DynamicDataImpl::serialize_key(
                 for (auto& member : enclosing_type_->get_all_members())
                 {
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                    if (!member_impl)
+                    {
+                        continue;
+                    }
                     auto member_type {traits<DynamicType>::narrow<DynamicTypeImpl>(member_impl->get_descriptor().type())};
 
                     if (TK_MAP != member_type->resolve_alias_enclosed_type()->get_kind())
@@ -2050,6 +2066,11 @@ void DynamicDataImpl::apply_bitset_mask(
     assert(enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(member_id));
     const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
                                 enclosing_type_->get_all_members().at(member_id))};
+    if (!member_impl)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying bitset mask. MemberId not found.");
+        return;
+    }
     const auto member_index {member_impl->get_descriptor().index()};
     const auto bound {enclosing_type_->get_descriptor().bound().at(member_index)};
     uint64_t mask {64 == bound ? 0x0llu : 0XFFFFFFFFFFFFFFFFllu << bound};
@@ -4007,6 +4028,13 @@ void DynamicDataImpl::set_discriminator_value(
     assert(member);
     auto m_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
     int32_t label {0};
+
+    if (!m_impl)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId " << id << " not found in enclosing type "
+                                                  << enclosing_type_->get_descriptor().name());
+        return;
+    }
 
     if (m_impl->get_descriptor().is_default_label())
     {
@@ -6406,6 +6434,11 @@ bool DynamicDataImpl::deserialize(
                         {
                             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
                             traits<DynamicDataImpl>::ref_type member_data;
+                            if (!member_impl)
+                            {
+                                throw fastcdr::exception::BadParamException(
+                                    "Member not found in DynamicTypeImpl");
+                            }
                             auto it = value_.find(member_impl->get_id());
 
                             if (it != value_.end())
@@ -6465,6 +6498,12 @@ bool DynamicDataImpl::deserialize(
                                         {
                                             auto m_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
                                                              member)};
+
+                                            if (!m_impl)
+                                            {
+                                                ret_value = false;
+                                                continue;
+                                            }
 
                                             for (auto label : m_impl->get_descriptor().label())
                                             {
