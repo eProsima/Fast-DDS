@@ -153,7 +153,7 @@ bool UDPTransportInterface::init(
     }
 
     asio::error_code ec;
-    ip::udp::socket socket(io_service_);
+    ip::udp::socket socket(io_context_);
     socket.open(generate_protocol(), ec);
     if (!!ec)
     {
@@ -249,7 +249,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
         const ip::udp::endpoint& endpoint,
         uint16_t& port)
 {
-    eProsimaUDPSocket socket = createUDPSocket(io_service_);
+    eProsimaUDPSocket socket = createUDPSocket(io_context_);
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
