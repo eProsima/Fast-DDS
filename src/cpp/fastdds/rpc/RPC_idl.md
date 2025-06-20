@@ -22,14 +22,14 @@ module dds {
 module rpc {
 
 // Base class for RPC exceptions.
-@nested
+@nested @final
 struct RpcException
 {
     string message;
 };
 
 // Exception thrown by the RPC API when the communication with the remote endpoint breaks.
-@nested
+@nested @final
 struct RpcBrokenPipeException : RpcException
 {
 };
@@ -38,14 +38,14 @@ struct RpcBrokenPipeException : RpcException
 typedef unsigned long RpcStatusCode;
 
 // Exception thrown by the RPC API when the client cancels an input feed.
-@nested
+@nested @final
 struct RpcFeedCancelledException : RpcException
 {
     RpcStatusCode reason;
 };
 
 // Base class for user defined exceptions.
-@nested
+@nested @final
 struct RpcOperationError : RpcException
 {
 };
@@ -54,6 +54,7 @@ struct RpcOperationError : RpcException
  * Enumeration of possible error codes that can be returned by a remote service.
  * Extracted from DDS-RPC v1.0 - 7.5.2 Mapping of Error Codes.
  */
+@final
 enum RemoteExceptionCode_t
 {
     REMOTE_EX_OK,                 // The request was executed successfully.
@@ -65,8 +66,15 @@ enum RemoteExceptionCode_t
 };
 
 // Class for exceptions that map to a RpcExceptionCode_t
-@nested
+@nested @final
 struct RpcRemoteException : RpcException
+{
+    RemoteExceptionCode_t code;
+};
+
+// Exception thrown by the RPC API when an operation times out.
+@nested @final
+struct RpcTimeoutException : RpcException
 {
 };
 
