@@ -33,9 +33,9 @@
 #include <sys/syscall.h>
 #ifndef SYS_gettid
     #error "SYS_gettid unavailable on this system"
-#endif
+#endif // ifndef SYS_gettid
 #define gettid() ((pid_t)syscall(SYS_gettid))
-#endif
+#endif // if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ <= 30)))
 
 namespace eprosima {
 
@@ -100,10 +100,10 @@ static void configure_current_thread_scheduler(
 
     if ((sched_class == SCHED_OTHER)
 #if !defined(__QNX__)
-        || (sched_class == SCHED_BATCH)
-        || (sched_class == SCHED_IDLE)
+            || (sched_class == SCHED_BATCH)
+            || (sched_class == SCHED_IDLE)
 #endif  // !defined(__QNX__)
-        )
+            )
     {
         //
         // BATCH and IDLE do not have explicit priority values.
