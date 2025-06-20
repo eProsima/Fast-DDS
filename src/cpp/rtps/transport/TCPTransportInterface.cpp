@@ -586,7 +586,7 @@ bool TCPTransportInterface::init(
         auto ioContextTimersFunction = [&]()
                 {
                     asio::executor_work_guard<asio::io_context::executor_type> work = make_work_guard(io_context_timers_.
-                                    get_executor());
+                                            get_executor());
                     io_context_timers_.run();
                 };
         io_context_timers_thread_ = create_thread(ioContextTimersFunction,
