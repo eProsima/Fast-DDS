@@ -491,6 +491,11 @@ private:
             enclosing_type_->get_member(selected_member, selected_union_member_);
             auto sm_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(selected_member);
 
+            if (!sm_impl)
+            {
+                return false;
+            }
+
             for (auto label : sm_impl->get_descriptor().label())
             {
                 if (static_cast<int32_t>(value) == label)
@@ -511,6 +516,12 @@ private:
                 for (auto member : enclosing_type_->get_all_members_by_index())
                 {
                     auto m_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+
+                    if (!m_impl)
+                    {
+                        ret_value = false;
+                        continue;
+                    }
 
                     for (auto label : m_impl->get_descriptor().label())
                     {

@@ -56,6 +56,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type(
 {
     auto descriptor_impl = traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(descriptor);
 
+    if (!descriptor_impl)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Invalid TypeDescriptor provided to create_type.");
+        return {};
+    }
+
     if (descriptor_impl->is_consistent())
     {
         return std::make_shared<DynamicTypeBuilderImpl>(*descriptor_impl);

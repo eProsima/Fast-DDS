@@ -59,8 +59,16 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         {
             traits<DynamicTypeMemberImpl>::ref_type member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
                                                                      members_.back())};
-            assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
-            next_id_ = member_impl->get_descriptor().id() + 1;
+            if (!member_impl)
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES,
+                        "Internal error: last member is not a DynamicTypeMemberImpl");
+            }
+            else
+            {
+                assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
+                next_id_ = member_impl->get_descriptor().id() + 1;
+            }
         }
 
         next_index_ = static_cast<uint32_t>(members_.size());
@@ -453,6 +461,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         {
             const MemberId mid {member.first};
             const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+            if (!member_impl)
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member with id " << mid << " is not a DynamicTypeMemberImpl");
+                return RETCODE_BAD_PARAMETER;
+            }
             const auto member_index {member_impl->get_descriptor().index()};
 
             if (mid == new_member_id)
@@ -498,6 +511,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         if (0 < members_.size())
         {
             const auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(members_.at(0));
+
+            if (!member_impl)
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member is not a DynamicTypeMemberImpl");
+                return RETCODE_BAD_PARAMETER;
+            }
 
             if (member_impl->get_descriptor().type()->get_kind() != descriptor->type()->get_kind())
             {
@@ -554,6 +573,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         for (++it; it != members_.end(); ++it)
         {
             auto next_member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(*it);
+            if (!next_member)
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Member is not a DynamicTypeMemberImpl");
+                return RETCODE_BAD_PARAMETER;
+            }
             next_member->get_descriptor().index(next_member->get_descriptor().index() + 1);
         }
         ++next_index_;

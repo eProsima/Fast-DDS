@@ -597,7 +597,14 @@ void PDP::announceParticipantState(
             if (m_hasChangedLocalPDP.exchange(false) || new_change)
             {
                 mp_mutex->lock();
-                ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
+                auto* local_participant_data = getLocalParticipantProxyData();
+                if (!local_participant_data)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PDP,
+                            "announceParticipantState(): local participant data is null");
+                    mp_mutex->unlock();
+                    return;
+                }
                 InstanceHandle_t key = local_participant_data->m_key;
                 ParticipantProxyData proxy_data_copy(*local_participant_data);
                 mp_mutex->unlock();
@@ -638,7 +645,14 @@ void PDP::announceParticipantState(
         else
         {
             mp_mutex->lock();
-            ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
+            auto* local_participant_data = getLocalParticipantProxyData();
+            if (!local_participant_data)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PDP,
+                        "announceParticipantState(): local participant data is null");
+                mp_mutex->unlock();
+                return;
+            }
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
             mp_mutex->unlock();
