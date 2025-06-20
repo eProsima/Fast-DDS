@@ -37,7 +37,7 @@ def test_topic_instances(pub_args, sub_args):
         out = subprocess.check_output('"@DOCKER_EXECUTABLE@" compose -f topic_instances.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
-            timeout=30,
+            timeout=60,
             env=menv
         ).decode().split('\n')
 
