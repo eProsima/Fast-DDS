@@ -247,6 +247,17 @@ void ClientPublisherApp::run()
         {
             std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                       << "' SENT" << std::endl;
+
+            if (hello_.index() == 1u)
+            {
+                ReturnCode_t acked = RETCODE_ERROR;
+                do
+                {
+                    dds::Duration_t acked_wait{1, 0};
+                    acked = writer_->wait_for_acknowledgments(acked_wait);
+                }
+                while (acked != RETCODE_OK);
+            }
         }
         // Wait for period or stop event
         std::unique_lock<std::mutex> period_lock(mutex_);

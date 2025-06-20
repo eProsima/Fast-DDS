@@ -1043,8 +1043,8 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (static_cast<long>(input) < static_cast<long>(std::numeric_limits<uint32_t>::min()) ||
-                                    static_cast<long>(input) > static_cast<long>(std::numeric_limits<uint32_t>::max()))
+                            if (input < 1 ||
+                                    static_cast<unsigned int>(input) > std::numeric_limits<uint32_t>::max())
                             {
                                 throw std::out_of_range("ownership strength argument " + std::string(
                                                   argv[i]) + " out of range [0, " +
