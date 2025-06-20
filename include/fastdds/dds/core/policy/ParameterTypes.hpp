@@ -184,7 +184,9 @@ enum ParameterId_t : uint16_t
     PID_RTPS_RELIABLE_READER                = 0x8201,
     PID_READER_RESOURCE_LIMITS              = 0x8202,
     /* Participant specific */
-    PID_WIREPROTOCOL_CONFIG                 = 0x8300
+    PID_WIREPROTOCOL_CONFIG                 = 0x8300,
+    /* RPC specific */
+    PID_RPC_MORE_REPLIES                    = 0x8400
 };
 
 /*!

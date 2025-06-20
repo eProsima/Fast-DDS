@@ -155,7 +155,13 @@ public:
             rtps::CDRMessage_t* cdr_message,
             const rtps::SampleIdentity& sample_id)
     {
-        if (cdr_message->pos + 28 > cdr_message->max_size)
+        uint32_t required_size = 24 + 4; // 24 for the sample identity and 4 for the PID and length
+        if (sample_id.has_more_replies())
+        {
+            required_size += 4; // Additional parameter for has_more_replies
+        }
+
+        if (cdr_message->pos + required_size > cdr_message->max_size)
         {
             return false;
         }
@@ -168,6 +174,14 @@ public:
                 sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
         rtps::CDRMessage::addInt32(cdr_message, sample_id.sequence_number().high);
         rtps::CDRMessage::addUInt32(cdr_message, sample_id.sequence_number().low);
+
+        if (sample_id.has_more_replies())
+        {
+            // Add has_more_replies parameter
+            rtps::CDRMessage::addUInt16(cdr_message, dds::PID_RPC_MORE_REPLIES);
+            rtps::CDRMessage::addUInt16(cdr_message, 0);
+        }
+
         return true;
     }
 
@@ -826,6 +840,11 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::add_content_to_cdr_m
                     parameter.sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
     valid &= rtps::CDRMessage::addInt32(cdr_message, parameter.sample_id.sequence_number().high);
     valid &= rtps::CDRMessage::addUInt32(cdr_message, parameter.sample_id.sequence_number().low);
+    if (parameter.sample_id.has_more_replies())
+    {
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, dds::PID_RPC_MORE_REPLIES);
+        valid &= rtps::CDRMessage::addUInt16(cdr_message, 0); // Length of the additional parameter
+    }
     return valid;
 }
 
@@ -846,6 +865,7 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
                     parameter.sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
     valid &= rtps::CDRMessage::readInt32(cdr_message, &parameter.sample_id.sequence_number().high);
     valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
+
     return valid;
 }
 

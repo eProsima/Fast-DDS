@@ -99,6 +99,20 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                         break;
                     }
 
+                    case PID_RPC_MORE_REPLIES:
+                    {
+                        // Ignore custom PID when coming from other vendors
+                        if (rtps::c_VendorId_eProsima != change.vendor_id)
+                        {
+                            return true;
+                        }
+
+                        change.write_params.related_sample_identity().has_more_replies(true);
+                        change.write_params.sample_identity().has_more_replies(true);
+
+                        break;
+                    }
+
                     case PID_STATUS_INFO:
                     {
                         ParameterStatusInfo_t p(pid, plength);
