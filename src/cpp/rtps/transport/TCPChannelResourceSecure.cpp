@@ -79,9 +79,9 @@ void TCPChannelResourceSecure::connect(
             ip::tcp::resolver resolver(context_);
 
             auto endpoints = resolver.resolve(
-                            IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
-                                locator_),
-                            std::to_string(IPLocator::getPhysicalPort(locator_)));
+                IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
+                    locator_),
+                std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             TCPTransportInterface* parent = parent_;
             secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(context_, ssl_context_);

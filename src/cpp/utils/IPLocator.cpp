@@ -1190,7 +1190,7 @@ std::pair<std::set<std::string>, std::set<std::string>> IPLocator::resolveNameDN
 
     // Create an instance of io context
     asio::io_context ioc;
-    
+
     // Create a resolver instance
     asio::ip::tcp::resolver resolver(ioc);
 

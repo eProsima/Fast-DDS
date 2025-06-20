@@ -67,9 +67,9 @@ void TCPChannelResourceBasic::connect(
             ip::tcp::resolver resolver(context_);
 
             auto endpoints = resolver.resolve(
-                            IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
-                                locator_),
-                            std::to_string(IPLocator::getPhysicalPort(locator_)));
+                IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
+                    locator_),
+                std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(context_);
             std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
