@@ -113,6 +113,18 @@ public:
         return sequence_number_;
     }
 
+    bool has_more_replies() const
+    {
+        return has_more_replies_;
+    }
+
+    SampleIdentity& has_more_replies(
+            bool more_replies)
+    {
+        has_more_replies_ = more_replies;
+        return *this;
+    }
+
     static SampleIdentity unknown()
     {
         return SampleIdentity();
@@ -123,6 +135,8 @@ private:
     GUID_t writer_guid_ = GUID_t::unknown();
 
     SequenceNumber_t sequence_number_ = SequenceNumber_t::unknown();
+
+    bool has_more_replies_ = false;
 
     friend std::istream& operator >>(
             std::istream& input,
