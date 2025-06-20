@@ -232,6 +232,11 @@ bool DynamicPubSubType::serialize(
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     auto type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type_);
+    if (!type_impl)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicPubSubType cannot serialize data. Unspecified type.");
+        return false;
+    }
     ser.set_encoding_flag(get_fastcdr_encoding_flag(type_impl->get_descriptor().extensibility_kind(),
             fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION == data_representation?
             eprosima::fastcdr::CdrVersion:: XCDRv1 :
@@ -317,6 +322,10 @@ void DynamicPubSubType::update_dynamic_type()
         for (auto& member : type_impl->get_all_members_by_index())
         {
             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+            if (!member_impl)
+            {
+                continue;
+            }
             if (member_impl->get_descriptor().is_key())
             {
                 is_compute_key_provided = true;

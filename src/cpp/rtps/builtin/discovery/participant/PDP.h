@@ -342,7 +342,13 @@ public:
      */
     ParticipantProxyData* getLocalParticipantProxyData() const
     {
-        return participant_proxies_.empty() ? nullptr : participant_proxies_.front();
+        if (participant_proxies_.empty())
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP,
+                    "getLocalParticipantProxyData(): no local ParticipantProxyData available – returning dummy instance");
+            assert(false && "No ParticipantProxyData available in pool");
+        }
+        return participant_proxies_.front();
     }
 
     /**
