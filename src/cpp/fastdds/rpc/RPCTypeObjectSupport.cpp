@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file RPCTypeObjectSupport.cxx
+ * @file RPCTypeObjectSupport.cpp
  */
 
 #include <fastdds/dds/rpc/RPCTypeObjectSupport.hpp>
@@ -49,11 +49,18 @@ void register_RpcException_type_identifier(
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RpcException)
     {
         StructTypeFlag struct_flags_RpcException = TypeObjectUtils::build_struct_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-            false, false);
+            eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+            true, false);
         QualifiedTypeName type_name_RpcException = "eprosima::fastdds::dds::rpc::RpcException";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RpcException;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RpcException;
+        AppliedAnnotationSeq tmp_ann_custom_RpcException;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RpcException;
+        if (!tmp_ann_custom_RpcException.empty())
+        {
+            ann_custom_RpcException = tmp_ann_custom_RpcException;
+        }
+
         CompleteTypeDetail detail_RpcException = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RpcException, ann_custom_RpcException,
             type_name_RpcException.to_string());
@@ -122,7 +129,6 @@ void register_RpcException_type_identifier(
 void register_RpcBrokenPipeException_type_identifier(
         TypeIdentifierPair& type_ids_RpcBrokenPipeException)
 {
-
     ReturnCode_t return_code_RpcBrokenPipeException {eprosima::fastdds::dds::RETCODE_OK};
     return_code_RpcBrokenPipeException =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
@@ -131,8 +137,8 @@ void register_RpcBrokenPipeException_type_identifier(
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RpcBrokenPipeException)
     {
         StructTypeFlag struct_flags_RpcBrokenPipeException = TypeObjectUtils::build_struct_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-            false, false);
+            eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+            true, false);
         return_code_RpcBrokenPipeException =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
                         get_type_identifiers(
@@ -145,6 +151,13 @@ void register_RpcBrokenPipeException_type_identifier(
         QualifiedTypeName type_name_RpcBrokenPipeException = "eprosima::fastdds::dds::rpc::RpcBrokenPipeException";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RpcBrokenPipeException;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RpcBrokenPipeException;
+        AppliedAnnotationSeq tmp_ann_custom_RpcBrokenPipeException;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RpcBrokenPipeException;
+        if (!tmp_ann_custom_RpcBrokenPipeException.empty())
+        {
+            ann_custom_RpcBrokenPipeException = tmp_ann_custom_RpcBrokenPipeException;
+        }
+
         CompleteTypeDetail detail_RpcBrokenPipeException = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RpcBrokenPipeException, ann_custom_RpcBrokenPipeException,
             type_name_RpcBrokenPipeException.to_string());
@@ -248,8 +261,8 @@ void register_RpcFeedCancelledException_type_identifier(
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RpcFeedCancelledException)
     {
         StructTypeFlag struct_flags_RpcFeedCancelledException = TypeObjectUtils::build_struct_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-            false, false);
+            eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+            true, false);
         return_code_RpcFeedCancelledException =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
                         get_type_identifiers(
@@ -263,6 +276,13 @@ void register_RpcFeedCancelledException_type_identifier(
                 "eprosima::fastdds::dds::rpc::RpcFeedCancelledException";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RpcFeedCancelledException;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RpcFeedCancelledException;
+        AppliedAnnotationSeq tmp_ann_custom_RpcFeedCancelledException;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RpcFeedCancelledException;
+        if (!tmp_ann_custom_RpcFeedCancelledException.empty())
+        {
+            ann_custom_RpcFeedCancelledException = tmp_ann_custom_RpcFeedCancelledException;
+        }
+
         CompleteTypeDetail detail_RpcFeedCancelledException = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RpcFeedCancelledException, ann_custom_RpcFeedCancelledException,
             type_name_RpcFeedCancelledException.to_string());
@@ -347,8 +367,8 @@ void register_RpcOperationError_type_identifier(
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RpcOperationError)
     {
         StructTypeFlag struct_flags_RpcOperationError = TypeObjectUtils::build_struct_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-            false, false);
+            eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+            true, false);
         return_code_RpcOperationError =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
                         get_type_identifiers(
@@ -361,6 +381,13 @@ void register_RpcOperationError_type_identifier(
         QualifiedTypeName type_name_RpcOperationError = "eprosima::fastdds::dds::rpc::RpcOperationError";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RpcOperationError;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RpcOperationError;
+        AppliedAnnotationSeq tmp_ann_custom_RpcOperationError;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RpcOperationError;
+        if (!tmp_ann_custom_RpcOperationError.empty())
+        {
+            ann_custom_RpcOperationError = tmp_ann_custom_RpcOperationError;
+        }
+
         CompleteTypeDetail detail_RpcOperationError = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RpcOperationError, ann_custom_RpcOperationError,
             type_name_RpcOperationError.to_string());
@@ -411,6 +438,13 @@ void register_RemoteExceptionCode_t_type_identifier(
         QualifiedTypeName type_name_RemoteExceptionCode_t = "eprosima::fastdds::dds::rpc::RemoteExceptionCode_t";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RemoteExceptionCode_t;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RemoteExceptionCode_t;
+        AppliedAnnotationSeq tmp_ann_custom_RemoteExceptionCode_t;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RemoteExceptionCode_t;
+        if (!tmp_ann_custom_RemoteExceptionCode_t.empty())
+        {
+            ann_custom_RemoteExceptionCode_t = tmp_ann_custom_RemoteExceptionCode_t;
+        }
+
         CompleteTypeDetail detail_RemoteExceptionCode_t = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RemoteExceptionCode_t, ann_custom_RemoteExceptionCode_t,
             type_name_RemoteExceptionCode_t.to_string());
@@ -544,8 +578,8 @@ void register_RpcRemoteException_type_identifier(
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RpcRemoteException)
     {
         StructTypeFlag struct_flags_RpcRemoteException = TypeObjectUtils::build_struct_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-            false, false);
+            eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+            true, false);
         return_code_RpcRemoteException =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
                         get_type_identifiers(
@@ -558,6 +592,13 @@ void register_RpcRemoteException_type_identifier(
         QualifiedTypeName type_name_RpcRemoteException = "eprosima::fastdds::dds::rpc::RpcRemoteException";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RpcRemoteException;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RpcRemoteException;
+        AppliedAnnotationSeq tmp_ann_custom_RpcRemoteException;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RpcRemoteException;
+        if (!tmp_ann_custom_RpcRemoteException.empty())
+        {
+            ann_custom_RpcRemoteException = tmp_ann_custom_RpcRemoteException;
+        }
+
         CompleteTypeDetail detail_RpcRemoteException = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RpcRemoteException, ann_custom_RpcRemoteException,
             type_name_RpcRemoteException.to_string());
@@ -631,6 +672,7 @@ void register_RpcRemoteException_type_identifier(
 void register_RpcTimeoutException_type_identifier(
         TypeIdentifierPair& type_ids_RpcTimeoutException)
 {
+
     ReturnCode_t return_code_RpcTimeoutException {eprosima::fastdds::dds::RETCODE_OK};
     return_code_RpcTimeoutException =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
@@ -639,8 +681,8 @@ void register_RpcTimeoutException_type_identifier(
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_RpcTimeoutException)
     {
         StructTypeFlag struct_flags_RpcTimeoutException = TypeObjectUtils::build_struct_type_flag(
-            eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
-            false, false);
+            eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+            true, false);
         return_code_RpcTimeoutException =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().
                         get_type_identifiers(
@@ -653,6 +695,13 @@ void register_RpcTimeoutException_type_identifier(
         QualifiedTypeName type_name_RpcTimeoutException = "eprosima::fastdds::dds::rpc::RpcTimeoutException";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_RpcTimeoutException;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_RpcTimeoutException;
+        AppliedAnnotationSeq tmp_ann_custom_RpcTimeoutException;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_RpcTimeoutException;
+        if (!tmp_ann_custom_RpcTimeoutException.empty())
+        {
+            ann_custom_RpcTimeoutException = tmp_ann_custom_RpcTimeoutException;
+        }
+
         CompleteTypeDetail detail_RpcTimeoutException = TypeObjectUtils::build_complete_type_detail(
             type_ann_builtin_RpcTimeoutException, ann_custom_RpcTimeoutException,
             type_name_RpcTimeoutException.to_string());
