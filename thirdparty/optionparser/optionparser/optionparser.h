@@ -770,22 +770,10 @@ public:
    * @code for (Option* opt = options[FILE]; opt; opt = opt->next())
    *   fname = opt->arg; ... @endcode
    */
-#ifndef _MSC_VER
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wnull-dereference"
-  #pragma clang diagnostic push
-  #pragma clang diagnostic ignored "-Wnull-dereference"
-#endif
-
   operator Option*()
   {
     return desc ? this : 0;
   }
-
-#ifndef _MSC_VER
-  #pragma clang diagnostic pop
-  #pragma GCC diagnostic pop
-#endif
 
   /**
    * @brief Creates a new Option that is a one-element linked list and has NULL
