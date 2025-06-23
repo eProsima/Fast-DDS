@@ -11,6 +11,7 @@ Forthcoming
   * New `DataWriter::set_sample_prefilter` method.
   * New `WriteParams::UserWriteData` extensible struct.
 * Add `get_complete_type_object` to `ITypeObjectRegistry`
+* Support modules in `IdlParser`
 
 Version v3.2.2
 --------------
