@@ -3901,6 +3901,30 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
+TEST_F(DataReaderTests, set_related_datawriter_key)
+{
+    create_entities();
+
+    ASSERT_TRUE(data_reader_->is_enabled());
+    ASSERT_EQ(RETCODE_ERROR, data_reader_->set_related_datawriter_key(data_writer_->guid()));
+
+    participant_->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+
+    SubscriberQos subscriber_qos;
+    subscriber_qos.entity_factory().autoenable_created_entities = false;
+
+    create_entities(
+        nullptr,
+        DATAREADER_QOS_DEFAULT,
+        subscriber_qos
+        );
+
+    ASSERT_FALSE(data_reader_->is_enabled());
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data_reader_->set_related_datawriter_key(data_reader_->guid()));
+    ASSERT_EQ(RETCODE_OK, data_reader_->set_related_datawriter_key(data_writer_->guid()));
+}
+
 int main(
         int argc,
         char** argv)
