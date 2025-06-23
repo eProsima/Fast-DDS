@@ -107,8 +107,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                             return true;
                         }
 
-                        change.write_params.related_sample_identity().has_more_replies(true);
-                        change.write_params.sample_identity().has_more_replies(true);
+                        change.write_params.has_more_replies(true);
 
                         break;
                     }
