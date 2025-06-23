@@ -33,7 +33,7 @@ namespace rpc {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -46,7 +46,7 @@ FASTDDS_EXPORTED_API void register_RpcException_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -59,7 +59,7 @@ FASTDDS_EXPORTED_API void register_RpcBrokenPipeException_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -72,7 +72,7 @@ FASTDDS_EXPORTED_API void register_RpcStatusCode_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -85,7 +85,7 @@ FASTDDS_EXPORTED_API void register_RpcFeedCancelledException_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -98,7 +98,7 @@ FASTDDS_EXPORTED_API void register_RpcOperationError_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -111,7 +111,7 @@ FASTDDS_EXPORTED_API void register_RemoteExceptionCode_t_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
@@ -124,7 +124,7 @@ FASTDDS_EXPORTED_API void register_RpcRemoteException_type_identifier(
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
- * @param[out] TypeIdentifier of the registered type.
+ * @param[out] type_ids TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
