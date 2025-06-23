@@ -247,6 +247,7 @@ struct ReadTakeCommand
         info.sample_identity.writer_guid(item->writerGUID);
         info.sample_identity.sequence_number(item->sequenceNumber);
         info.related_sample_identity = item->write_params.sample_identity();
+        info.has_more_replies = item->write_params.has_more_replies();
 
         info.valid_data = true;
 
