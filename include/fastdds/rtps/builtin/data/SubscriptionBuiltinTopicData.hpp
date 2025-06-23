@@ -125,6 +125,11 @@ struct SubscriptionBuiltinTopicData
     /// Type consistency enforcement Qos, NOT implemented in the library.
     dds::TypeConsistencyEnforcementQosPolicy type_consistency;
 
+    // RPC over DDS V1.0
+
+    // Related DataWriter Key
+    GUID_t related_datawriter_key;
+
     // eProsima Extensions
 
     /// Content filter configuration
