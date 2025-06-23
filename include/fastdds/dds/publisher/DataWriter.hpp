@@ -613,6 +613,23 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t set_sample_prefilter(
             std::shared_ptr<IContentFilter> prefilter);
 
+    /**
+     * This operation sets the key of the DataReader that is related to this DataWriter.
+     * This is used to establish a relationship between a DataReader and a DataWriter
+     * in the context of RPC over DDS.
+     *
+     * @warning This operation is only valid if the entity is not enabled.
+     *
+     * @param [in] related_reader_guid The GUID of the DataReader to set as related.
+     *
+     * @return RETCODE_OK if the key is set successfully.
+     * @return RETCODE_ERROR if this entity is enabled.
+     * @return RETCODE_BAD_PARAMETER if the provided GUID is unknown
+     * or does not correspond to a DataReader.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_related_datareader_key(
+            const rtps::GUID_t& related_reader_guid);
+
 protected:
 
     DataWriterImpl* impl_;
