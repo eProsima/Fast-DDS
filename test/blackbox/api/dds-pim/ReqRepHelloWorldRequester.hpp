@@ -91,6 +91,12 @@ public:
 
     void send(
             const uint16_t number,
+            std::function<void(eprosima::fastdds::dds::rpc::Requester*,
+            eprosima::fastdds::dds::rpc::RequestInfo* info,
+            void*)> send_evaluator);
+
+    void send(
+            const uint16_t number,
             const eprosima::fastdds::rtps::SampleIdentity& related_sample_identity);
 
     const eprosima::fastdds::dds::Duration_t datawriter_latency_budget_duration() const;
