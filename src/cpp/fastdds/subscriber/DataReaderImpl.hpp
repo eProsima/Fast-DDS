@@ -410,6 +410,23 @@ public:
     ReturnCode_t get_subscription_builtin_topic_data(
             SubscriptionBuiltinTopicData& subscription_data) const;
 
+    /**
+     * This operation sets the key of the DataWriter that is related to this DataReader.
+     * This is used to establish a relationship between a DataReader and a DataWriter
+     * in the context of RPC over DDS.
+     *
+     * @warning This operation is only valid if the entity is not enabled.
+     *
+     * @param [in] related_writer_guid The GUID of the DataWriter to set as related.
+     *
+     * @return RETCODE_OK if the key is set successfully.
+     * @return RETCODE_ERROR if this entity is enabled.
+     * @return RETCODE_BAD_PARAMETER if the provided GUID is unknown
+     * or does not correspond to a DataWriter.
+     */
+    ReturnCode_t set_related_datawriter_key(
+            const rtps::GUID_t& related_writer_guid);
+
 protected:
 
     //!Subscriber
@@ -527,6 +544,9 @@ protected:
 
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
+
+    //RPC over DDS
+    rtps::GUID_t related_datawriter_key_{rtps::c_Guid_Unknown};
 
     /**
      * Mutex to protect ReadCondition collection

@@ -1088,6 +1088,23 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t get_subscription_builtin_topic_data(
             SubscriptionBuiltinTopicData& subscription_data) const;
 
+    /**
+     * This operation sets the key of the DataWriter that is related to this DataReader.
+     * This is used to establish a relationship between a DataReader and a DataWriter
+     * in the context of RPC over DDS.
+     *
+     * @warning This operation is only valid if the entity is not enabled.
+     *
+     * @param [in] related_writer_guid The GUID of the DataWriter to set as related.
+     *
+     * @return RETCODE_OK if the key is set successfully.
+     * @return RETCODE_ERROR if this entity is already enabled.
+     * @return RETCODE_BAD_PARAMETER if the provided GUID is unknown
+     * or does not correspond to a DataWriter.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_related_datawriter_key(
+            const rtps::GUID_t& related_writer_guid);
+
 protected:
 
     DataReaderImpl* impl_;
