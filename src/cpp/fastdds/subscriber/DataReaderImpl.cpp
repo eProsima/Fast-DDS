@@ -2236,6 +2236,9 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     }
     subscription_data.representation = qos_.representation();
 
+    // RPC over DDS
+    subscription_data.related_datawriter_key = related_datawriter_key_;
+
     // eProsima Extensions
 
     subscription_data.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_acks;
@@ -2280,6 +2283,28 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     subscription_data.reader_resource_limits = qos_.reader_resource_limits();
 
     return RETCODE_OK;
+}
+
+ReturnCode_t DataReaderImpl::set_related_datawriter_key(
+        const rtps::GUID_t& related_writer_guid)
+{
+    ReturnCode_t ret = RETCODE_ERROR;
+
+    if (nullptr == reader_)
+    {
+        if (related_writer_guid != c_Guid_Unknown &&
+                related_writer_guid.entityId.is_writer())
+        {
+            related_datawriter_key_ = related_writer_guid;
+            ret = RETCODE_OK;
+        }
+        else
+        {
+            ret = RETCODE_BAD_PARAMETER;
+        }
+    }
+
+    return ret;
 }
 
 }  // namespace dds

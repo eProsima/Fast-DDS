@@ -2036,7 +2036,12 @@ rpc::Service* DomainParticipantImpl::create_service(
     // that it will use for DDS endpoints creation, if it is necessary
     if (!services_publisher_.second)
     {
-        Publisher* pub = create_publisher(PUBLISHER_QOS_DEFAULT);
+        // Disable automatic enabling of created entities
+        // This is necessary to previously set the related_entity_key
+        PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+        pub_qos.entity_factory().autoenable_created_entities = false;
+
+        Publisher* pub = create_publisher(pub_qos);
         if (!pub)
         {
             EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating Services publisher.");
@@ -2047,7 +2052,12 @@ rpc::Service* DomainParticipantImpl::create_service(
 
     if (!services_subscriber_.second)
     {
-        Subscriber* sub = create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        // Disable automatic enabling of created entities
+        // This is necessary to previously set the related_entity_key
+        SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+        sub_qos.entity_factory().autoenable_created_entities = false;
+
+        Subscriber* sub = create_subscriber(sub_qos);
         if (!sub)
         {
             EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating Services subscriber.");
