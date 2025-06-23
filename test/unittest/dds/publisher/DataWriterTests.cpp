@@ -2209,6 +2209,53 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
+TEST(DataWriterTests, set_related_datareader_key)
+{
+    // Create entities
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    // Assert set_related_datareader_key returns error on disabled entity
+    ASSERT_TRUE(datawriter->is_enabled());
+    ASSERT_EQ(RETCODE_ERROR, datawriter->set_related_datareader_key(datawriter->guid()));
+
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+
+    // Disable autoenable_created_entities
+    PublisherQos publisher_qos;
+    publisher_qos.entity_factory().autoenable_created_entities = false;
+
+    publisher = participant->create_publisher(publisher_qos);
+    ASSERT_NE(publisher, nullptr);
+    datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    // Assert set_related_datareader_key correctly behaves
+    ASSERT_FALSE(datawriter->is_enabled());
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, datawriter->set_related_datareader_key(datawriter->guid()));
+    auto reader_guid = datawriter->guid();
+    reader_guid.entityId.value[3] = 0x04;
+    ASSERT_EQ(RETCODE_OK, datawriter->set_related_datareader_key(reader_guid));
+
+    // Tear down
+    participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
