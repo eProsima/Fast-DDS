@@ -121,6 +121,7 @@ ReturnCode_t ReplierImpl::send_reply(
 
     rtps::WriteParams wparams;
     wparams.related_sample_identity(info.related_sample_identity);
+    wparams.has_more_replies(info.has_more_replies);
 
     return replier_writer_->write(data, wparams);
 }
