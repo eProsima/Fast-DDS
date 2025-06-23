@@ -510,6 +510,14 @@ public:
         return builder;
     }
 
+    std::string create_scoped_name(
+            const std::string& plain_name) const
+    {
+        assert(plain_name.find("::") == std::string::npos);
+        const std::string& name_space = scope();
+        return name_space.empty() ? plain_name : name_space + "::" + plain_name;
+    }
+
 protected:
 
     // NOTE: Builders are stored using the scoped name as key

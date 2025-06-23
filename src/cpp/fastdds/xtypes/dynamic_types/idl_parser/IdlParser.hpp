@@ -231,10 +231,8 @@ struct action<identifier>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         auto module = ctx->modules().current();
-        std::string identifier_name = in.string();
-        const std::string& name_space = module->scope();
-        const std::string& scoped_identifier_name = name_space.empty() ?
-                identifier_name : name_space + "::" + identifier_name;
+        const std::string identifier_name = in.string();
+        const std::string scoped_identifier_name = module->create_scoped_name(identifier_name);
 
         if (state.count("enum_name"))
         {
@@ -1460,15 +1458,7 @@ struct action<struct_forward_dcl>
         cleanup_guard{state};
 
         auto module = ctx->modules().current();
-        const std::string& struct_name = state["struct_name"];
-
-        if (struct_name.find("::") != std::string::npos)
-        {
-            return; // Cannot add a symbol with scoped name.
-        }
-
-        const std::string& name_space = module->scope();
-        const std::string scoped_struct_name = name_space.empty() ? struct_name : name_space + "::" + struct_name;
+        const std::string scoped_struct_name = module->create_scoped_name(state["struct_name"]);
 
         if (module->has_symbol(scoped_struct_name, false))
         {
@@ -1531,15 +1521,7 @@ struct action<union_forward_dcl>
         cleanup_guard{state};
 
         auto module = ctx->modules().current();
-        const std::string& union_name = state["union_name"];
-
-        if (union_name.find("::") != std::string::npos)
-        {
-            return; // Cannot add a symbol with scoped name.
-        }
-
-        const std::string& name_space = module->scope();
-        const std::string scoped_union_name = name_space.empty() ? union_name : name_space + "::" + union_name;
+        const std::string scoped_union_name = module->create_scoped_name(state["union_name"]);
 
         if (module->has_symbol(scoped_union_name, false))
         {
@@ -1592,14 +1574,7 @@ struct action<const_dcl>
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
         auto module = ctx->modules().current();
-        const std::string& const_name = state["identifier"];
-        const std::string& name_space = module->scope();
-        const std::string scoped_const_name = name_space.empty() ? const_name : name_space + "::" + const_name;
-
-        if (const_name.find("::") != std::string::npos)
-        {
-            return; // Cannot add a symbol with scoped name.
-        }
+        const std::string scoped_const_name = module->create_scoped_name(state["identifier"]);
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << scoped_const_name);
 
@@ -1643,15 +1618,7 @@ struct action<enum_dcl>
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         auto module = ctx->modules().current();
-        const std::string& enum_name = state["enum_name"];
-
-        if (enum_name.find("::") != std::string::npos)
-        {
-            return; // Cannot add a symbol with scoped name.
-        }
-
-        const std::string& name_space = module->scope();
-        const std::string scoped_enum_name = name_space.empty() ? enum_name : name_space + "::" + enum_name;
+        const std::string scoped_enum_name = module->create_scoped_name(state["enum_name"]);
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -1749,14 +1716,7 @@ struct action<struct_def>
         cleanup_guard{state};
 
         auto module = ctx->modules().current();
-        const std::string& struct_name = state["struct_name"];
-        const std::string& name_space = module->scope();
-        const std::string scoped_struct_name = name_space.empty() ? struct_name : name_space + "::" + struct_name;
-
-        if (struct_name.find("::") != std::string::npos)
-        {
-            return; // Cannot add a symbol with scoped name.
-        }
+        const std::string scoped_struct_name = module->create_scoped_name(state["struct_name"]);
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -1847,7 +1807,7 @@ struct action<struct_def>
             builder->add_member(member_descriptor);
         }
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << struct_name);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << scoped_struct_name);
         module->structure(builder);
 
         // Check if the scoped name matches the target type name
@@ -2056,14 +2016,7 @@ struct action<union_def>
         cleanup_guard{state};
 
         auto module = ctx->modules().current();
-        const std::string& union_name = state["union_name"];
-        const std::string& name_space = module->scope();
-        const std::string scoped_union_name = name_space.empty() ? union_name : name_space + "::" + union_name;
-
-        if (union_name.find("::") != std::string::npos)
-        {
-            return; // Cannot add a symbol with scoped name.
-        }
+        const std::string scoped_union_name = module->create_scoped_name(state["union_name"]);
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -2265,12 +2218,11 @@ struct action<typedef_dcl>
             alias_name = state["alias"];
         }
 
-        const std::string& name_space = module->scope();
-        const std::string scoped_alias_name = name_space.empty() ? alias_name : name_space + "::" + alias_name;
+        const std::string scoped_alias_name = module->create_scoped_name(alias_name);
 
-        if (alias_name.find("::") != std::string::npos || module->has_alias(scoped_alias_name))
+        if (module->has_alias(scoped_alias_name))
         {
-            return; // Cannot define alias with scoped name (or already defined).
+            return; // Already defined alias
         }
 
         // For sequence types, ctx->get_type() should return the type of the elements
