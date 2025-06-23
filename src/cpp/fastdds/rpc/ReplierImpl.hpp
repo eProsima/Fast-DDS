@@ -178,6 +178,17 @@ private:
 
     bool is_fully_matched() const;
 
+    /**
+     * @brief Wait for the replier to be fully matched with a requester,
+     * or to have just unmatched it.
+     *
+     * @param timeout Maximum time to wait for the requester to be matched
+     * @return true if the requester is matched, false if the timeout was reached
+     */
+    RequesterMatchStatus wait_for_matching(
+            const fastdds::dds::Duration_t& timeout,
+            const RequestInfo& info) const;
+
     DataReader* replier_reader_;
     DataWriter* replier_writer_;
     ReplierQos qos_;

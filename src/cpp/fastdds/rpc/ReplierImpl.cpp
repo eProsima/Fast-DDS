@@ -18,6 +18,8 @@
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/dds/core/condition/Condition.hpp>
+#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -102,8 +104,8 @@ ReturnCode_t ReplierImpl::send_reply(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    FASTDDS_TODO_BEFORE(3, 3, "Wait for the requester to be fully matched");
-    auto match_status = requester_match_status(info);
+    Time_t timeout{3, 0}; // Default timeout of 3 seconds
+    auto match_status = wait_for_matching(timeout, info);
     if (RequesterMatchStatus::UNMATCHED == match_status)
     {
         // The writer that sent the request has been unmatched.
@@ -127,13 +129,18 @@ ReturnCode_t ReplierImpl::take_request(
         void* data,
         RequestInfo& info)
 {
-    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-
     ReturnCode_t retcode;
 
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REPLIER, "Trying to take a request with a disabled replier");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // For taking the request is enough to check if the replier is fully matched
+    if (!is_fully_matched())
+    {
+        EPROSIMA_LOG_ERROR(REPLIER, "Trying to take a request with an unmatched requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -147,13 +154,18 @@ ReturnCode_t ReplierImpl::take_request(
         LoanableCollection& data,
         LoanableSequence<RequestInfo>& info)
 {
-    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-
     ReturnCode_t retcode;
 
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REPLIER, "Trying to take a request with a disabled replier");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // For taking the request is enough to check if the replier is fully matched
+    if (!is_fully_matched())
+    {
+        EPROSIMA_LOG_WARNING(REPLIER, "Trying to take a request with an unmatched requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -209,6 +221,11 @@ ReturnCode_t ReplierImpl::enable()
             delete_contained_entities();
             return retcode;
         }
+        else
+        {
+            replier_reader_->enable();
+            replier_writer_->enable();
+        }
 
         enabled_ = true;
     }
@@ -239,6 +256,9 @@ ReturnCode_t ReplierImpl::close()
 ReturnCode_t ReplierImpl::create_dds_entities(
         const ReplierQos& qos)
 {
+    // Entities are not autoenabled since the publisher and
+    // the subscriber have autoenable_created_entities set to false.
+
     // Create writer for the Reply topic
     replier_writer_ =
             service_->get_publisher()->create_datawriter(service_->get_reply_topic(), qos.writer_qos, nullptr);
@@ -257,6 +277,10 @@ ReturnCode_t ReplierImpl::create_dds_entities(
         EPROSIMA_LOG_ERROR(REPLIER, "Error creating reply reader");
         return RETCODE_ERROR;
     }
+
+    // Set the related entity key on both entities
+    replier_reader_->set_related_datawriter_key(replier_writer_->guid());
+    replier_writer_->set_related_datareader_key(replier_reader_->guid());
 
     return RETCODE_OK;
 }
@@ -302,22 +326,30 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::requester_match_status(
         return RequesterMatchStatus::UNMATCHED;
     }
 
-    FASTDDS_TODO_BEFORE(3, 3, "Get reply reader GUID from pub_data");
-
     auto related_guid = info.related_sample_identity.writer_guid();
     bool reply_topic_matched = false;
     if (info.sample_identity.writer_guid() != related_guid)
     {
         // Custom related GUID (i.e. reply reader GUID) sent with the request.
         // Check if the replier writer is matched with that specific reader.
-        SubscriptionBuiltinTopicData sub_data;
-        reply_topic_matched = RETCODE_OK == replier_writer_->get_matched_subscription_data(sub_data, related_guid);
+        if (related_guid.entityId.is_reader())
+        {
+            SubscriptionBuiltinTopicData sub_data;
+            reply_topic_matched = RETCODE_OK == replier_writer_->get_matched_subscription_data(sub_data, related_guid);
+        }
+        else
+        {
+            // At least, demand that the number of matched entities on the replier
+            // writer is equal to the ones on the requester reader.
+            reply_topic_matched = is_fully_matched();
+        }
     }
     else
     {
-        // No custom related GUID, check if the replier is matched with all the requesters
-        // (same number of matched readers and writers)
-        reply_topic_matched = is_fully_matched();
+        // Take the replier reader GUID from the related_datareader_key within PublicationBuiltinTopicData
+        SubscriptionBuiltinTopicData related_reader_sub_data;
+        reply_topic_matched = RETCODE_OK == replier_writer_->get_matched_subscription_data(related_reader_sub_data,
+                        pub_data.related_datareader_key);
     }
 
     return reply_topic_matched ?
@@ -338,6 +370,52 @@ bool ReplierImpl::is_fully_matched() const
 
     EPROSIMA_LOG_ERROR(REPLIER, "Error getting matched subscriptions or publications");
     return false;
+}
+
+ReplierImpl::RequesterMatchStatus ReplierImpl::wait_for_matching(
+        const fastdds::dds::Duration_t& timeout,
+        const RequestInfo& info) const
+{
+    WaitSet waitset;
+
+    // Add condition for changes in the replier reader matched status
+    StatusCondition& reader_condition = replier_reader_->get_statuscondition();
+    // Do not overwrite the original mask, since it is used by the server
+    StatusMask new_mask_reader, original_mask_reader = new_mask_reader = reader_condition.get_enabled_statuses();
+    new_mask_reader |= StatusMask::subscription_matched();
+    reader_condition.set_enabled_statuses(new_mask_reader);
+    waitset.attach_condition(reader_condition);
+
+    // Add condition for changes in the replier writer matched status
+    StatusCondition& writer_condition = replier_writer_->get_statuscondition();
+    // Do not overwrite the original mask, since it is used by the server
+    StatusMask new_mask_writer, original_mask_writer = new_mask_writer = writer_condition.get_enabled_statuses();
+    new_mask_writer |= StatusMask::publication_matched();
+    writer_condition.set_enabled_statuses(new_mask_writer);
+    waitset.attach_condition(writer_condition);
+
+    Time_t current_time;
+    Time_t::now(current_time);
+    Time_t finish_time = current_time + timeout;
+
+    RequesterMatchStatus requester_status = requester_match_status(info);
+    while ((RequesterMatchStatus::MATCHED != requester_status) && current_time < finish_time)
+    {
+        // Wait 10 ms for the conditions to be triggered
+        ConditionSeq active_conditions;
+        waitset.wait(active_conditions, {0, 10 * 1000 * 1000});
+
+        // Check if the replier is fully matched
+        requester_status = requester_match_status(info);
+
+        // Update the current time
+        Time_t::now(current_time);
+    }
+
+    reader_condition.set_enabled_statuses(original_mask_reader);
+    reader_condition.set_enabled_statuses(original_mask_writer);
+
+    return requester_status;
 }
 
 } // namespace rpc
