@@ -191,7 +191,8 @@ void ReqRepHelloWorldRequester::direct_send(
 }
 
 void ReqRepHelloWorldRequester::send(
-        const uint16_t number)
+        const uint16_t number,
+        std::function<void(Requester* requester, RequestInfo* info, void* request)> send_evaluator)
 {
     RequestInfo info;
     HelloWorld hello;
@@ -203,10 +204,23 @@ void ReqRepHelloWorldRequester::send(
         current_number_ = number;
     }
 
-    ASSERT_EQ(requester_->send_request((void*)&hello, info), RETCODE_OK);
-    related_sample_identity_ = info.related_sample_identity;
+    send_evaluator(requester_, &info, (void*)&hello);
+}
 
-    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
+void ReqRepHelloWorldRequester::send(
+        const uint16_t number)
+{
+    auto send_evaluator = [this](
+        Requester* requester,
+        RequestInfo* info,
+        void* request)
+            {
+                ASSERT_EQ(requester->send_request(request, *info), RETCODE_OK);
+                this->related_sample_identity_ = info->related_sample_identity;
+                ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
+            };
+
+    send(number, send_evaluator);
 }
 
 void ReqRepHelloWorldRequester::send(

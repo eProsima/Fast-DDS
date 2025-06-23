@@ -49,6 +49,13 @@ public:
 
     ReqRepHelloWorldReplier();
 
+    ReqRepHelloWorldReplier(
+            std::function<void(
+                eprosima::fastdds::dds::rpc::RequestInfo& info,
+                eprosima::fastdds::dds::rpc::Replier* replier,
+                const void* const request)> request_processor
+            );
+
     virtual ~ReqRepHelloWorldReplier();
 
     void init();
@@ -60,10 +67,6 @@ public:
     {
         return initialized_;
     }
-
-    void newNumber(
-            const eprosima::fastdds::dds::rpc::RequestInfo& info,
-            uint16_t number);
 
     void wait_discovery();
 
@@ -95,6 +98,12 @@ private:
     // The main thread remains blocked until the requester matches with the replier
     std::thread processing_thread_;
     eprosima::fastdds::dds::GuardCondition stop_processing_thread_;
+
+    std::function <void(
+                eprosima::fastdds::dds::rpc::RequestInfo& info,
+                eprosima::fastdds::dds::rpc::Replier* replier,
+                const void* const request
+                )> request_processor_;
 };
 
 #endif // _TEST_BLACKBOX_REQREPHELLOWORLDREPLIER_HPP_

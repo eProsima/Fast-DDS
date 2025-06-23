@@ -43,6 +43,34 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier()
     , initialized_(false)
     , matched_(0)
 {
+    request_processor_ = [](
+        eprosima::fastdds::dds::rpc::RequestInfo& info,
+        eprosima::fastdds::dds::rpc::Replier* replier,
+        const void* const request)
+            {
+                // Default request processor does nothing
+                const HelloWorld* hello_request = static_cast<const HelloWorld*>(request);
+                ASSERT_EQ(hello_request->message().compare("HelloWorld"), 0);
+                HelloWorld reply;
+                reply.index(hello_request->index());
+                reply.message("GoodBye");
+                ASSERT_EQ(replier->send_reply((void*)&reply, info), RETCODE_OK);
+            };
+}
+
+ReqRepHelloWorldReplier::ReqRepHelloWorldReplier(
+        std::function<void(
+            eprosima::fastdds::dds::rpc::RequestInfo& info,
+            eprosima::fastdds::dds::rpc::Replier* replier,
+            const void* const request)> request_processor
+        )
+    : replier_(nullptr)
+    , service_(nullptr)
+    , participant_(nullptr)
+    , initialized_(false)
+    , matched_(0)
+    , request_processor_(request_processor)
+{
 }
 
 ReqRepHelloWorldReplier::~ReqRepHelloWorldReplier()
@@ -101,16 +129,6 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
     init_processing_thread();
 
     initialized_ = true;
-}
-
-void ReqRepHelloWorldReplier::newNumber(
-        const RequestInfo& info,
-        uint16_t number)
-{
-    HelloWorld hello;
-    hello.index(number);
-    hello.message("GoodBye");
-    ASSERT_EQ(replier_->send_reply((void*)&hello, info), RETCODE_OK);
 }
 
 void ReqRepHelloWorldReplier::wait_discovery()
@@ -228,8 +246,10 @@ void ReqRepHelloWorldReplier::process_status_changes()
                     {
                         if (info.valid_data)
                         {
-                            ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
-                            newNumber(info, hello.index());
+                            request_processor_(
+                                info,
+                                replier_,
+                                static_cast<const void*>(&hello));
                         }
                     }
                 }
