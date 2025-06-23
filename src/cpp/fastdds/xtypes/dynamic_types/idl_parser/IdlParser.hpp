@@ -24,6 +24,7 @@
 #include <memory>
 #include <mutex>
 #include <regex>
+#include <stack>
 #include <string>
 #include <thread>
 #include <type_traits>
