@@ -3208,6 +3208,51 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_participant)
     ASSERT_EQ(in.wire_protocol.value(), out.wire_protocol.value());
 }
 
+/*!
+ * This test checks that a correct Reader/WriterProxyData is obtained
+ * when having a related_datareader/writer set.
+ */
+TEST(BuiltinDataSerializationTests, rpc_related_entity)
+{
+    WriterProxyData wpd_in(max_unicast_locators, max_multicast_locators), wpd_out(max_unicast_locators,
+            max_multicast_locators);
+    ReaderProxyData rpd_in(max_unicast_locators, max_multicast_locators), rpd_out(max_unicast_locators,
+            max_multicast_locators);
+
+    // These fields cannot be empty
+    wpd_in.topic_name = "TEST";
+    wpd_in.type_name = "TestType";
+    rpd_in.topic_name = "TEST";
+    rpd_in.type_name = "TestType";
+
+    // Fill related entities
+    std::istringstream("44.53.00.5f.45.60.52.4f.53.49.7c.41") >> wpd_in.related_datareader_key.guidPrefix;
+    wpd_in.related_datareader_key.entityId.value[2] = 1;
+    wpd_in.related_datareader_key.entityId.value[3] = 3;
+    std::istringstream("44.53.00.45.52.1A.52.4f.53.49.7c.41") >> rpd_in.related_datawriter_key.guidPrefix;
+    rpd_in.related_datawriter_key.entityId.value[2] = 1;
+    rpd_in.related_datawriter_key.entityId.value[3] = 4;
+
+    // Perform serialization
+    uint32_t wpd_msg_size = wpd_in.get_serialized_size(true);
+    CDRMessage_t wpd_msg(wpd_msg_size);
+    EXPECT_TRUE(wpd_in.write_to_cdr_message(&wpd_msg, true));
+
+    uint32_t rpd_msg_size = rpd_in.get_serialized_size(true);
+    CDRMessage_t rpd_msg(rpd_msg_size);
+    EXPECT_TRUE(rpd_in.write_to_cdr_message(&rpd_msg, true));
+
+    // Perform deserialization
+    wpd_msg.pos = 0;
+    EXPECT_TRUE(wpd_out.read_from_cdr_message(&wpd_msg, c_VendorId_eProsima));
+    rpd_msg.pos = 0;
+    EXPECT_TRUE(rpd_out.read_from_cdr_message(&rpd_msg, c_VendorId_eProsima));
+
+    // Check that the related entities are correctly set
+    ASSERT_EQ(wpd_out.related_datareader_key, wpd_in.related_datareader_key);
+    ASSERT_EQ(rpd_out.related_datawriter_key, rpd_in.related_datawriter_key);
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
