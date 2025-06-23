@@ -110,6 +110,8 @@ WriterProxyData& WriterProxyData::operator =(
 
     type_information = writerInfo.type_information;
 
+    related_datareader_key = writerInfo.related_datareader_key;
+
     if (writerInfo.history)
     {
         history = writerInfo.history;
@@ -350,6 +352,11 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val += dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
             type_information);
+    }
+
+    if (related_datareader_key != c_Guid_Unknown)
+    {
+        ret_val += 4 + PARAMETER_GUID_LENGTH;
     }
 
     if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history))
@@ -665,6 +672,15 @@ bool WriterProxyData::write_to_cdr_message(
     {
         if (!dds::QosPoliciesSerializer<dds::DataRepresentationQosPolicy>::add_to_cdr_message(
                     representation, msg))
+        {
+            return false;
+        }
+    }
+
+    if (related_datareader_key != c_Guid_Unknown)
+    {
+        ParameterGuid_t p(fastdds::dds::PID_RELATED_ENTITY_GUID, PARAMETER_GUID_LENGTH, related_datareader_key);
+        if (!dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -1075,6 +1091,18 @@ bool WriterProxyData::read_from_cdr_message(
                         {
                             return false;
                         }
+                        break;
+                    }
+                    case fastdds::dds::PID_RELATED_ENTITY_GUID:
+                    {
+                        ParameterGuid_t p(pid, plength);
+                        if (!dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(
+                                    p, msg, plength))
+                        {
+                            return false;
+                        }
+
+                        related_datareader_key = p.guid;
                         break;
                     }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
@@ -1780,6 +1808,7 @@ void WriterProxyData::clear()
     group_data.clear();
     type_information.clear();
     representation.clear();
+    related_datareader_key = c_Guid_Unknown;
     disable_positive_acks.clear();
     data_sharing.clear();
     if (history)
