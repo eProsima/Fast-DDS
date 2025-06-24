@@ -315,10 +315,10 @@ std::vector<uint8_t> string_to_vector(
         valb += 6;
         if (valb >= 0)
         {
-            char c {char((val >> valb) & 0xFF)};
+            char decode_c {char((val >> valb) & 0xFF)};
             for (size_t i {0}; i < 8; ++i)
             {
-                bits_vector.push_back(c >> (7 - i) & 0x01);
+                bits_vector.push_back((decode_c >> (7 - i)) & 0x01);
             }
             valb -= 8;
         }
