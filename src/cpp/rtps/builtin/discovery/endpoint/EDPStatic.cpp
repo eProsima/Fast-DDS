@@ -357,45 +357,46 @@ bool EDPStatic::enable_reader_on_v2_property(
         bool disable)
 {
     bool ret_value {false};
-    auto property_it = std::find_if(pdp_properties.begin(), pdp_properties.end(),
-                    [](const fastdds::dds::ParameterProperty_t& property)
-                    {
-                        if (0 == property.first().compare("ESR"))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    });
-
-    std::vector<uint8_t> bits;
-    std::pair<std::string, std::string> prop;
-
-    if (pdp_properties.end() == property_it)
-    {
-        // Create empty property.
-        prop.first = "ESR";
-        size_t number_of_readers = mp_edpXML->get_number_of_readers(local_participant_name);
-        // Make multiple of 8 bits
-        number_of_readers = (number_of_readers + 7) & ~7;
-        bits = std::vector<uint8_t>(number_of_readers, 0);
-        prop.second = vector_to_string(bits);
-        pdp_properties.push_back(prop);
-        property_it = pdp_properties.begin();
-        auto next_it = pdp_properties.begin();
-        while (++next_it != pdp_properties.end())
-        {
-            property_it = next_it;
-        }
-    }
-    else
-    {
-        bits = string_to_vector(property_it->second());
-    }
-
     uint32_t position {0};
+
     if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforReader(local_participant_name.c_str(), id, nullptr, position))
     {
+        auto property_it = std::find_if(pdp_properties.begin(), pdp_properties.end(),
+                        [](const fastdds::dds::ParameterProperty_t& property)
+                        {
+                            if (0 == property.first().compare("ESR"))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        });
+
+        std::vector<uint8_t> bits;
+        std::pair<std::string, std::string> prop;
+
+        if (pdp_properties.end() == property_it)
+        {
+            // Create empty property.
+            prop.first = "ESR";
+            size_t number_of_readers = mp_edpXML->get_number_of_readers(local_participant_name);
+            // Make multiple of 8 bits
+            number_of_readers = (number_of_readers + 7) & ~7;
+            bits = std::vector<uint8_t>(number_of_readers, 0);
+            prop.second = vector_to_string(bits);
+            pdp_properties.push_back(prop);
+            property_it = pdp_properties.begin();
+            auto next_it = pdp_properties.begin();
+            while (++next_it != pdp_properties.end())
+            {
+                property_it = next_it;
+            }
+        }
+        else
+        {
+            bits = string_to_vector(property_it->second());
+        }
+
         bits.at(position) = disable ? 0 : 1;
         prop.first = property_it->first();
         prop.second = vector_to_string(bits);
@@ -413,45 +414,46 @@ bool EDPStatic::enable_writer_on_v2_property(
         bool disable)
 {
     bool ret_value {false};
-    auto property_it = std::find_if(pdp_properties.begin(), pdp_properties.end(),
-                    [](const fastdds::dds::ParameterProperty_t& property)
-                    {
-                        if (0 == property.first().compare("ESW"))
-                        {
-                            return true;
-                        }
-
-                        return false;
-                    });
-
-    std::vector<uint8_t> bits;
-    std::pair<std::string, std::string> prop;
-
-    if (pdp_properties.end() == property_it)
-    {
-        // Create empty property.
-        prop.first = "ESW";
-        size_t number_of_writers = mp_edpXML->get_number_of_writers(local_participant_name);
-        // Make multiple of 8 bits
-        number_of_writers = (number_of_writers + 7) & ~7;
-        bits = std::vector<uint8_t>(number_of_writers, 0);
-        prop.second = vector_to_string(bits);
-        pdp_properties.push_back(prop);
-        property_it = pdp_properties.begin();
-        auto next_it = pdp_properties.begin();
-        while (++next_it != pdp_properties.end())
-        {
-            property_it = next_it;
-        }
-    }
-    else
-    {
-        bits = string_to_vector(property_it->second());
-    }
-
     uint32_t position {0};
+
     if (xmlparser::XMLP_ret::XML_OK == mp_edpXML->lookforWriter(local_participant_name.c_str(), id, nullptr, position))
     {
+        auto property_it = std::find_if(pdp_properties.begin(), pdp_properties.end(),
+                        [](const fastdds::dds::ParameterProperty_t& property)
+                        {
+                            if (0 == property.first().compare("ESW"))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        });
+
+        std::vector<uint8_t> bits;
+        std::pair<std::string, std::string> prop;
+
+        if (pdp_properties.end() == property_it)
+        {
+            // Create empty property.
+            prop.first = "ESW";
+            size_t number_of_writers = mp_edpXML->get_number_of_writers(local_participant_name);
+            // Make multiple of 8 bits
+            number_of_writers = (number_of_writers + 7) & ~7;
+            bits = std::vector<uint8_t>(number_of_writers, 0);
+            prop.second = vector_to_string(bits);
+            pdp_properties.push_back(prop);
+            property_it = pdp_properties.begin();
+            auto next_it = pdp_properties.begin();
+            while (++next_it != pdp_properties.end())
+            {
+                property_it = next_it;
+            }
+        }
+        else
+        {
+            bits = string_to_vector(property_it->second());
+        }
+
         bits.at(position) = disable ? 0 : 1;
         prop.first = property_it->first();
         prop.second = vector_to_string(bits);
