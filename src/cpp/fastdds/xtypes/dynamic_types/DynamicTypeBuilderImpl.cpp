@@ -61,8 +61,9 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
                                                                      members_.back())};
             if (!member_impl)
             {
+                assert(false);
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
-                        "Internal error: last member is not a DynamicTypeMemberImpl");
+                        "Internal error: last member is not a DynamicTypeMemberImpl.");
             }
             else
             {
