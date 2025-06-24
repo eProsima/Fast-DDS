@@ -287,12 +287,12 @@ TEST(Discovery, StaticDiscovery_v2)
 
 TEST(Discovery, StaticDiscovery_v1_v2)
 {
-    static_discovery_test("v2", "v2");
+    static_discovery_test("v1", "v2");
 }
 
 TEST(Discovery, StaticDiscovery_v1_Reduced_v2)
 {
-    static_discovery_test("v2", "v2");
+    static_discovery_test("v1_Reduced", "v2");
 }
 
 TEST(Discovery, StaticDiscovery_wrong_exchange_format)

@@ -689,109 +689,99 @@ void EDPStatic::assignRemoteEndpoints(
         persistence_guid.entityId.value[2] = pdata.user_data.at(17);
     }
 
-    if (ExchangeFormat::v2 == exchange_format_)
+    std::string participant_name {pdata.participant_name.to_string()};
+    for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
+            pit != pdata.properties.end(); ++pit)
     {
-        std::string participant_name {pdata.participant_name.to_string()};
-        for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
-                pit != pdata.properties.end(); ++pit)
-        {
-            persistence_guid.entityId.value[3] = 0;
+        EDPStaticProperty staticproperty;
+        persistence_guid.entityId.value[3] = 0;
 
-            if (0 == pit->first().compare("ESR"))
+        // Format v2
+        if (0 == pit->first().compare("ESR"))
+        {
+            std::vector<uint8_t> bits = string_to_vector(pit->second());
+            for (size_t i {0}; i < bits.size(); ++i)
             {
-                std::vector<uint8_t> bits = string_to_vector(pit->second());
-                for (size_t i {0}; i < bits.size(); ++i)
+                ReaderProxyData* rdataptr {nullptr};
+                if (xmlparser::XMLP_ret::XML_OK ==
+                        mp_edpXML->get_reader_from_position(participant_name, i, &rdataptr))
                 {
-                    ReaderProxyData* rdataptr {nullptr};
-                    if (xmlparser::XMLP_ret::XML_OK ==
-                            mp_edpXML->get_reader_from_position(participant_name, i, &rdataptr))
+                    if (bits[i] && !this->mp_PDP->has_reader_proxy_data(rdataptr->guid))    //IF NOT FOUND, we CREATE AND PAIR IT
                     {
-                        if (bits[i] && !this->mp_PDP->has_reader_proxy_data(rdataptr->guid))//IF NOT FOUND, we CREATE AND PAIR IT
-                        {
-                            newRemoteReader(pdata.guid, pdata.participant_name, rdataptr->user_defined_id());
-                        }
-                        else if (!bits[i] && this->mp_PDP->has_reader_proxy_data(rdataptr->guid))
-                        {
-                            this->mp_PDP->removeReaderProxyData(rdataptr->guid);
-                        }
+                        newRemoteReader(pdata.guid, pdata.participant_name, rdataptr->user_defined_id());
                     }
-                }
-            }
-            else if (0 == pit->first().compare("ESW"))
-            {
-                std::vector<uint8_t> bits = string_to_vector(pit->second());
-                for (size_t i {0}; i < bits.size(); ++i)
-                {
-                    WriterProxyData* wdataptr {nullptr};
-                    if (xmlparser::XMLP_ret::XML_OK ==
-                            mp_edpXML->get_writer_from_position(participant_name, i, &wdataptr))
+                    else if (!bits[i] && this->mp_PDP->has_reader_proxy_data(rdataptr->guid))
                     {
-                        if (bits[i] && !this->mp_PDP->has_writer_proxy_data(wdataptr->guid))//IF NOT FOUND, we CREATE AND PAIR IT
-                        {
-                            if (is_persistent_guid)
-                            {
-                                persistence_guid.entityId.value[3] = static_cast<uint8_t>(wdataptr->user_defined_id());
-                            }
-                            newRemoteWriter(pdata.guid, pdata.participant_name,
-                                    wdataptr->user_defined_id(), wdataptr->guid.entityId, persistence_guid);
-                        }
-                        else if (!bits[i] && this->mp_PDP->has_writer_proxy_data(wdataptr->guid))
-                        {
-                            this->mp_PDP->removeWriterProxyData(wdataptr->guid);
-                        }
+                        this->mp_PDP->removeReaderProxyData(rdataptr->guid);
                     }
                 }
             }
         }
-    }
-    else
-    {
-        for (ParameterPropertyList_t::const_iterator pit = pdata.properties.begin();
-                pit != pdata.properties.end(); ++pit)
+        else if (0 == pit->first().compare("ESW"))
         {
-            persistence_guid.entityId.value[3] = 0;
-
-            EDPStaticProperty staticproperty;
-            if (staticproperty.fromProperty((*pit).pair()))
+            std::vector<uint8_t> bits = string_to_vector(pit->second());
+            for (size_t i {0}; i < bits.size(); ++i)
             {
-                if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ALIVE")
+                WriterProxyData* wdataptr {nullptr};
+                if (xmlparser::XMLP_ret::XML_OK ==
+                        mp_edpXML->get_writer_from_position(participant_name, i, &wdataptr))
                 {
-                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                    if (!this->mp_PDP->has_reader_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
-                    {
-                        newRemoteReader(pdata.guid, pdata.participant_name,
-                                staticproperty.m_userId, staticproperty.m_entityId);
-                    }
-                }
-                else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
-                {
-                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                    if (!this->mp_PDP->has_writer_proxy_data(guid))//IF NOT FOUND, we CREATE AND PAIR IT
+                    if (bits[i] && !this->mp_PDP->has_writer_proxy_data(wdataptr->guid))    //IF NOT FOUND, we CREATE AND PAIR IT
                     {
                         if (is_persistent_guid)
                         {
-                            persistence_guid.entityId.value[3] = static_cast<uint8_t>(staticproperty.m_userId);
+                            persistence_guid.entityId.value[3] = static_cast<uint8_t>(wdataptr->user_defined_id());
                         }
                         newRemoteWriter(pdata.guid, pdata.participant_name,
-                                staticproperty.m_userId, staticproperty.m_entityId, persistence_guid);
+                                wdataptr->user_defined_id(), wdataptr->guid.entityId, persistence_guid);
+                    }
+                    else if (!bits[i] && this->mp_PDP->has_writer_proxy_data(wdataptr->guid))
+                    {
+                        this->mp_PDP->removeWriterProxyData(wdataptr->guid);
                     }
                 }
-                else if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
+            }
+        }
+        // Format v1 and v1_Reduced
+        else if (staticproperty.fromProperty((*pit).pair()))
+        {
+            if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ALIVE")
+            {
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                if (!this->mp_PDP->has_reader_proxy_data(guid))    //IF NOT FOUND, we CREATE AND PAIR IT
                 {
-                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                    this->mp_PDP->removeReaderProxyData(guid);
+                    newRemoteReader(pdata.guid, pdata.participant_name,
+                            staticproperty.m_userId, staticproperty.m_entityId);
                 }
-                else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
+            }
+            else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ALIVE")
+            {
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                if (!this->mp_PDP->has_writer_proxy_data(guid))    //IF NOT FOUND, we CREATE AND PAIR IT
                 {
-                    GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
-                    this->mp_PDP->removeWriterProxyData(guid);
+                    if (is_persistent_guid)
+                    {
+                        persistence_guid.entityId.value[3] = static_cast<uint8_t>(staticproperty.m_userId);
+                    }
+                    newRemoteWriter(pdata.guid, pdata.participant_name,
+                            staticproperty.m_userId, staticproperty.m_entityId, persistence_guid);
                 }
-                else
-                {
-                    EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
-                                                                                   << " and status " << staticproperty.m_status <<
-                            " not recognized");
-                }
+            }
+            else if (staticproperty.m_endpointType == "Reader" && staticproperty.m_status == "ENDED")
+            {
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                this->mp_PDP->removeReaderProxyData(guid);
+            }
+            else if (staticproperty.m_endpointType == "Writer" && staticproperty.m_status == "ENDED")
+            {
+                GUID_t guid(pdata.guid.guidPrefix, staticproperty.m_entityId);
+                this->mp_PDP->removeWriterProxyData(guid);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
+                                                                               << " and status " << staticproperty.m_status <<
+                        " not recognized");
             }
         }
     }
