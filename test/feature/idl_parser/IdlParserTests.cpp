@@ -374,7 +374,8 @@ TEST_F(IdlParserTests, structures)
     DynamicType::_ref_type type21 = builder21->build();
     ASSERT_TRUE(type21);
 
-    DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/structures.idl", "StructSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/structures.idl", "StructSequence",
+                    include_paths);
     EXPECT_TRUE(builder22);
     DynamicType::_ref_type type22 = builder22->build();
     ASSERT_TRUE(type22);
@@ -415,7 +416,66 @@ TEST_F(IdlParserTests, structures)
     // DynamicType::_ref_type type28 = builder28->build();
     // ASSERT_TRUE(type28);
 
-    // TODO The rest types are skipped since module parsing is not supported.
+    DynamicTypeBuilder::_ref_type builder29 = factory->create_type_w_uri("IDL/structures.idl", "testing_1::foo",
+                    include_paths);
+    EXPECT_TRUE(builder29);
+    DynamicType::_ref_type type29 = builder29->build();
+    ASSERT_TRUE(type29);
+
+    DynamicTypeBuilder::_ref_type builder30 = factory->create_type_w_uri("IDL/structures.idl", "testing_2::foo",
+                    include_paths);
+    EXPECT_TRUE(builder30);
+    DynamicType::_ref_type type30 = builder30->build();
+    ASSERT_TRUE(type30);
+
+    DynamicTypeBuilder::_ref_type builder31 = factory->create_type_w_uri("IDL/structures.idl", "bar",
+                    include_paths);
+    EXPECT_TRUE(builder31);
+    DynamicType::_ref_type type31 = builder31->build();
+    ASSERT_TRUE(type31);
+
+    DynamicTypeBuilder::_ref_type builder32 = factory->create_type_w_uri("IDL/structures.idl", "root1",
+                    include_paths);
+    EXPECT_TRUE(builder32);
+    DynamicType::_ref_type type32 = builder32->build();
+    ASSERT_TRUE(type32);
+
+    DynamicTypeBuilder::_ref_type builder33 = factory->create_type_w_uri("IDL/structures.idl", "root2",
+                    include_paths);
+    EXPECT_TRUE(builder33);
+    DynamicType::_ref_type type33 = builder33->build();
+    ASSERT_TRUE(type33);
+
+    DynamicTypeBuilder::_ref_type builder34 = factory->create_type_w_uri("IDL/structures.idl", "root",
+                    include_paths);
+    EXPECT_TRUE(builder34);
+    DynamicType::_ref_type type34 = builder34->build();
+    ASSERT_TRUE(type34);
+
+    /* Additional cases */
+    DynamicTypeBuilder::_ref_type builder35 = factory->create_type_w_uri(
+        "IDL/extra_structures.idl",
+        "Module_1::Module_2::NestedModuleStruct",
+        include_paths);
+    EXPECT_TRUE(builder35);
+    DynamicType::_ref_type type35 = builder35->build();
+    ASSERT_TRUE(type35);
+
+    DynamicTypeBuilder::_ref_type builder36 = factory->create_type_w_uri(
+        "IDL/extra_structures.idl",
+        "Outer::StructWithInnerAlias",
+        include_paths);
+    EXPECT_TRUE(builder36);
+    DynamicType::_ref_type type36 = builder36->build();
+    ASSERT_TRUE(type36);
+
+    DynamicTypeBuilder::_ref_type builder37 = factory->create_type_w_uri(
+        "IDL/extra_structures.idl",
+        "Module::ScopedNamesStruct",
+        include_paths);
+    EXPECT_TRUE(builder37);
+    DynamicType::_ref_type type37 = builder37->build();
+    ASSERT_TRUE(type37);
 }
 
 TEST_F(IdlParserTests, aliases)
@@ -545,7 +605,8 @@ TEST_F(IdlParserTests, aliases)
     DynamicType::_ref_type type20 = builder20->build();
     ASSERT_TRUE(type20);
 
-    DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_uri("IDL/aliases.idl", "AliasSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_uri("IDL/aliases.idl", "AliasSequence",
+                    include_paths);
     EXPECT_TRUE(builder21);
     DynamicType::_ref_type type21 = builder21->build();
     ASSERT_TRUE(type21);
@@ -708,7 +769,8 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type22 = builder22->build();
     ASSERT_TRUE(type22);
 
-    DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySequence",
+                    include_paths);
     EXPECT_TRUE(builder23);
     DynamicType::_ref_type type23 = builder23->build();
     ASSERT_TRUE(type23);
@@ -859,7 +921,8 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type47 = builder47->build();
     ASSERT_TRUE(type47);
 
-    DynamicTypeBuilder::_ref_type builder48 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder48 = factory->create_type_w_uri("IDL/arrays.idl",
+                    "ArrayMultiDimensionSequence", include_paths);
     EXPECT_TRUE(builder48);
     DynamicType::_ref_type type48 = builder48->build();
     ASSERT_TRUE(type48);
@@ -1034,7 +1097,9 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type73 = builder73->build();
     ASSERT_TRUE(type73);
 
-    DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySingleDimensionLiteralsSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_uri("IDL/arrays.idl",
+                    "ArraySingleDimensionLiteralsSequence",
+                    include_paths);
     EXPECT_TRUE(builder74);
     DynamicType::_ref_type type74 = builder74->build();
     ASSERT_TRUE(type74);
@@ -1204,7 +1269,9 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type98 = builder98->build();
     ASSERT_TRUE(type98);
 
-    DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionLiteralsSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_uri("IDL/arrays.idl",
+                    "ArrayMultiDimensionLiteralsSequence",
+                    include_paths);
     EXPECT_TRUE(builder99);
     DynamicType::_ref_type type99 = builder99->build();
     ASSERT_TRUE(type99);
@@ -1401,7 +1468,7 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-     builder = factory->create_type_w_uri("IDL/unions.idl", "Union_BoundedString", include_paths);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_BoundedString", include_paths);
     EXPECT_TRUE(builder);
     type = builder->build();
     ASSERT_TRUE(type);
@@ -1586,13 +1653,12 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO Union_Fixed_String_In_Module_Alias is skipped since module parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Fixed_String_In_Module_Alias", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Fixed_String_In_Module_Alias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
     builder = factory->create_type_w_uri("IDL/unions.idl", "UnionShort", include_paths);
     EXPECT_TRUE(builder);
@@ -1884,7 +1950,42 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO The rest types are skipped since annotation/module parsing are not supported.
+    // TODO The following types are skipped since annotation parsing is not supported.
+    // builder = factory->create_type_w_uri("IDL/unions.idl", "DefaultAnnotation", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // builder = factory->create_type_w_uri("IDL/unions.idl", "DefaultAnnotationExternalValue", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionShortExtraMember", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionFixedStringAlias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* Additional cases */
+    builder = factory->create_type_w_uri("IDL/extra_unions.idl", "UnionScopedDiscriminator", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 }
 
 TEST_F(IdlParserTests, sequences)
@@ -1894,7 +1995,8 @@ TEST_F(IdlParserTests, sequences)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     /* sequence<short> */
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceShort", include_paths);
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceShort",
+                    include_paths);
     EXPECT_TRUE(builder);
     DynamicType::_ref_type type = builder->build();
     ASSERT_TRUE(type);
@@ -2126,20 +2228,12 @@ TEST_F(IdlParserTests, sequences)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO: The rest types are skipped since module parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/sequences.idl", "Common_Module", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
-
-    // builder = factory->create_type_w_uri("IDL/sequences.idl", "NoCommon_Module", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "NoCommon_Module::My_Structure", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 }
 
 int main(
