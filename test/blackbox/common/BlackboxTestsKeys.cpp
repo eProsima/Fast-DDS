@@ -14,12 +14,22 @@
 
 #include "BlackboxTests.hpp"
 
+#include <atomic>
+#include <memory>
+
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 
+#include "../types/HelloWorldPubSubTypes.hpp"
+#include "../types/KeyedHelloWorldPubSubTypes.hpp"
 #include "../utils/filter_helpers.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 TEST(KeyedTopic, RegistrationNonKeyedFail)
 {
@@ -285,6 +295,144 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
     EXPECT_TRUE(writer_sends_inline_qos);
     EXPECT_TRUE(writer_sends_pid_key_hash);
+}
+
+// Check that compute_key is called with a key-only payload when KEY_HASH is not present
+TEST(KeyedTopic, key_only_payload)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    struct TestTypeSupport : public KeyedHelloWorldPubSubType
+    {
+        typedef KeyedHelloWorldPubSubType::type type;
+
+        bool compute_key(
+                eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                bool force_md5 = false) override
+        {
+            if (payload.is_serialized_key)
+            {
+                // Count the number of times compute_key is called with a key-only payload
+                key_only_payload_count++;
+            }
+
+            return KeyedHelloWorldPubSubType::compute_key(payload, ihandle, force_md5);
+        }
+
+        bool compute_key(
+                const void* const data,
+                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                bool force_md5 = false) override
+        {
+            return KeyedHelloWorldPubSubType::compute_key(data, ihandle, force_md5);
+        }
+
+        std::atomic<uint32_t> key_only_payload_count{ 0 };
+    };
+
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<TestTypeSupport> writer(TEST_TOPIC_NAME);
+    PubSubReader<TestTypeSupport> reader(TEST_TOPIC_NAME);
+
+    // Set custom reader locator so we can send hand-crafted data to a known location
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    reader.disable_builtin_transport().
+            add_user_transport_to_pparams(udp_transport).
+            init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.disable_builtin_transport().
+            add_user_transport_to_pparams(udp_transport).
+            init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(2);
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    EXPECT_TRUE(data.empty());
+    reader.block_for_all();
+
+    // Check that compute_key was not called with a key-only payload
+    auto ts = std::dynamic_pointer_cast<TestTypeSupport>(reader.get_type_support());
+    ASSERT_TRUE(ts != nullptr);
+    EXPECT_EQ(ts->key_only_payload_count.load(), 0u);
+
+    struct KeyOnlyPayloadPacket
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        struct DataSubMsg
+        {
+            struct Header
+            {
+                uint8_t submessage_id = 0x15;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint8_t flags = 0x08;
+#else
+                uint8_t flags = 0x09;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint16_t octets_to_next_header = 28;
+                uint16_t extra_flags = 0;
+                uint16_t octets_to_inline_qos = 16;
+                EntityId_t reader_id{};
+                EntityId_t writer_id{};
+                SequenceNumber_t sn{ 3 };
+            };
+
+            struct SerializedData
+            {
+                uint16_t encapsulation;
+                uint16_t encapsulation_opts;
+                uint8_t data[4] = {0x01, 0x00, 0x00, 0x00};
+            };
+
+            Header header;
+            SerializedData payload;
+        }
+        data;
+    };
+
+    UDPMessageSender fake_msg_sender;
+
+    // Send hand-crafted data
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        KeyOnlyPayloadPacket key_only_packet{};
+        key_only_packet.sender_prefix = writer_guid.guidPrefix;
+        key_only_packet.data.header.writer_id = writer_guid.entityId;
+        key_only_packet.data.header.reader_id = reader.datareader_guid().entityId;
+        key_only_packet.data.payload.encapsulation = CDR_LE;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(key_only_packet));
+        msg.init(reinterpret_cast<octet*>(&key_only_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Wait for key-only compute key to be called
+    while (ts->key_only_payload_count.load() <= 0)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 }
 
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE
