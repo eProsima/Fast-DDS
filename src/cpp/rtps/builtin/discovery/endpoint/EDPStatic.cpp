@@ -261,35 +261,43 @@ std::pair<std::string, std::string> EDPStaticProperty::toProperty(
 
 typedef unsigned char uchar;
 static const std::string base64_str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";//=
-static std::string base64_encode(
-        const std::string& in)
-{
-    std::string out;
 
-    int val = 0, valb = -6;
-    for (uchar c : in)
+std::string vector_to_string(
+        const std::vector<uint8_t>& bits)
+{
+    assert(0 == bits.size() % 8);
+    std::string bits_str;
+
+    uint8_t byte {0};
+    size_t base64_pos {0};
+    for (size_t i {0}; i < bits.size(); i += 8)
     {
-        val = (val << 8) + c;
-        valb += 8;
-        while (valb >= 0)
+        for (size_t j {0}; j < 8; ++j)
         {
-            out.push_back(base64_str[(val >> valb) & 0x3F]);
-            valb -= 6;
+            byte |= bits[i + j] << (5 - base64_pos++);
+            if (base64_pos == 6)
+            {
+                // We have a complete byte to encode
+                bits_str.push_back(base64_str[byte]);
+                base64_pos = 0;
+                byte = 0;
+            }
         }
     }
-    if (valb > -6)
+
+    if (base64_pos > 0)
     {
-        out.push_back(base64_str[((val << 8) >> (valb + 8)) & 0x3F]);
+        // We have a complete byte to encode
+        bits_str.push_back(base64_str[byte]);
     }
-    return out;
+
+    return bits_str;
 }
 
-static std::string base64_decode(
-        const std::string& in)
+std::vector<uint8_t> string_to_vector(
+        const std::string& bits)
 {
-
-    std::string out;
-
+    std::vector<uint8_t> bits_vector;
     std::vector<int> T(256, -1);
     for (int i = 0; i < 64; i++)
     {
@@ -297,7 +305,7 @@ static std::string base64_decode(
     }
 
     int val = 0, valb = -8;
-    for (uchar c : in)
+    for (uchar c : bits)
     {
         if (T[c] == -1)
         {
@@ -307,43 +315,12 @@ static std::string base64_decode(
         valb += 6;
         if (valb >= 0)
         {
-            out.push_back(char((val >> valb) & 0xFF));
+            char c {char((val >> valb) & 0xFF)};
+            for (size_t i {0}; i < 8; ++i)
+            {
+                bits_vector.push_back(c >> (7 - i) & 0x01);
+            }
             valb -= 8;
-        }
-    }
-    return out;
-}
-
-std::string vector_to_string(
-        const std::vector<uint8_t>& bits)
-{
-    assert(0 == bits.size() % 8);
-    std::string bits_str;
-
-    for (size_t i {0}; i < bits.size(); i += 8)
-    {
-        uint8_t byte {0};
-        for (size_t j {0}; j < 8; ++j)
-        {
-            byte |= bits[i + j] << (7 - j);
-        }
-        bits_str.push_back(byte);
-    }
-
-    return base64_encode(bits_str);
-}
-
-std::vector<uint8_t> string_to_vector(
-        const std::string& bits)
-{
-    std::vector<uint8_t> bits_vector;
-    std::string bits_str {base64_decode(bits)};
-
-    for (uint8_t byte : bits_str)
-    {
-        for (size_t i {0}; i < 8; ++i)
-        {
-            bits_vector.push_back(byte >> (7 - i) & 0x01);
         }
     }
 
