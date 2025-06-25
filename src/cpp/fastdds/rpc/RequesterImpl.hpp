@@ -40,8 +40,8 @@ class ServiceImpl;
  * @brief Class that represents a the implementation of a requester entity
  */
 class RequesterImpl : public Requester,
-                      public DataReaderListener,
-                      public DataWriterListener
+    public DataReaderListener,
+    public DataWriterListener
 {
 
 public:

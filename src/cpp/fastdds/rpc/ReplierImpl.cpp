@@ -366,11 +366,11 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::wait_for_matching(
         // Or every 100 milliseconds.
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait_for(lock,
-            std::chrono::milliseconds(100),
-            [this]()
-            {
-                return matched_status_changed_.load();
-            });
+                std::chrono::milliseconds(100),
+                [this]()
+                {
+                    return matched_status_changed_.load();
+                });
 
         // Reset the matched status changed flag
         matched_status_changed_.store(false);

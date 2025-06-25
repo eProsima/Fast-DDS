@@ -3924,7 +3924,7 @@ TEST_F(DataReaderTests, set_related_datawriter)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data_reader_->set_related_datawriter(nullptr));
 
     auto another_participant =
-                DomainParticipantFactory::get_instance()->create_participant(
+            DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant_, nullptr);
 

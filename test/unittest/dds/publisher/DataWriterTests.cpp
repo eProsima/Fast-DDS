@@ -2264,7 +2264,7 @@ TEST(DataWriterTests, set_related_datareader)
     ASSERT_NE(another_subscriber, nullptr);
 
     Topic* another_topic = another_participant->create_topic("another_footopic",
-            type.get_type_name(), TOPIC_QOS_DEFAULT);
+                    type.get_type_name(), TOPIC_QOS_DEFAULT);
 
     DataReader* another_datareader =
             another_subscriber->create_datareader(another_topic, DATAREADER_QOS_DEFAULT);
