@@ -325,7 +325,9 @@ void ReqRepHelloWorldRequester::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > 0)
                     {
                         matched();
                     }
@@ -345,7 +347,9 @@ void ReqRepHelloWorldRequester::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > 0)
                     {
                         matched();
                     }
