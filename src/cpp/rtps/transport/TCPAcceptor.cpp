@@ -24,28 +24,28 @@ namespace rtps {
 using IPLocator = fastdds::rtps::IPLocator;
 
 TCPAcceptor::TCPAcceptor(
-        asio::io_service& io_service,
+        asio::io_context& io_context,
         TCPTransportInterface* parent,
         const Locator& locator)
-    : acceptor_(io_service, parent->generate_endpoint(IPLocator::getPhysicalPort(locator)))
+    : acceptor_(io_context, parent->generate_endpoint(IPLocator::getPhysicalPort(locator)))
     , locator_(locator)
-    , io_service_(&io_service)
+    , io_context_(&io_context)
 {
     locator_.port = acceptor_.local_endpoint().port();
     endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
 
 TCPAcceptor::TCPAcceptor(
-        asio::io_service& io_service,
+        asio::io_context& io_context,
         const std::string& iface,
         const Locator& locator)
-    : acceptor_(io_service, asio::ip::tcp::endpoint(asio::ip::address::from_string(iface),
+    : acceptor_(io_context, asio::ip::tcp::endpoint(asio::ip::make_address(iface),
             IPLocator::getPhysicalPort(locator)))
     , locator_(locator)
-    , io_service_(&io_service)
+    , io_context_(&io_context)
 {
     locator_.port = acceptor_.local_endpoint().port();
-    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address::from_string(iface),
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::make_address(iface),
                     IPLocator::getPhysicalPort(locator_));
 }
 

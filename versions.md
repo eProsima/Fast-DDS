@@ -7,6 +7,16 @@ Forthcoming
   * Added optional serialization of `WireProtocolConfigQos` to the `ParticipantDiscoveryData`.
 * Monitor service now serializes all optional QoS in the ProxyDatas.
 * Removed Request-Reply example in favor of the new RPC over DDS example.
+<<<<<<< HEAD
+=======
+* Add DataWriter Sample Prefilter feature:
+  * New `DataWriter::set_sample_prefilter` method.
+  * New `WriteParams::UserWriteData` extensible struct.
+* Add `get_complete_type_object` to `ITypeObjectRegistry`
+* Support modules in `IdlParser`
+* New version of EDP static discovery which reduces greatly the Data(p) messages size.
+* Bump to asio 1.34.2 release.
+>>>>>>> da0e9edb (Bump to asio 1.34.2 (#5896))
 
 Version v3.2.2
 --------------

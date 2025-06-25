@@ -24,23 +24,23 @@ namespace rtps {
 using IPLocator = fastdds::rtps::IPLocator;
 
 TCPAcceptorBasic::TCPAcceptorBasic(
-        asio::io_service& io_service,
+        asio::io_context& io_context,
         TCPTransportInterface* parent,
         const Locator& locator)
-    : TCPAcceptor(io_service, parent, locator)
-    , socket_(*io_service_)
+    : TCPAcceptor(io_context, parent, locator)
+    , socket_(*io_context_)
 {
     endpoint_ = asio::ip::tcp::endpoint(parent->generate_protocol(), IPLocator::getPhysicalPort(locator_));
 }
 
 TCPAcceptorBasic::TCPAcceptorBasic(
-        asio::io_service& io_service,
+        asio::io_context& io_context,
         const std::string& iface,
         const Locator& locator)
-    : TCPAcceptor(io_service, iface, locator)
-    , socket_(*io_service_)
+    : TCPAcceptor(io_context, iface, locator)
+    , socket_(*io_context_)
 {
-    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address::from_string(iface),
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::make_address(iface),
                     IPLocator::getPhysicalPort(locator_));
 }
 

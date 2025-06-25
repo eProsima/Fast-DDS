@@ -168,7 +168,7 @@ TCPTransportInterface::TCPTransportInterface(
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
-    , keep_alive_event_(io_service_timers_)
+    , keep_alive_event_(io_context_timers_)
 {
 }
 
@@ -182,10 +182,10 @@ void TCPTransportInterface::clean()
     alive_.store(false);
 
     keep_alive_event_.cancel();
-    if (io_service_timers_thread_.joinable())
+    if (io_context_timers_thread_.joinable())
     {
-        io_service_timers_.stop();
-        io_service_timers_thread_.join();
+        io_context_timers_.stop();
+        io_context_timers_thread_.join();
     }
 
     {
@@ -250,10 +250,10 @@ void TCPTransportInterface::clean()
         initial_peer_local_locator_socket_.reset();
     }
 
-    if (io_service_thread_.joinable())
+    if (io_context_thread_.joinable())
     {
-        io_service_.stop();
-        io_service_thread_.join();
+        io_context_.stop();
+        io_context_thread_.join();
     }
 }
 
@@ -383,7 +383,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
             if (configuration()->apply_security)
             {
                 std::shared_ptr<TCPAcceptorSecure> acceptor =
-                        std::make_shared<TCPAcceptorSecure>(io_service_, this, locator);
+                        std::make_shared<TCPAcceptorSecure>(io_context_, this, locator);
                 acceptors_[acceptor->locator()] = acceptor;
                 acceptor->accept(this, ssl_context_);
                 final_port = static_cast<uint16_t>(acceptor->locator().port);
@@ -392,7 +392,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
 #endif // if TLS_FOUND
             {
                 std::shared_ptr<TCPAcceptorBasic> acceptor =
-                        std::make_shared<TCPAcceptorBasic>(io_service_, this, locator);
+                        std::make_shared<TCPAcceptorBasic>(io_context_, this, locator);
                 acceptors_[acceptor->locator()] = acceptor;
                 acceptor->accept(this);
                 final_port = static_cast<uint16_t>(acceptor->locator().port);
@@ -421,7 +421,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                 if (configuration()->apply_security)
                 {
                     std::shared_ptr<TCPAcceptorSecure> acceptor =
-                            std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, loc);
+                            std::make_shared<TCPAcceptorSecure>(io_context_, sInterface, loc);
                     acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this, ssl_context_);
                     final_port = static_cast<uint16_t>(acceptor->locator().port);
@@ -430,7 +430,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
 #endif // if TLS_FOUND
                 {
                     std::shared_ptr<TCPAcceptorBasic> acceptor =
-                            std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, loc);
+                            std::make_shared<TCPAcceptorBasic>(io_context_, sInterface, loc);
                     acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this);
                     final_port = static_cast<uint16_t>(acceptor->locator().port);
@@ -535,7 +535,7 @@ bool TCPTransportInterface::init(
        This process ensures uniqueness in the server's channel resources mapping, which uses client locators as keys.
        Although differing from the real client socket local port, provides a reliable mapping mechanism.
      */
-    initial_peer_local_locator_socket_ = std::unique_ptr<asio::ip::tcp::socket>(new asio::ip::tcp::socket(io_service_));
+    initial_peer_local_locator_socket_ = std::unique_ptr<asio::ip::tcp::socket>(new asio::ip::tcp::socket(io_context_));
     initial_peer_local_locator_socket_->open(generate_protocol());
 
     // Binding to port 0 delegates the port selection to the system.
@@ -574,30 +574,22 @@ bool TCPTransportInterface::init(
         rtcp_message_manager_ = std::make_shared<RTCPMessageManager>(this);
     }
 
-    auto ioServiceFunction = [&]()
+    auto ioContextFunction = [&]()
             {
-#if ASIO_VERSION >= 101200
-                asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
-#else
-                io_service::work work(io_service_);
-#endif // if ASIO_VERSION >= 101200
-                io_service_.run();
+                asio::executor_work_guard<asio::io_context::executor_type> work = make_work_guard(io_context_);
+                io_context_.run();
             };
-    io_service_thread_ = create_thread(ioServiceFunction, configuration()->accept_thread, "dds.tcp_accept");
+    io_context_thread_ = create_thread(ioContextFunction, configuration()->accept_thread, "dds.tcp_accept");
 
     if (0 < configuration()->keep_alive_frequency_ms)
     {
-        auto ioServiceTimersFunction = [&]()
+        auto ioContextTimersFunction = [&]()
                 {
-#if ASIO_VERSION >= 101200
-                    asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
-                                    get_executor());
-#else
-                    io_service::work work(io_service_timers_);
-#endif // if ASIO_VERSION >= 101200
-                    io_service_timers_.run();
+                    asio::executor_work_guard<asio::io_context::executor_type> work = make_work_guard(io_context_timers_.
+                                            get_executor());
+                    io_context_timers_.run();
                 };
-        io_service_timers_thread_ = create_thread(ioServiceTimersFunction,
+        io_context_timers_thread_ = create_thread(ioContextTimersFunction,
                         configuration()->keep_alive_thread, "dds.tcp_keep");
     }
 
@@ -898,11 +890,11 @@ bool TCPTransportInterface::OpenOutputChannel(
 #if TLS_FOUND
                 (configuration()->apply_security) ?
                 static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                    new TCPChannelResourceSecure(this, io_context_, ssl_context_,
                     physical_locator, configuration()->maxMessageSize)) :
 #endif // if TLS_FOUND
                 static_cast<TCPChannelResource*>(
-                    new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                    new TCPChannelResourceBasic(this, io_context_, physical_locator,
                     configuration()->maxMessageSize))
                 );
 
@@ -1020,11 +1012,11 @@ bool TCPTransportInterface::CreateInitialConnect(
 #if TLS_FOUND
         (configuration()->apply_security) ?
         static_cast<TCPChannelResource*>(
-            new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+            new TCPChannelResourceSecure(this, io_context_, ssl_context_,
             physical_locator, configuration()->maxMessageSize)) :
 #endif // if TLS_FOUND
         static_cast<TCPChannelResource*>(
-            new TCPChannelResourceBasic(this, io_service_, physical_locator,
+            new TCPChannelResourceBasic(this, io_context_, physical_locator,
             configuration()->maxMessageSize))
         );
 
@@ -1665,7 +1657,7 @@ void TCPTransportInterface::SocketAccepted(
         {
             // Always create a new channel, it might be replaced later in bind_socket()
             std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
-                    io_service_, socket, configuration()->maxMessageSize));
+                    io_context_, socket, configuration()->maxMessageSize));
 
             {
                 std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
@@ -1708,7 +1700,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         {
             // Always create a new secure_channel, it might be replaced later in bind_socket()
             std::shared_ptr<TCPChannelResource> secure_channel(new TCPChannelResourceSecure(this,
-                    io_service_, ssl_context_, socket, configuration()->maxMessageSize));
+                    io_context_, ssl_context_, socket, configuration()->maxMessageSize));
 
             {
                 std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
