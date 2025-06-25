@@ -262,6 +262,11 @@ std::pair<std::string, std::string> EDPStaticProperty::toProperty(
 typedef unsigned char uchar;
 static const std::string base64_str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";//=
 
+/**
+ * Convert a vector of bits to a Base64 string.
+ * @param[in] bits Vector of bits to convert.
+ * @return Base64 string.
+ */
 std::string vector_to_string(
         const std::vector<uint8_t>& bits)
 {
@@ -294,6 +299,11 @@ std::string vector_to_string(
     return bits_str;
 }
 
+/**
+ * Convert a Base64 string to a vector of bits.
+ * @param[in] bits Base64 string to convert.
+ * @return Vector of bits.
+ */
 std::vector<uint8_t> string_to_vector(
         const std::string& bits)
 {
@@ -327,6 +337,14 @@ std::vector<uint8_t> string_to_vector(
     return bits_vector;
 }
 
+/**
+ * Enable or disable a reader on the v2 property.
+ * @param[in] local_participant_name Name of the local participant.
+ * @param[in,out] pdp_properties Properties of the local participant.
+ * @param[in] id User defined ID of the reader.
+ * @param[in] disable True to disable, false to enable.
+ * @return True if the operation was successful, false otherwise.
+ */
 bool EDPStatic::enable_reader_on_v2_property(
         const std::string& local_participant_name,
         fastdds::dds::ParameterPropertyList_t& pdp_properties,
@@ -384,6 +402,14 @@ bool EDPStatic::enable_reader_on_v2_property(
     return ret_value;
 }
 
+/**
+ * Enable or disable a writer on the v2 property.
+ * @param[in] local_participant_name Name of the local participant.
+ * @param[in,out] pdp_properties Properties of the local participant.
+ * @param[in] id User defined ID of the writer.
+ * @param[in] disable True to disable, false to enable.
+ * @return True if the operation was successful, false otherwise.
+ */
 bool EDPStatic::enable_writer_on_v2_property(
         const std::string& local_participant_name,
         fastdds::dds::ParameterPropertyList_t& pdp_properties,
