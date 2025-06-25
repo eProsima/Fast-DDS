@@ -346,7 +346,7 @@ public:
         {
             EPROSIMA_LOG_ERROR(RTPS_PDP,
                     "getLocalParticipantProxyData(): no local ParticipantProxyData available – returning dummy instance");
-            assert(false && "No ParticipantProxyData available in pool");
+            return nullptr;
         }
         return participant_proxies_.front();
     }
