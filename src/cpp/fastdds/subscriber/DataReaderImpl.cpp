@@ -59,6 +59,8 @@
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.hpp>
+#else
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #endif //FASTDDS_STATISTICS
 
 using eprosima::fastdds::RecursiveTimedMutex;
