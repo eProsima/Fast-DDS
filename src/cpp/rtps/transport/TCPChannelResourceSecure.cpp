@@ -34,29 +34,29 @@ using namespace asio;
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
         TCPTransportInterface* parent,
-        asio::io_service& service,
+        asio::io_context& context,
         asio::ssl::context& ssl_context,
         const Locator_t& locator,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, locator, maxMsgSize)
-    , service_(service)
+    , context_(context)
     , ssl_context_(ssl_context)
-    , strand_read_(service)
-    , strand_write_(service)
+    , strand_read_(make_strand(context))
+    , strand_write_(make_strand(context))
 {
 }
 
 TCPChannelResourceSecure::TCPChannelResourceSecure(
         TCPTransportInterface* parent,
-        asio::io_service& service,
+        asio::io_context& context,
         asio::ssl::context& ssl_context,
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         uint32_t maxMsgSize)
     : TCPChannelResource(parent, maxMsgSize)
-    , service_(service)
+    , context_(context)
     , ssl_context_(ssl_context)
-    , strand_read_(service)
-    , strand_write_(service)
+    , strand_read_(make_strand(context))
+    , strand_write_(make_strand(context))
     , secure_socket_(socket)
 {
     set_tls_verify_mode(parent->configuration());
@@ -79,15 +79,15 @@ void TCPChannelResourceSecure::connect(
     {
         try
         {
-            ip::tcp::resolver resolver(service_);
+            ip::tcp::resolver resolver(context_);
 
-            auto endpoints = resolver.resolve({
-                            IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
-                                locator_),
-                            std::to_string(IPLocator::getPhysicalPort(locator_))});
+            auto endpoints = resolver.resolve(
+                IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
+                    locator_),
+                std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             TCPTransportInterface* parent = parent_;
-            secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(service_, ssl_context_);
+            secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(context_, ssl_context_);
             set_tls_verify_mode(parent->configuration());
             set_tls_sni(parent->configuration());
             std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
@@ -145,7 +145,7 @@ void TCPChannelResourceSecure::disconnect()
     {
         auto socket = secure_socket_;
 
-        service_.post([&, socket]()
+        post(context_, [&, socket]()
                 {
                     std::error_code ec;
                     socket->lowest_layer().close(ec);
@@ -169,7 +169,7 @@ uint32_t TCPChannelResourceSecure::read(
         auto bytes_future = read_bytes_promise.get_future();
         auto socket = secure_socket_;
 
-        strand_read_.post([&, socket]()
+        asio::post(strand_read_, [&, socket]()
                 {
                     if (socket->lowest_layer().is_open())
                     {
@@ -229,7 +229,7 @@ size_t TCPChannelResourceSecure::send(
         auto bytes_future = write_bytes_promise.get_future();
         auto socket = secure_socket_;
 
-        strand_write_.post([&, socket]()
+        asio::post(strand_write_, [&, socket]()
                 {
                     if (socket->lowest_layer().is_open())
                     {
