@@ -322,7 +322,7 @@ TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
     auto check_whitelist = transportUnderTest.get_interface_whitelist();
     for (auto& ip : asio_interfaces)
     {
-        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v6::from_string(
+        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::make_address_v6(
                     ip)), check_whitelist.end());
     }
 
@@ -401,13 +401,13 @@ TEST_F(TCPv6Tests, non_blocking_send)
     IPLocator::setLogicalPort(serverLoc, 7610);
 
     // TCPChannelResourceBasic::connect() like connection
-    asio::io_service io_service;
-    asio::ip::tcp::resolver resolver(io_service);
+    asio::io_context io_context;
+    asio::ip::tcp::resolver resolver(io_context);
     auto endpoints = resolver.resolve(
         IPLocator::ip_to_string(serverLoc),
         std::to_string(IPLocator::getPhysicalPort(serverLoc)));
 
-    asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_service);
+    asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_context);
     asio::async_connect(
         socket,
         endpoints,
