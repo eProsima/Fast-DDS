@@ -14,6 +14,7 @@ Forthcoming
 * Support modules in `IdlParser`
 * New version of EDP static discovery which reduces greatly the Data(p) messages size.
 * Bump to asio 1.34.2 release.
+* Add methods for TypeObject registration of RPC types.
 
 Version v3.2.2
 --------------
