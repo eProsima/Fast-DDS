@@ -319,7 +319,7 @@ RequesterImpl::ReplierMatchStatus RequesterImpl::replier_match_status() const
         if (RETCODE_OK == requester_writer_->get_publication_matched_status(pub_status))
         {
             if (pub_status.current_count > 0 &&
-                pub_status.current_count == sub_status.current_count)
+                    pub_status.current_count == sub_status.current_count)
             {
                 replier_match_status = ReplierMatchStatus::MATCHED;
             }
@@ -347,11 +347,11 @@ bool RequesterImpl::wait_for_matching(
         // Or every 100 milliseconds.
         std::unique_lock<std::mutex> lock(mtx_);
         cv_.wait_for(lock,
-            std::chrono::milliseconds(100),
-            [this]()
-            {
-                return matched_status_changed_.load();
-            });
+                std::chrono::milliseconds(100),
+                [this]()
+                {
+                    return matched_status_changed_.load();
+                });
 
         // Reset the matched status changed flag
         matched_status_changed_.store(false);
