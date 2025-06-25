@@ -65,6 +65,7 @@ class SubscriberImpl;
 class DataReaderImpl;
 class DataReaderListener;
 class DataReaderQos;
+class DataWriter;
 class TopicDescription;
 struct LivelinessChangedStatus;
 
@@ -1095,15 +1096,16 @@ public:
      *
      * @warning This operation is only valid if the entity is not enabled.
      *
-     * @param [in] related_writer_guid The GUID of the DataWriter to set as related.
+     * @param [in] related_writer The DataWriter to set as related.
      *
      * @return RETCODE_OK if the key is set successfully.
-     * @return RETCODE_ERROR if this entity is already enabled.
+     * @return RETCODE_ILLEGAL_OPERATION if this entity is enabled.
+     * @return RETCODE_PRECONDITION_NOT_MET if the entity does not belong to the same participant.
      * @return RETCODE_BAD_PARAMETER if the provided GUID is unknown
-     * or does not correspond to a DataWriter.
+     * or the pointer is not valid.
      */
-    FASTDDS_EXPORTED_API ReturnCode_t set_related_datawriter_key(
-            const rtps::GUID_t& related_writer_guid);
+    FASTDDS_EXPORTED_API ReturnCode_t set_related_datawriter(
+            const DataWriter* related_writer);
 
 protected:
 

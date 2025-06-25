@@ -2285,25 +2285,31 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     return RETCODE_OK;
 }
 
-ReturnCode_t DataReaderImpl::set_related_datawriter_key(
-        const rtps::GUID_t& related_writer_guid)
+ReturnCode_t DataReaderImpl::set_related_datawriter(
+        const DataWriter* related_writer)
 {
-    ReturnCode_t ret = RETCODE_ERROR;
+    ReturnCode_t ret = RETCODE_ILLEGAL_OPERATION;
 
     if (nullptr == reader_)
     {
-        if (related_writer_guid != c_Guid_Unknown &&
-                related_writer_guid.entityId.is_writer())
+        if (nullptr != related_writer &&
+                related_writer->guid() != c_Guid_Unknown)
         {
-            related_datawriter_key_ = related_writer_guid;
-            ret = RETCODE_OK;
+            if (related_writer->guid().guidPrefix == guid_.guidPrefix)
+            {
+                related_datawriter_key_ = related_writer->guid();
+                ret = RETCODE_OK;
+            }
+            else
+            {
+                ret = RETCODE_PRECONDITION_NOT_MET;
+            }
         }
         else
         {
             ret = RETCODE_BAD_PARAMETER;
         }
     }
-
     return ret;
 }
 

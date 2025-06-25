@@ -28,6 +28,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
@@ -1517,25 +1518,31 @@ ReturnCode_t DataWriterImpl::set_sample_prefilter(
     return RETCODE_OK;
 }
 
-ReturnCode_t DataWriterImpl::set_related_datareader_key(
-        const rtps::GUID_t& related_reader_guid)
+ReturnCode_t DataWriterImpl::set_related_datareader(
+        const DataReader* related_reader)
 {
-    ReturnCode_t ret = RETCODE_ERROR;
+    ReturnCode_t ret = RETCODE_ILLEGAL_OPERATION;
 
     if (nullptr == writer_)
     {
-        if (related_reader_guid != c_Guid_Unknown &&
-                related_reader_guid.entityId.is_reader())
+        if (nullptr != related_reader &&
+                related_reader->guid() != c_Guid_Unknown)
         {
-            related_datareader_key_ = related_reader_guid;
-            ret = RETCODE_OK;
+            if (related_reader->guid().guidPrefix == guid_.guidPrefix)
+            {
+                related_datareader_key_ = related_reader->guid();
+                ret = RETCODE_OK;
+            }
+            else
+            {
+                ret = RETCODE_PRECONDITION_NOT_MET;
+            }
         }
         else
         {
             ret = RETCODE_BAD_PARAMETER;
         }
     }
-
     return ret;
 }
 
