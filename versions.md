@@ -15,6 +15,10 @@ Forthcoming
 * New version of EDP static discovery which reduces greatly the Data(p) messages size.
 * Bump to asio 1.34.2 release.
 * Add methods for TypeObject registration of RPC types.
+* RPC enhanced discovery feature:
+  * New `DataWriter::set_related_datareader` method.
+  * New `DataReader::set_related_datawriter` method.
+  * Implemented Requester and Replier matching algorithm.
 
 Version v3.2.2
 --------------
