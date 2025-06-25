@@ -448,8 +448,8 @@ public:
         return RETCODE_OK;
     }
 
-    ReturnCode_t set_related_datareader_key(
-            const rtps::GUID_t&)
+    ReturnCode_t set_related_datareader(
+            const DataReader* /*related_reader*/)
     {
         return RETCODE_OK;
     }

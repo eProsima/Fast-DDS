@@ -3901,12 +3901,12 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
-TEST_F(DataReaderTests, set_related_datawriter_key)
+TEST_F(DataReaderTests, set_related_datawriter)
 {
     create_entities();
 
     ASSERT_TRUE(data_reader_->is_enabled());
-    ASSERT_EQ(RETCODE_ERROR, data_reader_->set_related_datawriter_key(data_writer_->guid()));
+    ASSERT_EQ(RETCODE_ILLEGAL_OPERATION, data_reader_->set_related_datawriter(data_writer_));
 
     participant_->delete_contained_entities();
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
@@ -3921,8 +3921,31 @@ TEST_F(DataReaderTests, set_related_datawriter_key)
         );
 
     ASSERT_FALSE(data_reader_->is_enabled());
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data_reader_->set_related_datawriter_key(data_reader_->guid()));
-    ASSERT_EQ(RETCODE_OK, data_reader_->set_related_datawriter_key(data_writer_->guid()));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data_reader_->set_related_datawriter(nullptr));
+
+    auto another_participant =
+                DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant_, nullptr);
+
+    auto another_publisher = another_participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher_, nullptr);
+
+    type_.register_type(another_participant);
+
+    auto another_topic = another_participant->create_topic(topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic_, nullptr);
+
+    auto another_dw = another_publisher->create_datawriter(another_topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(another_dw, nullptr);
+
+    // Check that the DataReader can not be set to a DataWriter from another participant
+    ASSERT_EQ(RETCODE_PRECONDITION_NOT_MET, data_reader_->set_related_datawriter(another_dw));
+    // Check that setting a DataWriter from the same participant works
+    ASSERT_EQ(RETCODE_OK, data_reader_->set_related_datawriter(data_writer_));
+
+    another_participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(another_participant);
 }
 
 int main(

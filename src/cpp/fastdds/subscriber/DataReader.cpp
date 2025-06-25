@@ -485,10 +485,10 @@ ReturnCode_t DataReader::get_subscription_builtin_topic_data(
     return impl_->get_subscription_builtin_topic_data(subscription_data);
 }
 
-ReturnCode_t DataReader::set_related_datawriter_key(
-        const rtps::GUID_t& related_writer_guid)
+ReturnCode_t DataReader::set_related_datawriter(
+        const DataWriter* related_writer)
 {
-    return impl_->set_related_datawriter_key(related_writer_guid);
+    return impl_->set_related_datawriter(related_writer);
 }
 
 } /* namespace dds */
