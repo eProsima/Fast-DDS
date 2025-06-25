@@ -182,8 +182,8 @@ private:
      */
     enum class ReplierMatchStatus
     {
-        UNMATCHED,          // Request topic not matched
-        PARTIALLY_MATCHED,  // Request topic matched but Reply topic not matched
+        UNMATCHED,          // Reply topic not matched
+        PARTIALLY_MATCHED,  // Reply topic matched but Request topic not matched
         MATCHED             // Both topics matched
     };
 
