@@ -126,23 +126,67 @@ public:
      * @param [in] partname RTPSParticipant name
      * @param [in] id Id of the reader
      * @param [out] rdataptr Pointer to pointer to return the information.
+     * @param [out] position Return the position of the reader in the vector of readers.
      * @return True if found.
      */
     XMLP_ret lookforReader(
             const char* partname,
             uint16_t id,
-            rtps::ReaderProxyData** rdataptr);
+            rtps::ReaderProxyData** rdataptr,
+            uint32_t& position);
     /**
      * Look for a writer in the previously loaded endpoints.
      * @param [in] partname RTPSParticipant name
      * @param [in] id Id of the writer
      * @param [out] wdataptr Pointer to pointer to return the information.
+     * @param [out] position Return the position of the writer in the vector of writers.
      * @return True if found
      */
     XMLP_ret lookforWriter(
             const char* partname,
             uint16_t id,
+            rtps::WriterProxyData** wdataptr,
+            uint32_t& position);
+
+    /**
+     * Get a reader from the position in the vector of readers.
+     * @param[in] participant_name Name of the participant
+     * @param[in] pos Position in the vector of readers.
+     * @param[out] rdataptr Pointer to pointer to return the information.
+     * @return XMLP_ret::XML_OK if found, XMLP_ret::XML_ERROR otherwise.
+     */
+    XMLP_ret get_reader_from_position(
+            const std::string& participant_name,
+            size_t pos,
+            rtps::ReaderProxyData** rdataptr);
+
+    /**
+     * Get a writer from the position in the vector of writers.
+     * @param[in] participant_name Name of the participant
+     * @param[in] pos Position in the vector of writers.
+     * @param[out] wdataptr Pointer to pointer to return the information.
+     * @return XMLP_ret::XML_OK if found, XMLP_ret::XML_ERROR otherwise.
+     */
+    XMLP_ret get_writer_from_position(
+            const std::string& participant_name,
+            size_t pos,
             rtps::WriterProxyData** wdataptr);
+
+    /**
+     * Get the number of readers for a participant.
+     * @param[in] participant_name Name of the participant.
+     * @return Number of readers for the participant.
+     */
+    size_t get_number_of_readers(
+            const std::string& participant_name);
+
+    /**
+     * Get the number of writers for a participant.
+     * @param[in] participant_name Name of the participant.
+     * @return Number of writers for the participant.
+     */
+    size_t get_number_of_writers(
+            const std::string& participant_name);
 
 private:
 

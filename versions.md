@@ -12,6 +12,7 @@ Forthcoming
   * New `WriteParams::UserWriteData` extensible struct.
 * Add `get_complete_type_object` to `ITypeObjectRegistry`
 * Support modules in `IdlParser`
+* New version of EDP static discovery which reduces greatly the Data(p) messages size.
 
 Version v3.2.2
 --------------

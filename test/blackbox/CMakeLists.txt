@@ -156,10 +156,8 @@ if(W_UNICAST_PORT_RANDOM_NUMBER LESS 1025)
 endif()
 math(EXPR R_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 1")
 math(EXPR MULTICAST_PORT_RANDOM_NUMBER "${R_UNICAST_PORT_RANDOM_NUMBER} + 1")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriter_static_disc.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter_static_disc.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader_static_disc.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader_static_disc.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/RTPSParticipant_static_disc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/RTPSParticipant_static_disc.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriterPersistence_static_disc.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriterPersistence_static_disc.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReaderPersistence_static_disc.xml.in
