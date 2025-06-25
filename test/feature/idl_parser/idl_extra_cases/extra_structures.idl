@@ -26,14 +26,14 @@ module Outer
 };
 
 // Check resolution of relative and absolute scoped names
-module Module
+module MyModule
 {
     typedef float FloatAlias;
 
     struct ScopedNamesStruct
     {
-        Module::FloatAlias absolute_scoped_float;
-        ::Module::FloatAlias absolute_scoped_w_root_float;
+        MyModule::FloatAlias absolute_scoped_float;
+        ::MyModule::FloatAlias absolute_scoped_w_root_float;
         FloatAlias relative_scoped_float;
     };
 };
