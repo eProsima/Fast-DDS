@@ -19,7 +19,6 @@
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/condition/Condition.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -80,6 +79,7 @@ ReplierImpl::ReplierImpl(
     , qos_(qos)
     , service_(service)
     , enabled_(false)
+    , matched_status_changed_(false)
 {
 }
 
@@ -137,13 +137,6 @@ ReturnCode_t ReplierImpl::take_request(
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    // For taking the request is enough to check if the replier is fully matched
-    if (!is_fully_matched())
-    {
-        EPROSIMA_LOG_ERROR(REPLIER, "Trying to take a request with an unmatched requester");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
     retcode = replier_reader_->take_next_sample(data, &info);
     fill_related_sample_identity(info);
 
@@ -159,13 +152,6 @@ ReturnCode_t ReplierImpl::take_request(
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REPLIER, "Trying to take a request with a disabled replier");
-        return RETCODE_PRECONDITION_NOT_MET;
-    }
-
-    // For taking the request is enough to check if the replier is fully matched
-    if (!is_fully_matched())
-    {
-        EPROSIMA_LOG_WARNING(REPLIER, "Trying to take a request with an unmatched requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -253,6 +239,23 @@ ReturnCode_t ReplierImpl::close()
     return retcode;
 }
 
+void ReplierImpl::on_publication_matched(
+        DataWriter* /*writer*/,
+        const PublicationMatchedStatus& /*info*/)
+{
+
+    matched_status_changed_.store(true);
+    cv_.notify_one();
+}
+
+void ReplierImpl::on_subscription_matched(
+        DataReader* /*reader*/,
+        const SubscriptionMatchedStatus& /*info*/)
+{
+    matched_status_changed_.store(true);
+    cv_.notify_one();
+}
+
 ReturnCode_t ReplierImpl::create_dds_entities(
         const ReplierQos& qos)
 {
@@ -261,7 +264,7 @@ ReturnCode_t ReplierImpl::create_dds_entities(
 
     // Create writer for the Reply topic
     replier_writer_ =
-            service_->get_publisher()->create_datawriter(service_->get_reply_topic(), qos.writer_qos, nullptr);
+            service_->get_publisher()->create_datawriter(service_->get_reply_topic(), qos.writer_qos, this);
 
     if (!replier_writer_)
     {
@@ -270,7 +273,7 @@ ReturnCode_t ReplierImpl::create_dds_entities(
     }
 
     replier_reader_ =
-            service_->get_subscriber()->create_datareader(service_->get_request_topic(), qos.reader_qos, nullptr);
+            service_->get_subscriber()->create_datareader(service_->get_request_topic(), qos.reader_qos, this);
 
     if (!replier_reader_)
     {
@@ -279,8 +282,8 @@ ReturnCode_t ReplierImpl::create_dds_entities(
     }
 
     // Set the related entity key on both entities
-    replier_reader_->set_related_datawriter_key(replier_writer_->guid());
-    replier_writer_->set_related_datareader_key(replier_reader_->guid());
+    replier_reader_->set_related_datawriter(replier_writer_);
+    replier_writer_->set_related_datareader(replier_reader_);
 
     return RETCODE_OK;
 }
@@ -328,21 +331,12 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::requester_match_status(
 
     auto related_guid = info.related_sample_identity.writer_guid();
     bool reply_topic_matched = false;
-    if (info.sample_identity.writer_guid() != related_guid)
+    if (related_guid.entityId.is_reader() && info.sample_identity.writer_guid() != related_guid)
     {
         // Custom related GUID (i.e. reply reader GUID) sent with the request.
         // Check if the replier writer is matched with that specific reader.
-        if (related_guid.entityId.is_reader())
-        {
-            SubscriptionBuiltinTopicData sub_data;
-            reply_topic_matched = RETCODE_OK == replier_writer_->get_matched_subscription_data(sub_data, related_guid);
-        }
-        else
-        {
-            // At least, demand that the number of matched entities on the replier
-            // writer is equal to the ones on the requester reader.
-            reply_topic_matched = is_fully_matched();
-        }
+        SubscriptionBuiltinTopicData sub_data;
+        reply_topic_matched = RETCODE_OK == replier_writer_->get_matched_subscription_data(sub_data, related_guid);
     }
     else
     {
@@ -357,43 +351,10 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::requester_match_status(
            RequesterMatchStatus::PARTIALLY_MATCHED;
 }
 
-bool ReplierImpl::is_fully_matched() const
-{
-    PublicationMatchedStatus pub_status;
-    SubscriptionMatchedStatus sub_status;
-
-    if ((RETCODE_OK == replier_reader_->get_subscription_matched_status(sub_status)) &&
-            (RETCODE_OK == replier_writer_->get_publication_matched_status(pub_status)))
-    {
-        return (pub_status.current_count > 0) && (pub_status.current_count == sub_status.current_count);
-    }
-
-    EPROSIMA_LOG_ERROR(REPLIER, "Error getting matched subscriptions or publications");
-    return false;
-}
-
 ReplierImpl::RequesterMatchStatus ReplierImpl::wait_for_matching(
         const fastdds::dds::Duration_t& timeout,
-        const RequestInfo& info) const
+        const RequestInfo& info)
 {
-    WaitSet waitset;
-
-    // Add condition for changes in the replier reader matched status
-    StatusCondition& reader_condition = replier_reader_->get_statuscondition();
-    // Do not overwrite the original mask, since it is used by the server
-    StatusMask new_mask_reader, original_mask_reader = new_mask_reader = reader_condition.get_enabled_statuses();
-    new_mask_reader |= StatusMask::subscription_matched();
-    reader_condition.set_enabled_statuses(new_mask_reader);
-    waitset.attach_condition(reader_condition);
-
-    // Add condition for changes in the replier writer matched status
-    StatusCondition& writer_condition = replier_writer_->get_statuscondition();
-    // Do not overwrite the original mask, since it is used by the server
-    StatusMask new_mask_writer, original_mask_writer = new_mask_writer = writer_condition.get_enabled_statuses();
-    new_mask_writer |= StatusMask::publication_matched();
-    writer_condition.set_enabled_statuses(new_mask_writer);
-    waitset.attach_condition(writer_condition);
-
     Time_t current_time;
     Time_t::now(current_time);
     Time_t finish_time = current_time + timeout;
@@ -401,9 +362,18 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::wait_for_matching(
     RequesterMatchStatus requester_status = requester_match_status(info);
     while ((RequesterMatchStatus::MATCHED != requester_status) && current_time < finish_time)
     {
-        // Wait 10 ms for the conditions to be triggered
-        ConditionSeq active_conditions;
-        waitset.wait(active_conditions, {0, 10 * 1000 * 1000});
+        // Wait for the matched status to change
+        // Or every 100 milliseconds.
+        std::unique_lock<std::mutex> lock(mtx_);
+        cv_.wait_for(lock,
+            std::chrono::milliseconds(100),
+            [this]()
+            {
+                return matched_status_changed_.load();
+            });
+
+        // Reset the matched status changed flag
+        matched_status_changed_.store(false);
 
         // Check if the replier is fully matched
         requester_status = requester_match_status(info);
@@ -411,9 +381,6 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::wait_for_matching(
         // Update the current time
         Time_t::now(current_time);
     }
-
-    reader_condition.set_enabled_statuses(original_mask_reader);
-    reader_condition.set_enabled_statuses(original_mask_writer);
 
     return requester_status;
 }
