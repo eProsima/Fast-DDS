@@ -70,7 +70,8 @@ public:
 
     void wait_discovery();
 
-    void matched();
+    void matched(
+            bool is_pub);
 
     eprosima::fastdds::dds::ReplierQos create_replier_qos();
 
@@ -92,7 +93,8 @@ private:
 
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    unsigned int matched_;
+    unsigned int pub_matched_;
+    unsigned int sub_matched_;
 
     // Entity status changes are managed using the WaitSet on a different thread
     // The main thread remains blocked until the requester matches with the replier

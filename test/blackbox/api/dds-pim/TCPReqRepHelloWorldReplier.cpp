@@ -46,7 +46,8 @@ TCPReqRepHelloWorldReplier::TCPReqRepHelloWorldReplier()
     , service_(nullptr)
     , participant_(nullptr)
     , initialized_(false)
-    , matched_(0)
+    , pub_matched_(0)
+    , sub_matched_(0)
 {
 }
 
@@ -169,14 +170,14 @@ void TCPReqRepHelloWorldReplier::wait_discovery(
     {
         cvDiscovery_.wait(lock, [&]()
                 {
-                    return matched_ > 1;
+                    return pub_matched_ > 0 && sub_matched_ > 0;
                 });
     }
     else
     {
         cvDiscovery_.wait_for(lock, timeout, [&]()
                 {
-                    return matched_ > 1;
+                    return pub_matched_ > 0 && sub_matched_ > 0;
                 });
     }
 
@@ -208,20 +209,38 @@ void TCPReqRepHelloWorldReplier::wait_unmatched(
     std::cout << "Replier unmatched" << std::endl;
 }
 
-void TCPReqRepHelloWorldReplier::matched()
+void TCPReqRepHelloWorldReplier::matched(
+        bool is_pub)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
-    ++matched_;
-    if (matched_ > 1)
+    if (is_pub)
+    {
+        ++pub_matched_;
+    }
+    else
+    {
+        ++sub_matched_;
+    }
+    if (pub_matched_ > 0 && sub_matched_ > 0)
     {
         cvDiscovery_.notify_one();
     }
 }
 
-void TCPReqRepHelloWorldReplier::unmatched()
+void TCPReqRepHelloWorldReplier::unmatched(
+        bool is_pub)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
-    --matched_;
+
+    if (is_pub)
+    {
+        --pub_matched_;
+    }
+    else
+    {
+        --sub_matched_;
+    }
+
     if (!is_matched())
     {
         cvDiscovery_.notify_one();
@@ -230,7 +249,7 @@ void TCPReqRepHelloWorldReplier::unmatched()
 
 bool TCPReqRepHelloWorldReplier::is_matched()
 {
-    return matched_ > 1;
+    return pub_matched_ > 0 && sub_matched_ > 0;
 }
 
 void TCPReqRepHelloWorldReplier::init_processing_thread()
@@ -284,13 +303,16 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    // Note: assume status changes are always +-1
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)pub_matched_.load())
                     {
-                        matched();
+                        matched(true);
                     }
-                    else if (status.current_count_change < 0)
+                    else if (status.current_count_change < 0 || status.current_count < (int32_t)pub_matched_.load())
                     {
-                        unmatched();
+                        unmatched(true);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::subscription_matched()))
@@ -308,13 +330,16 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    // Note: assume status changes are always +-1
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)sub_matched_.load())
                     {
-                        matched();
+                        matched(false);
                     }
-                    else if (status.current_count_change < 0)
+                    else if (status.current_count_change < 0 || status.current_count < (int32_t)sub_matched_.load())
                     {
-                        unmatched();
+                        unmatched(false);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))
