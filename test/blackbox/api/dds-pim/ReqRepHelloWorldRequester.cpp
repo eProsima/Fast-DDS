@@ -44,7 +44,8 @@ ReqRepHelloWorldRequester::ReqRepHelloWorldRequester()
     , service_(nullptr)
     , participant_(nullptr)
     , initialized_(false)
-    , matched_(0)
+    , pub_matched_(0)
+    , sub_matched_(0)
 {
 }
 
@@ -155,17 +156,26 @@ void ReqRepHelloWorldRequester::wait_discovery()
 
     cvDiscovery_.wait(lock, [&]()
             {
-                return matched_ > 1;
+                return pub_matched_ > 0 && sub_matched_ > 0;
             });
 
     std::cout << "Requester discovery finished..." << std::endl;
 }
 
-void ReqRepHelloWorldRequester::matched()
+void ReqRepHelloWorldRequester::matched(
+        bool is_pub)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
-    ++matched_;
-    if (matched_ > 1)
+    if (is_pub)
+    {
+        ++pub_matched_;
+    }
+    else
+    {
+        ++sub_matched_;
+    }
+
+    if (pub_matched_ > 0 && sub_matched_ > 0)
     {
         cvDiscovery_.notify_one();
     }
@@ -191,7 +201,8 @@ void ReqRepHelloWorldRequester::direct_send(
 }
 
 void ReqRepHelloWorldRequester::send(
-        const uint16_t number)
+        const uint16_t number,
+        std::function<void(Requester* requester, RequestInfo* info, void* request)> send_evaluator)
 {
     RequestInfo info;
     HelloWorld hello;
@@ -203,10 +214,23 @@ void ReqRepHelloWorldRequester::send(
         current_number_ = number;
     }
 
-    ASSERT_EQ(requester_->send_request((void*)&hello, info), RETCODE_OK);
-    related_sample_identity_ = info.related_sample_identity;
+    send_evaluator(requester_, &info, (void*)&hello);
+}
 
-    ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
+void ReqRepHelloWorldRequester::send(
+        const uint16_t number)
+{
+    auto send_evaluator = [this](
+        Requester* requester,
+        RequestInfo* info,
+        void* request)
+            {
+                ASSERT_EQ(requester->send_request(request, *info), RETCODE_OK);
+                this->related_sample_identity_ = info->related_sample_identity;
+                ASSERT_NE(related_sample_identity_.sequence_number(), SequenceNumber_t());
+            };
+
+    send(number, send_evaluator);
 }
 
 void ReqRepHelloWorldRequester::send(
@@ -311,9 +335,11 @@ void ReqRepHelloWorldRequester::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)pub_matched_)
                     {
-                        matched();
+                        matched(true);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::subscription_matched()))
@@ -331,9 +357,12 @@ void ReqRepHelloWorldRequester::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    // Note: assume status changes are always +-1
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)sub_matched_)
                     {
-                        matched();
+                        matched(false);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))

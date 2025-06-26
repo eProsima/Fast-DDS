@@ -311,6 +311,12 @@ ReturnCode_t DataWriter::set_sample_prefilter(
     return impl_->set_sample_prefilter(prefilter);
 }
 
+ReturnCode_t DataWriter::set_related_datareader(
+        const DataReader* related_reader)
+{
+    return impl_->set_related_datareader(related_reader);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

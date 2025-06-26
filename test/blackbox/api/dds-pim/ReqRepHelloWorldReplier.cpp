@@ -41,7 +41,37 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier()
     , service_(nullptr)
     , participant_(nullptr)
     , initialized_(false)
-    , matched_(0)
+    , pub_matched_(0)
+    , sub_matched_(0)
+{
+    request_processor_ = [](
+        eprosima::fastdds::dds::rpc::RequestInfo& info,
+        eprosima::fastdds::dds::rpc::Replier* replier,
+        const void* const request)
+            {
+                // Default request processor does nothing
+                const HelloWorld* hello_request = static_cast<const HelloWorld*>(request);
+                ASSERT_EQ(hello_request->message().compare("HelloWorld"), 0);
+                HelloWorld reply;
+                reply.index(hello_request->index());
+                reply.message("GoodBye");
+                ASSERT_EQ(replier->send_reply((void*)&reply, info), RETCODE_OK);
+            };
+}
+
+ReqRepHelloWorldReplier::ReqRepHelloWorldReplier(
+        std::function<void(
+            eprosima::fastdds::dds::rpc::RequestInfo& info,
+            eprosima::fastdds::dds::rpc::Replier* replier,
+            const void* const request)> request_processor
+        )
+    : replier_(nullptr)
+    , service_(nullptr)
+    , participant_(nullptr)
+    , initialized_(false)
+    , pub_matched_(0)
+    , sub_matched_(0)
+    , request_processor_(request_processor)
 {
 }
 
@@ -103,16 +133,6 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
     initialized_ = true;
 }
 
-void ReqRepHelloWorldReplier::newNumber(
-        const RequestInfo& info,
-        uint16_t number)
-{
-    HelloWorld hello;
-    hello.index(number);
-    hello.message("GoodBye");
-    ASSERT_EQ(replier_->send_reply((void*)&hello, info), RETCODE_OK);
-}
-
 void ReqRepHelloWorldReplier::wait_discovery()
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
@@ -121,17 +141,25 @@ void ReqRepHelloWorldReplier::wait_discovery()
 
     cvDiscovery_.wait(lock, [&]()
             {
-                return matched_ > 1;
+                return pub_matched_ > 0 && sub_matched_ > 0;
             });
 
     std::cout << "Replier discovery finished..." << std::endl;
 }
 
-void ReqRepHelloWorldReplier::matched()
+void ReqRepHelloWorldReplier::matched(
+        bool is_pub)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
-    ++matched_;
-    if (matched_ > 1)
+    if (is_pub)
+    {
+        ++pub_matched_;
+    }
+    else
+    {
+        ++sub_matched_;
+    }
+    if (pub_matched_ > 0 && sub_matched_ > 0)
     {
         cvDiscovery_.notify_one();
     }
@@ -188,9 +216,11 @@ void ReqRepHelloWorldReplier::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)pub_matched_)
                     {
-                        matched();
+                        matched(true);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::subscription_matched()))
@@ -208,9 +238,11 @@ void ReqRepHelloWorldReplier::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)sub_matched_)
                     {
-                        matched();
+                        matched(false);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))
@@ -228,8 +260,10 @@ void ReqRepHelloWorldReplier::process_status_changes()
                     {
                         if (info.valid_data)
                         {
-                            ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
-                            newNumber(info, hello.index());
+                            request_processor_(
+                                info,
+                                replier_,
+                                static_cast<const void*>(&hello));
                         }
                     }
                 }

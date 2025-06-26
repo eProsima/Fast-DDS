@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
@@ -44,6 +45,7 @@ RequesterImpl::RequesterImpl(
     , qos_(qos)
     , service_(service)
     , enabled_(false)
+    , matched_status_changed_(false)
 {
 }
 
@@ -62,15 +64,14 @@ ReturnCode_t RequesterImpl::send_request(
         void* data,
         RequestInfo& info)
 {
-    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Trying to send a request with a disabled requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
-    if (!is_fully_matched())
+    Duration_t timeout{3, 0}; // Default timeout of 3 seconds
+    if (!wait_for_matching(timeout))
     {
         EPROSIMA_LOG_WARNING(REQUESTER, "Trying to send a request with an unmatched requester");
         return RETCODE_PRECONDITION_NOT_MET;
@@ -96,6 +97,7 @@ ReturnCode_t RequesterImpl::send_request(
             info.related_sample_identity.sequence_number() = wparams.related_sample_identity().sequence_number();
         }
     }
+
     return ret;
 }
 
@@ -103,11 +105,16 @@ ReturnCode_t RequesterImpl::take_reply(
         void* data,
         RequestInfo& info)
 {
-    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Trying to take a reply with a disabled requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // For taking the reply is enough to check if the requester is partially matched
+    if (replier_match_status() == ReplierMatchStatus::UNMATCHED)
+    {
+        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to take a reply with an unmatched requester reader");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -118,11 +125,16 @@ ReturnCode_t RequesterImpl::take_reply(
         LoanableCollection& data,
         LoanableSequence<RequestInfo>& info)
 {
-    FASTDDS_TODO_BEFORE(3, 3, "Implement matching algorithm");
-
     if (!enabled_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Trying to take a reply with a disabled requester");
+        return RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    // For taking the reply is enough to check if the requester is partially matched
+    if (replier_match_status() == ReplierMatchStatus::UNMATCHED)
+    {
+        EPROSIMA_LOG_WARNING(REQUESTER, "Trying to take a reply with an unmatched requester");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -170,6 +182,11 @@ ReturnCode_t RequesterImpl::enable()
             delete_contained_entities();
             return retcode;
         }
+        else
+        {
+            requester_reader_->enable();
+            requester_writer_->enable();
+        }
 
         enabled_ = true;
     }
@@ -197,12 +214,33 @@ ReturnCode_t RequesterImpl::close()
     return retcode;
 }
 
+void RequesterImpl::on_publication_matched(
+        DataWriter* /*writer*/,
+        const PublicationMatchedStatus& /*info*/)
+{
+
+    matched_status_changed_.store(true);
+    cv_.notify_one();
+}
+
+void RequesterImpl::on_subscription_matched(
+        DataReader* /*reader*/,
+        const SubscriptionMatchedStatus& /*info*/)
+{
+    matched_status_changed_.store(true);
+    cv_.notify_one();
+}
+
 ReturnCode_t RequesterImpl::create_dds_entities(
         const RequesterQos& qos)
 {
+    // Entities are not autoenabled since the publisher and
+    // the subscriber have autoenable_created_entities set to false.
+
     // Create writer for the Request topic
     requester_writer_ =
-            service_->get_publisher()->create_datawriter(service_->get_request_topic(), qos.writer_qos, nullptr);
+            service_->get_publisher()->create_datawriter(
+        service_->get_request_topic(), qos.writer_qos, this, StatusMask::publication_matched());
 
     if (!requester_writer_)
     {
@@ -212,13 +250,17 @@ ReturnCode_t RequesterImpl::create_dds_entities(
 
     requester_reader_ =
             service_->get_subscriber()->create_datareader(
-        service_->get_reply_filtered_topic(), qos.reader_qos, nullptr);
+        service_->get_reply_filtered_topic(), qos.reader_qos, this, StatusMask::subscription_matched());
 
     if (!requester_reader_)
     {
         EPROSIMA_LOG_ERROR(REQUESTER, "Error creating reply reader");
         return RETCODE_ERROR;
     }
+
+    // Set the related entity key on both entities
+    requester_reader_->set_related_datawriter(requester_writer_);
+    requester_writer_->set_related_datareader(requester_reader_);
 
     return RETCODE_OK;
 }
@@ -254,19 +296,78 @@ ReturnCode_t RequesterImpl::delete_contained_entities()
     return RETCODE_OK;
 }
 
-bool RequesterImpl::is_fully_matched() const
+RequesterImpl::ReplierMatchStatus RequesterImpl::replier_match_status() const
 {
-    PublicationMatchedStatus pub_status;
+    ReplierMatchStatus replier_match_status = ReplierMatchStatus::UNMATCHED;
+
     SubscriptionMatchedStatus sub_status;
 
-    if ((RETCODE_OK == requester_reader_->get_subscription_matched_status(sub_status)) &&
-            (RETCODE_OK == requester_writer_->get_publication_matched_status(pub_status)))
+    if (RETCODE_OK == requester_reader_->get_subscription_matched_status(sub_status))
     {
-        return (pub_status.current_count > 0) && (pub_status.current_count == sub_status.current_count);
+        if (sub_status.current_count > 0)
+        {
+            replier_match_status = ReplierMatchStatus::PARTIALLY_MATCHED;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(REQUESTER, "Error getting matched subscriptions status");
     }
 
-    EPROSIMA_LOG_ERROR(REQUESTER, "Error getting matched subscriptions or publications");
-    return false;
+    if (replier_match_status == ReplierMatchStatus::PARTIALLY_MATCHED)
+    {
+        PublicationMatchedStatus pub_status;
+        if (RETCODE_OK == requester_writer_->get_publication_matched_status(pub_status))
+        {
+            if (pub_status.current_count > 0 &&
+                    pub_status.current_count == sub_status.current_count)
+            {
+                replier_match_status = ReplierMatchStatus::MATCHED;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(REQUESTER, "Error getting matched publications status");
+        }
+    }
+
+    return replier_match_status;
+}
+
+bool RequesterImpl::wait_for_matching(
+        const fastdds::dds::Duration_t& timeout)
+{
+    Time_t current_time;
+    Time_t::now(current_time);
+    Time_t finish_time = current_time + timeout;
+
+    ReplierMatchStatus replier_status = replier_match_status();
+    while ((ReplierMatchStatus::MATCHED != replier_status) && current_time < finish_time)
+    {
+        // Wait for the matched status to change
+        // Or every 100 milliseconds.
+        std::unique_lock<std::mutex> lock(mtx_);
+        bool res = cv_.wait_for(lock,
+                        std::chrono::milliseconds(100),
+                        [this]()
+                        {
+                            return matched_status_changed_.load();
+                        });
+
+        if (res)
+        {
+            // Reset the matched status changed flag
+            matched_status_changed_.store(false);
+
+            // Check if the replier is fully matched
+            replier_status = replier_match_status();
+        }
+
+        // Update the current time
+        Time_t::now(current_time);
+    }
+
+    return (ReplierMatchStatus::MATCHED == replier_status);
 }
 
 } // namespace rpc

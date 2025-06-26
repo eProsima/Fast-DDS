@@ -120,6 +120,8 @@ ReaderProxyData& ReaderProxyData::operator =(
 
     type_information = readerInfo.type_information;
 
+    related_datawriter_key = readerInfo.related_datawriter_key;
+
     if (readerInfo.history)
     {
         history = readerInfo.history;
@@ -321,6 +323,12 @@ uint32_t ReaderProxyData::get_serialized_size(
                 dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
             type_information);
     }
+
+    if (related_datawriter_key != c_Guid_Unknown)
+    {
+        ret_val += 4 + PARAMETER_GUID_LENGTH;
+    }
+
     if (dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::should_be_sent(type_consistency))
     {
         ret_val += dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
@@ -683,6 +691,15 @@ bool ReaderProxyData::write_to_cdr_message(
     {
         if (!dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::add_to_cdr_message(
                     type_information, msg))
+        {
+            return false;
+        }
+    }
+
+    if (related_datawriter_key != c_Guid_Unknown)
+    {
+        ParameterGuid_t p(fastdds::dds::PID_RELATED_ENTITY_GUID, PARAMETER_GUID_LENGTH, related_datawriter_key);
+        if (!dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -1078,7 +1095,18 @@ bool ReaderProxyData::read_from_cdr_message(
                         }
                         break;
                     }
+                    case fastdds::dds::PID_RELATED_ENTITY_GUID:
+                    {
+                        ParameterGuid_t p(pid, plength);
+                        if (!dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(
+                                    p, msg, plength))
+                        {
+                            return false;
+                        }
 
+                        related_datawriter_key = p.guid;
+                        break;
+                    }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
@@ -1443,6 +1471,7 @@ void ReaderProxyData::clear()
     lifespan.clear();
     disable_positive_acks.clear();
     representation.clear();
+    related_datawriter_key = c_Guid_Unknown;
     type_consistency.clear();
     type_information.clear();
     data_sharing.clear();
