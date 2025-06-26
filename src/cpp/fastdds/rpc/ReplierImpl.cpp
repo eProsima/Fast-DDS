@@ -264,7 +264,8 @@ ReturnCode_t ReplierImpl::create_dds_entities(
 
     // Create writer for the Reply topic
     replier_writer_ =
-            service_->get_publisher()->create_datawriter(service_->get_reply_topic(), qos.writer_qos, this);
+            service_->get_publisher()->create_datawriter(
+        service_->get_reply_topic(), qos.writer_qos, this, StatusMask::publication_matched());
 
     if (!replier_writer_)
     {
@@ -273,7 +274,8 @@ ReturnCode_t ReplierImpl::create_dds_entities(
     }
 
     replier_reader_ =
-            service_->get_subscriber()->create_datareader(service_->get_request_topic(), qos.reader_qos, this);
+            service_->get_subscriber()->create_datareader(
+        service_->get_request_topic(), qos.reader_qos, this, StatusMask::subscription_matched());
 
     if (!replier_reader_)
     {
@@ -365,18 +367,21 @@ ReplierImpl::RequesterMatchStatus ReplierImpl::wait_for_matching(
         // Wait for the matched status to change
         // Or every 100 milliseconds.
         std::unique_lock<std::mutex> lock(mtx_);
-        cv_.wait_for(lock,
-                std::chrono::milliseconds(100),
-                [this]()
-                {
-                    return matched_status_changed_.load();
-                });
+        bool res = cv_.wait_for(lock,
+                        std::chrono::milliseconds(100),
+                        [this]()
+                        {
+                            return matched_status_changed_.load();
+                        });
 
-        // Reset the matched status changed flag
-        matched_status_changed_.store(false);
+        if (res)
+        {
+            // Reset the matched status changed flag
+            matched_status_changed_.store(false);
 
-        // Check if the replier is fully matched
-        requester_status = requester_match_status(info);
+            // Check if the requester is fully matched
+            requester_status = requester_match_status(info);
+        }
 
         // Update the current time
         Time_t::now(current_time);

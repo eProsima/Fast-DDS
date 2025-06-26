@@ -621,7 +621,7 @@ public:
      *
      * @warning This operation is only valid if the entity is not enabled.
      *
-     * @param [in] related_reader The GUID of the DataReader to set as related.
+     * @param [in] related_reader Pointer to the DataReader to set as related.
      *
      * @return RETCODE_OK if the key is set successfully.
      * @return RETCODE_ILLEGAL_OPERATION if this entity is enabled.
