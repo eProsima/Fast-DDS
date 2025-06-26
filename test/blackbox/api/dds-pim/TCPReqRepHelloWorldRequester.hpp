@@ -72,9 +72,11 @@ public:
     void wait_discovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero());
 
-    void matched();
+    void matched(
+            bool is_pub);
 
-    void unmatched();
+    void unmatched(
+            bool is_pub);
 
     bool is_matched();
 
@@ -101,7 +103,8 @@ private:
     eprosima::fastdds::dds::WaitSet wait_set_;
 
     bool initialized_;
-    std::atomic<unsigned int> matched_;
+    std::atomic<unsigned int> pub_matched_;
+    std::atomic<unsigned int> sub_matched_;
     eprosima::fastdds::rtps::SampleIdentity related_sample_identity_;
     eprosima::fastdds::rtps::SampleIdentity received_sample_identity_;
 
