@@ -344,8 +344,6 @@ public:
     {
         if (participant_proxies_.empty())
         {
-            EPROSIMA_LOG_ERROR(RTPS_PDP,
-                    "getLocalParticipantProxyData(): no local ParticipantProxyData available – returning dummy instance");
             return nullptr;
         }
         return participant_proxies_.front();
