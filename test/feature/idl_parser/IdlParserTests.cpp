@@ -471,7 +471,7 @@ TEST_F(IdlParserTests, structures)
 
     DynamicTypeBuilder::_ref_type builder37 = factory->create_type_w_uri(
         "IDL/extra_structures.idl",
-        "Module::ScopedNamesStruct",
+        "MyModule::ScopedNamesStruct",
         include_paths);
     EXPECT_TRUE(builder37);
     DynamicType::_ref_type type37 = builder37->build();
