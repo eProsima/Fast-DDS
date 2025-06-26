@@ -3,8 +3,9 @@
 set -e
 
 files_to_exclude=(
-    './thirdparty/dds-types-test/IDL/relative_path_include.idl' # Relative path not working in current location.
-    './test/feature/idl_parser/no_path_included.idl'            # Relative path not working in current location.
+    './thirdparty/dds-types-test/IDL/relative_path_include.idl'       # Relative path not working in current location.
+    './test/feature/idl_parser/no_path_included.idl'                  # Relative path not working in current location.
+    './test/feature/idl_parser/idl_extra_cases/extra_structures.idl'  # Contains features not supported by IDL parser (scoped name beginning with double colon).
 )
 
 files_not_needing_typeobject=(
