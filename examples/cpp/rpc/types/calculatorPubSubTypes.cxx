@@ -175,6 +175,11 @@ namespace calculator_example {
             delete pData;
         }
 
+        eProsima_user_DllExport void register_type_object_representation() override
+        {
+            register_Calculator_Request_type_identifier(type_identifiers_);
+        }
+
     };
 
     class Calculator_ReplyPubSubType : public eprosima::fastdds::dds::TopicDataType
@@ -316,6 +321,11 @@ namespace calculator_example {
         {
             type* pData = static_cast<type*>(data);
             delete pData;
+        }
+
+        eProsima_user_DllExport void register_type_object_representation() override
+        {
+            register_Calculator_Reply_type_identifier(type_identifiers_);
         }
 
     };
