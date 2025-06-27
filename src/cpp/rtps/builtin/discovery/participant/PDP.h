@@ -342,7 +342,11 @@ public:
      */
     ParticipantProxyData* getLocalParticipantProxyData() const
     {
-        return participant_proxies_.empty() ? nullptr : participant_proxies_.front();
+        if (participant_proxies_.empty())
+        {
+            return nullptr;
+        }
+        return participant_proxies_.front();
     }
 
     /**
