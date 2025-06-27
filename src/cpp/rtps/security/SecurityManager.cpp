@@ -222,7 +222,8 @@ bool SecurityManager::init(
                                 participant_->getRTPSParticipantAttributes(),
                                 participant_->getGuid(),
                                 exception);
-            } while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
+            }
+            while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
 
             if (ret == VALIDATION_OK)
             {
@@ -904,8 +905,11 @@ bool SecurityManager::on_process_handshake(
 
         CacheChange_t* change = participant_stateless_message_writer_->new_change([&message]() -> uint32_t
                         {
-                            return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                            + 4 /*encapsulation*/);
+                            uint32_t cdr_size =
+                            static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+                            cdr_size += (4 - (cdr_size % 4)) & (4 - 1); // Align to 4 bytes
+                            cdr_size += 4; // Encapsulation
+                            return cdr_size;
                         }
                         , ALIVE, c_InstanceHandle_Unknown);
 
@@ -2243,8 +2247,10 @@ void SecurityManager::exchange_participant_crypto(
         CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
             [&message]() -> uint32_t
             {
-                return static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message)
-                + 4 /*encapsulation*/);
+                uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+                cdr_size += (4 - (cdr_size % 4)) & (4 - 1); // Align to 4 bytes
+                cdr_size += 4; // Encapsulation
+                return cdr_size;
             }
             , ALIVE, c_InstanceHandle_Unknown);
 
@@ -3062,9 +3068,12 @@ bool SecurityManager::discovered_reader(
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
                                     [&message]() -> uint32_t
                                     {
-                                        return static_cast<uint32_t>(
-                                            ParticipantGenericMessageHelper::serialized_size(message)
-                                            + 4 /*encapsulation*/);
+                                        uint32_t cdr_size =
+                                        static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(
+                                            message));
+                                        cdr_size += (4 - (cdr_size % 4)) & (4 - 1); // Align to 4 bytes
+                                        cdr_size += 4; // Encapsulation
+                                        return cdr_size;
                                     }
                                     , ALIVE, c_InstanceHandle_Unknown);
 
@@ -3426,9 +3435,12 @@ bool SecurityManager::discovered_writer(
                                 CacheChange_t* change = participant_volatile_message_secure_writer_->new_change(
                                     [&message]() -> uint32_t
                                     {
-                                        return static_cast<uint32_t>(
-                                            ParticipantGenericMessageHelper::serialized_size(message)
-                                            + 4 /*encapsulation*/);
+                                        uint32_t cdr_size =
+                                        static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(
+                                            message));
+                                        cdr_size += (4 - (cdr_size % 4)) & (4 - 1); // Align to 4 bytes
+                                        cdr_size += 4; // Encapsulation
+                                        return cdr_size;
                                     }
                                     , ALIVE, c_InstanceHandle_Unknown);
 

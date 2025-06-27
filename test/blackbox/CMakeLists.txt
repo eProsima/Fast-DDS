@@ -195,6 +195,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builtin_transports_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/builtin_transports_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/auth_handshake_props_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/auth_handshake_props_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/security_bug_participant_generic_message.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/security_bug_participant_generic_message.xml COPYONLY)
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 if(FASTRTPS_API_TESTS)
