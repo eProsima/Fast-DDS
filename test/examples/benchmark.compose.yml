@@ -15,8 +15,9 @@
 services:
   subscriber:
     image: @DOCKER_IMAGE_NAME@
-    network_mode: host
+    @NETWORK_MODE_COMPOSE@
     ipc: host
+    container_name: subscriber_benchmark_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
@@ -26,13 +27,14 @@ services:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/benchmark/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/benchmark/benchmark_profile.xml
-      SUBSCRIBER_ADDITIONAL_ARGUMENTS: ${SUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/benchmark@FILE_EXTENSION@ subscriber --reliable --transient-local --samples 1000 $${SUBSCRIBER_ADDITIONAL_ARGUMENTS}"
+      SUB_ADDITIONAL_ARGS_COMPOSE: ${SUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/benchmark@FILE_EXTENSION@ subscriber --reliable --transient-local --samples 1000 @SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
 
   publisher:
     image: @DOCKER_IMAGE_NAME@
-    network_mode: host
+    @NETWORK_MODE_COMPOSE@
     ipc: host
+    container_name: publisher_benchmark_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
@@ -42,5 +44,5 @@ services:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/benchmark/@EXAMPLE_SUFFIX_DIR_COMPOSE@
       FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/benchmark/benchmark_profile.xml
-      PUBLISHER_ADDITIONAL_ARGUMENTS: ${PUB_ARGS}
-    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/benchmark@FILE_EXTENSION@ publisher --reliable --transient-local --samples 1000 $${PUBLISHER_ADDITIONAL_ARGUMENTS}"
+      PUB_ADDITIONAL_ARGS_COMPOSE: ${PUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/benchmark@FILE_EXTENSION@ publisher --reliable --transient-local --samples 1000 @PUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"

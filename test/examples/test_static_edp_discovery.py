@@ -20,7 +20,7 @@ def test_static_edp_discovery():
     out = ''
     try:
         out = subprocess.check_output(
-            '@DOCKER_EXECUTABLE@ compose -f static_edp_discovery.compose.yml up',
+            '"@DOCKER_EXECUTABLE@" compose -f static_edp_discovery.compose.yml up',
             stderr=subprocess.STDOUT,
             shell=True,
             timeout=20

@@ -65,6 +65,7 @@ public:
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         bool ignore_local_endpoints = false;
         uint16_t samples = 0;
+        uint16_t matched = 1;
         uint32_t domain = 0;
         DeliveryMechanismKind delivery_mechanism = DeliveryMechanismKind::DEFAULT;
         std::string tcp_ip_address = "";
@@ -110,6 +111,8 @@ public:
         std::cout << "  -s <num>, --samples <num>           Number of samples to send or receive"       << std::endl;
         std::cout << "                                      [0 <= <num> <= 65535]"                      << std::endl;
         std::cout << "                                      (Default: 0 [unlimited])"                   << std::endl;
+        std::cout << "  -m, --matched                       Number of participants to discover"         << std::endl;
+        std::cout << "                                      before start publishing (Default: 1)"       << std::endl;
         std::cout << ""                                                                                 << std::endl;
         std::cout << "\"pubsub\" options:"                                                              << std::endl;
         std::cout << "  -i , --ignore-local-endpoints       Avoid matching compatible datareaders and"  << std::endl;
@@ -306,6 +309,10 @@ public:
                     {
                         config.delivery_mechanism = DeliveryMechanismKind::SHM;
                     }
+                    else if (mechanism == "DEFAULT" || mechanism == "default")
+                    {
+                        config.delivery_mechanism = DeliveryMechanismKind::DEFAULT;
+                    }
                     else
                     {
                         EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing mechanism argument");
@@ -327,6 +334,41 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "ignore-local-endpoints option only allowed with \"pubsub\" entity");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-m" || arg == "--matched")
+            {
+                try
+                {
+                    int input = std::stoi(argv[++i]);
+                    if (input < std::numeric_limits<std::uint16_t>::min() ||
+                            input > std::numeric_limits<std::uint16_t>::max())
+                    {
+                        throw std::out_of_range("matched argument out of range");
+                    }
+                    else
+                    {
+                        if (config.entity == CLIParser::EntityKind::PUBLISHER ||
+                                config.entity == CLIParser::EntityKind::PUBSUB)
+                        {
+                            config.matched = static_cast<uint16_t>(input);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "matched can only be used with the publisher entity");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                }
+                catch (const std::invalid_argument& e)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg + ": " + e.what());
+                    print_help(EXIT_FAILURE);
+                }
+                catch (const std::out_of_range& e)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "sample argument out of range for " + arg + ": " + e.what());
                     print_help(EXIT_FAILURE);
                 }
             }

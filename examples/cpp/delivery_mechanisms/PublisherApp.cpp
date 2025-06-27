@@ -55,6 +55,7 @@ PublisherApp::PublisherApp(
     , writer_(nullptr)
     , type_(new DeliveryMechanismsPubSubType())
     , matched_(0)
+    , expected_matches_(config.matched)
     , index_of_last_sample_sent_(0)
     , samples_(config.samples)
     , stop_(false)
@@ -241,13 +242,13 @@ void PublisherApp::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher matched." << std::endl;
         cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -265,6 +266,18 @@ void PublisherApp::run()
         {
             std::cout << "Error sending sample with index: '" << index_of_last_sample_sent_ << "'" << std::endl;
         }
+
+        if (index_of_last_sample_sent_ == 1u)
+        {
+            ReturnCode_t acked = RETCODE_ERROR;
+            do
+            {
+                dds::Duration_t acked_wait{1, 0};
+                acked = writer_->wait_for_acknowledgments(acked_wait);
+            }
+            while (acked != RETCODE_OK);
+        }
+
         // Wait for period or stop event
         std::unique_lock<std::mutex> terminate_lock(mutex_);
         cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
@@ -282,7 +295,7 @@ bool PublisherApp::publish()
     cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
-                return ((matched_ > 0) || is_stopped());
+                return ((matched_ >= expected_matches_) || is_stopped());
             });
     void* sample_ = nullptr;
     if (!is_stopped() && (RETCODE_OK == writer_->loan_sample(sample_)))

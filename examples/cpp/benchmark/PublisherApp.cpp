@@ -68,7 +68,6 @@ PublisherApp::PublisherApp(
     , vSamples(0)
     , startTime(std::chrono::steady_clock::now())
 {
-
     if (samples_ > 0)
     {
         timeout_ = 0;
@@ -507,6 +506,18 @@ bool PublisherApp::publish()
                 throw std::runtime_error("Type invalid");
         }
     }
+
+    if (benchmark_.index() == 0u)
+    {
+        ReturnCode_t acked = RETCODE_ERROR;
+        do
+        {
+            dds::Duration_t acked_wait{1, 0};
+            acked = writer_->wait_for_acknowledgments(acked_wait);
+        }
+        while (acked != RETCODE_OK);
+    }
+
     return ret;
 }
 
