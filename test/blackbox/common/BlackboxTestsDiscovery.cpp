@@ -40,6 +40,7 @@
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
 #include "PubSubParticipant.hpp"
+#include "../utils/filter_helpers.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -2401,7 +2402,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     // Declare a test transport that will count the number of Data(p) messages sent
     std::atomic<size_t> num_data_p_sends{ 0 };
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-    test_transport->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+    test_transport->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
             {
                 return builtin_msg_is_data_p(msg, num_data_p_sends);
             };
@@ -2410,8 +2411,8 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     auto server = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
 
     Locator_t locator_server;  // UDPv4 locator by default
-    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
-    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server, global_port);
+    IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
+    IPLocator::setPhysicalPort(locator_server, global_port);
 
     WireProtocolConfigQos server_wp_qos;
     server_wp_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
@@ -2435,7 +2436,9 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     // Set participant as client
     WireProtocolConfigQos client_qos;
     client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
-    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server);
+    RemoteServerAttributes remote_server_att;
+    remote_server_att.metatrafficUnicastLocatorList.push_back(locator_server);
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
     client_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     client_qos.builtin.discovery_config.leaseDuration_announcementperiod = c_TimeInfinite;
     client_qos.builtin.discovery_config.initial_announcements.count = 1;
@@ -2559,13 +2562,13 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     std::atomic<size_t> num_data_r_w_sends_s1{ 0 };
     std::atomic<size_t> num_data_r_w_sends_s2{ 0 };
     auto test_transport_s1 = std::make_shared<test_UDPv4TransportDescriptor>();
-    test_transport_s1->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+    test_transport_s1->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
             {
                 return builtin_msg_is_data_r_w(msg, num_data_r_w_sends_s1);
             };
 
     auto test_transport_s2 = std::make_shared<test_UDPv4TransportDescriptor>();
-    test_transport_s2->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
+    test_transport_s2->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
             {
                 return builtin_msg_is_data_r_w(msg, num_data_r_w_sends_s2);
             };
@@ -2574,8 +2577,8 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     auto server_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
 
     Locator_t locator_server_1;  // UDPv4 locator by default
-    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
-    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server_1, global_port);
+    IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
+    IPLocator::setPhysicalPort(locator_server_1, global_port);
 
     WireProtocolConfigQos server_wp_qos_1;
     server_wp_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
@@ -2596,14 +2599,16 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     auto server_2 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
 
     Locator_t locator_server_2 = locator_server_1;  // UDPv4 locator by default
-    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server_2, global_port + 1);
+    IPLocator::setPhysicalPort(locator_server_2, global_port + 1);
 
     WireProtocolConfigQos server_wp_qos_2 = server_wp_qos_1;
     server_wp_qos_2.builtin.metatrafficUnicastLocatorList.clear();
     server_wp_qos_2.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
     // Configure 1 initial announcement as this Server will connect to the first one
     server_wp_qos_2.builtin.discovery_config.initial_announcements.count = 1;
-    server_wp_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_1);
+    RemoteServerAttributes remote_server_att_1;
+    remote_server_att_1.metatrafficUnicastLocatorList.push_back(locator_server_1);
+    server_wp_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att_1);
 
     // The main participant will use the test transport and a specific announcements configuration
     server_2->disable_builtin_transport().add_user_transport_to_pparams(test_transport_s2)
@@ -2624,7 +2629,7 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     // Set participant as client
     WireProtocolConfigQos client_qos;
     client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
-    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_1);
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att_1);
     client_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
     client_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 15, 0 };
     client_qos.builtin.discovery_config.initial_announcements.count = 0;
@@ -2636,7 +2641,9 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
 
     // Init client 2
     client_qos.builtin.discovery_config.m_DiscoveryServers.clear();
-    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_2);
+    RemoteServerAttributes remote_server_att_2;
+    remote_server_att_2.metatrafficUnicastLocatorList.push_back(locator_server_2);
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att_2);
     client_2.set_wire_protocol_qos(client_qos)
             .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
             .init();
