@@ -392,49 +392,49 @@ TEST(KeyedTopic, key_only_payload)
     ASSERT_TRUE(ts != nullptr);
     EXPECT_EQ(ts->nb_of_times_called_with_key_only_payload(), 0u);
 
-    struct KeyOnlyPayloadPacket
-    {
-        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
-        std::array<uint8_t, 2> protocol_version{ {2, 3} };
-        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
-        GuidPrefix_t sender_prefix{};
-
-        struct DataSubMsg
-        {
-            struct Header
-            {
-                uint8_t submessage_id = 0x15;
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-                uint8_t flags = 0x08;
-#else
-                uint8_t flags = 0x09;
-#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
-                uint16_t octets_to_next_header = 28;
-                uint16_t extra_flags = 0;
-                uint16_t octets_to_inline_qos = 16;
-                EntityId_t reader_id{};
-                EntityId_t writer_id{};
-                SequenceNumber_t sn{ 3 };
-            };
-
-            struct SerializedData
-            {
-                uint8_t encapsulation[2] = {0x00, CDR_LE};
-                uint8_t encapsulation_opts[2] = {0x00, 0x00};
-                uint8_t data[4] = {0x01, 0x00, 0x00, 0x00};
-            };
-
-            Header header;
-            SerializedData payload;
-        }
-        data;
-    };
-
     UDPMessageSender fake_msg_sender;
 
     // Send hand-crafted data
     {
         auto writer_guid = writer.datawriter_guid();
+
+        struct KeyOnlyPayloadPacket
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            GuidPrefix_t sender_prefix{};
+
+            struct DataSubMsg
+            {
+                struct Header
+                {
+                    uint8_t submessage_id = 0x15;
+    #if FASTDDS_IS_BIG_ENDIAN_TARGET
+                    uint8_t flags = 0x08;
+    #else
+                    uint8_t flags = 0x09;
+    #endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                    uint16_t octets_to_next_header = 28;
+                    uint16_t extra_flags = 0;
+                    uint16_t octets_to_inline_qos = 16;
+                    EntityId_t reader_id{};
+                    EntityId_t writer_id{};
+                    SequenceNumber_t sn{ 3 };
+                };
+
+                struct SerializedData
+                {
+                    uint8_t encapsulation[2] = {0x00, CDR_LE};
+                    uint8_t encapsulation_opts[2] = {0x00, 0x00};
+                    uint8_t data[4] = {0x0A, 0x00, 0x00, 0x00};
+                };
+
+                Header header;
+                SerializedData payload;
+            }
+            data;
+        };
 
         KeyOnlyPayloadPacket key_only_packet{};
         key_only_packet.sender_prefix = writer_guid.guidPrefix;
@@ -451,6 +451,76 @@ TEST(KeyedTopic, key_only_payload)
 
     // Wait for key-only compute key to be called
     ts->wait_for_key_only_payload(1);
+
+    // Send hand-crafted data frags
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        struct KeyOnlyPayloadTwoFragmentsPacket
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            GuidPrefix_t sender_prefix{};
+
+            struct DataFragSubMsg
+            {
+                struct Header
+                {
+                    uint8_t submessage_id = 0x16;
+    #if FASTDDS_IS_BIG_ENDIAN_TARGET
+                    uint8_t flags = 0x04;
+    #else
+                    uint8_t flags = 0x05;
+    #endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                    uint16_t octets_to_next_header = 36;
+                    uint16_t extra_flags = 0;
+                    uint16_t octets_to_inline_qos = 28;
+                    EntityId_t reader_id{};
+                    EntityId_t writer_id{};
+                    SequenceNumber_t sn{ 4 };
+                    uint32_t fragment_starting_num = 1;
+                    uint16_t fragments_in_submessage = 1;
+                    uint16_t fragment_size = 4;
+                    uint32_t sample_size = 8;
+                };
+
+                struct SerializedData
+                {
+                    uint8_t data[4] = {0x00, 0x00, 0x00, 0x00};
+                };
+
+                Header header;
+                SerializedData payload;
+            }
+            data[2];
+        };
+
+        KeyOnlyPayloadTwoFragmentsPacket fragments_packet{};
+        fragments_packet.sender_prefix = writer_guid.guidPrefix;
+
+        // First fragment with encapsulation header
+        fragments_packet.data[0].header.writer_id = writer_guid.entityId;
+        fragments_packet.data[0].header.reader_id = reader.datareader_guid().entityId;
+        fragments_packet.data[0].header.fragment_starting_num = 1;
+        fragments_packet.data[0].payload.data[1] = CDR_LE;
+
+        // Second fragment with serialized key
+        fragments_packet.data[1].header.writer_id = writer_guid.entityId;
+        fragments_packet.data[1].header.reader_id = reader.datareader_guid().entityId;
+        fragments_packet.data[1].header.fragment_starting_num = 2;
+        fragments_packet.data[1].payload.data[0] = 0x0B;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(fragments_packet));
+        msg.init(reinterpret_cast<octet*>(&fragments_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Wait for key-only compute key to be called
+    ts->wait_for_key_only_payload(2);
 }
 
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE
