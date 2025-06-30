@@ -1263,6 +1263,33 @@ TEST_F(DDSSQLFilterValueTests, test_update_params)
     EXPECT_EQ(RETCODE_OK, ret);
 }
 
+// Check that key-only payloads always pass the filter
+TEST_F(DDSSQLFilterValueTests, key_only_payload)
+{
+    static const std::string expression = "string_field MATCH %0 OR string_field LIKE %1";
+
+    IContentFilter* filter = nullptr;
+    auto ret = create_content_filter(uut, expression, { "'BBB'", "'X'" }, &type_support, filter);
+    EXPECT_EQ(RETCODE_OK, ret);
+    ASSERT_NE(nullptr, filter);
+
+    // Create a copy of the default values, but with the key-only payload
+    const auto& initial_values = DDSSQLFilterValueGlobalData::values();
+    std::vector<std::unique_ptr<IContentFilter::SerializedPayload>> values;
+    values.reserve(initial_values.size());
+    for (const auto& value : initial_values)
+    {
+        auto payload = new IContentFilter::SerializedPayload(value->max_size);
+        payload->copy(value.get());
+        payload->is_serialized_key = true;
+        values.emplace_back(std::move(payload));
+    }
+    std::array<bool, 5> results{ true, true, true, true, true };
+
+    ASSERT_EQ(results.size(), values.size());
+    perform_basic_check(filter, results, values);
+}
+
 static void add_test_filtered_value_inputs(
         const std::string& test_prefix,
         const std::string& field_name,
