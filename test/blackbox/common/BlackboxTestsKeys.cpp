@@ -365,7 +365,7 @@ TEST(KeyedTopic, key_only_payload)
     EXPECT_TRUE(data.empty());
     reader.block_for_all();
 
-    // Check that compute_key was not called with a key-only payload
+    // Check that compute_key was not called with a key-only payload when KEY_HASH is present
     auto ts = std::dynamic_pointer_cast<TestTypeSupport>(reader.get_type_support());
     ASSERT_TRUE(ts != nullptr);
     EXPECT_EQ(ts->key_only_payload_count.load(), 0u);
