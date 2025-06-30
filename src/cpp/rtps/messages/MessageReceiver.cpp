@@ -959,6 +959,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
     CacheChange_t ch;
+    ch.kind = ALIVE;
     ch.writerGUID.guidPrefix = source_guid_prefix_;
     valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
 
@@ -1031,7 +1032,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     uint32_t next_pos = msg->pos + payload_size;
     if (msg->length >= next_pos && payload_size > 0)
     {
-        ch.kind = ALIVE;
         ch.serializedPayload.data = &msg->buffer[msg->pos];
         ch.serializedPayload.length = payload_size;
         ch.serializedPayload.max_size = payload_size;
