@@ -397,8 +397,8 @@ TEST(KeyedTopic, key_only_payload)
 
             struct SerializedData
             {
-                uint16_t encapsulation;
-                uint16_t encapsulation_opts;
+                uint8_t encapsulation[2] = {0x00, CDR_LE};
+                uint8_t encapsulation_opts[2] = {0x00, 0x00};
                 uint8_t data[4] = {0x01, 0x00, 0x00, 0x00};
             };
 
@@ -418,7 +418,6 @@ TEST(KeyedTopic, key_only_payload)
         key_only_packet.sender_prefix = writer_guid.guidPrefix;
         key_only_packet.data.header.writer_id = writer_guid.entityId;
         key_only_packet.data.header.reader_id = reader.datareader_guid().entityId;
-        key_only_packet.data.payload.encapsulation = CDR_LE;
 
         CDRMessage_t msg(0);
         uint32_t msg_len = static_cast<uint32_t>(sizeof(key_only_packet));
