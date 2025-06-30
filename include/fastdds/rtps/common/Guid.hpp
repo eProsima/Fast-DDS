@@ -34,11 +34,6 @@ namespace rtps {
 
 struct InstanceHandle_t;
 
-#ifndef _MSC_VER
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wnull-dereference"
-#endif // ifndef _MSC_VER
-
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
 //!@ingroup COMMON_MODULE
 struct FASTDDS_EXPORTED_API GUID_t
@@ -151,10 +146,6 @@ struct FASTDDS_EXPORTED_API GUID_t
         return *reinterpret_cast<const InstanceHandle_t*>(this);
     }
 };
-
-#ifndef _MSC_VER
-    #pragma GCC diagnostic pop
-#endif // ifndef _MSC_VER
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 

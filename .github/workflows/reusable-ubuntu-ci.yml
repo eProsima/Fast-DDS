@@ -861,9 +861,9 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds'
-          cmake_args: '-DBUILD_TESTING=OFF -DCMAKE_CXX_FLAGS="-Wnull-dereference" ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args: '-DEPROSIMA_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="-Wnull-dereference" -DSECURITY=ON -DFASTDDS_STATISTICS ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
-          cmake_build_type: ${{ matrix.cmake-build-type }}
+          cmake_build_type: Release
           workspace: ${{ github.workspace }}
 
       - name: Clean workspace - No shared libs
