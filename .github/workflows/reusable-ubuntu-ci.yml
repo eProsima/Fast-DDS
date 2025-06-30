@@ -861,8 +861,9 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds'
-          cmake_args: '-DEPROSIMA_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="-Wnull-dereference" -DSECURITY=ON -DFASTDDS_STATISTICS ${{ inputs.cmake-args }}'
+          cmake_args: '-DEPROSIMA_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS="-Wnull-dereference" -DSECURITY=ON -DFASTDDS_STATISTICS=ON ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
+          # Force to build with maximum compiler optimization to catch all 'null-dereference' errors
           cmake_build_type: Release
           workspace: ${{ github.workspace }}
 
