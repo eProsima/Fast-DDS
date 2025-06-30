@@ -39,11 +39,19 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTRTPS_DYN_LINK)
-#if defined(fastrtps_EXPORTS)
-#define RTPS_DllAPI __declspec( dllexport )
+#if defined(MINGW_COMPILER)
+    #if defined(fastrtps_EXPORTS)
+    #define RTPS_DllAPI __declspec( dllexport )
+    #else
+    #define RTPS_DllAPI __attribute__((visibility("default")))
+    #endif // FASTRTPS_SOURCE
 #else
-#define RTPS_DllAPI __declspec( dllimport )
-#endif // FASTRTPS_SOURCE
+    #if defined(fastrtps_EXPORTS)
+    #define RTPS_DllAPI __declspec( dllexport )
+    #else
+    #define RTPS_DllAPI __declspec( dllimport )
+    #endif // FASTRTPS_SOURCE
+#endif // if defined(MINGW_COMPILER)
 #else
 #define RTPS_DllAPI
 #endif

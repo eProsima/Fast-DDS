@@ -48,12 +48,19 @@ int clock_gettime(int, struct timespec* tv)
     tv->tv_sec = (long)(hnsTime.QuadPart / HNS_PER_SEC);
 
     return 0;
-}
-*/
-#define exp7           10000000i64     //1E+7     //C-file part
-#define exp9         1000000000i64     //1E+9
-#define w2ux 116444736000000000i64     //1.jan1601 to 1.jan1970
-void unix_time(struct timespec* spec)
+   }
+ */
+#ifdef MINGW_COMPILER
+    #define exp7           10000000LL     //1E+7     //C-file part
+    #define exp9         1000000000LL     //1E+9
+    #define w2ux 116444736000000000LL     //1.jan1601 to 1.jan1970
+#else
+    #define exp7           10000000i64     //1E+7     //C-file part
+    #define exp9         1000000000i64     //1E+9
+    #define w2ux 116444736000000000i64     //1.jan1601 to 1.jan1970
+#endif // ifdef MINGW_COMPILER
+void unix_time(
+        struct timespec* spec)
 {
     __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)& wintime);
     wintime -= w2ux;  spec->tv_sec = wintime / exp7;
