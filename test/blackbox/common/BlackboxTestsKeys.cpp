@@ -14,8 +14,8 @@
 
 #include "BlackboxTests.hpp"
 
-#include <atomic>
 #include <memory>
+#include <mutex>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -315,7 +315,9 @@ TEST(KeyedTopic, key_only_payload)
             if (payload.is_serialized_key)
             {
                 // Count the number of times compute_key is called with a key-only payload
-                key_only_payload_count++;
+                std::lock_guard<std::mutex> lock(mtx_);
+                key_only_payload_count_++;
+                cv_.notify_all();
             }
 
             return KeyedHelloWorldPubSubType::compute_key(payload, ihandle, force_md5);
@@ -329,7 +331,27 @@ TEST(KeyedTopic, key_only_payload)
             return KeyedHelloWorldPubSubType::compute_key(data, ihandle, force_md5);
         }
 
-        std::atomic<uint32_t> key_only_payload_count{ 0 };
+        uint32_t nb_of_times_called_with_key_only_payload() const
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+            return key_only_payload_count_;
+        }
+
+        void wait_for_key_only_payload(
+                std::uint32_t min_value)
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            cv_.wait(lock, [this, min_value]()
+                    {
+                        return key_only_payload_count_ >= min_value;
+                    });
+        }
+
+    private:
+
+        mutable std::mutex mtx_;
+        std::condition_variable cv_;
+        std::uint32_t key_only_payload_count_ = 0;
     };
 
     // Force using UDP transport
@@ -368,7 +390,7 @@ TEST(KeyedTopic, key_only_payload)
     // Check that compute_key was not called with a key-only payload when KEY_HASH is present
     auto ts = std::dynamic_pointer_cast<TestTypeSupport>(reader.get_type_support());
     ASSERT_TRUE(ts != nullptr);
-    EXPECT_EQ(ts->key_only_payload_count.load(), 0u);
+    EXPECT_EQ(ts->nb_of_times_called_with_key_only_payload(), 0u);
 
     struct KeyOnlyPayloadPacket
     {
@@ -428,10 +450,7 @@ TEST(KeyedTopic, key_only_payload)
     }
 
     // Wait for key-only compute key to be called
-    while (ts->key_only_payload_count.load() <= 0)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    ts->wait_for_key_only_payload(1);
 }
 
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE
