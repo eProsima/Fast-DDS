@@ -133,10 +133,6 @@ private:
             return &tail == head.writer_info.next;
         }
 
-        #if defined(__GNUC__)
-        #  pragma GCC diagnostic pop
-        #endif // if defined(__GNUC__)
-
         void add_change(
                 CacheChange_t* change) noexcept
         {
