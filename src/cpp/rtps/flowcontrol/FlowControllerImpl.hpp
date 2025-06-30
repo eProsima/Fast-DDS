@@ -125,11 +125,8 @@ private:
             tail.writer_info.previous = &head;
         }
 
-        #if defined(__GNUC__)
-        #  pragma GCC diagnostic push
-        #  pragma GCC diagnostic ignored "-Wnull-dereference"
-        #endif // if defined(__GNUC__)
-        bool is_empty() const noexcept
+        // TODO: remove optimization with GCC > 15
+        [[gnu::optimize("no-delete-null-pointer-checks")]] bool is_empty() const noexcept
         {
             assert((&tail == head.writer_info.next && &head == tail.writer_info.previous) ||
                     (&tail != head.writer_info.next && &head != tail.writer_info.previous));
@@ -804,7 +801,6 @@ struct FlowControllerPriorityWithReservationSchedule
                     "FlowControllerPriorityWithReservationSchedule::unregister_writer: writer not found");
             return;
         }
-        assert(it != writers_queue_.end());
         int32_t priority = std::get<1>(it->second);
         writers_queue_.erase(it);
         auto priority_it = priorities_.find(priority);

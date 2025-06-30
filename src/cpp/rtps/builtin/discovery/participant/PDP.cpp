@@ -597,7 +597,7 @@ void PDP::announceParticipantState(
             if (m_hasChangedLocalPDP.exchange(false) || new_change)
             {
                 mp_mutex->lock();
-                auto* local_participant_data = getLocalParticipantProxyData();
+                ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
                 if (!local_participant_data)
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PDP,
@@ -645,7 +645,7 @@ void PDP::announceParticipantState(
         else
         {
             mp_mutex->lock();
-            auto* local_participant_data = getLocalParticipantProxyData();
+            ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
             if (!local_participant_data)
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP,

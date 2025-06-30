@@ -577,14 +577,9 @@ void PDPSimple::unmatch_pdp_remote_endpoints(
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
         if (nullptr == endpoints)
         {
-            assert(false);
             EPROSIMA_LOG_ERROR(RTPS_PDP,
                     "unmatch_pdp_remote_endpoints(): builtin_endpoints_ is null or wrong type");
             return;
-        }
-        else
-        {
-            assert(true);
         }
 
         guid.entityId = c_EntityId_SPDPWriter;
