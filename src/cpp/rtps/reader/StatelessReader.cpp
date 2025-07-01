@@ -98,6 +98,9 @@ bool StatelessReader::matched_writer_add(
         std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);
         listener = mp_listener;
 
+        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
+        bool is_datasharing = is_datasharing_compatible_with(wdata);
+
         for (RemoteWriterInfo_t& writer : matched_writers_)
         {
             if (writer.guid == wdata.guid())
@@ -111,6 +114,11 @@ bool StatelessReader::matched_writer_add(
                         writer.guid, wdata.m_qos.m_ownershipStrength.value);
                 }
                 writer.ownership_strength = wdata.m_qos.m_ownershipStrength.value;
+
+                if (!is_same_process && !is_datasharing)
+                {
+                    mp_RTPSParticipant->createSenderResources(wdata.remote_locators(), m_att);
+                }
 
                 if (nullptr != listener)
                 {
@@ -132,9 +140,6 @@ bool StatelessReader::matched_writer_add(
                 return false;
             }
         }
-
-        bool is_same_process = RTPSDomainImpl::should_intraprocess_between(m_guid, wdata.guid());
-        bool is_datasharing = is_datasharing_compatible_with(wdata);
 
         RemoteWriterInfo_t info;
         info.guid = wdata.guid();
@@ -183,6 +188,11 @@ bool StatelessReader::matched_writer_add(
             // simulate a notification to force reading of transient changes
             // this has to be done after the writer is added to the matched_writers or the processing may fail
             datasharing_listener_->notify(false);
+        }
+
+        if (!is_same_process && !is_datasharing)
+        {
+            mp_RTPSParticipant->createSenderResources(wdata.remote_locators(), m_att);
         }
     }
 

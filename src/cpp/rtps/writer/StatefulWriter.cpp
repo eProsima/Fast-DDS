@@ -1042,6 +1042,7 @@ bool StatefulWriter::matched_reader_add(
                         m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
                         filter_remote_locators(*reader->async_locator_selector_entry(),
                         m_att.external_unicast_locators, m_att.ignore_non_matching_locators);
+                        mp_RTPSParticipant->createSenderResources(rdata.remote_locators(), m_att);
                         update_reader_info(locator_selector_general_, true);
                         update_reader_info(locator_selector_async_, true);
                     }
@@ -1126,6 +1127,7 @@ bool StatefulWriter::matched_reader_add(
         }
     }
 
+    mp_RTPSParticipant->createSenderResources(rdata.remote_locators(), m_att);
     update_reader_info(locator_selector_general_, true);
     update_reader_info(locator_selector_async_, true);
 
@@ -1568,7 +1570,8 @@ void StatefulWriter::check_acked_status()
                     mp_listener->onWriterChangeReceivedByAll(this, change);
 
                     // Stop if we got to either next_all_acked_notify_sequence_ or the first change
-                } while (seq > end_seq);
+                }
+                while (seq > end_seq);
             }
 
             next_all_acked_notify_sequence_ = min_low_mark + 1;
@@ -2123,7 +2126,8 @@ bool StatefulWriter::ack_timer_expired()
         do
         {
             last_sequence_number_++;
-        } while (!mp_history->get_change(
+        }
+        while (!mp_history->get_change(
             last_sequence_number_,
             getGuid(),
             &change) && last_sequence_number_ < next_sequence_number());
