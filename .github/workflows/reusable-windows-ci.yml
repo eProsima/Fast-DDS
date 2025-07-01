@@ -154,7 +154,7 @@ jobs:
   fastdds_test:
     needs: fastdds_build
     if: ${{ inputs.run-tests == true }}
-    name: fastdds_test (${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }})
+    name: fastdds_test (${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }}), ${{ matrix.vs-toolset }}
     runs-on: windows-2022
     strategy:
       fail-fast: false
