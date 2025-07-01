@@ -219,6 +219,18 @@ public:
         return *this;
     }
 
+    bool has_more_replies() const
+    {
+        return has_more_replies_;
+    }
+
+    WriteParams& has_more_replies(
+            bool more_replies)
+    {
+        has_more_replies_ = more_replies;
+        return *this;
+    }
+
     static WriteParams WRITE_PARAM_DEFAULT;
 
     /**
@@ -259,6 +271,8 @@ private:
     Time_t source_timestamp_{ -1, TIME_T_INFINITE_NANOSECONDS };
     /// User write data
     UserWriteDataPtr user_write_data_{nullptr};
+    /// Flag to indicate if there are more replies
+    bool has_more_replies_ = false;
 };
 
 }  // namespace rtps

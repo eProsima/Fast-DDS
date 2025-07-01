@@ -475,6 +475,10 @@ void WriterHistory::set_fragments(
     {
         inline_qos_size += (2 * fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
     }
+    if (change->write_params.has_more_replies())
+    {
+        inline_qos_size += 4u;
+    }
     if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
     {
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
