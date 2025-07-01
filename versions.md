@@ -21,6 +21,7 @@ Forthcoming
   * Implemented Requester and Replier matching algorithm.
 * Process key-only payloads:
   * New `is_serialized_key` attribute in `SerializedPayload_t`.
+* Add field `has_more_replies` to `WriteParams` and `SampleInfo`
 
 Version v3.2.2
 --------------
