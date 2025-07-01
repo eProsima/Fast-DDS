@@ -50,6 +50,12 @@ bool DDSFilterExpression::evaluate(
     using namespace eprosima::fastdds::dds::xtypes;
     using namespace eprosima::fastcdr;
 
+    // Always pass filter for key-only payloads
+    if (payload.is_serialized_key)
+    {
+        return true;
+    }
+
     dyn_data_->clear_all_values();
     try
     {

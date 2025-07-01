@@ -19,6 +19,8 @@ Forthcoming
   * New `DataWriter::set_related_datareader` method.
   * New `DataReader::set_related_datawriter` method.
   * Implemented Requester and Replier matching algorithm.
+* Process key-only payloads:
+  * New `is_serialized_key` attribute in `SerializedPayload_t`.
 
 Version v3.2.2
 --------------
