@@ -47,7 +47,6 @@ jobs:
         cmake-config:
           - 'RelWithDebInfo'
         vs-toolset:
-          - 'v141'
           - 'v142'
     steps:
       - name: Sync eProsima/Fast-DDS repository
