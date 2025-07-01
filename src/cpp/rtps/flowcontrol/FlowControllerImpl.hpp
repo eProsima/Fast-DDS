@@ -126,7 +126,10 @@ private:
         }
 
         // TODO: remove optimization with GCC > 15
-        [[gnu::optimize("no-delete-null-pointer-checks")]] bool is_empty() const noexcept
+        #if defined(__linux__)
+        [[gnu::optimize("no-delete-null-pointer-checks")]]
+        #endif // if defined(__GNUC__)
+        bool is_empty() const noexcept
         {
             assert((&tail == head.writer_info.next && &head == tail.writer_info.previous) ||
                     (&tail != head.writer_info.next && &head != tail.writer_info.previous));
