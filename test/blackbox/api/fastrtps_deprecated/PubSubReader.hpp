@@ -165,7 +165,8 @@ private:
                 do
                 {
                     reader_.receive_one(sub, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 

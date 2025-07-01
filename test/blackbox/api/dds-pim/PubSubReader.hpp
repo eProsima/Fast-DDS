@@ -197,7 +197,8 @@ protected:
                 do
                 {
                     reader_.receive(datareader, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 
@@ -375,7 +376,11 @@ public:
             bool take = true,
             bool statistics = false,
             bool read = true)
-        : PubSubReader(topic_name, take, statistics, read)
+        : PubSubReader(
+            topic_name,
+            take,
+            statistics,
+            read)
     {
         filter_expression_ = filter_expression;
         expression_parameters_ = expression_parameters;
@@ -2363,7 +2368,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
 
@@ -2399,7 +2405,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
         }
