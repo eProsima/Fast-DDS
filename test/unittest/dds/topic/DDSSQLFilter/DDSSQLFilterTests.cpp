@@ -1288,6 +1288,9 @@ TEST_F(DDSSQLFilterValueTests, key_only_payload)
 
     ASSERT_EQ(results.size(), values.size());
     perform_basic_check(filter, results, values);
+
+    ret = uut.delete_content_filter("DDSSQL", filter);
+    EXPECT_EQ(RETCODE_OK, ret);
 }
 
 static void add_test_filtered_value_inputs(
