@@ -51,6 +51,7 @@ jobs:
       matrix:
         vs-toolset:
           - 'v142'
+          - 'v143'
     steps:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -160,6 +161,7 @@ jobs:
       matrix:
         vs-toolset:
           - 'v142'
+          - 'v143'
         cmake_build_type:
           - ${{ inputs.cmake-config }}
         test_filter:
