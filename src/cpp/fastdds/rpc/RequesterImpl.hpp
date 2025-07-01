@@ -15,10 +15,13 @@
 #ifndef FASTDDS_RPC__REQUESTERIMPL_HPP
 #define FASTDDS_RPC__REQUESTERIMPL_HPP
 
+#include <condition_variable>
+
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/rpc/Requester.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
@@ -36,7 +39,9 @@ class ServiceImpl;
 /**
  * @brief Class that represents a the implementation of a requester entity
  */
-class RequesterImpl : public Requester
+class RequesterImpl : public Requester,
+    public DataReaderListener,
+    public DataWriterListener
 {
 
 public:
@@ -139,6 +144,22 @@ public:
 private:
 
     /**
+     * @brief Callback triggered when a publication is matched or unmatched.
+     * This is used to track the requester's writer matched status with any replier reader.
+     */
+    void on_publication_matched(
+            DataWriter* writer,
+            const PublicationMatchedStatus& info) override;
+
+    /**
+     * @brief Callback triggered when a subscription is matched or unmatched.
+     * This is used to track the requester's reader matched status with any replier writer.
+     */
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    /**
      * @brief Create required DDS entities to enable communication with the replier
      *
      * @param qos Requester QoS to configure the DDS entities
@@ -157,17 +178,39 @@ private:
     ReturnCode_t delete_contained_entities();
 
     /**
-     * @brief Check if the requester is fully matched with a replier
-     *
-     * @return true if the requester is fully matched, false otherwise
+     * @brief Possible states of the requester with respect to a replier
      */
-    bool is_fully_matched() const;
+    enum class ReplierMatchStatus
+    {
+        UNMATCHED,          // Reply topic not matched
+        PARTIALLY_MATCHED,  // Reply topic matched but Request topic not matched
+        MATCHED             // Both topics matched
+    };
+
+    /**
+     * @brief Check the matched status of the requester with respect to a replier
+     *
+     * @return The matched status of the requester with respect to the replier that sent the request
+     */
+    ReplierMatchStatus replier_match_status() const;
+
+    /**
+     * @brief Wait for the requester to be matched with a replier
+     *
+     * @param timeout Maximum time to wait for the requester to be matched
+     * @return true if the requester is matched, false if the timeout was reached
+     */
+    bool wait_for_matching(
+            const fastdds::dds::Duration_t& timeout);
 
     DataReader* requester_reader_;
     DataWriter* requester_writer_;
     RequesterQos qos_;
     ServiceImpl* service_;
     bool enabled_;
+    std::atomic<bool> matched_status_changed_;
+    std::condition_variable cv_;
+    std::mutex mtx_;
 
 };
 

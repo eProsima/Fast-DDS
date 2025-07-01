@@ -59,6 +59,8 @@
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.hpp>
+#else
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #endif //FASTDDS_STATISTICS
 
 using eprosima::fastdds::RecursiveTimedMutex;
@@ -2236,6 +2238,9 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     }
     subscription_data.representation = qos_.representation();
 
+    // RPC over DDS
+    subscription_data.related_datawriter_key = related_datawriter_key_;
+
     // eProsima Extensions
 
     subscription_data.disable_positive_acks = qos_.reliable_reader_qos().disable_positive_acks;
@@ -2280,6 +2285,34 @@ ReturnCode_t DataReaderImpl::get_subscription_builtin_topic_data(
     subscription_data.reader_resource_limits = qos_.reader_resource_limits();
 
     return RETCODE_OK;
+}
+
+ReturnCode_t DataReaderImpl::set_related_datawriter(
+        const DataWriter* related_writer)
+{
+    ReturnCode_t ret = RETCODE_ILLEGAL_OPERATION;
+
+    if (nullptr == reader_)
+    {
+        if (nullptr != related_writer &&
+                related_writer->guid() != c_Guid_Unknown)
+        {
+            if (related_writer->guid().guidPrefix == guid_.guidPrefix)
+            {
+                related_datawriter_key_ = related_writer->guid();
+                ret = RETCODE_OK;
+            }
+            else
+            {
+                ret = RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+        else
+        {
+            ret = RETCODE_BAD_PARAMETER;
+        }
+    }
+    return ret;
 }
 
 }  // namespace dds

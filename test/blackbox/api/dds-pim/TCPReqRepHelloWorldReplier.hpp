@@ -71,9 +71,11 @@ public:
     void wait_unmatched(
             std::chrono::seconds timeout = std::chrono::seconds::zero());
 
-    void matched();
+    void matched(
+            bool is_pub);
 
-    void unmatched();
+    void unmatched(
+            bool is_pub);
 
     bool is_matched();
 
@@ -97,7 +99,8 @@ private:
 
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    std::atomic<unsigned int> matched_;
+    std::atomic<unsigned int> pub_matched_;
+    std::atomic<unsigned int> sub_matched_;
 
     // Entity status changes are managed using the WaitSet on a different thread
     // The main thread remains blocked until the requester matches with the replier

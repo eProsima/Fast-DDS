@@ -44,6 +44,7 @@ struct GUID_t;
 
 namespace dds {
 
+class DataReader;
 class PublisherListener;
 class PublisherImpl;
 class Publisher;
@@ -612,6 +613,24 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t set_sample_prefilter(
             std::shared_ptr<IContentFilter> prefilter);
+
+    /**
+     * This operation sets the key of the DataReader that is related to this DataWriter.
+     * This is used to establish a relationship between a DataReader and a DataWriter
+     * in the context of RPC over DDS.
+     *
+     * @warning This operation is only valid if the entity is not enabled.
+     *
+     * @param [in] related_reader Pointer to the DataReader to set as related.
+     *
+     * @return RETCODE_OK if the key is set successfully.
+     * @return RETCODE_ILLEGAL_OPERATION if this entity is enabled.
+     * @return RETCODE_PRECONDITION_NOT_MET if the entity does not belong to the same participant.
+     * @return RETCODE_BAD_PARAMETER if the provided GUID is unknown
+     * or the pointer is not valid.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_related_datareader(
+            const DataReader* related_reader);
 
 protected:
 

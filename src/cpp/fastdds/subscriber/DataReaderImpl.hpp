@@ -59,6 +59,7 @@ class TimedEvent;
 namespace dds {
 
 class ContentFilteredTopicImpl;
+class DataWriter;
 class Subscriber;
 class SubscriberImpl;
 class TopicDescription;
@@ -410,6 +411,24 @@ public:
     ReturnCode_t get_subscription_builtin_topic_data(
             SubscriptionBuiltinTopicData& subscription_data) const;
 
+    /**
+     * This operation sets the key of the DataWriter that is related to this DataReader.
+     * This is used to establish a relationship between a DataReader and a DataWriter
+     * in the context of RPC over DDS.
+     *
+     * @warning This operation is only valid if the entity is not enabled.
+     *
+     * @param [in] related_writer Pointer to the DataWriter to set as related.
+     *
+     * @return RETCODE_OK if the key is set successfully.
+     * @return RETCODE_ILLEGAL_OPERATION if this entity is enabled.
+     * @return RETCODE_PRECONDITION_NOT_MET if the entity does not belong to the same participant.
+     * @return RETCODE_BAD_PARAMETER if the provided GUID is unknown
+     * or the pointer is not valid.
+     */
+    ReturnCode_t set_related_datawriter(
+            const DataWriter* related_writer);
+
 protected:
 
     //!Subscriber
@@ -527,6 +546,9 @@ protected:
 
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
+
+    //RPC over DDS
+    rtps::GUID_t related_datawriter_key_{rtps::c_Guid_Unknown};
 
     /**
      * Mutex to protect ReadCondition collection
