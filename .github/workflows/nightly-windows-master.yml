@@ -17,9 +17,9 @@ jobs:
         security:
           - 'ON'
           - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@test/5895
     with:
       label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-master
       cmake-config: ${{ matrix.cmake_build_type }}
       cmake-args: "-DSECURITY=${{ matrix.security }}"
-      fastdds_branch: 'master'
+      fastdds_branch: 'test/5895'
