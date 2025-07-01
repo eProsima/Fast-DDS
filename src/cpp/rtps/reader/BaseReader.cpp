@@ -434,6 +434,20 @@ fastdds::rtps::SequenceNumber_t BaseReader::get_last_notified(
     return ret_val;
 }
 
+fastdds::rtps::GUID_t BaseReader::get_persistence_guid(
+        const fastdds::rtps::GUID_t& guid)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    GUID_t ret_val = guid;
+    auto p_guid = history_state_->persistence_guid_map.find(guid);
+    if (p_guid != history_state_->persistence_guid_map.end())
+    {
+        ret_val = p_guid->second;
+    }
+
+    return ret_val;
+}
+
 fastdds::rtps::SequenceNumber_t BaseReader::update_last_notified(
         const fastdds::rtps::GUID_t& guid,
         const fastdds::rtps::SequenceNumber_t& seq)

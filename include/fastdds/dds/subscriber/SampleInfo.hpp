@@ -87,6 +87,9 @@ struct SampleInfo
     //!Related Sample Identity (Extension for RPC)
     rtps::SampleIdentity related_sample_identity;
 
+    //!Persistence Sample Identity (Extension for RPC)
+    rtps::SampleIdentity persistence_sample_identity;
+
 };
 
 }  // namespace dds

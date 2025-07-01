@@ -1155,6 +1155,9 @@ bool StatefulReader::change_received(
         a_change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
     }
 
+    // Update persistence GUID information on the CacheChange.
+    a_change->reader_info.persistence_writer_guid = get_persistence_guid(a_change->writerGUID);
+
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to history_->received_change
     fastdds::dds::SampleRejectedStatusKind rejection_reason;
