@@ -296,6 +296,7 @@ public:
      * @param destination_locators_begin Iterator at the first destination locator.
      * @param destination_locators_end Iterator at the end destination locator.
      * @param max_blocking_time_point execution time limit timepoint.
+     * @param transport_priority Transport priority of the message.
      * @return true if at least one locator has been sent.
      */
     template<class LocatorIteratorT>
@@ -305,7 +306,8 @@ public:
             const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end,
-            std::chrono::steady_clock::time_point& max_blocking_time_point)
+            std::chrono::steady_clock::time_point& max_blocking_time_point,
+            int32_t transport_priority)
     {
         bool ret_code = false;
 #if HAVE_STRICT_REALTIME
@@ -322,7 +324,7 @@ public:
                 LocatorIteratorT locators_begin = destination_locators_begin;
                 LocatorIteratorT locators_end = destination_locators_end;
                 send_resource->send(buffers, total_bytes, &locators_begin, &locators_end,
-                        max_blocking_time_point, 0);
+                        max_blocking_time_point, transport_priority);
             }
 
             lock.unlock();

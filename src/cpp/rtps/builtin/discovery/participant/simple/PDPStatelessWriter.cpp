@@ -113,7 +113,7 @@ bool PDPStatelessWriter::send_to_fixed_locators(
         ret = initial_peers_.empty() ||
                 mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid,
                         Locators(initial_peers_.begin()), Locators(initial_peers_.end()),
-                        max_blocking_time_point);
+                        max_blocking_time_point, 0);
 
         if (ret)
         {

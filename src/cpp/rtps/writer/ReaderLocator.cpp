@@ -192,14 +192,14 @@ bool ReaderLocator::send(
             return participant_owner_->sendSync(buffers, total_bytes, owner_->getGuid(),
                            Locators(general_locator_info_.unicast.begin()), Locators(
                                general_locator_info_.unicast.end()),
-                           max_blocking_time_point);
+                           max_blocking_time_point, 0);
         }
         else
         {
             return participant_owner_->sendSync(buffers, total_bytes, owner_->getGuid(),
                            Locators(general_locator_info_.multicast.begin()),
                            Locators(general_locator_info_.multicast.end()),
-                           max_blocking_time_point);
+                           max_blocking_time_point, 0);
         }
     }
 
