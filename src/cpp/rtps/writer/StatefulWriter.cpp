@@ -1601,6 +1601,8 @@ bool StatefulWriter::wait_for_acknowledgement(
 void StatefulWriter::update_attributes(
         const WriterAttributes& att)
 {
+    BaseWriter::update_attributes(att);
+
     this->update_times(att.times);
     if (this->get_disable_positive_acks())
     {

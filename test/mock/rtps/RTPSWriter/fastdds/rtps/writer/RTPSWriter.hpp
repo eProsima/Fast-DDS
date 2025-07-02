@@ -131,6 +131,11 @@ public:
         return m_att.endpoint;
     }
 
+    virtual int32_t get_transport_priority() const
+    {
+        return m_att.transport_priority;
+    }
+
     virtual void update_attributes(
             const WriterAttributes&)
     {

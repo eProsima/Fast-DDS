@@ -140,6 +140,17 @@ bool BaseWriter::is_async() const
     return is_async_;
 }
 
+int32_t BaseWriter::get_transport_priority() const
+{
+    return transport_priority_;
+}
+
+void BaseWriter::update_attributes(
+        const WriterAttributes& att)
+{
+    transport_priority_ = att.transport_priority;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool BaseWriter::add_statistics_listener(
