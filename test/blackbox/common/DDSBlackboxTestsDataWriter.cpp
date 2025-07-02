@@ -1185,7 +1185,7 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_b)
     EXPECT_EQ(expected_qos_pids.size(), 0u);
 }
 
-// This tests checks that non-default optional QoS are correctly sent in the Data(r)
+// This tests checks that non-default optional QoS are correctly sent in the Data(w)
 // QoS that should be sent:
 // - ResourceLimitsQosPolicy
 // - TransportPriorityQosPolicy
