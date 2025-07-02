@@ -242,7 +242,7 @@ bool BaseWriter::send_nts(
 
     return locator_selector.locator_selector.selected_size() == 0 ||
            participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
-                   locator_selector.locator_selector.end(), max_blocking_time_point);
+                   locator_selector.locator_selector.end(), max_blocking_time_point, 0);
 }
 
 const dds::LivelinessQosPolicyKind& BaseWriter::get_liveliness_kind() const

@@ -738,7 +738,7 @@ bool StatelessWriter::send_to_fixed_locators(
     return fixed_locators_.empty() ||
            mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid,
                    Locators(fixed_locators_.begin()), Locators(fixed_locators_.end()),
-                   max_blocking_time_point);
+                   max_blocking_time_point, 0);
 }
 
 DeliveryRetCode StatelessWriter::deliver_sample_nts(
