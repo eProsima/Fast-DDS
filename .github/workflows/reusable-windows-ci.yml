@@ -40,15 +40,15 @@ defaults:
 
 jobs:
   reusable-windows-ci:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       fail-fast: false
       matrix:
         cmake-config:
           - 'RelWithDebInfo'
         vs-toolset:
-          - 'v141'
           - 'v142'
+          - 'v143'
     steps:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
