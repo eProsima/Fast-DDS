@@ -276,6 +276,16 @@ public:
     }
 
     /**
+     * @brief Get the transport priority of this writer.
+     *
+     * @return Transport priority of this writer.
+     */
+    inline int32_t get_transport_priority() const
+    {
+        return transport_priority_;
+    }
+
+    /**
      * @brief A method to retrieve the liveliness kind
      *
      * @return Liveliness kind
@@ -395,6 +405,8 @@ protected:
     dds::Duration_t liveliness_lease_duration_;
     /// The liveliness announcement period
     dds::Duration_t liveliness_announcement_period_;
+    /// The transport priority of this writer
+    int32_t transport_priority_ = 0;
 
 private:
 
