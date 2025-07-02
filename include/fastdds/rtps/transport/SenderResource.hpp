@@ -59,6 +59,27 @@ public:
      * @param destination_locators_begin destination endpoint Locators iterator begin.
      * @param destination_locators_end destination endpoint Locators iterator end.
      * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
+     * @return Success of the send operation.
+     */
+    bool send(
+            const std::vector<NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point)
+    {
+        return send(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                       max_blocking_time_point, 0);
+    }
+
+    /**
+     * Sends to a destination locator, through the channel managed by this resource.
+     * @param buffers Vector of buffers to send.
+     * @param total_bytes Length of all buffers to be sent. Will be used as a boundary for
+     * the previous parameter.
+     * @param destination_locators_begin destination endpoint Locators iterator begin.
+     * @param destination_locators_end destination endpoint Locators iterator end.
+     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
      * @param transport_priority Transport priority to be used for the send operation.
      * @return Success of the send operation.
      */
