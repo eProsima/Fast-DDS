@@ -70,7 +70,11 @@ public:
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
             int32_t transport_priority)
     {
-        static_cast<void>(transport_priority);
+        if (send_lambda_)
+        {
+            return send_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                           max_blocking_time_point, transport_priority);
+        }
         return send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
                        max_blocking_time_point);
     }
@@ -118,6 +122,14 @@ protected:
                 LocatorsIterator* destination_locators_begin,
                 LocatorsIterator* destination_locators_end,
                 const std::chrono::steady_clock::time_point&)> send_buffers_lambda_;
+
+    std::function<bool(
+                const std::vector<NetworkBuffer>&,
+                uint32_t,
+                LocatorsIterator* destination_locators_begin,
+                LocatorsIterator* destination_locators_end,
+                const std::chrono::steady_clock::time_point&,
+                int32_t transport_priority)> send_lambda_;
 
 private:
 
