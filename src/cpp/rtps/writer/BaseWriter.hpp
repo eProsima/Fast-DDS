@@ -19,6 +19,7 @@
 #ifndef RTPS_WRITER__BASEWRITER_HPP
 #define RTPS_WRITER__BASEWRITER_HPP
 
+#include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -78,6 +79,11 @@ public:
             WriterListener* listener) final;
 
     bool is_async() const final;
+
+    int32_t get_transport_priority() const final;
+
+    void update_attributes(
+            const WriterAttributes& att) override;
 
     virtual void local_actions_on_writer_removed();
 
@@ -276,16 +282,6 @@ public:
     }
 
     /**
-     * @brief Get the transport priority of this writer.
-     *
-     * @return Transport priority of this writer.
-     */
-    inline int32_t get_transport_priority() const
-    {
-        return transport_priority_;
-    }
-
-    /**
      * @brief A method to retrieve the liveliness kind
      *
      * @return Liveliness kind
@@ -406,7 +402,7 @@ protected:
     /// The liveliness announcement period
     dds::Duration_t liveliness_announcement_period_;
     /// The transport priority of this writer
-    int32_t transport_priority_ = 0;
+    std::atomic<int32_t> transport_priority_;
 
 private:
 

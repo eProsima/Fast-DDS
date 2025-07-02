@@ -1222,14 +1222,18 @@ ReturnCode_t DataWriterImpl::set_qos(
 
     if (enabled)
     {
-        if (qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
-                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos())
+        int32_t transport_priority = writer_->get_transport_priority();
+
+        if ( (qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
+                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos()) ||
+            (transport_priority != qos_to_set.transport_priority().value) )
         {
             // Update times and positive_acks attributes on RTPS Layer
             WriterAttributes w_att;
             w_att.times = qos_.reliable_writer_qos().times;
             w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
             w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+            w_att.transport_priority = qos_to_set.transport_priority().value;
             writer_->update_attributes(w_att);
         }
 
