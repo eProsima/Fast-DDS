@@ -47,6 +47,8 @@ public:
 
     std::function<void()> send_function_called;
 
+    std::function<void(int32_t)> send_with_priority_function_called;
+
     eprosima::fastdds::rtps::TransportInterface* create_transport() const override;
 };
 
@@ -77,7 +79,10 @@ public:
                 eprosima::fastdds::rtps::PropertyPolicyHelper::find_property(*properties, test_property_name);
         if (value && 0 == value->compare(test_property_value))
         {
-            descriptor_.init_function_called();
+            if (descriptor_.init_function_called)
+            {
+                descriptor_.init_function_called();
+            }
         }
         return low_level_transport_->init(properties, max_msg_size_no_frag);
     }
@@ -90,11 +95,33 @@ public:
             eprosima::fastdds::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& timeout) override
     {
-        descriptor_.send_function_called();
+        if (descriptor_.send_function_called)
+        {
+            descriptor_.send_function_called();
+        }
 
         // Call low level transport
         return low_sender_resource->send(buffers, total_bytes, destination_locators_begin,
                        destination_locators_end, timeout, 0);
+    }
+
+    bool send_w_priority(
+            eprosima::fastdds::rtps::SenderResource* low_sender_resource,
+            const std::vector<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
+            eprosima::fastdds::rtps::LocatorsIterator* destination_locators_begin,
+            eprosima::fastdds::rtps::LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& timeout,
+            int32_t priority) override
+    {
+        if (priority != 0 && descriptor_.send_with_priority_function_called)
+        {
+            descriptor_.send_with_priority_function_called(priority);
+        }
+
+        // Call low level transport
+        return send(low_sender_resource, buffers, total_bytes,
+                       destination_locators_begin, destination_locators_end, timeout);
     }
 
     void receive(
@@ -104,7 +131,10 @@ public:
             const eprosima::fastdds::rtps::Locator_t& local_locator,
             const eprosima::fastdds::rtps::Locator_t& remote_locator) override
     {
-        descriptor_.receive_function_called();
+        if (descriptor_.receive_function_called)
+        {
+            descriptor_.receive_function_called();
+        }
 
         // Call upper level
         next_receiver->OnDataReceived(receive_buffer, receive_buffer_size, local_locator, remote_locator);
@@ -444,6 +474,74 @@ TEST(ChainingTransportTests, basic_test)
     ASSERT_TRUE(reader_init_function_called);
     ASSERT_TRUE(reader_receive_function_called);
     ASSERT_TRUE(reader_send_function_called);
+}
+
+TEST(ChainingTransportTests, transport_priority)
+{
+    std::map<int32_t, size_t> priority_calls;
+
+    // Initialize priority calls map
+    for (int32_t priority = 1; priority <= 3; ++priority)
+    {
+        priority_calls[priority] = 0;
+    }
+
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto writer_transport = std::make_shared<TestChainingTransportDescriptor>(udp_transport);
+    writer_transport->send_with_priority_function_called =
+            [&priority_calls](int32_t priority)
+            {
+                if (priority != 0)
+                {
+                    ++priority_calls[priority];
+                }
+            };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(writer_transport)
+            .history_depth(1)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+            .transport_priority(1)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.disable_builtin_transport()
+            .add_user_transport_to_pparams(udp_transport)
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Check that the initial priority was set correctly
+
+
+    for (int32_t priority = 1; priority <= 3; ++priority)
+    {
+        // Check that the priority has not been used
+        EXPECT_EQ(priority_calls[priority], 0u);
+
+        // Send data with current priority
+        auto data = default_helloworld_data_generator(1);
+        reader.startReception(data);
+        writer.send(data);
+        ASSERT_TRUE(data.empty());
+        reader.block_for_all();
+
+        // Check that the priority was used when calling the transport
+        EXPECT_GE(priority_calls[priority], 1u) << "Priority " << priority << " was not called.";
+
+        // Update priority for next iteration
+        writer.transport_priority(priority + 1);
+        EXPECT_TRUE(writer.set_qos());
+    }
 }
 
 //! This is a regression test for Redmine #19665

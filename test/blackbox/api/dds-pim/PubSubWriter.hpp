@@ -1001,6 +1001,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& transport_priority(
+            int32_t priority)
+    {
+        datawriter_qos_.transport_priority().value = priority;
+        return *this;
+    }
+
     PubSubWriter& add_flow_controller_descriptor_to_pparams(
             eprosima::fastdds::rtps::FlowControllerSchedulerPolicy scheduler_policy,
             uint32_t bytesPerPeriod,
