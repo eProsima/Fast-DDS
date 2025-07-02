@@ -79,7 +79,7 @@ ReturnCode_t json_serialize_collection(
 
 ReturnCode_t json_serialize_array(
         const traits<DynamicDataImpl>::ref_type& data,
-        TypeKind member_kind,
+        TypeKind element_kind,
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
         nlohmann::json& j_array,

@@ -16,8 +16,10 @@
 #ifndef MINGW_COMPILER
     #include <codecvt>
 #endif  // ifndef MINGW_COMPILER
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 
 #include <nlohmann/json.hpp>
@@ -266,6 +268,7 @@ ReturnCode_t json_serialize_member(
         }
         case TK_MAP:
         {
+            // TODO: encapsulate all complex kinds serialization?
             traits<DynamicDataImpl>::ref_type st_data =
                     traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
             if (nullptr == st_data)
@@ -364,6 +367,7 @@ ReturnCode_t json_serialize_member(
             traits<DynamicTypeImpl>::ref_type bitmask_type = st_data->enclosing_type();
             const TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
 
+            // Get the bitmask bound to determine the value precision
             auto bound = bitmask_desc.bound().at(0);
 
             if (format == DynamicDataJsonFormat::OMG)
@@ -716,6 +720,14 @@ ReturnCode_t json_serialize_basic_member(
             ReturnCode_t ret = data->get_float128_value(value, member_id);
             if (RETCODE_OK == ret)
             {
+                // Fail if value exceeds double limits, as JSON does not support long double
+                if (value < std::numeric_limits<double>::lowest() ||
+                        value > std::numeric_limits<double>::max())
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_FLOAT128 member to JSON: value out of range.");
+                    return RETCODE_BAD_PARAMETER;
+                }
                 json_insert(member_name, value, output);
             }
             else
@@ -746,20 +758,39 @@ ReturnCode_t json_serialize_basic_member(
             if (RETCODE_OK == ret)
             {
                 // Insert UTF-8 converted value
-#if defined(MINGW_COMPILER)
                 std::wstring aux_wstring_value({value});
-                std::string utf8_value;
-                int size_needed = std::wcstombs(nullptr, aux_wstring_value.data(), 0);
-                if (size_needed > 0)
+                std::string utf8_value("\0", 1);
+#if defined(MINGW_COMPILER)
+                // WARNING: it is the user responsibility to set the appropiate UTF-8 locale before calling this method
+                int size_needed = std::wcstombs(nullptr, aux_wstring_value.c_str(), 0);
+                if (size_needed < 0)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_CHAR16 member to JSON: encountered invalid character.");
+                    return RETCODE_BAD_PARAMETER;
+                }
+                else if (size_needed > 0)
                 {
                     utf8_value.resize(size_needed);
-                    std::wcstombs(&utf8_value[0], aux_wstring_value.data(), size_needed);
+                    if (std::wcstombs(&utf8_value[0], aux_wstring_value.c_str(), size_needed) == static_cast<std::size_t>(-1))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                                "Error encountered while serializing TK_CHAR16 member to JSON: encountered invalid character.");
+                        return RETCODE_BAD_PARAMETER;
+                    }
                 }
 #else
-                std::wstring aux_wstring_value({value});
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-                std::string utf8_value = converter.to_bytes(aux_wstring_value); // TODO: handle exception
-
+                try
+                {
+                    utf8_value = converter.to_bytes(aux_wstring_value);
+                }
+                catch (const std::exception& e)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_CHAR16 member to JSON: " << e.what());
+                    return RETCODE_BAD_PARAMETER;
+                }
 #endif  // defined(MINGW_COMPILER)
                 json_insert(member_name, utf8_value, output);
             }
@@ -790,17 +821,38 @@ ReturnCode_t json_serialize_basic_member(
             if (RETCODE_OK == ret)
             {
                 // Insert UTF-8 converted value
-#ifdef MINGW_COMPILER
                 std::string utf8_value;
-                int size_needed = std::wcstombs(nullptr, value.data(), 0);
-                if (size_needed > 0)
+#ifdef MINGW_COMPILER
+                // WARNING: it is the user responsibility to set the appropiate UTF-8 locale before calling this method
+                int size_needed = std::wcstombs(nullptr, value.c_str(), 0);
+                if (size_needed < 0)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_STRING16 member to JSON: encountered invalid character.");
+                    return RETCODE_BAD_PARAMETER;
+                }
+                else if (size_needed > 0)
                 {
                     utf8_value.resize(size_needed);
-                    std::wcstombs(&utf8_value[0], value.data(), size_needed);
+                    if (std::wcstombs(&utf8_value[0], value.c_str(), size_needed) == static_cast<std::size_t>(-1))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                                "Error encountered while serializing TK_STRING16 member to JSON: encountered invalid character.");
+                        return RETCODE_BAD_PARAMETER;
+                    }
                 }
 #else
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-                std::string utf8_value = converter.to_bytes(value); // TODO: handle exception
+                try
+                {
+                    utf8_value = converter.to_bytes(value);
+                }
+                catch (const std::exception& e)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_STRING16 member to JSON: " << e.what());
+                    return RETCODE_BAD_PARAMETER;
+                }
 #endif  // defined(MINGW_COMPILER)
                 json_insert(member_name, utf8_value, output);
             }
@@ -812,24 +864,17 @@ ReturnCode_t json_serialize_basic_member(
         }
         case TK_ENUM:
         {
-            int32_t value;
-            ReturnCode_t ret = data->get_int32_value(value, member_id);
-            if (RETCODE_OK != ret)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_ENUM member to JSON.");
-                return ret;
-            }
-
-            // Get enumeration type to obtain the names of the different values
+            // Get enumeration type to obtain the names of the different values, and also the underlying primitive type
             // NOTE: a different approach is required for collections and other "holder" types (e.g. structures),
             // as unlike with DynamicData::loan_value or DynamicData::get_X_value, DynamicData::get_descriptor method
             // is not meant to work with sequences nor arrays according to XTypes standard.
-            traits<DynamicType>::ref_type enum_type;
+            traits<DynamicTypeImpl>::ref_type enum_type;
             TypeKind holder_kind = data->enclosing_type()->get_kind();
+            ReturnCode_t ret = RETCODE_OK;
             if (TK_ARRAY == holder_kind || TK_SEQUENCE == holder_kind)
             {
                 const TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
-                enum_type = collection_descriptor.element_type();
+                enum_type = traits<DynamicType>::narrow<DynamicTypeImpl>(collection_descriptor.element_type())->resolve_alias_enclosed_type();
             }
             else
             {
@@ -840,14 +885,67 @@ ReturnCode_t json_serialize_basic_member(
                             "Error encountered while serializing TK_ENUM member to JSON: get_descriptor failed.");
                     return ret;
                 }
-                enum_type = enum_desc->type();
+                enum_type = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_desc->type())->resolve_alias_enclosed_type();
+            }
+
+            // Get value depending on the enclosing type
+            assert(enum_type->get_kind() == TK_ENUM);
+            TypeKind enclosing_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(0)->get_descriptor().type())->get_kind(); // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
+            nlohmann::json j_value;
+            if (TK_INT8 == enclosing_kind)
+            {
+                int8_t value;
+                ret = data->get_int8_value(value, member_id);
+                j_value = value;
+            }
+            else if (TK_UINT8 == enclosing_kind)
+            {
+                uint8_t value;
+                ret = data->get_uint8_value(value, member_id);
+                j_value = value;
+            }
+            else if (TK_INT16 == enclosing_kind)
+            {
+                int16_t value;
+                ret = data->get_int16_value(value, member_id);
+                j_value = value;
+            }
+            else if (TK_UINT16 == enclosing_kind)
+            {
+                uint16_t value;
+                ret = data->get_uint16_value(value, member_id);
+                j_value = value;
+            }
+            else if (TK_INT32 == enclosing_kind)
+            {
+                int32_t value;
+                ret = data->get_int32_value(value, member_id);
+                j_value = value;
+            }
+            else if (TK_UINT32 == enclosing_kind)
+            {
+                uint32_t value;
+                ret = data->get_uint32_value(value, member_id);
+                j_value = value;
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                        "Error encountered while serializing TK_ENUM member to JSON: unexpected enclosing kind " <<
+                        enclosing_kind << " found.");
+                return RETCODE_BAD_PARAMETER;
+            }
+
+            if (RETCODE_OK != ret)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_ENUM member to JSON.");
+                return ret;
             }
 
             DynamicTypeMembersByName all_members;
             if (RETCODE_OK !=
                     (ret =
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type)->resolve_alias_enclosed_type()->
-                            get_all_members_by_name(all_members)))
+                    enum_type->get_all_members_by_name(all_members)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while serializing TK_ENUM member to JSON: get_all_members_by_name failed.");
@@ -860,7 +958,7 @@ ReturnCode_t json_serialize_basic_member(
             {
                 MemberDescriptorImpl& enum_member_desc = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
                     it.second)->get_descriptor();
-                if (enum_member_desc.default_value() == std::to_string(value))
+                if (enum_member_desc.default_value() == j_value.dump())
                 {
                     name = it.first;
                     assert(name == it.second->get_name());
@@ -876,7 +974,7 @@ ReturnCode_t json_serialize_basic_member(
                 }
                 else if (format == DynamicDataJsonFormat::EPROSIMA)
                 {
-                    nlohmann::json enum_dict = {{"name", name}, {"value", value}};
+                    nlohmann::json enum_dict = {{"name", name}, {"value", j_value}};
                     json_insert(member_name, enum_dict, output);
                 }
             }
@@ -902,20 +1000,18 @@ ReturnCode_t json_serialize_collection(
         DynamicDataJsonFormat format) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
+    const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
+    auto element_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()->get_kind();
     if (data->enclosing_type()->get_kind() == TK_SEQUENCE)
     {
-        const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
-
+        assert(descriptor.bound().size() == 1);
         auto count = data->get_item_count();
         nlohmann::json j_array = nlohmann::json::array();
         for (uint32_t index = 0; index < count; ++index)
         {
             if (RETCODE_OK !=
                     (ret =
-                    json_serialize_member(data, static_cast<MemberId>(index),
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()
-                            ->get_kind(), j_array,
-                    format)))
+                    json_serialize_member(data, static_cast<MemberId>(index), element_kind, j_array, format)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing sequence collection to JSON.");
                 break;
@@ -928,13 +1024,10 @@ ReturnCode_t json_serialize_collection(
     }
     else
     {
-        const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
-
         const BoundSeq& bounds = descriptor.bound();
         nlohmann::json j_array = nlohmann::json::array();
         unsigned int index = 0;
-        if (RETCODE_OK != (ret = json_serialize_array(data, traits<DynamicType>::narrow<DynamicTypeImpl>(
-                    descriptor.element_type())->resolve_alias_enclosed_type()->get_kind(), index, bounds, j_array,
+        if (RETCODE_OK != (ret = json_serialize_array(data, element_kind, index, bounds, j_array,
                 format)))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing array collection to JSON.");
@@ -949,7 +1042,7 @@ ReturnCode_t json_serialize_collection(
 
 ReturnCode_t json_serialize_array(
         const traits<DynamicDataImpl>::ref_type& data,
-        TypeKind member_kind,
+        TypeKind element_kind,
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
         nlohmann::json& j_array,
@@ -963,7 +1056,7 @@ ReturnCode_t json_serialize_array(
         {
             if (RETCODE_OK !=
                     (ret =
-                    json_serialize_member(data, static_cast<MemberId>(index++), member_kind, j_array,
+                    json_serialize_member(data, static_cast<MemberId>(index++), element_kind, j_array,
                     format)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing array element to JSON.");
@@ -978,7 +1071,7 @@ ReturnCode_t json_serialize_array(
             nlohmann::json inner_array = nlohmann::json::array();
             if (RETCODE_OK !=
                     (ret =
-                    json_serialize_array(data, member_kind, index,
+                    json_serialize_array(data, element_kind, index,
                     std::vector<unsigned int>(bounds.begin() + 1, bounds.end()), inner_array, format)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,

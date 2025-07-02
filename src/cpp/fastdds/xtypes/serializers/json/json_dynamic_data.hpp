@@ -39,7 +39,7 @@ namespace dds {
 
 ReturnCode_t json_deserialize(
         const nlohmann::json& j,
-        const DynamicType::_ref_type& dynamic_type,
+        const traits<DynamicTypeImpl>::ref_type& dynamic_type,
         DynamicDataJsonFormat format,
         DynamicData::_ref_type& data) noexcept;
 
@@ -47,34 +47,38 @@ ReturnCode_t json_deserialize_member(
         const nlohmann::json& j,
         const traits<DynamicTypeMember>::ref_type& type_member,
         DynamicDataJsonFormat format,
-        DynamicData::_ref_type& data) noexcept;
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
 
 ReturnCode_t json_deserialize_member(
         const nlohmann::json& j,
         const MemberId& member_id,
         const TypeKind& member_kind,
         DynamicDataJsonFormat format,
-        DynamicData::_ref_type& data) noexcept;
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
 
 ReturnCode_t json_deserialize_basic_member(
         const nlohmann::json& j,
         const MemberId& member_id,
         const TypeKind& member_kind,
         DynamicDataJsonFormat format,
-        DynamicData::_ref_type& data) noexcept;
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
 
 ReturnCode_t json_deserialize_collection(
         const nlohmann::json& j,
         DynamicDataJsonFormat format,
-        DynamicData::_ref_type& data) noexcept;
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
 
 ReturnCode_t json_deserialize_array(
         const nlohmann::json& j,
-        TypeKind member_kind,
+        TypeKind element_kind,
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
         DynamicDataJsonFormat format,
-        DynamicData::_ref_type& data) noexcept;
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
+template<class Target>
+Target numeric_get(
+        const nlohmann::json& j);
 
 } // namespace dds
 } // namespace fastdds
