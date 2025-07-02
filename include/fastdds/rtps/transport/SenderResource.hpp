@@ -51,16 +51,7 @@ public:
 
     using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
-    /**
-     * Sends to a destination locator, through the channel managed by this resource.
-     * @param buffers Vector of buffers to send.
-     * @param total_bytes Length of all buffers to be sent. Will be used as a boundary for
-     * the previous parameter.
-     * @param destination_locators_begin destination endpoint Locators iterator begin.
-     * @param destination_locators_end destination endpoint Locators iterator end.
-     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
-     * @return Success of the send operation.
-     */
+    FASTDDS_DEPRECATED_UNTIL(4, send, "Use send with transport_priority instead")
     bool send(
             const std::vector<NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
