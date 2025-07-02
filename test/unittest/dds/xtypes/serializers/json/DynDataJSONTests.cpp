@@ -59,15 +59,28 @@ void test_generic()
 
             ASSERT_NE(dyn_data, nullptr);
 
+            // Test DynamicData to JSON serialization
             std::stringstream generated_json;
             generated_json << std::setw(4);
-            const auto ret = json_serialize(
+            auto ret = json_serialize(
                 dyn_data,
                 format_kind,
                 generated_json);
+            EXPECT_EQ(ret, RETCODE_OK);
+            EXPECT_EQ(generated_json.str(), get_expected_json<Data>(format_kind, filled, fill_index));
 
-            ASSERT_EQ(ret, RETCODE_OK);
-            ASSERT_EQ(generated_json.str(), get_expected_json<Data>(format_kind, filled, fill_index));
+            // Test JSON to DynamicData deserialization
+            DynamicData::_ref_type dyn_data_from_json;
+            ret = json_deserialize(
+                generated_json.str(),
+                dyn_type,
+                format_kind,
+                dyn_data_from_json);
+            EXPECT_EQ(ret, RETCODE_OK);
+
+            // Check that the deserialized DynamicData matches the original
+            ASSERT_NE(dyn_data_from_json, nullptr);
+            EXPECT_TRUE(dyn_data->equals(dyn_data_from_json));
         }
     }
 }
