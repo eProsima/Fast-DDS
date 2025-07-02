@@ -19,12 +19,15 @@
 #ifndef FASTDDS_RTPS_ATTRIBUTES__WRITERATTRIBUTES_HPP
 #define FASTDDS_RTPS_ATTRIBUTES__WRITERATTRIBUTES_HPP
 
+#include <cstdint>
 #include <functional>
+#include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/EndpointAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/rtps/common/Types.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
@@ -126,6 +129,9 @@ public:
 
     //! Whether to send data to each matched reader separately.
     bool separate_sending = false;
+
+    //! Transport priority for this Writer.
+    int32_t transport_priority = 0;
 };
 
 } // namespace rtps

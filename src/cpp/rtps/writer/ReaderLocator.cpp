@@ -187,19 +187,21 @@ bool ReaderLocator::send(
 {
     if (general_locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
     {
+        int32_t transport_priority = owner_->get_transport_priority();
+
         if (general_locator_info_.unicast.size() > 0)
         {
             return participant_owner_->sendSync(buffers, total_bytes, owner_->getGuid(),
                            Locators(general_locator_info_.unicast.begin()), Locators(
                                general_locator_info_.unicast.end()),
-                           max_blocking_time_point, 0);
+                           max_blocking_time_point, transport_priority);
         }
         else
         {
             return participant_owner_->sendSync(buffers, total_bytes, owner_->getGuid(),
                            Locators(general_locator_info_.multicast.begin()),
                            Locators(general_locator_info_.multicast.end()),
-                           max_blocking_time_point, 0);
+                           max_blocking_time_point, transport_priority);
         }
     }
 
