@@ -197,7 +197,7 @@ protected:
     friend class UDPChannelResource;
 
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-    asio::io_service io_service_;
+    asio::io_context io_context_;
 
     mutable std::recursive_mutex mInputMapMutex;
     std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
