@@ -902,7 +902,7 @@ ReturnCode_t json_deserialize_basic_member(
             std::string j_string = j.get<std::string>();
             std::wstring aux_wstring({L'\0'});
 #if defined(MINGW_COMPILER)
-            // WARNING: it is the user responsibility to set the appropiate UTF-8 locale before calling this method
+            // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
             int size_needed = std::mbstowcs(nullptr, j_string.c_str(), 0);
             if (size_needed < 0)
             {
@@ -971,7 +971,7 @@ ReturnCode_t json_deserialize_basic_member(
             std::string j_string = j.get<std::string>();
             std::wstring value;
 #if defined(MINGW_COMPILER)
-            // WARNING: it is the user responsibility to set the appropiate UTF-8 locale before calling this method
+            // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
             int size_needed = std::mbstowcs(nullptr, j_string.c_str(), 0);
             if (size_needed < 0)
             {
@@ -1039,7 +1039,7 @@ ReturnCode_t json_deserialize_basic_member(
                 enum_type = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_desc->type())->resolve_alias_enclosed_type();
             }
 
-            // Get enclosing type kind to parse the value accordingly, and later user the appropiate setter
+            // Get enclosing type kind to parse the value accordingly, and later user the appropriate setter
             assert(enum_type->get_kind() == TK_ENUM);
             TypeKind enclosing_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(0)->get_descriptor().type())->get_kind(); // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
 
@@ -1339,15 +1339,15 @@ Target numeric_get(
         int64_t v = j.get<int64_t>();  // Integers are stored as int64 or uint64 in JSON
         if (std::is_unsigned<Target>::value)
         {
-            if (v < 0 || static_cast<uint64_t>(v) > std::numeric_limits<Target>::max())
+            if (v < 0 || static_cast<uint64_t>(v) > static_cast<uint64_t>(std::numeric_limits<Target>::max()))
             {
                 throw std::out_of_range(std::string{"Unsigned value " + std::to_string(v) + " out of range"});
             }
         }
         else
         {
-            if (v < std::numeric_limits<Target>::min() ||
-                v > std::numeric_limits<Target>::max())
+            if (v < static_cast<int64_t>(std::numeric_limits<Target>::min()) ||
+                v > static_cast<int64_t>(std::numeric_limits<Target>::max()))
             {
                 throw std::out_of_range(std::string{"Signed value " + std::to_string(v) + " out of range"});
             }
