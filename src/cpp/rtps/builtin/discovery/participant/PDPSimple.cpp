@@ -575,12 +575,27 @@ void PDPSimple::unmatch_pdp_remote_endpoints(
 
     {
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
-        assert(nullptr != endpoints);
+        if (nullptr == endpoints)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP,
+                    "unmatch_pdp_remote_endpoints(): builtin_endpoints_ is null or wrong type");
+            return;
+        }
 
         guid.entityId = c_EntityId_SPDPWriter;
+        if (!endpoints->reader.reader_)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "SPDPReader is null, cannot unmatch remote endpoints for " << guid);
+            return;
+        }
         endpoints->reader.reader_->matched_writer_remove(guid);
 
         guid.entityId = c_EntityId_SPDPReader;
+        if (!endpoints->writer.writer_)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "SPDPWriter is null, cannot unmatch remote endpoints for " << guid);
+            return;
+        }
         endpoints->writer.writer_->matched_reader_remove(guid);
     }
 

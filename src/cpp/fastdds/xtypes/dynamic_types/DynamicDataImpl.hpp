@@ -481,56 +481,7 @@ private:
      */
     template<typename T, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>
     bool check_new_discriminator_value(
-            const T& value)
-    {
-        bool ret_value = false;
-
-        if (MEMBER_ID_INVALID != selected_union_member_) // There is a member selected by current discriminator.
-        {
-            traits<DynamicTypeMember>::ref_type selected_member;
-            enclosing_type_->get_member(selected_member, selected_union_member_);
-            auto sm_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(selected_member);
-
-            for (auto label : sm_impl->get_descriptor().label())
-            {
-                if (static_cast<int32_t>(value) == label)
-                {
-                    ret_value = true;
-                    break;
-                }
-            }
-        }
-
-        if (MEMBER_ID_INVALID == selected_union_member_ ||
-                (MEMBER_ID_INVALID == enclosing_type_->default_union_member() && !ret_value)) // It is selected the implicit default member.
-        {
-            ret_value = true;
-
-            if (enclosing_type_->default_value() != static_cast<int32_t>(value))
-            {
-                for (auto member : enclosing_type_->get_all_members_by_index())
-                {
-                    auto m_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
-
-                    for (auto label : m_impl->get_descriptor().label())
-                    {
-                        if (static_cast<int32_t>(value) == label)
-                        {
-                            ret_value = false;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (ret_value)
-            {
-                selected_union_member_ = MEMBER_ID_INVALID;
-            }
-        }
-
-        return ret_value;
-    }
+            const T& value);
 
     template<typename T, typename std::enable_if<!std::is_integral<T>::value, bool>::type = true>
     bool check_new_discriminator_value(

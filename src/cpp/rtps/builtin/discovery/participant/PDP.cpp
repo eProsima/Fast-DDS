@@ -598,6 +598,13 @@ void PDP::announceParticipantState(
             {
                 mp_mutex->lock();
                 ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
+                if (!local_participant_data)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PDP,
+                            "announceParticipantState(): local participant data is null");
+                    mp_mutex->unlock();
+                    return;
+                }
                 InstanceHandle_t key = local_participant_data->m_key;
                 ParticipantProxyData proxy_data_copy(*local_participant_data);
                 mp_mutex->unlock();
@@ -639,6 +646,13 @@ void PDP::announceParticipantState(
         {
             mp_mutex->lock();
             ParticipantProxyData* local_participant_data = getLocalParticipantProxyData();
+            if (!local_participant_data)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PDP,
+                        "announceParticipantState(): local participant data is null");
+                mp_mutex->unlock();
+                return;
+            }
             InstanceHandle_t key = local_participant_data->m_key;
             ParticipantProxyData proxy_data_copy(*local_participant_data);
             mp_mutex->unlock();
@@ -1147,6 +1161,14 @@ bool PDP::get_all_local_proxies(
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
     ParticipantProxyData* local_participant = getLocalParticipantProxyData();
+
+    if (!local_participant)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PDP,
+                "announceParticipantState(): local participant data is null");
+        return false;
+    }
+
     guids.reserve(local_participant->m_writers->size() +
             local_participant->m_readers->size() +
             1);
@@ -1738,6 +1760,14 @@ void PDP::local_participant_attributes_update_nts(
 {
     // Update user data
     auto participant_data = getLocalParticipantProxyData();
+
+    if (nullptr == participant_data)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PDP,
+                "local_participant_attributes_update_nts(): local participant data is null");
+        return;
+    }
+
     participant_data->user_data.data_vec(new_atts.userData);
 
     // If we are intraprocess only, we do not need to update locators

@@ -40,8 +40,24 @@ DataWriter::DataWriter(
         DataWriterListener* listener,
         const StatusMask& mask)
     : DomainEntity(mask)
-    , impl_(pub->create_datawriter(topic, qos, listener, mask)->impl_)
+    , impl_(nullptr)
 {
+    if (nullptr == pub)
+    {
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Publisher pointer is null");
+    }
+    else
+    {
+        DataWriter* dw = pub->create_datawriter(topic, qos, listener, mask);
+        if (nullptr == dw)
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Publisher::create_datawriter returned null");
+        }
+        else
+        {
+            impl_ = dw->impl_;
+        }
+    }
 }
 
 DataWriter::~DataWriter()
