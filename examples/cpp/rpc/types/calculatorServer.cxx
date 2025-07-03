@@ -253,6 +253,7 @@ private:
             : info_(info)
             , replier_(replier)
         {
+            info_.has_more_replies = true;
             reply_.fibonacci_seq = calculator_example::detail::Calculator_fibonacci_seq_Result{};
             reply_.fibonacci_seq->result = calculator_example::detail::Calculator_fibonacci_seq_Out{};
         }
@@ -541,6 +542,7 @@ private:
             : info_(info)
             , replier_(replier)
         {
+            info_.has_more_replies = true;
             reply_.accumulator = calculator_example::detail::Calculator_accumulator_Result{};
             reply_.accumulator->result = calculator_example::detail::Calculator_accumulator_Out{};
         }
@@ -710,6 +712,7 @@ private:
             : info_(info)
             , replier_(replier)
         {
+            info_.has_more_replies = true;
             reply_.filter = calculator_example::detail::Calculator_filter_Result{};
             reply_.filter->result = calculator_example::detail::Calculator_filter_Out{};
         }
