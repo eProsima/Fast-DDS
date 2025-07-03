@@ -764,7 +764,8 @@ private:
      * Returns the Durability kind from which a endpoint is able to use the persistence service.
      */
     DurabilityKind_t get_persistence_durability_red_line(
-            bool is_builtin_endpoint);
+            bool is_builtin_endpoint,
+            const EndpointAttributes& endpoint_attr) const;
 
     /**
      * Check if persistence is required and return persistence service from factory,
