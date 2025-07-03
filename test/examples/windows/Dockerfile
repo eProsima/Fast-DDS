@@ -9,7 +9,7 @@ RUN Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointMa
 RUN choco install -y vcredist140
 
 # Install OpenSSL latest
-RUN choco install -y openssl
+RUN choco install -y openssl --version=3.1.1
 
 #Install Runtime Debug Libraries
 RUN choco install -y visualstudio2022buildtools --package-parameters '--includeRecommended --includeOptional --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.Component.VC.Runtime.UCRTSDK' --no-progress
