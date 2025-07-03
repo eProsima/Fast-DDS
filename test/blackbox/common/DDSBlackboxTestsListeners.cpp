@@ -920,7 +920,7 @@ TEST(DDSStatus, sample_lost_be_dw_be_dr_fragments)
     auto data = default_data300kb_data_generator(13);
 
     reader.startReception(data);
-    writer.send(data, 100);
+    writer.send(data, 200);
 
     std::unique_lock<std::mutex> lock(test_step_mtx);
     test_step_cv.wait(lock, [&test_step]()
