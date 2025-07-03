@@ -2888,6 +2888,13 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             if (locals.empty())
             {
                 IPFinder::getIP4Address(&locals);
+                // If no local interfaces found, use localhost
+                if (locals.empty())
+                {
+                    Locator_t loc_lo;
+                    IPLocator::setIPv4(loc_lo, "127.0.0.1");
+                    locals.push_back(loc_lo);
+                }
             }
 
             // add a locator for each local
