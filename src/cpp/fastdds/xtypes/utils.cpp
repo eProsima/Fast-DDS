@@ -23,6 +23,7 @@
 #include "dynamic_types/DynamicDataImpl.hpp"
 #include "serializers/idl/dynamic_type_idl.hpp"
 #include "serializers/json/dynamic_data_json.hpp"
+#include "serializers/json/json_dynamic_data.hpp"
 #include "utils/collections/TreeNode.hpp"
 
 #include <iostream>
@@ -71,12 +72,53 @@ ReturnCode_t json_serialize(
     nlohmann::json j;
     if (RETCODE_OK == (ret = json_serialize(traits<DynamicData>::narrow<DynamicDataImpl>(data), j, format)))
     {
-        output << j;
+        try
+        {
+            output << j;
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while dumping JSON to output stream: " << e.what());
+            return RETCODE_BAD_PARAMETER;
+        }
     }
     else
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Error encountered while performing DynamicData to JSON serialization.");
+    }
+    return ret;
+}
+
+ReturnCode_t json_deserialize(
+        const std::string& input,
+        const DynamicType::_ref_type& dynamic_type,
+        DynamicDataJsonFormat format,
+        DynamicData::_ref_type& data) noexcept
+{
+    nlohmann::json j;
+    try
+    {
+        j = nlohmann::json::parse(input);
+        // WARNING: This might result in silent precision loss for numeric values above (u)int64_t and double limits,
+        // additional checks should be implemented if willing to cover those cases.
+    }
+    catch (const std::exception& e) // Exceptions other than nlohmann::json::parse_error can be thrown
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while parsing JSON input: " << e.what());
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    ReturnCode_t ret;
+    if (RETCODE_OK !=
+            (ret =
+            json_deserialize(j, traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type), format, data)))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while performing JSON to DynamicData deserialization.");
+        data.reset(); // Reset data in case of error
     }
     return ret;
 }
