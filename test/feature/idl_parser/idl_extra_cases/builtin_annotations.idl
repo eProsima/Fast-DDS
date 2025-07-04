@@ -1,0 +1,265 @@
+// @id
+struct id_ann_valid_struct
+{
+  @id(1) long first;
+  @id(3) string second;
+  @id(4) float third;
+};
+
+union id_ann_valid_union switch(long)
+{
+  case 0:
+    @id(1) long first;
+  case 1:
+    @id(3) string second;
+  default:
+    @id(4) float third;
+};
+
+struct id_ann_missing_value
+{
+    @id long invalid_member;
+};
+
+struct id_ann_invalid_value_type
+{
+    @id("invalid") long invalid_member;
+};
+
+struct id_ann_extra_parameter
+{
+    @id(0, "extra") long invalid_member;
+};
+
+struct id_ann_duplicated_ids
+{
+    @id(0) long first;
+    @id(0) string second;
+    @id(1) float third;
+};
+
+@id(1) struct id_ann_on_struct
+{
+    long first;
+};
+
+@id(1) enum id_ann_on_enum
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2,
+    ENUM_VALUE_3
+};
+
+@id(1) union id_ann_on_union switch(long)
+{
+  case 0:
+    long first;
+  default:
+    string second;
+};
+
+// @optional
+struct optional_ann_valid {
+  @optional long first;
+  @optional(value = FALSE) string second;
+  @optional(FALSE) float third;
+};
+
+struct optional_ann_invalid_value_type
+{
+    @optional("invalid") long invalid_member;
+};
+
+struct optional_ann_extra_parameter
+{
+    @optional(TRUE, "extra") long invalid_member;
+};
+
+@optional struct optional_ann_on_struct
+{
+    long first;
+};
+
+struct position_ann_valid_struct
+{
+  @position(4) long first;
+  @position(value = 3) string second;
+};
+
+union position_ann_valid_union switch(long)
+{
+  case 0:
+    @position(4) long first;
+  default:
+    @position(value = 3) float second;
+};
+
+struct position_ann_missing_value
+{
+    @position long invalid_member;
+};
+
+struct position_ann_invalid_value_type
+{
+    @position("invalid") long invalid_member;
+};
+
+struct position_ann_extra_parameter
+{
+    @position(2, "extra") long invalid_member;
+};
+
+struct position_ann_duplicated_positions
+{
+    @position(0) long first;
+    @position(0) string second;
+    @position(1) float third;
+};
+
+@position(1) struct position_ann_on_struct
+{
+    long first;
+};
+
+@position(1) enum position_ann_on_enum
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@position(1) union position_ann_on_union switch(long)
+{
+  case 0:
+    long first;
+  default:
+    string second;
+};
+
+// @extensibility
+@extensibility(FINAL)
+struct extensibility_ann_final_struct
+{
+    long first;
+};
+
+@extensibility(APPENDABLE)
+struct extensibility_ann_appendable_struct
+{
+    long first;
+};
+
+@extensibility(MUTABLE)
+struct extensibility_ann_mutable_struct
+{
+    long first;
+};
+
+@extensibility(value = MUTABLE)
+struct extensibility_ann_mutable_keyword_param_struct
+{
+    long first;
+};
+
+@extensibility("invalid")
+struct extensibility_ann_invalid_value_type_struct
+{
+    long first;
+};
+
+@extensibility(FINAL, "extra")
+struct extensibility_ann_extra_parameter_struct
+{
+    long first;
+};
+
+@extensibility
+struct extensibility_ann_missing_value_struct
+{
+    long first;
+};
+
+struct extensibility_ann_on_struct_member
+{
+    @extensibility(FINAL) long first;
+};
+
+// @final
+@final
+struct final_ann_valid_struct
+{
+    long first;
+};
+
+@final("extra")
+struct final_ann_extra_parameter_struct
+{
+    long first;
+};
+
+struct final_ann_on_struct_member
+{
+    @final long first;
+};
+
+// @appendable
+@appendable
+struct appendable_ann_valid_struct
+{
+    long first;
+};
+
+@appendable("extra")
+struct appendable_ann_extra_parameter_struct
+{
+    long first;
+};
+
+struct appendable_ann_on_struct_member
+{
+    @appendable long first;
+};
+
+// @mutable
+@mutable
+struct mutable_ann_valid_struct
+{
+    long first;
+};
+
+@mutable("extra")
+struct mutable_ann_extra_parameter_struct
+{
+    long first;
+};
+
+struct mutable_ann_on_struct_member
+{
+    @mutable long first;
+};
+
+// @key
+struct key_ann_valid_struct
+{
+    @key long first;
+    @key(value = FALSE) string second;
+    @key(FALSE) float third;
+};
+
+struct key_ann_invalid_value_type
+{
+    @key("invalid") long invalid_member;
+};
+
+struct key_ann_extra_parameter
+{
+    @key(TRUE, "extra") long invalid_member;
+};
+
+@key struct key_ann_on_struct
+{
+    long first;
+};
+
+
+
+
