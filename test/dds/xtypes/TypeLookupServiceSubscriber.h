@@ -453,8 +453,6 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(FinalUnionStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(FinalWCharStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(InheritanceEmptyStruct);
-        SUBSCRIBER_TYPE_CREATOR_FUNCTION(InnerEmptyStructureHelper);
-        SUBSCRIBER_TYPE_CREATOR_FUNCTION(InnerStructureHelper);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BitsetsChildInheritanceStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(InnerEmptyStructureHelperChild);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(InnerStructureHelperChild);

@@ -430,8 +430,6 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(FinalUnionStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(FinalWCharStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(InheritanceEmptyStruct);
-        PUBLISHER_TYPE_CREATOR_FUNCTION(InnerEmptyStructureHelper);
-        PUBLISHER_TYPE_CREATOR_FUNCTION(InnerStructureHelper);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BitsetsChildInheritanceStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(InnerEmptyStructureHelperChild);
         PUBLISHER_TYPE_CREATOR_FUNCTION(InnerStructureHelperChild);
