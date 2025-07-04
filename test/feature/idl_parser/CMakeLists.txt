@@ -69,4 +69,5 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_structures.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_unions.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/builtin_annotations.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
 )

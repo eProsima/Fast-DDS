@@ -310,7 +310,8 @@ struct case_label : sor<seq<kw_case, const_expr, colon>, seq<kw_default, colon>>
 struct switch_case : seq<plus<case_label>, element_spec, semicolon> {};
 struct switch_body : plus<switch_case> {};
 struct switch_type_spec : sor<integer_type, char_type, boolean_type, wide_char_type, octet_type, scoped_name> {};
-struct union_def : seq<kw_union, identifier, kw_switch, open_parentheses, star<annotation_appl>, switch_type_spec, close_parentheses, open_brace, switch_body, close_brace> {};
+struct union_discriminator : seq<open_parentheses, star<annotation_appl>, switch_type_spec, close_parentheses> {};
+struct union_def : seq<kw_union, identifier, kw_switch, union_discriminator, open_brace, switch_body, close_brace> {};
 struct union_dcl : sor<union_def, union_forward_dcl> {};
 struct struct_forward_dcl : seq<kw_struct, identifier, not_at<open_brace>> {};
 struct member : seq<star<annotation_appl>, type_spec, declarators, semicolon> {};
@@ -327,7 +328,8 @@ struct const_dcl : seq<kw_const, const_type, opt<ws>, identifier, equal_op, cons
 // ANNOTATIONS
 struct annotation_appl_param : sor<seq<identifier, equal_op, const_expr>, const_expr> {};
 struct annotation_appl_params : sor<seq<annotation_appl_param, star<seq<comma, annotation_appl_param>>>, annotation_appl_param> {};
-struct annotation_appl : seq<TAO_PEGTL_STRING("@"), scoped_name, opt<open_parentheses, annotation_appl_params, close_parentheses>> {};
+struct annotation_begin : TAO_PEGTL_STRING("@"){};
+struct annotation_appl : seq<annotation_begin, scoped_name, opt<open_parentheses, annotation_appl_params, close_parentheses>> {};
 struct any_const_type : kw_any {};
 struct annotation_member_type : sor<const_type, any_const_type, scoped_name> {};
 struct annotation_member : seq<opt<ws>, annotation_member_type, opt<ws>, simple_declarator, opt<seq<kw_default, const_expr>>, semicolon> {};

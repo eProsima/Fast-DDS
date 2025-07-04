@@ -2236,6 +2236,296 @@ TEST_F(IdlParserTests, sequences)
     ASSERT_TRUE(data);
 }
 
+TEST_F(IdlParserTests, builtin_annotations)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    /* @id tests */
+
+    // Set custom ids and test that they are correctly parsed (struct members)
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_valid_struct",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 4), RETCODE_OK);
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+    ASSERT_TRUE(data);
+
+    // Set custom ids and test that they are correctly parsed (union members)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_valid_union",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 4), RETCODE_OK);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // Negative case: Trying to annotate using @id with missing value
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_missing_value",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @id with invalid value type
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @id with additional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate multiple members with the same @id
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_duplicated_ids",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @id a constructed type (struct)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @id a constructed type (enumeration)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @id a constructed type (union)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "id_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @optional tests */
+
+    // Set optional members using default value, keyword and positional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "optional_ann_valid",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_optional());
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_optional());
+    EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_optional());
+
+    // Negative case: Trying to annotate using @optional with invalid value type
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "optional_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @optional with additional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "optional_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @optional
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "optional_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @position tests */
+
+    // Set member ids in constructed type (struct) using @position with keyword and positional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 4), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+
+    // Set member ids in constructed type (union) using @position with keyword and positional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_valid_union",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 4), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+
+    // Negative case: Trying to annotate using @position with missing value
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_missing_value",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @position with invalid value type
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @position with additional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate multiple members with the same @position
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_duplicated_positions",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @position a constructed type (struct)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @position a constructed type (enumeration)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @position a constructed type (union)
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "position_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @extensibility tests */
+
+    // Set extensibility kind to FINAL using positional parameter
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_final_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::FINAL);
+
+    // Set extensibility kind to APPENDABLE using positional parameter
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_appendable_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::APPENDABLE);
+
+    // Set extensibility kind to MUTABLE using positional parameter
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_mutable_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
+
+    // Set extensibility kind to MUTABLE using keyword parameter
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_mutable_keyword_param_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
+
+    // Negative case: Trying to annotate using @extensibility with invalid value type
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_invalid_value_type_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @extensibility with additional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @extensibility with missing value
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_missing_value_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annote a member with @extensibility
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "extensibility_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @final tests */
+    // Set final to struct type and check that it is correctly parsed
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "final_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::FINAL);
+
+    // Negative case: Trying to annotate using @final with parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "final_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @final
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "final_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @appendable tests */
+
+    // Set appendable to struct type and check that it is correctly parsed
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "appendable_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::APPENDABLE);
+
+    // Negative case: Trying to annotate using @appendable with parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "appendable_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @appendable
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "appendable_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @mutable tests */
+
+    // Set mutable to struct type and check that it is correctly parsed
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "mutable_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
+
+    // Negative case: Trying to annotate using @mutable with parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "mutable_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @mutable
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "mutable_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    /* @key tests */
+
+    // Set key members using default value, keyword and positional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "key_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_key());
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_key());
+    EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_key());
+
+    // Negative case: Trying to annotate using @key with invalid value type
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "key_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @key with additional parameters
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "key_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @key
+    builder = factory->create_type_w_uri("IDL/builtin_annotations.idl", "key_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
 int main(
         int argc,
         char** argv)
