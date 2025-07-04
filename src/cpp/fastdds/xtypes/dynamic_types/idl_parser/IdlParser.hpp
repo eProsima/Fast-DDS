@@ -324,26 +324,6 @@ private:
 
 }; // class Context
 
-// __FLAG__
-template<typename Input>
-void debug_action(
-        const std::string& rule_name,
-        const Input& in,
-        const std::map<std::string, std::string>& state)
-{
-    std::cout << "[DEBUG] Rule: " << rule_name << "\n";
-    std::cout << "        Input: \"" << in.string() << "\"\n";
-    std::cout << "        State:\n";
-    for (std::map<std::string, std::string>::const_iterator it = state.begin(); it != state.end(); ++it)
-    {
-        std::cout << "          - " << it->first << ": " << it->second << "\n";
-    }
-
-    std::cout << "-----------------------------------\n";
-}
-
-/////////////////
-
 // Actions
 template<typename Rule>
 struct action
@@ -370,9 +350,6 @@ struct action<identifier>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        // __FLAG__
-        // debug_action("identifier", in, state);
-        ///////////////
         auto module = ctx->modules().current();
         const std::string identifier_name = in.string();
         const std::string scoped_identifier_name = module->create_scoped_name(identifier_name);
@@ -1689,9 +1666,6 @@ struct action<struct_forward_dcl>
 
         if (scoped_struct_name == ctx->target_type_name)
         {
-            // __FLAG__
-            std::cout << "Found target struct: " << scoped_struct_name << std::endl;
-            ////////////////
             ctx->builder = builder;
         }
     }
@@ -1941,7 +1915,7 @@ struct action<kw_struct>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -1956,10 +1930,6 @@ struct action<kw_struct>
         state["current_array_sizes"] = "";
         state["sequence_sizes"] = "";
 
-        // __FLAG__
-        static_cast<void>(in);
-        // debug_action("kw_struct", in, state);
-        /////////////////////
         // Add pending struct annotations if were processed
         if (state.count("annotation_names") && !state["annotation_names"].empty())
         {
@@ -2118,13 +2088,6 @@ struct action<struct_def>
 
             // Annotate the member descriptor with the annotations collected during parsing
             const auto& member_annotations = ctx->annotations().pending_member_annotations();
-            // // __FLAG__
-            // for (const auto& info : ctx->annotations().pending_member_annotations())
-            // {
-            //     std::cout << "Pending member annotations size: " << info.second.size() << " for member: "
-            //             << info.first << std::endl;
-            // }
-            // //////////////////
             if (member_annotations.count(names[i]))
             {
                 for (const auto& info : member_annotations.at(names[i]))
@@ -2163,7 +2126,7 @@ struct action<kw_union>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -2178,9 +2141,6 @@ struct action<kw_union>
         state["sequence_sizes"] = "";
         state["type"] = "";
 
-        // __FLAG__
-        debug_action("kw_union", in, state);
-        /////////////////////
         // Add pending union annotations if were processed
         if (state.count("annotation_names") && !state["annotation_names"].empty())
         {
@@ -2374,7 +2334,7 @@ struct action<union_def>
 
     template<typename Input>
     static void apply(
-            const Input& in,
+            const Input& /*in*/,
             Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
@@ -2392,10 +2352,6 @@ struct action<union_def>
         }
         cleanup_guard{state, ctx};
 
-        // __FLAG__
-        static_cast<void>(in);
-        // debug_action("union_def", in, state);
-        ////////////////////////
         auto module = ctx->modules().current();
         const std::string scoped_union_name = module->create_scoped_name(state["union_name"]);
 
@@ -2738,41 +2694,15 @@ struct action<annotation_appl_params>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        // __FLAG__
-        // debug_action("annotation_appl_params", in, state);
-        ////////////////
-
         const std::string& last_ann_params = in.string();
         std::string& current_ann_params = state["annotation_params"];
 
         // Last parsed annotation has parameters, update the state
         std::vector<std::string> tokens = ctx->split_string(current_ann_params, ';');
-        // __FLAG__
-        if (tokens.empty())
-        {
-            EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid annotation parameters: " << current_ann_params);
-            throw std::runtime_error("Invalid annotation parameters: " + current_ann_params);
-        }
-        ////////////////
         tokens.back() = last_ann_params;
         current_ann_params = ctx->join_strings(tokens, ';');
     }
 };
-
-// template<>
-// struct action<annotation_appl>
-// {
-//     template<typename Input>
-//     static void apply(
-//             const Input& in,
-//             Context* /*ctx*/,
-//             std::map<std::string, std::string>& state,
-//             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
-//     {
-//         EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] annotation_appl parsing not supported: " << state["type"]);
-//     }
-
-// };
 
 template<>
 struct action<bitmask_dcl>
@@ -2784,9 +2714,6 @@ struct action<bitmask_dcl>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        // __FLAG__
-        // debug_action("bitmask_dcl", in, state);
-        /////////////////////
         state["type"] = in.string();
         EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitmask_dcl parsing not supported: " << state["type"]);
         // Ignore bitmask annotations (Unsupported type)
@@ -3108,14 +3035,6 @@ traits<DynamicType>::ref_type Context::get_type(
 bool AnnotationsManager::update_pending_annotations(
         std::map<std::string, std::string>& state)
 {
-    // // __FLAG__
-    // std::cout << "UPDATING PENDING ANNOTATIONS\n";
-    // std::cout << "Current state:\n";
-    // for (std::map<std::string, std::string>::const_iterator it = state.begin(); it != state.end(); ++it)
-    // {
-    //     std::cout << "          - " << it->first << ": " << it->second << "\n";
-    // }
-    // ///////////////////////
     if (!state.count("annotation_names") || !state.count("annotation_params") || !state.count("annotation_target"))
     {
         EPROSIMA_LOG_ERROR(IDLPARSER, "Unable to update pending annotations: missing required state keys.");

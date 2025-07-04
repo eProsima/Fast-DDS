@@ -621,9 +621,6 @@ ReturnCode_t DynamicTypeBuilderImpl::apply_annotation(
                 return x.equals(descriptor_impl);
             }))
     {
-        // __FLAG__
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Annotation already exists");
-        //////////////////
         return RETCODE_BAD_PARAMETER;
     }
 

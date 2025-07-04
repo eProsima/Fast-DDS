@@ -410,7 +410,8 @@ public:
             return false;
         }
 
-        return (RETCODE_OK == type_builder->apply_annotation(descriptor));
+        ReturnCode_t ret = type_builder->apply_annotation(descriptor);
+        return (RETCODE_OK == ret);
     }
 
     /**
