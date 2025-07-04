@@ -77,9 +77,9 @@ ReturnCode_t json_deserialize_enum_member(
 // WARNING: Enforcing noexcept here throws a warning in C++11, and in fact causes no effect (i.e. compilation does not
 // fail when executing a method with this signature from a noexcept one) -> manually ensure all deserializers are noexcept
 using MemberDeserializer = ReturnCode_t (*)(
-        const nlohmann::json& j,
-        DynamicDataJsonFormat format,
-        traits<DynamicDataImpl>::ref_type& data);
+    const nlohmann::json& j,
+    DynamicDataJsonFormat format,
+    traits<DynamicDataImpl>::ref_type& data);
 
 ReturnCode_t json_deserialize_member_with_loan(
         const nlohmann::json& j,
