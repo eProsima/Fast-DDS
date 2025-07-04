@@ -112,7 +112,9 @@ ReturnCode_t json_deserialize(
     }
 
     ReturnCode_t ret;
-    if (RETCODE_OK != (ret = json_deserialize(j, traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type), format, data)))
+    if (RETCODE_OK !=
+            (ret =
+            json_deserialize(j, traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type), format, data)))
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Error encountered while performing JSON to DynamicData deserialization.");

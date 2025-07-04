@@ -86,10 +86,10 @@ ReturnCode_t json_serialize_enum_member(
 // WARNING: Enforcing noexcept here throws a warning in C++11, and in fact causes no effect (i.e. compilation does not
 // fail when executing a method with this signature from a noexcept one) -> manually ensure all serializers are noexcept
 using MemberSerializer = ReturnCode_t (*)(
-        const traits<DynamicDataImpl>::ref_type& data,
-        const std::string& member_name,
-        nlohmann::json& output,
-        DynamicDataJsonFormat format);
+    const traits<DynamicDataImpl>::ref_type& data,
+    const std::string& member_name,
+    nlohmann::json& output,
+    DynamicDataJsonFormat format);
 
 ReturnCode_t json_serialize_member_with_loan(
         const traits<DynamicDataImpl>::ref_type& data,

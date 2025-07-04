@@ -148,25 +148,29 @@ ReturnCode_t json_serialize_member(
         case TK_BITSET:
         {
             return json_serialize_member_with_loan(data, member_id,
-                    (member_kind == TK_STRUCTURE) ? "structure" : "bitset", json_serialize_aggregate_member,
-                    member_name, output, format);
+                           (member_kind == TK_STRUCTURE) ? "structure" : "bitset", json_serialize_aggregate_member,
+                           member_name, output, format);
         }
         case TK_UNION:
         {
-            return json_serialize_member_with_loan(data, member_id, "union", json_serialize_union_member, member_name, output, format);
+            return json_serialize_member_with_loan(data, member_id, "union", json_serialize_union_member, member_name,
+                           output, format);
         }
         case TK_SEQUENCE:
         case TK_ARRAY:
         {
-            return json_serialize_member_with_loan(data, member_id, (member_kind == TK_SEQUENCE) ? "sequence" : "array", json_serialize_collection_member, member_name, output, format);
+            return json_serialize_member_with_loan(data, member_id, (member_kind == TK_SEQUENCE) ? "sequence" : "array",
+                           json_serialize_collection_member, member_name, output, format);
         }
         case TK_MAP:
         {
-            return json_serialize_member_with_loan(data, member_id, "map", json_serialize_map_member, member_name, output, format);
+            return json_serialize_member_with_loan(data, member_id, "map", json_serialize_map_member, member_name,
+                           output, format);
         }
         case TK_BITMASK:
         {
-            return json_serialize_member_with_loan(data, member_id, "bitmask", json_serialize_bitmask_member, member_name, output, format);
+            return json_serialize_member_with_loan(data, member_id, "bitmask", json_serialize_bitmask_member,
+                           member_name, output, format);
         }
         case TK_ALIAS:
         {
@@ -442,7 +446,8 @@ ReturnCode_t json_serialize_basic_member(
                 else if (size_needed > 0)
                 {
                     utf8_value.resize(size_needed);
-                    if (std::wcstombs(&utf8_value[0], aux_wstring_value.c_str(), size_needed) == static_cast<std::size_t>(-1))
+                    if (std::wcstombs(&utf8_value[0], aux_wstring_value.c_str(),
+                            size_needed) == static_cast<std::size_t>(-1))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                                 "Error encountered while serializing TK_CHAR16 member to JSON: encountered invalid character.");
@@ -561,7 +566,9 @@ ReturnCode_t json_serialize_enum_member(
     if (TK_ARRAY == holder_kind || TK_SEQUENCE == holder_kind)
     {
         const TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
-        enum_type = traits<DynamicType>::narrow<DynamicTypeImpl>(collection_descriptor.element_type())->resolve_alias_enclosed_type();
+        enum_type =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(collection_descriptor.element_type())->
+                        resolve_alias_enclosed_type();
     }
     else
     {
@@ -577,7 +584,8 @@ ReturnCode_t json_serialize_enum_member(
 
     // Get value depending on the enclosing type
     assert(enum_type->get_kind() == TK_ENUM);
-    TypeKind enclosing_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(0)->get_descriptor().type())->get_kind(); // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
+    TypeKind enclosing_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(
+                        0)->get_descriptor().type())->get_kind();                                                                                             // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
     nlohmann::json j_value;
     if (TK_INT8 == enclosing_kind)
     {
@@ -725,7 +733,8 @@ ReturnCode_t json_serialize_aggregate_member(
     if (RETCODE_OK != (ret = json_serialize_aggregate(data, j_struct, format)))
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while serializing " << kind_str << " member to JSON: json_serialize_aggregate failed.");
+                "Error encountered while serializing " << kind_str <<
+                " member to JSON: json_serialize_aggregate failed.");
         return ret;
     }
 
@@ -781,7 +790,9 @@ ReturnCode_t json_serialize_collection_member(
 {
     ReturnCode_t ret = RETCODE_OK;
     const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
-    auto element_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()->get_kind();
+    auto element_kind =
+            traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()
+                    ->get_kind();
     if (TK_SEQUENCE == data->enclosing_type()->get_kind())
     {
         assert(descriptor.bound().size() == 1);
