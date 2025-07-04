@@ -55,7 +55,7 @@ std::string rtrim(
 
 //! trim a string from both ends
 std::string trim(
-        const std::string &s)
+        const std::string& s)
 {
     return rtrim(ltrim(s));
 }
@@ -66,7 +66,10 @@ std::string to_lower(
 {
     std::string result = s;
     std::transform(result.begin(), result.end(), result.begin(),
-            [](unsigned char c) { return std::tolower(c); });
+            [](unsigned char c)
+            {
+                return std::tolower(c);
+            });
     return result;
 }
 

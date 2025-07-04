@@ -394,7 +394,10 @@ struct action<identifier>
                             // The identifier is the member name
                             state["current_struct_member_name"] = identifier_name;
 
-                            if (state.count("annotation_target") && (state["annotation_target"] == AnnotationsManager::target_kind_to_string(AnnotationsManager::AnnotationTargetKind::MEMBER)))
+                            if (state.count("annotation_target") &&
+                                    (state["annotation_target"] ==
+                                    AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                            AnnotationTargetKind::MEMBER)))
                             {
                                 state["annotation_member_name"] = state["current_struct_member_name"];
                             }
@@ -411,7 +414,10 @@ struct action<identifier>
                         // The identifier is a member name
                         state["current_struct_member_name"] = identifier_name;
 
-                        if (state.count("annotation_target") && (state["annotation_target"] == AnnotationsManager::target_kind_to_string(AnnotationsManager::AnnotationTargetKind::MEMBER)))
+                        if (state.count("annotation_target") &&
+                                (state["annotation_target"] ==
+                                AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                        AnnotationTargetKind::MEMBER)))
                         {
                             state["annotation_member_name"] = state["current_struct_member_name"];
                         }
@@ -448,7 +454,10 @@ struct action<identifier>
                             // The identifier is the member name
                             state["current_union_member_name"] = identifier_name;
 
-                            if (state.count("annotation_target") && (state["annotation_target"] == AnnotationsManager::target_kind_to_string(AnnotationsManager::AnnotationTargetKind::MEMBER)))
+                            if (state.count("annotation_target") &&
+                                    (state["annotation_target"] ==
+                                    AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                            AnnotationTargetKind::MEMBER)))
                             {
                                 state["annotation_member_name"] = state["current_union_member_name"];
                             }
@@ -465,7 +474,10 @@ struct action<identifier>
                         // The identifier is a member name
                         state["current_union_member_name"] = identifier_name;
 
-                        if (state.count("annotation_target") && (state["annotation_target"] == AnnotationsManager::target_kind_to_string(AnnotationsManager::AnnotationTargetKind::MEMBER)))
+                        if (state.count("annotation_target") &&
+                                (state["annotation_target"] ==
+                                AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                        AnnotationTargetKind::MEMBER)))
                         {
                             state["annotation_member_name"] = state["current_union_member_name"];
                         }
@@ -722,7 +734,7 @@ struct action<semicolon>
         // Add pending member annotations
         if (state.count("annotation_names") && !state["annotation_names"].empty())
         {
-            if(!ctx->annotations().update_pending_annotations(state))
+            if (!ctx->annotations().update_pending_annotations(state))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Failed to update pending annotations for member");
                 return;
@@ -1796,7 +1808,7 @@ struct action<kw_enum>
         // Add pending enum annotations
         if (state.count("annotation_names") && !state["annotation_names"].empty())
         {
-            if(!ctx->annotations().update_pending_annotations(state))
+            if (!ctx->annotations().update_pending_annotations(state))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum");
                 return;
@@ -1835,6 +1847,7 @@ struct action<enum_dcl>
             {
                 cleanup_state(state, ctx);
             }
+
         }
         cleanup_guard{state, ctx};
 
@@ -1879,7 +1892,8 @@ struct action<enum_dcl>
                 {
                     if (!info.first->annotate_descriptor(member_descriptor, info.second))
                     {
-                        EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating member descriptor for enum: " << scoped_enum_name);
+                        EPROSIMA_LOG_ERROR(IDLPARSER,
+                                "Error annotating member descriptor for enum: " << scoped_enum_name);
                         return;
                     }
                 }
@@ -1888,7 +1902,7 @@ struct action<enum_dcl>
             if (RETCODE_OK != builder->add_member(member_descriptor))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to union: " << scoped_enum_name
-                        << ", member: " << member_name);
+                                                                               << ", member: " << member_name);
                 return;
             }
 
@@ -1933,13 +1947,14 @@ struct action<kw_struct>
         // Add pending struct annotations if were processed
         if (state.count("annotation_names") && !state["annotation_names"].empty())
         {
-            if(!ctx->annotations().update_pending_annotations(state))
+            if (!ctx->annotations().update_pending_annotations(state))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating struct");
                 return;
             }
         }
     }
+
 };
 
 template<>
@@ -1997,7 +2012,8 @@ struct action<struct_def>
             {
                 if (!info.first->annotate_descriptor(type_descriptor, info.second))
                 {
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating type descriptor for struct: " << scoped_struct_name);
+                    EPROSIMA_LOG_ERROR(IDLPARSER,
+                            "Error annotating type descriptor for struct: " << scoped_struct_name);
                     return;
                 }
             }
@@ -2104,7 +2120,7 @@ struct action<struct_def>
             if (RETCODE_OK != builder->add_member(member_descriptor))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to struct: " << scoped_struct_name
-                        << ", member: " << names[i]);
+                                                                                << ", member: " << names[i]);
                 return;
             }
         }
@@ -2144,7 +2160,7 @@ struct action<kw_union>
         // Add pending union annotations if were processed
         if (state.count("annotation_names") && !state["annotation_names"].empty())
         {
-            if(!ctx->annotations().update_pending_annotations(state))
+            if (!ctx->annotations().update_pending_annotations(state))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating union");
                 return;
@@ -2313,6 +2329,7 @@ struct action<union_discriminator>
             }
         }
     }
+
 };
 
 template<>
@@ -2357,7 +2374,8 @@ struct action<union_def>
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-        DynamicTypeBuilder::_ref_type discriminator_builder = factory->create_type_copy(ctx->get_type(state, state["union_discriminant"]));
+        DynamicTypeBuilder::_ref_type discriminator_builder =
+                factory->create_type_copy(ctx->get_type(state, state["union_discriminant"]));
         if (!discriminator_builder)
         {
             EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] union type not supported: " << state["union_discriminant"]);
@@ -2510,7 +2528,7 @@ struct action<union_def>
             if (RETCODE_OK != builder->add_member(member_descriptor))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to union: " << scoped_union_name
-                        << ", member: " << names[i]);
+                                                                               << ", member: " << names[i]);
                 return;
             }
         }
@@ -2682,6 +2700,7 @@ struct action<annotation_begin>
         state["parsing_annotation"] = "true";
         state["is_annotation_definition"] = "false";
     }
+
 };
 
 template<>
@@ -2702,6 +2721,7 @@ struct action<annotation_appl_params>
         tokens.back() = last_ann_params;
         current_ann_params = ctx->join_strings(tokens, ';');
     }
+
 };
 
 template<>
@@ -3053,22 +3073,22 @@ bool AnnotationsManager::update_pending_annotations(
     }
 
     auto add_to_pending_ann = [this, &ann_names, &ann_params](PendingAnnotations& pending_ann)
-    {
-        for (size_t i = 0; i < ann_names.size(); i++)
-        {
-            const Annotation* declared_ann = declared_annotations_.get_annotation(ann_names[i]);
-            if (!declared_ann)
             {
-                EPROSIMA_LOG_ERROR(IDLPARSER, "Annotation '" << ann_names[i] << "' is not declared.");
-                return false;
-            }
+                for (size_t i = 0; i < ann_names.size(); i++)
+                {
+                    const Annotation* declared_ann = declared_annotations_.get_annotation(ann_names[i]);
+                    if (!declared_ann)
+                    {
+                        EPROSIMA_LOG_ERROR(IDLPARSER, "Annotation '" << ann_names[i] << "' is not declared.");
+                        return false;
+                    }
 
-            AnnotationParameterValues param_values = AnnotationParameterValues::from_string(ann_params[i]);
-            pending_ann.push_back(std::make_pair(declared_ann, param_values));
-        }
+                    AnnotationParameterValues param_values = AnnotationParameterValues::from_string(ann_params[i]);
+                    pending_ann.push_back(std::make_pair(declared_ann, param_values));
+                }
 
-        return true;
-    };
+                return true;
+            };
 
     bool success = true;
     switch (string_to_target_kind(state["annotation_target"]))
