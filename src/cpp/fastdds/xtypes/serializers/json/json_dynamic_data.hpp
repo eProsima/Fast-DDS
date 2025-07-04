@@ -43,6 +43,11 @@ ReturnCode_t json_deserialize(
         DynamicDataJsonFormat format,
         DynamicData::_ref_type& data) noexcept;
 
+ReturnCode_t json_deserialize_aggregate(
+        const nlohmann::json& j,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
 ReturnCode_t json_deserialize_member(
         const nlohmann::json& j,
         const traits<DynamicTypeMember>::ref_type& type_member,
@@ -63,6 +68,32 @@ ReturnCode_t json_deserialize_basic_member(
         DynamicDataJsonFormat format,
         traits<DynamicDataImpl>::ref_type& data) noexcept;
 
+ReturnCode_t json_deserialize_enum_member(
+        const nlohmann::json& j,
+        const MemberId& member_id,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
+// WARNING: Enforcing noexcept here throws a warning in C++11, and in fact causes no effect (i.e. compilation does not
+// fail when executing a method with this signature from a noexcept one) -> manually ensure all deserializers are noexcept
+using MemberDeserializer = ReturnCode_t (*)(
+        const nlohmann::json& j,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data);
+
+ReturnCode_t json_deserialize_member_with_loan(
+        const nlohmann::json& j,
+        const MemberId& member_id,
+        const std::string& kind_str,
+        MemberDeserializer member_deserializer,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
+ReturnCode_t json_deserialize_union(
+        const nlohmann::json& j,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
 ReturnCode_t json_deserialize_collection(
         const nlohmann::json& j,
         DynamicDataJsonFormat format,
@@ -73,6 +104,16 @@ ReturnCode_t json_deserialize_array(
         TypeKind element_kind,
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
+ReturnCode_t json_deserialize_map(
+        const nlohmann::json& j,
+        DynamicDataJsonFormat format,
+        traits<DynamicDataImpl>::ref_type& data) noexcept;
+
+ReturnCode_t json_deserialize_bitmask(
+        const nlohmann::json& j,
         DynamicDataJsonFormat format,
         traits<DynamicDataImpl>::ref_type& data) noexcept;
 
