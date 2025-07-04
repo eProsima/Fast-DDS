@@ -582,6 +582,13 @@ ReturnCode_t json_serialize_enum_member(
         enum_type = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_desc->type())->resolve_alias_enclosed_type();
     }
 
+    if (nullptr == enum_type)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing TK_ENUM member to JSON: null enum type.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
     // Get value depending on the enclosing type
     assert(enum_type->get_kind() == TK_ENUM);
     TypeKind enclosing_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(
