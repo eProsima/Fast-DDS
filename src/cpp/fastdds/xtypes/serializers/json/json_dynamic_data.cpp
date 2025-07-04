@@ -679,8 +679,15 @@ ReturnCode_t json_deserialize_enum_member(
 
     // Get enclosing type kind to parse the value accordingly, and later user the appropriate setter
     assert(enum_type->get_kind() == TK_ENUM);
-    TypeKind enclosing_kind = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(
-                        0)->get_descriptor().type())->get_kind();                                                                                             // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
+    auto enclosing_type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(
+                        0)->get_descriptor().type()); // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
+    if (nullptr == enclosing_type_impl)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while deserializing TK_ENUM member from JSON: null enclosing type.");
+        return RETCODE_BAD_PARAMETER;
+    }
+    TypeKind enclosing_kind = enclosing_type_impl->get_kind();
 
     if (DynamicDataJsonFormat::OMG == format)
     {
@@ -776,9 +783,7 @@ ReturnCode_t json_deserialize_enum_member(
         // Find value corresponding to name
 
         DynamicTypeMembersByName all_members;
-        if (RETCODE_OK !=
-                (ret =
-                traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type)->get_all_members_by_name(all_members)))
+        if (RETCODE_OK != (ret = enum_type->get_all_members_by_name(all_members)))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                     "Error encountered while deserializing TK_ENUM member from JSON: get_all_members_by_name failed.");
