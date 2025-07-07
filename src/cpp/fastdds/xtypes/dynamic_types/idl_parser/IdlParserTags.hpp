@@ -112,7 +112,7 @@ static constexpr const char* IDL_BUILTIN_ANN_VERBATIM_TEXT_TAG = "text";
 static constexpr const char* IDL_BUILTIN_ANN_SERVICE_TAG = "service";
 static constexpr const char* IDL_BUILTIN_ANN_SERVICE_PLATFORM_TAG = "platform";
 
-//  @oneway
+// @oneway
 static constexpr const char* IDL_BUILTIN_ANN_ONEWAY_TAG = "oneway";
 
 // @ami
