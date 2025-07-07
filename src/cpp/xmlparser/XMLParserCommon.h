@@ -100,6 +100,9 @@ extern const char* SCHEDULING_POLICY;
 extern const char* PRIORITY;
 extern const char* AFFINITY;
 extern const char* STACK_SIZE;
+extern const char* CHAINING_LIBRARY;
+extern const char* CHAINING_SYMBOL;
+extern const char* CHAINING_LOW_LEVEL_TRANSPORT;
 
 // IntraprocessDeliveryType
 extern const char* OFF;
@@ -217,6 +220,7 @@ extern const char* DEFAULTv6;
 extern const char* LARGE_DATA;
 extern const char* LARGE_DATAv6;
 extern const char* P2P;
+extern const char* CHAINING_TRANSPORT;
 extern const char* INIT_ACKNACK_DELAY;
 extern const char* HEARTB_RESP_DELAY;
 extern const char* INIT_HEARTB_DELAY;
