@@ -33,7 +33,7 @@ Community members may provide assistance with these platforms.
 
 |Architecture|Ubuntu Noble (24.04)|Ubuntu Jammy (22.04)|MacOS Mojave (10.14)|Windows 10 (VS2019)|Windows 11 (VS2022)|Debian Buster (10)|Android 12 |Android 13 | QNX 7.1   |
 |------------|--------------------|--------------------|--------------------|-------------------|-------------------|------------------|-----------|-----------|-----------|
-|amd64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |Tier 1 [^s]         |Tier 3 [^a][^s]    |Tier 1 [^a][^s]    |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
+|amd64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |Tier 1 [^s]         |Tier 1 [^a][^s]    |Tier 1 [^a][^s]    |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
 |amd32       |                    |                    |Tier 3 [^a][^s]    |Tier 3 [^a][^s]    |                  |           |           |           |
 |arm64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
 |arm32       |                    |Tier 3 [^s]         |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|           |
