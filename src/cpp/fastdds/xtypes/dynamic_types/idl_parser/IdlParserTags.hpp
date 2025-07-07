@@ -125,6 +125,31 @@ static constexpr const char* IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_DISCARD_T
 static constexpr const char* IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG = "USE_DEFAULT";
 static constexpr const char* IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TRIM_TAG = "TRIM";
 
+// @hashid
+static constexpr const char* IDL_BUILTIN_ANN_HASHID_TAG = "hashid";
+
+// @default_nested
+static constexpr const char* IDL_BUILTIN_ANN_DEFAULT_NESTED_TAG = "default_nested";
+
+// @ignore_literal_names
+static constexpr const char* IDL_BUILTIN_ANN_IGNORE_LITERAL_NAMES_TAG = "ignore_literal_names";
+
+// @non_serialized
+static constexpr const char* IDL_BUILTIN_ANN_NON_SERIALIZED_TAG = "non_serialized";
+
+// @data_representation
+static constexpr const char* IDL_BUILTIN_ANN_DATA_REPRESENTATION_TAG = "data_representation";
+static constexpr const char* IDL_BUILTIN_ANN_DATA_REPRESENTATION_MASK_TAG = "DataRepresentationMask";
+static constexpr const char* IDL_BUILTIN_ANN_DATA_REPRESENTATION_MASK_XCDR1_TAG = "XCDR1";
+static constexpr const char* IDL_BUILTIN_ANN_DATA_REPRESENTATION_MASK_XML_TAG = "XML";
+static constexpr const char* IDL_BUILTIN_ANN_DATA_REPRESENTATION_MASK_XCDR2_TAG = "XCDR2";
+static constexpr const char* IDL_BUILTIN_ANN_DATA_REPRESENTATION_ALLOWED_KINDS_TAG = "allowed_kinds";
+
+// @topic
+static constexpr const char* IDL_BUILTIN_ANN_TOPIC_TAG = "topic";
+static constexpr const char* IDL_BUILTIN_ANN_TOPIC_NAME_TAG = "name";
+static constexpr const char* IDL_BUILTIN_ANN_TOPIC_PLATFORM_TAG = "platform";
+
 } // namespace idlparser
 } // namespace dds
 } // namespace fastdds
