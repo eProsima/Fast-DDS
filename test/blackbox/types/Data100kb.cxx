@@ -28,6 +28,8 @@ char dummy;
 
 #include "Data100kb.h"
 
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include <fastcdr/Cdr.h>
 
 
@@ -131,3 +133,4 @@ std::vector<uint8_t>& Data100kb::data()
 // Include auxiliary functions like for serializing/deserializing.
 #include "Data100kbCdrAux.ipp"
 
+#endif // FASTCDR_VERSION_MAJOR > 1
