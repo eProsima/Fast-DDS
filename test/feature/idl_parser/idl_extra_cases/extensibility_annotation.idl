@@ -1,0 +1,46 @@
+@extensibility(FINAL)
+struct extensibility_ann_final_struct
+{
+    long first;
+};
+
+@extensibility(APPENDABLE)
+struct extensibility_ann_appendable_struct
+{
+    long first;
+};
+
+@extensibility(MUTABLE)
+struct extensibility_ann_mutable_struct
+{
+    long first;
+};
+
+@extensibility(value = MUTABLE)
+struct extensibility_ann_mutable_keyword_param_struct
+{
+    long first;
+};
+
+@extensibility("invalid")
+struct extensibility_ann_invalid_value_type_struct
+{
+    long first;
+};
+
+@extensibility(FINAL, "extra")
+struct extensibility_ann_extra_parameter_struct
+{
+    long first;
+};
+
+@extensibility
+struct extensibility_ann_missing_value_struct
+{
+    long first;
+};
+
+struct extensibility_ann_on_struct_member
+{
+    @extensibility(FINAL) long first;
+};

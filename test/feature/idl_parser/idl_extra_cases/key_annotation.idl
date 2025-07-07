@@ -1,0 +1,21 @@
+struct key_ann_valid_struct
+{
+    @key long first;
+    @key(value = FALSE) string second;
+    @key(FALSE) float third;
+};
+
+struct key_ann_invalid_value_type
+{
+    @key("invalid") long invalid_member;
+};
+
+struct key_ann_extra_parameter
+{
+    @key(TRUE, "extra") long invalid_member;
+};
+
+@key struct key_ann_on_struct
+{
+    long first;
+};

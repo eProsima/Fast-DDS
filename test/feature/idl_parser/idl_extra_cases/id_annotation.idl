@@ -1,0 +1,58 @@
+struct id_ann_valid_struct
+{
+  @id(1) long first;
+  @id(3) string second;
+  @id(4) float third;
+};
+
+union id_ann_valid_union switch(long)
+{
+  case 0:
+    @id(1) long first;
+  case 1:
+    @id(3) string second;
+  default:
+    @id(4) float third;
+};
+
+struct id_ann_missing_value
+{
+    @id long invalid_member;
+};
+
+struct id_ann_invalid_value_type
+{
+    @id("invalid") long invalid_member;
+};
+
+struct id_ann_extra_parameter
+{
+    @id(0, "extra") long invalid_member;
+};
+
+struct id_ann_duplicated_ids
+{
+    @id(0) long first;
+    @id(0) string second;
+    @id(1) float third;
+};
+
+@id(1) struct id_ann_on_struct
+{
+    long first;
+};
+
+@id(1) enum id_ann_on_enum
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2,
+    ENUM_VALUE_3
+};
+
+@id(1) union id_ann_on_union switch(long)
+{
+  case 0:
+    long first;
+  default:
+    string second;
+};
