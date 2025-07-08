@@ -1,6 +1,10 @@
 Forthcoming
 -----------
 
+
+Version v3.3.0
+--------------
+
 * QoS Policies are now only added to EDP messages if they do not have the default value.
 * HistoryQosPolicy has been included to EDP messages (when non-default value is used).
 * New property to extend EDP messages with eProsima Extensions QoS.
