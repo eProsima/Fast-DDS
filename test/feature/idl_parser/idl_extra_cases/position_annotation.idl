@@ -24,7 +24,7 @@ struct position_ann_invalid_value_type
 
 struct position_ann_extra_parameter
 {
-    @position(2, "extra") long invalid_member;
+    @position(value = 2, value2 = "extra") long invalid_member;
 };
 
 struct position_ann_duplicated_positions

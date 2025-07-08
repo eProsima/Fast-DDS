@@ -326,8 +326,8 @@ struct type_dcl : sor<constr_type_dcl, native_dcl, typedef_dcl> {};
 struct const_dcl : seq<kw_const, const_type, opt<ws>, identifier, equal_op, const_expr> {};
 
 // ANNOTATIONS
-struct annotation_appl_param : sor<seq<identifier, equal_op, const_expr>, const_expr> {};
-struct annotation_appl_params : sor<seq<annotation_appl_param, star<seq<comma, annotation_appl_param>>>, annotation_appl_param> {};
+struct annotation_appl_param : seq<identifier, equal_op, const_expr> {};
+struct annotation_appl_params : sor<seq<annotation_appl_param, star<seq<comma, annotation_appl_param>>>, const_expr> {};
 struct annotation_begin : TAO_PEGTL_STRING("@"){};
 struct annotation_appl : seq<annotation_begin, scoped_name, opt<open_parentheses, annotation_appl_params, close_parentheses>> {};
 struct any_const_type : kw_any {};

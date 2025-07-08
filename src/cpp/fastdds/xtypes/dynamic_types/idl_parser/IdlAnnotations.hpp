@@ -54,12 +54,13 @@ namespace idlparser {
  */
 struct AnnotationParameterValues
 {
-    std::vector<std::string> positional_parameters;
+    // Constant expression representing the shortened parameter value in one-member annotations.
+    std::string shortened_parameter;
+    // Map containing the provided parameter values, where the key is the parameter's name
     std::map<std::string, std::string> keyword_parameters;
 
     /**
      * @brief Parse string input of parameter values separated by commas.
-     * @note In case of detecting a positional parameter after a keyword parameter, parsing will stop and the rest of the parameters are ignored.
      */
     static AnnotationParameterValues from_string(
             const std::string& input)
@@ -81,21 +82,15 @@ struct AnnotationParameterValues
             if (it != std::string::npos)
             {
                 // Keyword parameter
+                assert(result.shortened_parameter.empty());
                 std::string key = utils::trim(param_token.substr(0, it));
                 std::string value = utils::trim(param_token.substr(it + 1));
                 result.keyword_parameters[key] = value;
             }
             else
             {
-                // Positional parameter
-                if (!result.keyword_parameters.empty())
-                {
-                    // If we already have keyword parameters, stop parsing positional parameters
-                    EPROSIMA_LOG_WARNING(IDL_PARSER, "Positional parameter '" << param_token
-                                                                              << "' found after keyword parameters. Ignoring the rest of the parameters.");
-                    break;
-                }
-                result.positional_parameters.push_back(param_token);
+                assert(result.keyword_parameters.empty());
+                result.shortened_parameter = param_token;
             }
         }
 
@@ -538,8 +533,6 @@ protected:
      * @param[out] resolved_parameters The resolved annotation's parameter values. Keys correspond to annotation's members names,
      *                                  and values correspond to the values of the annotation's members that should be considered.
      * @return true if the value of each annotation's member was successfully resolved, false otherwise.
-     * @note Positional parameters should be provided before keyword parameters. If some positional parameter corresponds to a member id higher than
-     *       the member id related to a keyword parameter, parameter resolution will fail.
      */
     bool resolve_parameter_values(
             const AnnotationParameterValues& input_parameters,
@@ -551,53 +544,57 @@ protected:
         DynamicTypeMembersById members_by_id;
         annotation_builder_->get_all_members(members_by_id);
 
-        // Resolve positional parameters
-        for (uint32_t i = 0; i < input_parameters.positional_parameters.size(); ++i)
+        // Resolve shortened parameter for one-member annotations
+        if (!input_parameters.shortened_parameter.empty())
         {
-            if (i >= members_by_id.size())
+            if (members_by_id.size() != 1)
             {
                 EPROSIMA_LOG_ERROR(IDL_PARSER,
-                        "Too many positional parameters for annotation " << annotation_builder_->get_name() << ".");
+                        "Shortened parameter '" << input_parameters.shortened_parameter
+                                                << "' can only be used in annotations with a single member.");
                 return false;
             }
 
-            const auto& member = members_by_id[i];
+            const auto& member = members_by_id.begin()->second;
             const std::string& name = member->get_name().to_string();
             processed_params.insert(name);
-            resolved_parameters[name] = input_parameters.positional_parameters[i];
+            resolved_parameters[name] = input_parameters.shortened_parameter;
         }
-
-        // Resolve keyword parameters
-        for (const auto& kv : input_parameters.keyword_parameters)
+        else
         {
-            const std::string& name = kv.first;
+            // Resolve keyword parameters
+            for (const auto& kv : input_parameters.keyword_parameters)
+            {
+                const std::string& name = kv.first;
 
-            // Check if a member with the given name exists
-            auto it = std::find_if(
-                members_by_id.begin(), members_by_id.end(),
-                [&](const std::pair<MemberId, traits<DynamicTypeMember>::ref_type>& m)
+                // Check if a member with the given name exists
+                auto it = std::find_if(
+                    members_by_id.begin(), members_by_id.end(),
+                    [&](const std::pair<MemberId, traits<DynamicTypeMember>::ref_type>& m)
+                    {
+                        return m.second->get_name() == name;
+                    });
+
+                if (it == members_by_id.end())
                 {
-                    return m.second->get_name() == name;
-                });
+                    EPROSIMA_LOG_ERROR(IDL_PARSER,
+                            "Unknown annotation member '" << name << "' in annotation '"
+                                                          << annotation_builder_->get_name() << "'.");
+                    return false;
+                }
 
-            if (it == members_by_id.end())
-            {
-                EPROSIMA_LOG_ERROR(IDL_PARSER,
-                        "Unknown annotation member '" << name << "' in annotation '"
-                                                      << annotation_builder_->get_name() << "'.");
-                return false;
+                // Check that there are no collisions
+                if (!processed_params.insert(name).second)
+                {
+                    EPROSIMA_LOG_ERROR(IDL_PARSER,
+                            "Parameter '" << name << "' is specified multiple times.");
+                    return false;
+                }
+
+                resolved_parameters[name] = kv.second;
             }
-
-            // Check that there are no collisions
-            if (!processed_params.insert(name).second)
-            {
-                EPROSIMA_LOG_ERROR(IDL_PARSER,
-                        "Parameter '" << name << "' is specified multiple times.");
-                return false;
-            }
-
-            resolved_parameters[name] = kv.second;
         }
+
 
         // Fill missing parameters with default values
         for (const auto& member : members_by_id)
@@ -1145,17 +1142,6 @@ public:
                     }
 
                     descriptor->default_value(params.at(IDL_VALUE_TAG));
-
-                    // Check that the default value is consistent with the member type
-                    if (!descriptor->is_consistent())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Default value '" << params.at(IDL_VALUE_TAG)
-                                                  << "' is not consistent with the member type for annotation '"
-                                                  << IDL_BUILTIN_ANN_DEFAULT_TAG << "'.");
-                        return false;
-                    }
-
                     return true;
                 };
         ann = Annotation(

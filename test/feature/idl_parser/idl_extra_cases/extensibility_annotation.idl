@@ -28,7 +28,7 @@ struct extensibility_ann_invalid_value_type_struct
     long first;
 };
 
-@extensibility(FINAL, "extra")
+@extensibility(value = FINAL, value2 = "extra")
 struct extensibility_ann_extra_parameter_struct
 {
     long first;

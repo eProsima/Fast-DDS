@@ -27,7 +27,7 @@ struct id_ann_invalid_value_type
 
 struct id_ann_extra_parameter
 {
-    @id(0, "extra") long invalid_member;
+    @id(value = 0, value2 = "extra") long invalid_member;
 };
 
 struct id_ann_duplicated_ids

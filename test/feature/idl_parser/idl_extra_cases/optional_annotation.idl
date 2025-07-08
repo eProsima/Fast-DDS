@@ -11,7 +11,7 @@ struct optional_ann_invalid_value_type
 
 struct optional_ann_extra_parameter
 {
-    @optional(TRUE, "extra") long invalid_member;
+    @optional(value = TRUE, value2 = "extra") long invalid_member;
 };
 
 @optional struct optional_ann_on_struct

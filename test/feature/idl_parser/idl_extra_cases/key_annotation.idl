@@ -12,7 +12,7 @@ struct key_ann_invalid_value_type
 
 struct key_ann_extra_parameter
 {
-    @key(TRUE, "extra") long invalid_member;
+    @key(value = TRUE, value2 = "extra") long invalid_member;
 };
 
 @key struct key_ann_on_struct
