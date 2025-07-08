@@ -253,10 +253,7 @@ ReturnCode_t json_deserialize_basic_member(
                     const auto value = numeric_get<uint8_t>(j);
                     if (value != 0 && value != 1)
                     {
-                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while deserializing TK_BOOLEAN member: expected 0 or 1, got " <<
-                                value);
-                        return RETCODE_BAD_PARAMETER;
+                        throw std::invalid_argument(std::string{"Expected 0 or 1, got "} + std::to_string(value));
                     }
                     ret = data->set_boolean_value(member_id, value);
                 }
@@ -515,8 +512,8 @@ ReturnCode_t json_deserialize_basic_member(
             std::wstring aux_wstring({L'\0'});
 #if defined(MINGW_COMPILER)
             // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
-            int size_needed = std::mbstowcs(nullptr, j_string.c_str(), 0);
-            if (size_needed < 0)
+            size_t size_needed = std::mbstowcs(nullptr, j_string.c_str(), 0);
+            if (size_needed == static_cast<size_t>(-1))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while deserializing TK_CHAR16 member: invalid UTF-8 string.");
@@ -590,8 +587,8 @@ ReturnCode_t json_deserialize_basic_member(
             std::wstring value;
 #if defined(MINGW_COMPILER)
             // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
-            int size_needed = std::mbstowcs(nullptr, j_string.c_str(), 0);
-            if (size_needed < 0)
+            size_t size_needed = std::mbstowcs(nullptr, j_string.c_str(), 0);
+            if (size_needed == static_cast<size_t>(-1))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                         "Error encountered while deserializing TK_STRING16 member: invalid UTF-8 string.");

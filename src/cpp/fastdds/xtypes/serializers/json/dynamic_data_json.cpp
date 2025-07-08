@@ -436,8 +436,8 @@ ReturnCode_t json_serialize_basic_member(
                 std::string utf8_value("\0", 1);
 #if defined(MINGW_COMPILER)
                 // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
-                int size_needed = std::wcstombs(nullptr, aux_wstring_value.c_str(), 0);
-                if (size_needed < 0)
+                size_t size_needed = std::wcstombs(nullptr, aux_wstring_value.c_str(), 0);
+                if (size_needed == static_cast<size_t>(-1))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                             "Error encountered while serializing TK_CHAR16 member to JSON: encountered invalid character.");
@@ -499,8 +499,8 @@ ReturnCode_t json_serialize_basic_member(
                 std::string utf8_value;
 #ifdef MINGW_COMPILER
                 // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
-                int size_needed = std::wcstombs(nullptr, value.c_str(), 0);
-                if (size_needed < 0)
+                size_t size_needed = std::wcstombs(nullptr, value.c_str(), 0);
+                if (size_needed == static_cast<size_t>(-1))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                             "Error encountered while serializing TK_STRING16 member to JSON: encountered invalid character.");
