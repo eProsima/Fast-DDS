@@ -19,6 +19,7 @@
 #include <cstring>
 #include <functional>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <unordered_set>
@@ -107,38 +108,16 @@ class Annotation
 {
 public:
 
-    using TypeDescriptorAnnotationHandler = std::function<bool (TypeDescriptor::_ref_type& /* descriptor */,
-                    const std::map<std::string, std::string>&) /* annotation's member values */>;
-    using MemberDescriptorAnnotationHandler = std::function<bool (MemberDescriptor::_ref_type& /* descriptor */,
-                    const std::map<std::string, std::string>& /* annotation's member values */)>;
-
     Annotation(
             const std::string& name)
-        : Annotation(
-            name,
-            [](TypeDescriptor::_ref_type&, const std::map<std::string, std::string>&)
-            {
-                return true;
-            },
-            [](MemberDescriptor::_ref_type&, const std::map<std::string, std::string>&)
-            {
-                return true;
-            })
-    {
-    }
-
-    Annotation(
-            const std::string& name,
-            TypeDescriptorAnnotationHandler type_descriptor_handler,
-            MemberDescriptorAnnotationHandler member_descriptor_handler)
-        : type_descriptor_handler_(std::move(type_descriptor_handler))
-        , member_descriptor_handler_(std::move(member_descriptor_handler))
     {
         TypeDescriptor::_ref_type annotation_type {traits<TypeDescriptor>::make_shared()};
         annotation_type->kind(TK_ANNOTATION);
         annotation_type->name(name);
         annotation_builder_ = DynamicTypeBuilderFactory::get_instance()->create_type(annotation_type);
     }
+
+    virtual ~Annotation() = default;
 
     /**
      * @brief Getter for the annotation's name.
@@ -358,7 +337,7 @@ public:
             return false;
         }
 
-        return type_descriptor_handler_(descriptor, resolved_parameters);
+        return apply_to_type(descriptor, resolved_parameters);
     }
 
     /**
@@ -388,7 +367,7 @@ public:
             return false;
         }
 
-        return member_descriptor_handler_(descriptor, resolved_parameters);
+        return apply_to_member(descriptor, resolved_parameters);
     }
 
     /**
@@ -494,37 +473,44 @@ public:
     /**
      * @brief Check if the annotation is a builtin annotation
      */
-    bool is_builtin() const
+    virtual bool is_builtin() const
     {
-        const char* name = annotation_builder_->get_name().c_str();
-
-        return strcmp(name, IDL_BUILTIN_ANN_ID_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_AUTOID_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_OPTIONAL_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_POSITION_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_VALUE_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_EXTENSIBILITY_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_FINAL_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_APPENDABLE_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_MUTABLE_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_KEY_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_MUST_UNDERSTAND_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_DEFAULT_LITERAL_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_DEFAULT_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_RANGE_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_MIN_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_MAX_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_UNIT_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_BIT_BOUND_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_EXTERNAL_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_NESTED_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_VERBATIM_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_SERVICE_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_ONEWAY_TAG) == 0 ||
-               strcmp(name, IDL_BUILTIN_ANN_AMI_TAG) == 0;
+        return false;
     }
 
 protected:
+
+    /**
+     * @brief Annotate a type descriptor with the provided annotation's resolved parameter values.
+     *
+     * @param[inout] descriptor The TypeDescriptor to annotate.
+     * @param[in] parameters The resolved annotation's parameters values to use
+     * @return true if the descriptor was successfully updated (i.e: if the annotation was applied or if no changes were needed), false otherwise.
+     */
+    virtual bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+        return true;
+    }
+
+    /**
+     * @brief Annotate a member descriptor with the provided annotation's resolved parameter values.
+     *
+     * @param[inout] descriptor The MemberDescriptor to annotate.
+     * @param[in] parameters The resolved annotation's parameters values to use
+     * @return true if the descriptor was successfully updated (i.e: if the annotation was applied or if no changes were needed), false otherwise.
+     */
+    virtual bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+        return true;
+    }
 
     /**
      * @brief Resolve the input parameters values according to the annotation's definition.
@@ -787,14 +773,1166 @@ protected:
     std::map<std::string, DynamicType::_ref_type> enums_;
     std::map<std::string, DynamicType::_ref_type> aliases_;
     std::map<std::string, DynamicData::_ref_type> constants_;
-
-    //! Callable representing how TypeDescriptor instances should be annotated.
-    TypeDescriptorAnnotationHandler type_descriptor_handler_;
-
-    //! Callable representing how MemberDescriptor instances should be annotated.
-    MemberDescriptorAnnotationHandler member_descriptor_handler_;
 };
 
+/**
+ * @brief Base class for built-in annotations.
+ */
+class BuiltinAnnotation : public Annotation
+{
+public:
+
+    BuiltinAnnotation(
+            const std::string& name)
+        : Annotation(name)
+    {
+    }
+
+    ~BuiltinAnnotation() = default;
+
+    bool is_builtin() const override
+    {
+        return true;
+    }
+
+    /**
+     * @brief Configure the annotation's members and declared types.
+     *
+     * @return true if the annotation was successfully initialized, false otherwise.
+     */
+    virtual bool initialize() = 0;
+};
+
+/**
+ * @brief @id annotation
+ */
+class IdAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    IdAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_ID_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~IdAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(IDL_VALUE_TAG,
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @id annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(
+                IDL_PARSER,
+                "Missing required parameter '" << IDL_VALUE_TAG
+                                               << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "'.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_UINT32> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
+            descriptor->id(value);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(
+                IDL_PARSER,
+                "Failed to convert value '" << parameters.at(
+                    IDL_VALUE_TAG)
+                                            << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "': " <<
+                            e.what());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @optional annotation
+ */
+class OptionalAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    OptionalAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_OPTIONAL_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~OptionalAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(
+                            IDL_VALUE_TAG,
+                            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
+                            IDL_TRUE_TAG);
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @optional annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_OPTIONAL_TAG <<
+                            "'.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(parameters.at(IDL_VALUE_TAG)));
+            descriptor->is_optional(value);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_OPTIONAL_TAG << "': " <<
+                            e.what());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @position annotation
+ */
+class PositionAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    PositionAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_POSITION_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~PositionAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(
+                                IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16));
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @position annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_POSITION_TAG <<
+                            "'.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_UINT16> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
+            descriptor->id(value);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_POSITION_TAG << "': " <<
+                            e.what());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @extensibility annotation
+ */
+class ExtensibilityAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    ExtensibilityAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_EXTENSIBILITY_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~ExtensibilityAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            bool success {true};
+
+            TypeDescriptor::_ref_type enum_type_descriptor {traits<TypeDescriptor>::make_shared()};
+            enum_type_descriptor->kind(TK_ENUM);
+            enum_type_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_TAG);
+            DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                            enum_type_descriptor)};
+            MemberDescriptor::_ref_type enum_member_descriptor {traits<MemberDescriptor>::make_shared()};
+            enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            enum_member_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_FINAL_TAG);
+            enum_builder->add_member(enum_member_descriptor);
+            enum_member_descriptor = traits<MemberDescriptor>::make_shared();
+            enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            enum_member_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_APPENDABLE_TAG);
+            enum_builder->add_member(enum_member_descriptor);
+            enum_member_descriptor = traits<MemberDescriptor>::make_shared();
+            enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            enum_member_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_MUTABLE_TAG);
+            enum_builder->add_member(enum_member_descriptor);
+
+            success &= add_declared_type(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_TAG, enum_builder->build());
+            success &= add_declared_type_member(IDL_VALUE_TAG, IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_TAG);
+
+            initialized_ = success;
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_EXTENSIBILITY_TAG <<
+                            "'.");
+            return false;
+        }
+
+        const std::string& value = parameters.at(IDL_VALUE_TAG);
+        if (value == IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_FINAL_TAG)
+        {
+            descriptor->extensibility_kind(ExtensibilityKind::FINAL);
+        }
+        else if (value == IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_APPENDABLE_TAG)
+        {
+            descriptor->extensibility_kind(ExtensibilityKind::APPENDABLE);
+        }
+        else if (value == IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_MUTABLE_TAG)
+        {
+            descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Invalid value '" << value
+                                      << "' for annotation '" << IDL_BUILTIN_ANN_EXTENSIBILITY_TAG << "'.");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @extensibility annotation to a MemberDescriptor.");
+        return false;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @final annotation
+ */
+class FinalAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    FinalAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_FINAL_TAG)
+    {
+    }
+
+    ~FinalAnnotation() = default;
+
+    bool initialize() override
+    {
+        // Nothing to do
+        return true;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(parameters);
+        assert(descriptor != nullptr);
+
+        descriptor->extensibility_kind(ExtensibilityKind::FINAL);
+        return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @final annotation to a MemberDescriptor.");
+        return false;
+    }
+};
+
+/**
+ * @brief @appendable annotation
+ */
+class AppendableAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    AppendableAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_APPENDABLE_TAG)
+    {
+    }
+
+    ~AppendableAnnotation() = default;
+
+    bool initialize() override
+    {
+        // Nothing to do
+        return true;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(parameters);
+        assert(descriptor != nullptr);
+
+        descriptor->extensibility_kind(ExtensibilityKind::APPENDABLE);
+        return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @appendable annotation to a MemberDescriptor.");
+        return false;
+    }
+};
+
+/**
+ * @brief @mutable annotation
+ */
+class MutableAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    MutableAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_MUTABLE_TAG)
+    {
+    }
+
+    ~MutableAnnotation() = default;
+
+    bool initialize() override
+    {
+        // Nothing to do
+        return true;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(parameters);
+        assert(descriptor != nullptr);
+
+        descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
+        return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @mutable annotation to a MemberDescriptor.");
+        return false;
+    }
+};
+
+/**
+ * @brief @key annotation
+ */
+class KeyAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    KeyAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_KEY_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~KeyAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(
+                                IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
+                                IDL_TRUE_TAG);
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @key annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_KEY_TAG <<
+                            "'.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(parameters.at(IDL_VALUE_TAG)));
+            descriptor->is_key(value);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_KEY_TAG << "': " <<
+                            e.what());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @default_literal annotation
+ */
+class DefaultLiteralAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    DefaultLiteralAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_DEFAULT_LITERAL_TAG)
+    {
+    }
+
+    ~DefaultLiteralAnnotation() = default;
+
+    bool initialize() override
+    {
+        // Nothing to do
+        return true;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @default_literal annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(parameters);
+        assert(descriptor != nullptr);
+
+        descriptor->is_default_label(true);
+        return true;
+    }
+};
+
+/**
+ * @brief @default annotation
+ */
+class DefaultAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    DefaultAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_DEFAULT_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~DefaultAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            // Note: The member is processed as a string, so it can be used to set the default value of any type.
+            // In the future, it should be processed as a "any" type member.
+            initialized_ = add_primitive_or_string_member(IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->create_string_type(
+                                    static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @default annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_DEFAULT_TAG <<
+                            "'.");
+            return false;
+        }
+
+        descriptor->default_value(parameters.at(IDL_VALUE_TAG));
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @bit_bound annotation
+ */
+class BitBoundAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    BitBoundAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_BIT_BOUND_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~BitBoundAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(
+                                IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16));
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
+                            "'.");
+            return false;
+        }
+
+        if (TK_BITSET != descriptor->kind() || TK_BITMASK != descriptor->kind())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "TypeDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
+                                                                  << "' for bitset/bitmask types.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_UINT16> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
+            descriptor->bound({value});
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG << "': " <<
+                            e.what());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
+                            "'.");
+            return false;
+        }
+
+        if (TK_ENUM != descriptor->type()->get_kind())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "MemberDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
+                                                                    << "' for enumeration types.");
+            return false;
+        }
+
+        TypeForKind<TK_UINT16> value;
+
+        try
+        {
+            value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
+                            "'.");
+            return false;
+        }
+
+        DynamicType::_ref_type member_type;
+
+        if (value == 8)
+        {
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT8);
+        }
+        else if (value == 16)
+        {
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16);
+        }
+        else if (value == 32)
+        {
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32);
+        }
+        else if (value == 64)
+        {
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Invalid bit bound value '" << value << "' for annotation '"
+                                                << IDL_BUILTIN_ANN_BIT_BOUND_TAG << "'.");
+            return false;
+        }
+
+        descriptor->type(member_type);
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @external annotation
+ */
+class ExternalAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    ExternalAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_EXTERNAL_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~ExternalAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(
+                                IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
+                                IDL_TRUE_TAG);
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @external annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_EXTERNAL_TAG <<
+                            "'.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(parameters.at(IDL_VALUE_TAG)));
+            descriptor->is_shared(value);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_EXTERNAL_TAG <<
+                            "'.");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @nested annotation
+ */
+class NestedAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    NestedAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_NESTED_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~NestedAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            initialized_ = add_primitive_or_string_member(
+                                IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
+                                IDL_TRUE_TAG);
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_NESTED_TAG <<
+                            "'.");
+            return false;
+        }
+
+        try
+        {
+            TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(parameters.at(IDL_VALUE_TAG)));
+            descriptor->is_nested(value);
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Failed to convert value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_NESTED_TAG << "': " <<
+                            e.what());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @nested annotation to a MemberDescriptor.");
+        return false;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @try_construct annotation
+ */
+class TryConstructAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    TryConstructAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~TryConstructAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            bool success {true};
+
+            TypeDescriptor::_ref_type enum_type_descriptor = traits<TypeDescriptor>::make_shared();
+            enum_type_descriptor->kind(TK_ENUM);
+            enum_type_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG);
+            DynamicTypeBuilder::_ref_type enum_builder = DynamicTypeBuilderFactory::get_instance()->create_type(enum_type_descriptor);
+            MemberDescriptor::_ref_type enum_member_descriptor = traits<MemberDescriptor>::make_shared();
+            enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_DISCARD_TAG);
+            enum_builder->add_member(enum_member_descriptor);
+            enum_member_descriptor = traits<MemberDescriptor>::make_shared();
+            enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG);
+            enum_builder->add_member(enum_member_descriptor);
+            enum_member_descriptor = traits<MemberDescriptor>::make_shared();
+            enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
+            enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TRIM_TAG);
+            enum_builder->add_member(enum_member_descriptor);
+
+            success &= add_declared_type(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG, enum_builder->build());
+            success &= add_declared_type_member(
+                            IDL_VALUE_TAG,
+                            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG,
+                            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG);
+
+            initialized_ = success;
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @try_construct annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG <<
+                            "'.");
+            return false;
+        }
+
+        const std::string& value = parameters.at(IDL_VALUE_TAG);
+        if (value == IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_DISCARD_TAG)
+        {
+            descriptor->try_construct_kind(TryConstructKind::DISCARD);
+        }
+        else if (value == IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG)
+        {
+            descriptor->try_construct_kind(TryConstructKind::USE_DEFAULT);
+        }
+        else if (value == IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TRIM_TAG)
+        {
+            descriptor->try_construct_kind(TryConstructKind::TRIM);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Invalid value '" << value
+                                      << "' for annotation '" << IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG << "'.");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
+
+/**
+ * @brief @value annotation
+ */
+class ValueAnnotation final : public BuiltinAnnotation
+{
+public:
+
+    ValueAnnotation()
+        : BuiltinAnnotation(IDL_BUILTIN_ANN_VALUE_TAG)
+        , initialized_(false)
+    {
+    }
+
+    ~ValueAnnotation() = default;
+
+    bool initialize() override
+    {
+        if (!initialized_)
+        {
+            // Note: The member is processed as a string, so it can be used to set the default value of any type.
+            // In the future, it should be processed as a "any" type member.
+            initialized_ = add_primitive_or_string_member(
+                                IDL_VALUE_TAG,
+                                DynamicTypeBuilderFactory::get_instance()->create_string_type(
+                                    static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+        }
+
+        return initialized_;
+    }
+
+protected:
+
+    bool apply_to_type(
+            TypeDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @value annotation to a TypeDescriptor.");
+        return false;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        assert(descriptor != nullptr);
+
+        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Missing required parameter '" << IDL_VALUE_TAG
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG <<
+                            "'.");
+            return false;
+        }
+
+        descriptor->default_value(parameters.at(IDL_VALUE_TAG));
+
+        // Check that the default value is consistent with the member type
+        if (!descriptor->is_consistent())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Default value '" << parameters.at(IDL_VALUE_TAG)
+                                      << "' is not consistent with the member type for annotation '"
+                                      << IDL_BUILTIN_ANN_DEFAULT_TAG << "'.");
+            return false;
+        }
+
+        return true;
+    }
+
+    bool initialized_;
+};
 
 /**
  * @brief Class used to manage a list of annotations
@@ -812,661 +1950,118 @@ public:
      */
     static AnnotationList from_builtin()
     {
-        auto default_type_descriptor_handler = [](TypeDescriptor::_ref_type&, const std::map<std::string, std::string>&)
-                {
-                    EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply an invalid annotation to a TypeDescriptor.");
-                    return false;
-                };
-        auto default_member_descriptor_handler = [](MemberDescriptor::_ref_type&, const std::map<std::string,
-                        std::string>&)
-                {
-                    EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply an invalid annotation to a MemberDescriptor.");
-                    return false;
-                };
-
-        std::function<bool(TypeDescriptor::_ref_type&,
-                const std::map<std::string, std::string>&)> type_descriptor_handler;
-        std::function<bool(MemberDescriptor::_ref_type&,
-                const std::map<std::string, std::string>&)> member_descriptor_handler;
-
         AnnotationList list;
 
         // @id
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(
-                            IDL_PARSER,
-                            "Missing required parameter '" << IDL_VALUE_TAG
-                                                           << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "'.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_UINT32> value = TypeValueConverter::sto(params.at(IDL_VALUE_TAG));
-                        descriptor->id(value);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(
-                            IDL_PARSER,
-                            "Failed to convert value '" << params.at(
-                                IDL_VALUE_TAG)
-                                                        << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "': " <<
-                                        e.what());
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        Annotation ann(
-            IDL_BUILTIN_ANN_ID_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        ann.add_primitive_or_string_member(IDL_VALUE_TAG,
-                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
-        list.add_annotation(ann);
+        auto id_annotation = std::make_shared<IdAnnotation>();
+        if (!id_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @id annotation.");
+            throw std::runtime_error("Failed to initialize @id annotation.");
+        }
+        list.add_annotation(id_annotation);
 
         // @optional
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_OPTIONAL_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(params.at(
-                                            IDL_VALUE_TAG)));
-                        descriptor->is_optional(value);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_OPTIONAL_TAG << "': " <<
-                                        e.what());
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_OPTIONAL_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        if (!ann.add_primitive_or_string_member(
-                    IDL_VALUE_TAG,
-                    DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
-                    IDL_TRUE_TAG))
+        auto optional_annotation = std::make_shared<OptionalAnnotation>();
+        if (!optional_annotation->initialize())
         {
-            EPROSIMA_LOG_ERROR(IDL_PARSER,
-                    "Failed to add member to annotation '" << IDL_BUILTIN_ANN_OPTIONAL_TAG << "'.");
-            throw std::runtime_error("Failed to add member to annotation.");
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @optional annotation.");
+            throw std::runtime_error("Failed to initialize @optional annotation.");
         }
-        list.add_annotation(ann);
+        list.add_annotation(optional_annotation);
 
         // @position
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_POSITION_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_UINT16> value = TypeValueConverter::sto(params.at(IDL_VALUE_TAG));
-                        descriptor->id(value);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_POSITION_TAG << "': " <<
-                                        e.what());
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_POSITION_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16));
-        list.add_annotation(ann);
+        auto position_annotation = std::make_shared<PositionAnnotation>();
+        if (!position_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @position annotation.");
+            throw std::runtime_error("Failed to initialize @position annotation.");
+        }
+        list.add_annotation(position_annotation);
 
         // @extensibility
-        type_descriptor_handler =
-                [](TypeDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_EXTENSIBILITY_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    const std::string& value = params.at(IDL_VALUE_TAG);
-                    if (value == IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_FINAL_TAG)
-                    {
-                        descriptor->extensibility_kind(ExtensibilityKind::FINAL);
-                    }
-                    else if (value == IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_APPENDABLE_TAG)
-                    {
-                        descriptor->extensibility_kind(ExtensibilityKind::APPENDABLE);
-                    }
-                    else if (value == IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_MUTABLE_TAG)
-                    {
-                        descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Invalid value '" << value
-                                                  << "' for annotation '" << IDL_BUILTIN_ANN_EXTENSIBILITY_TAG << "'.");
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_EXTENSIBILITY_TAG,
-            type_descriptor_handler,
-            default_member_descriptor_handler);
-
-        TypeDescriptor::_ref_type enum_type_descriptor {traits<TypeDescriptor>::make_shared()};
-        enum_type_descriptor->kind(TK_ENUM);
-        enum_type_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_TAG);
-        DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                        enum_type_descriptor)};
-        MemberDescriptor::_ref_type enum_member_descriptor {traits<MemberDescriptor>::make_shared()};
-        enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        enum_member_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_FINAL_TAG);
-        enum_builder->add_member(enum_member_descriptor);
-        enum_member_descriptor = traits<MemberDescriptor>::make_shared();
-        enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        enum_member_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_APPENDABLE_TAG);
-        enum_builder->add_member(enum_member_descriptor);
-        enum_member_descriptor = traits<MemberDescriptor>::make_shared();
-        enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        enum_member_descriptor->name(IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_MUTABLE_TAG);
-        enum_builder->add_member(enum_member_descriptor);
-
-        ann.add_declared_type(
-            IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_TAG,
-            enum_builder->build());
-        ann.add_declared_type_member(
-            IDL_VALUE_TAG,
-            IDL_BUILTIN_ANN_EXTENSIBILITY_KIND_TAG);
-        list.add_annotation(ann);
+        auto extensibility_annotation = std::make_shared<ExtensibilityAnnotation>();
+        if (!extensibility_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @extensibility annotation.");
+            throw std::runtime_error("Failed to initialize @extensibility annotation.");
+        }
+        list.add_annotation(extensibility_annotation);
 
         // @final
-        type_descriptor_handler = [](TypeDescriptor::_ref_type& descriptor, const std::map<std::string, std::string>&)
-                {
-                    descriptor->extensibility_kind(ExtensibilityKind::FINAL);
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_FINAL_TAG,
-            type_descriptor_handler,
-            default_member_descriptor_handler);
-        list.add_annotation(ann);
+        list.add_annotation(std::make_shared<FinalAnnotation>());
 
         // @appendable
-        type_descriptor_handler = [](TypeDescriptor::_ref_type& descriptor, const std::map<std::string, std::string>&)
-                {
-                    descriptor->extensibility_kind(ExtensibilityKind::APPENDABLE);
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_APPENDABLE_TAG,
-            type_descriptor_handler,
-            default_member_descriptor_handler);
-        list.add_annotation(ann);
+        list.add_annotation(std::make_shared<AppendableAnnotation>());
 
         // @mutable
-        type_descriptor_handler = [](TypeDescriptor::_ref_type& descriptor, const std::map<std::string, std::string>&)
-                {
-                    descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_MUTABLE_TAG,
-            type_descriptor_handler,
-            default_member_descriptor_handler);
-        list.add_annotation(ann);
+        list.add_annotation(std::make_shared<MutableAnnotation>());
 
         // @key
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_KEY_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(params.at(
-                                            IDL_VALUE_TAG)));
-                        descriptor->is_key(value);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_KEY_TAG << "': " <<
-                                        e.what());
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_KEY_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
-            IDL_TRUE_TAG);
-        list.add_annotation(ann);
+        auto key_annotation = std::make_shared<KeyAnnotation>();
+        if (!key_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @key annotation.");
+            throw std::runtime_error("Failed to initialize @key annotation.");
+        }
+        list.add_annotation(key_annotation);
 
         // @default_literal
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor, const std::map<std::string, std::string>&)
-                {
-                    descriptor->is_default_label(true);
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_DEFAULT_LITERAL_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        list.add_annotation(ann);
+        list.add_annotation(std::make_shared<DefaultLiteralAnnotation>());
 
         // @default
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_DEFAULT_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    descriptor->default_value(params.at(IDL_VALUE_TAG));
-                    return true;
-                };
-        ann = Annotation(
-            IDL_BUILTIN_ANN_DEFAULT_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        // Note: The member is processed as a string, so it can be used to set the default value of any type.
-        // In the future, it should be processed as a "any" type member.
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->create_string_type(
-                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
-        list.add_annotation(ann);
+        auto default_annotation = std::make_shared<DefaultAnnotation>();
+        if (!default_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @default annotation.");
+            throw std::runtime_error("Failed to initialize @default annotation.");
+        }
+        list.add_annotation(default_annotation);
 
         // @bit_bound
-        type_descriptor_handler =
-                [](TypeDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    if (TK_BITSET != descriptor->kind() || TK_BITMASK != descriptor->kind())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "TypeDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
-                                                                              << "' for bitset/bitmask types.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_UINT16> value = TypeValueConverter::sto(params.at(IDL_VALUE_TAG));
-                        descriptor->bound({value});
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG << "': " <<
-                                        e.what());
-                        return false;
-                    }
-
-                    return true;
-                };
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    if (TK_ENUM != descriptor->type()->get_kind())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "MemberDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
-                                                                                << "' for enumeration types.");
-                        return false;
-                    }
-
-                    TypeForKind<TK_UINT16> value;
-
-                    try
-                    {
-                        value = TypeValueConverter::sto(params.at(IDL_VALUE_TAG));
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    DynamicType::_ref_type member_type;
-
-                    if (value == 8)
-                    {
-                        member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT8);
-                    }
-                    else if (value == 16)
-                    {
-                        member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16);
-                    }
-                    else if (value == 32)
-                    {
-                        member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32);
-                    }
-                    else if (value == 64)
-                    {
-                        member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Invalid bit bound value '" << value << "' for annotation '"
-                                                            << IDL_BUILTIN_ANN_BIT_BOUND_TAG << "'.");
-                        return false;
-                    }
-
-                    descriptor->type(member_type);
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_BIT_BOUND_TAG,
-            type_descriptor_handler,
-            member_descriptor_handler);
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16));
-        list.add_annotation(ann);
+        auto bit_bound_annotation = std::make_shared<BitBoundAnnotation>();
+        if (!bit_bound_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @bit_bound annotation.");
+            throw std::runtime_error("Failed to initialize @bit_bound annotation.");
+        }
+        list.add_annotation(bit_bound_annotation);
 
         // @external
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_EXTERNAL_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(params.at(
-                                            IDL_VALUE_TAG)));
-                        descriptor->is_shared(value);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_EXTERNAL_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_EXTERNAL_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
-            IDL_TRUE_TAG);
-        list.add_annotation(ann);
+        auto external_annotation = std::make_shared<ExternalAnnotation>();
+        if (!external_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @external annotation.");
+            throw std::runtime_error("Failed to initialize @external annotation.");
+        }
+        list.add_annotation(external_annotation);
 
         // @nested
-        type_descriptor_handler =
-                [](TypeDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_NESTED_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    try
-                    {
-                        TypeForKind<TK_BOOLEAN> value = TypeValueConverter::sto(utils::to_lower(params.at(
-                                            IDL_VALUE_TAG)));
-                        descriptor->is_nested(value);
-                    }
-                    catch (const std::exception& e)
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Failed to convert value '" << params.at(
-                                    IDL_VALUE_TAG)
-                                                            << "' for annotation '" << IDL_BUILTIN_ANN_NESTED_TAG << "': " <<
-                                        e.what());
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_NESTED_TAG,
-            type_descriptor_handler,
-            default_member_descriptor_handler);
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
-            IDL_TRUE_TAG);
-        list.add_annotation(ann);
+        auto nested_annotation = std::make_shared<NestedAnnotation>();
+        if (!nested_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @nested annotation.");
+            throw std::runtime_error("Failed to initialize @nested annotation.");
+        }
+        list.add_annotation(nested_annotation);
 
         // @try_construct
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    const std::string& value = params.at(IDL_VALUE_TAG);
-                    if (value == IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_DISCARD_TAG)
-                    {
-                        descriptor->try_construct_kind(TryConstructKind::DISCARD);
-                    }
-                    else if (value == IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG)
-                    {
-                        descriptor->try_construct_kind(TryConstructKind::USE_DEFAULT);
-                    }
-                    else if (value == IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TRIM_TAG)
-                    {
-                        descriptor->try_construct_kind(TryConstructKind::TRIM);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Invalid value '" << value
-                                                  << "' for annotation '" << IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG << "'.");
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-
-        enum_type_descriptor = traits<TypeDescriptor>::make_shared();
-        enum_type_descriptor->kind(TK_ENUM);
-        enum_type_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG);
-        enum_builder = DynamicTypeBuilderFactory::get_instance()->create_type(enum_type_descriptor);
-        enum_member_descriptor = traits<MemberDescriptor>::make_shared();
-        enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_DISCARD_TAG);
-        enum_builder->add_member(enum_member_descriptor);
-        enum_member_descriptor = traits<MemberDescriptor>::make_shared();
-        enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG);
-        enum_builder->add_member(enum_member_descriptor);
-        enum_member_descriptor = traits<MemberDescriptor>::make_shared();
-        enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
-        enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TRIM_TAG);
-        enum_builder->add_member(enum_member_descriptor);
-
-        ann.add_declared_type(
-            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG,
-            enum_builder->build());
-        ann.add_declared_type_member(
-            IDL_VALUE_TAG,
-            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG,
-            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG);
-        list.add_annotation(ann);
+        auto try_construct_annotation = std::make_shared<TryConstructAnnotation>();
+        if (!try_construct_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @try_construct annotation.");
+            throw std::runtime_error("Failed to initialize @try_construct annotation.");
+        }
+        list.add_annotation(try_construct_annotation);
 
         // @value
-        member_descriptor_handler =
-                [](MemberDescriptor::_ref_type& descriptor,
-                        const std::map<std::string, std::string>& params)
-                {
-                    if (params.find(IDL_VALUE_TAG) == params.end())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Missing required parameter '" << IDL_VALUE_TAG
-                                                               << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG <<
-                                        "'.");
-                        return false;
-                    }
-
-                    descriptor->default_value(params.at(IDL_VALUE_TAG));
-
-                    // Check that the default value is consistent with the member type
-                    if (!descriptor->is_consistent())
-                    {
-                        EPROSIMA_LOG_ERROR(IDL_PARSER,
-                                "Default value '" << params.at(IDL_VALUE_TAG)
-                                                  << "' is not consistent with the member type for annotation '"
-                                                  << IDL_BUILTIN_ANN_DEFAULT_TAG << "'.");
-                        return false;
-                    }
-
-                    return true;
-                };
-
-        ann = Annotation(
-            IDL_BUILTIN_ANN_VALUE_TAG,
-            default_type_descriptor_handler,
-            member_descriptor_handler);
-        // Note: The member is processed as a string, so it can be used to set the default value of any type.
-        // In the future, it should be processed as a "any" type member.
-        ann.add_primitive_or_string_member(
-            IDL_VALUE_TAG,
-            DynamicTypeBuilderFactory::get_instance()->create_string_type(
-                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
-        list.add_annotation(ann);
+        auto value_annotation = std::make_shared<ValueAnnotation>();
+        if (!value_annotation->initialize())
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER, "Failed to initialize @value annotation.");
+            throw std::runtime_error("Failed to initialize @value annotation.");
+        }
+        list.add_annotation(value_annotation);
 
         // TODO: Add other built-in annotations when supported
         // @autoid (Unsupported)
@@ -1489,18 +2084,23 @@ public:
      * @param annotation The annotation to add.
      */
     void add_annotation(
-            const Annotation& annotation)
+            const std::shared_ptr<Annotation>& annotation)
     {
-        if (has_annotation(annotation.get_name()))
+        assert(annotation != nullptr);
+        assert(!annotation->get_name().empty());
+
+        const std::string& name = annotation->get_name();
+
+        if (has_annotation(name))
         {
             EPROSIMA_LOG_WARNING(IDL_PARSER,
-                    "Ignoring annotation '" << annotation.get_name()
+                    "Ignoring annotation '" << name
                                             << "': already exists in the list.");
         }
         else
         {
-            annotations_.push_back(annotation);
-            EPROSIMA_LOG_INFO(IDL_PARSER, "Added annotation '" << annotation.get_name() << "'");
+            annotations_[name] = annotation;
+            EPROSIMA_LOG_INFO(IDL_PARSER, "Added annotation '" << name << "'");
         }
     }
 
@@ -1512,7 +2112,7 @@ public:
     void delete_annotation(
             const std::string& annotation_name)
     {
-        auto it = find_annotation(annotation_name);
+        auto it = annotations_.find(annotation_name);
 
         if (it != annotations_.end())
         {
@@ -1534,7 +2134,7 @@ public:
     bool has_annotation(
             const std::string& annotation_name) const
     {
-        auto it = find_annotation(annotation_name);
+        auto it = annotations_.find(annotation_name);
         return it != annotations_.end();
     }
 
@@ -1547,11 +2147,11 @@ public:
     const Annotation* get_annotation(
             const std::string& annotation_name) const
     {
-        auto it = find_annotation(annotation_name);
+        auto it = annotations_.find(annotation_name);
 
         if (it != annotations_.end())
         {
-            return &(*it);
+            return it->second.get();
         }
         else
         {
@@ -1570,7 +2170,7 @@ public:
     {
         for (const auto& annotation : annotations_)
         {
-            func(annotation);
+            func(annotation.second);
         }
     }
 
@@ -1580,25 +2180,13 @@ public:
     {
         for (auto& annotation : annotations_)
         {
-            func(annotation);
+            func(annotation.second);
         }
     }
 
 protected:
 
-    std::vector<Annotation>::const_iterator find_annotation(
-            const std::string& name) const
-    {
-        return std::find_if(
-            annotations_.begin(),
-            annotations_.end(),
-            [&name](const Annotation& ann)
-            {
-                return ann.get_name() == name;
-            });
-    }
-
-    std::vector<Annotation> annotations_;
+    std::map<std::string, std::shared_ptr<Annotation>> annotations_;
 };
 
 } // namespace idlparser
