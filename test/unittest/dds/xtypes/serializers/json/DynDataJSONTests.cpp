@@ -17,6 +17,7 @@
 #include <fstream>
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
@@ -291,6 +292,9 @@ TEST(DynDataJSONTests, json_deserialize_negative)
         ASSERT_NE(dyn_type, nullptr);
         test_negative_case(json, dyn_type);
     }
+
+    // Flush log before finishing to avoid deadlock in Windows (Redmine #23458)
+    Log::Flush();
 }
 
 int main(
