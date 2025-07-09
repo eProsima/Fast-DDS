@@ -814,9 +814,6 @@ void sample_lost_test_init(
         PubSubWriter<T>& writer,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
-    reader.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE);
-    writer.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE);
-
     sample_lost_test_dw_init(writer);
     sample_lost_test_dr_init(reader, functor);
 
