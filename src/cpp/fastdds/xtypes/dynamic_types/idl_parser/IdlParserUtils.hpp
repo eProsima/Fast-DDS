@@ -73,6 +73,16 @@ std::string to_lower(
     return result;
 }
 
+//! Remove a given character from a string
+std::string remove_char(
+        const std::string& s,
+        char c)
+{
+    std::string result = s;
+    result.erase(std::remove(result.begin(), result.end(), c), result.end());
+    return result;
+}
+
 } // namespace utils
 } // namespace idlparser
 } // namespace dds

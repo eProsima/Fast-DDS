@@ -79,6 +79,9 @@ struct AnnotationParameterValues
                 continue;
             }
 
+            // Remove escape characters in string values
+            param_token = utils::remove_char(param_token, '\"');
+
             auto it = param_token.find("=");
             if (it != std::string::npos)
             {
