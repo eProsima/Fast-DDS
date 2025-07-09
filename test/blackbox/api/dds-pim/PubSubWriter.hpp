@@ -1547,10 +1547,10 @@ public:
     }
 
     PubSubWriter& socket_buffer_size(
-            uint32_t sockerBufferSize)
+            uint32_t socketBufferSize)
     {
-        participant_qos_.transport().listen_socket_buffer_size = sockerBufferSize;
-        participant_qos_.transport().send_socket_buffer_size = sockerBufferSize;
+        participant_qos_.transport().listen_socket_buffer_size = socketBufferSize;
+        participant_qos_.transport().send_socket_buffer_size = socketBufferSize;
         return *this;
     }
 
