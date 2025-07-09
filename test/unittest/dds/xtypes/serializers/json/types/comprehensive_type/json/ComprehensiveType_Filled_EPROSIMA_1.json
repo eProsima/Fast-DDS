@@ -80,7 +80,7 @@
                 "my_long": 1,
                 "my_longdouble": 0.5,
                 "my_longlong": 1,
-                "my_octet": 0,
+                "my_octet": 1,
                 "my_short": 1,
                 "my_uint8": 1,
                 "my_ulong": 1,
@@ -115,7 +115,7 @@
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
-            "my_octet": 0,
+            "my_octet": 1,
             "my_recursive_alias": {
                 "name": "B",
                 "value": 1
@@ -222,7 +222,7 @@
                 "my_long": 1,
                 "my_longdouble": 0.5,
                 "my_longlong": 1,
-                "my_octet": 0,
+                "my_octet": 1,
                 "my_short": 1,
                 "my_uint8": 1,
                 "my_ulong": 1,
@@ -257,7 +257,7 @@
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
-            "my_octet": 0,
+            "my_octet": 1,
             "my_recursive_alias": {
                 "name": "B",
                 "value": 1
@@ -366,7 +366,7 @@
                 "my_long": 1,
                 "my_longdouble": 0.5,
                 "my_longlong": 1,
-                "my_octet": 0,
+                "my_octet": 1,
                 "my_short": 1,
                 "my_uint8": 1,
                 "my_ulong": 1,
@@ -401,7 +401,7 @@
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
-            "my_octet": 0,
+            "my_octet": 1,
             "my_recursive_alias": {
                 "name": "B",
                 "value": 1
@@ -510,7 +510,7 @@
                 "my_long": 1,
                 "my_longdouble": 0.5,
                 "my_longlong": 1,
-                "my_octet": 0,
+                "my_octet": 1,
                 "my_short": 1,
                 "my_uint8": 1,
                 "my_ulong": 1,
@@ -545,7 +545,7 @@
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
-            "my_octet": 0,
+            "my_octet": 1,
             "my_recursive_alias": {
                 "name": "B",
                 "value": 1
@@ -654,7 +654,7 @@
             "my_long": 1,
             "my_longdouble": 0.5,
             "my_longlong": 1,
-            "my_octet": 0,
+            "my_octet": 1,
             "my_short": 1,
             "my_uint8": 1,
             "my_ulong": 1,
@@ -689,7 +689,7 @@
         "my_long": 1,
         "my_longdouble": 0.5,
         "my_longlong": 1,
-        "my_octet": 0,
+        "my_octet": 1,
         "my_recursive_alias": {
             "name": "B",
             "value": 1

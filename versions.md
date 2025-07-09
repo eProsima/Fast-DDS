@@ -22,6 +22,7 @@ Forthcoming
 * Process key-only payloads:
   * New `is_serialized_key` attribute in `SerializedPayload_t`.
 * Add field `has_more_replies` to `WriteParams` and `SampleInfo`
+* Add new JSON to DynamicData deserializer (`json_deserialize`).
 
 Version v3.2.2
 --------------

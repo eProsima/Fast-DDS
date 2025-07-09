@@ -29,6 +29,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/utils.hpp>
 #include <ScopedLogs.hpp>
 
 using namespace eprosima::fastdds::rtps;
@@ -48,10 +49,35 @@ void encoding_decoding_test(
             static_cast<uint32_t>(pubsubType.calculate_serialized_size(&encoding_data, encoding));
     SerializedPayload_t payload(payloadSize);
     EXPECT_TRUE(pubsubType.serialize(&encoding_data, payload, encoding));
+
     EXPECT_EQ(payload.length, payloadSize);
     EXPECT_LE(payload.length, pubsubType->max_serialized_type_size);
     EXPECT_TRUE(pubsubType.deserialize(payload, &decoding_data));
     EXPECT_TRUE(decoding_data->equals(encoding_data));
+
+    // Test JSON serialization and deserialization for struct types
+    if (TK_STRUCTURE == created_type->get_kind())
+    {
+        std::vector<DynamicDataJsonFormat> format_options =
+        {DynamicDataJsonFormat::EPROSIMA, DynamicDataJsonFormat::OMG};
+        for (const auto& format_kind : format_options)
+        {
+            std::stringstream generated_json;
+            EXPECT_EQ(json_serialize(
+                        encoding_data,
+                        format_kind,
+                        generated_json), RETCODE_OK);
+
+            DynamicData::_ref_type data_from_json;
+            EXPECT_EQ(json_deserialize(
+                        generated_json.str(),
+                        created_type,
+                        format_kind,
+                        data_from_json), RETCODE_OK);
+
+            EXPECT_TRUE(encoding_data->equals(data_from_json));
+        }
+    }
 
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         0, PARTICIPANT_QOS_DEFAULT);

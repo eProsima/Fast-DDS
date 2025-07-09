@@ -5,15 +5,29 @@
                 0
             ],
             "complex_union": {
-                "fourth": {
-                    "second": 2
-                }
+                "third": 2
             },
             "enum_sequence": [
                 "C"
             ],
             "inner_union": {
-                "second": 2
+                "first": {
+                    "my_bool": false,
+                    "my_char": "o",
+                    "my_double": 1.0,
+                    "my_float": 1.0,
+                    "my_int8": 2,
+                    "my_long": 2,
+                    "my_longdouble": 1.0,
+                    "my_longlong": 2,
+                    "my_octet": 2,
+                    "my_short": 2,
+                    "my_uint8": 2,
+                    "my_ulong": 2,
+                    "my_ulonglong": 2,
+                    "my_ushort": 2,
+                    "my_wchar": "o"
+                }
             },
             "long_array": [
                 [
@@ -68,7 +82,7 @@
                 "my_long": 2,
                 "my_longdouble": 1.0,
                 "my_longlong": 2,
-                "my_octet": 0,
+                "my_octet": 2,
                 "my_short": 2,
                 "my_uint8": 2,
                 "my_ulong": 2,
@@ -94,7 +108,7 @@
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
-            "my_octet": 0,
+            "my_octet": 2,
             "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
@@ -123,15 +137,29 @@
                 0
             ],
             "complex_union": {
-                "fourth": {
-                    "second": 2
-                }
+                "third": 2
             },
             "enum_sequence": [
                 "C"
             ],
             "inner_union": {
-                "second": 2
+                "first": {
+                    "my_bool": false,
+                    "my_char": "o",
+                    "my_double": 1.0,
+                    "my_float": 1.0,
+                    "my_int8": 2,
+                    "my_long": 2,
+                    "my_longdouble": 1.0,
+                    "my_longlong": 2,
+                    "my_octet": 2,
+                    "my_short": 2,
+                    "my_uint8": 2,
+                    "my_ulong": 2,
+                    "my_ulonglong": 2,
+                    "my_ushort": 2,
+                    "my_wchar": "o"
+                }
             },
             "long_array": [
                 [
@@ -186,7 +214,7 @@
                 "my_long": 2,
                 "my_longdouble": 1.0,
                 "my_longlong": 2,
-                "my_octet": 0,
+                "my_octet": 2,
                 "my_short": 2,
                 "my_uint8": 2,
                 "my_ulong": 2,
@@ -212,7 +240,7 @@
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
-            "my_octet": 0,
+            "my_octet": 2,
             "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
@@ -243,15 +271,29 @@
                 0
             ],
             "complex_union": {
-                "fourth": {
-                    "second": 2
-                }
+                "third": 2
             },
             "enum_sequence": [
                 "C"
             ],
             "inner_union": {
-                "second": 2
+                "first": {
+                    "my_bool": false,
+                    "my_char": "o",
+                    "my_double": 1.0,
+                    "my_float": 1.0,
+                    "my_int8": 2,
+                    "my_long": 2,
+                    "my_longdouble": 1.0,
+                    "my_longlong": 2,
+                    "my_octet": 2,
+                    "my_short": 2,
+                    "my_uint8": 2,
+                    "my_ulong": 2,
+                    "my_ulonglong": 2,
+                    "my_ushort": 2,
+                    "my_wchar": "o"
+                }
             },
             "long_array": [
                 [
@@ -306,7 +348,7 @@
                 "my_long": 2,
                 "my_longdouble": 1.0,
                 "my_longlong": 2,
-                "my_octet": 0,
+                "my_octet": 2,
                 "my_short": 2,
                 "my_uint8": 2,
                 "my_ulong": 2,
@@ -332,7 +374,7 @@
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
-            "my_octet": 0,
+            "my_octet": 2,
             "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
@@ -363,15 +405,29 @@
                 0
             ],
             "complex_union": {
-                "fourth": {
-                    "second": 2
-                }
+                "third": 2
             },
             "enum_sequence": [
                 "C"
             ],
             "inner_union": {
-                "second": 2
+                "first": {
+                    "my_bool": false,
+                    "my_char": "o",
+                    "my_double": 1.0,
+                    "my_float": 1.0,
+                    "my_int8": 2,
+                    "my_long": 2,
+                    "my_longdouble": 1.0,
+                    "my_longlong": 2,
+                    "my_octet": 2,
+                    "my_short": 2,
+                    "my_uint8": 2,
+                    "my_ulong": 2,
+                    "my_ulonglong": 2,
+                    "my_ushort": 2,
+                    "my_wchar": "o"
+                }
             },
             "long_array": [
                 [
@@ -426,7 +482,7 @@
                 "my_long": 2,
                 "my_longdouble": 1.0,
                 "my_longlong": 2,
-                "my_octet": 0,
+                "my_octet": 2,
                 "my_short": 2,
                 "my_uint8": 2,
                 "my_ulong": 2,
@@ -452,7 +508,7 @@
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
-            "my_octet": 0,
+            "my_octet": 2,
             "my_recursive_alias": "C",
             "my_short": 2,
             "my_string": "my_string",
@@ -483,15 +539,29 @@
             0
         ],
         "complex_union": {
-            "fourth": {
-                "second": 2
-            }
+            "third": 2
         },
         "enum_sequence": [
             "C"
         ],
         "inner_union": {
-            "second": 2
+            "first": {
+                "my_bool": false,
+                "my_char": "o",
+                "my_double": 1.0,
+                "my_float": 1.0,
+                "my_int8": 2,
+                "my_long": 2,
+                "my_longdouble": 1.0,
+                "my_longlong": 2,
+                "my_octet": 2,
+                "my_short": 2,
+                "my_uint8": 2,
+                "my_ulong": 2,
+                "my_ulonglong": 2,
+                "my_ushort": 2,
+                "my_wchar": "o"
+            }
         },
         "long_array": [
             [
@@ -546,7 +616,7 @@
             "my_long": 2,
             "my_longdouble": 1.0,
             "my_longlong": 2,
-            "my_octet": 0,
+            "my_octet": 2,
             "my_short": 2,
             "my_uint8": 2,
             "my_ulong": 2,
@@ -572,7 +642,7 @@
         "my_long": 2,
         "my_longdouble": 1.0,
         "my_longlong": 2,
-        "my_octet": 0,
+        "my_octet": 2,
         "my_recursive_alias": "C",
         "my_short": 2,
         "my_string": "my_string",
