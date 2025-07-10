@@ -1,0 +1,5 @@
+struct default_ann_valid_struct
+{
+    @default(2) long first;
+    @default("foo") string second;
+};
