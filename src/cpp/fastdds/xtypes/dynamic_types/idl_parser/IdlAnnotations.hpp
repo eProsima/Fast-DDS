@@ -1503,7 +1503,7 @@ protected:
             return false;
         }
 
-        if (TK_BITSET != descriptor->kind() || TK_BITMASK != descriptor->kind())
+        if ((TK_BITSET != descriptor->kind()) && (TK_BITMASK != descriptor->kind()))
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "TypeDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
@@ -1544,14 +1544,6 @@ protected:
             return false;
         }
 
-        if (TK_ENUM != descriptor->type()->get_kind())
-        {
-            EPROSIMA_LOG_ERROR(IDL_PARSER,
-                    "MemberDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
-                                                                    << "' for enumeration types.");
-            return false;
-        }
-
         TypeForKind<TK_UINT16> value;
 
         try
@@ -1572,19 +1564,15 @@ protected:
 
         if (value == 8)
         {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT8);
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT8);
         }
         else if (value == 16)
         {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16);
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16);
         }
         else if (value == 32)
         {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32);
-        }
-        else if (value == 64)
-        {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64);
+            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32);
         }
         else
         {
