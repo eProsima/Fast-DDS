@@ -796,12 +796,8 @@ void sample_lost_test_dr_init(
         PubSubReader<T>& reader,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
-    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-    udp_transport->sendBufferSize = SAMPLE_LOST_TEST_BUFFER_SIZE;
-    udp_transport->receiveBufferSize = SAMPLE_LOST_TEST_BUFFER_SIZE;
 
-    reader.disable_builtin_transport()
-            .add_user_transport_to_pparams(udp_transport)
+    reader.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE)
             .sample_lost_status_functor(functor)
             .init();
 
@@ -814,9 +810,6 @@ void sample_lost_test_init(
         PubSubWriter<T>& writer,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
-    reader.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE);
-    writer.socket_buffer_size(SAMPLE_LOST_TEST_BUFFER_SIZE);
-
     sample_lost_test_dw_init(writer);
     sample_lost_test_dr_init(reader, functor);
 

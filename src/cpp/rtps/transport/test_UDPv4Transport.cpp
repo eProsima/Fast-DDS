@@ -59,8 +59,9 @@ test_UDPv4Transport::test_UDPv4Transport(
 
     test_transport_options->test_UDPv4Transport_DropLogLength = 0;
     test_transport_options->test_UDPv4Transport_ShutdownAllNetwork = false;
-    UDPv4Transport::mSendBufferSize = descriptor.sendBufferSize;
-    UDPv4Transport::mReceiveBufferSize = descriptor.receiveBufferSize;
+    UDPv4Transport::configuration_.sendBufferSize = descriptor.sendBufferSize;
+    UDPv4Transport::configuration_.receiveBufferSize = descriptor.receiveBufferSize;
+    UDPv4Transport::configuration_.maxMessageSize = descriptor.maxMessageSize;
     for (auto interf : descriptor.interfaceWhiteList)
     {
         UDPv4Transport::interface_whitelist_.emplace_back(asio::ip::make_address_v4(interf));
