@@ -25,3 +25,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install apt dependencies
 RUN apt-get update && apt-get install --yes net-tools && rm -rf /var/lib/apt/lists/*
+
+FROM ubuntu:$ubuntu_version AS ubuntu-cli
+
+# Needed for a dependency that forces to set timezone
+ENV TZ=Europe/Madrid
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Avoids using interactions during building
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install apt dependencies
+RUN apt-get update && apt-get install --yes python3 python3-pip && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install psutil
