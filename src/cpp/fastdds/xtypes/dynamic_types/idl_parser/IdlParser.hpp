@@ -362,15 +362,27 @@ struct action<identifier>
             }
             else
             {
-                state["enum_member_names"] += scoped_identifier_name + ";";
-
-                if (state.count("annotation_names") && !state["annotation_names"].empty())
+                if (state.count("parsing_annotation") && state["parsing_annotation"] == "true")
                 {
-                    state["annotation_member_name"] = identifier_name;
-                    if (!ctx->annotations().update_pending_annotations(state))
+                    // identifier is an annotation's name, and handled in action<scoped_name>. Do nothing
+                    return;
+                }
+                if (state.count("parsing_annotation_params") && state["parsing_annotation_params"] == "true")
+                {
+                    // identifier is an annotation's parameter name, and handled in action<annotation_appl_param>. Do nothing
+                    return;
+                }
+                else
+                {
+                    state["enum_member_names"] +=  scoped_identifier_name + ";";
+                    if (state.count("annotation_names") && !state["annotation_names"].empty())
                     {
-                        EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum member");
-                        return;
+                        state["annotation_member_name"] = identifier_name;
+                        if (!ctx->annotations().update_pending_annotations(state))
+                        {
+                            EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum member");
+                            return;
+                        }
                     }
                 }
             }
@@ -1901,7 +1913,7 @@ struct action<enum_dcl>
 
             if (RETCODE_OK != builder->add_member(member_descriptor))
             {
-                EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to union: " << scoped_enum_name
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to enum: " << scoped_enum_name
                                                                                << ", member: " << member_name);
                 return;
             }
@@ -1995,7 +2007,6 @@ struct action<struct_def>
 
         }
         cleanup_guard{state, ctx};
-
         auto module = ctx->modules().current();
         const std::string scoped_struct_name = module->create_scoped_name(state["struct_name"]);
 
@@ -2702,6 +2713,36 @@ struct action<annotation_begin>
     }
 
 };
+
+template<>
+struct action<annotation_param_context_begin>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["parsing_annotation_params"] = "true";
+    }
+};
+
+template<>
+struct action<annotation_param_context_end>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        assert(state.count("parsing_annotation_params"));
+        state.erase("parsing_annotation_params");
+    }
+};
+
 
 template<>
 struct action<annotation_appl_params>

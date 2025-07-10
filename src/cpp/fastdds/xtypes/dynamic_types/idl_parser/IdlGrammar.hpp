@@ -329,7 +329,9 @@ struct const_dcl : seq<kw_const, const_type, opt<ws>, identifier, equal_op, cons
 struct annotation_appl_param : seq<identifier, equal_op, const_expr> {};
 struct annotation_appl_params : sor<seq<annotation_appl_param, star<seq<comma, annotation_appl_param>>>, const_expr> {};
 struct annotation_begin : TAO_PEGTL_STRING("@"){};
-struct annotation_appl : seq<annotation_begin, scoped_name, opt<open_parentheses, annotation_appl_params, close_parentheses>> {};
+struct annotation_param_context_begin: open_parentheses {};
+struct annotation_param_context_end: close_parentheses {};
+struct annotation_appl : seq<annotation_begin, scoped_name, opt<annotation_param_context_begin, annotation_appl_params, annotation_param_context_end>> {};
 struct any_const_type : kw_any {};
 struct annotation_member_type : sor<const_type, any_const_type, scoped_name> {};
 struct annotation_member : seq<opt<ws>, annotation_member_type, opt<ws>, simple_declarator, opt<seq<kw_default, const_expr>>, semicolon> {};
