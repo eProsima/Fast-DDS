@@ -1102,10 +1102,10 @@ public:
     }
 
     PubSubReader& socket_buffer_size(
-            uint32_t sockerBufferSize)
+            uint32_t socketBufferSize)
     {
-        participant_attr_.rtps.listenSocketBufferSize = sockerBufferSize;
-        participant_attr_.rtps.sendSocketBufferSize = sockerBufferSize;
+        participant_attr_.rtps.listenSocketBufferSize = socketBufferSize;
+        participant_attr_.rtps.sendSocketBufferSize = socketBufferSize;
         return *this;
     }
 
