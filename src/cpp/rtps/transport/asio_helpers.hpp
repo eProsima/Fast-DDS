@@ -86,6 +86,7 @@ struct asio_helpers
         socket.set_option(BufferOptionType(value_to_set), ec);
         if (!ec)
         {
+            // Last attempt was successful. Get the actual value set.
             BufferOptionType option;
             socket.get_option(option, ec);
             if (!ec && (option.value() >= value_to_set))
