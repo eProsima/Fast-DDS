@@ -153,7 +153,7 @@ bool test_UDPv4Transport::send(
         bool only_multicast_purpose,
         bool whitelisted,
         const std::chrono::steady_clock::time_point& max_blocking_time_point,
-        int32_t /* transport_priority */)
+        int32_t transport_priority)
 {
     fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 
@@ -177,7 +177,8 @@ bool test_UDPv4Transport::send(
                             *it,
                             only_multicast_purpose,
                             whitelisted,
-                            std::chrono::duration_cast<std::chrono::microseconds>(now - max_blocking_time_point));
+                            std::chrono::duration_cast<std::chrono::microseconds>(now - max_blocking_time_point),
+                            transport_priority);
 
             ++it;
         }
@@ -198,12 +199,13 @@ bool test_UDPv4Transport::send(
         const Locator& remote_locator,
         bool only_multicast_purpose,
         bool whitelisted,
-        const std::chrono::microseconds& timeout)
+        const std::chrono::microseconds& timeout,
+        int32_t transport_priority)
 {
     bool is_multicast_remote_address = fastdds::rtps::IPLocator::IPLocator::isMulticast(remote_locator);
     if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
-        if (packet_should_drop(buffers, total_bytes) || should_drop_locator(remote_locator))
+        if (packet_should_drop(buffers, total_bytes) || should_drop_locator(remote_locator, transport_priority))
         {
             statistics_info_.set_statistics_message_data(remote_locator, buffers.back(), total_bytes);
             log_drop(buffers, total_bytes);
@@ -254,10 +256,11 @@ static bool ReadSubmessageHeader(
 }
 
 bool test_UDPv4Transport::should_drop_locator(
-        const Locator& remote_locator)
+        const Locator& remote_locator,
+        int32_t transport_priority)
 {
-    return test_transport_options->locator_filter(remote_locator) ||
-           locator_filter_(remote_locator) ||
+    return test_transport_options->locator_filter(remote_locator, transport_priority) ||
+           locator_filter_(remote_locator, transport_priority) ||
            // If there are no interfaces (simulate_no_interfaces), only multicast and localhost traffic is sent
            (test_transport_options->simulate_no_interfaces &&
            !fastdds::rtps::IPLocator::isMulticast(remote_locator) &&

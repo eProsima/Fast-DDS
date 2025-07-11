@@ -102,7 +102,8 @@ private:
     test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter_;
 
     bool should_drop_locator(
-            const Locator& remote_locator);
+            const Locator& remote_locator,
+            int32_t transport_priority);
 
     bool log_drop(
             const std::vector<NetworkBuffer>& buffer,
@@ -121,7 +122,8 @@ private:
             const Locator& remote_locator,
             bool only_multicast_purpose,
             bool whitelisted,
-            const std::chrono::microseconds& timeout);
+            const std::chrono::microseconds& timeout,
+            int32_t transport_priority);
 };
 
 } // namespace rtps
