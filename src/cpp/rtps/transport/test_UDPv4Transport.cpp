@@ -152,7 +152,8 @@ bool test_UDPv4Transport::send(
         fastdds::rtps::LocatorsIterator* destination_locators_end,
         bool only_multicast_purpose,
         bool whitelisted,
-        const std::chrono::steady_clock::time_point& max_blocking_time_point)
+        const std::chrono::steady_clock::time_point& max_blocking_time_point,
+        int32_t /* transport_priority */)
 {
     fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 
