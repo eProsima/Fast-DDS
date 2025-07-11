@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>         
+        <data_writer profile_name="TRP-FUN-04">
+            <transport_priority>12</transport_priority>
+        </data_writer>
+    </profiles>
+</dds>
