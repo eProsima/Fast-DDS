@@ -1224,9 +1224,9 @@ ReturnCode_t DataWriterImpl::set_qos(
     {
         int32_t transport_priority = writer_->get_transport_priority();
 
-        if ( (qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
+        if ((qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
                 qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos()) ||
-            (transport_priority != qos_to_set.transport_priority().value) )
+                (transport_priority != qos_to_set.transport_priority().value))
         {
             // Update times and positive_acks attributes on RTPS Layer
             WriterAttributes w_att;
