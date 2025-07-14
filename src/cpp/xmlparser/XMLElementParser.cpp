@@ -4285,6 +4285,14 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, "transport_priority") == 0)
+        {
+            // transport_priority - int32
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &publisher.transport_priority, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'publisherProfileType'. Name: " << name);
