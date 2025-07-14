@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Pass value of `TransportPriorityQosPolicy` to transport layer.
+* Support annotated types and builtin annotations in IDL Parser.
 
 Version v3.3.0
 --------------
