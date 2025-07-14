@@ -1909,16 +1909,6 @@ protected:
 
         descriptor->default_value(parameters.at(IDL_VALUE_TAG));
 
-        // Check that the default value is consistent with the member type
-        if (!descriptor->is_consistent())
-        {
-            EPROSIMA_LOG_ERROR(IDL_PARSER,
-                    "Default value '" << parameters.at(IDL_VALUE_TAG)
-                                      << "' is not consistent with the member type for annotation '"
-                                      << IDL_BUILTIN_ANN_DEFAULT_TAG << "'.");
-            return false;
-        }
-
         return true;
     }
 

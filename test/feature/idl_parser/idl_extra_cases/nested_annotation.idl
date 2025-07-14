@@ -1,0 +1,24 @@
+@nested struct nested_ann_struct_valid
+{
+    long first;
+};
+
+@nested(value = TRUE) struct nested_ann_struct_keyword_valid
+{
+    long first;
+};
+
+@nested("invalid") struct nested_ann_struct_invalid_value_type
+{
+    long invalid_member;
+};
+
+@nested(value = TRUE, value2 = "extra") struct nested_ann_struct_extra_parameter
+{
+    long invalid_member;
+};
+
+struct nested_ann_on_member
+{
+    @nested long invalid_member;
+}

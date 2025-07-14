@@ -1,0 +1,20 @@
+struct value_ann_valid_struct
+{
+    @value("foo") string first;
+    @value(value = 8) long second;
+};
+
+struct value_ann_ann_invalid_value_type_struct
+{
+    @value("invalid") long invalid_member;
+};
+
+struct value_ann_extra_parameter_struct
+{
+    @value(value = 8, value2 = "extra") long invalid_member;
+};
+
+@value(8) struct value_ann_on_struct
+{
+    long first;
+};

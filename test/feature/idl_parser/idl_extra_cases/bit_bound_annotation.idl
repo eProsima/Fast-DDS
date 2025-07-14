@@ -1,0 +1,29 @@
+enum bit_bound_ann_valid_enum
+{
+    @bit_bound(8) ENUM_VALUE_1,
+    @bit_bound(value = 8) ENUM_VALUE_2
+};
+
+enum bit_bound_ann_invalid_bound_value_enum
+{
+    @bit_bound(100) ENUM_VALUE_1,
+    @bit_bound(100) ENUM_VALUE_2
+};
+
+enum bit_bound_ann_invalid_value_type_enum
+{
+    @bit_bound("invalid") ENUM_VALUE_1,
+    @bit_bound("invalid") ENUM_VALUE_2
+};
+
+enum bit_bound_ann_extra_parameter_enum
+{
+    @bit_bound(value = 8, value2 = "extra") ENUM_VALUE_1,
+    @bit_bound(value = 8, value2 = "extra") ENUM_VALUE_2
+};
+
+@bit_bound(8) struct bit_bound_ann_on_struct
+{
+    long first;
+    string second;
+};

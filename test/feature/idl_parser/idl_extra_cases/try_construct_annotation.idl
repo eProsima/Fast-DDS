@@ -1,0 +1,21 @@
+struct try_construct_ann_struct_valid
+{
+    @try_construct long first;
+    @try_construct(USE_DEFAULT) string second;
+    @try_construct(TRIM) string third;
+};
+
+struct try_construct_ann_invalid_value_type
+{
+    @try_construct("invalid") long invalid_member;
+};
+
+struct try_construct_ann_extra_parameter
+{
+    @try_construct(value = TRIM, value2 = "extra") long invalid_member;
+};
+
+@try_construct struct try_construct_ann_on_struct
+{
+    long first;
+};

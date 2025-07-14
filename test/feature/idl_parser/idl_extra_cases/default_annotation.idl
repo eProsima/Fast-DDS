@@ -1,5 +1,35 @@
 struct default_ann_valid_struct
 {
     @default(2) long first;
-    @default("foo") string second;
+    @default(value = "foo") string second;
+};
+
+union default_ann_valid_union switch(long)
+{
+    case 0:
+        @default(1) long first;
+    case 1:
+        @default("foo") string second;
+    default:
+        @default(3.14) float third;
+};
+
+struct default_ann_missing_value
+{
+    @default long invalid_member;
+};
+
+struct default_ann_invalid_value_type
+{
+    @default("invalid") long invalid_member;
+};
+
+struct default_ann_extra_parameter
+{
+    @default(value = 2, value2 = "extra") long invalid_member;
+};
+
+@default("foo") struct default_ann_on_struct
+{
+    long first;
 };
