@@ -147,7 +147,7 @@ public:
             bool only_multicast_purpose,
             bool whitelisted,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
-            int32_t transport_priority);
+            const int32_t transport_priority);
 
     /**
      * Performs the locator selection algorithm for this transport.

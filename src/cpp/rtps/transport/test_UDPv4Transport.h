@@ -49,7 +49,7 @@ public:
             bool only_multicast_purpose,
             bool whitelisted,
             const std::chrono::steady_clock::time_point& max_blocking_time_point,
-            int32_t transport_priority) override;
+            const int32_t transport_priority) override;
 
     virtual LocatorList NormalizeLocator(
             const Locator& locator) override;

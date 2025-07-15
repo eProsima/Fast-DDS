@@ -507,7 +507,7 @@ bool UDPTransportInterface::send(
         bool only_multicast_purpose,
         bool whitelisted,
         const std::chrono::steady_clock::time_point& max_blocking_time_point,
-        int32_t /* transport_priority */)
+        const int32_t /* transport_priority */)
 {
     fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 
