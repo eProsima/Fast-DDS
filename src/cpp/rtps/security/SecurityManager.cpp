@@ -4249,7 +4249,8 @@ void SecurityManager::resend_handshake_message_token(
                     on_validation_failed(dp_it->second->participant_data(), exception);
                     if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
                     {
-                        participant_stateless_message_writer_history_->remove_change(remote_participant_info->change_sequence_number_);
+                        participant_stateless_message_writer_history_->remove_change(
+                            remote_participant_info->change_sequence_number_);
                         remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
                     }
                 }
