@@ -61,6 +61,7 @@ std::string trim(
 }
 
 //! Convert a string to lower case
+//! @warning If the string contains multi-byte characters, this will trigger undefined behavior.
 std::string to_lower(
         const std::string& s)
 {
@@ -68,7 +69,7 @@ std::string to_lower(
     std::transform(result.begin(), result.end(), result.begin(),
             [](unsigned char c)
             {
-                return std::tolower(c);
+                return static_cast<char>(std::tolower(c));
             });
     return result;
 }
