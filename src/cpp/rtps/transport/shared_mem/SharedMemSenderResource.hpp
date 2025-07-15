@@ -38,15 +38,16 @@ public:
                     // No cleanup is required
                 };
 
-        send_buffers_lambda_ = [&transport](
+        send_lambda_ = [&transport](
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             LocatorsIterator* destination_locators_begin,
             LocatorsIterator* destination_locators_end,
-            const std::chrono::steady_clock::time_point& max_blocking_time_point) -> bool
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
+            int32_t transport_priority) -> bool
                 {
                     return transport.send(buffers, total_bytes, destination_locators_begin, destination_locators_end,
-                                   max_blocking_time_point);
+                                   max_blocking_time_point, transport_priority);
                 };
 
     }
