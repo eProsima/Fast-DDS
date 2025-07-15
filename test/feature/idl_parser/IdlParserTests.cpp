@@ -2768,10 +2768,9 @@ TEST_F(IdlParserTests, try_construct_builtin_annotation)
     EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
     EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
     EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::TRIM);
-    // TODO (For some reason, maybe a PEGTL bug, "DISCARD" identifier is not parsed correctly, matching only "D"). Uncomment when fixed.
-    // EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
-    // EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
-    // EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::DISCARD);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::DISCARD);
 
     // Negative case: Trying to annotate using @try_construct with invalid value type
     builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_invalid_value_type",

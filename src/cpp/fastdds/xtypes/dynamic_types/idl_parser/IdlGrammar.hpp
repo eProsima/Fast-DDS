@@ -129,11 +129,14 @@ struct float_literal : seq<
 
 // fixed-point literals
 using fixed_suffix = one<'d', 'D'>;
+struct fixed_number : sor<
+                            seq<plus<digit>, dot, star<digit>>,
+                            seq<dot, plus<digit>>,
+                            plus<digit>
+                         > {};
 struct fixed_pt_literal : seq<
                                 opt<one<'-'>>,
-                                not_at<seq<dot, fixed_suffix>>,
-                                star<digit>,
-                                opt<seq<dot, star<digit>>>,
+                                fixed_number,
                                 fixed_suffix
                              > {};
 

@@ -3,6 +3,7 @@ struct try_construct_ann_struct_valid
     @try_construct long first;
     @try_construct(USE_DEFAULT) string second;
     @try_construct(TRIM) string third;
+    @try_construct(DISCARD) string fourth;
 };
 
 struct try_construct_ann_invalid_value_type
