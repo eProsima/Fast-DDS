@@ -149,8 +149,10 @@ public:
     bool clear = true;
     bool allow_keyword_identifiers = false;
     bool ignore_redefinition = false;
+    bool should_continue = true;
     CharType char_translation = CHAR;
     WideCharType wchar_type = WCHAR_T;
+    std::function<bool(DynamicTypeBuilder::_ref_type)> on_builder_created = [](DynamicTypeBuilder::_ref_type) { return true; };
 
     // Results
     bool success = false;
@@ -2466,6 +2468,28 @@ public:
         }
         parse_file(idl_file, context);
         return context;
+    }
+
+    void parse_file(
+            const std::string& idl_file,
+            const IncludePathSeq& include_paths,
+            const std::string& preprocessor,
+            std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback)
+    {
+        Context context;
+        context.on_builder_created = callback;
+        if (!include_paths.empty())
+        {
+            context.include_paths = include_paths;
+            context.preprocess = true;
+            context.preprocessor_exec = preprocessor;
+            if (context.preprocessor_exec.empty())
+            {
+                context.preprocessor_exec = EPROSIMA_PLATFORM_PREPROCESSOR;
+            }
+        }
+
+        parse_file(idl_file, context);
     }
 
     bool parse_string(
