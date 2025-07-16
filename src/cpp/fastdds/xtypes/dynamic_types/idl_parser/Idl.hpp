@@ -92,6 +92,15 @@ inline std::string preprocess(
     return Parser::preprocess(idl_file, includes);
 }
 
+inline void parse_file(
+        const std::string& document_url,
+        const IncludePathSeq& include_paths,
+        const std::string& preprocessor,
+        std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback)
+{
+    Parser::instance()->parse_file(document_url, include_paths, preprocessor, callback);
+}
+
 } //namespace idlparser
 } //namespace dds
 } //namespace fastdds

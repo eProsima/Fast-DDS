@@ -15,6 +15,7 @@
 #ifndef FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPEBUILDERFACTORY_HPP
 #define FASTDDS_DDS_XTYPES_DYNAMIC_TYPES__DYNAMICTYPEBUILDERFACTORY_HPP
 
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -164,6 +165,20 @@ public:
             const std::string& document_url,
             const std::string& type_name,
             const IncludePathSeq& include_paths) = 0;
+
+    /*!
+     * Parse an input document and apply a callback on each encountered type.
+     * @param [in] document_url pointing to the url containing the type description.
+     * @param [in] include_paths A collection of URLs to directories to be searched for additional type description
+     * documents.
+     * @param [in] callback function to be called for each type parsed in the document:
+     * It receives a @ref DynamicTypeBuilder reference to the parsed type and returns a boolean value, that represents
+     * whether the parsing process should continue (`true` return value) or not.
+     */
+    FASTDDS_EXPORTED_API virtual void for_each_type_w_uri(
+            const std::string& document_url,
+            const IncludePathSeq& include_paths,
+            std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) = 0;
 
     /*!
      * Creates a new @ref DynamicTypeBuilder reference by parsing the type description contained in the given string.

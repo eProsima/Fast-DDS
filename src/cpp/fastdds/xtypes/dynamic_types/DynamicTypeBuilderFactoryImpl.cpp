@@ -209,6 +209,21 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
     return ret_val;
 }
 
+void DynamicTypeBuilderFactoryImpl::for_each_type_w_uri(
+            const std::string& document_url,
+            const IncludePathSeq& include_paths,
+            std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) noexcept
+{
+    try
+    {
+        idlparser::parse_file(document_url, include_paths, preprocessor_, callback);
+    }
+    catch (const std::exception& e)
+    {
+        EPROSIMA_LOG_ERROR(IDLPARSER, e.what());
+    }
+}
+
 //}}}
 
 //{{{ Functions to create specific types
