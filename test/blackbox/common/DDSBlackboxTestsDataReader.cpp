@@ -1424,6 +1424,87 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
     EXPECT_TRUE(reception_ts_2 <= reception_ts_3);
 }
 
+/* This is a regression test for redmine issue 22929.
+ *
+ * Considers the following scenario:
+ * - A DataReader is created on keyed topic A
+ * - A DataWriter is created on the same topic
+ * - DataWriter writes sample 1 to instance 1
+ * - DataReader takes sample 1
+ * - DataWriter is deleted
+ *
+ * The following behavior is expected:
+ * - Calling take on the DataReader returns a sample on instance 1 with
+ *   valid_data = false to inform about the change in the instance state
+ *   to NOT_ALIVE_NO_WRITERS
+ */
+TEST_P(DDSDataReader, return_sample_when_writer_disappears)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    fdds::InstanceHandle_t instance_handle{};
+
+    // Create a DataReader on a keyed topic
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+    fdds::DataReader& data_reader = reader.get_native_reader();
+
+    // Create a DataWriter on the same topic
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // DataWriter writes sample 1 to instance 1
+    {
+        KeyedHelloWorldPubSubType::type sample;
+        sample.key(1);
+        sample.index(1);
+        sample.message("Hello World");
+        EXPECT_TRUE(writer.send_sample(sample));
+    }
+
+    // DataReader takes sample 1
+    {
+        EXPECT_TRUE(data_reader.wait_for_unread_message(fdds::c_TimeInfinite));
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
+        EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
+        EXPECT_TRUE(info.valid_data);
+        EXPECT_EQ(info.instance_state, fdds::ALIVE_INSTANCE_STATE);
+        EXPECT_EQ(sample.key(), 1);
+        EXPECT_EQ(sample.index(), 1);
+        EXPECT_EQ(sample.message(), "Hello World");
+
+        // Store the instance handle for later use
+        instance_handle = info.instance_handle;
+    }
+
+    // DataWriter is deleted
+    writer.destroy();
+    reader.wait_writer_undiscovery();
+
+    // Verify expectations
+    {
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
+
+        EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+        EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
+        EXPECT_FALSE(info.valid_data);
+        EXPECT_EQ(info.instance_handle, instance_handle);
+        EXPECT_EQ(info.instance_state, fdds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE);
+    }
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
