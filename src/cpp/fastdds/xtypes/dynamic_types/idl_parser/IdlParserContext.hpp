@@ -225,10 +225,8 @@ public:
     bool clear = true;
     bool allow_keyword_identifiers = false;
     bool ignore_redefinition = false;
-    bool should_continue = true;
     CharType char_translation = CHAR;
     WideCharType wchar_type = WCHAR_T;
-    std::function<bool(DynamicTypeBuilder::_ref_type)> on_builder_created = [](DynamicTypeBuilder::_ref_type) { return true; };
 
     // Results
     bool success = false;
@@ -332,6 +330,18 @@ public:
         return xtype;
     }
 
+    void notify_declared_type(
+            DynamicTypeBuilder::_ref_type builder)
+    {
+        should_continue_ = on_type_dcl_builder_created_(builder);
+    }
+
+    void set_declared_type_callback(
+            std::function<bool(DynamicTypeBuilder::_ref_type)> callback)
+    {
+        on_type_dcl_builder_created_ = callback;
+    }
+
     DynamicTypeBuilder::_ref_type builder;
 
     ModuleStack& modules()
@@ -342,6 +352,11 @@ public:
     AnnotationsManager& annotations()
     {
         return annotations_;
+    }
+
+    bool should_continue() const
+    {
+        return should_continue_;
     }
 
     void clear_context()
@@ -362,6 +377,8 @@ private:
 
     ModuleStack modules_;
     AnnotationsManager annotations_;
+    std::function<bool(DynamicTypeBuilder::_ref_type)> on_type_dcl_builder_created_ = [](DynamicTypeBuilder::_ref_type) { return true; };
+    bool should_continue_ = true;
 
 };
 

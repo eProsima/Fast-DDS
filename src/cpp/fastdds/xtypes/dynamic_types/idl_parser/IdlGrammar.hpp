@@ -17,6 +17,8 @@
 
 #include "pegtl.hpp"
 
+#include "CustomRules.hpp"
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -356,7 +358,7 @@ struct bitset_dcl : seq<kw_bitset, identifier, opt<inhertance>, open_brace, star
 
 struct preprocessor_directive : seq<opt<ws>, one<'#'>, until<eolf>> {};
 struct module_dcl; // forward declaration
-struct definition : sor<seq<sor<module_dcl, const_dcl, type_dcl, annotation_dcl>, semicolon>, preprocessor_directive> {};
+struct definition : sor<seq_until_manual_stop<sor<module_dcl, const_dcl, type_dcl, annotation_dcl>, semicolon>, preprocessor_directive> {};
 struct module_dcl : seq<star<annotation_appl>, kw_module, identifier, open_brace, plus<definition>, close_brace> {};
 struct specification : plus<definition> {};
 struct document : seq<opt<ws>, specification, opt<ws>> {};
