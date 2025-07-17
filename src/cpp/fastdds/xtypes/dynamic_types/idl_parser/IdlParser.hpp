@@ -1674,6 +1674,8 @@ struct action<enum_dcl>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -1886,6 +1888,8 @@ struct action<struct_def>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -2286,6 +2290,8 @@ struct action<union_def>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -2429,6 +2435,8 @@ struct action<typedef_dcl>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -2686,7 +2694,7 @@ public:
             std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback)
     {
         Context context;
-        context.on_builder_created = callback;
+        context.set_declared_type_callback(callback);
         if (!include_paths.empty())
         {
             context.include_paths = include_paths;
