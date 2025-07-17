@@ -25,6 +25,13 @@ set_and_check(@PROJECT_NAME@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 find_package(fastcdr REQUIRED)
 find_package(foonathan_memory REQUIRED)
 find_package(TinyXML2 QUIET)
+if(NOT TinyXML2_FOUND)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(TinyXML2 IMPORTED_TARGET tinyxml2)
+    if(TARGET PkgConfig::TinyXML2)
+        add_library(tinyxml2::tinyxml2 ALIAS PkgConfig::TinyXML2)
+    endif()
+endif()
 @FASTDDS_INSTALLER_DEPS_ANCILLARY@
 @FASTDDS_PACKAGE_UNIX_OPT_DEPS@
 
