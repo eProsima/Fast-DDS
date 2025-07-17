@@ -154,6 +154,5 @@ static constexpr const char* IDL_BUILTIN_ANN_TOPIC_PLATFORM_TAG = "platform";
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
-/* Built-in annotations related tags */
 
 #endif // FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSERTAGS_HPP
