@@ -6,7 +6,7 @@ on:
     - cron: '0 22 * * *' # At 22:00 GMT
 
 jobs:
-  nightly-mac-ci-3_2_x:
+  nightly-mac-ci-3_3_x:
     strategy:
       fail-fast: false
       matrix:

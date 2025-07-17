@@ -6,7 +6,7 @@ on:
     - cron: '0 22 * * *' # At 22:00 GMT
 
 jobs:
-  nightly-windows-ci-3_2_x:
+  nightly-windows-ci-3_3_x:
     strategy:
       fail-fast: false
       matrix:

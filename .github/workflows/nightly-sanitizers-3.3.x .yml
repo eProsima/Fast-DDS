@@ -6,7 +6,7 @@ on:
     - cron: '0 22 * * *' # At 22:00 GMT
 
 jobs:
-  nightly-sanitizers-ci-3_2_x:
+  nightly-sanitizers-ci-3_3_x:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@3.3.x
     with:
       label: 'nightly-sec-sanitizers-ci-3.3.x'
