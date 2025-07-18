@@ -16,6 +16,8 @@
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSERUTILS_HPP
 
 #include <algorithm>
+#include <sstream>
+#include <vector>
 #include <cctype>
 #include <string>
 
@@ -82,6 +84,35 @@ std::string remove_char(
     std::string result = s;
     result.erase(std::remove(result.begin(), result.end(), c), result.end());
     return result;
+}
+
+//! Split a string by a given delimiter
+std::vector<std::string> split_string(
+        const std::string& str,
+        char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream ss(str);
+    while (std::getline(ss, token, delimiter))
+    {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+//! Join a vector of strings into a single string with a given delimiter
+std::string join_strings(
+        const std::vector<std::string>& strings,
+        char delimiter)
+{
+    std::ostringstream oss;
+    for (size_t i = 0; i < strings.size(); ++i)
+    {
+        oss << strings[i];
+        oss << delimiter;
+    }
+    return oss.str();
 }
 
 } // namespace utils

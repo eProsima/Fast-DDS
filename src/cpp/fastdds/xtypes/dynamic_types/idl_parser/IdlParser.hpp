@@ -53,10 +53,11 @@
 #include "pegtl.hpp"
 #include "pegtl/analyze.hpp"
 
+#include "IdlAnnotations.hpp"
 #include "IdlGrammar.hpp"
 #include "IdlModule.hpp"
+#include "IdlParserUtils.hpp"
 #include "IdlPreprocessor.hpp"
-#include "IdlAnnotations.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -260,33 +261,6 @@ public:
     traits<DynamicType>::ref_type get_type(
             std::map<std::string, std::string>& state,
             const std::string& type);
-
-    static std::vector<std::string> split_string(
-            const std::string& str,
-            char delimiter)
-    {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream ss(str);
-        while (std::getline(ss, token, delimiter))
-        {
-            tokens.push_back(token);
-        }
-        return tokens;
-    }
-
-    static std::string join_strings(
-            const std::vector<std::string>& strings,
-            char delimiter)
-    {
-        std::ostringstream oss;
-        for (size_t i = 0; i < strings.size(); ++i)
-        {
-            oss << strings[i];
-            oss << delimiter;
-        }
-        return oss.str();
-    }
 
     DynamicTypeBuilder::_ref_type builder;
 
@@ -1887,7 +1861,7 @@ struct action<enum_dcl>
 
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        std::vector<std::string> tokens = ctx->split_string(state["enum_member_names"], ';');
+        std::vector<std::string> tokens = utils::split_string(state["enum_member_names"], ';');
 
         for (size_t i = 0; i < tokens.size(); i++)
         {
@@ -2032,10 +2006,10 @@ struct action<struct_def>
 
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        std::vector<std::string> types = ctx->split_string(state["struct_member_types"], ';');
-        std::vector<std::string> names = ctx->split_string(state["struct_member_names"], ';');
-        std::vector<std::string> all_array_sizes = ctx->split_string(state["all_array_sizes"], ';');
-        std::vector<std::string> sequence_sizes = ctx->split_string(state["sequence_sizes"], ';');
+        std::vector<std::string> types = utils::split_string(state["struct_member_types"], ';');
+        std::vector<std::string> names = utils::split_string(state["struct_member_names"], ';');
+        std::vector<std::string> all_array_sizes = utils::split_string(state["all_array_sizes"], ';');
+        std::vector<std::string> sequence_sizes = utils::split_string(state["sequence_sizes"], ';');
 
         for (size_t i = 0; i < types.size(); i++)
         {
@@ -2050,7 +2024,7 @@ struct action<struct_def>
             // If array sizes are specified for this member, create an array type
             if (i < all_array_sizes.size() && all_array_sizes[i] != "0")
             {
-                std::vector<std::string> array_sizes = ctx->split_string(all_array_sizes[i], ',');
+                std::vector<std::string> array_sizes = utils::split_string(all_array_sizes[i], ',');
                 std::vector<uint32_t> sizes;
                 for (const auto& size : array_sizes)
                 {
@@ -2421,10 +2395,10 @@ struct action<union_def>
 
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        std::vector<std::string> label_groups = ctx->split_string(state["union_labels"], ';');
-        std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
-        std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
-        std::vector<std::string> sequence_sizes = ctx->split_string(state["sequence_sizes"], ';');
+        std::vector<std::string> label_groups = utils::split_string(state["union_labels"], ';');
+        std::vector<std::string> types = utils::split_string(state["union_member_types"], ';');
+        std::vector<std::string> names = utils::split_string(state["union_member_names"], ';');
+        std::vector<std::string> sequence_sizes = utils::split_string(state["sequence_sizes"], ';');
 
         std::vector<std::vector<int32_t>> labels(types.size());
         int default_label_index = -1;
@@ -2435,7 +2409,7 @@ struct action<union_def>
             {
                 continue; // Skip empty strings
             }
-            std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
+            std::vector<std::string> numbers_str = utils::split_string(label_groups[i], ',');
             for (const auto& num_str : numbers_str)
             {
                 if (num_str == "default")
@@ -2606,7 +2580,7 @@ struct action<typedef_dcl>
         auto module = ctx->modules().current();
 
         std::string alias_name;
-        std::vector<std::string> array_sizes = ctx->split_string(state["current_array_sizes"], ',');
+        std::vector<std::string> array_sizes = utils::split_string(state["current_array_sizes"], ',');
 
         // state["alias"] is supposed to contain up to two fields, alias type (optional) and name
         std::ptrdiff_t comma_count = std::count(state["alias"].begin(), state["alias"].end(), ',');
@@ -2743,7 +2717,7 @@ struct action<annotation_appl_params>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* ctx,
+            Context* /*ctx*/,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
@@ -2751,9 +2725,9 @@ struct action<annotation_appl_params>
         std::string& current_ann_params = state["annotation_params"];
 
         // Last parsed annotation has parameters, update the state
-        std::vector<std::string> tokens = ctx->split_string(current_ann_params, ';');
+        std::vector<std::string> tokens = utils::split_string(current_ann_params, ';');
         tokens.back() = last_ann_params;
-        current_ann_params = ctx->join_strings(tokens, ';');
+        current_ann_params = utils::join_strings(tokens, ';');
     }
 
 };
@@ -3095,8 +3069,8 @@ bool AnnotationsManager::update_pending_annotations(
         return false;
     }
 
-    std::vector<std::string> ann_names = Context::split_string(state["annotation_names"], ';');
-    std::vector<std::string> ann_params = Context::split_string(state["annotation_params"], ';');
+    std::vector<std::string> ann_names = utils::split_string(state["annotation_names"], ';');
+    std::vector<std::string> ann_params = utils::split_string(state["annotation_params"], ';');
 
     // The number of annotation names and parameters should match
     if (ann_names.size() != ann_params.size())
