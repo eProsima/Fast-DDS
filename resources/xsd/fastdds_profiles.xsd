@@ -233,7 +233,8 @@
         ├ propertiesPolicy             [0~1],
         ├ userDefinedID                [int16],
         ├ entityID                     [int16],
-        └ matchedSubscribersAllocation [0~1]-->
+        └ matchedSubscribersAllocation [0~1],
+        └ transport_priority           [0~1]-->
     <xs:complexType name="publisherProfileNoAttributesType">
         <xs:all>
             <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
@@ -248,6 +249,7 @@
             <xs:element name="userDefinedID" type="int16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="entityID" type="int16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="matchedSubscribersAllocation" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="transport_priority" type="int32" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -266,7 +268,8 @@
         ├ propertiesPolicy             [0~1],
         ├ userDefinedID                [int16],
         ├ entityID                     [int16],
-        └ matchedSubscribersAllocation [0~1]-->
+        └ matchedSubscribersAllocation [0~1],
+        └ transport_priority           [0~1]-->
     <xs:complexType name="publisherProfileType">
         <xs:complexContent>
             <xs:extension base="publisherProfileNoAttributesType">
@@ -1288,7 +1291,7 @@
         ├ reliability                 [0~1],
         ├ timeBasedFilter             [0~1],
         ├ topicData                   [0~1],
-        └ userData                    [0~1] -->
+        ├ userData                    [0~1] -->
     <xs:complexType name="dataWriterQosPoliciesType">
         <xs:all>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>

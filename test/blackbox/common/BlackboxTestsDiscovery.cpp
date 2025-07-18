@@ -820,7 +820,7 @@ TEST(Discovery, LocalInitialPeersDiferrentLocators)
 
     // Install hook on the test transport to check for destination locators on the writer participant
     Checker checker;
-    auto locator_printer = [&checker](const eprosima::fastdds::rtps::Locator& destination)
+    auto locator_printer = [&checker](const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 checker.check(destination);
                 return false;
@@ -1351,7 +1351,7 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     std::atomic<uint32_t> messages_on_port{ 0 };
     test_transport->interfaceWhiteList.push_back("127.0.0.1");
     test_transport->locator_filter_ = [&multicast_port, &messages_on_port](
-        const eprosima::fastdds::rtps::Locator& destination)
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 if (IPLocator::isMulticast(destination))
                 {
@@ -1406,7 +1406,7 @@ TEST_P(Discovery, single_unicast_pdp_response)
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
     test_transport->interfaceWhiteList.push_back("127.0.0.1");
     test_transport->locator_filter_ = [&num_unicast_sends, &multicast_port](
-        const eprosima::fastdds::rtps::Locator& destination)
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 if (IPLocator::isMulticast(destination))
                 {
@@ -1516,7 +1516,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller)
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
     test_transport->interfaceWhiteList.push_back("127.0.0.1");
     test_transport->locator_filter_ = [&num_unicast_sends, &multicast_port](
-        const eprosima::fastdds::rtps::Locator& destination)
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 if (IPLocator::isMulticast(destination))
                 {
@@ -1648,7 +1648,7 @@ TEST_P(Discovery, single_unicast_pdp_response_flowcontroller_limited)
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
     test_transport->interfaceWhiteList.push_back("127.0.0.1");
     test_transport->locator_filter_ = [&num_unicast_sends, &multicast_port](
-        const eprosima::fastdds::rtps::Locator& destination)
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 if (IPLocator::isMulticast(destination))
                 {

@@ -325,7 +325,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     EXPECT_EQ(50, wqos.resource_limits().allocated_samples);
     EXPECT_EQ(2, wqos.resource_limits().extra_samples);
     // .transport_priority
-    EXPECT_EQ(10u, wqos.transport_priority().value);
+    EXPECT_EQ(10, wqos.transport_priority().value);
     // .lifespan
     EXPECT_EQ(10, wqos.lifespan().duration.seconds);
     EXPECT_EQ(33u, wqos.lifespan().duration.nanosec);

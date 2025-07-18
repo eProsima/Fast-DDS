@@ -19,6 +19,7 @@
 #ifndef FASTDDS_XMLPARSER_ATTRIBUTES__PUBLISHERATTRIBUTES_HPP
 #define FASTDDS_XMLPARSER_ATTRIBUTES__PUBLISHERATTRIBUTES_HPP
 
+#include <cstdint>
 
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
@@ -27,6 +28,7 @@
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include <xmlparser/attributes/TopicAttributes.hpp>
 
@@ -58,7 +60,9 @@ public:
                (this->multicastLocatorList == b.multicastLocatorList) &&
                (this->remoteLocatorList == b.remoteLocatorList) &&
                (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
-               (this->properties == b.properties);
+               (this->properties == b.properties) &&
+               (this->matched_subscriber_allocation == b.matched_subscriber_allocation) &&
+               (this->transport_priority == b.transport_priority);
     }
 
     //! Topic Attributes for the Publisher
@@ -94,6 +98,9 @@ public:
 
     //! Allocation limits on the matched subscribers collections
     fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;
+
+    //! Transport priority for the Publisher
+    int32_t transport_priority = 0;
 
     /**
      * Get the user defined ID

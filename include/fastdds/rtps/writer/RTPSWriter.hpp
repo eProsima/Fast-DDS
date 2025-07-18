@@ -184,6 +184,13 @@ public:
     FASTDDS_EXPORTED_API virtual bool get_disable_positive_acks() const = 0;
 
     /**
+     * @brief Get the transport priority of this writer.
+     *
+     * @return Transport priority of this writer.
+     */
+    FASTDDS_EXPORTED_API virtual int32_t get_transport_priority() const = 0;
+
+    /**
      * @brief Fills the provided vector with the GUIDs of the matched readers.
      *
      * @param[out] guids Vector to be filled with the GUIDs of the matched readers.

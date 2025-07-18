@@ -359,6 +359,7 @@ public:
 
     eprosima::fastdds::dds::DataWriter& get_native_writer() const
     {
+        EXPECT_NE(datawriter_, nullptr);
         return *datawriter_;
     }
 
@@ -1674,6 +1675,13 @@ public:
             const eprosima::fastdds::rtps::ThreadSettings& settings)
     {
         participant_qos_.timed_events_thread(settings);
+        return *this;
+    }
+
+    PubSubWriter& transport_priority(
+            int32_t prio)
+    {
+        datawriter_qos_.transport_priority().value = prio;
         return *this;
     }
 

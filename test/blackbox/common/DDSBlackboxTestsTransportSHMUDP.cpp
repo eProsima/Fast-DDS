@@ -118,7 +118,7 @@ void run_parametrized_test(
     auto pub_udp_descriptor = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     std::atomic<uint32_t> messages_on_odd_port{ 0 };  // Messages corresponding to user data
     pub_udp_descriptor->locator_filter_ = [&messages_on_odd_port](
-        const eprosima::fastdds::rtps::Locator& destination)
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 if (0 != (destination.port % 2))
                 {

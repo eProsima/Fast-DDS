@@ -782,7 +782,7 @@ inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::add_content_to_cd
         const TransportPriorityQosPolicy& qos_policy,
         rtps::CDRMessage_t* cdr_message)
 {
-    bool valid = rtps::CDRMessage::addUInt32(cdr_message, qos_policy.value);
+    bool valid = rtps::CDRMessage::addInt32(cdr_message, qos_policy.value);
     return valid;
 }
 
@@ -797,7 +797,7 @@ inline bool QosPoliciesSerializer<TransportPriorityQosPolicy>::read_content_from
         return false;
     }
     qos_policy.length = parameter_length;
-    return rtps::CDRMessage::readUInt32(cdr_message, &qos_policy.value);
+    return rtps::CDRMessage::readInt32(cdr_message, &qos_policy.value);
 }
 
 template<>

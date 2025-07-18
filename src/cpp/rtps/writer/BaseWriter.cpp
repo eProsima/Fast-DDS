@@ -77,6 +77,7 @@ BaseWriter::BaseWriter(
     , liveliness_kind_(att.liveliness_kind)
     , liveliness_lease_duration_(att.liveliness_lease_duration)
     , liveliness_announcement_period_(att.liveliness_announcement_period)
+    , transport_priority_(att.transport_priority)
 {
     init(att);
 
@@ -137,6 +138,17 @@ bool BaseWriter::set_listener(
 bool BaseWriter::is_async() const
 {
     return is_async_;
+}
+
+int32_t BaseWriter::get_transport_priority() const
+{
+    return transport_priority_;
+}
+
+void BaseWriter::update_attributes(
+        const WriterAttributes& att)
+{
+    transport_priority_ = att.transport_priority;
 }
 
 #ifdef FASTDDS_STATISTICS
@@ -242,7 +254,7 @@ bool BaseWriter::send_nts(
 
     return locator_selector.locator_selector.selected_size() == 0 ||
            participant->sendSync(buffers, total_bytes, m_guid, locator_selector.locator_selector.begin(),
-                   locator_selector.locator_selector.end(), max_blocking_time_point);
+                   locator_selector.locator_selector.end(), max_blocking_time_point, transport_priority_);
 }
 
 const dds::LivelinessQosPolicyKind& BaseWriter::get_liveliness_kind() const

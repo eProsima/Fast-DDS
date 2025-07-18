@@ -103,7 +103,7 @@ bool DirectMessageSender::send(
         std::chrono::steady_clock::time_point max_blocking_time_point) const
 {
     return participant_->sendSync(buffers, total_bytes, participant_->getGuid(),
-                   Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
+                   Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point, 0);
 }
 
 } /* namespace rtps */

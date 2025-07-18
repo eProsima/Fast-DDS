@@ -63,6 +63,7 @@ void set_qos_from_attributes(
     qos.resource_limits() = attr.topic.resourceLimitsQos;
     qos.data_sharing() = attr.qos.data_sharing;
     qos.reliable_writer_qos().disable_heartbeat_piggyback = attr.qos.disable_heartbeat_piggyback;
+    qos.transport_priority().value = attr.transport_priority;
 
     if (attr.qos.m_partition.size() > 0 )
     {

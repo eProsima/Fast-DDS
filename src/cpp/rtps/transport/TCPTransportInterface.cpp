@@ -1482,7 +1482,8 @@ bool TCPTransportInterface::send(
         uint32_t total_bytes,
         const fastdds::rtps::Locator_t& locator,
         fastdds::rtps::LocatorsIterator* destination_locators_begin,
-        fastdds::rtps::LocatorsIterator* destination_locators_end)
+        fastdds::rtps::LocatorsIterator* destination_locators_end,
+        const int32_t /* transport_priority */)
 {
     fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 

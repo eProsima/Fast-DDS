@@ -493,7 +493,8 @@ bool SharedMemTransport::send(
         uint32_t total_bytes,
         fastdds::rtps::LocatorsIterator* destination_locators_begin,
         fastdds::rtps::LocatorsIterator* destination_locators_end,
-        const std::chrono::steady_clock::time_point& max_blocking_time_point)
+        const std::chrono::steady_clock::time_point& max_blocking_time_point,
+        const int32_t /* transport_priority */)
 {
     using namespace eprosima::fastdds::statistics::rtps;
 

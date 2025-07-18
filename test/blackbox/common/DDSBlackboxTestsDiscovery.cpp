@@ -2438,7 +2438,7 @@ TEST(DDSDiscovery, multicast_only_one_packet_sent_when_multiple_multicast_reader
     multicast_locators.push_back(new_multicast_locator);
 
     writer_test_transport->locator_filter_ = [&n_multicast_times_sent, &new_multicast_locator](
-        const eprosima::fastdds::rtps::Locator& destination)
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
             {
                 if (destination == new_multicast_locator)
                 {

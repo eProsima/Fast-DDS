@@ -403,13 +403,15 @@ public:
      * so should not be reuse.
      * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
      * so should not be reuse.
+     * @param transport_priority Transport priority to use for this send.
      */
     bool send(
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             const Locator_t& locator,
             LocatorsIterator* destination_locators_begin,
-            LocatorsIterator* destination_locators_end);
+            LocatorsIterator* destination_locators_end,
+            const int32_t transport_priority);
 
     /**
      * Performs the locator selection algorithm for this transport.
