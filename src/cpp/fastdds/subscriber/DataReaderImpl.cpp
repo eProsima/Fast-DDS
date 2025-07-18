@@ -743,11 +743,6 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return RETCODE_NOT_ENABLED;
     }
 
-    if (history_.getHistorySize() == 0)
-    {
-        return RETCODE_NO_DATA;
-    }
-
 #if HAVE_STRICT_REALTIME
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
