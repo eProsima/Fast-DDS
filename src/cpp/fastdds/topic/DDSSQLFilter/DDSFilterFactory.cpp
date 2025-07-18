@@ -449,7 +449,47 @@ DDSFilterFactory::~DDSFilterFactory()
     pool.clear();
 }
 
+<<<<<<< HEAD
 IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
+=======
+static std::shared_ptr<xtypes::TypeObject> get_complete_type_object(
+        const char* type_name,
+        const TopicDataType* data_type)
+{
+    ReturnCode_t ret;
+
+    // Try to get the complete TypeObject from the type name
+    std::shared_ptr<xtypes::TypeObjectPair> type_objects = std::make_shared<xtypes::TypeObjectPair>();
+    ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+        type_name, *type_objects);
+    if (RETCODE_OK == ret)
+    {
+        return std::make_shared<xtypes::TypeObject>(type_objects->complete_type_object);
+    }
+
+    // If not found, try to get the complete TypeObject from the type identifier
+    xtypes::TypeObject complete_type_object;
+    if (xtypes::EK_COMPLETE == data_type->type_identifiers().type_identifier1()._d())
+    {
+        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+            data_type->type_identifiers().type_identifier1(), complete_type_object);
+    }
+    else if (xtypes::EK_COMPLETE == data_type->type_identifiers().type_identifier2()._d())
+    {
+        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+            data_type->type_identifiers().type_identifier2(), complete_type_object);
+    }
+
+    if (RETCODE_OK == ret)
+    {
+        return std::make_shared<xtypes::TypeObject>(complete_type_object);
+    }
+
+    return nullptr;
+}
+
+ReturnCode_t DDSFilterFactory::create_content_filter(
+>>>>>>> 92260c2d (Allow creation of built-in content filters with different type name (#5867))
         const char* filter_class_name,
         const char* type_name,
         const TopicDataType* data_type,
@@ -457,11 +497,15 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         const IContentFilterFactory::ParameterSeq& filter_parameters,
         IContentFilter*& filter_instance)
 {
+<<<<<<< HEAD
     using eprosima::fastrtps::types::TypeObjectFactory;
 
     static_cast<void>(data_type);
 
     ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
+=======
+    ReturnCode_t ret = RETCODE_UNSUPPORTED;
+>>>>>>> 92260c2d (Allow creation of built-in content filters with different type name (#5867))
 
     if (nullptr == filter_expression)
     {
@@ -517,7 +561,12 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
     }
     else
     {
+<<<<<<< HEAD
         auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_name, true);
+=======
+        std::shared_ptr<xtypes::TypeObject> type_object = get_complete_type_object(type_name, data_type);
+
+>>>>>>> 92260c2d (Allow creation of built-in content filters with different type name (#5867))
         if (!type_object)
         {
             EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
@@ -528,6 +577,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
             auto node = parser::parse_filter_expression(filter_expression, type_object);
             if (node)
             {
+<<<<<<< HEAD
                 auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
                 auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
                 DDSFilterExpression* expr = get_expression();
@@ -544,6 +594,32 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
                 {
                     delete_content_filter(filter_class_name, filter_instance);
                     filter_instance = expr;
+=======
+                DynamicType::_ref_type dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
+                    *type_object)->build();
+                if (dyn_type)
+                {
+                    DDSFilterExpression* expr = get_expression();
+                    expr->set_type(dyn_type);
+                    size_t n_params = filter_parameters.length();
+                    expr->parameters.reserve(n_params);
+                    while (expr->parameters.size() < n_params)
+                    {
+                        expr->parameters.emplace_back();
+                    }
+                    ExpressionParsingState state{ std::make_shared<xtypes::TypeObject>(*type_object),
+                                                  filter_parameters, expr };
+                    ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
+                    if (RETCODE_OK == ret)
+                    {
+                        delete_content_filter(filter_class_name, filter_instance);
+                        filter_instance = expr;
+                    }
+                    else
+                    {
+                        delete_content_filter(filter_class_name, expr);
+                    }
+>>>>>>> 92260c2d (Allow creation of built-in content filters with different type name (#5867))
                 }
                 else
                 {
