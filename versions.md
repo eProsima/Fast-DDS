@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* Support annotated types and builtin annotations in IDL Parser.
 
 Version v3.3.0
 --------------

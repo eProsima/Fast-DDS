@@ -1,0 +1,34 @@
+enum value_ann_valid_enum
+{
+    @value(3) ENUM_VALUE1,
+    @value(value = 8) ENUM_VALUE2
+};
+
+enum value_ann_invalid_value_type
+{
+    @value("invalid") INVALID_VALUE
+};
+
+enum value_ann_duplicated_values
+{
+    @value(0) ENUM_VALUE1,
+    @value(0) ENUM_VALUE2,
+    @value(1) ENUM_VALUE3
+};
+
+enum value_ann_extra_parameter
+{
+    @value(value = 8, value2 = "extra") INVALID_VALUE
+};
+
+@value(8) enum value_ann_on_enum
+{
+    INVALID_VALUE1,
+    INVALID_VALUE2
+};
+
+// TODO (Carlosespicur): Design pending
+// struct value_ann_on_invalid_type_member
+// {
+//     @value(8) long invalid_member;
+// };

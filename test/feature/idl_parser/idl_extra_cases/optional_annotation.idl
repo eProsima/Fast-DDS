@@ -1,0 +1,29 @@
+struct optional_ann_valid {
+  @optional long first;
+  @optional(value = FALSE) string second;
+  @optional(FALSE) float third;
+};
+
+struct optional_ann_invalid_value_type
+{
+    @optional("invalid") long invalid_member;
+};
+
+struct optional_ann_extra_parameter
+{
+    @optional(value = TRUE, value2 = "extra") long invalid_member;
+};
+
+@optional struct optional_ann_on_struct
+{
+    long first;
+};
+
+
+union optional_ann_invalid_union switch(long)
+{
+  case 0:
+    @optional long first;
+  default:
+    string second;
+};
