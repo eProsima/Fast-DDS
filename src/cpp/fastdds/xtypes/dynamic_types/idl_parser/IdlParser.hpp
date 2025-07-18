@@ -2397,15 +2397,8 @@ struct action<union_def>
         const auto& discriminator_annotations = ctx->annotations().pending_discriminator_annotations();
         if (!discriminator_annotations.empty())
         {
-            for (const auto& info : discriminator_annotations)
-            {
-                if (!info.first->annotate_type(discriminator_builder, info.second))
-                {
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating discriminator type builder for union: "
-                            << scoped_union_name);
-                    return;
-                }
-            }
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Annotations for union discriminators are not supported yet.");
+            return;
         }
 
         type_descriptor->kind(TK_UNION);

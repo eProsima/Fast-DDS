@@ -15,6 +15,15 @@ union id_ann_valid_union switch(long)
     @id(4) float third;
 };
 
+// TODO: Uncomment when annotating descriptors of unions' discriminators is supported
+// union id_ann_on_union_discriminator switch(@id(1) long)
+// {
+//   case 0:
+//     long first;
+//   default:
+//     string second;
+// };
+
 struct id_ann_missing_value
 {
     @id long invalid_member;
@@ -37,6 +46,13 @@ struct id_ann_duplicated_ids
     @id(1) float third;
 };
 
+struct id_ann_implicit_duplicated_ids
+{
+    @id(3) long first;
+    string second;
+    @id(4) float third;
+};
+
 @id(1) struct id_ann_on_struct
 {
     long first;
@@ -56,3 +72,12 @@ struct id_ann_duplicated_ids
   default:
     string second;
 };
+
+union id_ann_on_union_discriminator switch(@id(1) long)
+{
+  case 0:
+    long first;
+  default:
+    string second;
+};
+

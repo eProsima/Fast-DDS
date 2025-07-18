@@ -1,20 +1,34 @@
-struct value_ann_valid_struct
+enum value_ann_valid_enum
 {
-    @value("foo") string first;
-    @value(value = 8) long second;
+    @value(3) ENUM_VALUE1,
+    @value(value = 8) ENUM_VALUE2
 };
 
-struct value_ann_ann_invalid_value_type_struct
+enum value_ann_invalid_value_type
 {
-    @value("invalid") long invalid_member;
+    @value("invalid") INVALID_VALUE
 };
 
-struct value_ann_extra_parameter_struct
+enum value_ann_duplicated_values
 {
-    @value(value = 8, value2 = "extra") long invalid_member;
+    @value(0) ENUM_VALUE1,
+    @value(0) ENUM_VALUE2,
+    @value(1) ENUM_VALUE3
 };
 
-@value(8) struct value_ann_on_struct
+enum value_ann_extra_parameter
 {
-    long first;
+    @value(value = 8, value2 = "extra") INVALID_VALUE
 };
+
+@value(8) enum value_ann_on_enum
+{
+    INVALID_VALUE1,
+    INVALID_VALUE2
+};
+
+// TODO (Carlosespicur): Design pending
+// struct value_ann_on_invalid_type_member
+// {
+//     @value(8) long invalid_member;
+// };

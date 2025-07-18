@@ -1907,7 +1907,20 @@ protected:
             return false;
         }
 
-        descriptor->default_value(parameters.at(IDL_VALUE_TAG));
+        try
+        {
+            TypeForKind<TK_INT32> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
+            descriptor->default_value(std::to_string(value));
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(IDL_PARSER,
+                    "Invalid value '" << parameters.at(
+                        IDL_VALUE_TAG)
+                                                << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG << "': " <<
+                            e.what());
+            return false;
+        }
 
         return true;
     }

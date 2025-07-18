@@ -5,6 +5,15 @@ struct key_ann_valid_struct
     @key(FALSE) float third;
 };
 
+// TODO: Uncomment when annotating descriptors of unions' discriminators is supported
+// union key_ann_valid_union switch(@key long)
+// {
+//   case 0:
+//     long first;
+//   default:
+//     string second;
+// };
+
 struct key_ann_invalid_value_type
 {
     @key("invalid") long invalid_member;

@@ -6,6 +6,14 @@ struct try_construct_ann_struct_valid
     @try_construct(DISCARD) string fourth;
 };
 
+union try_construct_ann_union_valid switch(long)
+{
+    case 0:
+        @try_construct long first;
+    default:
+        @try_construct(TRIM) string second;
+};
+
 struct try_construct_ann_invalid_value_type
 {
     @try_construct("invalid") long invalid_member;
@@ -19,4 +27,12 @@ struct try_construct_ann_extra_parameter
 @try_construct struct try_construct_ann_on_struct
 {
     long first;
+};
+
+union try_construct_ann_on_union_discriminator switch(@try_construct long)
+{
+    case 0:
+        long first;
+    default:
+        string second;
 };

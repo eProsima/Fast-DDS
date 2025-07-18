@@ -18,3 +18,12 @@ struct optional_ann_extra_parameter
 {
     long first;
 };
+
+
+union optional_ann_invalid_union switch(long)
+{
+  case 0:
+    @optional long first;
+  default:
+    string second;
+};
