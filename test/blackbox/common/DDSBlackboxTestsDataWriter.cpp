@@ -41,6 +41,8 @@
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 using namespace eprosima::fastdds;
 
@@ -1876,37 +1878,124 @@ TEST(DDSDataWriter, transport_priority_mutable)
     // ----------- Setup -----------
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    // We want to check that the transport priority is correctly transmitted,
+    // so we need to serialize the optional QoS in the DataWriter discovery.
+    rtps::PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.serialize_optional_qos", "true");
+    writer.property_policy(properties);
 
     // ----------- Procedure -----------
 
-    // 1. Create a disabled `DataWriter` with default QoS.
+    // 1. Create a participant with a custom listener that captures the transport priority
+    //    of the discovered writer.
+    struct CustomListener : public fdds::DomainParticipantListener
+    {
+        void on_data_writer_discovery(
+                fdds::DomainParticipant* /* participant */,
+                rtps::WriterDiscoveryStatus reason,
+                const fdds::PublicationBuiltinTopicData& info,
+                bool& should_be_ignored) override
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+
+            if (reason == rtps::WriterDiscoveryStatus::DISCOVERED_WRITER)
+            {
+                // Capture the transport priority of the discovered writer.
+                EXPECT_TRUE(info.transport_priority.has_value());
+                if (info.transport_priority.has_value())
+                {
+                    discovered_transport_priority_ = info.transport_priority->value;
+                }
+            }
+            else if (reason == rtps::WriterDiscoveryStatus::CHANGED_QOS_WRITER)
+            {
+                // Capture the updated transport priority of the writer.
+                EXPECT_TRUE(info.transport_priority.has_value());
+                if (info.transport_priority.has_value())
+                {
+                    updated_transport_priority_ = info.transport_priority->value;
+                }
+            }
+            cv_.notify_all();
+
+            should_be_ignored = false;
+        }
+
+        void wait_discovery()
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            // Wait for the transport priority to be discovered.
+            cv_.wait(lock, [this]
+                    {
+                        return discovered_transport_priority_ != 0;
+                    });
+        }
+
+        void wait_update()
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            // Wait for the transport priority to be updated.
+            cv_.wait(lock, [this]
+                    {
+                        return updated_transport_priority_ != 0;
+                    });
+        }
+
+        void check_expectations() const
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+            int32_t prio = PRIORITY_2;
+            EXPECT_EQ(discovered_transport_priority_, prio);
+            prio = PRIORITY_3;
+            EXPECT_EQ(updated_transport_priority_, prio);
+        }
+
+    private:
+
+        mutable std::mutex mtx_;
+        std::condition_variable cv_;
+        int32_t discovered_transport_priority_ = 0;
+        int32_t updated_transport_priority_ = 0;
+    };
+
+    CustomListener custom_listener;
+    auto factory = fdds::DomainParticipantFactory::get_shared_instance();
+    fdds::DomainId_t domain_id = static_cast<fdds::DomainId_t>(GET_PID()) % 230;
+    fdds::DomainParticipant* participant = factory->create_participant(
+        domain_id, fdds::PARTICIPANT_QOS_DEFAULT, &custom_listener, fdds::StatusMask::none());
+
+    // 2. Create a disabled `DataWriter` with default QoS.
     fdds::PublisherQos pub_qos{};
     pub_qos.entity_factory().autoenable_created_entities = false;
     writer.publisher_qos(pub_qos).init();
     fdds::DataWriter& data_writer = writer.get_native_writer();
 
-    // 2. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_1`.
+    // 3. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_1`.
     auto current_qos = data_writer.get_qos();
     int32_t transport_priority_1 = current_qos.transport_priority().value;
 
-    // 3. Update the transport priority in `current_qos` to `PRIORITY_2` and set the `DataWriter` QoS to `current_qos`.
+    // 4. Update the transport priority in `current_qos` to `PRIORITY_2` and set the `DataWriter` QoS to `current_qos`.
     current_qos.transport_priority().value = PRIORITY_2;
     EXPECT_EQ(data_writer.set_qos(current_qos), fdds::RETCODE_OK);
 
-    // 4. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_2`.
+    // 5. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_2`.
     current_qos = data_writer.get_qos();
     int32_t transport_priority_2 = current_qos.transport_priority().value;
 
-    // 5. Enable the `DataWriter`.
+    // 6. Enable the `DataWriter`.
     EXPECT_EQ(data_writer.enable(), fdds::RETCODE_OK);
+    custom_listener.wait_discovery();
 
-    // 6. Update the transport priority in `current_qos` to `PRIORITY_3` and set the `DataWriter` QoS to `current_qos`.
+    // 7. Update the transport priority in `current_qos` to `PRIORITY_3` and set the `DataWriter` QoS to `current_qos`.
     current_qos.transport_priority().value = PRIORITY_3;
     EXPECT_EQ(data_writer.set_qos(current_qos), fdds::RETCODE_OK);
 
-    // 7. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_3`.
+    // 8. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_3`.
     current_qos = data_writer.get_qos();
     int32_t transport_priority_3 = current_qos.transport_priority().value;
+
+    // 9. Wait for the participant to discover the `DataWriter` and update the transport priority.
+    custom_listener.wait_update();
 
     // ----------- Assertions -----------
 
@@ -1918,6 +2007,14 @@ TEST(DDSDataWriter, transport_priority_mutable)
 
     // 3. `transport_priority_3` equals `PRIORITY_3`.
     EXPECT_EQ(transport_priority_3, PRIORITY_3);
+
+    // 4. The other participant discovered and updated transport priorities
+    //    are equal to `PRIORITY_2` and `PRIORITY_3`, respectively.
+    custom_listener.check_expectations();
+
+    // ----------- Cleanup -----------
+
+    factory->delete_participant(participant);
 }
 
 /**
