@@ -128,6 +128,9 @@ private:
     //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};
 
+    //! Name of the enumeration's default literal.
+    ObjectName default_literal_;
+
     //! Index pointing the first own member, not inherited from a base_type.
     uint32_t index_own_members_ {0};
 

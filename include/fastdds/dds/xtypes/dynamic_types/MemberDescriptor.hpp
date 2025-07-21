@@ -278,6 +278,25 @@ public:
             bool is_default_label) = 0;
 
     /*!
+     * Returns if the member is a default literal.
+     * @return If the member is a default literal
+     */
+    virtual bool is_default_literal() const = 0;
+
+    /*!
+     * Returns if the member is a default literal.
+     * @return If the member is a default literal
+     */
+    virtual bool& is_default_literal() = 0;
+
+    /*!
+     * Modifies if the member is a default literal.
+     * @param [in] is_default_literal Boolean
+     */
+    virtual void is_default_literal(
+            bool is_default_literal) = 0;
+
+    /*!
      * Overwrites the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.7.1).
      * @param [in] descriptor reference.
      * @return @ref ReturnCode_t

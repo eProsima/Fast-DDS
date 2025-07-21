@@ -69,8 +69,7 @@ protected:
     {
         static_cast<void>(parameters);
         assert(descriptor != nullptr);
-
-        descriptor->is_default_label(true);
+        descriptor->is_default_literal(true);
         return true;
     }
 };

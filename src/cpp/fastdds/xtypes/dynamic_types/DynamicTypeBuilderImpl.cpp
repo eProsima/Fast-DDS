@@ -287,6 +287,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
     RollbackSetting<uint32_t> id_reverter{next_id_}, index_reverter{next_index_};
     RollbackSetting<int32_t> default_value_reverter{default_value_};
+    RollbackSetting<ObjectName> default_literal_reverter{default_literal_};
 
     if (TK_ANNOTATION != type_descriptor_kind &&
             TK_BITMASK != type_descriptor_kind &&
@@ -525,6 +526,26 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             }
         }
 
+        if (descriptor_impl->is_default_literal())
+        {
+            for (auto member : members_)
+            {
+                const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
+
+                // Check that there isn't already any member marked as default.
+                if (member_impl->get_descriptor().is_default_literal())
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES,
+                            "Member " << member_impl->member_descriptor_.name().c_str() <<
+                            " has already been annotated as default");
+                    return RETCODE_BAD_PARAMETER;
+                }
+            }
+
+            default_literal_ = member_name;
+            default_literal_reverter.activate = true;
+        }
+
         if (!descriptor->default_value().empty())
         {
             for (auto member : members_)
@@ -602,6 +623,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     id_reverter.activate = false;
     index_reverter.activate = false;
     default_value_reverter.activate = false;
+    default_literal_reverter.activate = false;
     return RETCODE_OK;
 }
 
@@ -703,6 +725,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
             ret_val->members_ = members_;
             ret_val->default_value_ = default_value_;
             ret_val->default_union_member_ = default_union_member_;
+            ret_val->default_literal_ = default_literal_;
             ret_val->index_own_members_ = index_own_members_;
         }
     }

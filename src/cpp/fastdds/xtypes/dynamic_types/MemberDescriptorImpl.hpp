@@ -40,6 +40,9 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! If the union member is default.
     bool is_default_label_ {false};
 
+    //! If the enumeration member is default.
+    bool is_default_literal_ {false};
+
     //! If the member is key.
     bool is_key_ {false};
 
@@ -306,6 +309,22 @@ public:
             bool is_default_label) noexcept override
     {
         is_default_label_ = is_default_label;
+    }
+
+    bool is_default_literal() const noexcept override
+    {
+        return is_default_literal_;
+    }
+
+    bool& is_default_literal() noexcept override
+    {
+        return is_default_literal_;
+    }
+
+    void is_default_literal(
+            bool is_default_literal) noexcept override
+    {
+        is_default_literal_ = is_default_literal;
     }
 
     ReturnCode_t copy_from(

@@ -83,4 +83,5 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/nested_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/try_construct_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/value_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_literal_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
 )

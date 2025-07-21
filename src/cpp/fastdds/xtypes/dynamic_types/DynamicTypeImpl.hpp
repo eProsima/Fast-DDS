@@ -116,6 +116,11 @@ public:
         return default_union_member_;
     }
 
+    ObjectName default_literal() const noexcept
+    {
+        return default_literal_;
+    }
+
     traits<DynamicTypeImpl>::ref_type resolve_alias_enclosed_type() noexcept;
 
 protected:
@@ -133,6 +138,9 @@ private:
 
     //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};
+
+    //! Name of the enumeration's default literal.
+    ObjectName default_literal_;
 
     //! Index pointing the first own member, not inherited from a base_type.
     uint32_t index_own_members_ {0};

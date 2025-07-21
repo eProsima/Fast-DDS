@@ -99,6 +99,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     is_must_understand_ = descriptor.is_must_understand_;
     is_shared_ = descriptor.is_shared_;
     is_default_label_ = descriptor.is_default_label_;
+    is_default_literal_ = descriptor.is_default_literal_;
     is_try_construct_kind_set_ = descriptor.is_try_construct_kind_set_;
 
     return RETCODE_OK;
@@ -124,7 +125,9 @@ bool MemberDescriptorImpl::equals(
            is_optional_ == descriptor.is_optional_ &&
            is_must_understand_ == descriptor.is_must_understand_ &&
            is_shared_ == descriptor.is_shared_ &&
-           is_default_label_ == descriptor.is_default_label_;
+           is_default_label_ == descriptor.is_default_label_ &&
+           is_default_literal_ == descriptor.is_default_literal_ &&
+           is_try_construct_kind_set_ == descriptor.is_try_construct_kind_set_;
 }
 
 bool MemberDescriptorImpl::equal_labels(
@@ -293,6 +296,16 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         else
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "is_optional is not implemented yet.");
+        }
+    }
+
+    // Check default_literal built-in annotation.
+    if (is_default_literal_)
+    {
+        if (TK_ENUM != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "is_default_literal is set but parent type of member is not TK_ENUM.");
+            return false;
         }
     }
 

@@ -2875,6 +2875,56 @@ TEST_F(IdlParserTests, value_builtin_annotation)
     // ASSERT_FALSE(builder);
 }
 
+TEST_F(IdlParserTests, default_literal_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set @default_literal annotation on a enumeration's member and check that it is correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_valid_enum",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_2"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_default_literal());
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+
+    // Negative case: Trying to annotate multiple members with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_multiple_default_members",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @default_literal using parameters
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct member with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union member with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union discriminator with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
 int main(
         int argc,
         char** argv)
