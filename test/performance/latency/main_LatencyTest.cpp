@@ -188,8 +188,8 @@ int main(
         char** argv)
 {
 
-    Log::SetVerbosity(Log::Kind::Info);
-    Log::SetCategoryFilter(std::regex("LatencyTest"));
+    // Log::SetVerbosity(Log::Kind::Info);
+    // Log::SetCategoryFilter(std::regex("LatencyTest"));
 
     int columns;
 
