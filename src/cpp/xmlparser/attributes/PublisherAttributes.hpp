@@ -61,8 +61,7 @@ public:
                (this->remoteLocatorList == b.remoteLocatorList) &&
                (this->historyMemoryPolicy == b.historyMemoryPolicy) &&
                (this->properties == b.properties) &&
-               (this->matched_subscriber_allocation == b.matched_subscriber_allocation) &&
-               (this->transport_priority == b.transport_priority);
+               (this->matched_subscriber_allocation == b.matched_subscriber_allocation);
     }
 
     //! Topic Attributes for the Publisher
@@ -98,9 +97,6 @@ public:
 
     //! Allocation limits on the matched subscribers collections
     fastdds::ResourceLimitedContainerConfig matched_subscriber_allocation;
-
-    //! Transport priority for the Publisher
-    int32_t transport_priority = 0;
 
     /**
      * Get the user defined ID

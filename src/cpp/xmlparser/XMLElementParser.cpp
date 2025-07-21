@@ -4288,7 +4288,7 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
         else if (strcmp(name, "transport_priority") == 0)
         {
             // transport_priority - int32
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &publisher.transport_priority, ident))
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &publisher.qos.transport_priority.value, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
