@@ -22,7 +22,6 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Colors.hpp>
-#include <fastdds/dds/log/Log.hpp>
 
 #include "../optionarg.hpp"
 #include "LatencyTestPublisher.hpp"
@@ -185,11 +184,6 @@ int main(
         int argc,
         char** argv)
 {
-
-    using Log = eprosima::fastdds::dds::Log;
-    Log::SetVerbosity(Log::Kind::Info);
-    Log::SetCategoryFilter(std::regex("LatencyTest"));
-
     int columns;
 
 #if defined(_WIN32)
