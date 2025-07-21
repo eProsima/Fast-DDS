@@ -1606,7 +1606,7 @@ void WriterProxyData::set_qos(
     {
         resource_limits = qos.resource_limits;
     }
-    if (first_time && qos.transport_priority.has_value())
+    if (qos.transport_priority.has_value())
     {
         transport_priority = qos.transport_priority;
     }
@@ -1705,6 +1705,7 @@ void WriterProxyData::set_qos(
     {
         ownership_strength = qos.m_ownershipStrength;
     }
+    transport_priority = qos.transport_priority;
     if (first_time)
     {
         disable_positive_acks = qos.m_disablePositiveACKs;
