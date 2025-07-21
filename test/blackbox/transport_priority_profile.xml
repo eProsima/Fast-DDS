@@ -2,7 +2,9 @@
 <dds xmlns="http://www.eprosima.com">
     <profiles>         
         <data_writer profile_name="TRP-FUN-04">
-            <transport_priority>12</transport_priority>
+            <qos>
+                <transport_priority>12</transport_priority>
+            </qos>
         </data_writer>
     </profiles>
 </dds>
