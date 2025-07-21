@@ -1785,7 +1785,10 @@ public:
 
         if (eprosima::fastdds::dds::RETCODE_OK == datareader_->take(data_seq, info_seq))
         {
-            current_processed_count_++;
+            if (info_seq[0].sample_identity != eprosima::fastdds::rtps::SampleIdentity::unknown())
+            {
+                current_processed_count_++;
+            }
             return true;
         }
         return false;
@@ -1797,7 +1800,10 @@ public:
         eprosima::fastdds::dds::SampleInfo dds_info;
         if (datareader_->take_next_sample(data, &dds_info) == eprosima::fastdds::dds::RETCODE_OK)
         {
-            current_processed_count_++;
+            if (dds_info.sample_identity != eprosima::fastdds::rtps::SampleIdentity::unknown())
+            {
+                current_processed_count_++;
+            }
             return true;
         }
         return false;
@@ -2017,7 +2023,8 @@ protected:
         ReturnCode_t success = take_ ?
                 datareader->take_next_sample((void*)&data, &info) :
                 datareader->read_next_sample((void*)&data, &info);
-        if (eprosima::fastdds::dds::RETCODE_OK == success)
+        if ((eprosima::fastdds::dds::RETCODE_OK == success) &&
+                (info.sample_identity != eprosima::fastdds::rtps::SampleIdentity::unknown()))
         {
             returnedValue = true;
 
@@ -2070,6 +2077,11 @@ protected:
         {
             type& data = datas[i];
             eprosima::fastdds::dds::SampleInfo& info = infos[i];
+
+            if (info.sample_identity == eprosima::fastdds::rtps::SampleIdentity::unknown())
+            {
+                continue; // Skip unknown samples
+            }
 
             // Check order of changes.
             LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
