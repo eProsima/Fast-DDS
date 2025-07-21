@@ -181,7 +181,7 @@ struct ReadTakeCommand
         }
 
         // Check if there is a fake sample available
-        if (instance_->second->has_fake_sample)
+        if (!finished_ && instance_->second->has_fake_sample)
         {
             // Add sample and info to collections
             bool deserialization_error = false;
