@@ -21,4 +21,4 @@
 struct nested_ann_on_member
 {
     @nested long invalid_member;
-}
+};

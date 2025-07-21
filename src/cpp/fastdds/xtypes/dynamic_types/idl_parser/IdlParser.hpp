@@ -53,6 +53,7 @@
 #include "pegtl.hpp"
 #include "pegtl/analyze.hpp"
 
+#include "AnnotationList.hpp"
 #include "IdlAnnotations.hpp"
 #include "IdlGrammar.hpp"
 #include "IdlModule.hpp"
