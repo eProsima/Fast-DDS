@@ -2337,7 +2337,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     // Initial announcements will be disabled and lease announcements will be configured to control discovery sequence.
     // The main participant will use the test transport to count the number of Data(p) sent.
 
-    // Look for the PID_DOMAIN_ID in the message as it is only present in Data(p) messages
+    // Look for the PID_PARTICIPANT_LEASE_DURATION in the message as it is only present in Data(p) messages
     auto builtin_msg_is_data_p = [](CDRMessage_t& msg, std::atomic<size_t>& num_data_p)
             {
                 uint32_t qos_size = 0;
@@ -2385,7 +2385,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
                     }
                     else if (!is_sentinel)
                     {
-                        if (pid == eprosima::fastdds::dds::PID_DOMAIN_ID)
+                        if (pid == eprosima::fastdds::dds::PID_PARTICIPANT_LEASE_DURATION)
                         {
                             std::cout << "Data(p) sent by the server" << std::endl;
                             inline_qos_msg = false;
@@ -2402,7 +2402,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     // Declare a test transport that will count the number of Data(p) messages sent
     std::atomic<size_t> num_data_p_sends{ 0 };
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
-    test_transport->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
+    test_transport->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
             {
                 return builtin_msg_is_data_p(msg, num_data_p_sends);
             };
@@ -2416,6 +2416,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
 
     WireProtocolConfigQos server_wp_qos;
     server_wp_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    std::istringstream("44.53.00.5f.45.50.52.4f.53.49.4d.41") >> server_wp_qos.prefix;
     server_wp_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server);
 
     server_wp_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
@@ -2437,6 +2438,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     WireProtocolConfigQos client_qos;
     client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     RemoteServerAttributes remote_server_att;
+    remote_server_att.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
     remote_server_att.metatrafficUnicastLocatorList.push_back(locator_server);
     client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
     client_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
@@ -2562,13 +2564,13 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     std::atomic<size_t> num_data_r_w_sends_s1{ 0 };
     std::atomic<size_t> num_data_r_w_sends_s2{ 0 };
     auto test_transport_s1 = std::make_shared<test_UDPv4TransportDescriptor>();
-    test_transport_s1->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
+    test_transport_s1->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
             {
                 return builtin_msg_is_data_r_w(msg, num_data_r_w_sends_s1);
             };
 
     auto test_transport_s2 = std::make_shared<test_UDPv4TransportDescriptor>();
-    test_transport_s2->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
+    test_transport_s2->drop_builtin_data_messages_filter_ = [&](CDRMessage_t& msg)
             {
                 return builtin_msg_is_data_r_w(msg, num_data_r_w_sends_s2);
             };
@@ -2582,6 +2584,7 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
 
     WireProtocolConfigQos server_wp_qos_1;
     server_wp_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    std::istringstream("44.53.01.5f.45.50.52.4f.53.49.4d.41") >> server_wp_qos_1.prefix;
     server_wp_qos_1.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
 
     server_wp_qos_1.builtin.discovery_config.leaseDuration = c_TimeInfinite;
@@ -2602,11 +2605,13 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     IPLocator::setPhysicalPort(locator_server_2, global_port + 1);
 
     WireProtocolConfigQos server_wp_qos_2 = server_wp_qos_1;
+    std::istringstream("44.53.02.5f.45.50.52.4f.53.49.4d.41") >> server_wp_qos_2.prefix;
     server_wp_qos_2.builtin.metatrafficUnicastLocatorList.clear();
     server_wp_qos_2.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
     // Configure 1 initial announcement as this Server will connect to the first one
     server_wp_qos_2.builtin.discovery_config.initial_announcements.count = 1;
     RemoteServerAttributes remote_server_att_1;
+    remote_server_att_1.ReadguidPrefix("44.53.01.5f.45.50.52.4f.53.49.4d.41");
     remote_server_att_1.metatrafficUnicastLocatorList.push_back(locator_server_1);
     server_wp_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att_1);
 
@@ -2642,6 +2647,7 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     // Init client 2
     client_qos.builtin.discovery_config.m_DiscoveryServers.clear();
     RemoteServerAttributes remote_server_att_2;
+    remote_server_att_2.ReadguidPrefix("44.53.02.5f.45.50.52.4f.53.49.4d.41");
     remote_server_att_2.metatrafficUnicastLocatorList.push_back(locator_server_2);
     client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att_2);
     client_2.set_wire_protocol_qos(client_qos)
