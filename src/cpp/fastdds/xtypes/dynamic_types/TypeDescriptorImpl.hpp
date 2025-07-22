@@ -35,6 +35,9 @@ class TypeDescriptorImpl : public virtual TypeDescriptor
     //! Discriminator type for a union.
     traits<DynamicType>::ref_type discriminator_type_;
 
+    //! Literal type for an enumeration.
+    traits<DynamicType>::ref_type literal_type_;
+
     //! Length for strings, arrays, sequences, maps and bitmasks.
     BoundSeq bound_;
 
@@ -134,6 +137,22 @@ public:
             traits<DynamicType>::ref_type type) noexcept override
     {
         discriminator_type_ = type;
+    }
+
+    traits<DynamicType>::ref_type literal_type() const noexcept override
+    {
+        return literal_type_;
+    }
+
+    traits<DynamicType>::ref_type& literal_type() noexcept override
+    {
+        return literal_type_;
+    }
+
+    void literal_type(
+            traits<DynamicType>::ref_type type) noexcept override
+    {
+        literal_type_ = type;
     }
 
     const BoundSeq& bound() const noexcept override

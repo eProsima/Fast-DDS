@@ -78,44 +78,11 @@ protected:
             return false;
         }
 
-        if ((TK_BITSET != descriptor->kind()) && (TK_BITMASK != descriptor->kind()))
+        if ((TK_ENUM != descriptor->kind()) && (TK_BITMASK != descriptor->kind()))
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "TypeDescriptor can only be annotated with '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
-                                                                  << "' for bitset/bitmask types.");
-            return false;
-        }
-
-        try
-        {
-            TypeForKind<TK_UINT16> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
-            descriptor->bound({value});
-        }
-        catch (const std::exception& e)
-        {
-            EPROSIMA_LOG_ERROR(IDL_PARSER,
-                    "Failed to convert value '" << parameters.at(
-                        IDL_VALUE_TAG)
-                                                << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG << "': " <<
-                            e.what());
-            return false;
-        }
-
-        return true;
-    }
-
-    bool apply_to_member(
-            MemberDescriptor::_ref_type& descriptor,
-            const std::map<std::string, std::string>& parameters) const override
-    {
-        assert(descriptor != nullptr);
-
-        if (parameters.find(IDL_VALUE_TAG) == parameters.end())
-        {
-            EPROSIMA_LOG_ERROR(IDL_PARSER,
-                    "Missing required parameter '" << IDL_VALUE_TAG
-                                                   << "' for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG <<
-                            "'.");
+                                                                  << "' for enumeration/bitmask types.");
             return false;
         }
 
@@ -135,31 +102,70 @@ protected:
             return false;
         }
 
-        DynamicType::_ref_type member_type;
-
-        if (value == 8)
+        if (TK_BITMASK == descriptor->kind())
         {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT8);
-        }
-        else if (value == 16)
-        {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16);
-        }
-        else if (value == 32)
-        {
-            member_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32);
+            descriptor->bound({value});
         }
         else
         {
-            EPROSIMA_LOG_ERROR(IDL_PARSER,
-                    "Invalid bit bound value '" << value << "' for annotation '"
-                                                << IDL_BUILTIN_ANN_BIT_BOUND_TAG << "'.");
-            return false;
+            TypeKind literal_kind;
+
+            try
+            {
+                literal_kind = get_literal_kind_from_bound(value);
+            }
+            catch (const std::exception& e)
+            {
+                EPROSIMA_LOG_ERROR(IDL_PARSER,
+                        "Failed to get literal kind from bound for annotation '" << IDL_BUILTIN_ANN_BIT_BOUND_TAG
+                                                                                  << "': " << e.what());
+                return false;
+            }
+
+            descriptor->literal_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(literal_kind));
         }
 
-        descriptor->type(member_type);
-
         return true;
+    }
+
+    bool apply_to_member(
+            MemberDescriptor::_ref_type& descriptor,
+            const std::map<std::string, std::string>& parameters) const override
+    {
+        static_cast<void>(descriptor);
+        static_cast<void>(parameters);
+
+        EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @bit_bound annotation to a MemberDescriptor.");
+        return false;
+    }
+
+    /**
+     * @brief Get the TypeKind corresponding to the literal type of a @bit_bound annotated enumeration
+     *
+     * @param value The value of the @bit_bound annotation
+     * @return The enumeration's literal type kind.
+     * @throws std::invalid_argument if value is 0 or higher than 32.
+     */
+    TypeKind get_literal_kind_from_bound(
+            TypeForKind<TK_UINT16> value) const
+    {
+        if (value == 0 || value > 32)
+        {
+            throw std::invalid_argument("Invalid bit bound value: " + std::to_string(value));
+        }
+
+        if (value <= 8)
+        {
+            return TK_INT8;
+        }
+        else if (value <= 16)
+        {
+            return TK_INT16;
+        }
+        else
+        {
+            return TK_INT32;
+        }
     }
 
     bool initialized_;

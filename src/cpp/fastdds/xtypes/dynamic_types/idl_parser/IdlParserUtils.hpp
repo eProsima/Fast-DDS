@@ -16,10 +16,10 @@
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSERUTILS_HPP
 
 #include <algorithm>
-#include <sstream>
-#include <vector>
 #include <cctype>
+#include <sstream>
 #include <string>
+#include <vector>
 
 namespace eprosima {
 namespace fastdds {

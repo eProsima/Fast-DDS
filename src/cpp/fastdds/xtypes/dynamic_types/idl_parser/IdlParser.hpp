@@ -1869,7 +1869,15 @@ struct action<enum_dcl>
             const std::string& member_name = tokens[i];
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(member_name);
-            member_descriptor->type(factory->get_primitive_type(TK_INT32));
+
+            if (type_descriptor->literal_type())
+            {
+                member_descriptor->type(type_descriptor->literal_type());
+            }
+            else
+            {
+                member_descriptor->type(factory->get_primitive_type(TK_INT32));
+            }
 
             // Annotate the member descriptor with the annotations collected during parsing
             const auto& member_annotations = ctx->annotations().pending_member_annotations();
@@ -1901,7 +1909,7 @@ struct action<enum_dcl>
         }
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << scoped_enum_name);
-        module->enum_32(scoped_enum_name, builder);
+        module->enumeration(scoped_enum_name, builder);
 
         if (scoped_enum_name == ctx->target_type_name)
         {

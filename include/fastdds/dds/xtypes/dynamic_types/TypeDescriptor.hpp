@@ -118,6 +118,34 @@ public:
             traits<DynamicType>::ref_type type) = 0;
 
     /*!
+     * Returns a reference to the literal type. The reference can be nil.
+     *
+     * @note This is only valid for @ref TK_ENUM types, and it represents the expected type of its literals.
+     * @warning This method is an extension of the standard TypeDescriptor interface (see [standard] section \b 7.5.2.4 )
+     * @return @ref DynamicType reference.
+     */
+    virtual traits<DynamicType>::ref_type literal_type() const = 0;
+
+    /*!
+     * Returns a reference to the literal type. The reference can be nil.
+     *
+     * @note This is only valid for @ref TK_ENUM types, and it represents the expected type of its literals.
+     * @warning This method is an extension of the standard TypeDescriptor interface (see [standard] section \b 7.5.2.4 )
+     * @return @ref DynamicType reference.
+     */
+    virtual traits<DynamicType>::ref_type& literal_type() = 0;
+
+    /*!
+     * Modifies the underlying literal type reference.
+     *
+     * @param [in] type @ref DynamicType reference.
+     * @note This is only valid for @ref TK_ENUM types, and it represents the expected type of its literals.
+     * @warning This method is an extension of the standard TypeDescriptor interface (see [standard] section \b 7.5.2.4 )
+     */
+    virtual void literal_type(
+            traits<DynamicType>::ref_type type) = 0;
+
+    /*!
      * Returns the bound.
      * @return @ref BoundSeq.
      */

@@ -2658,10 +2658,10 @@ TEST_F(IdlParserTests, bit_bound_builtin_annotation)
 
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
-    // TODO: Add positive tests for bitset/bitmask when bitset/bitmask parsing is supported.
+    // TODO: Add positive tests for bitmasks when bitmask parsing is supported.
 
     // Set bit_bound annotation on enum members and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_valid_enum",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_valid_enum_8",
                     include_paths);
     DynamicTypeMember::_ref_type member;
     ASSERT_TRUE(builder);
@@ -2671,20 +2671,68 @@ TEST_F(IdlParserTests, bit_bound_builtin_annotation)
     EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_2"), RETCODE_OK);
     EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
     EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT8));
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_valid_enum_16",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_1"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT16));
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_2"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT16));
+    type = builder->build();
+    ASSERT_TRUE(type);
 
     // Negative case: Trying to annotate using @bit_bound with invalid bound value
-    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_invalid_bound_value_enum",
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_invalid_bound_value",
                     include_paths);
-    // ASSERT_FALSE(builder);
     EXPECT_FALSE(builder);
 
     // Negative case: Trying to annotate using @bit_bound with invalid value type
-    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_invalid_value_type_enum",
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @bit_bound without specifying the bound value
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_missing_parameter",
                     include_paths);
     ASSERT_FALSE(builder);
 
     // Negative case: Trying to annotate using @bit_bound with additional parameters
-    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_extra_parameter_enum",
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct type with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct mmember with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a enumeration's member with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_enum_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union type with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union member with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union's discriminator with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_union_discriminator",
                     include_paths);
     ASSERT_FALSE(builder);
 
