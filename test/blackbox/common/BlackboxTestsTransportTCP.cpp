@@ -528,11 +528,6 @@ TEST_P(TransportTCP, TCPLocalhost)
 // Test == operator for TCPv4/v6
 TEST_P(TransportTCP, TCP_equal_operator)
 {
-<<<<<<< HEAD
-    // TCPv4TransportDescriptor
-    TCPv4TransportDescriptor tcpv4_transport_1;
-    TCPv4TransportDescriptor tcpv4_transport_2;
-=======
     if (use_ipv6)
     {
         // TCPv6TransportDescriptor
@@ -540,7 +535,6 @@ TEST_P(TransportTCP, TCP_equal_operator)
         TCPv6TransportDescriptor transport2;
         // Compare equal in defult values
         ASSERT_EQ(transport1, transport2);
->>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
 
         // Modify some default values in 1
         transport1.enable_tcp_nodelay = !transport1.enable_tcp_nodelay; // change default value
@@ -575,18 +569,6 @@ TEST_P(TransportTCP, TCP_equal_operator)
 // Test copy constructor and copy assignment for TCPv4/v6
 TEST_P(TransportTCP, TCP_copy)
 {
-<<<<<<< HEAD
-    TCPv4TransportDescriptor tcpv4_transport;
-    tcpv4_transport.set_WAN_address("80.80.99.45");
-
-    // Copy constructor
-    TCPv4TransportDescriptor tcpv4_transport_copy_constructor(tcpv4_transport);
-    EXPECT_EQ(tcpv4_transport, tcpv4_transport_copy_constructor);
-
-    // Copy assignment
-    TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
-    EXPECT_EQ(tcpv4_transport_copy, tcpv4_transport);
-=======
     if (use_ipv6)
     {
         // Change some varibles in order to check the non default creation
@@ -615,7 +597,6 @@ TEST_P(TransportTCP, TCP_copy)
         TCPv4TransportDescriptor tcpv4_transport_copy = tcpv4_transport;
         EXPECT_EQ(tcpv4_transport_copy, tcpv4_transport);
     }
->>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
 }
 
 // Test get_WAN_address member function
@@ -627,53 +608,6 @@ TEST(TransportTCP, TCPv4_get_WAN_address)
     ASSERT_EQ(tcpv4_transport.get_WAN_address(), "80.80.99.45");
 }
 
-<<<<<<< HEAD
-// Test == operator for TCPv6
-TEST_P(TransportTCP, TCPv6_equal_operator)
-{
-    // TCPv6TransportDescriptor
-    TCPv6TransportDescriptor tcpv6_transport_1;
-    TCPv6TransportDescriptor tcpv6_transport_2;
-
-    // Compare equal in defult values
-    ASSERT_EQ(tcpv6_transport_1, tcpv6_transport_2);
-
-    // Modify some default values in 1
-    tcpv6_transport_1.enable_tcp_nodelay = !tcpv6_transport_1.enable_tcp_nodelay; // change default value
-    tcpv6_transport_1.max_logical_port = tcpv6_transport_1.max_logical_port + 10; // change default value
-    tcpv6_transport_1.add_listener_port(123u * 98u);
-
-    ASSERT_FALSE(tcpv6_transport_1 == tcpv6_transport_2); // operator== != operator!=, using operator== == false instead
-
-
-    // Modify some default values in 2
-    tcpv6_transport_2.enable_tcp_nodelay = !tcpv6_transport_2.enable_tcp_nodelay; // change default value
-    tcpv6_transport_2.max_logical_port = tcpv6_transport_2.max_logical_port + 10; // change default value
-    tcpv6_transport_2.add_listener_port(123u * 98u);
-
-    ASSERT_EQ(tcpv6_transport_1, tcpv6_transport_2);
-}
-
-// Test copy constructor and copy assignment for TCPv6
-TEST_P(TransportTCP, TCPv6_copy)
-{
-    // Change some varibles in order to check the non default creation
-    TCPv6TransportDescriptor tcpv6_transport;
-    tcpv6_transport.enable_tcp_nodelay = !tcpv6_transport.enable_tcp_nodelay; // change default value
-    tcpv6_transport.max_logical_port = tcpv6_transport.max_logical_port + 10; // change default value
-    tcpv6_transport.add_listener_port(123u * 98u);
-
-    // Copy constructor
-    TCPv6TransportDescriptor tcpv6_transport_copy_constructor(tcpv6_transport);
-    EXPECT_EQ(tcpv6_transport, tcpv6_transport_copy_constructor);
-
-    // Copy assignment
-    TCPv6TransportDescriptor tcpv6_transport_copy = tcpv6_transport;
-    EXPECT_EQ(tcpv6_transport_copy, tcpv6_transport);
-}
-
-=======
->>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
 // Test connection is successfully restablished after dropping and relaunching a TCP client (requester)
 // Issue -> https://github.com/eProsima/Fast-DDS/issues/2409
 TEST_P(TransportTCP, Client_reconnection)
@@ -757,10 +691,6 @@ TEST_P(TransportTCP, TCP_autofill_port)
     }
 
     // Add TCP Transport with listening port 0
-<<<<<<< HEAD
-    auto p1_transport = std::make_shared<TCPv4TransportDescriptor>();
-=======
->>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
     p1_transport->add_listener_port(0);
     p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
     p1.init();
@@ -768,40 +698,6 @@ TEST_P(TransportTCP, TCP_autofill_port)
 
     // Add TCP Transport with listening port different from 0
     uint16_t port = 12345;
-<<<<<<< HEAD
-    auto p2_transport = std::make_shared<TCPv4TransportDescriptor>();
-    p2_transport->add_listener_port(port);
-    p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
-    p2.init();
-    ASSERT_TRUE(p2.isInitialized());
-
-    LocatorList_t p1_locators;
-    p1.get_native_reader().get_listening_locators(p1_locators);
-    EXPECT_TRUE(IPLocator::getPhysicalPort(p1_locators.begin()[0]) != 0);
-
-    LocatorList_t p2_locators;
-    p2.get_native_reader().get_listening_locators(p2_locators);
-    EXPECT_TRUE(IPLocator::getPhysicalPort(p2_locators.begin()[0]) == port);
-}
-
-// Test zero listening port for TCPv6
-TEST_P(TransportTCP, TCPv6_autofill_port)
-{
-    PubSubReader<HelloWorldPubSubType> p1(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> p2(TEST_TOPIC_NAME);
-
-    // Add TCP Transport with listening port 0
-    auto p1_transport = std::make_shared<TCPv6TransportDescriptor>();
-    p1_transport->add_listener_port(0);
-    p1.disable_builtin_transport().add_user_transport_to_pparams(p1_transport);
-    p1.init();
-    ASSERT_TRUE(p1.isInitialized());
-
-    // Add TCP Transport with listening port different from 0
-    uint16_t port = 12345;
-    auto p2_transport = std::make_shared<TCPv6TransportDescriptor>();
-=======
->>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
     p2_transport->add_listener_port(port);
     p2.disable_builtin_transport().add_user_transport_to_pparams(p2_transport);
     p2.init();
@@ -933,24 +829,9 @@ TEST_P(TransportTCP, multiple_listening_ports)
     uint16_t server_port_1 = 10000;
     uint16_t server_port_2 = 10001;
 
-<<<<<<< HEAD
-    std::shared_ptr<TCPTransportDescriptor> server_transport;
-    if (use_ipv6)
-    {
-        server_transport = std::make_shared<TCPv6TransportDescriptor>();
-    }
-    else
-    {
-        server_transport = std::make_shared<TCPv4TransportDescriptor>();
-    }
-    server_transport->add_listener_port(server_port_1);
-    server_transport->add_listener_port(server_port_2);
-    server->disable_builtin_transport().add_user_transport_to_pparams(server_transport).init();
-=======
     test_transport_->add_listener_port(server_port_1);
     test_transport_->add_listener_port(server_port_2);
     server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).init();
->>>>>>> 0c799f4ca (Improve Blackbox TCP tests suite (#5467))
     ASSERT_TRUE(server->isInitialized());
 
     // Create two clients each one connecting to a different port
