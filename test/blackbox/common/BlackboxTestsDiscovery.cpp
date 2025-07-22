@@ -2322,15 +2322,8 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 
 // This test checks that a Discover Server does not send duplicated PDP messages of itself when new clients
 // are discovered
-TEST_P(Discovery, discovery_server_pdp_messages_sent)
+TEST(Discovery, discovery_server_pdp_messages_sent)
 {
-    // Skip test in intraprocess and datasharing mode
-    if (TRANSPORT != GetParam())
-    {
-        GTEST_SKIP() << "Only makes sense on TRANSPORT";
-        return;
-    }
-
     using namespace eprosima::fastdds::dds;
 
     // One discovery server will be created, with multiple direct clients connected to it.
@@ -2480,15 +2473,8 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 3u);
 }
 
-TEST_P(Discovery, discovery_server_edp_messages_sent)
+TEST(Discovery, discovery_server_edp_messages_sent)
 {
-    // Skip test in intraprocess and datasharing mode
-    if (TRANSPORT != GetParam())
-    {
-        GTEST_SKIP() << "Only makes sense on TRANSPORT";
-        return;
-    }
-
     using namespace eprosima::fastdds::dds;
 
     // Two discovery servers will be created, each with a direct client connected to them.
