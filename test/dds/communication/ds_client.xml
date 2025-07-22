@@ -18,12 +18,16 @@
                     <discovery_config>
                         <discoveryProtocol>CLIENT</discoveryProtocol>
                         <discoveryServersList>
-                            <locator>
-                                <udpv4>
-                                    <address>${SERVER_IP}</address>
-                                    <port>11811</port>
-                                </udpv4>
-                            </locator>
+                            <RemoteServer prefix="44.53.00.5f.45.50.52.4f.53.49.4d.41">
+                                <metatrafficUnicastLocatorList>
+                                    <locator>
+                                        <udpv4>
+                                            <address>${SERVER_IP}</address>
+                                            <port>11811</port>
+                                        </udpv4>
+                                    </locator>
+                                </metatrafficUnicastLocatorList>
+                            </RemoteServer>
                         </discoveryServersList>
                     </discovery_config>
 

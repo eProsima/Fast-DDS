@@ -21,7 +21,7 @@ EXAMPLE_DIR="@PROJECT_BINARY_DIR@/test/dds/communication"
 export EXAMPLE_DIR
 
 echo "[INFO] Starting discovery server"
-"$PREFIX/bin/fastdds" discovery -l 0.0.0.0 &
+"$PREFIX/bin/fastdds" discovery -i 0 -l 0.0.0.0 &
 SERVER_PID=$!
 
 
