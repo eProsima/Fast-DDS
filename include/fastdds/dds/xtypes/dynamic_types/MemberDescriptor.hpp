@@ -126,6 +126,30 @@ public:
             std::string&& default_value) = 0;
 
     /*!
+     * Returns the assigned value for members representing an enumerated literal.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     *
+     * @return The enumerated literal value
+     */
+    virtual std::string& literal_value() = 0;
+
+    /*!
+     * Returns the assigned value for members representing an enumerated literal.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     *
+     * @return The enumerated literal value
+     */
+    virtual const std::string& literal_value() const = 0;
+
+    /*!
+     * Modifies the underlying literal value by copy.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @param [in] literal_value Literal value.
+     */
+    virtual void literal_value(
+            const std::string& literal_value) = 0;
+
+    /*!
      * Returns the order of definition of the member.
      * @return Order of definition.
      */

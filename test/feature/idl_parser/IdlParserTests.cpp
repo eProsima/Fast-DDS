@@ -2890,10 +2890,12 @@ TEST_F(IdlParserTests, value_builtin_annotation)
     DynamicTypeMember::_ref_type member;
     EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE1"), RETCODE_OK);
     EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
-    EXPECT_EQ(member_descriptor->default_value(), "3");
+    EXPECT_EQ(member_descriptor->literal_value(), "3");
     EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE2"), RETCODE_OK);
     EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
-    EXPECT_EQ(member_descriptor->default_value(), "8");
+    EXPECT_EQ(member_descriptor->literal_value(), "8");
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
 
     // Negative case: Trying to annotate using @value with invalid value type
     builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_invalid_value_type",
@@ -2910,17 +2912,35 @@ TEST_F(IdlParserTests, value_builtin_annotation)
                     include_paths);
     ASSERT_FALSE(builder);
 
-    // Negative case: Trying to annotate a constructed type with @value
+    // Negative case: Trying to annotate a enum type with @value
     builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_enum",
                     include_paths);
     ASSERT_FALSE(builder);
 
-    // TODO (Carlosespicur): Design pending
-    // // Negative case: Trying to annotate with @value a member of a
-    // // constructed type different from a enumeration
-    // builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_invalid_type_member",
-    //                 include_paths);
-    // ASSERT_FALSE(builder);
+    // Negative case: Trying to annotate a struct type with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct member with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union type with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union member with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union discriminator with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
 }
 
 TEST_F(IdlParserTests, default_literal_builtin_annotation)

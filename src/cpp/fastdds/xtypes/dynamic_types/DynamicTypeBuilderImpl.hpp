@@ -121,9 +121,13 @@ private:
     //! Contains the annotations applied by the user.
     std::vector<AnnotationDescriptorImpl> annotation_;
 
-    //! Contains the default value of discriminator (TK_UNION) or next literal (TK_ENUM).
+    //! Contains the default value of discriminator (TK_UNION).
     //! This is calculated while the type is being built.
     int32_t default_value_ {0};
+
+    //! Contains the value of the next literal (TK_ENUM).
+    //! This is calculated while the type is being built.
+    int32_t literal_value_ {0};
 
     //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};

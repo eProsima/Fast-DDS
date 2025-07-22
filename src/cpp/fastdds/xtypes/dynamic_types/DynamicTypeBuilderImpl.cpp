@@ -287,6 +287,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
     RollbackSetting<uint32_t> id_reverter{next_id_}, index_reverter{next_index_};
     RollbackSetting<int32_t> default_value_reverter{default_value_};
+    RollbackSetting<int32_t> literal_value_reverter{literal_value_};
     RollbackSetting<ObjectName> default_literal_reverter{default_literal_};
 
     if (TK_ANNOTATION != type_descriptor_kind &&
@@ -554,33 +555,33 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             default_literal_reverter.activate = true;
         }
 
-        if (!descriptor->default_value().empty())
+        if (!descriptor->literal_value().empty())
         {
             for (auto member : members_)
             {
                 const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
 
-                // Check that there isn't already any member with the same default value.
-                if (0 == descriptor->default_value().compare(member_impl->get_descriptor().default_value()))
+                // Check that there isn't already any member with the same literal value.
+                if (0 == descriptor->literal_value().compare(member_impl->get_descriptor().literal_value()))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
                             "Member " << member_impl->member_descriptor_.name().c_str() <<
-                            " has already the value");
+                            " has already the value " << member_impl->get_descriptor().literal_value());
                     return RETCODE_BAD_PARAMETER;
                 }
             }
-            TypeForKind<TK_INT32> value = TypeValueConverter::sto(descriptor->default_value());
+            TypeForKind<TK_INT32> value = TypeValueConverter::sto(descriptor->literal_value());
 
-            if (value >= default_value_)
+            if (value >= literal_value_)
             {
-                default_value_ = value + 1;
-                default_value_reverter.activate = true;
+                literal_value_ = value + 1;
+                literal_value_reverter.activate = true;
             }
         }
         else
         {
-            dyn_member->get_descriptor().default_value(std::to_string(default_value_++));
-            default_value_reverter.activate = true;
+            dyn_member->get_descriptor().literal_value(std::to_string(literal_value_++));
+            literal_value_reverter.activate = true;
         }
     }
     //}}}
@@ -631,6 +632,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     id_reverter.activate = false;
     index_reverter.activate = false;
     default_value_reverter.activate = false;
+    literal_value_reverter.activate = false;
     default_literal_reverter.activate = false;
     return RETCODE_OK;
 }

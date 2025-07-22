@@ -31,6 +31,9 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! Default value of the member in string form.
     std::string default_value_;
 
+    //! Value of the enumerated literal (enumeration's members)
+    std::string literal_value_;
+
     //! MemberId, it should be filled automatically when the member is added if not set (MEMBER_ID_INVALID).
     MemberId id_ {MEMBER_ID_INVALID};
 
@@ -158,6 +161,22 @@ public:
             std::string&& default_value) noexcept override
     {
         default_value_ = std::move(default_value);
+    }
+
+    std::string& literal_value() noexcept override
+    {
+        return literal_value_;
+    }
+
+    const std::string& literal_value() const noexcept override
+    {
+        return literal_value_;
+    }
+
+    void literal_value(
+            const std::string& literal_value) noexcept override
+    {
+        literal_value_ = literal_value;
     }
 
     uint32_t index() const noexcept override

@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-bool default_value_compare(
+bool value_compare(
         const traits<DynamicType>::ref_type type,
         const std::string& d1,
         const std::string& d2)
@@ -91,6 +91,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     id_ = descriptor.id_;
     type_ = descriptor.type_;
     default_value_ = descriptor.default_value_;
+    literal_value_ = descriptor.literal_value_;
     index_ = descriptor.index_;
     label_ = descriptor.label_;
     try_construct_kind_ = descriptor.try_construct_kind_;
@@ -117,7 +118,8 @@ bool MemberDescriptorImpl::equals(
     return name_ == descriptor.name_ &&
            id_ == descriptor.id_ &&
            (type_ && type_->equals(descriptor.type_)) &&
-           default_value_compare(type_, default_value_, descriptor.default_value_) &&
+           value_compare(type_, default_value_, descriptor.default_value_) &&
+           value_compare(type_, literal_value_, descriptor.literal_value_) &&
            index_ == descriptor.index_ &&
            equal_labels(descriptor.label_) &&
            try_construct_kind_ == descriptor.try_construct_kind_ &&
@@ -214,12 +216,30 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         }
     }
 
+    // Check default_value_.
     if (!default_value_.empty() &&
             !TypeValueConverter::is_string_consistent(type->get_kind(), type->get_all_members_by_index(),
             default_value_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Default value is not consistent");
         return false;
+    }
+
+    // Check literal_value_.
+    if (!literal_value_.empty())
+    {
+        if (TK_ENUM != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is not an ENUM and it has set literal_value");
+            return false;
+        }
+
+        if (!TypeValueConverter::is_string_consistent(type->get_kind(), type->get_all_members_by_index(),
+                literal_value_))
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Literal value is not consistent");
+            return false;
+        }
     }
 
     // Check bitfield|enum enclosing type.

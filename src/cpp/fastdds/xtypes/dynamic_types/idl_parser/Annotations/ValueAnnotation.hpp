@@ -95,7 +95,7 @@ protected:
         try
         {
             TypeForKind<TK_INT32> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
-            descriptor->default_value(std::to_string(value));
+            descriptor->literal_value(std::to_string(value));
         }
         catch (const std::exception& e)
         {
