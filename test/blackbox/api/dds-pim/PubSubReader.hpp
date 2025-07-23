@@ -1785,7 +1785,7 @@ public:
 
         if (eprosima::fastdds::dds::RETCODE_OK == datareader_->take(data_seq, info_seq))
         {
-            if (info_seq[0].sample_identity != eprosima::fastdds::rtps::SampleIdentity::unknown())
+            if (info_seq[0].publication_handle != HANDLE_NIL)
             {
                 current_processed_count_++;
             }
@@ -1800,7 +1800,7 @@ public:
         eprosima::fastdds::dds::SampleInfo dds_info;
         if (datareader_->take_next_sample(data, &dds_info) == eprosima::fastdds::dds::RETCODE_OK)
         {
-            if (dds_info.sample_identity != eprosima::fastdds::rtps::SampleIdentity::unknown())
+            if (dds_info.publication_handle != HANDLE_NIL)
             {
                 current_processed_count_++;
             }
@@ -2024,7 +2024,7 @@ protected:
                 datareader->take_next_sample((void*)&data, &info) :
                 datareader->read_next_sample((void*)&data, &info);
         if ((eprosima::fastdds::dds::RETCODE_OK == success) &&
-                (info.sample_identity != eprosima::fastdds::rtps::SampleIdentity::unknown()))
+                (info.publication_handle != HANDLE_NIL))
         {
             returnedValue = true;
 
@@ -2078,9 +2078,10 @@ protected:
             type& data = datas[i];
             eprosima::fastdds::dds::SampleInfo& info = infos[i];
 
-            if (info.sample_identity == eprosima::fastdds::rtps::SampleIdentity::unknown())
+            // Skip unknown samples
+            if (info.publication_handle == HANDLE_NIL)
             {
-                continue; // Skip unknown samples
+                continue;
             }
 
             // Check order of changes.

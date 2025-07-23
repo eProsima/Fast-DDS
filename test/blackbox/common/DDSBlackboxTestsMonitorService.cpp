@@ -17,6 +17,7 @@
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/Time_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
@@ -707,7 +708,7 @@ protected:
         {
             returnedValue = true;
 
-            if (info.sample_identity != SampleIdentity::unknown())
+            if (info.publication_handle != HANDLE_NIL)
             {
                 std::unique_lock<std::mutex> lock(mutex_);
 
