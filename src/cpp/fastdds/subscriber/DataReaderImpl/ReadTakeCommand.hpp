@@ -428,7 +428,7 @@ private:
             info.source_timestamp = current_time;
             info.reception_timestamp = current_time;
             info.instance_handle = instance_->first;
-            info.publication_handle = reader_->getGuid();
+            info.publication_handle = HANDLE_NIL;
 
             info.sample_identity = rtps::SampleIdentity{};
             info.related_sample_identity = rtps::SampleIdentity{};
