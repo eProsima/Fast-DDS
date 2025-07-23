@@ -416,6 +416,8 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(ArrayWString);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BoundedBigArrays);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BoundedSmallArrays);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(LargeBasicPlainArray);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(LargePlainArray);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BitsetStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(ConstsLiteralsStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(const_module1::ModuleConstsLiteralsStruct);
@@ -814,6 +816,7 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(WCharStruct);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BoundedBigSequences);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BoundedSmallSequences);
+        SUBSCRIBER_TYPE_CREATOR_FUNCTION(LargePlainSequence);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SequenceAlias);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SequenceBitMask);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(SequenceBitset);

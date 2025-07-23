@@ -393,6 +393,8 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(ArrayWString);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BoundedBigArrays);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BoundedSmallArrays);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(LargeBasicPlainArray);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(LargePlainArray);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BitsetStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(ConstsLiteralsStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(const_module1::ModuleConstsLiteralsStruct);
@@ -791,6 +793,7 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(WCharStruct);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BoundedBigSequences);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BoundedSmallSequences);
+        PUBLISHER_TYPE_CREATOR_FUNCTION(LargePlainSequence);
         PUBLISHER_TYPE_CREATOR_FUNCTION(SequenceAlias);
         PUBLISHER_TYPE_CREATOR_FUNCTION(SequenceBitMask);
         PUBLISHER_TYPE_CREATOR_FUNCTION(SequenceBitset);
