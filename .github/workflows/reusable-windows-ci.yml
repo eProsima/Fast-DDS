@@ -30,14 +30,13 @@ defaults:
 
 jobs:
   reusable-windows-ci:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       fail-fast: false
       matrix:
         cmake-config:
           - 'RelWithDebInfo'
         vs-toolset:
-          - 'v141'
           - 'v142'
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -55,7 +54,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.16.6'
+          cmakeVersion: '3.21.7'
 
       - name: Install OpenSSL
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
