@@ -130,8 +130,7 @@ bool MemberDescriptorImpl::equals(
            is_must_understand_ == descriptor.is_must_understand_ &&
            is_shared_ == descriptor.is_shared_ &&
            is_default_label_ == descriptor.is_default_label_ &&
-           is_default_literal_ == descriptor.is_default_literal_ &&
-           is_try_construct_kind_set_ == descriptor.is_try_construct_kind_set_;
+           is_default_literal_ == descriptor.is_default_literal_;
 }
 
 bool MemberDescriptorImpl::equal_labels(
@@ -166,14 +165,12 @@ bool MemberDescriptorImpl::is_consistent() noexcept
 
     auto type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
 
-    // Only aggregated types must use the ID value.
+    // Only aggregated types (except bitmask types) must use the ID value.
     if ((MEMBER_ID_INVALID == id_ && (TK_ANNOTATION == parent_kind_ ||
-            TK_BITMASK == parent_kind_ ||
             TK_BITSET == parent_kind_ ||
             TK_UNION == parent_kind_ ||
             TK_STRUCTURE == parent_kind_)) ||
             (MEMBER_ID_INVALID != id_ && TK_ANNOTATION != parent_kind_ &&
-            TK_BITMASK != parent_kind_ &&
             TK_BITSET != parent_kind_ &&
             TK_UNION != parent_kind_ &&
             TK_STRUCTURE != parent_kind_))

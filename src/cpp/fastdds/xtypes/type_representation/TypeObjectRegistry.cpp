@@ -2171,10 +2171,10 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
         MemberDescriptorImpl& member_descriptor {literal->get_descriptor()};
         EnumeratedLiteralFlag flags {TypeObjectUtils::build_enumerated_literal_flag(
                                          member_descriptor.is_default_label())};
-        // Literal value might be automatically assigned or taken from default_value (@value annotation)
+        // Literal value might be automatically assigned or taken from literal_value (@value annotation)
         CommonEnumeratedLiteral common_literal {TypeObjectUtils::build_common_enumerated_literal(
-                                                    member_descriptor.default_value().empty() ? member_descriptor.index() :
-                                                    std::stol(member_descriptor.default_value()), flags)};
+                                                    member_descriptor.literal_value().empty() ? member_descriptor.index() :
+                                                    std::stol(member_descriptor.literal_value()), flags)};
         CompleteMemberDetail member_detail;
         complete_member_detail(literal, member_detail);
         CompleteEnumeratedLiteral literal_member {TypeObjectUtils::build_complete_enumerated_literal(
@@ -2218,7 +2218,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     {
         MemberDescriptorImpl& member_descriptor {bitflag->get_descriptor()};
         CommonBitflag common_bitflag {TypeObjectUtils::build_common_bitflag(
-                                          static_cast<uint16_t>(member_descriptor.id()), 0)};
+                                          static_cast<uint16_t>(member_descriptor.position()), 0)};
         CompleteMemberDetail member_detail;
         complete_member_detail(bitflag, member_detail);
         CompleteBitflag bitflag_member {TypeObjectUtils::build_complete_bitflag(

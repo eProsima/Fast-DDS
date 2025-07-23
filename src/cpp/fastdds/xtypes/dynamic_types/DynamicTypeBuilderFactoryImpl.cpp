@@ -1146,7 +1146,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_enum_
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(literal.detail().name());
             member_descriptor->type(literal_type);
-            member_descriptor->default_value(std::to_string(literal.common().value()));
+            member_descriptor->literal_value(std::to_string(literal.common().value()));
             member_descriptor->is_default_label(literal.common().flags() & xtypes::IS_DEFAULT);
             if (RETCODE_OK != ret_val->add_member(member_descriptor))
             {
@@ -1230,7 +1230,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitma
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(bitflag.detail().name());
             member_descriptor->type(get_primitive_type(TK_BOOLEAN));
-            member_descriptor->id(bitflag.common().position());
+            member_descriptor->position(bitflag.common().position());
             if (RETCODE_OK != ret_val->add_member(member_descriptor))
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding bitflag " + member_descriptor->name().to_string());
