@@ -673,7 +673,7 @@ void DataReaderHistory::check_and_remove_instance(
 {
     DataReaderInstance* instance = instance_info->second.get();
 
-    if (instance->cache_changes.empty() && (false == instance->has_fake_sample))
+    if (instance->cache_changes.empty() && (false == instance->has_state_notification_sample))
     {
         if (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state &&
                 instance->alive_writers.empty() &&
@@ -906,9 +906,9 @@ bool DataReaderHistory::writer_not_alive(
 
     for (auto& it : instances_)
     {
-        bool had_fake_sample = it.second->has_fake_sample;
+        bool had_notification_sample = it.second->has_state_notification_sample;
         it.second->writer_removed(counters_, writer_guid);
-        if (it.second->has_fake_sample && !had_fake_sample)
+        if (it.second->has_state_notification_sample && !had_notification_sample)
         {
             // Mark instance as data available
             data_available_instances_[it.first] = it.second;

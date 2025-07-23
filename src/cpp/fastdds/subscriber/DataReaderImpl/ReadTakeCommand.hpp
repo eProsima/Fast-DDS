@@ -180,15 +180,15 @@ struct ReadTakeCommand
             ++it;
         }
 
-        // Check if there is a fake sample available
-        if (!finished_ && instance_->second->has_fake_sample)
+        // Check if there is a state notification sample available
+        if (!finished_ && instance_->second->has_state_notification_sample)
         {
             // Add sample and info to collections
             bool deserialization_error = false;
             bool added = add_sample(nullptr, deserialization_error);
             if (added && take_samples)
             {
-                instance_->second->has_fake_sample = false;
+                instance_->second->has_state_notification_sample = false;
             }
         }
 
