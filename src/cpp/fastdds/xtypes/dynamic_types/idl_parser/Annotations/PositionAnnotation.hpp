@@ -92,7 +92,7 @@ protected:
         try
         {
             TypeForKind<TK_UINT16> value = TypeValueConverter::sto(parameters.at(IDL_VALUE_TAG));
-            descriptor->id(value);
+            descriptor->position(value);
         }
         catch (const std::exception& e)
         {

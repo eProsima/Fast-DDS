@@ -81,6 +81,28 @@ public:
             MemberId id) = 0;
 
     /*!
+     * Returns the position of the bitmask member.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @return Position of the bitmask member.
+     */
+    virtual MemberId position() const = 0;
+
+    /*!
+     * Returns the position of the bitmask member.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @return Position of the bitmask member.
+     */
+    virtual MemberId& position() = 0;
+
+    /*!
+     * Modifies the position of the bitmask member.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @param [in] position Position of the bitmask member.
+     */
+    virtual void position(
+            MemberId position) = 0;
+
+    /*!
      * Returns a reference to the member's type.
      * @return @ref DynamicType reference.
      */

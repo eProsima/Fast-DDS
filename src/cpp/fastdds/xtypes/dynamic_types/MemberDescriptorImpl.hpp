@@ -37,6 +37,9 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! MemberId, it should be filled automatically when the member is added if not set (MEMBER_ID_INVALID).
     MemberId id_ {MEMBER_ID_INVALID};
 
+    //! Position of the bitmask member.
+    MemberId position_ {MEMBER_ID_INVALID};
+
     //! Definition order of the member inside its parent.
     uint32_t index_ {0xFFFFFFFF};
 
@@ -123,6 +126,22 @@ public:
             MemberId id) noexcept override
     {
         id_ = id;
+    }
+
+    MemberId position() const noexcept override
+    {
+        return position_;
+    }
+
+    MemberId& position() noexcept override
+    {
+        return position_;
+    }
+
+    void position(
+            MemberId position) noexcept override
+    {
+        position_ = position;
     }
 
     traits<DynamicType>::ref_type type() const noexcept override

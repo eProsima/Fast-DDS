@@ -338,7 +338,17 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     //}}}
 
-    auto member_id = descriptor_impl->id();
+    // Get the identifier associated to the member, depending on the member type
+    MemberId member_id;
+    if (TK_BITMASK == type_descriptor_kind)
+    {
+        // Member identifier of a BITMASK member is the member's position
+        member_id = descriptor_impl->position();
+    }
+    else
+    {
+        member_id = descriptor_impl->id();
+    }
 
     //{{{ If member_id is MEMBER_ID_INVALID and type is aggregated, find a new one.
     if (TK_ANNOTATION == type_descriptor_kind ||
@@ -386,7 +396,14 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     //}}}
 
     traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(*descriptor_impl);
-    dyn_member->get_descriptor().id(member_id);
+    if (TK_BITMASK == type_descriptor_kind)
+    {
+        dyn_member->get_descriptor().position(member_id);
+    }
+    else
+    {
+        dyn_member->get_descriptor().id(member_id);
+    }
     //{{{ Set index
     dyn_member->get_descriptor().index(next_index_++);
     index_reverter.activate = true;

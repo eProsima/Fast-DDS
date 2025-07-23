@@ -1,42 +1,35 @@
-struct position_ann_valid_struct
+@position(4) struct position_ann_on_struct
 {
-  @position(4) long first;
-  @position(value = 3) string second;
+  long invalid_member;
 };
 
-union position_ann_valid_union switch(long)
+struct position_ann_on_struct_member
+{
+  @position(4) long invalid_member;
+};
+
+@position(4) union position_ann_on_union switch(long)
+{
+  case 0:
+    long first;
+  default:
+    float second;
+};
+
+union position_ann_on_union_discriminator switch(@position(4) long)
+{
+  case 0:
+    long first;
+  default:
+    float second;
+};
+
+union position_ann_on_union_member switch(long)
 {
   case 0:
     @position(4) long first;
   default:
-    @position(value = 3) float second;
-};
-
-struct position_ann_missing_value
-{
-    @position long invalid_member;
-};
-
-struct position_ann_invalid_value_type
-{
-    @position("invalid") long invalid_member;
-};
-
-struct position_ann_extra_parameter
-{
-    @position(value = 2, value2 = "extra") long invalid_member;
-};
-
-struct position_ann_duplicated_positions
-{
-    @position(0) long first;
-    @position(0) string second;
-    @position(1) float third;
-};
-
-@position(1) struct position_ann_on_struct
-{
-    long first;
+    float second;
 };
 
 @position(1) enum position_ann_on_enum
@@ -45,10 +38,8 @@ struct position_ann_duplicated_positions
     ENUM_VALUE_2
 };
 
-@position(1) union position_ann_on_union switch(long)
+enum position_ann_on_enum_member
 {
-  case 0:
-    long first;
-  default:
-    string second;
+    @position(1) ENUM_VALUE_1,
+    ENUM_VALUE_2
 };

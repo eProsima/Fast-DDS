@@ -89,6 +89,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
 {
     name_ = descriptor.name_;
     id_ = descriptor.id_;
+    position_ = descriptor.position_;
     type_ = descriptor.type_;
     default_value_ = descriptor.default_value_;
     literal_value_ = descriptor.literal_value_;
@@ -117,6 +118,7 @@ bool MemberDescriptorImpl::equals(
 {
     return name_ == descriptor.name_ &&
            id_ == descriptor.id_ &&
+           position_ == descriptor.position_ &&
            (type_ && type_->equals(descriptor.type_)) &&
            value_compare(type_, default_value_, descriptor.default_value_) &&
            value_compare(type_, literal_value_, descriptor.literal_value_) &&
@@ -214,6 +216,13 @@ bool MemberDescriptorImpl::is_consistent() noexcept
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor contains duplicated labels");
             return false;
         }
+    }
+
+    // Check position_.
+    if ((position_ != MEMBER_ID_INVALID) && (TK_BITMASK != parent_kind_))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is not a BITMASK and it has set position");
+        return false;
     }
 
     // Check default_value_.
