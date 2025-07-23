@@ -32,6 +32,82 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
+namespace fastcdr {
+
+bool is_eprosima_fastdds_rtps_core_detail_SequenceNumber_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_InfoTimestampSubmessage_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_ProtocolVersion_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_GUID_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_Time_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_EntityId_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_Header_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_Duration_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_rtps_core_RTPSMessage_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_SequenceNumberSet_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_rtps_core_detail_Count_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_GuidPrefix_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_StatusInfo_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_AckNackSubmessage_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_InfoDestinationSubmessage_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_rtps_core_detail_EntityName_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_SubmessageHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_rtps_core_detail_KeyHash_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_VendorId_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_detail_Locator_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_HeartBeatSubmessage_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_rtps_core_InfoSourceSubmessage_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
     namespace fastdds {
         namespace rtps {
             namespace core {
@@ -153,6 +229,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::EntityId_t*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool EntityId_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool EntityId_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -336,6 +423,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::ProtocolVersion_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool ProtocolVersion_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool ProtocolVersion_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -517,6 +615,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::VendorId_t*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool VendorId_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool VendorId_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -700,6 +809,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::GuidPrefix_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool GuidPrefix_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool GuidPrefix_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -881,6 +1001,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::GUID_t*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool GUID_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool GUID_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -1064,6 +1195,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::SequenceNumber_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool SequenceNumber_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool SequenceNumber_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -1245,6 +1387,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::Count_t*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool Count_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool Count_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -1428,6 +1581,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::Time_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool Time_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool Time_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -1609,6 +1773,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::SequenceNumberSet*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool SequenceNumberSetPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool SequenceNumberSetPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -1792,6 +1967,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::Locator_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool Locator_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool Locator_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -1973,6 +2159,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::Duration_t*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool Duration_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool Duration_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -2156,6 +2353,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::StatusInfo_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool StatusInfo_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool StatusInfo_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -2338,6 +2546,17 @@ namespace eprosima {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::KeyHash_t*>(data));
                     }
 
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool KeyHash_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                     bool KeyHash_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
                             InstanceHandle_t& handle,
@@ -2519,6 +2738,17 @@ namespace eprosima {
                     {
                         delete(reinterpret_cast<::eprosima::fastdds::rtps::core::detail::EntityName_t*>(data));
                     }
+
+                    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                        bool EntityName_tPubSubType::is_plain(
+                                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                        {
+                            static_cast<void>(data_representation);
+                            return false;
+                        }
+
+                    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                     bool EntityName_tPubSubType::compute_key(
                             SerializedPayload_t& payload,
@@ -2704,6 +2934,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::Header*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool HeaderPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool HeaderPubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -2885,6 +3126,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::SubmessageHeader*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool SubmessageHeaderPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool SubmessageHeaderPubSubType::compute_key(
                         SerializedPayload_t& payload,
@@ -3071,6 +3323,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::AckNackSubmessage*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool AckNackSubmessagePubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool AckNackSubmessagePubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -3252,6 +3515,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::HeartBeatSubmessage*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool HeartBeatSubmessagePubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool HeartBeatSubmessagePubSubType::compute_key(
                         SerializedPayload_t& payload,
@@ -3435,6 +3709,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::InfoDestinationSubmessage*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool InfoDestinationSubmessagePubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool InfoDestinationSubmessagePubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -3616,6 +3901,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::InfoSourceSubmessage*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool InfoSourceSubmessagePubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool InfoSourceSubmessagePubSubType::compute_key(
                         SerializedPayload_t& payload,
@@ -3799,6 +4095,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::InfoTimestampSubmessage*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool InfoTimestampSubmessagePubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool InfoTimestampSubmessagePubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -3980,6 +4287,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::rtps::core::RTPSMessage*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool RTPSMessagePubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool RTPSMessagePubSubType::compute_key(
                         SerializedPayload_t& payload,

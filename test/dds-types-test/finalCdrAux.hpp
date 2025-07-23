@@ -51,6 +51,7 @@ constexpr uint32_t FinalULongStruct_max_cdr_typesize {4UL};
 constexpr uint32_t FinalULongStruct_max_key_cdr_typesize {0UL};
 
 
+
 constexpr uint32_t FinalLongDoubleStruct_max_cdr_typesize {16UL};
 constexpr uint32_t FinalLongDoubleStruct_max_key_cdr_typesize {0UL};
 
@@ -67,6 +68,7 @@ constexpr uint32_t FinalUShortStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t FinalOctetStruct_max_cdr_typesize {1UL};
 constexpr uint32_t FinalOctetStruct_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -105,77 +107,544 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalShortStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalShortStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalShortStruct_f
+{
+    typedef int16_t FinalShortStruct::* type;
+    friend constexpr type get(
+            FinalShortStruct_f);
+};
+
+template struct FinalShortStruct_rob<FinalShortStruct_f, &FinalShortStruct::m_var_short>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalShortStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalUShortStruct& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalUShortStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalUShortStruct_f
+{
+    typedef uint16_t FinalUShortStruct::* type;
+    friend constexpr type get(
+            FinalUShortStruct_f);
+};
+
+template struct FinalUShortStruct_rob<FinalUShortStruct_f, &FinalUShortStruct::m_var_ushort>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalUShortStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalLongStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalLongStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalLongStruct_f
+{
+    typedef int32_t FinalLongStruct::* type;
+    friend constexpr type get(
+            FinalLongStruct_f);
+};
+
+template struct FinalLongStruct_rob<FinalLongStruct_f, &FinalLongStruct::m_var_long>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalLongStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalULongStruct& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalULongStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalULongStruct_f
+{
+    typedef uint32_t FinalULongStruct::* type;
+    friend constexpr type get(
+            FinalULongStruct_f);
+};
+
+template struct FinalULongStruct_rob<FinalULongStruct_f, &FinalULongStruct::m_var_ulong>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalULongStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalLongLongStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalLongLongStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalLongLongStruct_f
+{
+    typedef int64_t FinalLongLongStruct::* type;
+    friend constexpr type get(
+            FinalLongLongStruct_f);
+};
+
+template struct FinalLongLongStruct_rob<FinalLongLongStruct_f, &FinalLongLongStruct::m_var_longlong>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalLongLongStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalULongLongStruct& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalULongLongStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalULongLongStruct_f
+{
+    typedef uint64_t FinalULongLongStruct::* type;
+    friend constexpr type get(
+            FinalULongLongStruct_f);
+};
+
+template struct FinalULongLongStruct_rob<FinalULongLongStruct_f, &FinalULongLongStruct::m_var_ulonglong>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalULongLongStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalFloatStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalFloatStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalFloatStruct_f
+{
+    typedef float FinalFloatStruct::* type;
+    friend constexpr type get(
+            FinalFloatStruct_f);
+};
+
+template struct FinalFloatStruct_rob<FinalFloatStruct_f, &FinalFloatStruct::m_var_float>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalFloatStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalDoubleStruct& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalDoubleStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalDoubleStruct_f
+{
+    typedef double FinalDoubleStruct::* type;
+    friend constexpr type get(
+            FinalDoubleStruct_f);
+};
+
+template struct FinalDoubleStruct_rob<FinalDoubleStruct_f, &FinalDoubleStruct::m_var_double>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalDoubleStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalLongDoubleStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalLongDoubleStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalLongDoubleStruct_f
+{
+    typedef long double FinalLongDoubleStruct::* type;
+    friend constexpr type get(
+            FinalLongDoubleStruct_f);
+};
+
+template struct FinalLongDoubleStruct_rob<FinalLongDoubleStruct_f, &FinalLongDoubleStruct::m_var_longdouble>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalLongDoubleStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalBooleanStruct& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalBooleanStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalBooleanStruct_f
+{
+    typedef bool FinalBooleanStruct::* type;
+    friend constexpr type get(
+            FinalBooleanStruct_f);
+};
+
+template struct FinalBooleanStruct_rob<FinalBooleanStruct_f, &FinalBooleanStruct::m_var_boolean>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalBooleanStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalOctetStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalOctetStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalOctetStruct_f
+{
+    typedef uint8_t FinalOctetStruct::* type;
+    friend constexpr type get(
+            FinalOctetStruct_f);
+};
+
+template struct FinalOctetStruct_rob<FinalOctetStruct_f, &FinalOctetStruct::m_var_octet>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalOctetStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalCharStruct& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalCharStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalCharStruct_f
+{
+    typedef char FinalCharStruct::* type;
+    friend constexpr type get(
+            FinalCharStruct_f);
+};
+
+template struct FinalCharStruct_rob<FinalCharStruct_f, &FinalCharStruct::m_var_char8>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalCharStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalWCharStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalWCharStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalWCharStruct_f
+{
+    typedef wchar_t FinalWCharStruct::* type;
+    friend constexpr type get(
+            FinalWCharStruct_f);
+};
+
+template struct FinalWCharStruct_rob<FinalWCharStruct_f, &FinalWCharStruct::m_var_char16>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalWCharStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalUnionStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalEmptyStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalEmptyInheritanceStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalInheritanceStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InheritanceEmptyStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalExtensibilityInheritance& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalExtensibilityInheritance_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalExtensibilityInheritance_f
+{
+    typedef int32_t FinalExtensibilityInheritance::* type;
+    friend constexpr type get(
+            FinalExtensibilityInheritance_f);
+};
+
+template struct FinalExtensibilityInheritance_rob<FinalExtensibilityInheritance_f, &FinalExtensibilityInheritance::m_var_long>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalExtensibilityInheritance_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 
 } // namespace fastcdr

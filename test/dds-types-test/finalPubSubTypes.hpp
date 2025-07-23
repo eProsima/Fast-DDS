@@ -39,39 +39,6 @@
 #endif  // FASTDDS_GEN_API_VER
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalShortStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalShortStruct_f
-{
-    typedef int16_t FinalShortStruct::* type;
-    friend constexpr type get(
-            FinalShortStruct_f);
-};
-
-template struct FinalShortStruct_rob<FinalShortStruct_f, &FinalShortStruct::m_var_short>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalShortStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type FinalShortStruct defined by the user in the IDL file.
  * @ingroup final
@@ -127,18 +94,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -157,55 +114,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 2ULL ==
-               (detail::FinalShortStruct_offset_of<FinalShortStruct, detail::FinalShortStruct_f>() +
-               sizeof(int16_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 2ULL ==
-               (detail::FinalShortStruct_offset_of<FinalShortStruct, detail::FinalShortStruct_f>() +
-               sizeof(int16_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalUShortStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalUShortStruct_f
-{
-    typedef uint16_t FinalUShortStruct::* type;
-    friend constexpr type get(
-            FinalUShortStruct_f);
-};
-
-template struct FinalUShortStruct_rob<FinalUShortStruct_f, &FinalUShortStruct::m_var_ushort>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalUShortStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -263,18 +172,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -293,55 +192,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 2ULL ==
-               (detail::FinalUShortStruct_offset_of<FinalUShortStruct, detail::FinalUShortStruct_f>() +
-               sizeof(uint16_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 2ULL ==
-               (detail::FinalUShortStruct_offset_of<FinalUShortStruct, detail::FinalUShortStruct_f>() +
-               sizeof(uint16_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalLongStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalLongStruct_f
-{
-    typedef int32_t FinalLongStruct::* type;
-    friend constexpr type get(
-            FinalLongStruct_f);
-};
-
-template struct FinalLongStruct_rob<FinalLongStruct_f, &FinalLongStruct::m_var_long>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalLongStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -399,18 +250,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -429,55 +270,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 4ULL ==
-               (detail::FinalLongStruct_offset_of<FinalLongStruct, detail::FinalLongStruct_f>() +
-               sizeof(int32_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 4ULL ==
-               (detail::FinalLongStruct_offset_of<FinalLongStruct, detail::FinalLongStruct_f>() +
-               sizeof(int32_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalULongStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalULongStruct_f
-{
-    typedef uint32_t FinalULongStruct::* type;
-    friend constexpr type get(
-            FinalULongStruct_f);
-};
-
-template struct FinalULongStruct_rob<FinalULongStruct_f, &FinalULongStruct::m_var_ulong>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalULongStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -535,18 +328,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -565,55 +348,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 4ULL ==
-               (detail::FinalULongStruct_offset_of<FinalULongStruct, detail::FinalULongStruct_f>() +
-               sizeof(uint32_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 4ULL ==
-               (detail::FinalULongStruct_offset_of<FinalULongStruct, detail::FinalULongStruct_f>() +
-               sizeof(uint32_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalLongLongStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalLongLongStruct_f
-{
-    typedef int64_t FinalLongLongStruct::* type;
-    friend constexpr type get(
-            FinalLongLongStruct_f);
-};
-
-template struct FinalLongLongStruct_rob<FinalLongLongStruct_f, &FinalLongLongStruct::m_var_longlong>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalLongLongStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -671,18 +406,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -701,55 +426,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 8ULL ==
-               (detail::FinalLongLongStruct_offset_of<FinalLongLongStruct, detail::FinalLongLongStruct_f>() +
-               sizeof(int64_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 8ULL ==
-               (detail::FinalLongLongStruct_offset_of<FinalLongLongStruct, detail::FinalLongLongStruct_f>() +
-               sizeof(int64_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalULongLongStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalULongLongStruct_f
-{
-    typedef uint64_t FinalULongLongStruct::* type;
-    friend constexpr type get(
-            FinalULongLongStruct_f);
-};
-
-template struct FinalULongLongStruct_rob<FinalULongLongStruct_f, &FinalULongLongStruct::m_var_ulonglong>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalULongLongStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -807,18 +484,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -837,55 +504,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 8ULL ==
-               (detail::FinalULongLongStruct_offset_of<FinalULongLongStruct, detail::FinalULongLongStruct_f>() +
-               sizeof(uint64_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 8ULL ==
-               (detail::FinalULongLongStruct_offset_of<FinalULongLongStruct, detail::FinalULongLongStruct_f>() +
-               sizeof(uint64_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalFloatStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalFloatStruct_f
-{
-    typedef float FinalFloatStruct::* type;
-    friend constexpr type get(
-            FinalFloatStruct_f);
-};
-
-template struct FinalFloatStruct_rob<FinalFloatStruct_f, &FinalFloatStruct::m_var_float>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalFloatStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -943,18 +562,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -973,55 +582,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 4ULL ==
-               (detail::FinalFloatStruct_offset_of<FinalFloatStruct, detail::FinalFloatStruct_f>() +
-               sizeof(float));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 4ULL ==
-               (detail::FinalFloatStruct_offset_of<FinalFloatStruct, detail::FinalFloatStruct_f>() +
-               sizeof(float));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalDoubleStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalDoubleStruct_f
-{
-    typedef double FinalDoubleStruct::* type;
-    friend constexpr type get(
-            FinalDoubleStruct_f);
-};
-
-template struct FinalDoubleStruct_rob<FinalDoubleStruct_f, &FinalDoubleStruct::m_var_double>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalDoubleStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -1079,18 +640,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1109,55 +660,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 8ULL ==
-               (detail::FinalDoubleStruct_offset_of<FinalDoubleStruct, detail::FinalDoubleStruct_f>() +
-               sizeof(double));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 8ULL ==
-               (detail::FinalDoubleStruct_offset_of<FinalDoubleStruct, detail::FinalDoubleStruct_f>() +
-               sizeof(double));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalLongDoubleStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalLongDoubleStruct_f
-{
-    typedef long double FinalLongDoubleStruct::* type;
-    friend constexpr type get(
-            FinalLongDoubleStruct_f);
-};
-
-template struct FinalLongDoubleStruct_rob<FinalLongDoubleStruct_f, &FinalLongDoubleStruct::m_var_longdouble>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalLongDoubleStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -1215,18 +718,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1245,55 +738,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 16ULL ==
-               (detail::FinalLongDoubleStruct_offset_of<FinalLongDoubleStruct, detail::FinalLongDoubleStruct_f>() +
-               sizeof(long double));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 16ULL ==
-               (detail::FinalLongDoubleStruct_offset_of<FinalLongDoubleStruct, detail::FinalLongDoubleStruct_f>() +
-               sizeof(long double));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalBooleanStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalBooleanStruct_f
-{
-    typedef bool FinalBooleanStruct::* type;
-    friend constexpr type get(
-            FinalBooleanStruct_f);
-};
-
-template struct FinalBooleanStruct_rob<FinalBooleanStruct_f, &FinalBooleanStruct::m_var_boolean>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalBooleanStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -1351,18 +796,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1381,55 +816,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 1ULL ==
-               (detail::FinalBooleanStruct_offset_of<FinalBooleanStruct, detail::FinalBooleanStruct_f>() +
-               sizeof(bool));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 1ULL ==
-               (detail::FinalBooleanStruct_offset_of<FinalBooleanStruct, detail::FinalBooleanStruct_f>() +
-               sizeof(bool));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalOctetStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalOctetStruct_f
-{
-    typedef uint8_t FinalOctetStruct::* type;
-    friend constexpr type get(
-            FinalOctetStruct_f);
-};
-
-template struct FinalOctetStruct_rob<FinalOctetStruct_f, &FinalOctetStruct::m_var_octet>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalOctetStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -1487,18 +874,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1517,55 +894,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 1ULL ==
-               (detail::FinalOctetStruct_offset_of<FinalOctetStruct, detail::FinalOctetStruct_f>() +
-               sizeof(uint8_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 1ULL ==
-               (detail::FinalOctetStruct_offset_of<FinalOctetStruct, detail::FinalOctetStruct_f>() +
-               sizeof(uint8_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalCharStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalCharStruct_f
-{
-    typedef char FinalCharStruct::* type;
-    friend constexpr type get(
-            FinalCharStruct_f);
-};
-
-template struct FinalCharStruct_rob<FinalCharStruct_f, &FinalCharStruct::m_var_char8>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalCharStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -1623,18 +952,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1653,55 +972,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 1ULL ==
-               (detail::FinalCharStruct_offset_of<FinalCharStruct, detail::FinalCharStruct_f>() +
-               sizeof(char));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 1ULL ==
-               (detail::FinalCharStruct_offset_of<FinalCharStruct, detail::FinalCharStruct_f>() +
-               sizeof(char));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalWCharStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalWCharStruct_f
-{
-    typedef wchar_t FinalWCharStruct::* type;
-    friend constexpr type get(
-            FinalWCharStruct_f);
-};
-
-template struct FinalWCharStruct_rob<FinalWCharStruct_f, &FinalWCharStruct::m_var_char16>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalWCharStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -1759,18 +1030,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1788,21 +1049,6 @@ private:
 
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
-
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 2ULL ==
-               (detail::FinalWCharStruct_offset_of<FinalWCharStruct, detail::FinalWCharStruct_f>() +
-               sizeof(wchar_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 2ULL ==
-               (detail::FinalWCharStruct_offset_of<FinalWCharStruct, detail::FinalWCharStruct_f>() +
-               sizeof(wchar_t));
-    }
 
 };
 
@@ -1862,12 +1108,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1944,18 +1186,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1973,17 +1205,6 @@ private:
 
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
-
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return true;
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return true;
-    }
 
 };
 
@@ -2043,12 +1264,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2125,12 +1342,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2207,18 +1420,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2237,55 +1440,7 @@ private:
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
 
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 2ULL ==
-               (detail::FinalShortStruct_offset_of<FinalShortStruct, detail::FinalShortStruct_f>() +
-               sizeof(int16_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 2ULL ==
-               (detail::FinalShortStruct_offset_of<FinalShortStruct, detail::FinalShortStruct_f>() +
-               sizeof(int16_t));
-    }
-
 };
-
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalExtensibilityInheritance_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalExtensibilityInheritance_f
-{
-    typedef int32_t FinalExtensibilityInheritance::* type;
-    friend constexpr type get(
-            FinalExtensibilityInheritance_f);
-};
-
-template struct FinalExtensibilityInheritance_rob<FinalExtensibilityInheritance_f, &FinalExtensibilityInheritance::m_var_long>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalExtensibilityInheritance_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
 
 
 /*!
@@ -2343,18 +1498,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2372,21 +1517,6 @@ private:
 
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
-
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 8ULL ==
-               (detail::FinalExtensibilityInheritance_offset_of<FinalExtensibilityInheritance, detail::FinalExtensibilityInheritance_f>() +
-               sizeof(int32_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 8ULL ==
-               (detail::FinalExtensibilityInheritance_offset_of<FinalExtensibilityInheritance, detail::FinalExtensibilityInheritance_f>() +
-               sizeof(int32_t));
-    }
 
 };
 

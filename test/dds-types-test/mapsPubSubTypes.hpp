@@ -94,12 +94,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -176,12 +172,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -258,12 +250,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -340,12 +328,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -422,12 +406,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -504,12 +484,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -586,12 +562,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -668,12 +640,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -750,12 +718,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -832,12 +796,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -914,12 +874,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -996,12 +952,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1078,12 +1030,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1160,12 +1108,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1242,12 +1186,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1324,12 +1264,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1406,12 +1342,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1488,12 +1420,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1570,12 +1498,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1652,12 +1576,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1734,12 +1654,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1816,12 +1732,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1898,12 +1810,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -1980,12 +1888,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2062,12 +1966,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2144,12 +2044,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2226,12 +2122,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2308,12 +2200,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2390,12 +2278,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2472,12 +2356,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2554,12 +2434,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2636,12 +2512,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2718,12 +2590,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2800,12 +2668,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2882,12 +2746,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -2964,12 +2824,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3046,12 +2902,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3128,12 +2980,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3210,12 +3058,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3292,12 +3136,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3374,12 +3214,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3456,12 +3292,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3538,12 +3370,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3620,12 +3448,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3702,12 +3526,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3784,12 +3604,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3866,12 +3682,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -3948,12 +3760,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4030,12 +3838,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4112,12 +3916,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4194,12 +3994,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4276,12 +4072,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4358,12 +4150,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4440,12 +4228,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4522,12 +4306,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4604,12 +4384,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4686,12 +4462,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4768,12 +4540,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4850,12 +4618,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -4932,12 +4696,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5014,12 +4774,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5096,12 +4852,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5178,12 +4930,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5260,12 +5008,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5342,12 +5086,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5424,12 +5164,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5506,12 +5242,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5588,12 +5320,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5670,12 +5398,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5752,12 +5476,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5834,12 +5554,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5916,12 +5632,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -5998,12 +5710,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6080,12 +5788,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6162,12 +5866,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6244,12 +5944,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6326,12 +6022,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6408,12 +6100,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6490,12 +6178,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6572,12 +6256,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6654,12 +6334,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6736,12 +6412,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6818,12 +6490,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6900,12 +6568,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -6982,12 +6646,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7064,12 +6724,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7146,12 +6802,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7228,12 +6880,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7310,12 +6958,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7392,12 +7036,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7474,12 +7114,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7556,12 +7192,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7638,12 +7270,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7720,12 +7348,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7802,12 +7426,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7884,12 +7504,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -7966,12 +7582,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8048,12 +7660,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8130,12 +7738,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8212,12 +7816,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8294,12 +7894,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8376,12 +7972,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8458,12 +8050,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8540,12 +8128,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8622,12 +8206,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8704,12 +8284,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8786,12 +8362,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8868,12 +8440,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -8950,12 +8518,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9032,12 +8596,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9114,12 +8674,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9196,12 +8752,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9278,12 +8830,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9360,12 +8908,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9442,12 +8986,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9524,12 +9064,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9606,12 +9142,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9688,12 +9220,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9770,12 +9298,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9852,12 +9376,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -9934,12 +9454,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10016,12 +9532,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10098,12 +9610,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10180,12 +9688,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10262,12 +9766,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10344,12 +9844,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10426,12 +9922,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10508,12 +10000,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10590,12 +10078,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10672,12 +10156,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10754,12 +10234,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10836,12 +10312,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -10918,12 +10390,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11000,12 +10468,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11082,12 +10546,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11164,12 +10624,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11246,12 +10702,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11328,12 +10780,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11410,12 +10858,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11492,12 +10936,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11574,12 +11014,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11656,12 +11092,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11738,12 +11170,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11820,12 +11248,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11902,12 +11326,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -11984,12 +11404,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12066,12 +11482,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12148,12 +11560,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12230,12 +11638,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12312,12 +11716,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12394,12 +11794,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12476,12 +11872,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12558,12 +11950,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12640,12 +12028,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12722,12 +12106,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12804,12 +12184,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12886,12 +12262,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -12968,12 +12340,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13050,12 +12418,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13132,12 +12496,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13214,12 +12574,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13296,12 +12652,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13378,12 +12730,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13460,12 +12808,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13542,12 +12886,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13624,12 +12964,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13706,12 +13042,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13788,12 +13120,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13870,12 +13198,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -13952,12 +13276,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14034,12 +13354,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14116,12 +13432,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14198,12 +13510,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14280,12 +13588,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14362,12 +13666,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14444,12 +13744,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14526,12 +13822,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14608,12 +13900,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14690,12 +13978,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14772,12 +14056,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14854,12 +14134,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -14936,12 +14212,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15018,12 +14290,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15100,12 +14368,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15182,12 +14446,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15264,12 +14524,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15346,12 +14602,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15428,12 +14680,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15510,12 +14758,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15592,12 +14836,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15674,12 +14914,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15756,12 +14992,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15838,12 +15070,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -15920,12 +15148,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16002,12 +15226,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16084,12 +15304,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16166,12 +15382,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16248,12 +15460,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16330,12 +15538,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16412,12 +15616,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16494,12 +15694,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16576,12 +15772,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16658,12 +15850,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16740,12 +15928,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16822,12 +16006,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16904,12 +16084,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -16986,12 +16162,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17068,12 +16240,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17150,12 +16318,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17232,12 +16396,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17314,12 +16474,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17396,12 +16552,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17478,12 +16630,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17560,12 +16708,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17642,12 +16786,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17724,12 +16864,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17806,12 +16942,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17888,12 +17020,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -17970,12 +17098,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18052,12 +17176,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18134,12 +17254,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18216,12 +17332,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18298,12 +17410,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18380,12 +17488,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18462,12 +17566,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18544,12 +17644,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18626,12 +17722,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18708,12 +17800,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18790,12 +17878,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18872,12 +17956,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -18954,12 +18034,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19036,12 +18112,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19118,12 +18190,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19200,12 +18268,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19282,12 +18346,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19364,12 +18424,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19446,12 +18502,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19528,12 +18580,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19610,12 +18658,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19692,12 +18736,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19774,12 +18814,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19856,12 +18892,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -19938,12 +18970,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20020,12 +19048,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20102,12 +19126,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20184,12 +19204,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20266,12 +19282,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20348,12 +19360,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20430,12 +19438,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20512,12 +19516,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20594,12 +19594,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20676,12 +19672,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20758,12 +19750,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20840,12 +19828,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -20922,12 +19906,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21004,12 +19984,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21086,12 +20062,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21168,12 +20140,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21250,12 +20218,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21332,12 +20296,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21414,12 +20374,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -21496,12 +20452,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 

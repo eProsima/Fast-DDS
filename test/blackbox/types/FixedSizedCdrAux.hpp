@@ -37,6 +37,39 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixedSized& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FixedSized_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FixedSized_f
+{
+    typedef uint16_t FixedSized::* type;
+    friend constexpr type get(
+            FixedSized_f);
+};
+
+template struct FixedSized_rob<FixedSized_f, &FixedSized::m_index>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FixedSized_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 
 } // namespace fastcdr
 } // namespace eprosima

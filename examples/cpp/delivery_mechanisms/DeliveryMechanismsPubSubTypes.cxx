@@ -31,6 +31,15 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_DeliveryMechanisms_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 DeliveryMechanismsPubSubType::DeliveryMechanismsPubSubType()
 {
     set_name("DeliveryMechanisms");
@@ -148,6 +157,16 @@ void DeliveryMechanismsPubSubType::delete_data(
 {
     delete(reinterpret_cast<::DeliveryMechanisms*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool DeliveryMechanismsPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        return eprosima::fastcdr::is_DeliveryMechanisms_cdr_plain(data_representation);
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool DeliveryMechanismsPubSubType::compute_key(
         SerializedPayload_t& payload,

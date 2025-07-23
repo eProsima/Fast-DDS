@@ -32,6 +32,57 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
+namespace fastcdr {
+
+bool is_eprosima_fastdds_statistics_BaseStatus_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_statistics_ExtendedIncompatibleQoSStatus_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_DeadlineMissedStatus_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_statistics_QosPolicyCount_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_statistics_MonitorServiceStatusData_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_eprosima_fastdds_statistics_Connection_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_statistics_LivelinessChangedStatus_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
     namespace fastdds {
         namespace statistics {
             ConnectionPubSubType::ConnectionPubSubType()
@@ -151,6 +202,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::Connection*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool ConnectionPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool ConnectionPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -334,6 +396,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::QosPolicyCount_s*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool QosPolicyCount_sPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool QosPolicyCount_sPubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -515,6 +588,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::BaseStatus_s*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool BaseStatus_sPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool BaseStatus_sPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -698,6 +782,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::IncompatibleQoSStatus_s*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool IncompatibleQoSStatus_sPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool IncompatibleQoSStatus_sPubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -879,6 +974,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::LivelinessChangedStatus_s*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool LivelinessChangedStatus_sPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool LivelinessChangedStatus_sPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -1062,6 +1168,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::DeadlineMissedStatus_s*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool DeadlineMissedStatus_sPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool DeadlineMissedStatus_sPubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -1243,6 +1360,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::ExtendedIncompatibleQoSStatus_s*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool ExtendedIncompatibleQoSStatus_sPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool ExtendedIncompatibleQoSStatus_sPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -1428,6 +1556,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::MonitorServiceStatusData*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool MonitorServiceStatusDataPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool MonitorServiceStatusDataPubSubType::compute_key(
                     SerializedPayload_t& payload,

@@ -38,39 +38,6 @@
 #endif  // FASTDDS_GEN_API_VER
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct DeliveryMechanisms_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct DeliveryMechanisms_f
-{
-    typedef std::array<char, 32> DeliveryMechanisms::* type;
-    friend constexpr type get(
-            DeliveryMechanisms_f);
-};
-
-template struct DeliveryMechanisms_rob<DeliveryMechanisms_f, &DeliveryMechanisms::m_message>;
-
-template <typename T, typename Tag>
-inline size_t constexpr DeliveryMechanisms_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type DeliveryMechanisms defined by the user in the IDL file.
  * @ingroup DeliveryMechanisms
@@ -126,18 +93,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -155,21 +112,6 @@ private:
 
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
-
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 36ULL ==
-               (detail::DeliveryMechanisms_offset_of<DeliveryMechanisms, detail::DeliveryMechanisms_f>() +
-               sizeof(std::array<char, 32>));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 36ULL ==
-               (detail::DeliveryMechanisms_offset_of<DeliveryMechanisms, detail::DeliveryMechanisms_f>() +
-               sizeof(std::array<char, 32>));
-    }
 
 };
 

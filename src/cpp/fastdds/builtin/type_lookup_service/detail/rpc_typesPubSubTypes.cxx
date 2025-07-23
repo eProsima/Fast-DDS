@@ -30,6 +30,35 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
+namespace fastcdr {
+
+bool is_eprosima_fastdds_dds_rpc_RequestHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_EntityId_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_GUID_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_rpc_ReplyHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_SequenceNumber_t_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_SampleIdentity_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
 
 namespace fastdds {
 

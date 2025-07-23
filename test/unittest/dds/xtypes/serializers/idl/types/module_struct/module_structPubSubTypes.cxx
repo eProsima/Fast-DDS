@@ -31,6 +31,23 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_TrialModule_StructModule_StructType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_ModuleStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
 namespace TrialModule {
     namespace AliasModule {
     } // namespace AliasModule
@@ -174,6 +191,17 @@ namespace TrialModule {
         {
             delete(reinterpret_cast<::TrialModule::StructModule::StructType*>(data));
         }
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            bool StructTypePubSubType::is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
         bool StructTypePubSubType::compute_key(
                 SerializedPayload_t& payload,
@@ -366,6 +394,17 @@ void ModuleStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::ModuleStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ModuleStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool ModuleStructPubSubType::compute_key(
         SerializedPayload_t& payload,

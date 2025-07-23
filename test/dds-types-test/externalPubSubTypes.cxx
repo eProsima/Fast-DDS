@@ -29,6 +29,111 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_ulong_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_ushort_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_char_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_struct_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_ulonglong_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_struct_external_optional_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_short_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_octet_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_array_short_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_long_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_boolean_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_wchar_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_string_unbounded_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_ext_and_inner_struct_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_longlong_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_longdouble_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_sequence_short_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_recursive_test_1_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_recursive_test_2_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_recursive_union_container_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_map_short_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_double_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_ext_struct_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_float_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_string_bounded_external_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_recursive_structure_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_InnerStructExternal_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 short_externalPubSubType::short_externalPubSubType()
 {
     set_name("short_external");
@@ -146,6 +251,17 @@ void short_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::short_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool short_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool short_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -330,6 +446,17 @@ void ushort_externalPubSubType::delete_data(
     delete(reinterpret_cast<::ushort_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ushort_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ushort_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -512,6 +639,17 @@ void long_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::long_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool long_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool long_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -696,6 +834,17 @@ void ulong_externalPubSubType::delete_data(
     delete(reinterpret_cast<::ulong_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ulong_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ulong_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -878,6 +1027,17 @@ void longlong_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::longlong_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool longlong_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool longlong_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1062,6 +1222,17 @@ void ulonglong_externalPubSubType::delete_data(
     delete(reinterpret_cast<::ulonglong_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ulonglong_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ulonglong_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1244,6 +1415,17 @@ void float_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::float_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool float_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool float_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1428,6 +1610,17 @@ void double_externalPubSubType::delete_data(
     delete(reinterpret_cast<::double_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool double_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool double_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1610,6 +1803,17 @@ void longdouble_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::longdouble_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool longdouble_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool longdouble_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1794,6 +1998,17 @@ void boolean_externalPubSubType::delete_data(
     delete(reinterpret_cast<::boolean_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool boolean_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool boolean_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1976,6 +2191,17 @@ void octet_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::octet_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool octet_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool octet_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -2160,6 +2386,17 @@ void char_externalPubSubType::delete_data(
     delete(reinterpret_cast<::char_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool char_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool char_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -2342,6 +2579,17 @@ void wchar_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::wchar_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool wchar_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool wchar_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -2526,6 +2774,17 @@ void sequence_short_externalPubSubType::delete_data(
     delete(reinterpret_cast<::sequence_short_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool sequence_short_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool sequence_short_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -2708,6 +2967,17 @@ void string_unbounded_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::string_unbounded_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool string_unbounded_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool string_unbounded_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -2892,6 +3162,17 @@ void string_bounded_externalPubSubType::delete_data(
     delete(reinterpret_cast<::string_bounded_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool string_bounded_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool string_bounded_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -3074,6 +3355,17 @@ void map_short_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::map_short_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool map_short_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool map_short_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -3258,6 +3550,17 @@ void array_short_externalPubSubType::delete_data(
     delete(reinterpret_cast<::array_short_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool array_short_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool array_short_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -3440,6 +3743,17 @@ void struct_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::struct_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool struct_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool struct_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -3624,6 +3938,17 @@ void InnerStructExternalPubSubType::delete_data(
     delete(reinterpret_cast<::InnerStructExternal*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool InnerStructExternalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool InnerStructExternalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -3806,6 +4131,17 @@ void ext_struct_externalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::ext_struct_external*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ext_struct_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool ext_struct_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -3990,6 +4326,17 @@ void ext_and_inner_struct_externalPubSubType::delete_data(
     delete(reinterpret_cast<::ext_and_inner_struct_external*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ext_and_inner_struct_externalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ext_and_inner_struct_externalPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -4172,6 +4519,17 @@ void struct_external_optionalPubSubType::delete_data(
 {
     delete(reinterpret_cast<::struct_external_optional*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool struct_external_optionalPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool struct_external_optionalPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -4356,6 +4714,17 @@ void recursive_test_1PubSubType::delete_data(
     delete(reinterpret_cast<::recursive_test_1*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool recursive_test_1PubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool recursive_test_1PubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -4539,6 +4908,17 @@ void recursive_structurePubSubType::delete_data(
     delete(reinterpret_cast<::recursive_structure*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool recursive_structurePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool recursive_structurePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -4721,6 +5101,17 @@ void recursive_test_2PubSubType::delete_data(
 {
     delete(reinterpret_cast<::recursive_test_2*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool recursive_test_2PubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool recursive_test_2PubSubType::compute_key(
         SerializedPayload_t& payload,

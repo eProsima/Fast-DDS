@@ -31,6 +31,18 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_ValueStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_MapStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 ValueStructPubSubType::ValueStructPubSubType()
 {
     set_name("ValueStruct");
@@ -148,6 +160,17 @@ void ValueStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::ValueStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ValueStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool ValueStructPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -330,6 +353,17 @@ void MapStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::MapStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool MapStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool MapStructPubSubType::compute_key(
         SerializedPayload_t& payload,

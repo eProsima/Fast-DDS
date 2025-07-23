@@ -30,6 +30,153 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
+namespace fastcdr {
+
+bool is_eprosima_fastdds_dds_builtin_TypeLookup_Reply_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool is_eprosima_fastdds_dds_builtin_TypeLookup_Request_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
 
 namespace fastdds {
 
@@ -154,6 +301,17 @@ namespace builtin {
     {
         delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data));
     }
+
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool TypeLookup_getTypes_InPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     bool TypeLookup_getTypes_InPubSubType::compute_key(
             SerializedPayload_t& payload,
@@ -338,6 +496,17 @@ namespace builtin {
         delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data));
     }
 
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool TypeLookup_getTypes_OutPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
     bool TypeLookup_getTypes_OutPubSubType::compute_key(
             SerializedPayload_t& payload,
             InstanceHandle_t& handle,
@@ -520,6 +689,17 @@ namespace builtin {
     {
         delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data));
     }
+
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool TypeLookup_getTypeDependencies_InPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
             SerializedPayload_t& payload,
@@ -704,6 +884,17 @@ namespace builtin {
         delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data));
     }
 
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool TypeLookup_getTypeDependencies_OutPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
     bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
             SerializedPayload_t& payload,
             InstanceHandle_t& handle,
@@ -887,6 +1078,17 @@ namespace builtin {
         delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data));
     }
 
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool TypeLookup_RequestPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
     bool TypeLookup_RequestPubSubType::compute_key(
             SerializedPayload_t& payload,
             InstanceHandle_t& handle,
@@ -1069,6 +1271,17 @@ namespace builtin {
     {
         delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data));
     }
+
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool TypeLookup_ReplyPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     bool TypeLookup_ReplyPubSubType::compute_key(
             SerializedPayload_t& payload,

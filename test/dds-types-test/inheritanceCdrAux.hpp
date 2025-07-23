@@ -44,8 +44,10 @@ constexpr uint32_t InnerStructureHelperEmptyChildChild_max_key_cdr_typesize {0UL
 
 
 
+
 constexpr uint32_t StructuresInheritanceStruct_max_cdr_typesize {142UL};
 constexpr uint32_t StructuresInheritanceStruct_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -75,33 +77,41 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperChild& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperChildChild& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperEmptyChild& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelperEmptyChildChild& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerEmptyStructureHelperChild& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructAliasInheritanceStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructuresInheritanceStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetsChildInheritanceStruct& data);
+
 
 
 } // namespace fastcdr

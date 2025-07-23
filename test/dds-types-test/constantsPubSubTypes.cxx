@@ -31,6 +31,30 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_ConstsLiteralsStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_const_module2_Module2ConstsLiteralsStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_const_module1_ModuleConstsLiteralsStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
 namespace const_module1 {
     ModuleConstsLiteralsStructPubSubType::ModuleConstsLiteralsStructPubSubType()
     {
@@ -149,6 +173,17 @@ namespace const_module1 {
     {
         delete(reinterpret_cast<::const_module1::ModuleConstsLiteralsStruct*>(data));
     }
+
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool ModuleConstsLiteralsStructPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     bool ModuleConstsLiteralsStructPubSubType::compute_key(
             SerializedPayload_t& payload,
@@ -335,6 +370,17 @@ namespace const_module2 {
         delete(reinterpret_cast<::const_module2::Module2ConstsLiteralsStruct*>(data));
     }
 
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool Module2ConstsLiteralsStructPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
     bool Module2ConstsLiteralsStructPubSubType::compute_key(
             SerializedPayload_t& payload,
             InstanceHandle_t& handle,
@@ -518,6 +564,17 @@ void ConstsLiteralsStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::ConstsLiteralsStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ConstsLiteralsStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool ConstsLiteralsStructPubSubType::compute_key(
         SerializedPayload_t& payload,

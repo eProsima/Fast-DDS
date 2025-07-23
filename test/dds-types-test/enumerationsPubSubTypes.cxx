@@ -31,6 +31,38 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_BoundedBitMaskStructure_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_EnumStructure_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_EnumWithValuesStructure_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_BitMaskStructure_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
 namespace Test {
 } // namespace Test
 
@@ -151,6 +183,17 @@ void EnumStructurePubSubType::delete_data(
 {
     delete(reinterpret_cast<::EnumStructure*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool EnumStructurePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool EnumStructurePubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -334,6 +377,17 @@ void BitMaskStructurePubSubType::delete_data(
     delete(reinterpret_cast<::BitMaskStructure*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool BitMaskStructurePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool BitMaskStructurePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -516,6 +570,17 @@ void BoundedBitMaskStructurePubSubType::delete_data(
     delete(reinterpret_cast<::BoundedBitMaskStructure*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool BoundedBitMaskStructurePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool BoundedBitMaskStructurePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -697,6 +762,17 @@ void EnumWithValuesStructurePubSubType::delete_data(
 {
     delete(reinterpret_cast<::EnumWithValuesStructure*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool EnumWithValuesStructurePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool EnumWithValuesStructurePubSubType::compute_key(
         SerializedPayload_t& payload,

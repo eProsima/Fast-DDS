@@ -32,6 +32,55 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
+namespace fastcdr {
+
+bool is_eprosima_fastdds_statistics_DiscoveryTime_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_PhysicalData_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_detail_Locator_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_statistics_detail_GuidPrefix_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_detail_SampleIdentity_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_EntityData_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_Entity2LocatorTraffic_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_detail_EntityId_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_EntityCount_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_WriterReaderData_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_SampleIdentityCount_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_Locator2LocatorData_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_detail_GUID_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_statistics_detail_SequenceNumber_s_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
     namespace fastdds {
         namespace statistics {
             namespace detail {
@@ -152,6 +201,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::statistics::detail::EntityId_s*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool EntityId_sPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool EntityId_sPubSubType::compute_key(
                         SerializedPayload_t& payload,
@@ -335,6 +395,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::statistics::detail::GuidPrefix_s*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool GuidPrefix_sPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool GuidPrefix_sPubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -516,6 +587,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::statistics::detail::GUID_s*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool GUID_sPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool GUID_sPubSubType::compute_key(
                         SerializedPayload_t& payload,
@@ -699,6 +781,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::statistics::detail::SequenceNumber_s*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool SequenceNumber_sPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool SequenceNumber_sPubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -881,6 +974,17 @@ namespace eprosima {
                     delete(reinterpret_cast<::eprosima::fastdds::statistics::detail::SampleIdentity_s*>(data));
                 }
 
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool SampleIdentity_sPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
                 bool SampleIdentity_sPubSubType::compute_key(
                         SerializedPayload_t& payload,
                         InstanceHandle_t& handle,
@@ -1062,6 +1166,17 @@ namespace eprosima {
                 {
                     delete(reinterpret_cast<::eprosima::fastdds::statistics::detail::Locator_s*>(data));
                 }
+
+                #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                    bool Locator_sPubSubType::is_plain(
+                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                    {
+                        static_cast<void>(data_representation);
+                        return false;
+                    }
+
+                #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
                 bool Locator_sPubSubType::compute_key(
                         SerializedPayload_t& payload,
@@ -1247,6 +1362,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::DiscoveryTime*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool DiscoveryTimePubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool DiscoveryTimePubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -1428,6 +1554,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::EntityCount*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool EntityCountPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool EntityCountPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -1611,6 +1748,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::SampleIdentityCount*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool SampleIdentityCountPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool SampleIdentityCountPubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -1792,6 +1940,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::Entity2LocatorTraffic*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool Entity2LocatorTrafficPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool Entity2LocatorTrafficPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -1975,6 +2134,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::WriterReaderData*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool WriterReaderDataPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool WriterReaderDataPubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -2156,6 +2326,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::Locator2LocatorData*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool Locator2LocatorDataPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool Locator2LocatorDataPubSubType::compute_key(
                     SerializedPayload_t& payload,
@@ -2339,6 +2520,17 @@ namespace eprosima {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::EntityData*>(data));
             }
 
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool EntityDataPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
             bool EntityDataPubSubType::compute_key(
                     SerializedPayload_t& payload,
                     InstanceHandle_t& handle,
@@ -2520,6 +2712,17 @@ namespace eprosima {
             {
                 delete(reinterpret_cast<::eprosima::fastdds::statistics::PhysicalData*>(data));
             }
+
+            #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+                bool PhysicalDataPubSubType::is_plain(
+                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+                {
+                    static_cast<void>(data_representation);
+                    return false;
+                }
+
+            #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
             bool PhysicalDataPubSubType::compute_key(
                     SerializedPayload_t& payload,

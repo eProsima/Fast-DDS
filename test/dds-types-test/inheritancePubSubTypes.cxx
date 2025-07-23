@@ -31,6 +31,55 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_InnerStructureHelperChild_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_InnerStructureHelperEmptyChild_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_InnerEmptyStructureHelperChild_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_InnerStructureHelperChildChild_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_InnerStructureHelperEmptyChildChild_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+bool is_StructuresInheritanceStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_BitsetsChildInheritanceStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+bool is_StructAliasInheritanceStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 InnerStructureHelperChildPubSubType::InnerStructureHelperChildPubSubType()
 {
     set_name("InnerStructureHelperChild");
@@ -148,6 +197,17 @@ void InnerStructureHelperChildPubSubType::delete_data(
 {
     delete(reinterpret_cast<::InnerStructureHelperChild*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool InnerStructureHelperChildPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool InnerStructureHelperChildPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -331,6 +391,17 @@ void InnerStructureHelperChildChildPubSubType::delete_data(
     delete(reinterpret_cast<::InnerStructureHelperChildChild*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool InnerStructureHelperChildChildPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool InnerStructureHelperChildChildPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -512,6 +583,17 @@ void InnerStructureHelperEmptyChildPubSubType::delete_data(
 {
     delete(reinterpret_cast<::InnerStructureHelperEmptyChild*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool InnerStructureHelperEmptyChildPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool InnerStructureHelperEmptyChildPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -695,6 +777,17 @@ void InnerStructureHelperEmptyChildChildPubSubType::delete_data(
     delete(reinterpret_cast<::InnerStructureHelperEmptyChildChild*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool InnerStructureHelperEmptyChildChildPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool InnerStructureHelperEmptyChildChildPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -876,6 +969,17 @@ void InnerEmptyStructureHelperChildPubSubType::delete_data(
 {
     delete(reinterpret_cast<::InnerEmptyStructureHelperChild*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool InnerEmptyStructureHelperChildPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool InnerEmptyStructureHelperChildPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1059,6 +1163,17 @@ void StructAliasInheritanceStructPubSubType::delete_data(
     delete(reinterpret_cast<::StructAliasInheritanceStruct*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool StructAliasInheritanceStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool StructAliasInheritanceStructPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1241,6 +1356,17 @@ void StructuresInheritanceStructPubSubType::delete_data(
     delete(reinterpret_cast<::StructuresInheritanceStruct*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool StructuresInheritanceStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool StructuresInheritanceStructPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1422,6 +1548,17 @@ void BitsetsChildInheritanceStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::BitsetsChildInheritanceStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool BitsetsChildInheritanceStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool BitsetsChildInheritanceStructPubSubType::compute_key(
         SerializedPayload_t& payload,

@@ -27,6 +27,7 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
@@ -109,6 +110,19 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const UnionScopedDiscriminator* array_ptr,
+        const std::size_t array_size)
+{
+    // Optimization for serialization
+    // of arrays of unions not yet supported
+    scdr.serialize_array(array_ptr, array_size);
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -175,6 +189,19 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
+
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        UnionScopedDiscriminator* array_ptr,
+        const std::size_t array_size)
+{
+    // Optimization for deserialization
+    // of arrays of unions not yet supported
+    scdr.deserialize_array(array_ptr, array_size);
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
 
 
 } // namespace fastcdr

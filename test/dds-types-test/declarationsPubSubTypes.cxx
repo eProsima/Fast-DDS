@@ -29,6 +29,37 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_ModuledCommonNameStructure_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_ForwardStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_declarations_module_ForwardStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_ModuledForwardDeclarationsRecursiveStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_ForwardDeclarationsRecursiveStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_declarations_module_ModuledForwardStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 ForwardDeclarationsRecursiveStructPubSubType::ForwardDeclarationsRecursiveStructPubSubType()
 {
     set_name("ForwardDeclarationsRecursiveStruct");
@@ -146,6 +177,17 @@ void ForwardDeclarationsRecursiveStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::ForwardDeclarationsRecursiveStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ForwardDeclarationsRecursiveStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool ForwardDeclarationsRecursiveStructPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -330,6 +372,17 @@ void ForwardStructPubSubType::delete_data(
     delete(reinterpret_cast<::ForwardStruct*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ForwardStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ForwardStructPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -513,6 +566,17 @@ namespace declarations_module {
     {
         delete(reinterpret_cast<::declarations_module::ForwardStruct*>(data));
     }
+
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool ForwardStructPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     bool ForwardStructPubSubType::compute_key(
             SerializedPayload_t& payload,
@@ -699,6 +763,17 @@ void ModuledForwardDeclarationsRecursiveStructPubSubType::delete_data(
     delete(reinterpret_cast<::ModuledForwardDeclarationsRecursiveStruct*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ModuledForwardDeclarationsRecursiveStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ModuledForwardDeclarationsRecursiveStructPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -882,6 +957,17 @@ namespace declarations_module {
     {
         delete(reinterpret_cast<::declarations_module::ModuledForwardStruct*>(data));
     }
+
+    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        bool ModuledForwardStructPubSubType::is_plain(
+                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+        {
+            static_cast<void>(data_representation);
+            return false;
+        }
+
+    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
     bool ModuledForwardStructPubSubType::compute_key(
             SerializedPayload_t& payload,
@@ -1067,6 +1153,17 @@ void ModuledCommonNameStructurePubSubType::delete_data(
 {
     delete(reinterpret_cast<::ModuledCommonNameStructure*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ModuledCommonNameStructurePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool ModuledCommonNameStructurePubSubType::compute_key(
         SerializedPayload_t& payload,

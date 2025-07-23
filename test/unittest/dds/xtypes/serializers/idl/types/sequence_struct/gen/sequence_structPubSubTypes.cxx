@@ -31,6 +31,21 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_NestedSequenceElement_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_ComplexSequenceElement_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_SequenceStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 NestedSequenceElementPubSubType::NestedSequenceElementPubSubType()
 {
     set_name("NestedSequenceElement");
@@ -148,6 +163,17 @@ void NestedSequenceElementPubSubType::delete_data(
 {
     delete(reinterpret_cast<::NestedSequenceElement*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool NestedSequenceElementPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool NestedSequenceElementPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -331,6 +357,17 @@ void ComplexSequenceElementPubSubType::delete_data(
     delete(reinterpret_cast<::ComplexSequenceElement*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool ComplexSequenceElementPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool ComplexSequenceElementPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -512,6 +549,17 @@ void SequenceStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::SequenceStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool SequenceStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool SequenceStructPubSubType::compute_key(
         SerializedPayload_t& payload,

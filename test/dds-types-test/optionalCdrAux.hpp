@@ -23,21 +23,9 @@
 #define FAST_DDS_GENERATED__OPTIONALCDRAUX_HPP
 
 #include "optional.hpp"
-constexpr uint32_t ushort_optional_max_cdr_typesize {10UL};
-constexpr uint32_t ushort_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t boolean_align_2_optional_max_cdr_typesize {13UL};
 constexpr uint32_t boolean_align_2_optional_max_key_cdr_typesize {0UL};
 
-
-constexpr uint32_t double_align_2_optional_max_cdr_typesize {32UL};
-constexpr uint32_t double_align_2_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t ulong_align_4_optional_max_cdr_typesize {16UL};
-constexpr uint32_t ulong_align_4_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t char_align_4_optional_max_cdr_typesize {13UL};
-constexpr uint32_t char_align_4_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t map_short_align_1_optional_max_cdr_typesize {24UL};
 constexpr uint32_t map_short_align_1_optional_max_key_cdr_typesize {0UL};
@@ -45,32 +33,11 @@ constexpr uint32_t map_short_align_1_optional_max_key_cdr_typesize {0UL};
 constexpr uint32_t float_align_4_optional_max_cdr_typesize {16UL};
 constexpr uint32_t float_align_4_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t struct_optional_max_cdr_typesize {28UL};
-constexpr uint32_t struct_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t opt_struct_align_2_optional_max_cdr_typesize {36UL};
-constexpr uint32_t opt_struct_align_2_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t short_align_2_optional_max_cdr_typesize {14UL};
-constexpr uint32_t short_align_2_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t long_optional_max_cdr_typesize {12UL};
 constexpr uint32_t long_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t ushort_align_2_optional_max_cdr_typesize {14UL};
-constexpr uint32_t ushort_align_2_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t float_align_1_optional_max_cdr_typesize {16UL};
-constexpr uint32_t float_align_1_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t ulong_align_1_optional_max_cdr_typesize {16UL};
 constexpr uint32_t ulong_align_1_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t map_short_align_4_optional_max_cdr_typesize {24UL};
-constexpr uint32_t map_short_align_4_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t long_align_1_optional_max_cdr_typesize {16UL};
-constexpr uint32_t long_align_1_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t ulonglong_optional_max_cdr_typesize {24UL};
 constexpr uint32_t ulonglong_optional_max_key_cdr_typesize {0UL};
@@ -90,21 +57,120 @@ constexpr uint32_t ulonglong_align_1_optional_max_key_cdr_typesize {0UL};
 constexpr uint32_t octet_align_2_optional_max_cdr_typesize {13UL};
 constexpr uint32_t octet_align_2_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t sequence_short_align_1_optional_max_cdr_typesize {24UL};
-constexpr uint32_t sequence_short_align_1_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t opt_struct_align_4_optional_max_cdr_typesize {36UL};
 constexpr uint32_t opt_struct_align_4_optional_max_key_cdr_typesize {0UL};
 
+
+constexpr uint32_t char_align_2_optional_max_cdr_typesize {13UL};
+constexpr uint32_t char_align_2_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t longdouble_align_1_optional_max_cdr_typesize {40UL};
+constexpr uint32_t longdouble_align_1_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t double_align_4_optional_max_cdr_typesize {32UL};
+constexpr uint32_t double_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t opt_struct_optional_max_cdr_typesize {32UL};
+constexpr uint32_t opt_struct_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t string_unbounded_align_2_optional_max_cdr_typesize {280UL};
+constexpr uint32_t string_unbounded_align_2_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t ulonglong_align_2_optional_max_cdr_typesize {32UL};
+constexpr uint32_t ulonglong_align_2_optional_max_key_cdr_typesize {0UL};
+
+
+
+constexpr uint32_t longlong_align_2_optional_max_cdr_typesize {32UL};
+constexpr uint32_t longlong_align_2_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t ulong_optional_max_cdr_typesize {12UL};
+constexpr uint32_t ulong_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t short_align_4_optional_max_cdr_typesize {14UL};
+constexpr uint32_t short_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t array_short_align_1_optional_max_cdr_typesize {40UL};
+constexpr uint32_t array_short_align_1_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t octet_optional_max_cdr_typesize {9UL};
+constexpr uint32_t octet_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t short_align_1_optional_max_cdr_typesize {14UL};
+constexpr uint32_t short_align_1_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t string_bounded_align_4_optional_max_cdr_typesize {33UL};
+constexpr uint32_t string_bounded_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t sequence_short_align_2_optional_max_cdr_typesize {24UL};
+constexpr uint32_t sequence_short_align_2_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t ulonglong_align_4_optional_max_cdr_typesize {32UL};
+constexpr uint32_t ulonglong_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t sequence_short_align_4_optional_max_cdr_typesize {24UL};
+constexpr uint32_t sequence_short_align_4_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t boolean_align_1_optional_max_cdr_typesize {13UL};
+constexpr uint32_t boolean_align_1_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t string_bounded_align_2_optional_max_cdr_typesize {33UL};
+constexpr uint32_t string_bounded_align_2_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t map_short_optional_max_cdr_typesize {20UL};
+constexpr uint32_t map_short_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t short_optional_max_cdr_typesize {10UL};
+constexpr uint32_t short_optional_max_key_cdr_typesize {0UL};
+
+
+constexpr uint32_t ushort_optional_max_cdr_typesize {10UL};
+constexpr uint32_t ushort_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t double_align_2_optional_max_cdr_typesize {32UL};
+constexpr uint32_t double_align_2_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t ulong_align_4_optional_max_cdr_typesize {16UL};
+constexpr uint32_t ulong_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t char_align_4_optional_max_cdr_typesize {13UL};
+constexpr uint32_t char_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t struct_optional_max_cdr_typesize {28UL};
+constexpr uint32_t struct_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t opt_struct_align_2_optional_max_cdr_typesize {36UL};
+constexpr uint32_t opt_struct_align_2_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t short_align_2_optional_max_cdr_typesize {14UL};
+constexpr uint32_t short_align_2_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t ushort_align_2_optional_max_cdr_typesize {14UL};
+constexpr uint32_t ushort_align_2_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t float_align_1_optional_max_cdr_typesize {16UL};
+constexpr uint32_t float_align_1_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t map_short_align_4_optional_max_cdr_typesize {24UL};
+constexpr uint32_t map_short_align_4_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t long_align_1_optional_max_cdr_typesize {16UL};
+constexpr uint32_t long_align_1_optional_max_key_cdr_typesize {0UL};
+
+constexpr uint32_t sequence_short_align_1_optional_max_cdr_typesize {24UL};
+constexpr uint32_t sequence_short_align_1_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t float_align_2_optional_max_cdr_typesize {16UL};
 constexpr uint32_t float_align_2_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t longdouble_optional_max_cdr_typesize {32UL};
 constexpr uint32_t longdouble_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t char_align_2_optional_max_cdr_typesize {13UL};
-constexpr uint32_t char_align_2_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t wchar_align_2_optional_max_cdr_typesize {14UL};
 constexpr uint32_t wchar_align_2_optional_max_key_cdr_typesize {0UL};
@@ -116,43 +182,18 @@ constexpr uint32_t string_unbounded_align_1_optional_max_cdr_typesize {280UL};
 constexpr uint32_t string_unbounded_align_1_optional_max_key_cdr_typesize {0UL};
 
 
-
-constexpr uint32_t longdouble_align_1_optional_max_cdr_typesize {40UL};
-constexpr uint32_t longdouble_align_1_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t boolean_align_4_optional_max_cdr_typesize {13UL};
 constexpr uint32_t boolean_align_4_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t double_align_4_optional_max_cdr_typesize {32UL};
-constexpr uint32_t double_align_4_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t array_short_align_4_optional_max_cdr_typesize {40UL};
 constexpr uint32_t array_short_align_4_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t opt_struct_optional_max_cdr_typesize {32UL};
-constexpr uint32_t opt_struct_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t string_unbounded_align_2_optional_max_cdr_typesize {280UL};
-constexpr uint32_t string_unbounded_align_2_optional_max_key_cdr_typesize {0UL};
 
 
 constexpr uint32_t longdouble_align_2_optional_max_cdr_typesize {40UL};
 constexpr uint32_t longdouble_align_2_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t ulonglong_align_2_optional_max_cdr_typesize {32UL};
-constexpr uint32_t ulonglong_align_2_optional_max_key_cdr_typesize {0UL};
-
-
-
-constexpr uint32_t longlong_align_2_optional_max_cdr_typesize {32UL};
-constexpr uint32_t longlong_align_2_optional_max_key_cdr_typesize {0UL};
-
-
 constexpr uint32_t string_bounded_optional_max_cdr_typesize {29UL};
 constexpr uint32_t string_bounded_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t ulong_optional_max_cdr_typesize {12UL};
-constexpr uint32_t ulong_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t wchar_align_4_optional_max_cdr_typesize {14UL};
 constexpr uint32_t wchar_align_4_optional_max_key_cdr_typesize {0UL};
@@ -184,9 +225,6 @@ constexpr uint32_t longlong_align_4_optional_max_key_cdr_typesize {0UL};
 constexpr uint32_t wchar_align_1_optional_max_cdr_typesize {14UL};
 constexpr uint32_t wchar_align_1_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t short_align_4_optional_max_cdr_typesize {14UL};
-constexpr uint32_t short_align_4_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t InnerStructOptional_max_cdr_typesize {16UL};
 constexpr uint32_t InnerStructOptional_max_key_cdr_typesize {0UL};
 
@@ -196,33 +234,12 @@ constexpr uint32_t octet_align_4_optional_max_key_cdr_typesize {0UL};
 constexpr uint32_t octet_align_1_optional_max_cdr_typesize {13UL};
 constexpr uint32_t octet_align_1_optional_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t array_short_align_1_optional_max_cdr_typesize {40UL};
-constexpr uint32_t array_short_align_1_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t octet_optional_max_cdr_typesize {9UL};
-constexpr uint32_t octet_optional_max_key_cdr_typesize {0UL};
-
 constexpr uint32_t ulong_align_2_optional_max_cdr_typesize {16UL};
 constexpr uint32_t ulong_align_2_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t short_align_1_optional_max_cdr_typesize {14UL};
-constexpr uint32_t short_align_1_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t string_bounded_align_4_optional_max_cdr_typesize {33UL};
-constexpr uint32_t string_bounded_align_4_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t sequence_short_align_2_optional_max_cdr_typesize {24UL};
-constexpr uint32_t sequence_short_align_2_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t struct_align_4_optional_max_cdr_typesize {32UL};
 constexpr uint32_t struct_align_4_optional_max_key_cdr_typesize {0UL};
 
-
-constexpr uint32_t ulonglong_align_4_optional_max_cdr_typesize {32UL};
-constexpr uint32_t ulonglong_align_4_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t sequence_short_align_4_optional_max_cdr_typesize {24UL};
-constexpr uint32_t sequence_short_align_4_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t opt_struct_align_1_optional_max_cdr_typesize {36UL};
 constexpr uint32_t opt_struct_align_1_optional_max_key_cdr_typesize {0UL};
@@ -236,25 +253,11 @@ constexpr uint32_t double_optional_max_key_cdr_typesize {0UL};
 constexpr uint32_t wchar_optional_max_cdr_typesize {10UL};
 constexpr uint32_t wchar_optional_max_key_cdr_typesize {0UL};
 
-
-constexpr uint32_t boolean_align_1_optional_max_cdr_typesize {13UL};
-constexpr uint32_t boolean_align_1_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t string_bounded_align_2_optional_max_cdr_typesize {33UL};
-constexpr uint32_t string_bounded_align_2_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t map_short_optional_max_cdr_typesize {20UL};
-constexpr uint32_t map_short_optional_max_key_cdr_typesize {0UL};
-
-
 constexpr uint32_t boolean_optional_max_cdr_typesize {9UL};
 constexpr uint32_t boolean_optional_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t double_align_1_optional_max_cdr_typesize {32UL};
 constexpr uint32_t double_align_1_optional_max_key_cdr_typesize {0UL};
-
-constexpr uint32_t short_optional_max_cdr_typesize {10UL};
-constexpr uint32_t short_optional_max_key_cdr_typesize {0UL};
 
 
 
@@ -277,7 +280,6 @@ constexpr uint32_t string_unbounded_optional_max_cdr_typesize {276UL};
 constexpr uint32_t string_unbounded_optional_max_key_cdr_typesize {0UL};
 
 
-
 constexpr uint32_t map_short_align_2_optional_max_cdr_typesize {24UL};
 constexpr uint32_t map_short_align_2_optional_max_key_cdr_typesize {0UL};
 
@@ -292,325 +294,406 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const short_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ushort_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const long_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulong_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longlong_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulonglong_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const float_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const double_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longdouble_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const boolean_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const octet_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const char_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const wchar_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const short_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const short_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const short_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ushort_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ushort_align_2_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ushort_align_4_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const long_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const long_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const long_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulong_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulong_align_2_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulong_align_4_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longlong_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longlong_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longlong_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulonglong_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulonglong_align_2_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulonglong_align_4_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const float_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const float_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const float_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const double_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const double_align_2_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const double_align_4_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longdouble_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longdouble_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longdouble_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const boolean_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const boolean_align_2_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const boolean_align_4_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const octet_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const octet_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const octet_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const char_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const char_align_2_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const char_align_4_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const wchar_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const wchar_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const wchar_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const sequence_short_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const sequence_short_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const sequence_short_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const sequence_short_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_unbounded_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_unbounded_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_unbounded_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_unbounded_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_bounded_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_bounded_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_bounded_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_bounded_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const map_short_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const map_short_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const map_short_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const map_short_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const array_short_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const array_short_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const array_short_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const array_short_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_align_1_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_align_4_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructOptional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const opt_struct_optional& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const opt_struct_align_1_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const opt_struct_align_2_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const opt_struct_align_4_optional& data);
+
 
 
 } // namespace fastcdr

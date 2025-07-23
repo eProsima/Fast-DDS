@@ -34,7 +34,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "HelloWorldPubSubTypes.hpp"
+#include "LatencySamplePubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -50,7 +50,7 @@ WaitsetSubscriberApp::WaitsetSubscriberApp(
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
+    , type_(new my_namespace::LatencySample6mPubSubType())
     , samples_(config.samples)
     , received_samples_(0)
     , stop_(false)
@@ -150,21 +150,21 @@ void WaitsetSubscriberApp::run()
                 if (changed_statuses.is_active(StatusMask::data_available()))
                 {
                     SampleInfo info;
-                    while ((!is_stopped()) &&
+                    /*while ((!is_stopped()) &&
                             (RETCODE_OK == reader_->take_next_sample(&hello_, &info)))
                     {
                         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                         {
                             received_samples_++;
                             // Print Hello world message data
-                            std::cout << "Message: '" << hello_.message() << "' with index: '"
-                                      << hello_.index() << "' RECEIVED" << std::endl;
+                            //std::cout << "Message: '" << hello_.message() << "' with index: '"
+                            //          << hello_.index() << "' RECEIVED" << std::endl;
                             if (samples_ > 0 && (received_samples_ >= samples_))
                             {
                                 stop();
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }

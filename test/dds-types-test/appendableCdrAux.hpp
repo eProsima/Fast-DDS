@@ -49,6 +49,7 @@ constexpr uint32_t AppendableUShortStruct_max_key_cdr_typesize {0UL};
 
 
 
+
 constexpr uint32_t AppendableUnionStruct_max_cdr_typesize {16UL};
 constexpr uint32_t AppendableUnionStruct_max_key_cdr_typesize {0UL};
 
@@ -75,6 +76,7 @@ constexpr uint32_t AppendableCharStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t AppendableInheritanceEmptyStruct_max_cdr_typesize {6UL};
 constexpr uint32_t AppendableInheritanceEmptyStruct_max_key_cdr_typesize {0UL};
+
 
 
 constexpr uint32_t AppendableULongStruct_max_cdr_typesize {8UL};
@@ -105,77 +107,96 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableShortStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableUShortStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableLongStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableULongStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableLongLongStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableULongLongStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableFloatStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableDoubleStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableLongDoubleStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableBooleanStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableOctetStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableCharStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableWCharStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableUnionStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableEmptyStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableEmptyInheritanceStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableInheritanceStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableInheritanceEmptyStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableExtensibilityInheritance& data);
+
 
 
 } // namespace fastcdr

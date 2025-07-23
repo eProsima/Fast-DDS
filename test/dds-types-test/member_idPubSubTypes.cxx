@@ -31,6 +31,48 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_AutoidHash_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_DerivedAutoidDefault_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_AutoidSequential_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_DerivedEmptyAutoidSequential_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_FixHashidDefault_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_FixMix_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_AutoidDefault_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_DerivedAutoidHash_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_FixHashid_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_FixId_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_DerivedAutoidSequential_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_FixHexId_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+} // namespace fastcdr
+} // namespace eprosima
+
 FixIdPubSubType::FixIdPubSubType()
 {
     set_name("FixId");
@@ -148,6 +190,17 @@ void FixIdPubSubType::delete_data(
 {
     delete(reinterpret_cast<::FixId*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool FixIdPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool FixIdPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -331,6 +384,17 @@ void FixHexIdPubSubType::delete_data(
     delete(reinterpret_cast<::FixHexId*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool FixHexIdPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool FixHexIdPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -512,6 +576,17 @@ void FixHashidDefaultPubSubType::delete_data(
 {
     delete(reinterpret_cast<::FixHashidDefault*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool FixHashidDefaultPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool FixHashidDefaultPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -695,6 +770,17 @@ void FixHashidPubSubType::delete_data(
     delete(reinterpret_cast<::FixHashid*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool FixHashidPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool FixHashidPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -876,6 +962,17 @@ void FixMixPubSubType::delete_data(
 {
     delete(reinterpret_cast<::FixMix*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool FixMixPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool FixMixPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1059,6 +1156,17 @@ void AutoidDefaultPubSubType::delete_data(
     delete(reinterpret_cast<::AutoidDefault*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool AutoidDefaultPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool AutoidDefaultPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1240,6 +1348,17 @@ void AutoidSequentialPubSubType::delete_data(
 {
     delete(reinterpret_cast<::AutoidSequential*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool AutoidSequentialPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool AutoidSequentialPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1423,6 +1542,17 @@ void AutoidHashPubSubType::delete_data(
     delete(reinterpret_cast<::AutoidHash*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool AutoidHashPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool AutoidHashPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1604,6 +1734,17 @@ void DerivedAutoidDefaultPubSubType::delete_data(
 {
     delete(reinterpret_cast<::DerivedAutoidDefault*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool DerivedAutoidDefaultPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool DerivedAutoidDefaultPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1787,6 +1928,17 @@ void DerivedEmptyAutoidSequentialPubSubType::delete_data(
     delete(reinterpret_cast<::DerivedEmptyAutoidSequential*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool DerivedEmptyAutoidSequentialPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool DerivedEmptyAutoidSequentialPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1969,6 +2121,17 @@ void DerivedAutoidSequentialPubSubType::delete_data(
     delete(reinterpret_cast<::DerivedAutoidSequential*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool DerivedAutoidSequentialPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool DerivedAutoidSequentialPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -2150,6 +2313,17 @@ void DerivedAutoidHashPubSubType::delete_data(
 {
     delete(reinterpret_cast<::DerivedAutoidHash*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool DerivedAutoidHashPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool DerivedAutoidHashPubSubType::compute_key(
         SerializedPayload_t& payload,

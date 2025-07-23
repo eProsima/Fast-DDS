@@ -38,39 +38,6 @@
 #endif  // FASTDDS_GEN_API_VER
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FinalStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FinalStruct_f
-{
-    typedef uint8_t FinalStruct::* type;
-    friend constexpr type get(
-            FinalStruct_f);
-};
-
-template struct FinalStruct_rob<FinalStruct_f, &FinalStruct::m_my_value>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FinalStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type FinalStruct defined by the user in the IDL file.
  * @ingroup extensibility_struct
@@ -126,18 +93,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -155,21 +112,6 @@ private:
 
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
-
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 1ULL ==
-               (detail::FinalStruct_offset_of<FinalStruct, detail::FinalStruct_f>() +
-               sizeof(uint8_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 1ULL ==
-               (detail::FinalStruct_offset_of<FinalStruct, detail::FinalStruct_f>() +
-               sizeof(uint8_t));
-    }
 
 };
 
@@ -229,12 +171,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -311,12 +249,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -393,12 +327,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        static_cast<void>(data_representation);
-        return false;
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 

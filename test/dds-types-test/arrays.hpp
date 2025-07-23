@@ -14023,6 +14023,309 @@ private:
     std::array<int16_t, 41925> m_var_array_big{0};
 
 };
+/*!
+ * @brief This class represents the structure LargeBasicPlainArray defined by the user in the IDL file.
+ * @ingroup arrays
+ */
+class LargeBasicPlainArray
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport LargeBasicPlainArray()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~LargeBasicPlainArray()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object LargeBasicPlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargeBasicPlainArray(
+            const LargeBasicPlainArray& x)
+    {
+                    m_field1 = x.m_field1;
+
+                    m_var_large_basic_plain_array = x.m_var_large_basic_plain_array;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object LargeBasicPlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargeBasicPlainArray(
+            LargeBasicPlainArray&& x) noexcept
+    {
+        m_field1 = x.m_field1;
+        m_var_large_basic_plain_array = std::move(x.m_var_large_basic_plain_array);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object LargeBasicPlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargeBasicPlainArray& operator =(
+            const LargeBasicPlainArray& x)
+    {
+
+                    m_field1 = x.m_field1;
+
+                    m_var_large_basic_plain_array = x.m_var_large_basic_plain_array;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object LargeBasicPlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargeBasicPlainArray& operator =(
+            LargeBasicPlainArray&& x) noexcept
+    {
+
+        m_field1 = x.m_field1;
+        m_var_large_basic_plain_array = std::move(x.m_var_large_basic_plain_array);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x LargeBasicPlainArray object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const LargeBasicPlainArray& x) const
+    {
+        return (m_field1 == x.m_field1 &&
+           m_var_large_basic_plain_array == x.m_var_large_basic_plain_array);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x LargeBasicPlainArray object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const LargeBasicPlainArray& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member field1
+     * @param _field1 New value for member field1
+     */
+    eProsima_user_DllExport void field1(
+            uint8_t _field1)
+    {
+        m_field1 = _field1;
+    }
+
+    /*!
+     * @brief This function returns the value of member field1
+     * @return Value of member field1
+     */
+    eProsima_user_DllExport uint8_t field1() const
+    {
+        return m_field1;
+    }
+
+    /*!
+     * @brief This function returns a reference to member field1
+     * @return Reference to member field1
+     */
+    eProsima_user_DllExport uint8_t& field1()
+    {
+        return m_field1;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member var_large_basic_plain_array
+     * @param _var_large_basic_plain_array New value to be copied in member var_large_basic_plain_array
+     */
+    eProsima_user_DllExport void var_large_basic_plain_array(
+            const std::array<InnerBasicPlainStructHelper, 6291456>& _var_large_basic_plain_array)
+    {
+        m_var_large_basic_plain_array = _var_large_basic_plain_array;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_large_basic_plain_array
+     * @param _var_large_basic_plain_array New value to be moved in member var_large_basic_plain_array
+     */
+    eProsima_user_DllExport void var_large_basic_plain_array(
+            std::array<InnerBasicPlainStructHelper, 6291456>&& _var_large_basic_plain_array)
+    {
+        m_var_large_basic_plain_array = std::move(_var_large_basic_plain_array);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_large_basic_plain_array
+     * @return Constant reference to member var_large_basic_plain_array
+     */
+    eProsima_user_DllExport const std::array<InnerBasicPlainStructHelper, 6291456>& var_large_basic_plain_array() const
+    {
+        return m_var_large_basic_plain_array;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_large_basic_plain_array
+     * @return Reference to member var_large_basic_plain_array
+     */
+    eProsima_user_DllExport std::array<InnerBasicPlainStructHelper, 6291456>& var_large_basic_plain_array()
+    {
+        return m_var_large_basic_plain_array;
+    }
+
+
+
+private:
+
+    uint8_t m_field1{0};
+    std::array<InnerBasicPlainStructHelper, 6291456> m_var_large_basic_plain_array;
+
+};
+/*!
+ * @brief This class represents the structure LargePlainArray defined by the user in the IDL file.
+ * @ingroup arrays
+ */
+class LargePlainArray
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport LargePlainArray()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~LargePlainArray()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object LargePlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargePlainArray(
+            const LargePlainArray& x)
+    {
+                    m_var_large_plain_array = x.m_var_large_plain_array;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object LargePlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargePlainArray(
+            LargePlainArray&& x) noexcept
+    {
+        m_var_large_plain_array = std::move(x.m_var_large_plain_array);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object LargePlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargePlainArray& operator =(
+            const LargePlainArray& x)
+    {
+
+                    m_var_large_plain_array = x.m_var_large_plain_array;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object LargePlainArray that will be copied.
+     */
+    eProsima_user_DllExport LargePlainArray& operator =(
+            LargePlainArray&& x) noexcept
+    {
+
+        m_var_large_plain_array = std::move(x.m_var_large_plain_array);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x LargePlainArray object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const LargePlainArray& x) const
+    {
+        return (m_var_large_plain_array == x.m_var_large_plain_array);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x LargePlainArray object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const LargePlainArray& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_large_plain_array
+     * @param _var_large_plain_array New value to be copied in member var_large_plain_array
+     */
+    eProsima_user_DllExport void var_large_plain_array(
+            const std::array<InnerPlainStructHelper, 6291456>& _var_large_plain_array)
+    {
+        m_var_large_plain_array = _var_large_plain_array;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_large_plain_array
+     * @param _var_large_plain_array New value to be moved in member var_large_plain_array
+     */
+    eProsima_user_DllExport void var_large_plain_array(
+            std::array<InnerPlainStructHelper, 6291456>&& _var_large_plain_array)
+    {
+        m_var_large_plain_array = std::move(_var_large_plain_array);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_large_plain_array
+     * @return Constant reference to member var_large_plain_array
+     */
+    eProsima_user_DllExport const std::array<InnerPlainStructHelper, 6291456>& var_large_plain_array() const
+    {
+        return m_var_large_plain_array;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_large_plain_array
+     * @return Reference to member var_large_plain_array
+     */
+    eProsima_user_DllExport std::array<InnerPlainStructHelper, 6291456>& var_large_plain_array()
+    {
+        return m_var_large_plain_array;
+    }
+
+
+
+private:
+
+    std::array<InnerPlainStructHelper, 6291456> m_var_large_plain_array;
+
+};
 
 #endif // _FAST_DDS_GENERATED_ARRAYS_HPP_
 

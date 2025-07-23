@@ -125,6 +125,9 @@ constexpr uint32_t ArrayMultiDimensionString_max_key_cdr_typesize {0UL};
 constexpr uint32_t ArrayChar_max_cdr_typesize {14UL};
 constexpr uint32_t ArrayChar_max_key_cdr_typesize {0UL};
 
+constexpr uint32_t LargePlainArray_max_cdr_typesize {75497476UL};
+constexpr uint32_t LargePlainArray_max_key_cdr_typesize {0UL};
+
 
 constexpr uint32_t ArraySingleDimensionLiteralsString_max_cdr_typesize {1308UL};
 constexpr uint32_t ArraySingleDimensionLiteralsString_max_key_cdr_typesize {0UL};
@@ -219,6 +222,9 @@ constexpr uint32_t ArrayMap_max_key_cdr_typesize {0UL};
 constexpr uint32_t ArraySingleDimensionLiteralsShort_max_cdr_typesize {14UL};
 constexpr uint32_t ArraySingleDimensionLiteralsShort_max_key_cdr_typesize {0UL};
 
+constexpr uint32_t LargeBasicPlainArray_max_cdr_typesize {25165832UL};
+constexpr uint32_t LargeBasicPlainArray_max_key_cdr_typesize {0UL};
+
 constexpr uint32_t BoundedSmallArrays_max_cdr_typesize {6UL};
 constexpr uint32_t BoundedSmallArrays_max_key_cdr_typesize {0UL};
 
@@ -231,6 +237,7 @@ constexpr uint32_t ArrayMultiDimensionLiteralsChar_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t ArrayMultiDimensionLiteralsMap_max_cdr_typesize {1008UL};
 constexpr uint32_t ArrayMultiDimensionLiteralsMap_max_key_cdr_typesize {0UL};
+
 
 constexpr uint32_t ArrayWChar_max_cdr_typesize {24UL};
 constexpr uint32_t ArrayWChar_max_key_cdr_typesize {0UL};
@@ -304,6 +311,7 @@ constexpr uint32_t ArrayMultiDimensionFloat_max_key_cdr_typesize {0UL};
 constexpr uint32_t ArrayMultiDimensionLiteralsLongDouble_max_cdr_typesize {4008UL};
 constexpr uint32_t ArrayMultiDimensionLiteralsLongDouble_max_key_cdr_typesize {0UL};
 
+
 constexpr uint32_t ArrayMultiDimensionLiteralsShort_max_cdr_typesize {204UL};
 constexpr uint32_t ArrayMultiDimensionLiteralsShort_max_key_cdr_typesize {0UL};
 
@@ -363,421 +371,600 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayShort& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayUShort& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayULong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayLongLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayULongLong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayFloat& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayDouble& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayLongDouble& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBoolean& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayOctet& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayUInt8& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayChar& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayWChar& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayWString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBoundedString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBoundedWString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayEnum& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBitMask& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayAlias& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayShortArray& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySequence& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMap& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayUnion& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayStructure& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayBitset& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionShort& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionUShort& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionULong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLongLong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionULongLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionFloat& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionDouble& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLongDouble& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBoolean& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionOctet& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionChar& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionWChar& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionWString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBoundedString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBoundedWString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionEnum& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBitMask& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionAlias& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionSequence& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionMap& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionUnion& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionStructure& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionBitset& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsShort& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnsignedShort& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnsignedLong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsLongLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnsignedLongLong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsFloat& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsDouble& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsLongDouble& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBoolean& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsOctet& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsChar& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsWChar& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsWString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBoundedString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBoundedWString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsEnum& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBitMask& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsAlias& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsShortArray& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsSequence& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsMap& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsUnion& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsStructure& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraySingleDimensionLiteralsBitset& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsShort& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsUShort& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsULong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsLongLong& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsULongLong& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsFloat& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsDouble& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsLongDouble& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBoolean& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsOctet& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsChar& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsWChar& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsWString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBoundedString& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBoundedWString& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsEnum& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBitMask& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsAlias& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsSequence& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsMap& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsUnion& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsStructure& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayMultiDimensionLiteralsBitSet& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedSmallArrays& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoundedBigArrays& data);
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const LargeBasicPlainArray& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct LargeBasicPlainArray_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct LargeBasicPlainArray_f
+{
+    typedef std::array<InnerBasicPlainStructHelper, 6291456> LargeBasicPlainArray::* type;
+    friend constexpr type get(
+            LargeBasicPlainArray_f);
+};
+
+template struct LargeBasicPlainArray_rob<LargeBasicPlainArray_f, &LargeBasicPlainArray::m_var_large_basic_plain_array>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr LargeBasicPlainArray_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const LargePlainArray& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct LargePlainArray_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct LargePlainArray_f
+{
+    typedef std::array<InnerPlainStructHelper, 6291456> LargePlainArray::* type;
+    friend constexpr type get(
+            LargePlainArray_f);
+};
+
+template struct LargePlainArray_rob<LargePlainArray_f, &LargePlainArray::m_var_large_plain_array>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr LargePlainArray_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 
 } // namespace fastcdr

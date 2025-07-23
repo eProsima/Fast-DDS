@@ -35,6 +35,8 @@ constexpr uint32_t AnnotatedStruct_max_key_cdr_typesize {0UL};
 
 
 
+
+
 constexpr uint32_t EmptyAnnotatedStruct_max_cdr_typesize {4UL};
 constexpr uint32_t EmptyAnnotatedStruct_max_key_cdr_typesize {0UL};
 
@@ -58,13 +60,16 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AnnotatedStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const EmptyAnnotatedStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BasicAnnotationsStruct& data);
+
 
 
 } // namespace fastcdr
