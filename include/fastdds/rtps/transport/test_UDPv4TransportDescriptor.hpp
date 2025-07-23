@@ -42,7 +42,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     //! Custom message filtering functions
     typedef std::function<bool (eprosima::fastdds::rtps::CDRMessage_t& msg)> filter;
     //! Locator filtering function
-    typedef std::function<bool (const Locator& destination)> DestinationLocatorFilter;
+    typedef std::function<bool (const Locator& destination, int32_t priority)> DestinationLocatorFilter;
 
     //! Test transport options
     std::shared_ptr<TestUDPv4TransportOptions> test_transport_options = std::make_shared<TestUDPv4TransportOptions>();
@@ -115,7 +115,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
             };
 
     //! Filtering function for dropping messages to specific destinations
-    DestinationLocatorFilter locator_filter_ = [](const Locator&)
+    DestinationLocatorFilter locator_filter_ = [](const Locator&, int32_t)
             {
                 return false;
             };
@@ -168,7 +168,7 @@ struct TestUDPv4TransportOptions
     std::atomic<uint32_t> test_UDPv4Transport_DropLogLength{0};
     std::atomic<bool> always_drop_participant_builtin_topic_data{false};
     std::atomic<bool> simulate_no_interfaces{false};
-    test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter = [](const Locator&)
+    test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter = [](const Locator&, int32_t)
             {
                 return false;
             };

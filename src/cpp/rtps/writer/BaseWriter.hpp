@@ -19,6 +19,7 @@
 #ifndef RTPS_WRITER__BASEWRITER_HPP
 #define RTPS_WRITER__BASEWRITER_HPP
 
+#include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -78,6 +79,11 @@ public:
             WriterListener* listener) final;
 
     bool is_async() const final;
+
+    int32_t get_transport_priority() const final;
+
+    void update_attributes(
+            const WriterAttributes& att) override;
 
     virtual void local_actions_on_writer_removed();
 
@@ -395,6 +401,8 @@ protected:
     dds::Duration_t liveliness_lease_duration_;
     /// The liveliness announcement period
     dds::Duration_t liveliness_announcement_period_;
+    /// The transport priority of this writer
+    std::atomic<int32_t> transport_priority_;
 
 private:
 

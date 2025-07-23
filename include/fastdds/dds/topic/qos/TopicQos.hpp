@@ -529,7 +529,7 @@ private:
     //!Resource Limits Qos, implemented in the library.
     ResourceLimitsQosPolicy resource_limits_;
 
-    //!Transport Priority Qos, NOT implemented in the library.
+    //!Transport Priority Qos, implemented in the library.
     TransportPriorityQosPolicy transport_priority_;
 
     //!Lifespan Qos, implemented in the library.

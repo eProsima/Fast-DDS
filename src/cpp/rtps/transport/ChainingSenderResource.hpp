@@ -39,17 +39,19 @@ public:
                     // low_sender_resources_ makes its clean up on destruction.
                 };
 
-        send_buffers_lambda_ = [this, &transport](
+        send_lambda_ = [this, &transport](
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             LocatorsIterator* destination_locators_begin,
             LocatorsIterator* destination_locators_end,
-            const std::chrono::steady_clock::time_point& timeout) -> bool
+            const std::chrono::steady_clock::time_point& timeout,
+            int32_t transport_priority) -> bool
                 {
                     if (low_sender_resource_)
                     {
-                        return transport.send(low_sender_resource_.get(), buffers, total_bytes,
-                                       destination_locators_begin, destination_locators_end, timeout);
+                        return transport.send_w_priority(low_sender_resource_.get(), buffers, total_bytes,
+                                       destination_locators_begin, destination_locators_end, timeout,
+                                       transport_priority);
                     }
 
                     return false;

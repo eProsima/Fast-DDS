@@ -1242,7 +1242,8 @@ void StatefulReader::NotifyChanges(
         do
         {
             next_seq = prox->next_cache_change_to_be_notified();
-        } while (next_seq != c_SequenceNumber_Unknown && next_seq <= aux_ch->sequenceNumber);
+        }
+        while (next_seq != c_SequenceNumber_Unknown && next_seq <= aux_ch->sequenceNumber);
     }
     // Ensure correct state of proxy when max_seq is not present in history
     while (c_SequenceNumber_Unknown != prox->next_cache_change_to_be_notified())
@@ -1662,7 +1663,7 @@ bool StatefulReader::send_sync_nts(
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
     return mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid, locators_begin, locators_end,
-                   max_blocking_time_point);
+                   max_blocking_time_point, 0);
 }
 
 } // namespace rtps

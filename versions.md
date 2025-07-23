@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* Pass value of `TransportPriorityQosPolicy` to transport layer.
 
 Version v3.3.0
 --------------

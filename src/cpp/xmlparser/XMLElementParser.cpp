@@ -1389,6 +1389,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
                 <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0"/>
                 <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
                 <xs:element name="disable_heartbeat_piggyback" type="boolType" minOccurs="0"/>
+                <xs:element name="transport_priority" type="boolType" minOccurs="0"/>
             </xs:all>
         </xs:complexType>
      */
@@ -1533,6 +1534,14 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
         {
             // userData
             if (XMLP_ret::XML_OK != getXMLOctetVector(p_aux0, qos.m_groupData.data_vec(), ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, "transport_priority") == 0)
+        {
+            // transport_priority - int32
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &qos.transport_priority.value, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
