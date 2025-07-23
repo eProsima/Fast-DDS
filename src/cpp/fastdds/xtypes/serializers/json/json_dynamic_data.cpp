@@ -152,7 +152,18 @@ ReturnCode_t json_deserialize_member(
     MemberDescriptorImpl& member_desc =
             traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)->get_descriptor();
 
-    return json_deserialize_member(j, type_member->get_id(),
+    TypeKind parent_kind = member_desc.parent_kind();
+    MemberId member_id;
+    if (TK_BITMASK == parent_kind)
+    {
+        member_id = member_desc.position();
+    }
+    else
+    {
+        member_id = member_desc.id();
+    }
+
+    return json_deserialize_member(j, member_id,
                    traits<DynamicType>::narrow<DynamicTypeImpl>(
                        member_desc.type())->resolve_alias_enclosed_type()->get_kind(), format, data);
 }
@@ -794,7 +805,7 @@ ReturnCode_t json_deserialize_enum_member(
                 it.second)->get_descriptor();
             if (it.first == enum_name)
             {
-                const auto value_from_name = std::stoi(enum_member_desc.default_value());
+                const auto value_from_name = std::stoi(enum_member_desc.literal_value());
                 if (DynamicDataJsonFormat::EPROSIMA == format && is_value_set)
                 {
                     // Check if value coincides with the one obtained from name
@@ -1260,7 +1271,9 @@ ReturnCode_t json_deserialize_bitmask(
                 if (std::find(j_active_bits.begin(), j_active_bits.end(),
                         it.second->get_name().to_string()) != j_active_bits.end())
                 {
-                    u64_from_active |= (0x01ull << it.second->get_id());
+                    MemberDescriptorImpl& member_desc =
+                            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
+                    u64_from_active |= (0x01ull << member_desc.position());
                 }
             }
         }
