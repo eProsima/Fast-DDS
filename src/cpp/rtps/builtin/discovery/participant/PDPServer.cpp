@@ -1661,7 +1661,6 @@ void PDPServer::send_announcement(
             EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Error sending announcement from server to clients");
         }
     }
-
 }
 
 bool PDPServer::read_backup(
