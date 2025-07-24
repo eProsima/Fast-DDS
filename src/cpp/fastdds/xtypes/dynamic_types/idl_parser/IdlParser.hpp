@@ -16,20 +16,13 @@
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSER_HPP
 
 #include <array>
+#include <algorithm>
 #include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
+#include <locale>
+#include <ios>
 #include <map>
 #include <memory>
-#include <mutex>
-#include <regex>
-#include <stack>
 #include <string>
-#include <thread>
-#include <type_traits>
-#include <unordered_set>
-#include <utility>
 #include <vector>
 
 #ifdef _MSC_VER
@@ -46,13 +39,15 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 #include "pegtl.hpp"
 #include "pegtl/analyze.hpp"
 
 #include "IdlGrammar.hpp"
-#include "IdlModule.hpp"
+#include "IdlParserContext.hpp"
 #include "IdlPreprocessor.hpp"
 
 namespace eprosima {
@@ -61,148 +56,6 @@ namespace dds {
 namespace idlparser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
-
-class Parser;
-
-/**
- * @brief Class representing a hierarchy of nested modules, allowing to manage the current module context during parsing.
- * @note This class is used to keep track of the current module scope when parsing IDL attributes, types, and other elements.
- *       It is intended to be always non-empty, starting with a root module representing the global scope.
- *       The current module can be pushed and popped to navigate through nested modules.
- *       The root module is created upon instantiation and cannot be popped.
- */
-class ModuleStack
-{
-public:
-
-    ModuleStack()
-    {
-        // Initialize the stack with a global scope module (root)
-        stack_.push(std::make_shared<Module>());
-    }
-
-    std::shared_ptr<Module> current() const
-    {
-        return stack_.top();
-    }
-
-    std::shared_ptr<Module> push(
-            const std::string& submodule)
-    {
-        auto current = stack_.top();
-
-        if (!current->has_submodule(submodule))
-        {
-            current->create_submodule(submodule);
-        }
-
-        auto new_module = current->submodule(submodule);
-        stack_.push(new_module);
-
-        return new_module;
-    }
-
-    void pop()
-    {
-        if (stack_.size() == 1)
-        {
-            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot pop the root module.");
-            return;
-        }
-
-        stack_.pop();
-    }
-
-    void reset()
-    {
-        while (stack_.size() > 1)
-        {
-            stack_.pop();
-        }
-    }
-
-private:
-
-    std::stack<std::shared_ptr<Module>, std::vector<std::shared_ptr<Module>>> stack_;
-};
-
-class Context
-    : public PreprocessorContext
-{
-public:
-
-    enum CharType
-    {
-        CHAR,
-        UINT8,
-        INT8
-    };
-
-    enum WideCharType
-    {
-        WCHAR_T,
-        CHAR16_T
-    };
-
-    // Config
-    bool ignore_case = false;
-    bool clear = true;
-    bool allow_keyword_identifiers = false;
-    bool ignore_redefinition = false;
-    CharType char_translation = CHAR;
-    WideCharType wchar_type = WCHAR_T;
-
-    // Results
-    bool success = false;
-    std::string target_type_name;
-
-    traits<DynamicType>::ref_type get_type(
-            std::map<std::string, std::string>& state,
-            const std::string& type);
-
-    std::vector<std::string> split_string(
-            const std::string& str,
-            char delimiter)
-    {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream ss(str);
-        while (std::getline(ss, token, delimiter))
-        {
-            tokens.push_back(token);
-        }
-        return tokens;
-    }
-
-    DynamicTypeBuilder::_ref_type builder;
-
-    ModuleStack& modules()
-    {
-        return modules_;
-    }
-
-    void clear_context()
-    {
-        if (clear)
-        {
-            parser_.reset();
-            modules_.reset();
-        }
-    }
-
-    ~Context()
-    {
-        clear_context();
-    }
-
-private:
-
-    friend class Parser;
-    std::shared_ptr<Parser> parser_;
-    ModuleStack modules_;
-
-}; // class Context
-
 
 // Actions
 template<typename Rule>
@@ -1650,6 +1503,8 @@ struct action<enum_dcl>
             ctx->builder = builder;
         }
 
+        ctx->notify_declared_type(builder);
+
         state.erase("enum_name");
         state.erase("enum_member_names");
     }
@@ -1815,6 +1670,8 @@ struct action<struct_def>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -2134,6 +1991,8 @@ struct action<union_def>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -2277,6 +2136,8 @@ struct action<typedef_dcl>
         {
             ctx->builder = builder;
         }
+
+        ctx->notify_declared_type(builder);
     }
 
 };
@@ -2400,7 +2261,6 @@ public:
             return false;
         }
 
-        context.parser_ = shared_from_this();
         context_ = &context;
 
         std::map<std::string, std::string> parsing_state;
@@ -2425,7 +2285,6 @@ public:
             const std::string& idl_file,
             Context& context)
     {
-        context.parser_ = shared_from_this();
         context_ = &context;
         if (context_->preprocess)
         {
@@ -2468,12 +2327,32 @@ public:
         return context;
     }
 
+    void parse_file(
+            const std::string& idl_file,
+            const IncludePathSeq& include_paths,
+            const std::string& preprocessor,
+            std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback)
+    {
+        Context context;
+        context.set_declared_type_callback(callback);
+        if (!include_paths.empty())
+        {
+            context.include_paths = include_paths;
+            context.preprocess = true;
+            context.preprocessor_exec = preprocessor;
+            if (context.preprocessor_exec.empty())
+            {
+                context.preprocessor_exec = EPROSIMA_PLATFORM_PREPROCESSOR;
+            }
+        }
+
+        parse_file(idl_file, context);
+    }
+
     bool parse_string(
             const std::string& idl_string,
             Context& context)
     {
-        context.parser_ = shared_from_this();
-
         if (context.preprocess)
         {
             return parse(context.preprocess_string(idl_string), context);
@@ -2503,117 +2382,9 @@ public:
 
 private:
 
-    friend class Context;
-
     Context* context_;
 
-    traits<DynamicType>::ref_type type_spec(
-            std::map<std::string, std::string>& state,
-            const std::string& type)
-    {
-        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
-        DynamicTypeBuilder::_ref_type builder;
-        DynamicType::_ref_type xtype;
-
-        if (type == "boolean")
-        {
-            xtype = factory->get_primitive_type(TK_BOOLEAN);
-        }
-        else if (type == "int8")
-        {
-            xtype = factory->get_primitive_type(TK_INT8);
-        }
-        else if (type == "uint8")
-        {
-            xtype = factory->get_primitive_type(TK_UINT8);
-        }
-        else if (type == "int16")
-        {
-            xtype = factory->get_primitive_type(TK_INT16);
-        }
-        else if (type == "uint16")
-        {
-            xtype = factory->get_primitive_type(TK_UINT16);
-        }
-        else if (type == "int32")
-        {
-            xtype = factory->get_primitive_type(TK_INT32);
-        }
-        else if (type == "uint32")
-        {
-            xtype = factory->get_primitive_type(TK_UINT32);
-        }
-        else if (type == "int64")
-        {
-            xtype = factory->get_primitive_type(TK_INT64);
-        }
-        else if (type == "uint64")
-        {
-            xtype = factory->get_primitive_type(TK_UINT64);
-        }
-        else if (type == "float")
-        {
-            xtype = factory->get_primitive_type(TK_FLOAT32);
-        }
-        else if (type == "double")
-        {
-            xtype = factory->get_primitive_type(TK_FLOAT64);
-        }
-        else if (type == "long double")
-        {
-            xtype = factory->get_primitive_type(TK_FLOAT128);
-        }
-        else if (type == "char")
-        {
-            xtype = factory->get_primitive_type(TK_CHAR8);
-        }
-        else if (type == "wchar" || type == "char16")
-        {
-            xtype = factory->get_primitive_type(TK_CHAR16);
-        }
-        else if (type == "string")
-        {
-            uint32_t length = static_cast<uint32_t>(LENGTH_UNLIMITED);
-            if (state.count("string_size"))
-            {
-                length = std::atoi(state["string_size"].c_str());
-                state.erase("string_size");
-            }
-            builder = factory->create_string_type(length);
-            xtype = builder->build();
-        }
-        else if (type == "wstring")
-        {
-            uint32_t length = static_cast<uint32_t>(LENGTH_UNLIMITED);
-            if (state.count("wstring_size"))
-            {
-                length = std::atoi(state["wstring_size"].c_str());
-                state.erase("wstring_size");
-            }
-            builder = factory->create_wstring_type(length);
-            xtype = builder->build();
-        }
-        else
-        {
-            builder = context_->modules().current()->get_builder(type);
-            if (builder)
-            {
-                xtype = builder->build();
-            }
-        }
-
-        return xtype;
-    }
-
 }; // class Parser
-
-
-traits<DynamicType>::ref_type Context::get_type(
-        std::map<std::string, std::string>& state,
-        const std::string& type)
-{
-    return parser_->type_spec(state, type);
-}
 
 } // namespace idlparser
 } // namespace dds

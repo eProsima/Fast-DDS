@@ -2,6 +2,8 @@ Forthcoming
 -----------
 
 * Pass value of `TransportPriorityQosPolicy` to transport layer.
+* Iterate over declared types processed with IDL Parser:
+  * Add new `for_each_type_w_uri` method in `DynamicTypeBuilderFactory`
 
 Version v3.3.0
 --------------
