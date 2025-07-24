@@ -35,6 +35,7 @@
 #include <Windows.h>
 #endif // _MSC_VER
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -1785,7 +1786,10 @@ public:
 
         if (eprosima::fastdds::dds::RETCODE_OK == datareader_->take(data_seq, info_seq))
         {
-            current_processed_count_++;
+            if (info_seq[0].publication_handle != eprosima::fastdds::dds::HANDLE_NIL)
+            {
+                current_processed_count_++;
+            }
             return true;
         }
         return false;
@@ -1797,7 +1801,10 @@ public:
         eprosima::fastdds::dds::SampleInfo dds_info;
         if (datareader_->take_next_sample(data, &dds_info) == eprosima::fastdds::dds::RETCODE_OK)
         {
-            current_processed_count_++;
+            if (dds_info.publication_handle != eprosima::fastdds::dds::HANDLE_NIL)
+            {
+                current_processed_count_++;
+            }
             return true;
         }
         return false;
@@ -2017,7 +2024,8 @@ protected:
         ReturnCode_t success = take_ ?
                 datareader->take_next_sample((void*)&data, &info) :
                 datareader->read_next_sample((void*)&data, &info);
-        if (eprosima::fastdds::dds::RETCODE_OK == success)
+        if ((eprosima::fastdds::dds::RETCODE_OK == success) &&
+                (info.publication_handle != eprosima::fastdds::dds::HANDLE_NIL))
         {
             returnedValue = true;
 
@@ -2070,6 +2078,12 @@ protected:
         {
             type& data = datas[i];
             eprosima::fastdds::dds::SampleInfo& info = infos[i];
+
+            // Skip unknown samples
+            if (info.publication_handle == eprosima::fastdds::dds::HANDLE_NIL)
+            {
+                continue;
+            }
 
             // Check order of changes.
             LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
