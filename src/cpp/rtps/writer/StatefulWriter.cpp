@@ -1453,6 +1453,16 @@ void StatefulWriter::check_acked_status()
             }
             );
 
+    // In situation that there are recently matched readers to the writer has not yet
+    // sent changes, both 'min_low_mark = zero' and 'all_acked == true' will be met.
+    // In this scenario, onWriterChangeReceivedByAll() will be skipped for the acked
+    // changes, that causes the changes to remain in history indefinitely.
+    // To prevent this condition, clip min_low_mark to handle the acked changes.
+    if (all_acked)
+    {
+        min_low_mark = history_->next_sequence_number() - 1;
+    }
+
     bool something_changed = all_acked;
     SequenceNumber_t min_seq = get_seq_num_min();
     if (min_seq != SequenceNumber_t::unknown())
