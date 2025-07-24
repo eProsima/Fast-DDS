@@ -348,8 +348,21 @@ public:
     bool update_instance_nts(
             CacheChange_t* const change);
 
+<<<<<<< HEAD
     void writer_not_alive(
             const fastrtps::rtps::GUID_t& writer_guid);
+=======
+    /*!
+     * @brief Inform the history that a writer should be considered as not alive.
+     *
+     * @param [in] writer_guid GUID of the writer that should be considered as not alive.
+     *
+     * @return true if a state notification sample was added to at least one instance.
+     *         This would mean that DATA_AVAILABLE status (and listener) shall be notified.
+     */
+    bool writer_not_alive(
+            const fastdds::rtps::GUID_t& writer_guid);
+>>>>>>> 16b7477b (Return sample notifying changes on instance state (#5943))
 
     void check_and_remove_instance(
             instance_info& instance_info);
