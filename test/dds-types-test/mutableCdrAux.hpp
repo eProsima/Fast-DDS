@@ -46,6 +46,7 @@ constexpr uint32_t MutableLongLongStruct_max_key_cdr_typesize {0UL};
 
 
 
+
 constexpr uint32_t MutableWCharStruct_max_cdr_typesize {12UL};
 constexpr uint32_t MutableWCharStruct_max_key_cdr_typesize {0UL};
 
@@ -63,6 +64,7 @@ constexpr uint32_t MutableBooleanStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t MutableEmptyStruct_max_cdr_typesize {4UL};
 constexpr uint32_t MutableEmptyStruct_max_key_cdr_typesize {0UL};
+
 
 
 constexpr uint32_t MutableLongStruct_max_cdr_typesize {12UL};
@@ -105,77 +107,96 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableShortStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableUShortStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableLongStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableULongStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableLongLongStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableULongLongStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableFloatStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableDoubleStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableLongDoubleStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableBooleanStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableOctetStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableCharStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableWCharStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableUnionStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableEmptyStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableEmptyInheritanceStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableInheritanceStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableInheritanceEmptyStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableExtensibilityInheritance& data);
+
 
 
 } // namespace fastcdr

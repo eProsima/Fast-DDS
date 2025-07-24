@@ -43,6 +43,7 @@ constexpr uint32_t BitsetStruct_max_key_cdr_typesize {0UL};
 
 
 
+
 namespace eprosima {
 namespace fastcdr {
 
@@ -52,6 +53,7 @@ class CdrSizeCalculator;
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetStruct& data);
+
 
 
 } // namespace fastcdr

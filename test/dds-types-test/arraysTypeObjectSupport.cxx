@@ -10266,4 +10266,228 @@ void register_BoundedBigArrays_type_identifier(
                     "BoundedBigArrays already registered in TypeObjectRegistry for a different type.");
         }
     }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_LargeBasicPlainArray_type_identifier(
+        TypeIdentifierPair& type_ids_LargeBasicPlainArray)
+{
+
+    ReturnCode_t return_code_LargeBasicPlainArray {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_LargeBasicPlainArray =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "LargeBasicPlainArray", type_ids_LargeBasicPlainArray);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_LargeBasicPlainArray)
+    {
+        StructTypeFlag struct_flags_LargeBasicPlainArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_LargeBasicPlainArray = "LargeBasicPlainArray";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_LargeBasicPlainArray;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_LargeBasicPlainArray;
+        AppliedAnnotationSeq tmp_ann_custom_LargeBasicPlainArray;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_LargeBasicPlainArray;
+        if (!tmp_ann_custom_LargeBasicPlainArray.empty())
+        {
+            ann_custom_LargeBasicPlainArray = tmp_ann_custom_LargeBasicPlainArray;
+        }
+
+        CompleteTypeDetail detail_LargeBasicPlainArray = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_LargeBasicPlainArray, ann_custom_LargeBasicPlainArray, type_name_LargeBasicPlainArray.to_string());
+        CompleteStructHeader header_LargeBasicPlainArray;
+        header_LargeBasicPlainArray = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_LargeBasicPlainArray);
+        CompleteStructMemberSeq member_seq_LargeBasicPlainArray;
+        {
+            TypeIdentifierPair type_ids_field1;
+            ReturnCode_t return_code_field1 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_field1 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_byte", type_ids_field1);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_field1)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_field1 = 0x00000000;
+            bool common_field1_ec {false};
+            CommonStructMember common_field1 {TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_field1, common_field1_ec))};
+            if (!common_field1_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure field1 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_field1 = "field1";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+            ann_custom_LargeBasicPlainArray.reset();
+            CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_LargeBasicPlainArray);
+            CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+            TypeObjectUtils::add_complete_struct_member(member_seq_LargeBasicPlainArray, member_field1);
+        }
+        {
+            TypeIdentifierPair type_ids_var_large_basic_plain_array;
+            ReturnCode_t return_code_var_large_basic_plain_array {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_large_basic_plain_array =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_array_InnerBasicPlainStructHelper_6291456", type_ids_var_large_basic_plain_array);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_large_basic_plain_array)
+            {
+                return_code_var_large_basic_plain_array =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "InnerBasicPlainStructHelper", type_ids_var_large_basic_plain_array);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_large_basic_plain_array)
+                {
+                ::register_InnerBasicPlainStructHelper_type_identifier(type_ids_var_large_basic_plain_array);
+                }
+                bool element_identifier_anonymous_array_InnerBasicPlainStructHelper_6291456_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_InnerBasicPlainStructHelper_6291456 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_large_basic_plain_array, element_identifier_anonymous_array_InnerBasicPlainStructHelper_6291456_ec))};
+                if (!element_identifier_anonymous_array_InnerBasicPlainStructHelper_6291456_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_array_InnerBasicPlainStructHelper_6291456 = EK_COMPLETE;
+                if (TK_NONE == type_ids_var_large_basic_plain_array.type_identifier2()._d())
+                {
+                    equiv_kind_anonymous_array_InnerBasicPlainStructHelper_6291456 = EK_BOTH;
+                }
+                CollectionElementFlag element_flags_anonymous_array_InnerBasicPlainStructHelper_6291456 = 0;
+                PlainCollectionHeader header_anonymous_array_InnerBasicPlainStructHelper_6291456 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_InnerBasicPlainStructHelper_6291456, element_flags_anonymous_array_InnerBasicPlainStructHelper_6291456);
+                {
+                    LBoundSeq array_bound_seq;
+                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(6291456));
+
+                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_InnerBasicPlainStructHelper_6291456, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_InnerBasicPlainStructHelper_6291456));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_InnerBasicPlainStructHelper_6291456", type_ids_var_large_basic_plain_array))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_array_InnerBasicPlainStructHelper_6291456 already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_var_large_basic_plain_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_var_large_basic_plain_array = 0x00000001;
+            bool common_var_large_basic_plain_array_ec {false};
+            CommonStructMember common_var_large_basic_plain_array {TypeObjectUtils::build_common_struct_member(member_id_var_large_basic_plain_array, member_flags_var_large_basic_plain_array, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_large_basic_plain_array, common_var_large_basic_plain_array_ec))};
+            if (!common_var_large_basic_plain_array_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_large_basic_plain_array member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_large_basic_plain_array = "var_large_basic_plain_array";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_large_basic_plain_array;
+            ann_custom_LargeBasicPlainArray.reset();
+            CompleteMemberDetail detail_var_large_basic_plain_array = TypeObjectUtils::build_complete_member_detail(name_var_large_basic_plain_array, member_ann_builtin_var_large_basic_plain_array, ann_custom_LargeBasicPlainArray);
+            CompleteStructMember member_var_large_basic_plain_array = TypeObjectUtils::build_complete_struct_member(common_var_large_basic_plain_array, detail_var_large_basic_plain_array);
+            TypeObjectUtils::add_complete_struct_member(member_seq_LargeBasicPlainArray, member_var_large_basic_plain_array);
+        }
+        CompleteStructType struct_type_LargeBasicPlainArray = TypeObjectUtils::build_complete_struct_type(struct_flags_LargeBasicPlainArray, header_LargeBasicPlainArray, member_seq_LargeBasicPlainArray);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_LargeBasicPlainArray, type_name_LargeBasicPlainArray.to_string(), type_ids_LargeBasicPlainArray))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "LargeBasicPlainArray already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_LargePlainArray_type_identifier(
+        TypeIdentifierPair& type_ids_LargePlainArray)
+{
+
+    ReturnCode_t return_code_LargePlainArray {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_LargePlainArray =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "LargePlainArray", type_ids_LargePlainArray);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_LargePlainArray)
+    {
+        StructTypeFlag struct_flags_LargePlainArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_LargePlainArray = "LargePlainArray";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_LargePlainArray;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_LargePlainArray;
+        AppliedAnnotationSeq tmp_ann_custom_LargePlainArray;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_LargePlainArray;
+        if (!tmp_ann_custom_LargePlainArray.empty())
+        {
+            ann_custom_LargePlainArray = tmp_ann_custom_LargePlainArray;
+        }
+
+        CompleteTypeDetail detail_LargePlainArray = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_LargePlainArray, ann_custom_LargePlainArray, type_name_LargePlainArray.to_string());
+        CompleteStructHeader header_LargePlainArray;
+        header_LargePlainArray = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_LargePlainArray);
+        CompleteStructMemberSeq member_seq_LargePlainArray;
+        {
+            TypeIdentifierPair type_ids_var_large_plain_array;
+            ReturnCode_t return_code_var_large_plain_array {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_var_large_plain_array =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_array_InnerPlainStructHelper_6291456", type_ids_var_large_plain_array);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_large_plain_array)
+            {
+                return_code_var_large_plain_array =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "InnerPlainStructHelper", type_ids_var_large_plain_array);
+
+                if (eprosima::fastdds::dds::RETCODE_OK != return_code_var_large_plain_array)
+                {
+                ::register_InnerPlainStructHelper_type_identifier(type_ids_var_large_plain_array);
+                }
+                bool element_identifier_anonymous_array_InnerPlainStructHelper_6291456_ec {false};
+                TypeIdentifier* element_identifier_anonymous_array_InnerPlainStructHelper_6291456 {new TypeIdentifier(TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_large_plain_array, element_identifier_anonymous_array_InnerPlainStructHelper_6291456_ec))};
+                if (!element_identifier_anonymous_array_InnerPlainStructHelper_6291456_ec)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Array element TypeIdentifier inconsistent.");
+                    return;
+                }
+                EquivalenceKind equiv_kind_anonymous_array_InnerPlainStructHelper_6291456 = EK_COMPLETE;
+                if (TK_NONE == type_ids_var_large_plain_array.type_identifier2()._d())
+                {
+                    equiv_kind_anonymous_array_InnerPlainStructHelper_6291456 = EK_BOTH;
+                }
+                CollectionElementFlag element_flags_anonymous_array_InnerPlainStructHelper_6291456 = 0;
+                PlainCollectionHeader header_anonymous_array_InnerPlainStructHelper_6291456 = TypeObjectUtils::build_plain_collection_header(equiv_kind_anonymous_array_InnerPlainStructHelper_6291456, element_flags_anonymous_array_InnerPlainStructHelper_6291456);
+                {
+                    LBoundSeq array_bound_seq;
+                        TypeObjectUtils::add_array_dimension(array_bound_seq, static_cast<LBound>(6291456));
+
+                    PlainArrayLElemDefn array_ldefn = TypeObjectUtils::build_plain_array_l_elem_defn(header_anonymous_array_InnerPlainStructHelper_6291456, array_bound_seq,
+                                eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_array_InnerPlainStructHelper_6291456));
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_l_array_type_identifier(array_ldefn, "anonymous_array_InnerPlainStructHelper_6291456", type_ids_var_large_plain_array))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_array_InnerPlainStructHelper_6291456 already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_var_large_plain_array = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_var_large_plain_array = 0x00000000;
+            bool common_var_large_plain_array_ec {false};
+            CommonStructMember common_var_large_plain_array {TypeObjectUtils::build_common_struct_member(member_id_var_large_plain_array, member_flags_var_large_plain_array, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_var_large_plain_array, common_var_large_plain_array_ec))};
+            if (!common_var_large_plain_array_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure var_large_plain_array member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_large_plain_array = "var_large_plain_array";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_large_plain_array;
+            ann_custom_LargePlainArray.reset();
+            CompleteMemberDetail detail_var_large_plain_array = TypeObjectUtils::build_complete_member_detail(name_var_large_plain_array, member_ann_builtin_var_large_plain_array, ann_custom_LargePlainArray);
+            CompleteStructMember member_var_large_plain_array = TypeObjectUtils::build_complete_struct_member(common_var_large_plain_array, detail_var_large_plain_array);
+            TypeObjectUtils::add_complete_struct_member(member_seq_LargePlainArray, member_var_large_plain_array);
+        }
+        CompleteStructType struct_type_LargePlainArray = TypeObjectUtils::build_complete_struct_type(struct_flags_LargePlainArray, header_LargePlainArray, member_seq_LargePlainArray);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_LargePlainArray, type_name_LargePlainArray.to_string(), type_ids_LargePlainArray))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "LargePlainArray already registered in TypeObjectRegistry for a different type.");
+        }
+    }
 }

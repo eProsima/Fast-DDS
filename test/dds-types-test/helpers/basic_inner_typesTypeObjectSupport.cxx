@@ -1187,4 +1187,194 @@ void register_inner_bitset_helper_alias_type_identifier(
     }
 }
 
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerBasicPlainStructHelper_type_identifier(
+        TypeIdentifierPair& type_ids_InnerBasicPlainStructHelper)
+{
 
+    ReturnCode_t return_code_InnerBasicPlainStructHelper {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_InnerBasicPlainStructHelper =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "InnerBasicPlainStructHelper", type_ids_InnerBasicPlainStructHelper);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerBasicPlainStructHelper)
+    {
+        StructTypeFlag struct_flags_InnerBasicPlainStructHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_InnerBasicPlainStructHelper = "InnerBasicPlainStructHelper";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerBasicPlainStructHelper;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerBasicPlainStructHelper;
+        AppliedAnnotationSeq tmp_ann_custom_InnerBasicPlainStructHelper;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerBasicPlainStructHelper;
+        if (!tmp_ann_custom_InnerBasicPlainStructHelper.empty())
+        {
+            ann_custom_InnerBasicPlainStructHelper = tmp_ann_custom_InnerBasicPlainStructHelper;
+        }
+
+        CompleteTypeDetail detail_InnerBasicPlainStructHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerBasicPlainStructHelper, ann_custom_InnerBasicPlainStructHelper, type_name_InnerBasicPlainStructHelper.to_string());
+        CompleteStructHeader header_InnerBasicPlainStructHelper;
+        header_InnerBasicPlainStructHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerBasicPlainStructHelper);
+        CompleteStructMemberSeq member_seq_InnerBasicPlainStructHelper;
+        {
+            TypeIdentifierPair type_ids_field1;
+            ReturnCode_t return_code_field1 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_field1 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_field1);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_field1)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_field1 = 0x00000000;
+            bool common_field1_ec {false};
+            CommonStructMember common_field1 {TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_field1, common_field1_ec))};
+            if (!common_field1_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure field1 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_field1 = "field1";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+            ann_custom_InnerBasicPlainStructHelper.reset();
+            CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerBasicPlainStructHelper);
+            CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+            TypeObjectUtils::add_complete_struct_member(member_seq_InnerBasicPlainStructHelper, member_field1);
+        }
+        CompleteStructType struct_type_InnerBasicPlainStructHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerBasicPlainStructHelper, header_InnerBasicPlainStructHelper, member_seq_InnerBasicPlainStructHelper);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerBasicPlainStructHelper, type_name_InnerBasicPlainStructHelper.to_string(), type_ids_InnerBasicPlainStructHelper))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "InnerBasicPlainStructHelper already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_InnerPlainStructHelper_type_identifier(
+        TypeIdentifierPair& type_ids_InnerPlainStructHelper)
+{
+
+    ReturnCode_t return_code_InnerPlainStructHelper {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_InnerPlainStructHelper =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "InnerPlainStructHelper", type_ids_InnerPlainStructHelper);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerPlainStructHelper)
+    {
+        StructTypeFlag struct_flags_InnerPlainStructHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_InnerPlainStructHelper = "InnerPlainStructHelper";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerPlainStructHelper;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerPlainStructHelper;
+        AppliedAnnotationSeq tmp_ann_custom_InnerPlainStructHelper;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerPlainStructHelper;
+        if (!tmp_ann_custom_InnerPlainStructHelper.empty())
+        {
+            ann_custom_InnerPlainStructHelper = tmp_ann_custom_InnerPlainStructHelper;
+        }
+
+        CompleteTypeDetail detail_InnerPlainStructHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerPlainStructHelper, ann_custom_InnerPlainStructHelper, type_name_InnerPlainStructHelper.to_string());
+        CompleteStructHeader header_InnerPlainStructHelper;
+        header_InnerPlainStructHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerPlainStructHelper);
+        CompleteStructMemberSeq member_seq_InnerPlainStructHelper;
+        {
+            TypeIdentifierPair type_ids_field1;
+            ReturnCode_t return_code_field1 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_field1 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_bool", type_ids_field1);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_field1)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_field1 = 0x00000000;
+            bool common_field1_ec {false};
+            CommonStructMember common_field1 {TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_field1, common_field1_ec))};
+            if (!common_field1_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure field1 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_field1 = "field1";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+            ann_custom_InnerPlainStructHelper.reset();
+            CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerPlainStructHelper);
+            CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+            TypeObjectUtils::add_complete_struct_member(member_seq_InnerPlainStructHelper, member_field1);
+        }
+        {
+            TypeIdentifierPair type_ids_field2;
+            ReturnCode_t return_code_field2 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_field2 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_field2);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_field2)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_field2 = 0x00000001;
+            bool common_field2_ec {false};
+            CommonStructMember common_field2 {TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_field2, common_field2_ec))};
+            if (!common_field2_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure field2 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_field2 = "field2";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+            ann_custom_InnerPlainStructHelper.reset();
+            CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerPlainStructHelper);
+            CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+            TypeObjectUtils::add_complete_struct_member(member_seq_InnerPlainStructHelper, member_field2);
+        }
+        {
+            TypeIdentifierPair type_ids_field3;
+            ReturnCode_t return_code_field3 {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_field3 =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_float", type_ids_field3);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_field3)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "field3 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_field3 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_field3 = 0x00000002;
+            bool common_field3_ec {false};
+            CommonStructMember common_field3 {TypeObjectUtils::build_common_struct_member(member_id_field3, member_flags_field3, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_field3, common_field3_ec))};
+            if (!common_field3_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure field3 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_field3 = "field3";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field3;
+            ann_custom_InnerPlainStructHelper.reset();
+            CompleteMemberDetail detail_field3 = TypeObjectUtils::build_complete_member_detail(name_field3, member_ann_builtin_field3, ann_custom_InnerPlainStructHelper);
+            CompleteStructMember member_field3 = TypeObjectUtils::build_complete_struct_member(common_field3, detail_field3);
+            TypeObjectUtils::add_complete_struct_member(member_seq_InnerPlainStructHelper, member_field3);
+        }
+        CompleteStructType struct_type_InnerPlainStructHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerPlainStructHelper, header_InnerPlainStructHelper, member_seq_InnerPlainStructHelper);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerPlainStructHelper, type_name_InnerPlainStructHelper.to_string(), type_ids_InnerPlainStructHelper))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "InnerPlainStructHelper already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}

@@ -45,9 +45,11 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const TrialModule::StructModule::StructType& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ModuleStruct& data);
+
 
 
 } // namespace fastcdr

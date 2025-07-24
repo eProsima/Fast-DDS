@@ -46,17 +46,53 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FinalStruct& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct FinalStruct_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct FinalStruct_f
+{
+    typedef uint8_t FinalStruct::* type;
+    friend constexpr type get(
+            FinalStruct_f);
+};
+
+template struct FinalStruct_rob<FinalStruct_f, &FinalStruct::m_my_value>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr FinalStruct_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MutableStruct& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AppendableStruct& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ExtensibilityStruct& data);
+
 
 
 } // namespace fastcdr

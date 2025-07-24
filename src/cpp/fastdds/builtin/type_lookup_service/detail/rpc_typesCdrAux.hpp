@@ -57,25 +57,191 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::EntityId_t& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct EntityId_t_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct EntityId_t_f
+{
+    typedef uint8_t eprosima::fastdds::dds::EntityId_t::* type;
+    friend constexpr type get(
+            EntityId_t_f);
+};
+
+template struct EntityId_t_rob<EntityId_t_f, &eprosima::fastdds::dds::EntityId_t::m_entityKind>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr EntityId_t_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::GUID_t& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct GUID_t_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct GUID_t_f
+{
+    typedef eprosima::fastdds::dds::EntityId_t eprosima::fastdds::dds::GUID_t::* type;
+    friend constexpr type get(
+            GUID_t_f);
+};
+
+template struct GUID_t_rob<GUID_t_f, &eprosima::fastdds::dds::GUID_t::m_entityId>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr GUID_t_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::SequenceNumber_t& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct SequenceNumber_t_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct SequenceNumber_t_f
+{
+    typedef uint32_t eprosima::fastdds::dds::SequenceNumber_t::* type;
+    friend constexpr type get(
+            SequenceNumber_t_f);
+};
+
+template struct SequenceNumber_t_rob<SequenceNumber_t_f, &eprosima::fastdds::dds::SequenceNumber_t::m_low>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr SequenceNumber_t_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::SampleIdentity& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct SampleIdentity_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct SampleIdentity_f
+{
+    typedef eprosima::fastdds::dds::SequenceNumber_t eprosima::fastdds::dds::SampleIdentity::* type;
+    friend constexpr type get(
+            SampleIdentity_f);
+};
+
+template struct SampleIdentity_rob<SampleIdentity_f, &eprosima::fastdds::dds::SampleIdentity::m_sequence_number>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr SampleIdentity_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::rpc::RequestHeader& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::rpc::ReplyHeader& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct ReplyHeader_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct ReplyHeader_f
+{
+    typedef eprosima::fastdds::dds::rpc::RemoteExceptionCode_t eprosima::fastdds::dds::rpc::ReplyHeader::* type;
+    friend constexpr type get(
+            ReplyHeader_f);
+};
+
+template struct ReplyHeader_rob<ReplyHeader_f, &eprosima::fastdds::dds::rpc::ReplyHeader::m_remoteEx>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr ReplyHeader_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 
 } // namespace fastcdr
