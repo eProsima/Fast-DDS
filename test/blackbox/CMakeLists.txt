@@ -116,6 +116,9 @@ gtest_discover_tests(BlackboxTests_RTPS
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
+    types/core/core_types.cxx
+    types/core/core_typesPubSubTypes.cxx
+    types/core/core_typesv1.cxx
     types/Data1mb.cxx
     types/Data1mbPubSubTypes.cxx
     types/Data1mbv1.cxx
