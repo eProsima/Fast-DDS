@@ -2978,6 +2978,126 @@ TEST_F(IdlParserTests, default_literal_builtin_annotation)
     ASSERT_FALSE(builder);
 }
 
+TEST_F(IdlParserTests, get_declared_type_names)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    std::vector<std::string> declared_types;
+
+    auto store_declared_types = [&declared_types](traits<DynamicTypeBuilder>::ref_type builder)
+    {
+        if (builder)
+        {
+            declared_types.emplace_back(builder->get_name().to_string());
+        }
+
+        return true; // continue parsing
+    };
+
+    std::vector<std::string> expected_type_names = {
+        "InnerEnumHelper",
+        // "InnerBitMaskHelper", // TODO: Bitmask parsing is not supported.
+        // "InnerBoundedBitMaskHelper" // TODO: Bitmask parsing is not supported.
+        "InnerAliasHelper",
+        "InnerStructureHelper",
+        "InnerEmptyStructureHelper",
+        "InnerUnionHelper",
+        // "InnerBitsetHelper", // TODO: Bitset parsing is not supported.
+        "Inner_alias_bounded_string_helper",
+        "Inner_alias_bounded_wstring_helper",
+        "Inner_alias_array_helper",
+        "Inner_alias_sequence_helper",
+        // "Inner_alias_map_helper", // TODO: Map parsing is not supported.
+        "inner_structure_helper_alias",
+        // "inner_bitset_helper_alias" // TODO: Bitset parsing is not supported.
+        "StructShort",
+        "StructUnsignedShort",
+        "StructLong",
+        "StructUnsignedLong",
+        "StructLongLong",
+        "StructUnsignedLongLong",
+        "StructFloat",
+        "StructDouble",
+        "StructLongDouble",
+        "StructBoolean",
+        "StructOctet",
+        "StructChar8",
+        "StructChar16",
+        "StructString",
+        "StructWString",
+        "StructBoundedString",
+        "StructBoundedWString",
+        "StructEnum",
+        // "StructBitMask", // TODO: Bitmask parsing is not supported.
+        "StructAlias",
+        "StructShortArray",
+        "StructSequence",
+        // "StructMap", // TODO: Map parsing is not supported.
+        "StructUnion",
+        "StructStructure",
+        // "StructBitset", // TODO: Bitset parsing is not supported.
+        "StructEmpty",
+        // "Structures" // TODO: bitmask/bitset/map parsing is not supported.
+        "testing_1::foo",
+        "testing_2::foo",
+        "bar",
+        "root1",
+        "root2",
+        "root"
+    };
+
+    // Store the name of each constructed type declared in the input IDL file
+    factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types);
+
+    ASSERT_EQ(declared_types, expected_type_names);
+}
+
+TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+    std::vector<std::string> declared_types;
+
+    // Stop parsing when the type "StructShort" is parsed
+    auto store_declared_types = [&declared_types](traits<DynamicTypeBuilder>::ref_type builder)
+    {
+        std::string type_name;
+
+        if (builder)
+        {
+            type_name = builder->get_name().to_string();
+            declared_types.emplace_back(type_name);
+        }
+
+        return (type_name != "StructShort");
+    };
+
+    std::vector<std::string> expected_type_names = {
+        "InnerEnumHelper",
+        // "InnerBitMaskHelper", // TODO: Bitmask parsing is not supported.
+        // "InnerBoundedBitMaskHelper" // TODO: Bitmask parsing is not supported.
+        "InnerAliasHelper",
+        "InnerStructureHelper",
+        "InnerEmptyStructureHelper",
+        "InnerUnionHelper",
+        // "InnerBitsetHelper", // TODO: Bitset parsing is not supported.
+        "Inner_alias_bounded_string_helper",
+        "Inner_alias_bounded_wstring_helper",
+        "Inner_alias_array_helper",
+        "Inner_alias_sequence_helper",
+        // "Inner_alias_map_helper", // TODO: Map parsing is not supported.
+        "inner_structure_helper_alias",
+        // "inner_bitset_helper_alias" // TODO: Bitset parsing is not supported.
+        "StructShort"
+    };
+
+    factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types);
+
+    ASSERT_EQ(declared_types, expected_type_names);
+}
+
 int main(
         int argc,
         char** argv)
