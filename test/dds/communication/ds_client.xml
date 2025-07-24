@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>udp_transport</transport_id>
+                <type>UDPv4</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="Client" is_default_profile="true">
+            <rtps>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+                <builtin>
+                    <discovery_config>
+                        <discoveryProtocol>CLIENT</discoveryProtocol>
+                        <discoveryServersList>
+                            <RemoteServer prefix="44.53.00.5f.45.50.52.4f.53.49.4d.41">
+                                <metatrafficUnicastLocatorList>
+                                    <locator>
+                                        <udpv4>
+                                            <address>${SERVER_IP}</address>
+                                            <port>11811</port>
+                                        </udpv4>
+                                    </locator>
+                                </metatrafficUnicastLocatorList>
+                            </RemoteServer>
+                        </discoveryServersList>
+                    </discovery_config>
+
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <udpv4>
+                                <port>17401</port>
+                            </udpv4>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                </builtin>
+
+                <defaultUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <port>17400</port>
+                        </udpv4>
+                    </locator>
+                </defaultUnicastLocatorList>
+            </rtps>
+        </participant>
+
+        <data_writer profile_name="simple_publisher_profile" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="simple_subscriber_profile" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+
+    </profiles>
+</dds>
