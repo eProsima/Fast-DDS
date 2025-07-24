@@ -1728,7 +1728,7 @@ TEST_F(DataReaderTests, sample_info)
     reader_qos.history().depth = 1;
     reader_qos.resource_limits().max_instances = 2;
     reader_qos.resource_limits().max_samples_per_instance = 1;
-    reader_qos.resource_limits().max_samples = 2;
+    reader_qos.resource_limits().max_samples = 4;
 
     create_entities(nullptr, reader_qos);
     publisher_->delete_datawriter(data_writer_);
