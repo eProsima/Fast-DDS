@@ -171,7 +171,13 @@ public:
      * @param [in] document_url pointing to the url containing the type description.
      * @param [in] include_paths A collection of URLs to directories to be searched for additional type description
      * documents.
-     * @param [in] callback function to be called for each type parsed in the document:
+     * @param [in] callback function to be called when one of the following declared types are parsed in the document:
+     * - Structures
+     * - Unions
+     * - Enumerations
+     * - Aliases
+     * - Bitmasks ( Not implemented yet )
+     * - Bitsets ( Not implemented yet )
      * It receives a @ref DynamicTypeBuilder reference to the parsed type and returns a boolean value, that represents
      * whether the parsing process should continue (`true` return value) or not.
      */
