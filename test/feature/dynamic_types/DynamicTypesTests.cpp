@@ -5543,7 +5543,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
     member_descriptor->name("BIT5");
-    member_descriptor->id(5);
+    member_descriptor->position(5);
     EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     {
@@ -5551,16 +5551,16 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
         member_descriptor->name("BIT6");
-        // Test that not setting the id it will try with next id (6) which is invalid due to bound.
+        // Test that not setting the position it will try with next position (6) which is invalid due to bound.
         EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
-        // Test setting the id 6 which is invalid due to bound.
-        member_descriptor->id(6);
+        // Test setting the position 6 which is invalid due to bound.
+        member_descriptor->position(6);
         EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
         // Test setting with already existing name.
         member_descriptor->name("BIT0");
-        member_descriptor->id(4);
+        member_descriptor->position(4);
         EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
     }
 
@@ -14200,7 +14200,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type((TK_BOOLEAN)));
     member_descriptor->name("flag5");
-    member_descriptor->id(5);
+    member_descriptor->position(5);
     builder->add_member(member_descriptor);
 
     ASSERT_TRUE(xml_type_builder->build()->equals(builder->build()));

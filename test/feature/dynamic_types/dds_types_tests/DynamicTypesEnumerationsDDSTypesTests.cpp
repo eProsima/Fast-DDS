@@ -253,21 +253,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumWithValuesStructure)
         DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
             TK_INT32));
     enum_literal_descriptor->name("ENUM_VALUE1");
-    enum_literal_descriptor->default_value("-3");
+    enum_literal_descriptor->literal_value("-3");
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
     enum_literal_descriptor->type(
         DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
             TK_INT32));
     enum_literal_descriptor->name("ENUM_VALUE2");
-    enum_literal_descriptor->default_value("0");
+    enum_literal_descriptor->literal_value("0");
     enum_builder->add_member(enum_literal_descriptor);
     enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
     enum_literal_descriptor->type(
         DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
             TK_INT32));
     enum_literal_descriptor->name("ENUM_VALUE3");
-    enum_literal_descriptor->default_value("3");
+    enum_literal_descriptor->literal_value("3");
     enum_builder->add_member(enum_literal_descriptor);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};

@@ -106,7 +106,19 @@ ReturnCode_t json_serialize_member(
     MemberDescriptorImpl& member_desc =
             traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)->get_descriptor();
 
-    return json_serialize_member(data, type_member->get_id(),
+    TypeKind parent_kind = member_desc.parent_kind();
+    MemberId member_id;
+
+    if (TK_BITMASK == parent_kind)
+    {
+        member_id = member_desc.position();
+    }
+    else
+    {
+        member_id = member_desc.id();
+    }
+
+    return json_serialize_member(data, member_id,
                    traits<DynamicType>::narrow<DynamicTypeImpl>(
                        member_desc.type())->resolve_alias_enclosed_type()->get_kind(),
                    type_member->get_name().to_string(), output, format);
@@ -661,7 +673,7 @@ ReturnCode_t json_serialize_enum_member(
     {
         MemberDescriptorImpl& enum_member_desc = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
             it.second)->get_descriptor();
-        if (enum_member_desc.default_value() == j_value.dump())
+        if (enum_member_desc.literal_value() == j_value.dump())
         {
             name = it.first;
             assert(name == it.second->get_name());
@@ -1064,7 +1076,10 @@ ReturnCode_t json_serialize_bitmask_member(
         std::vector<std::string> active_bits;
         for (const auto& it : bitmask_members)
         {
-            if (u64_value & (0x01ull << it.second->get_id()))
+            MemberDescriptorImpl& member_desc =
+                            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
+
+            if (u64_value & (0x01ull << member_desc.position()))
             {
                 active_bits.push_back(it.second->get_name().to_string());
             }

@@ -1,0 +1,62 @@
+enum value_ann_valid_enum
+{
+    @value(3) ENUM_VALUE1,
+    @value(value = 8) ENUM_VALUE2
+};
+
+enum value_ann_invalid_value_type
+{
+    @value("invalid") INVALID_VALUE
+};
+
+enum value_ann_duplicated_values
+{
+    @value(0) ENUM_VALUE1,
+    @value(0) ENUM_VALUE2,
+    @value(1) ENUM_VALUE3
+};
+
+enum value_ann_extra_parameter
+{
+    @value(value = 8, value2 = "extra") INVALID_VALUE
+};
+
+@value(8) enum value_ann_on_enum
+{
+    INVALID_VALUE1,
+    INVALID_VALUE2
+};
+
+@value(8) struct value_ann_on_struct
+{
+    long invalid_member;
+};
+
+struct value_ann_on_struct_member
+{
+    @value(8) long invalid_member;
+};
+
+@value(8) union value_ann_on_union switch(long)
+{
+  case 0:
+    long first;
+  default:
+    string second;
+};
+
+union value_ann_on_union_member switch(long)
+{
+  case 0:
+    @value(8) long first;
+  default:
+    string second;
+};
+
+union value_ann_on_union_discriminator switch(@value(8) long)
+{
+  case 0:
+    long first;
+  default:
+    string second;
+};

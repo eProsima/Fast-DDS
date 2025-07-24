@@ -1,0 +1,16 @@
+@appendable
+struct appendable_ann_valid_struct
+{
+    long first;
+};
+
+@appendable("extra")
+struct appendable_ann_extra_parameter_struct
+{
+    long first;
+};
+
+struct appendable_ann_on_struct_member
+{
+    @appendable long first;
+};
