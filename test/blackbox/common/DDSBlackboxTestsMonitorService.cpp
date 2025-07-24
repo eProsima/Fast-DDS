@@ -17,6 +17,7 @@
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/core/Time_t.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
@@ -707,19 +708,22 @@ protected:
         {
             returnedValue = true;
 
-            std::unique_lock<std::mutex> lock(mutex_);
-
-            // Check order of changes
-            LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
-            ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
-            last_seq[seq_info] = info.sample_identity.sequence_number();
-
+            if (info.publication_handle != HANDLE_NIL)
             {
-                std::lock_guard<std::mutex> guard(validator_mtx_);
-                if (nullptr != sample_validator_)
+                std::unique_lock<std::mutex> lock(mutex_);
+
+                // Check order of changes
+                LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
+                ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
+                last_seq[seq_info] = info.sample_identity.sequence_number();
+
                 {
-                    validator_selector(statistics_part_, sample_validator_,
-                            data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+                    std::lock_guard<std::mutex> guard(validator_mtx_);
+                    if (nullptr != sample_validator_)
+                    {
+                        validator_selector(statistics_part_, sample_validator_,
+                                data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+                    }
                 }
             }
         }
