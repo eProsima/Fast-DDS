@@ -183,7 +183,7 @@ StatefulWriter::StatefulWriter(
     , may_remove_change_(0)
     , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
     , disable_positive_acks_(att.disable_positive_acks)
-    , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
+    , keep_duration_(att.keep_duration)
     , last_sequence_number_()
     , biggest_removed_sequence_number_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
@@ -218,7 +218,7 @@ StatefulWriter::StatefulWriter(
     , may_remove_change_(0)
     , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
     , disable_positive_acks_(att.disable_positive_acks)
-    , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
+    , keep_duration_(att.keep_duration)
     , last_sequence_number_()
     , biggest_removed_sequence_number_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
@@ -254,7 +254,7 @@ StatefulWriter::StatefulWriter(
     , may_remove_change_(0)
     , disable_heartbeat_piggyback_(att.disable_heartbeat_piggyback)
     , disable_positive_acks_(att.disable_positive_acks)
-    , keep_duration_us_(att.keep_duration.to_ns() * 1e-3)
+    , keep_duration_(att.keep_duration)
     , last_sequence_number_()
     , biggest_removed_sequence_number_()
     , sendBufferSize_(pimpl->get_min_network_send_buffer_size())
@@ -432,12 +432,13 @@ void StatefulWriter::unsent_change_added_to_history(
 
         if (disable_positive_acks_)
         {
-            auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-            auto now = system_clock::now();
-            auto interval = source_timestamp - now + keep_duration_us_;
-            assert(interval.count() >= 0);
+            Time_t expiration_ts = change->sourceTimestamp + keep_duration_;
+            Time_t current_ts;
+            Time_t::now(current_ts);
+            assert(expiration_ts >= current_ts);
+            auto interval = (expiration_ts - current_ts).to_duration_t();
 
-            ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+            ack_event_->update_interval(interval);
             ack_event_->restart_timer(max_blocking_time);
         }
 
@@ -953,12 +954,13 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
             if ( !(ack_event_->getRemainingTimeMilliSec() > 0))
             {
                 // Restart ack_timer
-                auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-                auto now = system_clock::now();
-                auto interval = source_timestamp - now + keep_duration_us_;
-                assert(interval.count() >= 0);
+                Time_t expiration_ts = change->sourceTimestamp + keep_duration_;
+                Time_t current_ts;
+                Time_t::now(current_ts);
+                assert(expiration_ts >= current_ts);
+                auto interval = (expiration_ts - current_ts).to_duration_t();
 
-                ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+                ack_event_->update_interval(interval);
                 ack_event_->restart_timer(max_blocking_time);
             }
         }
@@ -1675,13 +1677,9 @@ void StatefulWriter::updatePositiveAcks(
         const WriterAttributes& att)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    if (keep_duration_us_.count() != (att.keep_duration.to_ns() * 1e-3))
-    {
-        // Implicit conversion to microseconds
-        keep_duration_us_ = std::chrono::nanoseconds {att.keep_duration.to_ns()};
-    }
+    keep_duration_ = att.keep_duration;
     // Restart ack timer with new duration
-    ack_event_->update_interval_millisec(keep_duration_us_.count() * 1e-3);
+    ack_event_->update_interval(keep_duration_);
     ack_event_->restart_timer();
 }
 
@@ -2094,14 +2092,16 @@ bool StatefulWriter::ack_timer_expired()
     // The timer has expired so the earliest non-acked change must be marked as acknowledged
     // This will be done in the first while iteration, as we start with a negative interval
 
-    auto interval = -keep_duration_us_;
+    Time_t expiration_ts;
+    Time_t current_ts;
+    Time_t::now(current_ts);
 
     // On the other hand, we've seen in the tests that if samples are sent very quickly with little
     // time between consecutive samples, the timer interval could end up being negative
     // In this case, we keep marking changes as acknowledged until the timer is able to keep up, hence the while
     // loop
 
-    while (interval.count() < 0)
+    do
     {
         bool acks_flag = false;
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
@@ -2141,13 +2141,13 @@ bool StatefulWriter::ack_timer_expired()
             return false;
         }
 
-        auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
-        auto now = system_clock::now();
-        interval = source_timestamp - now + keep_duration_us_;
+        Time_t::now(current_ts);
+        expiration_ts = change->sourceTimestamp + keep_duration_;
     }
-    assert(interval.count() >= 0);
+    while (expiration_ts < current_ts);
 
-    ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
+    auto interval = (expiration_ts - current_ts).to_duration_t();
+    ack_event_->update_interval(interval);
     return true;
 }
 
