@@ -237,7 +237,7 @@ public:
             const std::string& type)
     {
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
-        DynamicTypeBuilder::_ref_type builder;
+        DynamicTypeBuilder::_ref_type type_builder;
         DynamicType::_ref_type xtype;
 
         if (type == "boolean")
@@ -304,8 +304,8 @@ public:
                 length = std::atoi(state["string_size"].c_str());
                 state.erase("string_size");
             }
-            builder = factory->create_string_type(length);
-            xtype = builder->build();
+            type_builder = factory->create_string_type(length);
+            xtype = type_builder->build();
         }
         else if (type == "wstring")
         {
@@ -315,15 +315,15 @@ public:
                 length = std::atoi(state["wstring_size"].c_str());
                 state.erase("wstring_size");
             }
-            builder = factory->create_wstring_type(length);
-            xtype = builder->build();
+            type_builder = factory->create_wstring_type(length);
+            xtype = type_builder->build();
         }
         else
         {
-            builder = modules_.current()->get_builder(type);
-            if (builder)
+            type_builder = modules_.current()->get_builder(type);
+            if (type_builder)
             {
-                xtype = builder->build();
+                xtype = type_builder->build();
             }
         }
 
@@ -331,9 +331,9 @@ public:
     }
 
     void notify_declared_type(
-            DynamicTypeBuilder::_ref_type builder)
+            DynamicTypeBuilder::_ref_type type_builder)
     {
-        should_continue_ = on_type_dcl_builder_created_(builder);
+        should_continue_ = on_type_dcl_builder_created_(type_builder);
     }
 
     void set_declared_type_callback(
