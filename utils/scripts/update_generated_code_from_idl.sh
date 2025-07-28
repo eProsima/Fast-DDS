@@ -18,7 +18,7 @@ files_not_needing_typeobject=(
 )
 
 files_needing_case_sensitive=(
-    )
+)
 
 files_needing_output_dir=(
     './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
@@ -43,6 +43,7 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/annotations.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/appendable.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/arrays.idl|../../../test/dds-types-test'
+    './thirdparty/dds-types-test/IDL/assignability.idl|../../../test/unittest/dds/xtypes/type_assignability'
     './thirdparty/dds-types-test/IDL/bitsets.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/constants.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/declarations.idl|../../../test/dds-types-test'
