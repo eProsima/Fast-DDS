@@ -155,13 +155,19 @@ public:
     #if HAVE_STRICT_REALTIME
             if (this->add_change_with_commit_hook(change, wparams, pre_commit, max_blocking_time))
     #else
+        //     auto time_point_now = std::chrono::steady_clock::now();
             auto time_point = std::chrono::steady_clock::now() + std::chrono::hours(24);
             if (this->add_change_with_commit_hook(change, wparams, pre_commit, time_point))
     #endif // if HAVE_STRICT_REALTIME
             {
+                // Compute time elapsed since the change was added to the history
+                // auto time_elapsed = std::chrono::steady_clock::now() - time_point_now;
                 EPROSIMA_LOG_INFO(RTPS_HISTORY,
                         " Change " << change->sequenceNumber << " added with key: " << change->instanceHandle
                                    << " and " << change->serializedPayload.length << " bytes");
+                // EPROSIMA_LOG_ERROR(RTPS_HISTORY,
+                //         " Time elapsed: " << std::chrono::duration_cast<std::chrono::microseconds>(time_elapsed).count()
+                //                           << " us");
                 returnedValue = true;
             }
         }
