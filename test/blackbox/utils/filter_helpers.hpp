@@ -31,7 +31,7 @@ inline uint16_t cdr_parse_u16(
     eprosima::fastcdr::FastBuffer buffer(serialized_buffer, 2);
     eprosima::fastcdr::Cdr cdr(buffer,
             eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::XCDRv1);
+            eprosima::fastcdr::CdrVersion::XCDRv1);
     cdr >> u16;
     return u16;
 }
@@ -43,7 +43,7 @@ inline uint32_t cdr_parse_u32(
     eprosima::fastcdr::FastBuffer buffer(serialized_buffer, 4);
     eprosima::fastcdr::Cdr cdr(buffer,
             eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::XCDRv1);
+            eprosima::fastcdr::CdrVersion::XCDRv1);
     cdr >> u32;
     return u32;
 }
