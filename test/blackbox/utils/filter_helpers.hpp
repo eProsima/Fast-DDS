@@ -32,7 +32,7 @@ inline rtps::core::AckNackSubmessage cdr_parse_acknack_submsg(
     eprosima::fastcdr::FastBuffer buffer(serialized_buffer, length);
     eprosima::fastcdr::Cdr cdr(buffer,
             eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::XCDRv1);
+            eprosima::fastcdr::CdrVersion::XCDRv1);
     cdr >> acknack_submsg;
     return acknack_submsg;
 }
