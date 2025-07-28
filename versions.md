@@ -5,7 +5,7 @@ Forthcoming
 * Support annotated types and builtin annotations in IDL Parser.
   * Extend `MemberDescriptor` with `position()`, `literal_value()` and `is_default_literal()` methods
     to avoid inconsistencies annotating enumerations and bitmask members.
-  * Extend `TypeDescriptor` with `literal_type` to store the literal type in enumerations.
+  * Extend `TypeDescriptor` with `literal_type()` to store the literal type in enumerations.
 
 Version v3.3.0
 --------------

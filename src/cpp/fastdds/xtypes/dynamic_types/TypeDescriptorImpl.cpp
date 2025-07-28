@@ -213,7 +213,7 @@ bool TypeDescriptorImpl::is_consistent() noexcept
         // Literal types are only used by enumerations.
         if (TK_ENUM != kind_)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a type which not support literal types");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a type which does not support literal types");
             return false;
         }
 

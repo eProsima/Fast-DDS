@@ -554,24 +554,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
         if (descriptor_impl->is_default_literal())
         {
-            for (auto member : members_)
+            if (default_literal_.size() > 0)
             {
-                const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
-
-                if (!member_impl)
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Member is not a DynamicTypeMemberImpl");
-                    return RETCODE_BAD_PARAMETER;
-                }
-
-                // Check that there isn't already any member marked as default.
-                if (member_impl->get_descriptor().is_default_literal())
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES,
-                            "Member " << member_impl->member_descriptor_.name().c_str() <<
-                            " has already been annotated as default");
-                    return RETCODE_BAD_PARAMETER;
-                }
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "There is already a member annotated as default literal: " <<
+                        default_literal_);
+                return RETCODE_BAD_PARAMETER;
             }
 
             default_literal_ = member_name;

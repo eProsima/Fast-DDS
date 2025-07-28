@@ -218,7 +218,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     // Check position_.
     if ((position_ != MEMBER_ID_INVALID) && (TK_BITMASK != parent_kind_))
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is not a BITMASK and it has set position");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Position is set but parent type of member is not TK_BITMASK");
         return false;
     }
 
@@ -236,7 +236,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     {
         if (TK_ENUM != parent_kind_)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is not an ENUM and it has set literal_value");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "literal_value is set but parent type of member is not TK_ENUM");
             return false;
         }
 
