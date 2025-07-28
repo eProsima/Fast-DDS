@@ -558,6 +558,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             {
                 const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
 
+                if (!member_impl)
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Member is not a DynamicTypeMemberImpl");
+                    return RETCODE_BAD_PARAMETER;
+                }
+
                 // Check that there isn't already any member marked as default.
                 if (member_impl->get_descriptor().is_default_literal())
                 {
