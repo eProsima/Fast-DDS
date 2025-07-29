@@ -489,7 +489,6 @@ MemberId DynamicDataImpl::get_member_id_at_index(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
-            TK_BITMASK == type_kind ||
             TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
@@ -498,6 +497,18 @@ MemberId DynamicDataImpl::get_member_id_at_index(
         if (RETCODE_OK == enclosing_type_->get_member_by_index(member, index))
         {
             ret_value = member->get_id();
+        }
+    }
+    else if (TK_BITMASK == type_kind)
+    {
+        traits<DynamicTypeMember>::ref_type member;
+        if (RETCODE_OK == enclosing_type_->get_member_by_index(member, index))
+        {
+            traits<MemberDescriptor>::ref_type descriptor {traits<MemberDescriptor>::make_shared()};
+            if (RETCODE_OK == member->get_descriptor(descriptor))
+            {
+                ret_value = descriptor->position();
+            }
         }
     }
     else if (TK_ARRAY == type_kind ||
@@ -529,7 +540,6 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
-            TK_BITMASK == type_kind ||
             TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
@@ -538,6 +548,18 @@ MemberId DynamicDataImpl::get_member_id_by_name(
         if (RETCODE_OK == enclosing_type_->get_member_by_name(member, name))
         {
             ret_value =  member->get_id();
+        }
+    }
+    else if (TK_BITMASK == type_kind)
+    {
+        traits<DynamicTypeMember>::ref_type member;
+        if (RETCODE_OK == enclosing_type_->get_member_by_name(member, name))
+        {
+            traits<MemberDescriptor>::ref_type descriptor {traits<MemberDescriptor>::make_shared()};
+            if (RETCODE_OK == member->get_descriptor(descriptor))
+            {
+                ret_value = descriptor->position();
+            }
         }
     }
     else if (TK_MAP == type_kind)
@@ -4925,12 +4947,12 @@ void DynamicDataImpl::set_value(
         {
             auto& members = enclosed_type->get_all_members_by_index();
             assert(0 < members.size());
-            TypeForKind<TK_INT32> value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
+            TypeForKind<TK_INT32> value = TypeValueConverter::sto(members.at(0)->get_descriptor().literal_value());
             for (auto member_it {members.begin()}; member_it != members.end(); ++member_it)
             {
                 if (0 == sValue.to_string().compare((*member_it)->get_name().to_string()))
                 {
-                    value = TypeValueConverter::sto((*member_it)->get_descriptor().default_value());
+                    value = TypeValueConverter::sto((*member_it)->get_descriptor().literal_value());
                     break;
                 }
             }

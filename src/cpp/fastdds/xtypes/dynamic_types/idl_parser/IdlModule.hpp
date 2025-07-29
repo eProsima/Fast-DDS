@@ -139,7 +139,7 @@ public:
                 || unions_.count(ident) > 0
                 || aliases_.count(ident) > 0
                 || constants_.count(ident) > 0
-                || enumerations_32_.count(ident) > 0
+                || enumerations_.count(ident) > 0
                 || inner_.count(ident) > 0;
 
         if (has_it)
@@ -402,27 +402,27 @@ public:
         return result.second;
     }
 
-    bool has_enum_32(
+    bool has_enum(
             const std::string& name) const
     {
-        return enumerations_32_.count(name) > 0;
+        return enumerations_.count(name) > 0;
     }
 
-    bool enum_32(
+    bool enumeration(
             const std::string& name,
             DynamicTypeBuilder::_ref_type builder,
             bool replace = false)
     {
         if (replace)
         {
-            auto it = enumerations_32_.find(name);
-            if (it != enumerations_32_.end())
+            auto it = enumerations_.find(name);
+            if (it != enumerations_.end())
             {
-                enumerations_32_.erase(it);
+                enumerations_.erase(it);
             }
         }
 
-        auto result = enumerations_32_.emplace(name, builder);
+        auto result = enumerations_.emplace(name, builder);
 
         return result.second;
     }
@@ -478,9 +478,9 @@ public:
         }
 
         // Check enums
-        if (module.first->has_enum_32(module.second))
+        if (module.first->has_enum(module.second))
         {
-            builder = module.first->enumerations_32_.at(module.second);
+            builder = module.first->enumerations_.at(module.second);
         }
 
         // Check structs
@@ -525,10 +525,9 @@ protected:
     // std::map<std::string, Type> constants_types_;
     std::map<std::string, DynamicData::_ref_type> constants_;
     std::vector<std::string> from_enum_;
-    std::map<std::string, DynamicTypeBuilder::_ref_type> enumerations_32_;
+    std::map<std::string, DynamicTypeBuilder::_ref_type> enumerations_;
     std::map<std::string, DynamicTypeBuilder::_ref_type> structs_;
     std::map<std::string, DynamicTypeBuilder::_ref_type> unions_;
-    //std::map<std::string, std::shared_ptr<AnnotationType>> annotations_;
     Module* outer_;
     std::map<std::string, std::shared_ptr<Module>> inner_;
     std::string name_;

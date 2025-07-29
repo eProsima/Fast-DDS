@@ -81,6 +81,28 @@ public:
             MemberId id) = 0;
 
     /*!
+     * Returns the position of the bitmask member.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @return Position of the bitmask member.
+     */
+    virtual MemberId position() const = 0;
+
+    /*!
+     * Returns the position of the bitmask member.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @return Position of the bitmask member.
+     */
+    virtual MemberId& position() = 0;
+
+    /*!
+     * Modifies the position of the bitmask member.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @param [in] position Position of the bitmask member.
+     */
+    virtual void position(
+            MemberId position) = 0;
+
+    /*!
      * Returns a reference to the member's type.
      * @return @ref DynamicType reference.
      */
@@ -124,6 +146,30 @@ public:
      */
     virtual void default_value(
             std::string&& default_value) = 0;
+
+    /*!
+     * Returns the assigned value for members representing an enumerated literal.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     *
+     * @return The enumerated literal value
+     */
+    virtual std::string& literal_value() = 0;
+
+    /*!
+     * Returns the assigned value for members representing an enumerated literal.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     *
+     * @return The enumerated literal value
+     */
+    virtual const std::string& literal_value() const = 0;
+
+    /*!
+     * Modifies the underlying literal value by copy.
+     * @warning This method is an extension of the standard MemberDescriptor interface (see [standard] \b 7.5.2.7 )
+     * @param [in] literal_value Literal value.
+     */
+    virtual void literal_value(
+            const std::string& literal_value) = 0;
 
     /*!
      * Returns the order of definition of the member.
@@ -276,6 +322,25 @@ public:
      */
     virtual void is_default_label(
             bool is_default_label) = 0;
+
+    /*!
+     * Returns if the member is a default literal.
+     * @return If the member is a default literal
+     */
+    virtual bool is_default_literal() const = 0;
+
+    /*!
+     * Returns if the member is a default literal.
+     * @return If the member is a default literal
+     */
+    virtual bool& is_default_literal() = 0;
+
+    /*!
+     * Modifies if the member is a default literal.
+     * @param [in] is_default_literal Boolean
+     */
+    virtual void is_default_literal(
+            bool is_default_literal) = 0;
 
     /*!
      * Overwrites the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.7.1).

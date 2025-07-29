@@ -289,7 +289,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     }
 
     MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
-    md->id(field_position);
+    md->position(field_position);
     md->name(memberName);
     md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     builder->add_member(md);
@@ -930,7 +930,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
             const char* value = literal->Attribute(VALUE);
             if (value != nullptr)
             {
-                md->default_value(value);
+                md->literal_value(value);
             }
 
             type_builder->add_member(md);

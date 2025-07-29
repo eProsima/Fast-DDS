@@ -31,14 +31,23 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! Default value of the member in string form.
     std::string default_value_;
 
+    //! Value of the enumerated literal (enumeration's members)
+    std::string literal_value_;
+
     //! MemberId, it should be filled automatically when the member is added if not set (MEMBER_ID_INVALID).
     MemberId id_ {MEMBER_ID_INVALID};
+
+    //! Position of the bitmask member.
+    MemberId position_ {MEMBER_ID_INVALID};
 
     //! Definition order of the member inside its parent.
     uint32_t index_ {0xFFFFFFFF};
 
     //! If the union member is default.
     bool is_default_label_ {false};
+
+    //! If the enumeration member is default.
+    bool is_default_literal_ {false};
 
     //! If the member is key.
     bool is_key_ {false};
@@ -119,6 +128,22 @@ public:
         id_ = id;
     }
 
+    MemberId position() const noexcept override
+    {
+        return position_;
+    }
+
+    MemberId& position() noexcept override
+    {
+        return position_;
+    }
+
+    void position(
+            MemberId position) noexcept override
+    {
+        position_ = position;
+    }
+
     traits<DynamicType>::ref_type type() const noexcept override
     {
         return type_;
@@ -155,6 +180,22 @@ public:
             std::string&& default_value) noexcept override
     {
         default_value_ = std::move(default_value);
+    }
+
+    std::string& literal_value() noexcept override
+    {
+        return literal_value_;
+    }
+
+    const std::string& literal_value() const noexcept override
+    {
+        return literal_value_;
+    }
+
+    void literal_value(
+            const std::string& literal_value) noexcept override
+    {
+        literal_value_ = literal_value;
     }
 
     uint32_t index() const noexcept override
@@ -306,6 +347,22 @@ public:
             bool is_default_label) noexcept override
     {
         is_default_label_ = is_default_label;
+    }
+
+    bool is_default_literal() const noexcept override
+    {
+        return is_default_literal_;
+    }
+
+    bool& is_default_literal() noexcept override
+    {
+        return is_default_literal_;
+    }
+
+    void is_default_literal(
+            bool is_default_literal) noexcept override
+    {
+        is_default_literal_ = is_default_literal;
     }
 
     ReturnCode_t copy_from(

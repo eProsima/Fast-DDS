@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-bool default_value_compare(
+bool value_compare(
         const traits<DynamicType>::ref_type type,
         const std::string& d1,
         const std::string& d2)
@@ -89,8 +89,10 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
 {
     name_ = descriptor.name_;
     id_ = descriptor.id_;
+    position_ = descriptor.position_;
     type_ = descriptor.type_;
     default_value_ = descriptor.default_value_;
+    literal_value_ = descriptor.literal_value_;
     index_ = descriptor.index_;
     label_ = descriptor.label_;
     try_construct_kind_ = descriptor.try_construct_kind_;
@@ -99,6 +101,7 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     is_must_understand_ = descriptor.is_must_understand_;
     is_shared_ = descriptor.is_shared_;
     is_default_label_ = descriptor.is_default_label_;
+    is_default_literal_ = descriptor.is_default_literal_;
     is_try_construct_kind_set_ = descriptor.is_try_construct_kind_set_;
 
     return RETCODE_OK;
@@ -115,8 +118,10 @@ bool MemberDescriptorImpl::equals(
 {
     return name_ == descriptor.name_ &&
            id_ == descriptor.id_ &&
+           position_ == descriptor.position_ &&
            (type_ && type_->equals(descriptor.type_)) &&
-           default_value_compare(type_, default_value_, descriptor.default_value_) &&
+           value_compare(type_, default_value_, descriptor.default_value_) &&
+           value_compare(type_, literal_value_, descriptor.literal_value_) &&
            index_ == descriptor.index_ &&
            equal_labels(descriptor.label_) &&
            try_construct_kind_ == descriptor.try_construct_kind_ &&
@@ -124,7 +129,8 @@ bool MemberDescriptorImpl::equals(
            is_optional_ == descriptor.is_optional_ &&
            is_must_understand_ == descriptor.is_must_understand_ &&
            is_shared_ == descriptor.is_shared_ &&
-           is_default_label_ == descriptor.is_default_label_;
+           is_default_label_ == descriptor.is_default_label_ &&
+           is_default_literal_ == descriptor.is_default_literal_;
 }
 
 bool MemberDescriptorImpl::equal_labels(
@@ -159,14 +165,12 @@ bool MemberDescriptorImpl::is_consistent() noexcept
 
     auto type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
 
-    // Only aggregated types must use the ID value.
+    // Only aggregated types (except bitmask types) must use the ID value.
     if ((MEMBER_ID_INVALID == id_ && (TK_ANNOTATION == parent_kind_ ||
-            TK_BITMASK == parent_kind_ ||
             TK_BITSET == parent_kind_ ||
             TK_UNION == parent_kind_ ||
             TK_STRUCTURE == parent_kind_)) ||
             (MEMBER_ID_INVALID != id_ && TK_ANNOTATION != parent_kind_ &&
-            TK_BITMASK != parent_kind_ &&
             TK_BITSET != parent_kind_ &&
             TK_UNION != parent_kind_ &&
             TK_STRUCTURE != parent_kind_))
@@ -211,12 +215,37 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         }
     }
 
+    // Check position_.
+    if ((position_ != MEMBER_ID_INVALID) && (TK_BITMASK != parent_kind_))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Position is set but parent type of member is not TK_BITMASK");
+        return false;
+    }
+
+    // Check default_value_.
     if (!default_value_.empty() &&
             !TypeValueConverter::is_string_consistent(type->get_kind(), type->get_all_members_by_index(),
             default_value_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Default value is not consistent");
         return false;
+    }
+
+    // Check literal_value_.
+    if (!literal_value_.empty())
+    {
+        if (TK_ENUM != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "literal_value is set but parent type of member is not TK_ENUM");
+            return false;
+        }
+
+        if (!TypeValueConverter::is_string_consistent(type->get_kind(), type->get_all_members_by_index(),
+                literal_value_))
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Literal value is not consistent");
+            return false;
+        }
     }
 
     // Check bitfield|enum enclosing type.
@@ -293,6 +322,16 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         else
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "is_optional is not implemented yet.");
+        }
+    }
+
+    // Check default_literal built-in annotation.
+    if (is_default_literal_)
+    {
+        if (TK_ENUM != parent_kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "is_default_literal is set but parent type of member is not TK_ENUM.");
+            return false;
         }
     }
 
