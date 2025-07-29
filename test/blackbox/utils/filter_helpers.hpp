@@ -18,11 +18,24 @@
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastrtps/rtps/common/Types.h>
 
-// #include "../types/core/core_typesPubSubTypes.hpp"
+#include "../types/core/core_typesPubSubTypes.h"
 
 namespace eprosima {
 namespace fastdds {
 namespace helpers {
+
+inline rtps::core::AckNackSubmessage cdr_parse_acknack_submsg(
+        char* serialized_buffer,
+        size_t length)
+{
+    eprosima::fastdds::rtps::core::AckNackSubmessage acknack_submsg;
+    eprosima::fastcdr::FastBuffer buffer(serialized_buffer, length);
+    eprosima::fastcdr::Cdr cdr(buffer,
+            eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::CdrVersion::XCDRv1);
+    cdr >> acknack_submsg;
+    return acknack_submsg;
+}
 
 inline uint16_t cdr_parse_u16(
         char* serialized_buffer)
