@@ -80,7 +80,7 @@ constexpr Endianness_t DEFAULT_ENDIAN = BIGEND;
 constexpr Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-using octet = unsigned char;
+using octet = uint8_t;
 // typedef unsigned int uint;
 // typedef unsigned short ushort;
 using SubmessageFlag = unsigned char;
