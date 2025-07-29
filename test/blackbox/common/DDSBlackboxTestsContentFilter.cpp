@@ -766,6 +766,9 @@ TEST(DDSContentFilter, filter_other_type_name)
 {
     using namespace eprosima::fastdds;
 
+    // Ensure type object registration
+    registerHelloWorldTypes();
+
     // Create a DomainParticipant
     DomainParticipant* participant =
             dds::DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
