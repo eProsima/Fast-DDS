@@ -22,6 +22,12 @@
             </rtps>
         </participant>
         <data_writer profile_name="pub_publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>2500</depth>
+                </historyQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -35,6 +41,12 @@
             </qos>
         </data_writer>
         <data_reader profile_name="pub_subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>2500</depth>
+                </historyQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -60,6 +72,12 @@
             </rtps>
         </participant>
         <data_writer profile_name="sub_publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>2500</depth>
+                </historyQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -73,6 +91,12 @@
             </qos>
         </data_writer>
         <data_reader profile_name="sub_subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>2500</depth>
+                </historyQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
