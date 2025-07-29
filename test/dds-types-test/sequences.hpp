@@ -3872,6 +3872,139 @@ private:
     std::vector<std::string> m_var_unbounded_string_large_bounded_sequence;
 
 };
+/*!
+ * @brief This class represents the structure LargePlainSequence defined by the user in the IDL file.
+ * @ingroup sequences
+ */
+class LargePlainSequence
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport LargePlainSequence()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~LargePlainSequence()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object LargePlainSequence that will be copied.
+     */
+    eProsima_user_DllExport LargePlainSequence(
+            const LargePlainSequence& x)
+    {
+                    m_var_large_plain_sequence = x.m_var_large_plain_sequence;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object LargePlainSequence that will be copied.
+     */
+    eProsima_user_DllExport LargePlainSequence(
+            LargePlainSequence&& x) noexcept
+    {
+        m_var_large_plain_sequence = std::move(x.m_var_large_plain_sequence);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object LargePlainSequence that will be copied.
+     */
+    eProsima_user_DllExport LargePlainSequence& operator =(
+            const LargePlainSequence& x)
+    {
+
+                    m_var_large_plain_sequence = x.m_var_large_plain_sequence;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object LargePlainSequence that will be copied.
+     */
+    eProsima_user_DllExport LargePlainSequence& operator =(
+            LargePlainSequence&& x) noexcept
+    {
+
+        m_var_large_plain_sequence = std::move(x.m_var_large_plain_sequence);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x LargePlainSequence object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const LargePlainSequence& x) const
+    {
+        return (m_var_large_plain_sequence == x.m_var_large_plain_sequence);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x LargePlainSequence object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const LargePlainSequence& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_large_plain_sequence
+     * @param _var_large_plain_sequence New value to be copied in member var_large_plain_sequence
+     */
+    eProsima_user_DllExport void var_large_plain_sequence(
+            const std::vector<InnerPlainStructHelper>& _var_large_plain_sequence)
+    {
+        m_var_large_plain_sequence = _var_large_plain_sequence;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_large_plain_sequence
+     * @param _var_large_plain_sequence New value to be moved in member var_large_plain_sequence
+     */
+    eProsima_user_DllExport void var_large_plain_sequence(
+            std::vector<InnerPlainStructHelper>&& _var_large_plain_sequence)
+    {
+        m_var_large_plain_sequence = std::move(_var_large_plain_sequence);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_large_plain_sequence
+     * @return Constant reference to member var_large_plain_sequence
+     */
+    eProsima_user_DllExport const std::vector<InnerPlainStructHelper>& var_large_plain_sequence() const
+    {
+        return m_var_large_plain_sequence;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_large_plain_sequence
+     * @return Reference to member var_large_plain_sequence
+     */
+    eProsima_user_DllExport std::vector<InnerPlainStructHelper>& var_large_plain_sequence()
+    {
+        return m_var_large_plain_sequence;
+    }
+
+
+
+private:
+
+    std::vector<InnerPlainStructHelper> m_var_large_plain_sequence;
+
+};
 namespace Common_Module {
 
 typedef char My_Char;
