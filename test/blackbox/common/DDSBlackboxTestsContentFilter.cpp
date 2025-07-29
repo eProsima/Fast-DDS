@@ -288,7 +288,8 @@ protected:
                 {
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                     reader->get_subscription_matched_status(status);
-                } while (status.current_count < 1);
+                }
+                while (status.current_count < 1);
             }
 
             return reader;
