@@ -135,13 +135,26 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
-    /// Copy assignment
+    /// Copy assignment operator
     Locator_t& operator =(
             const Locator_t& loc)
     {
         kind = loc.kind;
         port = loc.port;
         std::memcpy(address, loc.address, 16 * sizeof(octet));
+        return *this;
+    }
+
+    /// Move assignment operator
+    Locator_t& operator =(
+            Locator_t&& loc) noexcept
+    {
+        if (this != &loc)
+        {
+            kind = loc.kind;
+            port = loc.port;
+            std::memcpy(address, loc.address, 16 * sizeof(octet));
+        }
         return *this;
     }
 
