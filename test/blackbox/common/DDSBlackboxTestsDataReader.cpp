@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <mutex>
 #include <thread>
 #include <type_traits>
 
@@ -1422,6 +1423,165 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
     auto reception_ts_3 = reader.reception_timestamps[3];
     EXPECT_TRUE(reception_ts_1 <= reception_ts_2);
     EXPECT_TRUE(reception_ts_2 <= reception_ts_3);
+}
+
+/* This is a regression test for redmine issue 22929.
+ *
+ * Considers the following scenario:
+ * - A DataReader is created on keyed topic A
+ * - A DataWriter is created on the same topic
+ * - DataWriter writes sample 1 to instance 1
+ * - DataReader takes sample 1
+ * - DataWriter is deleted
+ *
+ * The following behavior is expected:
+ * - Calling take on the DataReader returns a sample on instance 1 with
+ *   valid_data = false to inform about the change in the instance state
+ *   to NOT_ALIVE_NO_WRITERS
+ */
+TEST_P(DDSDataReader, return_sample_when_writer_disappears)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    struct CustomReaderListener : public fdds::DataReaderListener
+    {
+        void on_data_available(
+                fdds::DataReader* /* reader */) override
+        {
+            inc_data_available_count();
+        }
+
+        void on_subscription_matched(
+                fdds::DataReader* /* reader */,
+                const fdds::SubscriptionMatchedStatus& info) override
+        {
+            set_current_matched(info.current_count);
+        }
+
+        size_t get_data_available_count() const
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return data_available_count_;
+        }
+
+        void wait_for_match()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait(lock,
+                    [this]()
+                    {
+                        return current_matched_ > 0;
+                    });
+        }
+
+        void wait_for_unmatch()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait(lock,
+                    [this]()
+                    {
+                        return current_matched_ == 0;
+                    });
+        }
+
+    private:
+
+        void inc_data_available_count()
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            ++data_available_count_;
+        }
+
+        void set_current_matched(
+                int32_t current_count)
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            current_matched_ = current_count;
+            cv_.notify_all();
+        }
+
+        mutable std::mutex mutex_;
+        std::condition_variable cv_;
+        size_t data_available_count_ = 0;
+        int32_t current_matched_ = 0;
+    };
+
+    fdds::InstanceHandle_t instance_handle{};
+    CustomReaderListener listener;
+
+    // Create a DataReader on a keyed topic
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+    fdds::DataReader& data_reader = reader.get_native_reader();
+    data_reader.set_listener(&listener, fdds::StatusMask::all());
+
+    // Create a DataWriter on the same topic
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    listener.wait_for_match();
+
+    // DataWriter writes sample 1 to instance 1
+    {
+        KeyedHelloWorldPubSubType::type sample;
+        sample.key(1);
+        sample.index(1);
+        sample.message("Hello World");
+        EXPECT_TRUE(writer.send_sample(sample));
+    }
+
+    // DataReader takes sample 1
+    {
+        EXPECT_TRUE(data_reader.wait_for_unread_message(fdds::c_TimeInfinite));
+        EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+        EXPECT_EQ(listener.get_data_available_count(), 1u);
+
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
+        EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
+        EXPECT_FALSE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+
+        EXPECT_TRUE(info.valid_data);
+        EXPECT_EQ(info.instance_state, fdds::ALIVE_INSTANCE_STATE);
+        EXPECT_EQ(sample.key(), 1);
+        EXPECT_EQ(sample.index(), 1);
+        EXPECT_EQ(sample.message(), "Hello World");
+
+        // Store the instance handle for later use
+        instance_handle = info.instance_handle;
+    }
+
+    // DataWriter is deleted
+    writer.destroy();
+    listener.wait_for_unmatch();
+
+    // Verify expectations
+    {
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
+
+        EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+        EXPECT_EQ(listener.get_data_available_count(), 2u);
+
+        EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
+        EXPECT_FALSE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+
+        EXPECT_FALSE(info.valid_data);
+        EXPECT_EQ(info.instance_handle, instance_handle);
+        EXPECT_EQ(info.instance_state, fdds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE);
+    }
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

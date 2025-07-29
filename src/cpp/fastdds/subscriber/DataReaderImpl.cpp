@@ -388,6 +388,28 @@ bool DataReaderImpl::wait_for_unread_message(
 void DataReaderImpl::set_read_communication_status(
         bool trigger_value)
 {
+    if (trigger_value)
+    {
+        auto user_reader = user_datareader_;
+
+        //First check if we can handle with on_data_on_readers
+        SubscriberListener* subscriber_listener =
+                subscriber_->get_listener_for(StatusMask::data_on_readers());
+        if (subscriber_listener != nullptr)
+        {
+            subscriber_listener->on_data_on_readers(subscriber_->user_subscriber_);
+        }
+        else
+        {
+            // If not, try with on_data_available
+            DataReaderListener* listener = get_listener_for(StatusMask::data_available());
+            if (listener != nullptr)
+            {
+                listener->on_data_available(user_reader);
+            }
+        }
+    }
+
     StatusMask notify_status = StatusMask::data_on_readers();
     subscriber_->user_subscriber_->get_statuscondition().get_impl()->set_status(notify_status, trigger_value);
 
@@ -719,11 +741,6 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return RETCODE_NOT_ENABLED;
     }
 
-    if (history_.getHistorySize() == 0)
-    {
-        return RETCODE_NO_DATA;
-    }
-
 #if HAVE_STRICT_REALTIME
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -918,25 +935,6 @@ void DataReaderImpl::InnerDataReaderListener::on_data_available(
 
     if (data_reader_->on_data_available(writer_guid, first_sequence, last_sequence))
     {
-        auto user_reader = data_reader_->user_datareader_;
-
-        //First check if we can handle with on_data_on_readers
-        SubscriberListener* subscriber_listener =
-                data_reader_->subscriber_->get_listener_for(StatusMask::data_on_readers());
-        if (subscriber_listener != nullptr)
-        {
-            subscriber_listener->on_data_on_readers(data_reader_->subscriber_->user_subscriber_);
-        }
-        else
-        {
-            // If not, try with on_data_available
-            DataReaderListener* listener = data_reader_->get_listener_for(StatusMask::data_available());
-            if (listener != nullptr)
-            {
-                listener->on_data_available(user_reader);
-            }
-        }
-
         data_reader_->set_read_communication_status(true);
     }
 }
@@ -1176,7 +1174,10 @@ void DataReaderImpl::update_subscription_matched_status(
 
     if (count_change < 0)
     {
-        history_.writer_not_alive(status.remoteEndpointGuid);
+        if (history_.writer_not_alive(status.remoteEndpointGuid))
+        {
+            set_read_communication_status(true);
+        }
         try_notify_read_conditions();
     }
 }
@@ -1491,7 +1492,10 @@ LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
 {
     if (0 < status.not_alive_count_change)
     {
-        history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
+        if (history_.writer_not_alive(iHandle2GUID(status.last_publication_handle)))
+        {
+            set_read_communication_status(true);
+        }
         try_notify_read_conditions();
     }
 
