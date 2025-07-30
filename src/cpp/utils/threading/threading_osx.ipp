@@ -129,7 +129,7 @@ static void configure_current_thread_affinity(
         const char* thread_name,
         uint64_t affinity)
 {
-    if (affinity <= static_cast<uint64_t>(std::numeric_limits<integer_t>::max()))
+    if (affinity != 0 && affinity <= static_cast<uint64_t>(std::numeric_limits<integer_t>::max()))
     {
         int result = 0;
         thread_affinity_policy_data_t policy = { static_cast<integer_t>(affinity) };
