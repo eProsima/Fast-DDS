@@ -553,6 +553,27 @@ TEST_F(DDSSQLFilterTests, type_compatibility_compare_operand_op_operand)
     }
 }
 
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/23265
+ *
+ * This test checks that a DDSSQL content filter can be created with a type name that is different from the one
+ * used to register the type object representation.
+ */
+TEST_F(DDSSQLFilterTests, different_type_name)
+{
+    ContentFilterTestTypePubSubType type;
+
+    IContentFilter* filter_instance = nullptr;
+    DDSFilterFactory factory;
+    StackAllocatedSequence<const char*, 10> params;
+
+    EXPECT_EQ(factory.create_content_filter("DDSSQL", "MyCustomType", &type,
+            "uint16_field = 3", params, filter_instance), ReturnCode_t::RETCODE_OK);
+
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            factory.delete_content_filter("DDSSQL", filter_instance));
+}
+
 /**
  * Singleton that holds the serialized payloads to be evaluated
  */

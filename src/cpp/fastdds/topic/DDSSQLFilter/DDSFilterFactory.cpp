@@ -449,6 +449,20 @@ DDSFilterFactory::~DDSFilterFactory()
     pool.clear();
 }
 
+static const eprosima::fastrtps::types::TypeIdentifier* get_complete_type_identifier(
+        const char* type_name,
+        const TopicDataType* data_type)
+{
+    using eprosima::fastrtps::types::TypeObjectFactory;
+    auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
+    if (!type_id)
+    {
+        type_id = TypeObjectFactory::get_instance()->get_type_identifier(data_type->getName(), true);
+    }
+
+    return type_id;
+}
+
 IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         const char* filter_class_name,
         const char* type_name,
@@ -458,8 +472,6 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         IContentFilter*& filter_instance)
 {
     using eprosima::fastrtps::types::TypeObjectFactory;
-
-    static_cast<void>(data_type);
 
     ReturnCode_t ret = ReturnCode_t::RETCODE_UNSUPPORTED;
 
@@ -517,18 +529,18 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
     }
     else
     {
-        auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_name, true);
-        if (!type_object)
+        auto type_id = get_complete_type_identifier(type_name, data_type);
+        if (!type_id)
         {
             EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
             ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
         else
         {
+            auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_id);
             auto node = parser::parse_filter_expression(filter_expression, type_object);
             if (node)
             {
-                auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
                 auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
                 DDSFilterExpression* expr = get_expression();
                 expr->set_type(dyn_type);
