@@ -97,6 +97,9 @@ bool FinalStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::FinalStruct* p_type = static_cast<::FinalStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::FinalStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool MutableStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MutableStruct* p_type = static_cast<::MutableStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::MutableStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool AppendableStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::AppendableStruct* p_type = static_cast<::AppendableStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::AppendableStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool ExtensibilityStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ExtensibilityStruct* p_type = static_cast<::ExtensibilityStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::ExtensibilityStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

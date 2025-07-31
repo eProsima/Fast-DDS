@@ -97,6 +97,9 @@ bool InnerStructureHelperChildPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::InnerStructureHelperChild* p_type = static_cast<::InnerStructureHelperChild*>(data);
 
+        // Call default constructor
+        new (p_type) ::InnerStructureHelperChild();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool InnerStructureHelperChildChildPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::InnerStructureHelperChildChild* p_type = static_cast<::InnerStructureHelperChildChild*>(data);
+
+        // Call default constructor
+        new (p_type) ::InnerStructureHelperChildChild();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool InnerStructureHelperEmptyChildPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::InnerStructureHelperEmptyChild* p_type = static_cast<::InnerStructureHelperEmptyChild*>(data);
 
+        // Call default constructor
+        new (p_type) ::InnerStructureHelperEmptyChild();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool InnerStructureHelperEmptyChildChildPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::InnerStructureHelperEmptyChildChild* p_type = static_cast<::InnerStructureHelperEmptyChildChild*>(data);
+
+        // Call default constructor
+        new (p_type) ::InnerStructureHelperEmptyChildChild();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool InnerEmptyStructureHelperChildPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::InnerEmptyStructureHelperChild* p_type = static_cast<::InnerEmptyStructureHelperChild*>(data);
 
+        // Call default constructor
+        new (p_type) ::InnerEmptyStructureHelperChild();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool StructAliasInheritanceStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructAliasInheritanceStruct* p_type = static_cast<::StructAliasInheritanceStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructAliasInheritanceStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1189,6 +1207,9 @@ bool StructuresInheritanceStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructuresInheritanceStruct* p_type = static_cast<::StructuresInheritanceStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructuresInheritanceStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1370,6 +1391,9 @@ bool BitsetsChildInheritanceStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::BitsetsChildInheritanceStruct* p_type = static_cast<::BitsetsChildInheritanceStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::BitsetsChildInheritanceStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

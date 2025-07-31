@@ -97,6 +97,9 @@ bool HelloWorldPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::HelloWorld* p_type = static_cast<::HelloWorld*>(data);
 
+        // Call default constructor
+        new (p_type) ::HelloWorld();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

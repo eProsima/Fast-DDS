@@ -97,6 +97,9 @@ bool ValueStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ValueStruct* p_type = static_cast<::ValueStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::ValueStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool MapStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStruct* p_type = static_cast<::MapStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

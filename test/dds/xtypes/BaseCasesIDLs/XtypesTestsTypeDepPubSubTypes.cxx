@@ -97,6 +97,9 @@ bool TypeDepPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::TypeDep* p_type = static_cast<::TypeDep*>(data);
 
+        // Call default constructor
+        new (p_type) ::TypeDep();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

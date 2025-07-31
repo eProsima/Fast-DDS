@@ -97,6 +97,9 @@ bool short_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::short_optional* p_type = static_cast<::short_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::short_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool ushort_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ushort_optional* p_type = static_cast<::ushort_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::ushort_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool long_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::long_optional* p_type = static_cast<::long_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::long_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool ulong_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ulong_optional* p_type = static_cast<::ulong_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::ulong_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool longlong_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::longlong_optional* p_type = static_cast<::longlong_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::longlong_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool ulonglong_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ulonglong_optional* p_type = static_cast<::ulonglong_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::ulonglong_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1189,6 +1207,9 @@ bool float_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::float_optional* p_type = static_cast<::float_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::float_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1370,6 +1391,9 @@ bool double_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::double_optional* p_type = static_cast<::double_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::double_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1553,6 +1577,9 @@ bool longdouble_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::longdouble_optional* p_type = static_cast<::longdouble_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::longdouble_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1734,6 +1761,9 @@ bool boolean_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::boolean_optional* p_type = static_cast<::boolean_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::boolean_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1917,6 +1947,9 @@ bool octet_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::octet_optional* p_type = static_cast<::octet_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::octet_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2098,6 +2131,9 @@ bool char_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::char_optional* p_type = static_cast<::char_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::char_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2281,6 +2317,9 @@ bool wchar_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::wchar_optional* p_type = static_cast<::wchar_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::wchar_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2462,6 +2501,9 @@ bool short_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::short_align_1_optional* p_type = static_cast<::short_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::short_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2645,6 +2687,9 @@ bool short_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::short_align_2_optional* p_type = static_cast<::short_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::short_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2826,6 +2871,9 @@ bool short_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::short_align_4_optional* p_type = static_cast<::short_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::short_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3009,6 +3057,9 @@ bool ushort_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ushort_align_1_optional* p_type = static_cast<::ushort_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::ushort_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3190,6 +3241,9 @@ bool ushort_align_2_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ushort_align_2_optional* p_type = static_cast<::ushort_align_2_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::ushort_align_2_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3373,6 +3427,9 @@ bool ushort_align_4_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ushort_align_4_optional* p_type = static_cast<::ushort_align_4_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::ushort_align_4_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3554,6 +3611,9 @@ bool long_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::long_align_1_optional* p_type = static_cast<::long_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::long_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3737,6 +3797,9 @@ bool long_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::long_align_2_optional* p_type = static_cast<::long_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::long_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3918,6 +3981,9 @@ bool long_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::long_align_4_optional* p_type = static_cast<::long_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::long_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4101,6 +4167,9 @@ bool ulong_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ulong_align_1_optional* p_type = static_cast<::ulong_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::ulong_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4282,6 +4351,9 @@ bool ulong_align_2_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ulong_align_2_optional* p_type = static_cast<::ulong_align_2_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::ulong_align_2_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4465,6 +4537,9 @@ bool ulong_align_4_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ulong_align_4_optional* p_type = static_cast<::ulong_align_4_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::ulong_align_4_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4646,6 +4721,9 @@ bool longlong_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::longlong_align_1_optional* p_type = static_cast<::longlong_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::longlong_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4829,6 +4907,9 @@ bool longlong_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::longlong_align_2_optional* p_type = static_cast<::longlong_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::longlong_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5010,6 +5091,9 @@ bool longlong_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::longlong_align_4_optional* p_type = static_cast<::longlong_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::longlong_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5193,6 +5277,9 @@ bool ulonglong_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ulonglong_align_1_optional* p_type = static_cast<::ulonglong_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::ulonglong_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5374,6 +5461,9 @@ bool ulonglong_align_2_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ulonglong_align_2_optional* p_type = static_cast<::ulonglong_align_2_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::ulonglong_align_2_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5557,6 +5647,9 @@ bool ulonglong_align_4_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ulonglong_align_4_optional* p_type = static_cast<::ulonglong_align_4_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::ulonglong_align_4_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5738,6 +5831,9 @@ bool float_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::float_align_1_optional* p_type = static_cast<::float_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::float_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5921,6 +6017,9 @@ bool float_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::float_align_2_optional* p_type = static_cast<::float_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::float_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6102,6 +6201,9 @@ bool float_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::float_align_4_optional* p_type = static_cast<::float_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::float_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6285,6 +6387,9 @@ bool double_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::double_align_1_optional* p_type = static_cast<::double_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::double_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6466,6 +6571,9 @@ bool double_align_2_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::double_align_2_optional* p_type = static_cast<::double_align_2_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::double_align_2_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6649,6 +6757,9 @@ bool double_align_4_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::double_align_4_optional* p_type = static_cast<::double_align_4_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::double_align_4_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6830,6 +6941,9 @@ bool longdouble_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::longdouble_align_1_optional* p_type = static_cast<::longdouble_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::longdouble_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7013,6 +7127,9 @@ bool longdouble_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::longdouble_align_2_optional* p_type = static_cast<::longdouble_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::longdouble_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7194,6 +7311,9 @@ bool longdouble_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::longdouble_align_4_optional* p_type = static_cast<::longdouble_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::longdouble_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7377,6 +7497,9 @@ bool boolean_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::boolean_align_1_optional* p_type = static_cast<::boolean_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::boolean_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7558,6 +7681,9 @@ bool boolean_align_2_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::boolean_align_2_optional* p_type = static_cast<::boolean_align_2_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::boolean_align_2_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7741,6 +7867,9 @@ bool boolean_align_4_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::boolean_align_4_optional* p_type = static_cast<::boolean_align_4_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::boolean_align_4_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7922,6 +8051,9 @@ bool octet_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::octet_align_1_optional* p_type = static_cast<::octet_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::octet_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8105,6 +8237,9 @@ bool octet_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::octet_align_2_optional* p_type = static_cast<::octet_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::octet_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -8286,6 +8421,9 @@ bool octet_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::octet_align_4_optional* p_type = static_cast<::octet_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::octet_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8469,6 +8607,9 @@ bool char_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::char_align_1_optional* p_type = static_cast<::char_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::char_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -8650,6 +8791,9 @@ bool char_align_2_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::char_align_2_optional* p_type = static_cast<::char_align_2_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::char_align_2_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8833,6 +8977,9 @@ bool char_align_4_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::char_align_4_optional* p_type = static_cast<::char_align_4_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::char_align_4_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -9014,6 +9161,9 @@ bool wchar_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::wchar_align_1_optional* p_type = static_cast<::wchar_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::wchar_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9197,6 +9347,9 @@ bool wchar_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::wchar_align_2_optional* p_type = static_cast<::wchar_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::wchar_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -9378,6 +9531,9 @@ bool wchar_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::wchar_align_4_optional* p_type = static_cast<::wchar_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::wchar_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9561,6 +9717,9 @@ bool sequence_short_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::sequence_short_optional* p_type = static_cast<::sequence_short_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::sequence_short_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -9742,6 +9901,9 @@ bool sequence_short_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::sequence_short_align_1_optional* p_type = static_cast<::sequence_short_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::sequence_short_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9925,6 +10087,9 @@ bool sequence_short_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::sequence_short_align_2_optional* p_type = static_cast<::sequence_short_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::sequence_short_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -10106,6 +10271,9 @@ bool sequence_short_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::sequence_short_align_4_optional* p_type = static_cast<::sequence_short_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::sequence_short_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10289,6 +10457,9 @@ bool string_unbounded_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::string_unbounded_optional* p_type = static_cast<::string_unbounded_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::string_unbounded_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -10470,6 +10641,9 @@ bool string_unbounded_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::string_unbounded_align_1_optional* p_type = static_cast<::string_unbounded_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::string_unbounded_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10653,6 +10827,9 @@ bool string_unbounded_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::string_unbounded_align_2_optional* p_type = static_cast<::string_unbounded_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::string_unbounded_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -10834,6 +11011,9 @@ bool string_unbounded_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::string_unbounded_align_4_optional* p_type = static_cast<::string_unbounded_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::string_unbounded_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11017,6 +11197,9 @@ bool string_bounded_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::string_bounded_optional* p_type = static_cast<::string_bounded_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::string_bounded_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -11198,6 +11381,9 @@ bool string_bounded_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::string_bounded_align_1_optional* p_type = static_cast<::string_bounded_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::string_bounded_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11381,6 +11567,9 @@ bool string_bounded_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::string_bounded_align_2_optional* p_type = static_cast<::string_bounded_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::string_bounded_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -11562,6 +11751,9 @@ bool string_bounded_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::string_bounded_align_4_optional* p_type = static_cast<::string_bounded_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::string_bounded_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11745,6 +11937,9 @@ bool map_short_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::map_short_optional* p_type = static_cast<::map_short_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::map_short_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -11926,6 +12121,9 @@ bool map_short_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::map_short_align_1_optional* p_type = static_cast<::map_short_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::map_short_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12109,6 +12307,9 @@ bool map_short_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::map_short_align_2_optional* p_type = static_cast<::map_short_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::map_short_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -12290,6 +12491,9 @@ bool map_short_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::map_short_align_4_optional* p_type = static_cast<::map_short_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::map_short_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12473,6 +12677,9 @@ bool array_short_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::array_short_optional* p_type = static_cast<::array_short_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::array_short_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -12654,6 +12861,9 @@ bool array_short_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::array_short_align_1_optional* p_type = static_cast<::array_short_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::array_short_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12837,6 +13047,9 @@ bool array_short_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::array_short_align_2_optional* p_type = static_cast<::array_short_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::array_short_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -13018,6 +13231,9 @@ bool array_short_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::array_short_align_4_optional* p_type = static_cast<::array_short_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::array_short_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13201,6 +13417,9 @@ bool struct_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::struct_optional* p_type = static_cast<::struct_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::struct_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -13382,6 +13601,9 @@ bool struct_align_1_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::struct_align_1_optional* p_type = static_cast<::struct_align_1_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::struct_align_1_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13565,6 +13787,9 @@ bool struct_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::struct_align_2_optional* p_type = static_cast<::struct_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::struct_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -13746,6 +13971,9 @@ bool struct_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::struct_align_4_optional* p_type = static_cast<::struct_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::struct_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13929,6 +14157,9 @@ bool InnerStructOptionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::InnerStructOptional* p_type = static_cast<::InnerStructOptional*>(data);
 
+        // Call default constructor
+        new (p_type) ::InnerStructOptional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -14110,6 +14341,9 @@ bool opt_struct_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::opt_struct_optional* p_type = static_cast<::opt_struct_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::opt_struct_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14293,6 +14527,9 @@ bool opt_struct_align_1_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::opt_struct_align_1_optional* p_type = static_cast<::opt_struct_align_1_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::opt_struct_align_1_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -14475,6 +14712,9 @@ bool opt_struct_align_2_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::opt_struct_align_2_optional* p_type = static_cast<::opt_struct_align_2_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::opt_struct_align_2_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -14656,6 +14896,9 @@ bool opt_struct_align_4_optionalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::opt_struct_align_4_optional* p_type = static_cast<::opt_struct_align_4_optional*>(data);
+
+        // Call default constructor
+        new (p_type) ::opt_struct_align_4_optional();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

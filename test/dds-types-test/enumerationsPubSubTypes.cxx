@@ -100,6 +100,9 @@ bool EnumStructurePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::EnumStructure* p_type = static_cast<::EnumStructure*>(data);
 
+        // Call default constructor
+        new (p_type) ::EnumStructure();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -281,6 +284,9 @@ bool BitMaskStructurePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::BitMaskStructure* p_type = static_cast<::BitMaskStructure*>(data);
+
+        // Call default constructor
+        new (p_type) ::BitMaskStructure();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -464,6 +470,9 @@ bool BoundedBitMaskStructurePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::BoundedBitMaskStructure* p_type = static_cast<::BoundedBitMaskStructure*>(data);
 
+        // Call default constructor
+        new (p_type) ::BoundedBitMaskStructure();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -645,6 +654,9 @@ bool EnumWithValuesStructurePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::EnumWithValuesStructure* p_type = static_cast<::EnumWithValuesStructure*>(data);
+
+        // Call default constructor
+        new (p_type) ::EnumWithValuesStructure();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

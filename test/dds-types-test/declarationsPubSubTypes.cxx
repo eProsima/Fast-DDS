@@ -95,6 +95,9 @@ bool ForwardDeclarationsRecursiveStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ForwardDeclarationsRecursiveStruct* p_type = static_cast<::ForwardDeclarationsRecursiveStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::ForwardDeclarationsRecursiveStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -277,6 +280,9 @@ bool ForwardStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ForwardStruct* p_type = static_cast<::ForwardStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::ForwardStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ namespace declarations_module {
         {
             // Convert DATA to pointer of your type
             ::declarations_module::ForwardStruct* p_type = static_cast<::declarations_module::ForwardStruct*>(data);
+
+            // Call default constructor
+            new (p_type) ::declarations_module::ForwardStruct();
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -647,6 +656,9 @@ bool ModuledForwardDeclarationsRecursiveStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ModuledForwardDeclarationsRecursiveStruct* p_type = static_cast<::ModuledForwardDeclarationsRecursiveStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::ModuledForwardDeclarationsRecursiveStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -830,6 +842,9 @@ namespace declarations_module {
         {
             // Convert DATA to pointer of your type
             ::declarations_module::ModuledForwardStruct* p_type = static_cast<::declarations_module::ModuledForwardStruct*>(data);
+
+            // Call default constructor
+            new (p_type) ::declarations_module::ModuledForwardStruct();
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1015,6 +1030,9 @@ bool ModuledCommonNameStructurePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ModuledCommonNameStructure* p_type = static_cast<::ModuledCommonNameStructure*>(data);
+
+        // Call default constructor
+        new (p_type) ::ModuledCommonNameStructure();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

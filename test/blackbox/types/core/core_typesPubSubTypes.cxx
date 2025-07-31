@@ -102,6 +102,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::EntityId_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::EntityId_t*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::EntityId_t();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -283,6 +286,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::ProtocolVersion_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::ProtocolVersion_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::ProtocolVersion_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -466,6 +472,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::VendorId_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::VendorId_t*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::VendorId_t();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -647,6 +656,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::GuidPrefix_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::GuidPrefix_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::GuidPrefix_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -830,6 +842,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::GUID_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::GUID_t*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::GUID_t();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1011,6 +1026,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::SequenceNumber_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::SequenceNumber_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::SequenceNumber_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1194,6 +1212,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::Count_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::Count_t*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::Count_t();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1375,6 +1396,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::Time_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::Time_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::Time_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1558,6 +1582,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::SequenceNumberSet* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::SequenceNumberSet*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::SequenceNumberSet();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1739,6 +1766,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::Locator_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::Locator_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::Locator_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1922,6 +1952,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::Duration_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::Duration_t*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::Duration_t();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2103,6 +2136,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::StatusInfo_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::StatusInfo_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::StatusInfo_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2286,6 +2322,9 @@ namespace eprosima {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::KeyHash_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::KeyHash_t*>(data);
 
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::KeyHash_t();
+
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2467,6 +2506,9 @@ namespace eprosima {
                         {
                             // Convert DATA to pointer of your type
                             ::eprosima::fastdds::rtps::core::detail::EntityName_t* p_type = static_cast<::eprosima::fastdds::rtps::core::detail::EntityName_t*>(data);
+
+                            // Call default constructor
+                            new (p_type) ::eprosima::fastdds::rtps::core::detail::EntityName_t();
 
                             // Object that manages the raw buffer.
                             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2652,6 +2694,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::Header* p_type = static_cast<::eprosima::fastdds::rtps::core::Header*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::Header();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2833,6 +2878,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::SubmessageHeader* p_type = static_cast<::eprosima::fastdds::rtps::core::SubmessageHeader*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::SubmessageHeader();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3019,6 +3067,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::AckNackSubmessage* p_type = static_cast<::eprosima::fastdds::rtps::core::AckNackSubmessage*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::AckNackSubmessage();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3200,6 +3251,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::HeartBeatSubmessage* p_type = static_cast<::eprosima::fastdds::rtps::core::HeartBeatSubmessage*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::HeartBeatSubmessage();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3383,6 +3437,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::InfoDestinationSubmessage* p_type = static_cast<::eprosima::fastdds::rtps::core::InfoDestinationSubmessage*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::InfoDestinationSubmessage();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3564,6 +3621,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::InfoSourceSubmessage* p_type = static_cast<::eprosima::fastdds::rtps::core::InfoSourceSubmessage*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::InfoSourceSubmessage();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3747,6 +3807,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::InfoTimestampSubmessage* p_type = static_cast<::eprosima::fastdds::rtps::core::InfoTimestampSubmessage*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::InfoTimestampSubmessage();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3928,6 +3991,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::rtps::core::RTPSMessage* p_type = static_cast<::eprosima::fastdds::rtps::core::RTPSMessage*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::rtps::core::RTPSMessage();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

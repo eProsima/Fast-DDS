@@ -97,6 +97,9 @@ bool BenchMarkMediumPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::BenchMarkMedium* p_type = static_cast<::BenchMarkMedium*>(data);
 
+        // Call default constructor
+        new (p_type) ::BenchMarkMedium();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

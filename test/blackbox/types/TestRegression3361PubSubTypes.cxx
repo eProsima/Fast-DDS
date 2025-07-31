@@ -97,6 +97,9 @@ bool TestRegression3361PubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::TestRegression3361* p_type = static_cast<::TestRegression3361*>(data);
 
+        // Call default constructor
+        new (p_type) ::TestRegression3361();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

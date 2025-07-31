@@ -97,6 +97,9 @@ bool AllocTestTypePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::AllocTestType* p_type = static_cast<::AllocTestType*>(data);
 
+        // Call default constructor
+        new (p_type) ::AllocTestType();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

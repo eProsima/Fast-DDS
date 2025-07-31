@@ -97,6 +97,9 @@ bool AnnotatedStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::AnnotatedStruct* p_type = static_cast<::AnnotatedStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::AnnotatedStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -279,6 +282,9 @@ bool EmptyAnnotatedStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::EmptyAnnotatedStruct* p_type = static_cast<::EmptyAnnotatedStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::EmptyAnnotatedStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -460,6 +466,9 @@ bool BasicAnnotationsStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::BasicAnnotationsStruct* p_type = static_cast<::BasicAnnotationsStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::BasicAnnotationsStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

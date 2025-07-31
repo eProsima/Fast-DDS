@@ -3,9 +3,12 @@
 set -e
 
 files_to_exclude=(
-    './thirdparty/dds-types-test/IDL/relative_path_include.idl'       # Relative path not working in current location.
-    './test/feature/idl_parser/no_path_included.idl'                  # Relative path not working in current location.
-    './test/feature/idl_parser/idl_extra_cases/extra_structures.idl'  # Contains features not supported by IDL parser (scoped name beginning with double colon).
+    './thirdparty/dds-types-test/IDL/exceptions.idl'                 # Not used in this repository.
+    './thirdparty/dds-types-test/IDL/interfaces.idl'                 # Not used in this repository.
+    './thirdparty/dds-types-test/IDL/interfaces_2.idl'               # Not used in this repository.
+    './thirdparty/dds-types-test/IDL/relative_path_include.idl'      # Relative path not working in current location.
+    './test/feature/idl_parser/no_path_included.idl'                 # Relative path not working in current location.
+    './test/feature/idl_parser/idl_extra_cases/extra_structures.idl' # Contains features not supported by IDL parser (scoped name beginning with double colon).
 )
 
 files_not_needing_typeobject=(
@@ -43,7 +46,6 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/annotations.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/appendable.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/arrays.idl|../../../test/dds-types-test'
-    './thirdparty/dds-types-test/IDL/assignability.idl|../../../test/unittest/dds/xtypes/type_assignability'
     './thirdparty/dds-types-test/IDL/bitsets.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/constants.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/declarations.idl|../../../test/dds-types-test'

@@ -95,6 +95,9 @@ bool short_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::short_external* p_type = static_cast<::short_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::short_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -277,6 +280,9 @@ bool ushort_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ushort_external* p_type = static_cast<::ushort_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::ushort_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool long_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::long_external* p_type = static_cast<::long_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::long_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -643,6 +652,9 @@ bool ulong_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ulong_external* p_type = static_cast<::ulong_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::ulong_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -827,6 +839,9 @@ bool longlong_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::longlong_external* p_type = static_cast<::longlong_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::longlong_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1009,6 +1024,9 @@ bool ulonglong_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ulonglong_external* p_type = static_cast<::ulonglong_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::ulonglong_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1193,6 +1211,9 @@ bool float_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::float_external* p_type = static_cast<::float_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::float_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1375,6 +1396,9 @@ bool double_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::double_external* p_type = static_cast<::double_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::double_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1559,6 +1583,9 @@ bool longdouble_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::longdouble_external* p_type = static_cast<::longdouble_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::longdouble_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1741,6 +1768,9 @@ bool boolean_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::boolean_external* p_type = static_cast<::boolean_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::boolean_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1925,6 +1955,9 @@ bool octet_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::octet_external* p_type = static_cast<::octet_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::octet_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2107,6 +2140,9 @@ bool char_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::char_external* p_type = static_cast<::char_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::char_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2291,6 +2327,9 @@ bool wchar_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::wchar_external* p_type = static_cast<::wchar_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::wchar_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2473,6 +2512,9 @@ bool sequence_short_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::sequence_short_external* p_type = static_cast<::sequence_short_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::sequence_short_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2657,6 +2699,9 @@ bool string_unbounded_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::string_unbounded_external* p_type = static_cast<::string_unbounded_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::string_unbounded_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2839,6 +2884,9 @@ bool string_bounded_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::string_bounded_external* p_type = static_cast<::string_bounded_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::string_bounded_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3023,6 +3071,9 @@ bool map_short_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::map_short_external* p_type = static_cast<::map_short_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::map_short_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3205,6 +3256,9 @@ bool array_short_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::array_short_external* p_type = static_cast<::array_short_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::array_short_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3389,6 +3443,9 @@ bool struct_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::struct_external* p_type = static_cast<::struct_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::struct_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3571,6 +3628,9 @@ bool InnerStructExternalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::InnerStructExternal* p_type = static_cast<::InnerStructExternal*>(data);
+
+        // Call default constructor
+        new (p_type) ::InnerStructExternal();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3755,6 +3815,9 @@ bool ext_struct_externalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ext_struct_external* p_type = static_cast<::ext_struct_external*>(data);
 
+        // Call default constructor
+        new (p_type) ::ext_struct_external();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3937,6 +4000,9 @@ bool ext_and_inner_struct_externalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ext_and_inner_struct_external* p_type = static_cast<::ext_and_inner_struct_external*>(data);
+
+        // Call default constructor
+        new (p_type) ::ext_and_inner_struct_external();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4121,6 +4187,9 @@ bool struct_external_optionalPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::struct_external_optional* p_type = static_cast<::struct_external_optional*>(data);
 
+        // Call default constructor
+        new (p_type) ::struct_external_optional();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4303,6 +4372,9 @@ bool recursive_test_1PubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::recursive_test_1* p_type = static_cast<::recursive_test_1*>(data);
+
+        // Call default constructor
+        new (p_type) ::recursive_test_1();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4487,6 +4559,9 @@ bool recursive_structurePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::recursive_structure* p_type = static_cast<::recursive_structure*>(data);
 
+        // Call default constructor
+        new (p_type) ::recursive_structure();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4669,6 +4744,9 @@ bool recursive_test_2PubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::recursive_test_2* p_type = static_cast<::recursive_test_2*>(data);
+
+        // Call default constructor
+        new (p_type) ::recursive_test_2();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

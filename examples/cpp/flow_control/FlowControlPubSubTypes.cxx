@@ -97,6 +97,9 @@ bool FlowControlPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::FlowControl* p_type = static_cast<::FlowControl*>(data);
 
+        // Call default constructor
+        new (p_type) ::FlowControl();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

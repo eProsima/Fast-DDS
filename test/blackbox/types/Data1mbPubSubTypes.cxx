@@ -97,6 +97,9 @@ bool Data1mbPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::Data1mb* p_type = static_cast<::Data1mb*>(data);
 
+        // Call default constructor
+        new (p_type) ::Data1mb();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

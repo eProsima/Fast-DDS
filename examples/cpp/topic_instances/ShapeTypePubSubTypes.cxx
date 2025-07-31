@@ -97,6 +97,9 @@ bool ShapeTypePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ShapeType* p_type = static_cast<::ShapeType*>(data);
 
+        // Call default constructor
+        new (p_type) ::ShapeType();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

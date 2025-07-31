@@ -97,6 +97,9 @@ bool DeliveryMechanismsPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::DeliveryMechanisms* p_type = static_cast<::DeliveryMechanisms*>(data);
 
+        // Call default constructor
+        new (p_type) ::DeliveryMechanisms();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

@@ -97,6 +97,9 @@ bool KeyedData1mbPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedData1mb* p_type = static_cast<::KeyedData1mb*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedData1mb();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

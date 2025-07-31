@@ -97,6 +97,9 @@ bool BitsetStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::BitsetStruct* p_type = static_cast<::BitsetStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::BitsetStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

@@ -98,6 +98,9 @@ namespace const_module1 {
             // Convert DATA to pointer of your type
             ::const_module1::ModuleConstsLiteralsStruct* p_type = static_cast<::const_module1::ModuleConstsLiteralsStruct*>(data);
 
+            // Call default constructor
+            new (p_type) ::const_module1::ModuleConstsLiteralsStruct();
+
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -283,6 +286,9 @@ namespace const_module2 {
             // Convert DATA to pointer of your type
             ::const_module2::Module2ConstsLiteralsStruct* p_type = static_cast<::const_module2::Module2ConstsLiteralsStruct*>(data);
 
+            // Call default constructor
+            new (p_type) ::const_module2::Module2ConstsLiteralsStruct();
+
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -466,6 +472,9 @@ bool ConstsLiteralsStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ConstsLiteralsStruct* p_type = static_cast<::ConstsLiteralsStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::ConstsLiteralsStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

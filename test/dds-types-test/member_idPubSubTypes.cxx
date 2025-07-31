@@ -97,6 +97,9 @@ bool FixIdPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::FixId* p_type = static_cast<::FixId*>(data);
 
+        // Call default constructor
+        new (p_type) ::FixId();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool FixHexIdPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::FixHexId* p_type = static_cast<::FixHexId*>(data);
+
+        // Call default constructor
+        new (p_type) ::FixHexId();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool FixHashidDefaultPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::FixHashidDefault* p_type = static_cast<::FixHashidDefault*>(data);
 
+        // Call default constructor
+        new (p_type) ::FixHashidDefault();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool FixHashidPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::FixHashid* p_type = static_cast<::FixHashid*>(data);
+
+        // Call default constructor
+        new (p_type) ::FixHashid();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool FixMixPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::FixMix* p_type = static_cast<::FixMix*>(data);
 
+        // Call default constructor
+        new (p_type) ::FixMix();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool AutoidDefaultPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::AutoidDefault* p_type = static_cast<::AutoidDefault*>(data);
+
+        // Call default constructor
+        new (p_type) ::AutoidDefault();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1189,6 +1207,9 @@ bool AutoidSequentialPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::AutoidSequential* p_type = static_cast<::AutoidSequential*>(data);
 
+        // Call default constructor
+        new (p_type) ::AutoidSequential();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1370,6 +1391,9 @@ bool AutoidHashPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::AutoidHash* p_type = static_cast<::AutoidHash*>(data);
+
+        // Call default constructor
+        new (p_type) ::AutoidHash();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1553,6 +1577,9 @@ bool DerivedAutoidDefaultPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::DerivedAutoidDefault* p_type = static_cast<::DerivedAutoidDefault*>(data);
 
+        // Call default constructor
+        new (p_type) ::DerivedAutoidDefault();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1734,6 +1761,9 @@ bool DerivedEmptyAutoidSequentialPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::DerivedEmptyAutoidSequential* p_type = static_cast<::DerivedEmptyAutoidSequential*>(data);
+
+        // Call default constructor
+        new (p_type) ::DerivedEmptyAutoidSequential();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1917,6 +1947,9 @@ bool DerivedAutoidSequentialPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::DerivedAutoidSequential* p_type = static_cast<::DerivedAutoidSequential*>(data);
 
+        // Call default constructor
+        new (p_type) ::DerivedAutoidSequential();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2098,6 +2131,9 @@ bool DerivedAutoidHashPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::DerivedAutoidHash* p_type = static_cast<::DerivedAutoidHash*>(data);
+
+        // Call default constructor
+        new (p_type) ::DerivedAutoidHash();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

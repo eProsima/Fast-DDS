@@ -97,6 +97,9 @@ bool KeyedShortStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedShortStruct* p_type = static_cast<::KeyedShortStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedShortStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool KeyedUShortStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedUShortStruct* p_type = static_cast<::KeyedUShortStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedUShortStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool KeyedLongStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedLongStruct* p_type = static_cast<::KeyedLongStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedLongStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool KeyedULongStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedULongStruct* p_type = static_cast<::KeyedULongStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedULongStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool KeyedLongLongStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedLongLongStruct* p_type = static_cast<::KeyedLongLongStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedLongLongStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool KeyedULongLongStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedULongLongStruct* p_type = static_cast<::KeyedULongLongStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedULongLongStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1189,6 +1207,9 @@ bool KeyedFloatStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedFloatStruct* p_type = static_cast<::KeyedFloatStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedFloatStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1370,6 +1391,9 @@ bool KeyedDoubleStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedDoubleStruct* p_type = static_cast<::KeyedDoubleStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedDoubleStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1553,6 +1577,9 @@ bool KeyedLongDoubleStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedLongDoubleStruct* p_type = static_cast<::KeyedLongDoubleStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedLongDoubleStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1734,6 +1761,9 @@ bool KeyedBooleanStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedBooleanStruct* p_type = static_cast<::KeyedBooleanStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedBooleanStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1917,6 +1947,9 @@ bool KeyedOctetStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedOctetStruct* p_type = static_cast<::KeyedOctetStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedOctetStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2098,6 +2131,9 @@ bool KeyedCharStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedCharStruct* p_type = static_cast<::KeyedCharStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedCharStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2281,6 +2317,9 @@ bool KeyedWCharStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedWCharStruct* p_type = static_cast<::KeyedWCharStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedWCharStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2462,6 +2501,9 @@ bool KeyedEmptyStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedEmptyStruct* p_type = static_cast<::KeyedEmptyStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedEmptyStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2645,6 +2687,9 @@ bool KeyedEmptyInheritanceStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedEmptyInheritanceStruct* p_type = static_cast<::KeyedEmptyInheritanceStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedEmptyInheritanceStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2826,6 +2871,9 @@ bool KeyedInheritanceStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedInheritanceStruct* p_type = static_cast<::KeyedInheritanceStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedInheritanceStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3009,6 +3057,9 @@ bool InheritanceKeyedEmptyStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::InheritanceKeyedEmptyStruct* p_type = static_cast<::InheritanceKeyedEmptyStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::InheritanceKeyedEmptyStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3190,6 +3241,9 @@ bool KeyedFinalPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedFinal* p_type = static_cast<::KeyedFinal*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedFinal();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3373,6 +3427,9 @@ bool KeyedAppendablePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::KeyedAppendable* p_type = static_cast<::KeyedAppendable*>(data);
 
+        // Call default constructor
+        new (p_type) ::KeyedAppendable();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3554,6 +3611,9 @@ bool KeyedMutablePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyedMutable* p_type = static_cast<::KeyedMutable*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyedMutable();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

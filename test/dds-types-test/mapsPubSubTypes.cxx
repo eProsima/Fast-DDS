@@ -97,6 +97,9 @@ bool MapShortShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortShort* p_type = static_cast<::MapShortShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool MapShortUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortUShort* p_type = static_cast<::MapShortUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool MapShortLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortLong* p_type = static_cast<::MapShortLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool MapShortULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortULong* p_type = static_cast<::MapShortULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool MapShortLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortLongLong* p_type = static_cast<::MapShortLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool MapShortULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortULongLong* p_type = static_cast<::MapShortULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1189,6 +1207,9 @@ bool MapShortFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortFloat* p_type = static_cast<::MapShortFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1370,6 +1391,9 @@ bool MapShortDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortDouble* p_type = static_cast<::MapShortDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1553,6 +1577,9 @@ bool MapShortLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortLongDouble* p_type = static_cast<::MapShortLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1734,6 +1761,9 @@ bool MapShortBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortBoolean* p_type = static_cast<::MapShortBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1917,6 +1947,9 @@ bool MapShortOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortOctet* p_type = static_cast<::MapShortOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2098,6 +2131,9 @@ bool MapShortCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortChar* p_type = static_cast<::MapShortChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2281,6 +2317,9 @@ bool MapShortWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortWChar* p_type = static_cast<::MapShortWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2462,6 +2501,9 @@ bool MapShortStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortString* p_type = static_cast<::MapShortString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2645,6 +2687,9 @@ bool MapShortWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortWString* p_type = static_cast<::MapShortWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2826,6 +2871,9 @@ bool MapShortInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortInnerAliasBoundedStringHelper* p_type = static_cast<::MapShortInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3009,6 +3057,9 @@ bool MapShortInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortInnerAliasBoundedWStringHelper* p_type = static_cast<::MapShortInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3190,6 +3241,9 @@ bool MapShortInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortInnerEnumHelper* p_type = static_cast<::MapShortInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3373,6 +3427,9 @@ bool MapShortInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortInnerBitMaskHelper* p_type = static_cast<::MapShortInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3554,6 +3611,9 @@ bool MapShortInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortInnerAliasHelper* p_type = static_cast<::MapShortInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3737,6 +3797,9 @@ bool MapShortInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortInnerAliasArrayHelper* p_type = static_cast<::MapShortInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3918,6 +3981,9 @@ bool MapShortInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortInnerAliasSequenceHelper* p_type = static_cast<::MapShortInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4101,6 +4167,9 @@ bool MapShortInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortInnerAliasMapHelper* p_type = static_cast<::MapShortInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4282,6 +4351,9 @@ bool MapShortInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortInnerUnionHelper* p_type = static_cast<::MapShortInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4465,6 +4537,9 @@ bool MapShortInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapShortInnerStructureHelper* p_type = static_cast<::MapShortInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapShortInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4646,6 +4721,9 @@ bool MapShortInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapShortInnerBitsetHelper* p_type = static_cast<::MapShortInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapShortInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4829,6 +4907,9 @@ bool MapUShortShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortShort* p_type = static_cast<::MapUShortShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5010,6 +5091,9 @@ bool MapUShortUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortUShort* p_type = static_cast<::MapUShortUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5193,6 +5277,9 @@ bool MapUShortLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortLong* p_type = static_cast<::MapUShortLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5374,6 +5461,9 @@ bool MapUShortULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortULong* p_type = static_cast<::MapUShortULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5557,6 +5647,9 @@ bool MapUShortLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortLongLong* p_type = static_cast<::MapUShortLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5738,6 +5831,9 @@ bool MapUShortULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortULongLong* p_type = static_cast<::MapUShortULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5921,6 +6017,9 @@ bool MapUShortFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortFloat* p_type = static_cast<::MapUShortFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6102,6 +6201,9 @@ bool MapUShortDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortDouble* p_type = static_cast<::MapUShortDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6285,6 +6387,9 @@ bool MapUShortLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortLongDouble* p_type = static_cast<::MapUShortLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6466,6 +6571,9 @@ bool MapUShortBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortBoolean* p_type = static_cast<::MapUShortBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6649,6 +6757,9 @@ bool MapUShortOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortOctet* p_type = static_cast<::MapUShortOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6830,6 +6941,9 @@ bool MapUShortCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortChar* p_type = static_cast<::MapUShortChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7013,6 +7127,9 @@ bool MapUShortWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortWChar* p_type = static_cast<::MapUShortWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7194,6 +7311,9 @@ bool MapUShortStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortString* p_type = static_cast<::MapUShortString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7377,6 +7497,9 @@ bool MapUShortWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortWString* p_type = static_cast<::MapUShortWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7558,6 +7681,9 @@ bool MapUShortInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortInnerAliasBoundedStringHelper* p_type = static_cast<::MapUShortInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7741,6 +7867,9 @@ bool MapUShortInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortInnerAliasBoundedWStringHelper* p_type = static_cast<::MapUShortInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7922,6 +8051,9 @@ bool MapUShortInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortInnerEnumHelper* p_type = static_cast<::MapUShortInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8105,6 +8237,9 @@ bool MapUShortInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortInnerBitMaskHelper* p_type = static_cast<::MapUShortInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -8286,6 +8421,9 @@ bool MapUShortInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortInnerAliasHelper* p_type = static_cast<::MapUShortInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8469,6 +8607,9 @@ bool MapUShortInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortInnerAliasArrayHelper* p_type = static_cast<::MapUShortInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -8650,6 +8791,9 @@ bool MapUShortInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortInnerAliasSequenceHelper* p_type = static_cast<::MapUShortInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8833,6 +8977,9 @@ bool MapUShortInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortInnerAliasMapHelper* p_type = static_cast<::MapUShortInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -9014,6 +9161,9 @@ bool MapUShortInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortInnerUnionHelper* p_type = static_cast<::MapUShortInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9197,6 +9347,9 @@ bool MapUShortInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapUShortInnerStructureHelper* p_type = static_cast<::MapUShortInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapUShortInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -9378,6 +9531,9 @@ bool MapUShortInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapUShortInnerBitsetHelper* p_type = static_cast<::MapUShortInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapUShortInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9561,6 +9717,9 @@ bool MapLongShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongShort* p_type = static_cast<::MapLongShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -9742,6 +9901,9 @@ bool MapLongUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongUShort* p_type = static_cast<::MapLongUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9925,6 +10087,9 @@ bool MapLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLong* p_type = static_cast<::MapLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -10106,6 +10271,9 @@ bool MapLongULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongULong* p_type = static_cast<::MapLongULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10289,6 +10457,9 @@ bool MapLongKeyLongLongValuePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongKeyLongLongValue* p_type = static_cast<::MapLongKeyLongLongValue*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongKeyLongLongValue();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -10470,6 +10641,9 @@ bool MapLongULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongULongLong* p_type = static_cast<::MapLongULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10653,6 +10827,9 @@ bool MapLongFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongFloat* p_type = static_cast<::MapLongFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -10834,6 +11011,9 @@ bool MapLongDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongDouble* p_type = static_cast<::MapLongDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11017,6 +11197,9 @@ bool MapLongKeyLongDoubleValuePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongKeyLongDoubleValue* p_type = static_cast<::MapLongKeyLongDoubleValue*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongKeyLongDoubleValue();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -11198,6 +11381,9 @@ bool MapLongBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongBoolean* p_type = static_cast<::MapLongBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11381,6 +11567,9 @@ bool MapLongOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongOctet* p_type = static_cast<::MapLongOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -11562,6 +11751,9 @@ bool MapLongCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongChar* p_type = static_cast<::MapLongChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11745,6 +11937,9 @@ bool MapLongWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongWChar* p_type = static_cast<::MapLongWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -11926,6 +12121,9 @@ bool MapLongStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongString* p_type = static_cast<::MapLongString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12109,6 +12307,9 @@ bool MapLongWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongWString* p_type = static_cast<::MapLongWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -12290,6 +12491,9 @@ bool MapLongInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongInnerAliasBoundedStringHelper* p_type = static_cast<::MapLongInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12473,6 +12677,9 @@ bool MapLongInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongInnerAliasBoundedWStringHelper* p_type = static_cast<::MapLongInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -12654,6 +12861,9 @@ bool MapLongInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongInnerEnumHelper* p_type = static_cast<::MapLongInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12837,6 +13047,9 @@ bool MapLongInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongInnerBitMaskHelper* p_type = static_cast<::MapLongInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -13018,6 +13231,9 @@ bool MapLongInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongInnerAliasHelper* p_type = static_cast<::MapLongInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13201,6 +13417,9 @@ bool MapLongInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongInnerAliasArrayHelper* p_type = static_cast<::MapLongInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -13382,6 +13601,9 @@ bool MapLongInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongInnerAliasSequenceHelper* p_type = static_cast<::MapLongInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13565,6 +13787,9 @@ bool MapLongInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongInnerAliasMapHelper* p_type = static_cast<::MapLongInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -13746,6 +13971,9 @@ bool MapLongInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongInnerUnionHelper* p_type = static_cast<::MapLongInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13929,6 +14157,9 @@ bool MapLongInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongInnerStructureHelper* p_type = static_cast<::MapLongInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -14110,6 +14341,9 @@ bool MapLongInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongInnerBitsetHelper* p_type = static_cast<::MapLongInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14293,6 +14527,9 @@ bool MapULongShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongShort* p_type = static_cast<::MapULongShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -14474,6 +14711,9 @@ bool MapULongUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongUShort* p_type = static_cast<::MapULongUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14657,6 +14897,9 @@ bool MapULongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLong* p_type = static_cast<::MapULongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -14838,6 +15081,9 @@ bool MapULongULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongULong* p_type = static_cast<::MapULongULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15021,6 +15267,9 @@ bool MapKeyULongValueLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapKeyULongValueLongLong* p_type = static_cast<::MapKeyULongValueLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapKeyULongValueLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -15202,6 +15451,9 @@ bool MapULongULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongULongLong* p_type = static_cast<::MapULongULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15385,6 +15637,9 @@ bool MapULongFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongFloat* p_type = static_cast<::MapULongFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -15566,6 +15821,9 @@ bool MapULongDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongDouble* p_type = static_cast<::MapULongDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15749,6 +16007,9 @@ bool MapKeyULongValueLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapKeyULongValueLongDouble* p_type = static_cast<::MapKeyULongValueLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapKeyULongValueLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -15930,6 +16191,9 @@ bool MapULongBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongBoolean* p_type = static_cast<::MapULongBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16113,6 +16377,9 @@ bool MapULongOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongOctet* p_type = static_cast<::MapULongOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -16294,6 +16561,9 @@ bool MapULongCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongChar* p_type = static_cast<::MapULongChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16477,6 +16747,9 @@ bool MapULongWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongWChar* p_type = static_cast<::MapULongWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -16658,6 +16931,9 @@ bool MapULongStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongString* p_type = static_cast<::MapULongString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16841,6 +17117,9 @@ bool MapULongWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongWString* p_type = static_cast<::MapULongWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -17022,6 +17301,9 @@ bool MapULongInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongInnerAliasBoundedStringHelper* p_type = static_cast<::MapULongInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17205,6 +17487,9 @@ bool MapULongInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongInnerAliasBoundedWStringHelper* p_type = static_cast<::MapULongInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -17386,6 +17671,9 @@ bool MapULongInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongInnerEnumHelper* p_type = static_cast<::MapULongInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17569,6 +17857,9 @@ bool MapULongInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongInnerBitMaskHelper* p_type = static_cast<::MapULongInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -17750,6 +18041,9 @@ bool MapULongInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongInnerAliasHelper* p_type = static_cast<::MapULongInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17933,6 +18227,9 @@ bool MapULongInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongInnerAliasArrayHelper* p_type = static_cast<::MapULongInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -18114,6 +18411,9 @@ bool MapULongInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongInnerAliasSequenceHelper* p_type = static_cast<::MapULongInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18297,6 +18597,9 @@ bool MapULongInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongInnerAliasMapHelper* p_type = static_cast<::MapULongInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -18478,6 +18781,9 @@ bool MapULongInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongInnerUnionHelper* p_type = static_cast<::MapULongInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18661,6 +18967,9 @@ bool MapULongInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongInnerStructureHelper* p_type = static_cast<::MapULongInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -18842,6 +19151,9 @@ bool MapULongInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongInnerBitsetHelper* p_type = static_cast<::MapULongInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -19025,6 +19337,9 @@ bool MapLongLongShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongShort* p_type = static_cast<::MapLongLongShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -19206,6 +19521,9 @@ bool MapLongLongUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongUShort* p_type = static_cast<::MapLongLongUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -19389,6 +19707,9 @@ bool MapLongLongKeyLongValuePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongKeyLongValue* p_type = static_cast<::MapLongLongKeyLongValue*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongKeyLongValue();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -19570,6 +19891,9 @@ bool MapLongLongULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongULong* p_type = static_cast<::MapLongLongULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -19753,6 +20077,9 @@ bool MapLongLongLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongLongLong* p_type = static_cast<::MapLongLongLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -19934,6 +20261,9 @@ bool MapLongLongULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongULongLong* p_type = static_cast<::MapLongLongULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -20117,6 +20447,9 @@ bool MapLongLongFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongFloat* p_type = static_cast<::MapLongLongFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -20298,6 +20631,9 @@ bool MapLongLongKeyDoubleValuePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongKeyDoubleValue* p_type = static_cast<::MapLongLongKeyDoubleValue*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongKeyDoubleValue();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -20481,6 +20817,9 @@ bool MapLongLongLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongLongDouble* p_type = static_cast<::MapLongLongLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -20662,6 +21001,9 @@ bool MapLongLongBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongBoolean* p_type = static_cast<::MapLongLongBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -20845,6 +21187,9 @@ bool MapLongLongOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongOctet* p_type = static_cast<::MapLongLongOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -21026,6 +21371,9 @@ bool MapLongLongCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongChar* p_type = static_cast<::MapLongLongChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -21209,6 +21557,9 @@ bool MapLongLongWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongWChar* p_type = static_cast<::MapLongLongWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -21390,6 +21741,9 @@ bool MapLongLongStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongString* p_type = static_cast<::MapLongLongString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -21573,6 +21927,9 @@ bool MapLongLongWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongWString* p_type = static_cast<::MapLongLongWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -21754,6 +22111,9 @@ bool MapLongLongInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongInnerAliasBoundedStringHelper* p_type = static_cast<::MapLongLongInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -21937,6 +22297,9 @@ bool MapLongLongInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongInnerAliasBoundedWStringHelper* p_type = static_cast<::MapLongLongInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -22118,6 +22481,9 @@ bool MapLongLongInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongInnerEnumHelper* p_type = static_cast<::MapLongLongInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -22301,6 +22667,9 @@ bool MapLongLongInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongInnerBitMaskHelper* p_type = static_cast<::MapLongLongInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -22482,6 +22851,9 @@ bool MapLongLongInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongInnerAliasHelper* p_type = static_cast<::MapLongLongInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -22665,6 +23037,9 @@ bool MapLongLongInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongInnerAliasArrayHelper* p_type = static_cast<::MapLongLongInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -22846,6 +23221,9 @@ bool MapLongLongInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongInnerAliasSequenceHelper* p_type = static_cast<::MapLongLongInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -23029,6 +23407,9 @@ bool MapLongLongInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongInnerAliasMapHelper* p_type = static_cast<::MapLongLongInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -23210,6 +23591,9 @@ bool MapLongLongInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongInnerUnionHelper* p_type = static_cast<::MapLongLongInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -23393,6 +23777,9 @@ bool MapLongLongInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapLongLongInnerStructureHelper* p_type = static_cast<::MapLongLongInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -23574,6 +23961,9 @@ bool MapLongLongInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapLongLongInnerBitsetHelper* p_type = static_cast<::MapLongLongInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapLongLongInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -23757,6 +24147,9 @@ bool MapULongLongShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongShort* p_type = static_cast<::MapULongLongShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -23938,6 +24331,9 @@ bool MapULongLongUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongUShort* p_type = static_cast<::MapULongLongUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -24121,6 +24517,9 @@ bool MapULongLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongLong* p_type = static_cast<::MapULongLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -24302,6 +24701,9 @@ bool MapULongLongULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongULong* p_type = static_cast<::MapULongLongULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -24485,6 +24887,9 @@ bool MapULongLongLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongLongLong* p_type = static_cast<::MapULongLongLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -24666,6 +25071,9 @@ bool MapULongLongULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongULongLong* p_type = static_cast<::MapULongLongULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -24849,6 +25257,9 @@ bool MapULongLongFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongFloat* p_type = static_cast<::MapULongLongFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -25030,6 +25441,9 @@ bool MapKeyULongLongValueDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapKeyULongLongValueDouble* p_type = static_cast<::MapKeyULongLongValueDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapKeyULongLongValueDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -25213,6 +25627,9 @@ bool MapULongLongLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongLongDouble* p_type = static_cast<::MapULongLongLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -25394,6 +25811,9 @@ bool MapULongLongBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongBoolean* p_type = static_cast<::MapULongLongBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -25577,6 +25997,9 @@ bool MapULongLongOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongOctet* p_type = static_cast<::MapULongLongOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -25758,6 +26181,9 @@ bool MapULongLongCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongChar* p_type = static_cast<::MapULongLongChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -25941,6 +26367,9 @@ bool MapULongLongWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongWChar* p_type = static_cast<::MapULongLongWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -26122,6 +26551,9 @@ bool MapULongLongStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongString* p_type = static_cast<::MapULongLongString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -26305,6 +26737,9 @@ bool MapULongLongWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongWString* p_type = static_cast<::MapULongLongWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -26486,6 +26921,9 @@ bool MapULongLongInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongInnerAliasBoundedStringHelper* p_type = static_cast<::MapULongLongInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -26669,6 +27107,9 @@ bool MapULongLongInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongInnerAliasBoundedWStringHelper* p_type = static_cast<::MapULongLongInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -26850,6 +27291,9 @@ bool MapULongLongInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongInnerEnumHelper* p_type = static_cast<::MapULongLongInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -27033,6 +27477,9 @@ bool MapULongLongInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongInnerBitMaskHelper* p_type = static_cast<::MapULongLongInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -27214,6 +27661,9 @@ bool MapULongLongInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongInnerAliasHelper* p_type = static_cast<::MapULongLongInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -27397,6 +27847,9 @@ bool MapULongLongInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongInnerAliasArrayHelper* p_type = static_cast<::MapULongLongInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -27578,6 +28031,9 @@ bool MapULongLongInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongInnerAliasSequenceHelper* p_type = static_cast<::MapULongLongInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -27761,6 +28217,9 @@ bool MapULongLongInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongInnerAliasMapHelper* p_type = static_cast<::MapULongLongInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -27942,6 +28401,9 @@ bool MapULongLongInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongInnerUnionHelper* p_type = static_cast<::MapULongLongInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -28125,6 +28587,9 @@ bool MapULongLongInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapULongLongInnerStructureHelper* p_type = static_cast<::MapULongLongInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -28306,6 +28771,9 @@ bool MapULongLongInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapULongLongInnerBitsetHelper* p_type = static_cast<::MapULongLongInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapULongLongInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -28489,6 +28957,9 @@ bool MapStringShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringShort* p_type = static_cast<::MapStringShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -28670,6 +29141,9 @@ bool MapStringUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringUShort* p_type = static_cast<::MapStringUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -28853,6 +29327,9 @@ bool MapStringLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringLong* p_type = static_cast<::MapStringLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -29034,6 +29511,9 @@ bool MapStringULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringULong* p_type = static_cast<::MapStringULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -29217,6 +29697,9 @@ bool MapStringLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringLongLong* p_type = static_cast<::MapStringLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -29398,6 +29881,9 @@ bool MapStringULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringULongLong* p_type = static_cast<::MapStringULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -29581,6 +30067,9 @@ bool MapStringFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringFloat* p_type = static_cast<::MapStringFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -29762,6 +30251,9 @@ bool MapStringDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringDouble* p_type = static_cast<::MapStringDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -29945,6 +30437,9 @@ bool MapStringLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringLongDouble* p_type = static_cast<::MapStringLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -30126,6 +30621,9 @@ bool MapStringBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringBoolean* p_type = static_cast<::MapStringBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -30309,6 +30807,9 @@ bool MapStringOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringOctet* p_type = static_cast<::MapStringOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -30490,6 +30991,9 @@ bool MapStringCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringChar* p_type = static_cast<::MapStringChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -30673,6 +31177,9 @@ bool MapStringWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringWChar* p_type = static_cast<::MapStringWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -30854,6 +31361,9 @@ bool MapStringStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringString* p_type = static_cast<::MapStringString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -31037,6 +31547,9 @@ bool MapStringWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringWString* p_type = static_cast<::MapStringWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -31218,6 +31731,9 @@ bool MapStringInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringInnerAliasBoundedStringHelper* p_type = static_cast<::MapStringInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -31401,6 +31917,9 @@ bool MapStringInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringInnerAliasBoundedWStringHelper* p_type = static_cast<::MapStringInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -31582,6 +32101,9 @@ bool MapStringInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringInnerEnumHelper* p_type = static_cast<::MapStringInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -31765,6 +32287,9 @@ bool MapStringInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringInnerBitMaskHelper* p_type = static_cast<::MapStringInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -31946,6 +32471,9 @@ bool MapStringInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringInnerAliasHelper* p_type = static_cast<::MapStringInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -32129,6 +32657,9 @@ bool MapStringInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringInnerAliasArrayHelper* p_type = static_cast<::MapStringInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -32310,6 +32841,9 @@ bool MapStringInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringInnerAliasSequenceHelper* p_type = static_cast<::MapStringInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -32493,6 +33027,9 @@ bool MapStringInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringInnerAliasMapHelper* p_type = static_cast<::MapStringInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -32674,6 +33211,9 @@ bool MapStringInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringInnerUnionHelper* p_type = static_cast<::MapStringInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -32857,6 +33397,9 @@ bool MapStringInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapStringInnerStructureHelper* p_type = static_cast<::MapStringInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapStringInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -33038,6 +33581,9 @@ bool MapStringInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapStringInnerBitsetHelper* p_type = static_cast<::MapStringInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapStringInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -33221,6 +33767,9 @@ bool MapWStringShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringShort* p_type = static_cast<::MapWStringShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -33402,6 +33951,9 @@ bool MapWStringUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringUShort* p_type = static_cast<::MapWStringUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -33585,6 +34137,9 @@ bool MapWStringLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringLong* p_type = static_cast<::MapWStringLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -33766,6 +34321,9 @@ bool MapWStringULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringULong* p_type = static_cast<::MapWStringULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -33949,6 +34507,9 @@ bool MapWStringLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringLongLong* p_type = static_cast<::MapWStringLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -34130,6 +34691,9 @@ bool MapWStringULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringULongLong* p_type = static_cast<::MapWStringULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -34313,6 +34877,9 @@ bool MapWStringFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringFloat* p_type = static_cast<::MapWStringFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -34494,6 +35061,9 @@ bool MapWStringDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringDouble* p_type = static_cast<::MapWStringDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -34677,6 +35247,9 @@ bool MapWStringLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringLongDouble* p_type = static_cast<::MapWStringLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -34858,6 +35431,9 @@ bool MapWStringBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringBoolean* p_type = static_cast<::MapWStringBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -35041,6 +35617,9 @@ bool MapWStringOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringOctet* p_type = static_cast<::MapWStringOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -35222,6 +35801,9 @@ bool MapWStringCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringChar* p_type = static_cast<::MapWStringChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -35405,6 +35987,9 @@ bool MapWStringWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringWChar* p_type = static_cast<::MapWStringWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -35586,6 +36171,9 @@ bool MapWStringStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringString* p_type = static_cast<::MapWStringString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -35769,6 +36357,9 @@ bool MapWStringWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringWString* p_type = static_cast<::MapWStringWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -35950,6 +36541,9 @@ bool MapWStringInnerAliasBoundedStringHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringInnerAliasBoundedStringHelper* p_type = static_cast<::MapWStringInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -36133,6 +36727,9 @@ bool MapWStringInnerAliasBoundedWStringHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringInnerAliasBoundedWStringHelper* p_type = static_cast<::MapWStringInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -36314,6 +36911,9 @@ bool MapWStringInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringInnerEnumHelper* p_type = static_cast<::MapWStringInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -36497,6 +37097,9 @@ bool MapWStringInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringInnerBitMaskHelper* p_type = static_cast<::MapWStringInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -36678,6 +37281,9 @@ bool MapWStringInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringInnerAliasHelper* p_type = static_cast<::MapWStringInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -36861,6 +37467,9 @@ bool MapWStringInnerAliasArrayHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringInnerAliasArrayHelper* p_type = static_cast<::MapWStringInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -37042,6 +37651,9 @@ bool MapWStringInnerAliasSequenceHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringInnerAliasSequenceHelper* p_type = static_cast<::MapWStringInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -37225,6 +37837,9 @@ bool MapWStringInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringInnerAliasMapHelper* p_type = static_cast<::MapWStringInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -37406,6 +38021,9 @@ bool MapWStringInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringInnerUnionHelper* p_type = static_cast<::MapWStringInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -37589,6 +38207,9 @@ bool MapWStringInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapWStringInnerStructureHelper* p_type = static_cast<::MapWStringInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapWStringInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -37770,6 +38391,9 @@ bool MapWStringInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapWStringInnerBitsetHelper* p_type = static_cast<::MapWStringInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapWStringInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -37953,6 +38577,9 @@ bool MapInnerAliasBoundedStringHelperShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperShort* p_type = static_cast<::MapInnerAliasBoundedStringHelperShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -38134,6 +38761,9 @@ bool MapInnerAliasBoundedStringHelperUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperUShort* p_type = static_cast<::MapInnerAliasBoundedStringHelperUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -38317,6 +38947,9 @@ bool MapInnerAliasBoundedStringHelperLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperLong* p_type = static_cast<::MapInnerAliasBoundedStringHelperLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -38498,6 +39131,9 @@ bool MapInnerAliasBoundedStringHelperULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperULong* p_type = static_cast<::MapInnerAliasBoundedStringHelperULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -38681,6 +39317,9 @@ bool MapInnerAliasBoundedStringHelperLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperLongLong* p_type = static_cast<::MapInnerAliasBoundedStringHelperLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -38862,6 +39501,9 @@ bool MapInnerAliasBoundedStringHelperULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperULongLong* p_type = static_cast<::MapInnerAliasBoundedStringHelperULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -39045,6 +39687,9 @@ bool MapInnerAliasBoundedStringHelperFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperFloat* p_type = static_cast<::MapInnerAliasBoundedStringHelperFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -39226,6 +39871,9 @@ bool MapInnerAliasBoundedStringHelperDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperDouble* p_type = static_cast<::MapInnerAliasBoundedStringHelperDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -39409,6 +40057,9 @@ bool MapInnerAliasBoundedStringHelperLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperLongDouble* p_type = static_cast<::MapInnerAliasBoundedStringHelperLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -39590,6 +40241,9 @@ bool MapInnerAliasBoundedStringHelperBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperBoolean* p_type = static_cast<::MapInnerAliasBoundedStringHelperBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -39773,6 +40427,9 @@ bool MapInnerAliasBoundedStringHelperOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperOctet* p_type = static_cast<::MapInnerAliasBoundedStringHelperOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -39954,6 +40611,9 @@ bool MapInnerAliasBoundedStringHelperCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperChar* p_type = static_cast<::MapInnerAliasBoundedStringHelperChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -40137,6 +40797,9 @@ bool MapInnerAliasBoundedStringHelperWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperWChar* p_type = static_cast<::MapInnerAliasBoundedStringHelperWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -40318,6 +40981,9 @@ bool MapInnerAliasBoundedStringHelperStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperString* p_type = static_cast<::MapInnerAliasBoundedStringHelperString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -40501,6 +41167,9 @@ bool MapInnerAliasBoundedStringHelperWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperWString* p_type = static_cast<::MapInnerAliasBoundedStringHelperWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -40682,6 +41351,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelperPubSubType::de
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -40865,6 +41537,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelperPubSubType::d
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -41046,6 +41721,9 @@ bool MapInnerAliasBoundedStringHelperInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerEnumHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -41229,6 +41907,9 @@ bool MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerBitMaskHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -41410,6 +42091,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerAliasHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -41593,6 +42277,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType::deserializ
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerAliasArrayHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -41774,6 +42461,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType::deseria
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -41957,6 +42647,9 @@ bool MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerAliasMapHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -42138,6 +42831,9 @@ bool MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerUnionHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -42321,6 +43017,9 @@ bool MapInnerAliasBoundedStringHelperInnerStructureHelperPubSubType::deserialize
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerStructureHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -42502,6 +43201,9 @@ bool MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedStringHelperInnerBitsetHelper* p_type = static_cast<::MapInnerAliasBoundedStringHelperInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedStringHelperInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -42685,6 +43387,9 @@ bool MapInnerAliasBoundedWStringHelperShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperShort* p_type = static_cast<::MapInnerAliasBoundedWStringHelperShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -42866,6 +43571,9 @@ bool MapInnerAliasBoundedWStringHelperUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperUShort* p_type = static_cast<::MapInnerAliasBoundedWStringHelperUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -43049,6 +43757,9 @@ bool MapInnerAliasBoundedWStringHelperLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperLong* p_type = static_cast<::MapInnerAliasBoundedWStringHelperLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -43230,6 +43941,9 @@ bool MapInnerAliasBoundedWStringHelperULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperULong* p_type = static_cast<::MapInnerAliasBoundedWStringHelperULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -43413,6 +44127,9 @@ bool MapInnerAliasBoundedWStringHelperLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperLongLong* p_type = static_cast<::MapInnerAliasBoundedWStringHelperLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -43594,6 +44311,9 @@ bool MapInnerAliasBoundedWStringHelperULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperULongLong* p_type = static_cast<::MapInnerAliasBoundedWStringHelperULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -43777,6 +44497,9 @@ bool MapInnerAliasBoundedWStringHelperFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperFloat* p_type = static_cast<::MapInnerAliasBoundedWStringHelperFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -43958,6 +44681,9 @@ bool MapInnerAliasBoundedWStringHelperDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperDouble* p_type = static_cast<::MapInnerAliasBoundedWStringHelperDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -44141,6 +44867,9 @@ bool MapInnerAliasBoundedWStringHelperLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperLongDouble* p_type = static_cast<::MapInnerAliasBoundedWStringHelperLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -44322,6 +45051,9 @@ bool MapInnerAliasBoundedWStringHelperBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperBoolean* p_type = static_cast<::MapInnerAliasBoundedWStringHelperBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -44505,6 +45237,9 @@ bool MapInnerAliasBoundedWStringHelperOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperOctet* p_type = static_cast<::MapInnerAliasBoundedWStringHelperOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -44686,6 +45421,9 @@ bool MapInnerAliasBoundedWStringHelperCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperChar* p_type = static_cast<::MapInnerAliasBoundedWStringHelperChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -44869,6 +45607,9 @@ bool MapInnerAliasBoundedWStringHelperWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperWChar* p_type = static_cast<::MapInnerAliasBoundedWStringHelperWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -45050,6 +45791,9 @@ bool MapInnerAliasBoundedWStringHelperStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperString* p_type = static_cast<::MapInnerAliasBoundedWStringHelperString*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -45233,6 +45977,9 @@ bool MapInnerAliasBoundedWStringHelperWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperWString* p_type = static_cast<::MapInnerAliasBoundedWStringHelperWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -45414,6 +46161,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelperPubSubType::d
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerAliasBoundedStringHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -45597,6 +46347,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelperPubSubType::
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerAliasBoundedWStringHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -45778,6 +46531,9 @@ bool MapInnerAliasBoundedWStringHelperInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerEnumHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -45961,6 +46717,9 @@ bool MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerBitMaskHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -46142,6 +46901,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerAliasHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -46325,6 +47087,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType::deseriali
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -46506,6 +47271,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType::deseri
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -46689,6 +47457,9 @@ bool MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType::deserialize
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerAliasMapHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerAliasMapHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerAliasMapHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -46870,6 +47641,9 @@ bool MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerUnionHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -47053,6 +47827,9 @@ bool MapInnerAliasBoundedWStringHelperInnerStructureHelperPubSubType::deserializ
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerStructureHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -47234,6 +48011,9 @@ bool MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::MapInnerAliasBoundedWStringHelperInnerBitsetHelper* p_type = static_cast<::MapInnerAliasBoundedWStringHelperInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::MapInnerAliasBoundedWStringHelperInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -47417,6 +48197,9 @@ bool BoundedSmallMapPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::BoundedSmallMap* p_type = static_cast<::BoundedSmallMap*>(data);
 
+        // Call default constructor
+        new (p_type) ::BoundedSmallMap();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -47598,6 +48381,9 @@ bool BoundedLargeMapPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::BoundedLargeMap* p_type = static_cast<::BoundedLargeMap*>(data);
+
+        // Call default constructor
+        new (p_type) ::BoundedLargeMap();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

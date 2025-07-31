@@ -97,6 +97,9 @@ bool UnboundedHelloWorldPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnboundedHelloWorld* p_type = static_cast<::UnboundedHelloWorld*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnboundedHelloWorld();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

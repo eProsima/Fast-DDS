@@ -97,6 +97,9 @@ bool GrandparentStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::GrandparentStruct* p_type = static_cast<::GrandparentStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::GrandparentStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool ParentStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ParentStruct* p_type = static_cast<::ParentStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::ParentStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool NestedStructElementPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::NestedStructElement* p_type = static_cast<::NestedStructElement*>(data);
 
+        // Call default constructor
+        new (p_type) ::NestedStructElement();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool StructStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructStruct* p_type = static_cast<::StructStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

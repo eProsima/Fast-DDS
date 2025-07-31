@@ -97,6 +97,9 @@ bool StringStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StringStruct* p_type = static_cast<::StringStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::StringStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool WStringStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::WStringStruct* p_type = static_cast<::WStringStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::WStringStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool SmallStringStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::SmallStringStruct* p_type = static_cast<::SmallStringStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::SmallStringStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool SmallWStringStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::SmallWStringStruct* p_type = static_cast<::SmallWStringStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::SmallWStringStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool LargeStringStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::LargeStringStruct* p_type = static_cast<::LargeStringStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::LargeStringStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool LargeWStringStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::LargeWStringStruct* p_type = static_cast<::LargeWStringStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::LargeWStringStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

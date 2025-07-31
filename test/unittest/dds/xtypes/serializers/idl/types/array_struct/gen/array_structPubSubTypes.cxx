@@ -97,6 +97,9 @@ bool NestedArrayElementPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::NestedArrayElement* p_type = static_cast<::NestedArrayElement*>(data);
 
+        // Call default constructor
+        new (p_type) ::NestedArrayElement();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -279,6 +282,9 @@ bool ComplexArrayElementPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ComplexArrayElement* p_type = static_cast<::ComplexArrayElement*>(data);
 
+        // Call default constructor
+        new (p_type) ::ComplexArrayElement();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -460,6 +466,9 @@ bool ArrayStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ArrayStruct* p_type = static_cast<::ArrayStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::ArrayStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

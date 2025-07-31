@@ -97,6 +97,9 @@ bool StringTestPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StringTest* p_type = static_cast<::StringTest*>(data);
 
+        // Call default constructor
+        new (p_type) ::StringTest();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

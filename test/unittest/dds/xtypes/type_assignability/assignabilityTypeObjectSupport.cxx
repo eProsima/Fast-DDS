@@ -37,7 +37,1583 @@
 
 using namespace eprosima::fastdds::dds::xtypes;
 
+namespace DifferentNumberElements {
+namespace Final {
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_OneElement_type_identifier(
+        TypeIdentifierPair& type_ids_OneElement)
+{
+
+    ReturnCode_t return_code_OneElement {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_OneElement =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Final::OneElement", type_ids_OneElement);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_OneElement)
+    {
+        StructTypeFlag struct_flags_OneElement = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_OneElement = "DifferentNumberElements::Final::OneElement";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_OneElement;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_OneElement;
+        AppliedAnnotationSeq tmp_ann_custom_OneElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_OneElement;
+        if (!tmp_ann_custom_OneElement.empty())
+        {
+            ann_custom_OneElement = tmp_ann_custom_OneElement;
+        }
+
+        CompleteTypeDetail detail_OneElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_OneElement, ann_custom_OneElement, type_name_OneElement.to_string());
+        CompleteStructHeader header_OneElement;
+        header_OneElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_OneElement);
+        CompleteStructMemberSeq member_seq_OneElement;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_OneElement.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_OneElement);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_OneElement, member_a);
+        }
+        CompleteStructType struct_type_OneElement = TypeObjectUtils::build_complete_struct_type(struct_flags_OneElement, header_OneElement, member_seq_OneElement);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_OneElement, type_name_OneElement.to_string(), type_ids_OneElement))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Final::OneElement already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_TwoElements_type_identifier(
+        TypeIdentifierPair& type_ids_TwoElements)
+{
+
+    ReturnCode_t return_code_TwoElements {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_TwoElements =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Final::TwoElements", type_ids_TwoElements);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_TwoElements)
+    {
+        StructTypeFlag struct_flags_TwoElements = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_TwoElements = "DifferentNumberElements::Final::TwoElements";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_TwoElements;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_TwoElements;
+        AppliedAnnotationSeq tmp_ann_custom_TwoElements;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_TwoElements;
+        if (!tmp_ann_custom_TwoElements.empty())
+        {
+            ann_custom_TwoElements = tmp_ann_custom_TwoElements;
+        }
+
+        CompleteTypeDetail detail_TwoElements = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_TwoElements, ann_custom_TwoElements, type_name_TwoElements.to_string());
+        CompleteStructHeader header_TwoElements;
+        header_TwoElements = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_TwoElements);
+        CompleteStructMemberSeq member_seq_TwoElements;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_TwoElements.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_TwoElements);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TwoElements, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000001;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_TwoElements.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_TwoElements);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TwoElements, member_b);
+        }
+        CompleteStructType struct_type_TwoElements = TypeObjectUtils::build_complete_struct_type(struct_flags_TwoElements, header_TwoElements, member_seq_TwoElements);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_TwoElements, type_name_TwoElements.to_string(), type_ids_TwoElements))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Final::TwoElements already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ElementsTwo_type_identifier(
+        TypeIdentifierPair& type_ids_ElementsTwo)
+{
+
+    ReturnCode_t return_code_ElementsTwo {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ElementsTwo =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Final::ElementsTwo", type_ids_ElementsTwo);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ElementsTwo)
+    {
+        StructTypeFlag struct_flags_ElementsTwo = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_ElementsTwo = "DifferentNumberElements::Final::ElementsTwo";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ElementsTwo;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ElementsTwo;
+        AppliedAnnotationSeq tmp_ann_custom_ElementsTwo;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ElementsTwo;
+        if (!tmp_ann_custom_ElementsTwo.empty())
+        {
+            ann_custom_ElementsTwo = tmp_ann_custom_ElementsTwo;
+        }
+
+        CompleteTypeDetail detail_ElementsTwo = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ElementsTwo, ann_custom_ElementsTwo, type_name_ElementsTwo.to_string());
+        CompleteStructHeader header_ElementsTwo;
+        header_ElementsTwo = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ElementsTwo);
+        CompleteStructMemberSeq member_seq_ElementsTwo;
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000000;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ElementsTwo.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ElementsTwo);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsTwo, member_b);
+        }
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000001;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ElementsTwo.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ElementsTwo);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsTwo, member_a);
+        }
+        CompleteStructType struct_type_ElementsTwo = TypeObjectUtils::build_complete_struct_type(struct_flags_ElementsTwo, header_ElementsTwo, member_seq_ElementsTwo);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ElementsTwo, type_name_ElementsTwo.to_string(), type_ids_ElementsTwo))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Final::ElementsTwo already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ThreeElements_type_identifier(
+        TypeIdentifierPair& type_ids_ThreeElements)
+{
+
+    ReturnCode_t return_code_ThreeElements {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ThreeElements =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Final::ThreeElements", type_ids_ThreeElements);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ThreeElements)
+    {
+        StructTypeFlag struct_flags_ThreeElements = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_ThreeElements = "DifferentNumberElements::Final::ThreeElements";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ThreeElements;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ThreeElements;
+        AppliedAnnotationSeq tmp_ann_custom_ThreeElements;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ThreeElements;
+        if (!tmp_ann_custom_ThreeElements.empty())
+        {
+            ann_custom_ThreeElements = tmp_ann_custom_ThreeElements;
+        }
+
+        CompleteTypeDetail detail_ThreeElements = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ThreeElements, ann_custom_ThreeElements, type_name_ThreeElements.to_string());
+        CompleteStructHeader header_ThreeElements;
+        header_ThreeElements = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ThreeElements);
+        CompleteStructMemberSeq member_seq_ThreeElements;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ThreeElements);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000001;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ThreeElements);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_b);
+        }
+        {
+            TypeIdentifierPair type_ids_s;
+            ReturnCode_t return_code_s {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_s)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_s))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_s = 0x00000002;
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_s = "s";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_s;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_s = TypeObjectUtils::build_complete_member_detail(name_s, member_ann_builtin_s, ann_custom_ThreeElements);
+            CompleteStructMember member_s = TypeObjectUtils::build_complete_struct_member(common_s, detail_s);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_s);
+        }
+        CompleteStructType struct_type_ThreeElements = TypeObjectUtils::build_complete_struct_type(struct_flags_ThreeElements, header_ThreeElements, member_seq_ThreeElements);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ThreeElements, type_name_ThreeElements.to_string(), type_ids_ThreeElements))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Final::ThreeElements already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ElementsThree_type_identifier(
+        TypeIdentifierPair& type_ids_ElementsThree)
+{
+
+    ReturnCode_t return_code_ElementsThree {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ElementsThree =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Final::ElementsThree", type_ids_ElementsThree);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ElementsThree)
+    {
+        StructTypeFlag struct_flags_ElementsThree = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_ElementsThree = "DifferentNumberElements::Final::ElementsThree";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ElementsThree;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ElementsThree;
+        AppliedAnnotationSeq tmp_ann_custom_ElementsThree;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ElementsThree;
+        if (!tmp_ann_custom_ElementsThree.empty())
+        {
+            ann_custom_ElementsThree = tmp_ann_custom_ElementsThree;
+        }
+
+        CompleteTypeDetail detail_ElementsThree = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ElementsThree, ann_custom_ElementsThree, type_name_ElementsThree.to_string());
+        CompleteStructHeader header_ElementsThree;
+        header_ElementsThree = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ElementsThree);
+        CompleteStructMemberSeq member_seq_ElementsThree;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ElementsThree);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_s;
+            ReturnCode_t return_code_s {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_s)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_s))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_s = 0x00000001;
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_s = "s";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_s;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_s = TypeObjectUtils::build_complete_member_detail(name_s, member_ann_builtin_s, ann_custom_ElementsThree);
+            CompleteStructMember member_s = TypeObjectUtils::build_complete_struct_member(common_s, detail_s);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_s);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000002;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ElementsThree);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_b);
+        }
+        CompleteStructType struct_type_ElementsThree = TypeObjectUtils::build_complete_struct_type(struct_flags_ElementsThree, header_ElementsThree, member_seq_ElementsThree);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ElementsThree, type_name_ElementsThree.to_string(), type_ids_ElementsThree))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Final::ElementsThree already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+} // namespace Final
+namespace Appendable {
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_OneElement_type_identifier(
+        TypeIdentifierPair& type_ids_OneElement)
+{
+
+    ReturnCode_t return_code_OneElement {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_OneElement =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Appendable::OneElement", type_ids_OneElement);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_OneElement)
+    {
+        StructTypeFlag struct_flags_OneElement = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_OneElement = "DifferentNumberElements::Appendable::OneElement";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_OneElement;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_OneElement;
+        AppliedAnnotationSeq tmp_ann_custom_OneElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_OneElement;
+        if (!tmp_ann_custom_OneElement.empty())
+        {
+            ann_custom_OneElement = tmp_ann_custom_OneElement;
+        }
+
+        CompleteTypeDetail detail_OneElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_OneElement, ann_custom_OneElement, type_name_OneElement.to_string());
+        CompleteStructHeader header_OneElement;
+        header_OneElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_OneElement);
+        CompleteStructMemberSeq member_seq_OneElement;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_OneElement.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_OneElement);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_OneElement, member_a);
+        }
+        CompleteStructType struct_type_OneElement = TypeObjectUtils::build_complete_struct_type(struct_flags_OneElement, header_OneElement, member_seq_OneElement);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_OneElement, type_name_OneElement.to_string(), type_ids_OneElement))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Appendable::OneElement already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_TwoElements_type_identifier(
+        TypeIdentifierPair& type_ids_TwoElements)
+{
+
+    ReturnCode_t return_code_TwoElements {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_TwoElements =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Appendable::TwoElements", type_ids_TwoElements);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_TwoElements)
+    {
+        StructTypeFlag struct_flags_TwoElements = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_TwoElements = "DifferentNumberElements::Appendable::TwoElements";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_TwoElements;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_TwoElements;
+        AppliedAnnotationSeq tmp_ann_custom_TwoElements;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_TwoElements;
+        if (!tmp_ann_custom_TwoElements.empty())
+        {
+            ann_custom_TwoElements = tmp_ann_custom_TwoElements;
+        }
+
+        CompleteTypeDetail detail_TwoElements = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_TwoElements, ann_custom_TwoElements, type_name_TwoElements.to_string());
+        CompleteStructHeader header_TwoElements;
+        header_TwoElements = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_TwoElements);
+        CompleteStructMemberSeq member_seq_TwoElements;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_TwoElements.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_TwoElements);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TwoElements, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000001;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_TwoElements.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_TwoElements);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TwoElements, member_b);
+        }
+        CompleteStructType struct_type_TwoElements = TypeObjectUtils::build_complete_struct_type(struct_flags_TwoElements, header_TwoElements, member_seq_TwoElements);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_TwoElements, type_name_TwoElements.to_string(), type_ids_TwoElements))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Appendable::TwoElements already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ElementsTwo_type_identifier(
+        TypeIdentifierPair& type_ids_ElementsTwo)
+{
+
+    ReturnCode_t return_code_ElementsTwo {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ElementsTwo =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Appendable::ElementsTwo", type_ids_ElementsTwo);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ElementsTwo)
+    {
+        StructTypeFlag struct_flags_ElementsTwo = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_ElementsTwo = "DifferentNumberElements::Appendable::ElementsTwo";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ElementsTwo;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ElementsTwo;
+        AppliedAnnotationSeq tmp_ann_custom_ElementsTwo;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ElementsTwo;
+        if (!tmp_ann_custom_ElementsTwo.empty())
+        {
+            ann_custom_ElementsTwo = tmp_ann_custom_ElementsTwo;
+        }
+
+        CompleteTypeDetail detail_ElementsTwo = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ElementsTwo, ann_custom_ElementsTwo, type_name_ElementsTwo.to_string());
+        CompleteStructHeader header_ElementsTwo;
+        header_ElementsTwo = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ElementsTwo);
+        CompleteStructMemberSeq member_seq_ElementsTwo;
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000000;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ElementsTwo.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ElementsTwo);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsTwo, member_b);
+        }
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000001;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ElementsTwo.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ElementsTwo);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsTwo, member_a);
+        }
+        CompleteStructType struct_type_ElementsTwo = TypeObjectUtils::build_complete_struct_type(struct_flags_ElementsTwo, header_ElementsTwo, member_seq_ElementsTwo);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ElementsTwo, type_name_ElementsTwo.to_string(), type_ids_ElementsTwo))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Appendable::ElementsTwo already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ThreeElements_type_identifier(
+        TypeIdentifierPair& type_ids_ThreeElements)
+{
+
+    ReturnCode_t return_code_ThreeElements {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ThreeElements =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Appendable::ThreeElements", type_ids_ThreeElements);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ThreeElements)
+    {
+        StructTypeFlag struct_flags_ThreeElements = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_ThreeElements = "DifferentNumberElements::Appendable::ThreeElements";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ThreeElements;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ThreeElements;
+        AppliedAnnotationSeq tmp_ann_custom_ThreeElements;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ThreeElements;
+        if (!tmp_ann_custom_ThreeElements.empty())
+        {
+            ann_custom_ThreeElements = tmp_ann_custom_ThreeElements;
+        }
+
+        CompleteTypeDetail detail_ThreeElements = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ThreeElements, ann_custom_ThreeElements, type_name_ThreeElements.to_string());
+        CompleteStructHeader header_ThreeElements;
+        header_ThreeElements = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ThreeElements);
+        CompleteStructMemberSeq member_seq_ThreeElements;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ThreeElements);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000001;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ThreeElements);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_b);
+        }
+        {
+            TypeIdentifierPair type_ids_s;
+            ReturnCode_t return_code_s {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_s)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_s))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_s = 0x00000002;
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_s = "s";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_s;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_s = TypeObjectUtils::build_complete_member_detail(name_s, member_ann_builtin_s, ann_custom_ThreeElements);
+            CompleteStructMember member_s = TypeObjectUtils::build_complete_struct_member(common_s, detail_s);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_s);
+        }
+        CompleteStructType struct_type_ThreeElements = TypeObjectUtils::build_complete_struct_type(struct_flags_ThreeElements, header_ThreeElements, member_seq_ThreeElements);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ThreeElements, type_name_ThreeElements.to_string(), type_ids_ThreeElements))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Appendable::ThreeElements already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ElementsThree_type_identifier(
+        TypeIdentifierPair& type_ids_ElementsThree)
+{
+
+    ReturnCode_t return_code_ElementsThree {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ElementsThree =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Appendable::ElementsThree", type_ids_ElementsThree);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ElementsThree)
+    {
+        StructTypeFlag struct_flags_ElementsThree = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_ElementsThree = "DifferentNumberElements::Appendable::ElementsThree";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ElementsThree;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ElementsThree;
+        AppliedAnnotationSeq tmp_ann_custom_ElementsThree;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ElementsThree;
+        if (!tmp_ann_custom_ElementsThree.empty())
+        {
+            ann_custom_ElementsThree = tmp_ann_custom_ElementsThree;
+        }
+
+        CompleteTypeDetail detail_ElementsThree = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ElementsThree, ann_custom_ElementsThree, type_name_ElementsThree.to_string());
+        CompleteStructHeader header_ElementsThree;
+        header_ElementsThree = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ElementsThree);
+        CompleteStructMemberSeq member_seq_ElementsThree;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ElementsThree);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_s;
+            ReturnCode_t return_code_s {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_s)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_s))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_s = 0x00000001;
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_s = "s";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_s;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_s = TypeObjectUtils::build_complete_member_detail(name_s, member_ann_builtin_s, ann_custom_ElementsThree);
+            CompleteStructMember member_s = TypeObjectUtils::build_complete_struct_member(common_s, detail_s);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_s);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x00000002;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ElementsThree);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_b);
+        }
+        CompleteStructType struct_type_ElementsThree = TypeObjectUtils::build_complete_struct_type(struct_flags_ElementsThree, header_ElementsThree, member_seq_ElementsThree);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ElementsThree, type_name_ElementsThree.to_string(), type_ids_ElementsThree))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Appendable::ElementsThree already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+} // namespace Appendable
+namespace Mutable {
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_OneElement_type_identifier(
+        TypeIdentifierPair& type_ids_OneElement)
+{
+
+    ReturnCode_t return_code_OneElement {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_OneElement =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Mutable::OneElement", type_ids_OneElement);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_OneElement)
+    {
+        StructTypeFlag struct_flags_OneElement = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, true);
+        QualifiedTypeName type_name_OneElement = "DifferentNumberElements::Mutable::OneElement";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_OneElement;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_OneElement;
+        AppliedAnnotationSeq tmp_ann_custom_OneElement;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_OneElement;
+        if (!tmp_ann_custom_OneElement.empty())
+        {
+            ann_custom_OneElement = tmp_ann_custom_OneElement;
+        }
+
+        CompleteTypeDetail detail_OneElement = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_OneElement, ann_custom_OneElement, type_name_OneElement.to_string());
+        CompleteStructHeader header_OneElement;
+        header_OneElement = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_OneElement);
+        CompleteStructMemberSeq member_seq_OneElement;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x0975c10c;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_OneElement.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_OneElement);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_OneElement, member_a);
+        }
+        CompleteStructType struct_type_OneElement = TypeObjectUtils::build_complete_struct_type(struct_flags_OneElement, header_OneElement, member_seq_OneElement);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_OneElement, type_name_OneElement.to_string(), type_ids_OneElement))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Mutable::OneElement already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_TwoElements_type_identifier(
+        TypeIdentifierPair& type_ids_TwoElements)
+{
+
+    ReturnCode_t return_code_TwoElements {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_TwoElements =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Mutable::TwoElements", type_ids_TwoElements);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_TwoElements)
+    {
+        StructTypeFlag struct_flags_TwoElements = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, true);
+        QualifiedTypeName type_name_TwoElements = "DifferentNumberElements::Mutable::TwoElements";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_TwoElements;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_TwoElements;
+        AppliedAnnotationSeq tmp_ann_custom_TwoElements;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_TwoElements;
+        if (!tmp_ann_custom_TwoElements.empty())
+        {
+            ann_custom_TwoElements = tmp_ann_custom_TwoElements;
+        }
+
+        CompleteTypeDetail detail_TwoElements = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_TwoElements, ann_custom_TwoElements, type_name_TwoElements.to_string());
+        CompleteStructHeader header_TwoElements;
+        header_TwoElements = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_TwoElements);
+        CompleteStructMemberSeq member_seq_TwoElements;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x0975c10c;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_TwoElements.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_TwoElements);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TwoElements, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x0e5feb92;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_TwoElements.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_TwoElements);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TwoElements, member_b);
+        }
+        CompleteStructType struct_type_TwoElements = TypeObjectUtils::build_complete_struct_type(struct_flags_TwoElements, header_TwoElements, member_seq_TwoElements);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_TwoElements, type_name_TwoElements.to_string(), type_ids_TwoElements))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Mutable::TwoElements already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ElementsTwo_type_identifier(
+        TypeIdentifierPair& type_ids_ElementsTwo)
+{
+
+    ReturnCode_t return_code_ElementsTwo {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ElementsTwo =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Mutable::ElementsTwo", type_ids_ElementsTwo);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ElementsTwo)
+    {
+        StructTypeFlag struct_flags_ElementsTwo = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, true);
+        QualifiedTypeName type_name_ElementsTwo = "DifferentNumberElements::Mutable::ElementsTwo";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ElementsTwo;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ElementsTwo;
+        AppliedAnnotationSeq tmp_ann_custom_ElementsTwo;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ElementsTwo;
+        if (!tmp_ann_custom_ElementsTwo.empty())
+        {
+            ann_custom_ElementsTwo = tmp_ann_custom_ElementsTwo;
+        }
+
+        CompleteTypeDetail detail_ElementsTwo = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ElementsTwo, ann_custom_ElementsTwo, type_name_ElementsTwo.to_string());
+        CompleteStructHeader header_ElementsTwo;
+        header_ElementsTwo = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ElementsTwo);
+        CompleteStructMemberSeq member_seq_ElementsTwo;
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x0e5feb92;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ElementsTwo.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ElementsTwo);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsTwo, member_b);
+        }
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x0975c10c;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ElementsTwo.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ElementsTwo);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsTwo, member_a);
+        }
+        CompleteStructType struct_type_ElementsTwo = TypeObjectUtils::build_complete_struct_type(struct_flags_ElementsTwo, header_ElementsTwo, member_seq_ElementsTwo);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ElementsTwo, type_name_ElementsTwo.to_string(), type_ids_ElementsTwo))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Mutable::ElementsTwo already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ThreeElements_type_identifier(
+        TypeIdentifierPair& type_ids_ThreeElements)
+{
+
+    ReturnCode_t return_code_ThreeElements {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ThreeElements =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Mutable::ThreeElements", type_ids_ThreeElements);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ThreeElements)
+    {
+        StructTypeFlag struct_flags_ThreeElements = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, true);
+        QualifiedTypeName type_name_ThreeElements = "DifferentNumberElements::Mutable::ThreeElements";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ThreeElements;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ThreeElements;
+        AppliedAnnotationSeq tmp_ann_custom_ThreeElements;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ThreeElements;
+        if (!tmp_ann_custom_ThreeElements.empty())
+        {
+            ann_custom_ThreeElements = tmp_ann_custom_ThreeElements;
+        }
+
+        CompleteTypeDetail detail_ThreeElements = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ThreeElements, ann_custom_ThreeElements, type_name_ThreeElements.to_string());
+        CompleteStructHeader header_ThreeElements;
+        header_ThreeElements = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ThreeElements);
+        CompleteStructMemberSeq member_seq_ThreeElements;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x0975c10c;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ThreeElements);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x0e5feb92;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ThreeElements);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_b);
+        }
+        {
+            TypeIdentifierPair type_ids_s;
+            ReturnCode_t return_code_s {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_s)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_s))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_s = 0x0cc0c703;
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_s = "s";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_s;
+            ann_custom_ThreeElements.reset();
+            CompleteMemberDetail detail_s = TypeObjectUtils::build_complete_member_detail(name_s, member_ann_builtin_s, ann_custom_ThreeElements);
+            CompleteStructMember member_s = TypeObjectUtils::build_complete_struct_member(common_s, detail_s);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ThreeElements, member_s);
+        }
+        CompleteStructType struct_type_ThreeElements = TypeObjectUtils::build_complete_struct_type(struct_flags_ThreeElements, header_ThreeElements, member_seq_ThreeElements);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ThreeElements, type_name_ThreeElements.to_string(), type_ids_ThreeElements))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Mutable::ThreeElements already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ElementsThree_type_identifier(
+        TypeIdentifierPair& type_ids_ElementsThree)
+{
+
+    ReturnCode_t return_code_ElementsThree {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_ElementsThree =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "DifferentNumberElements::Mutable::ElementsThree", type_ids_ElementsThree);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_ElementsThree)
+    {
+        StructTypeFlag struct_flags_ElementsThree = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, true);
+        QualifiedTypeName type_name_ElementsThree = "DifferentNumberElements::Mutable::ElementsThree";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_ElementsThree;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_ElementsThree;
+        AppliedAnnotationSeq tmp_ann_custom_ElementsThree;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_ElementsThree;
+        if (!tmp_ann_custom_ElementsThree.empty())
+        {
+            ann_custom_ElementsThree = tmp_ann_custom_ElementsThree;
+        }
+
+        CompleteTypeDetail detail_ElementsThree = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_ElementsThree, ann_custom_ElementsThree, type_name_ElementsThree.to_string());
+        CompleteStructHeader header_ElementsThree;
+        header_ElementsThree = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_ElementsThree);
+        CompleteStructMemberSeq member_seq_ElementsThree;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x0975c10c;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_ElementsThree);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_a);
+        }
+        {
+            TypeIdentifierPair type_ids_s;
+            ReturnCode_t return_code_s {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_s =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "anonymous_string_unbounded", type_ids_s);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_s)
+            {
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_s))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+            }
+            StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_s = 0x0cc0c703;
+            bool common_s_ec {false};
+            CommonStructMember common_s {TypeObjectUtils::build_common_struct_member(member_id_s, member_flags_s, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_s, common_s_ec))};
+            if (!common_s_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure s member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_s = "s";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_s;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_s = TypeObjectUtils::build_complete_member_detail(name_s, member_ann_builtin_s, ann_custom_ElementsThree);
+            CompleteStructMember member_s = TypeObjectUtils::build_complete_struct_member(common_s, detail_s);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_s);
+        }
+        {
+            TypeIdentifierPair type_ids_b;
+            ReturnCode_t return_code_b {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_b =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_b);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_b)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_b = 0x0e5feb92;
+            bool common_b_ec {false};
+            CommonStructMember common_b {TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_b, common_b_ec))};
+            if (!common_b_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure b member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_b = "b";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+            ann_custom_ElementsThree.reset();
+            CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_ElementsThree);
+            CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+            TypeObjectUtils::add_complete_struct_member(member_seq_ElementsThree, member_b);
+        }
+        CompleteStructType struct_type_ElementsThree = TypeObjectUtils::build_complete_struct_type(struct_flags_ElementsThree, header_ElementsThree, member_seq_ElementsThree);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ElementsThree, type_name_ElementsThree.to_string(), type_ids_ElementsThree))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "DifferentNumberElements::Mutable::ElementsThree already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+} // namespace Mutable
+
+} // namespace DifferentNumberElements
 namespace Primitives {
+namespace Final {
 // TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
 void register_Int8Struct_type_identifier(
         TypeIdentifierPair& type_ids_Int8Struct)
@@ -46,14 +1622,21 @@ void register_Int8Struct_type_identifier(
     ReturnCode_t return_code_Int8Struct {eprosima::fastdds::dds::RETCODE_OK};
     return_code_Int8Struct =
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-        "Primitives::Int8Struct", type_ids_Int8Struct);
+        "Primitives::Final::Int8Struct", type_ids_Int8Struct);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_Int8Struct)
     {
-        StructTypeFlag struct_flags_Int8Struct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+        StructTypeFlag struct_flags_Int8Struct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
-        QualifiedTypeName type_name_Int8Struct = "Primitives::Int8Struct";
+        QualifiedTypeName type_name_Int8Struct = "Primitives::Final::Int8Struct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Int8Struct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Int8Struct;
+        AppliedAnnotationSeq tmp_ann_custom_Int8Struct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_Int8Struct;
+        if (!tmp_ann_custom_Int8Struct.empty())
+        {
+            ann_custom_Int8Struct = tmp_ann_custom_Int8Struct;
+        }
+
         CompleteTypeDetail detail_Int8Struct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Int8Struct, ann_custom_Int8Struct, type_name_Int8Struct.to_string());
         CompleteStructHeader header_Int8Struct;
         header_Int8Struct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Int8Struct);
@@ -93,9 +1676,277 @@ void register_Int8Struct_type_identifier(
                 TypeObjectUtils::build_and_register_struct_type_object(struct_type_Int8Struct, type_name_Int8Struct.to_string(), type_ids_Int8Struct))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "Primitives::Int8Struct already registered in TypeObjectRegistry for a different type.");
+                    "Primitives::Final::Int8Struct already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Int8Struct_eq_type_identifier(
+        TypeIdentifierPair& type_ids_Int8Struct_eq)
+{
+
+    ReturnCode_t return_code_Int8Struct_eq {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_Int8Struct_eq =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Primitives::Final::Int8Struct_eq", type_ids_Int8Struct_eq);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_Int8Struct_eq)
+    {
+        StructTypeFlag struct_flags_Int8Struct_eq = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_Int8Struct_eq = "Primitives::Final::Int8Struct_eq";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Int8Struct_eq;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Int8Struct_eq;
+        AppliedAnnotationSeq tmp_ann_custom_Int8Struct_eq;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_Int8Struct_eq;
+        if (!tmp_ann_custom_Int8Struct_eq.empty())
+        {
+            ann_custom_Int8Struct_eq = tmp_ann_custom_Int8Struct_eq;
+        }
+
+        CompleteTypeDetail detail_Int8Struct_eq = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Int8Struct_eq, ann_custom_Int8Struct_eq, type_name_Int8Struct_eq.to_string());
+        CompleteStructHeader header_Int8Struct_eq;
+        header_Int8Struct_eq = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Int8Struct_eq);
+        CompleteStructMemberSeq member_seq_Int8Struct_eq;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Int8Struct_eq.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Int8Struct_eq);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Int8Struct_eq, member_a);
+        }
+        CompleteStructType struct_type_Int8Struct_eq = TypeObjectUtils::build_complete_struct_type(struct_flags_Int8Struct_eq, header_Int8Struct_eq, member_seq_Int8Struct_eq);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Int8Struct_eq, type_name_Int8Struct_eq.to_string(), type_ids_Int8Struct_eq))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Primitives::Final::Int8Struct_eq already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Int8Struct_ne_type_identifier(
+        TypeIdentifierPair& type_ids_Int8Struct_ne)
+{
+
+    ReturnCode_t return_code_Int8Struct_ne {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_Int8Struct_ne =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Primitives::Final::Int8Struct_ne", type_ids_Int8Struct_ne);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_Int8Struct_ne)
+    {
+        StructTypeFlag struct_flags_Int8Struct_ne = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+                false, false);
+        QualifiedTypeName type_name_Int8Struct_ne = "Primitives::Final::Int8Struct_ne";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Int8Struct_ne;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Int8Struct_ne;
+        AppliedAnnotationSeq tmp_ann_custom_Int8Struct_ne;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_Int8Struct_ne;
+        if (!tmp_ann_custom_Int8Struct_ne.empty())
+        {
+            ann_custom_Int8Struct_ne = tmp_ann_custom_Int8Struct_ne;
+        }
+
+        CompleteTypeDetail detail_Int8Struct_ne = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Int8Struct_ne, ann_custom_Int8Struct_ne, type_name_Int8Struct_ne.to_string());
+        CompleteStructHeader header_Int8Struct_ne;
+        header_Int8Struct_ne = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Int8Struct_ne);
+        CompleteStructMemberSeq member_seq_Int8Struct_ne;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int16_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Int8Struct_ne.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Int8Struct_ne);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Int8Struct_ne, member_a);
+        }
+        CompleteStructType struct_type_Int8Struct_ne = TypeObjectUtils::build_complete_struct_type(struct_flags_Int8Struct_ne, header_Int8Struct_ne, member_seq_Int8Struct_ne);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Int8Struct_ne, type_name_Int8Struct_ne.to_string(), type_ids_Int8Struct_ne))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Primitives::Final::Int8Struct_ne already registered in TypeObjectRegistry for a different type.");
         }
     }
 }
+} // namespace Final
+namespace Appendable {
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Int8Struct_type_identifier(
+        TypeIdentifierPair& type_ids_Int8Struct)
+{
+
+    ReturnCode_t return_code_Int8Struct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_Int8Struct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Primitives::Appendable::Int8Struct", type_ids_Int8Struct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_Int8Struct)
+    {
+        StructTypeFlag struct_flags_Int8Struct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+                false, false);
+        QualifiedTypeName type_name_Int8Struct = "Primitives::Appendable::Int8Struct";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Int8Struct;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Int8Struct;
+        AppliedAnnotationSeq tmp_ann_custom_Int8Struct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_Int8Struct;
+        if (!tmp_ann_custom_Int8Struct.empty())
+        {
+            ann_custom_Int8Struct = tmp_ann_custom_Int8Struct;
+        }
+
+        CompleteTypeDetail detail_Int8Struct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Int8Struct, ann_custom_Int8Struct, type_name_Int8Struct.to_string());
+        CompleteStructHeader header_Int8Struct;
+        header_Int8Struct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Int8Struct);
+        CompleteStructMemberSeq member_seq_Int8Struct;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Int8Struct.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Int8Struct);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Int8Struct, member_a);
+        }
+        CompleteStructType struct_type_Int8Struct = TypeObjectUtils::build_complete_struct_type(struct_flags_Int8Struct, header_Int8Struct, member_seq_Int8Struct);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Int8Struct, type_name_Int8Struct.to_string(), type_ids_Int8Struct))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Primitives::Appendable::Int8Struct already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+} // namespace Appendable
+namespace Mutable {
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Int8Struct_type_identifier(
+        TypeIdentifierPair& type_ids_Int8Struct)
+{
+
+    ReturnCode_t return_code_Int8Struct {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_Int8Struct =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "Primitives::Mutable::Int8Struct", type_ids_Int8Struct);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_Int8Struct)
+    {
+        StructTypeFlag struct_flags_Int8Struct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+                false, false);
+        QualifiedTypeName type_name_Int8Struct = "Primitives::Mutable::Int8Struct";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Int8Struct;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Int8Struct;
+        AppliedAnnotationSeq tmp_ann_custom_Int8Struct;
+        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_Int8Struct;
+        if (!tmp_ann_custom_Int8Struct.empty())
+        {
+            ann_custom_Int8Struct = tmp_ann_custom_Int8Struct;
+        }
+
+        CompleteTypeDetail detail_Int8Struct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Int8Struct, ann_custom_Int8Struct, type_name_Int8Struct.to_string());
+        CompleteStructHeader header_Int8Struct;
+        header_Int8Struct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Int8Struct);
+        CompleteStructMemberSeq member_seq_Int8Struct;
+        {
+            TypeIdentifierPair type_ids_a;
+            ReturnCode_t return_code_a {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_a =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int8_t", type_ids_a);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_a)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_a = 0x00000000;
+            bool common_a_ec {false};
+            CommonStructMember common_a {TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_a, common_a_ec))};
+            if (!common_a_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure a member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_a = "a";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+            ann_custom_Int8Struct.reset();
+            CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_Int8Struct);
+            CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Int8Struct, member_a);
+        }
+        CompleteStructType struct_type_Int8Struct = TypeObjectUtils::build_complete_struct_type(struct_flags_Int8Struct, header_Int8Struct, member_seq_Int8Struct);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Int8Struct, type_name_Int8Struct.to_string(), type_ids_Int8Struct))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "Primitives::Mutable::Int8Struct already registered in TypeObjectRegistry for a different type.");
+        }
+    }
+}
+} // namespace Mutable
+
 } // namespace Primitives
 

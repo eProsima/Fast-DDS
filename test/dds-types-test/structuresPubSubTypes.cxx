@@ -97,6 +97,9 @@ bool StructShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructShort* p_type = static_cast<::StructShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool StructUnsignedShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructUnsignedShort* p_type = static_cast<::StructUnsignedShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructUnsignedShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -461,6 +467,9 @@ bool StructLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructLong* p_type = static_cast<::StructLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -642,6 +651,9 @@ bool StructUnsignedLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructUnsignedLong* p_type = static_cast<::StructUnsignedLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructUnsignedLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -825,6 +837,9 @@ bool StructLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructLongLong* p_type = static_cast<::StructLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1006,6 +1021,9 @@ bool StructUnsignedLongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructUnsignedLongLong* p_type = static_cast<::StructUnsignedLongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructUnsignedLongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1189,6 +1207,9 @@ bool StructFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructFloat* p_type = static_cast<::StructFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1370,6 +1391,9 @@ bool StructDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructDouble* p_type = static_cast<::StructDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1553,6 +1577,9 @@ bool StructLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructLongDouble* p_type = static_cast<::StructLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1734,6 +1761,9 @@ bool StructBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructBoolean* p_type = static_cast<::StructBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1917,6 +1947,9 @@ bool StructOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructOctet* p_type = static_cast<::StructOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2098,6 +2131,9 @@ bool StructChar8PubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructChar8* p_type = static_cast<::StructChar8*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructChar8();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2281,6 +2317,9 @@ bool StructChar16PubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructChar16* p_type = static_cast<::StructChar16*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructChar16();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2462,6 +2501,9 @@ bool StructStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructString* p_type = static_cast<::StructString*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2645,6 +2687,9 @@ bool StructWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructWString* p_type = static_cast<::StructWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2826,6 +2871,9 @@ bool StructBoundedStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructBoundedString* p_type = static_cast<::StructBoundedString*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructBoundedString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3009,6 +3057,9 @@ bool StructBoundedWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructBoundedWString* p_type = static_cast<::StructBoundedWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructBoundedWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3190,6 +3241,9 @@ bool StructEnumPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructEnum* p_type = static_cast<::StructEnum*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructEnum();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3373,6 +3427,9 @@ bool StructBitMaskPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructBitMask* p_type = static_cast<::StructBitMask*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructBitMask();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3554,6 +3611,9 @@ bool StructAliasPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructAlias* p_type = static_cast<::StructAlias*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructAlias();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3737,6 +3797,9 @@ bool StructShortArrayPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructShortArray* p_type = static_cast<::StructShortArray*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructShortArray();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3918,6 +3981,9 @@ bool StructSequencePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructSequence* p_type = static_cast<::StructSequence*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructSequence();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4101,6 +4167,9 @@ bool StructMapPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructMap* p_type = static_cast<::StructMap*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructMap();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4282,6 +4351,9 @@ bool StructUnionPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructUnion* p_type = static_cast<::StructUnion*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructUnion();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4465,6 +4537,9 @@ bool StructStructurePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructStructure* p_type = static_cast<::StructStructure*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructStructure();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4646,6 +4721,9 @@ bool StructBitsetPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::StructBitset* p_type = static_cast<::StructBitset*>(data);
+
+        // Call default constructor
+        new (p_type) ::StructBitset();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4829,6 +4907,9 @@ bool StructEmptyPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::StructEmpty* p_type = static_cast<::StructEmpty*>(data);
 
+        // Call default constructor
+        new (p_type) ::StructEmpty();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5010,6 +5091,9 @@ bool StructuresPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::Structures* p_type = static_cast<::Structures*>(data);
+
+        // Call default constructor
+        new (p_type) ::Structures();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5193,6 +5277,9 @@ namespace testing_1 {
         {
             // Convert DATA to pointer of your type
             ::testing_1::foo* p_type = static_cast<::testing_1::foo*>(data);
+
+            // Call default constructor
+            new (p_type) ::testing_1::foo();
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5379,6 +5466,9 @@ namespace testing_2 {
             // Convert DATA to pointer of your type
             ::testing_2::foo* p_type = static_cast<::testing_2::foo*>(data);
 
+            // Call default constructor
+            new (p_type) ::testing_2::foo();
+
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5563,6 +5653,9 @@ bool barPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::bar* p_type = static_cast<::bar*>(data);
 
+        // Call default constructor
+        new (p_type) ::bar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5744,6 +5837,9 @@ bool root1PubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::root1* p_type = static_cast<::root1*>(data);
+
+        // Call default constructor
+        new (p_type) ::root1();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5927,6 +6023,9 @@ bool root2PubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::root2* p_type = static_cast<::root2*>(data);
 
+        // Call default constructor
+        new (p_type) ::root2();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6108,6 +6207,9 @@ bool rootPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::root* p_type = static_cast<::root*>(data);
+
+        // Call default constructor
+        new (p_type) ::root();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

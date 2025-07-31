@@ -97,6 +97,9 @@ bool PrimitivesStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::PrimitivesStruct* p_type = static_cast<::PrimitivesStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::PrimitivesStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -279,6 +282,9 @@ bool AllStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::AllStruct* p_type = static_cast<::AllStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::AllStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -460,6 +466,9 @@ bool ComprehensiveTypePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ComprehensiveType* p_type = static_cast<::ComprehensiveType*>(data);
+
+        // Call default constructor
+        new (p_type) ::ComprehensiveType();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

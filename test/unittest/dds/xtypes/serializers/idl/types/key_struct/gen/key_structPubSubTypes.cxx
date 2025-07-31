@@ -97,6 +97,9 @@ bool ImportantStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::ImportantStruct* p_type = static_cast<::ImportantStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::ImportantStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -278,6 +281,9 @@ bool KeyStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::KeyStruct* p_type = static_cast<::KeyStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::KeyStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

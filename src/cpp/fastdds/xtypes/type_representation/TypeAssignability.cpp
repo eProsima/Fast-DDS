@@ -32,18 +32,6 @@ fastdds::dds::xtypes::TypeObjectRegistry& registry_observer()
     return eprosima::fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer();
 }
 
-bool TypeAssignability::inheritance_type_assignable_from(
-        const TypeIdentifier& t1,
-        const TypeIdentifier& t2)
-{
-    if (t1._d() == t2._d())
-    {
-        return TK_NONE == t1._d() || type_assignable_from(t1, t2);
-    }
-
-    return false;
-}
-
 bool TypeAssignability::type_assignable_from(
         const TypeIdentifier& t1,
         const TypeIdentifier& t2)
@@ -62,41 +50,82 @@ bool TypeAssignability::type_assignable_from(
         return true;
     }
 
-    // Check assignability of minimals.
-    TypeIdentifier t1_type_identifier;
-    TypeObject t1_minimal_object;
-    if (EK_MINIMAL == t1._d())
-    {
-        t1_type_identifier = t1;
-    }
-    else
-    {
-        t1_type_identifier = registry_observer().get_complementary_type_identifier(t1);
-    }
-
-    if (RETCODE_OK != registry_observer().get_type_object(t1_type_identifier, t1_minimal_object))
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Cannot retrieve T1 minimal TypeObject from registry.");
-    }
+    bool ret_value {true};
 
     // Check assignability of minimals.
-    TypeIdentifier t2_type_identifier;
-    TypeObject t2_minimal_object;
-    if (EK_MINIMAL == t2._d())
+    MinimalTypeObject t1_minimal_object;
+    ret_value &= get_minimal_type_object(t1, t1_minimal_object);
+
+    // Check assignability of minimals.
+    MinimalTypeObject t2_minimal_object;
+    ret_value &= get_minimal_type_object(t2, t2_minimal_object);
+
+
+    return ret_value && minimal_typeobject_assignable_from(t1_minimal_object, t2_minimal_object);
+}
+
+bool TypeAssignability::type_assignable_from_(
+        const TypeIdentifier& t1,
+        const TypeIdentifier& t2)
+{
+    bool ret_value {false};
+    MinimalTypeObject aux_minimal_object;
+
+    switch (t1._d())
     {
-        t2_type_identifier = t2;
-    }
-    else
-    {
-        t2_type_identifier = registry_observer().get_complementary_type_identifier(t2);
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT8:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_CHAR8:
+        case TK_CHAR16:
+            ret_value = t1._d() == t2._d();
+            break;
+        case TK_UINT8:
+            ret_value = TK_UINT8 == t2._d() ||
+                    (EK_MINIMAL == t2._d() && get_minimal_type_object(t2, aux_minimal_object) &&
+                    TK_BITMASK == aux_minimal_object._d() &&
+                    1 <= aux_minimal_object.bitmask_type().header().common().bit_bound() &&
+                    8 >= aux_minimal_object.bitmask_type().header().common().bit_bound());
+            break;
+        case TK_UINT16:
+            ret_value = TK_UINT16 == t2._d() ||
+                    (EK_MINIMAL == t2._d() && get_minimal_type_object(t2, aux_minimal_object) &&
+                    TK_BITMASK == aux_minimal_object._d() &&
+                    9 <= aux_minimal_object.bitmask_type().header().common().bit_bound() &&
+                    16 >= aux_minimal_object.bitmask_type().header().common().bit_bound());
+            break;
+        case TK_UINT32:
+            ret_value = TK_UINT32 == t2._d() ||
+                    (EK_MINIMAL == t2._d() && get_minimal_type_object(t2, aux_minimal_object) &&
+                    TK_BITMASK == aux_minimal_object._d() &&
+                    17 <= aux_minimal_object.bitmask_type().header().common().bit_bound() &&
+                    32 >= aux_minimal_object.bitmask_type().header().common().bit_bound());
+            break;
+        case TK_UINT64:
+            ret_value = TK_UINT64 == t2._d() ||
+                    (EK_MINIMAL == t2._d() && get_minimal_type_object(t2, aux_minimal_object) &&
+                    TK_BITMASK == aux_minimal_object._d() &&
+                    33 <= aux_minimal_object.bitmask_type().header().common().bit_bound() &&
+                    64 >= aux_minimal_object.bitmask_type().header().common().bit_bound());
+            break;
+        case TI_STRING8_SMALL:
+            ret_value = (t1._d() == t2._d()) && t1.string_sdefn() == t2.string_sdefn();
+            break;
+        case TI_STRING8_LARGE:
+            ret_value = (t1._d() == t2._d()) && t1.string_ldefn() == t2.string_ldefn();
+            break;
+        case EK_MINIMAL:
+        case EK_COMPLETE:
+            ret_value = type_assignable_from(t1, t2);
     }
 
-    if (RETCODE_OK != registry_observer().get_type_object(t2_type_identifier, t2_minimal_object))
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Cannot retrieve T2 minimal TypeObject from registry.");
-    }
-
-    return typeobject_assignable_from(t1_minimal_object, t2_minimal_object);
+    return ret_value;
 }
 
 bool TypeAssignability::minimal_typeobject_assignable_from(
@@ -104,13 +133,6 @@ bool TypeAssignability::minimal_typeobject_assignable_from(
         const MinimalTypeObject& t2)
 {
     bool ret_value {false};
-
-    // Preconditions
-    if (t1._d() != t2._d())
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Precondition fail.");
-        return ret_value;
-    }
 
     switch (t1._d())
     {
@@ -120,29 +142,32 @@ bool TypeAssignability::minimal_typeobject_assignable_from(
         case TK_ANNOTATION:
             ret_value = t1.annotation_type() == t2.annotation_type();
             break;
-        case TK_STRUCTURE:
-            ret_value = struct_type_assignable_from(t1.struct_type(), t2.struct_type());
+        case TK_ARRAY:
+            ret_value = t1.array_type() == t2.array_type();
             break;
-        case TK_UNION:
-            ret_value = true; //t1.union_type() == t2.union_type();
+        case TK_BITMASK:
+            ret_value = t1.bitmask_type() == t2.bitmask_type();
             break;
         case TK_BITSET:
             ret_value = t1.bitset_type() == t2.bitset_type();
             break;
-        case TK_SEQUENCE:
-            ret_value = t1.sequence_type() == t2.sequence_type();
-            break;
-        case TK_ARRAY:
-            ret_value = t1.array_type() == t2.array_type();
+        case TK_ENUM:
+            ret_value = t1.enumerated_type() == t2.enumerated_type();
             break;
         case TK_MAP:
             ret_value = t1.map_type() == t2.map_type();
             break;
-        case TK_ENUM:
-            ret_value = true; //t1.enumerated_type() == t2.enumerated_type();
+        case TK_SEQUENCE:
+            ret_value = t1.sequence_type() == t2.sequence_type();
             break;
-        case TK_BITMASK:
-            ret_value = t1.bitmask_type() == t2.bitmask_type();
+        case TK_STRUCTURE:
+            ret_value = (t1._d() == t2._d()) && struct_type_assignable_from(t1.struct_type(), t2.struct_type());
+            break;
+        case TK_UNION:
+            ret_value = t1.union_type() == t2.union_type();
+            break;
+        default:
+            ret_value = false;
             break;
     }
 
@@ -153,48 +178,163 @@ bool TypeAssignability::struct_type_assignable_from(
         const MinimalStructType& t1,
         const MinimalStructType& t2)
 {
-    if (t1.struct_flags() == t2.struct_flags() && // TODO (richiware) Check what to do with NESTED and AUTOHASH
-            inheritance_type_assignable_from(t1.header().base_type(), t2.header().base_type()))
-    {
-        size_t pos {0};
-        std::list<const MinimalStructMember*> t1_member_list {t1.member_seq().size()};
-        std::list<const MinimalStructMember*> t2_member_list {t2.member_seq().size()};
-        std::generate(t1_member_list.begin(), t1_member_list.end(), [&pos, &t1]()
-                {
-                    return &t1.member_seq().at(pos++);
-                });
-        pos = 0;
-        std::generate(t2_member_list.begin(), t2_member_list.end(), [&pos, &t2]()
-                {
-                    return &t2.member_seq().at(pos++);
-                });
+    StructTypeFlag t1_flags = t1.struct_flags() &
+            (TypeFlagBits::IS_FINAL | TypeFlagBits::IS_APPENDABLE | TypeFlagBits::IS_MUTABLE);
+    StructTypeFlag t2_flags = t2.struct_flags() &
+            (TypeFlagBits::IS_FINAL | TypeFlagBits::IS_APPENDABLE | TypeFlagBits::IS_MUTABLE);
 
-        /*
-           for (auto& t1_member : t1.member_seq())
-           {
-           auto& t2_member = std::find_if(t2.member_seq().begin(), t2.member_seq().end(), [&t1_member](const MinimalStructMember& x)
-                                      {
-                                      return x.common().member_id() ==
-                                      };
-           }
-         */
+    // X-Types 1.3: T1 and T2 have the same extensibility kind.
+    bool ret_value {t1_flags == t2_flags};
+
+    if (ret_value)
+    {
+        bool is_final = t1_flags & TypeFlagBits::IS_FINAL;
+        bool is_final_or_appendable = t1_flags & (TypeFlagBits::IS_FINAL | TypeFlagBits::IS_APPENDABLE);
+
+        std::list<const MinimalStructMember*> t1_member_list;
+        generate_all_struct_members(t1_member_list, t1);
+        std::list<const MinimalStructMember*> t2_member_list;
+        generate_all_struct_members(t2_member_list, t2);
+        size_t t2_member_list_size {t2_member_list.size()};
+
+        // X-Types 1.3: AND if T1 is final, then they meet the same condition as for T1 being appendable and in
+        // addition T1 and T2 have the same set of member IDs.
+        ret_value &= !is_final || (t1_member_list.size() == t2_member_list.size());
+
+        for (auto t1_member {t1_member_list.begin()}; t1_member != t1_member_list.end() && ret_value;)
+        {
+            std::list<const MinimalStructMember*>::const_iterator t2_member;
+
+            if (is_final_or_appendable)
+            {
+                t2_member = t2_member_list.begin();
+            }
+            else
+            {
+                t2_member = std::find_if(t2_member_list.begin(), t2_member_list.end(),
+                                [&t1_member](const MinimalStructMember* x)
+                                {
+                                    return x->common().member_id() == (*t1_member)->common().member_id();
+                                });
+            }
+
+            // X-Types 1.3: Any members in T1 and T2 that have the same name also have the same ID and any members with
+            // the same ID also have the same name.
+            if (t2_member != t2_member_list.end())
+            {
+                ret_value &= (*t1_member)->common().member_id() == (*t2_member)->common().member_id();
+                ret_value &= (*t1_member)->detail().name_hash() == (*t2_member)->detail().name_hash();
+                ret_value &=
+                        TypeAssignability::type_assignable_from_(
+                    (*t1_member)->common().member_type_id(),
+                    (*t2_member)->common().member_type_id());
+
+                // X-Types 1.3: If T1 and T2 have the same member with the same ID, then the member in T1 is assignable
+                // from the member in T2.
+                //ret_value &= TypeAssignability::type_assignable_from( (*t1_member)->common().type_identifier(), (*t2_member)->common().type_identifier());
+
+                t2_member_list.erase(t2_member);
+            }
+            else
+            {
+                if (!is_final_or_appendable)
+                {
+                    // X-Types 1.3: Any members in T1 and T2 that have the same name also have the same ID and any members with
+                    // the same ID also have the same name.
+                    ret_value &= t2_member_list.end() == std::find_if(t2_member_list.begin(), t2_member_list.end(),
+                                    [&t1_member](const MinimalStructMember* x)
+                                    {
+                                        return x->detail().name_hash() == (*t1_member)->detail().name_hash();
+                                    });
+                }
+                else if (is_final)
+                {
+                    // X-Types 1.3: AND if T1 is appendable, then members with the same member_index have the same
+                    // member ID, the same setting for the ‘optional’ attribute and the T1 member type is strongly
+                    // assignable from the T2 member type.
+                    ret_value = false;
+                }
+            }
+
+            t1_member = t1_member_list.erase(t1_member);
+        }
+
+        // X-Types 1.3: There is at least one member “m1” of T1 and one corresponding member “m2” of T2 such that
+        // m1.id == m2.id
+        ret_value &= t2_member_list.size() < t2_member_list_size;
     }
 
-    return true; //false;
+    return ret_value;
 }
 
-bool TypeAssignability::typeobject_assignable_from(
-        const TypeObject& t1,
-        const TypeObject& t2)
+void TypeAssignability::generate_all_struct_members(
+        std::list<const MinimalStructMember*>& list,
+        const MinimalStructType& type)
 {
-    // Preconditions
-    if (EK_MINIMAL != t1._d() || EK_MINIMAL != t2._d())
+    if (TK_NONE != type.header().base_type()._d())
     {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Precondition fail.");
+        MinimalTypeObject base_type_object;
+        get_minimal_type_object(type.header().base_type(), base_type_object);
+
+        if (TK_STRUCTURE == base_type_object._d())
+        {
+            generate_all_struct_members(list, base_type_object.struct_type());
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Base type is not a structure.");
+            return;
+        }
+    }
+
+
+    for (size_t pos {0}; pos < type.member_seq().size(); ++pos)
+    {
+        list.push_back(&type.member_seq().at(pos));
+    }
+}
+
+bool TypeAssignability::get_minimal_type_object(
+        TypeIdentifier type_id,
+        MinimalTypeObject& minimal_object)
+{
+    TypeIdentifier type_identifier;
+
+    if (EK_MINIMAL == type_id._d())
+    {
+        type_identifier = type_id;
+    }
+    else if (EK_COMPLETE == type_id._d())
+    {
+        type_identifier = registry_observer().get_complementary_type_identifier(type_id);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "TypeIdentifier is not minimal or complete.");
         return false;
     }
 
-    return minimal_typeobject_assignable_from(t1.minimal(), t2.minimal());
+    bool ret_value {false};
+    TypeObject type_object;
+
+    if (RETCODE_OK == registry_observer().get_type_object(type_identifier, type_object))
+    {
+        if (EK_MINIMAL == type_object._d())
+        {
+            minimal_object = type_object.minimal();
+            ret_value = true;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "TypeObject is not minimal.");
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Cannot retrieve T1 minimal TypeObject from registry.");
+    }
+
+    return ret_value;
 }
 
 } // namespace xtypes

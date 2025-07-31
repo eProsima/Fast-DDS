@@ -103,6 +103,9 @@ namespace builtin {
             // Convert DATA to pointer of your type
             ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
 
+            // Call default constructor
+            new (p_type) ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In();
+
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -285,6 +288,9 @@ namespace builtin {
         {
             // Convert DATA to pointer of your type
             ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
+
+            // Call default constructor
+            new (p_type) ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out();
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -469,6 +475,9 @@ namespace builtin {
             // Convert DATA to pointer of your type
             ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
 
+            // Call default constructor
+            new (p_type) ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In();
+
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -651,6 +660,9 @@ namespace builtin {
         {
             // Convert DATA to pointer of your type
             ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
+
+            // Call default constructor
+            new (p_type) ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out();
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -835,6 +847,9 @@ namespace builtin {
             // Convert DATA to pointer of your type
             ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
 
+            // Call default constructor
+            new (p_type) ::eprosima::fastdds::dds::builtin::TypeLookup_Request();
+
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1017,6 +1032,9 @@ namespace builtin {
         {
             // Convert DATA to pointer of your type
             ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
+
+            // Call default constructor
+            new (p_type) ::eprosima::fastdds::dds::builtin::TypeLookup_Reply();
 
             // Object that manages the raw buffer.
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

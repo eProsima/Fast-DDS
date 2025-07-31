@@ -100,6 +100,9 @@ bool UnionShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionShort* p_type = static_cast<::UnionShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -281,6 +284,9 @@ bool UnionUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionUShort* p_type = static_cast<::UnionUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -464,6 +470,9 @@ bool UnionLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionLong* p_type = static_cast<::UnionLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -645,6 +654,9 @@ bool UnionULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionULong* p_type = static_cast<::UnionULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -828,6 +840,9 @@ bool UnionLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionLongLong* p_type = static_cast<::UnionLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1009,6 +1024,9 @@ bool UnionULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionULongLong* p_type = static_cast<::UnionULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1192,6 +1210,9 @@ bool UnionFloatPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionFloat* p_type = static_cast<::UnionFloat*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionFloat();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1373,6 +1394,9 @@ bool UnionDoublePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDouble* p_type = static_cast<::UnionDouble*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDouble();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1556,6 +1580,9 @@ bool UnionLongDoublePubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionLongDouble* p_type = static_cast<::UnionLongDouble*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionLongDouble();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1737,6 +1764,9 @@ bool UnionBooleanPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionBoolean* p_type = static_cast<::UnionBoolean*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionBoolean();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1920,6 +1950,9 @@ bool UnionOctetPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionOctet* p_type = static_cast<::UnionOctet*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionOctet();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2101,6 +2134,9 @@ bool UnionCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionChar* p_type = static_cast<::UnionChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2284,6 +2320,9 @@ bool UnionWCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionWChar* p_type = static_cast<::UnionWChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionWChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2465,6 +2504,9 @@ bool UnionStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionString* p_type = static_cast<::UnionString*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2648,6 +2690,9 @@ bool UnionWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionWString* p_type = static_cast<::UnionWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2829,6 +2874,9 @@ bool UnionBoundedStringPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionBoundedString* p_type = static_cast<::UnionBoundedString*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionBoundedString();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3012,6 +3060,9 @@ bool UnionBoundedWStringPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionBoundedWString* p_type = static_cast<::UnionBoundedWString*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionBoundedWString();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3193,6 +3244,9 @@ bool UnionInnerEnumHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionInnerEnumHelper* p_type = static_cast<::UnionInnerEnumHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionInnerEnumHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3376,6 +3430,9 @@ bool UnionInnerBitMaskHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionInnerBitMaskHelper* p_type = static_cast<::UnionInnerBitMaskHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionInnerBitMaskHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3557,6 +3614,9 @@ bool UnionInnerAliasHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionInnerAliasHelper* p_type = static_cast<::UnionInnerAliasHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionInnerAliasHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3740,6 +3800,9 @@ bool UnionArrayPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionArray* p_type = static_cast<::UnionArray*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionArray();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -3921,6 +3984,9 @@ bool UnionSequencePubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionSequence* p_type = static_cast<::UnionSequence*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionSequence();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4104,6 +4170,9 @@ bool UnionMapPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionMap* p_type = static_cast<::UnionMap*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionMap();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4285,6 +4354,9 @@ bool UnionInnerUnionHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionInnerUnionHelper* p_type = static_cast<::UnionInnerUnionHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionInnerUnionHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4468,6 +4540,9 @@ bool UnionInnerStructureHelperPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionInnerStructureHelper* p_type = static_cast<::UnionInnerStructureHelper*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionInnerStructureHelper();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -4649,6 +4724,9 @@ bool UnionInnerBitsetHelperPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionInnerBitsetHelper* p_type = static_cast<::UnionInnerBitsetHelper*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionInnerBitsetHelper();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4832,6 +4910,9 @@ bool UnionDiscriminatorShortPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorShort* p_type = static_cast<::UnionDiscriminatorShort*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorShort();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5013,6 +5094,9 @@ bool UnionDiscriminatorUShortPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorUShort* p_type = static_cast<::UnionDiscriminatorUShort*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorUShort();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5196,6 +5280,9 @@ bool UnionDiscriminatorLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorLong* p_type = static_cast<::UnionDiscriminatorLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5377,6 +5464,9 @@ bool UnionDiscriminatorULongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorULong* p_type = static_cast<::UnionDiscriminatorULong*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorULong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5560,6 +5650,9 @@ bool UnionDiscriminatorLongLongPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorLongLong* p_type = static_cast<::UnionDiscriminatorLongLong*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorLongLong();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -5741,6 +5834,9 @@ bool UnionDiscriminatorULongLongPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorULongLong* p_type = static_cast<::UnionDiscriminatorULongLong*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorULongLong();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5924,6 +6020,9 @@ bool UnionDiscriminatorBooleanPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorBoolean* p_type = static_cast<::UnionDiscriminatorBoolean*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorBoolean();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6105,6 +6204,9 @@ bool UnionDiscriminatorOctetPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorOctet* p_type = static_cast<::UnionDiscriminatorOctet*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorOctet();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6288,6 +6390,9 @@ bool UnionDiscriminatorCharPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorChar* p_type = static_cast<::UnionDiscriminatorChar*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorChar();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6469,6 +6574,9 @@ bool UnionDiscriminatorWCharPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorWChar* p_type = static_cast<::UnionDiscriminatorWChar*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorWChar();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6652,6 +6760,9 @@ bool UnionDiscriminatorEnumPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorEnum* p_type = static_cast<::UnionDiscriminatorEnum*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorEnum();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -6833,6 +6944,9 @@ bool UnionDiscriminatorEnumLabelPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorEnumLabel* p_type = static_cast<::UnionDiscriminatorEnumLabel*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorEnumLabel();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7016,6 +7130,9 @@ bool UnionDiscriminatorAliasPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionDiscriminatorAlias* p_type = static_cast<::UnionDiscriminatorAlias*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionDiscriminatorAlias();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7197,6 +7314,9 @@ bool UnionSeveralFieldsPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionSeveralFields* p_type = static_cast<::UnionSeveralFields*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionSeveralFields();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7380,6 +7500,9 @@ bool UnionSeveralFieldsWithDefaultPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionSeveralFieldsWithDefault* p_type = static_cast<::UnionSeveralFieldsWithDefault*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionSeveralFieldsWithDefault();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7562,6 +7685,9 @@ bool UnionShortExtraMemberPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::UnionShortExtraMember* p_type = static_cast<::UnionShortExtraMember*>(data);
 
+        // Call default constructor
+        new (p_type) ::UnionShortExtraMember();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -7743,6 +7869,9 @@ bool UnionFixedStringAliasPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::UnionFixedStringAlias* p_type = static_cast<::UnionFixedStringAlias*>(data);
+
+        // Call default constructor
+        new (p_type) ::UnionFixedStringAlias();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

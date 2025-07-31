@@ -20,8 +20,8 @@
  */
 
 
-#ifndef FAST_DDS_GENERATED__PRIMITIVES_ASSIGNABILITY_PUBSUBTYPES_HPP
-#define FAST_DDS_GENERATED__PRIMITIVES_ASSIGNABILITY_PUBSUBTYPES_HPP
+#ifndef FAST_DDS_GENERATED__PRIMITIVES_MUTABLE_ASSIGNABILITY_PUBSUBTYPES_HPP
+#define FAST_DDS_GENERATED__PRIMITIVES_MUTABLE_ASSIGNABILITY_PUBSUBTYPES_HPP
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
@@ -37,91 +37,1994 @@
     Generated assignability is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // FASTDDS_GEN_API_VER
 
+namespace DifferentNumberElements
+{
+    namespace Final
+    {
+
+        #ifndef SWIG
+        namespace detail {
+
+        template<typename Tag, typename Tag::type M>
+        struct OneElement_rob
+        {
+            friend constexpr typename Tag::type get(
+                    Tag)
+            {
+                return M;
+            }
+
+        };
+
+        struct OneElement_f
+        {
+            typedef int8_t OneElement::* type;
+            friend constexpr type get(
+                    OneElement_f);
+        };
+
+        template struct OneElement_rob<OneElement_f, &OneElement::m_a>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr OneElement_offset_of()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        }
+
+        } // namespace detail
+        #endif // ifndef SWIG
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type OneElement defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class OneElementPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Final::OneElement type;
+
+            eProsima_user_DllExport OneElementPubSubType();
+
+            eProsima_user_DllExport ~OneElementPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+                {
+                    return is_plain_xcdrv2_impl();
+                }
+                else
+                {
+                    return is_plain_xcdrv1_impl();
+                }
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                new (memory) OneElement();
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+
+            static constexpr bool is_plain_xcdrv1_impl()
+            {
+                return 1ULL ==
+                       (detail::OneElement_offset_of<OneElement, detail::OneElement_f>() +
+                       sizeof(int8_t));
+            }
+
+            static constexpr bool is_plain_xcdrv2_impl()
+            {
+                return 1ULL ==
+                       (detail::OneElement_offset_of<OneElement, detail::OneElement_f>() +
+                       sizeof(int8_t));
+            }
+
+        };
+
+
+        #ifndef SWIG
+        namespace detail {
+
+        template<typename Tag, typename Tag::type M>
+        struct TwoElements_rob
+        {
+            friend constexpr typename Tag::type get(
+                    Tag)
+            {
+                return M;
+            }
+
+        };
+
+        struct TwoElements_f
+        {
+            typedef int16_t TwoElements::* type;
+            friend constexpr type get(
+                    TwoElements_f);
+        };
+
+        template struct TwoElements_rob<TwoElements_f, &TwoElements::m_b>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr TwoElements_offset_of()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        }
+
+        } // namespace detail
+        #endif // ifndef SWIG
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type TwoElements defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class TwoElementsPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Final::TwoElements type;
+
+            eProsima_user_DllExport TwoElementsPubSubType();
+
+            eProsima_user_DllExport ~TwoElementsPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+                {
+                    return is_plain_xcdrv2_impl();
+                }
+                else
+                {
+                    return is_plain_xcdrv1_impl();
+                }
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                new (memory) TwoElements();
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+
+            static constexpr bool is_plain_xcdrv1_impl()
+            {
+                return 4ULL ==
+                       (detail::TwoElements_offset_of<TwoElements, detail::TwoElements_f>() +
+                       sizeof(int16_t));
+            }
+
+            static constexpr bool is_plain_xcdrv2_impl()
+            {
+                return 4ULL ==
+                       (detail::TwoElements_offset_of<TwoElements, detail::TwoElements_f>() +
+                       sizeof(int16_t));
+            }
+
+        };
+
+
+        #ifndef SWIG
+        namespace detail {
+
+        template<typename Tag, typename Tag::type M>
+        struct ElementsTwo_rob
+        {
+            friend constexpr typename Tag::type get(
+                    Tag)
+            {
+                return M;
+            }
+
+        };
+
+        struct ElementsTwo_f
+        {
+            typedef int8_t ElementsTwo::* type;
+            friend constexpr type get(
+                    ElementsTwo_f);
+        };
+
+        template struct ElementsTwo_rob<ElementsTwo_f, &ElementsTwo::m_a>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr ElementsTwo_offset_of()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        }
+
+        } // namespace detail
+        #endif // ifndef SWIG
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ElementsTwo defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ElementsTwoPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Final::ElementsTwo type;
+
+            eProsima_user_DllExport ElementsTwoPubSubType();
+
+            eProsima_user_DllExport ~ElementsTwoPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+                {
+                    return is_plain_xcdrv2_impl();
+                }
+                else
+                {
+                    return is_plain_xcdrv1_impl();
+                }
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                new (memory) ElementsTwo();
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+
+            static constexpr bool is_plain_xcdrv1_impl()
+            {
+                return 3ULL ==
+                       (detail::ElementsTwo_offset_of<ElementsTwo, detail::ElementsTwo_f>() +
+                       sizeof(int8_t));
+            }
+
+            static constexpr bool is_plain_xcdrv2_impl()
+            {
+                return 3ULL ==
+                       (detail::ElementsTwo_offset_of<ElementsTwo, detail::ElementsTwo_f>() +
+                       sizeof(int8_t));
+            }
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ThreeElements defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ThreeElementsPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Final::ThreeElements type;
+
+            eProsima_user_DllExport ThreeElementsPubSubType();
+
+            eProsima_user_DllExport ~ThreeElementsPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ElementsThree defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ElementsThreePubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Final::ElementsThree type;
+
+            eProsima_user_DllExport ElementsThreePubSubType();
+
+            eProsima_user_DllExport ~ElementsThreePubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+    } // namespace Final
+    namespace Appendable
+    {
+
+        /*!
+         * @brief This class represents the TopicDataType of the type OneElement defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class OneElementPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Appendable::OneElement type;
+
+            eProsima_user_DllExport OneElementPubSubType();
+
+            eProsima_user_DllExport ~OneElementPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type TwoElements defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class TwoElementsPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Appendable::TwoElements type;
+
+            eProsima_user_DllExport TwoElementsPubSubType();
+
+            eProsima_user_DllExport ~TwoElementsPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ElementsTwo defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ElementsTwoPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Appendable::ElementsTwo type;
+
+            eProsima_user_DllExport ElementsTwoPubSubType();
+
+            eProsima_user_DllExport ~ElementsTwoPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ThreeElements defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ThreeElementsPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Appendable::ThreeElements type;
+
+            eProsima_user_DllExport ThreeElementsPubSubType();
+
+            eProsima_user_DllExport ~ThreeElementsPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ElementsThree defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ElementsThreePubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Appendable::ElementsThree type;
+
+            eProsima_user_DllExport ElementsThreePubSubType();
+
+            eProsima_user_DllExport ~ElementsThreePubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+    } // namespace Appendable
+    namespace Mutable
+    {
+
+        /*!
+         * @brief This class represents the TopicDataType of the type OneElement defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class OneElementPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Mutable::OneElement type;
+
+            eProsima_user_DllExport OneElementPubSubType();
+
+            eProsima_user_DllExport ~OneElementPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type TwoElements defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class TwoElementsPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Mutable::TwoElements type;
+
+            eProsima_user_DllExport TwoElementsPubSubType();
+
+            eProsima_user_DllExport ~TwoElementsPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ElementsTwo defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ElementsTwoPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Mutable::ElementsTwo type;
+
+            eProsima_user_DllExport ElementsTwoPubSubType();
+
+            eProsima_user_DllExport ~ElementsTwoPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ThreeElements defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ThreeElementsPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Mutable::ThreeElements type;
+
+            eProsima_user_DllExport ThreeElementsPubSubType();
+
+            eProsima_user_DllExport ~ThreeElementsPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+
+        /*!
+         * @brief This class represents the TopicDataType of the type ElementsThree defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class ElementsThreePubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::DifferentNumberElements::Mutable::ElementsThree type;
+
+            eProsima_user_DllExport ElementsThreePubSubType();
+
+            eProsima_user_DllExport ~ElementsThreePubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+    } // namespace Mutable
+} // namespace DifferentNumberElements
 namespace Primitives
 {
-
-    /*!
-     * @brief This class represents the TopicDataType of the type Int8Struct defined by the user in the IDL file.
-     * @ingroup assignability
-     */
-    class Int8StructPubSubType : public eprosima::fastdds::dds::TopicDataType
+    namespace Final
     {
-    public:
 
-        typedef ::Primitives::Int8Struct type;
+        #ifndef SWIG
+        namespace detail {
 
-        eProsima_user_DllExport Int8StructPubSubType();
-
-        eProsima_user_DllExport ~Int8StructPubSubType() override;
-
-        eProsima_user_DllExport bool serialize(
-                const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-        eProsima_user_DllExport bool deserialize(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                void* data) override;
-
-        eProsima_user_DllExport uint32_t calculate_serialized_size(
-                const void* const data,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-        eProsima_user_DllExport bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override;
-
-        eProsima_user_DllExport bool compute_key(
-                const void* const data,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override;
-
-        eProsima_user_DllExport void* create_data() override;
-
-        eProsima_user_DllExport void delete_data(
-                void* data) override;
-
-        //Register TypeObject representation in Fast DDS TypeObjectRegistry
-        eProsima_user_DllExport void register_type_object_representation() override;
-
-    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-        eProsima_user_DllExport inline bool is_bounded() const override
+        template<typename Tag, typename Tag::type M>
+        struct Int8Struct_rob
         {
-            return true;
+            friend constexpr typename Tag::type get(
+                    Tag)
+            {
+                return M;
+            }
+
+        };
+
+        struct Int8Struct_f
+        {
+            typedef int8_t Int8Struct::* type;
+            friend constexpr type get(
+                    Int8Struct_f);
+        };
+
+        template struct Int8Struct_rob<Int8Struct_f, &Int8Struct::m_a>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr Int8Struct_offset_of()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
         }
 
-    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+        } // namespace detail
+        #endif // ifndef SWIG
 
-    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-        eProsima_user_DllExport inline bool is_plain(
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+        /*!
+         * @brief This class represents the TopicDataType of the type Int8Struct defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class Int8StructPubSubType : public eprosima::fastdds::dds::TopicDataType
         {
-            static_cast<void>(data_representation);
-            return false;
+        public:
+
+            typedef ::Primitives::Final::Int8Struct type;
+
+            eProsima_user_DllExport Int8StructPubSubType();
+
+            eProsima_user_DllExport ~Int8StructPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+                {
+                    return is_plain_xcdrv2_impl();
+                }
+                else
+                {
+                    return is_plain_xcdrv1_impl();
+                }
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                new (memory) Int8Struct();
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+
+            static constexpr bool is_plain_xcdrv1_impl()
+            {
+                return 1ULL ==
+                       (detail::Int8Struct_offset_of<Int8Struct, detail::Int8Struct_f>() +
+                       sizeof(int8_t));
+            }
+
+            static constexpr bool is_plain_xcdrv2_impl()
+            {
+                return 1ULL ==
+                       (detail::Int8Struct_offset_of<Int8Struct, detail::Int8Struct_f>() +
+                       sizeof(int8_t));
+            }
+
+        };
+
+
+        #ifndef SWIG
+        namespace detail {
+
+        template<typename Tag, typename Tag::type M>
+        struct Int8Struct_eq_rob
+        {
+            friend constexpr typename Tag::type get(
+                    Tag)
+            {
+                return M;
+            }
+
+        };
+
+        struct Int8Struct_eq_f
+        {
+            typedef int8_t Int8Struct_eq::* type;
+            friend constexpr type get(
+                    Int8Struct_eq_f);
+        };
+
+        template struct Int8Struct_eq_rob<Int8Struct_eq_f, &Int8Struct_eq::m_a>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr Int8Struct_eq_offset_of()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
         }
 
-    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+        } // namespace detail
+        #endif // ifndef SWIG
 
-    #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-        eProsima_user_DllExport inline bool construct_sample(
-                void* memory) const override
+
+        /*!
+         * @brief This class represents the TopicDataType of the type Int8Struct_eq defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class Int8Struct_eqPubSubType : public eprosima::fastdds::dds::TopicDataType
         {
-            static_cast<void>(memory);
-            return false;
+        public:
+
+            typedef ::Primitives::Final::Int8Struct_eq type;
+
+            eProsima_user_DllExport Int8Struct_eqPubSubType();
+
+            eProsima_user_DllExport ~Int8Struct_eqPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+                {
+                    return is_plain_xcdrv2_impl();
+                }
+                else
+                {
+                    return is_plain_xcdrv1_impl();
+                }
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                new (memory) Int8Struct_eq();
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+
+            static constexpr bool is_plain_xcdrv1_impl()
+            {
+                return 1ULL ==
+                       (detail::Int8Struct_eq_offset_of<Int8Struct_eq, detail::Int8Struct_eq_f>() +
+                       sizeof(int8_t));
+            }
+
+            static constexpr bool is_plain_xcdrv2_impl()
+            {
+                return 1ULL ==
+                       (detail::Int8Struct_eq_offset_of<Int8Struct_eq, detail::Int8Struct_eq_f>() +
+                       sizeof(int8_t));
+            }
+
+        };
+
+
+        #ifndef SWIG
+        namespace detail {
+
+        template<typename Tag, typename Tag::type M>
+        struct Int8Struct_ne_rob
+        {
+            friend constexpr typename Tag::type get(
+                    Tag)
+            {
+                return M;
+            }
+
+        };
+
+        struct Int8Struct_ne_f
+        {
+            typedef int16_t Int8Struct_ne::* type;
+            friend constexpr type get(
+                    Int8Struct_ne_f);
+        };
+
+        template struct Int8Struct_ne_rob<Int8Struct_ne_f, &Int8Struct_ne::m_a>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr Int8Struct_ne_offset_of()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
         }
 
-    #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+        } // namespace detail
+        #endif // ifndef SWIG
 
-    private:
 
-        eprosima::fastdds::MD5 md5_;
-        unsigned char* key_buffer_;
+        /*!
+         * @brief This class represents the TopicDataType of the type Int8Struct_ne defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class Int8Struct_nePubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
 
-    };
+            typedef ::Primitives::Final::Int8Struct_ne type;
 
+            eProsima_user_DllExport Int8Struct_nePubSubType();
+
+            eProsima_user_DllExport ~Int8Struct_nePubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+                {
+                    return is_plain_xcdrv2_impl();
+                }
+                else
+                {
+                    return is_plain_xcdrv1_impl();
+                }
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                new (memory) Int8Struct_ne();
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+
+            static constexpr bool is_plain_xcdrv1_impl()
+            {
+                return 2ULL ==
+                       (detail::Int8Struct_ne_offset_of<Int8Struct_ne, detail::Int8Struct_ne_f>() +
+                       sizeof(int16_t));
+            }
+
+            static constexpr bool is_plain_xcdrv2_impl()
+            {
+                return 2ULL ==
+                       (detail::Int8Struct_ne_offset_of<Int8Struct_ne, detail::Int8Struct_ne_f>() +
+                       sizeof(int16_t));
+            }
+
+        };
+
+    } // namespace Final
+    namespace Appendable
+    {
+
+        /*!
+         * @brief This class represents the TopicDataType of the type Int8Struct defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class Int8StructPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::Primitives::Appendable::Int8Struct type;
+
+            eProsima_user_DllExport Int8StructPubSubType();
+
+            eProsima_user_DllExport ~Int8StructPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+    } // namespace Appendable
+    namespace Mutable
+    {
+
+        /*!
+         * @brief This class represents the TopicDataType of the type Int8Struct defined by the user in the IDL file.
+         * @ingroup assignability
+         */
+        class Int8StructPubSubType : public eprosima::fastdds::dds::TopicDataType
+        {
+        public:
+
+            typedef ::Primitives::Mutable::Int8Struct type;
+
+            eProsima_user_DllExport Int8StructPubSubType();
+
+            eProsima_user_DllExport ~Int8StructPubSubType() override;
+
+            eProsima_user_DllExport bool serialize(
+                    const void* const data,
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool deserialize(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    void* data) override;
+
+            eProsima_user_DllExport uint32_t calculate_serialized_size(
+                    const void* const data,
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport bool compute_key(
+                    const void* const data,
+                    eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+                    bool force_md5 = false) override;
+
+            eProsima_user_DllExport void* create_data() override;
+
+            eProsima_user_DllExport void delete_data(
+                    void* data) override;
+
+            //Register TypeObject representation in Fast DDS TypeObjectRegistry
+            eProsima_user_DllExport void register_type_object_representation() override;
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+            eProsima_user_DllExport inline bool is_bounded() const override
+            {
+                return true;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+            eProsima_user_DllExport inline bool is_plain(
+                    eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            {
+                static_cast<void>(data_representation);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+        #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+            eProsima_user_DllExport inline bool construct_sample(
+                    void* memory) const override
+            {
+                static_cast<void>(memory);
+                return false;
+            }
+
+        #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+        private:
+
+            eprosima::fastdds::MD5 md5_;
+            unsigned char* key_buffer_;
+
+        };
+
+    } // namespace Mutable
 } // namespace Primitives
 
-#endif // FAST_DDS_GENERATED__PRIMITIVES_ASSIGNABILITY_PUBSUBTYPES_HPP
+#endif // FAST_DDS_GENERATED__PRIMITIVES_MUTABLE_ASSIGNABILITY_PUBSUBTYPES_HPP
 

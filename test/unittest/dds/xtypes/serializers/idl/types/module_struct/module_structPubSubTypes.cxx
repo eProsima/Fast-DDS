@@ -123,6 +123,9 @@ namespace TrialModule {
                 // Convert DATA to pointer of your type
                 ::TrialModule::StructModule::StructType* p_type = static_cast<::TrialModule::StructModule::StructType*>(data);
 
+                // Call default constructor
+                new (p_type) ::TrialModule::StructModule::StructType();
+
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -314,6 +317,9 @@ bool ModuleStructPubSubType::deserialize(
     {
         // Convert DATA to pointer of your type
         ::ModuleStruct* p_type = static_cast<::ModuleStruct*>(data);
+
+        // Call default constructor
+        new (p_type) ::ModuleStruct();
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

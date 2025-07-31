@@ -101,6 +101,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::statistics::detail::EntityId_s* p_type = static_cast<::eprosima::fastdds::statistics::detail::EntityId_s*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::statistics::detail::EntityId_s();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -282,6 +285,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::statistics::detail::GuidPrefix_s* p_type = static_cast<::eprosima::fastdds::statistics::detail::GuidPrefix_s*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::statistics::detail::GuidPrefix_s();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -465,6 +471,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::statistics::detail::GUID_s* p_type = static_cast<::eprosima::fastdds::statistics::detail::GUID_s*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::statistics::detail::GUID_s();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -646,6 +655,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::statistics::detail::SequenceNumber_s* p_type = static_cast<::eprosima::fastdds::statistics::detail::SequenceNumber_s*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::statistics::detail::SequenceNumber_s();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -829,6 +841,9 @@ namespace eprosima {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::statistics::detail::SampleIdentity_s* p_type = static_cast<::eprosima::fastdds::statistics::detail::SampleIdentity_s*>(data);
 
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::statistics::detail::SampleIdentity_s();
+
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1010,6 +1025,9 @@ namespace eprosima {
                     {
                         // Convert DATA to pointer of your type
                         ::eprosima::fastdds::statistics::detail::Locator_s* p_type = static_cast<::eprosima::fastdds::statistics::detail::Locator_s*>(data);
+
+                        // Call default constructor
+                        new (p_type) ::eprosima::fastdds::statistics::detail::Locator_s();
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1195,6 +1213,9 @@ namespace eprosima {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::DiscoveryTime* p_type = static_cast<::eprosima::fastdds::statistics::DiscoveryTime*>(data);
 
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::DiscoveryTime();
+
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1376,6 +1397,9 @@ namespace eprosima {
                 {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::EntityCount* p_type = static_cast<::eprosima::fastdds::statistics::EntityCount*>(data);
+
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::EntityCount();
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1559,6 +1583,9 @@ namespace eprosima {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::SampleIdentityCount* p_type = static_cast<::eprosima::fastdds::statistics::SampleIdentityCount*>(data);
 
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::SampleIdentityCount();
+
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -1740,6 +1767,9 @@ namespace eprosima {
                 {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::Entity2LocatorTraffic* p_type = static_cast<::eprosima::fastdds::statistics::Entity2LocatorTraffic*>(data);
+
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::Entity2LocatorTraffic();
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1923,6 +1953,9 @@ namespace eprosima {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::WriterReaderData* p_type = static_cast<::eprosima::fastdds::statistics::WriterReaderData*>(data);
 
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::WriterReaderData();
+
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2104,6 +2137,9 @@ namespace eprosima {
                 {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::Locator2LocatorData* p_type = static_cast<::eprosima::fastdds::statistics::Locator2LocatorData*>(data);
+
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::Locator2LocatorData();
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2287,6 +2323,9 @@ namespace eprosima {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::EntityData* p_type = static_cast<::eprosima::fastdds::statistics::EntityData*>(data);
 
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::EntityData();
+
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
@@ -2468,6 +2507,9 @@ namespace eprosima {
                 {
                     // Convert DATA to pointer of your type
                     ::eprosima::fastdds::statistics::PhysicalData* p_type = static_cast<::eprosima::fastdds::statistics::PhysicalData*>(data);
+
+                    // Call default constructor
+                    new (p_type) ::eprosima::fastdds::statistics::PhysicalData();
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);

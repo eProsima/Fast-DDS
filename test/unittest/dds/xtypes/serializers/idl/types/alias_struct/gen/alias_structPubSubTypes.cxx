@@ -97,6 +97,9 @@ bool AliasStructPubSubType::deserialize(
         // Convert DATA to pointer of your type
         ::AliasStruct* p_type = static_cast<::AliasStruct*>(data);
 
+        // Call default constructor
+        new (p_type) ::AliasStruct();
+
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 

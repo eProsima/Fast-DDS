@@ -1,0 +1,166 @@
+module DifferentNumberElements
+{
+    module Final
+    {
+        @final
+        struct OneElement
+        {
+            int8 a;
+        };
+
+        @final
+        struct TwoElements
+        {
+            int8 a;
+            int16 b;
+        };
+
+        @final
+        struct ElementsTwo
+        {
+            int16 b;
+            int8 a;
+        };
+
+        @final
+        struct ThreeElements
+        {
+            int8 a;
+            int16 b;
+            string s;
+        };
+
+        @final
+        struct ElementsThree
+        {
+            int8 a;
+            string s;
+            int16 b;
+        };
+    };
+
+    module Appendable
+    {
+        @appendable
+        struct OneElement
+        {
+            int8 a;
+        };
+
+        @appendable
+        struct TwoElements
+        {
+            int8 a;
+            int16 b;
+        };
+
+        @appendable
+        struct ElementsTwo
+        {
+            int16 b;
+            int8 a;
+        };
+
+        @appendable
+        struct ThreeElements
+        {
+            int8 a;
+            int16 b;
+            string s;
+        };
+
+        @appendable
+        struct ElementsThree
+        {
+            int8 a;
+            string s;
+            int16 b;
+        };
+    };
+
+    module Mutable
+    {
+        @mutable
+        @autoid(HASH)
+        struct OneElement
+        {
+            int8 a;
+        };
+
+        @mutable
+        @autoid(HASH)
+        struct TwoElements
+        {
+            int8 a;
+            int16 b;
+        };
+
+        @mutable
+        @autoid(HASH)
+        struct ElementsTwo
+        {
+            int16 b;
+            int8 a;
+        };
+
+        @mutable
+        @autoid(HASH)
+        struct ThreeElements
+        {
+            int8 a;
+            int16 b;
+            string s;
+        };
+
+        @mutable
+        @autoid(HASH)
+        struct ElementsThree
+        {
+            int8 a;
+            string s;
+            int16 b;
+        };
+    };
+};
+
+module Primitives
+{
+    module Final
+    {
+        @final
+        struct Int8Struct
+        {
+            int8 a;
+        };
+
+        @final
+        struct Int8Struct_eq
+        {
+            int8 a;
+        };
+
+        @final
+        struct Int8Struct_ne
+        {
+            int16 a;
+        };
+    };
+
+    module Appendable
+    {
+        @appendable
+        struct Int8Struct
+        {
+            int8 a;
+        };
+    };
+
+    module Mutable
+    {
+        @mutable
+        struct Int8Struct
+        {
+            int8 a;
+        };
+    };
+};
