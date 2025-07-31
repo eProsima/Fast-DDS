@@ -103,6 +103,11 @@
 // Statistics
 #cmakedefine FASTDDS_STATISTICS
 
+// dlopen support
+#ifndef HAVE_DLOPEN
+#define HAVE_DLOPEN @HAVE_DLOPEN@
+#endif // ifndef HAVE_DLOPEN
+
 // Deprecated macro
 #if __cplusplus >= 201402L
 #define FASTDDS_DEPRECATED(msg) [[ deprecated(msg) ]]
