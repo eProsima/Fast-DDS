@@ -4624,6 +4624,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
                 n_logs)));
 
     const size_t n_participants = 100;
+    const uint32_t known_unicast_port = 7350;
 
     // Configure security and handshake properties
     const std::string governance_file("governance_helloworld_all_enable.smime");
@@ -4634,8 +4635,9 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     // Set a configuration that fails the authentication fast
     handshake_prop_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.max_handshake_requests",
             "1"));
-    handshake_prop_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period",
-            "50"));
+    handshake_prop_policy.properties().emplace_back(Property(
+                "dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period",
+                "50"));
 
     // Create the main participant (pointee by the rest)
     PubSubWriter<HelloWorldPubSubType> main_participant("HelloWorldTopic");
@@ -4658,12 +4660,12 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
                 msg.pos += 2 + 2 + 4;
 
                 // Read writer entity id
-                eprosima::fastdds::rtps::GUID_t writer_guid;
-                writer_guid.entityId = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                EntityId_t writer_entity_id;
+                writer_entity_id = eprosima::fastdds::helpers::cdr_parse_entity_id(
                     (char*)&msg.buffer[msg.pos]);
                 msg.pos = old_pos;
 
-                if (writer_guid.entityId == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
+                if (writer_entity_id == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
                 {
                     // Drop the message if the message comes from participant generic message
                     return true;
@@ -4677,7 +4679,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
 
     main_participant.disable_builtin_transport()
             .add_user_transport_to_pparams(test_transport)
-            .add_to_metatraffic_unicast_locator_list("127.0.0.1", 7650)
+            .add_to_metatraffic_unicast_locator_list("127.0.0.1", known_unicast_port)
             .init();
     ASSERT_TRUE(main_participant.isInitialized());
 
@@ -4686,7 +4688,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     LocatorList_t initial_peers;
     Locator_t main_participant_locator;
     main_participant_locator.kind = LOCATOR_KIND_UDPv4;
-    main_participant_locator.port = 7650;
+    main_participant_locator.port = known_unicast_port;
     IPLocator::setIPv4(main_participant_locator, "127.0.0.1");
     initial_peers.push_back(main_participant_locator);
 
