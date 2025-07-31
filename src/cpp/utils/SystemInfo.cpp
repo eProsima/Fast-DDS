@@ -174,7 +174,7 @@ bool SystemInfo::wait_for_file_closure(
         const std::string& filename,
         const std::chrono::seconds timeout)
 {
-    auto start = std::chrono::system_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
 #ifdef _MSC_VER
     std::ofstream os;
@@ -184,7 +184,7 @@ bool SystemInfo::wait_for_file_closure(
         os.open(filename, std::ios::out | std::ios::app, _SH_DENYWR);
         if (!os.is_open()
                 // If the file is lock-opened in an external editor do not hang
-                && (std::chrono::system_clock::now() - start) < timeout )
+                && (std::chrono::steady_clock::now() - start) < timeout )
         {
             std::this_thread::yield();
         }
@@ -199,7 +199,7 @@ bool SystemInfo::wait_for_file_closure(
 
     while (flock(fd, LOCK_EX | LOCK_NB)
             // If the file is lock-opened in an external editor do not hang
-            && (std::chrono::system_clock::now() - start) < timeout )
+            && (std::chrono::steady_clock::now() - start) < timeout )
     {
         std::this_thread::yield();
     }
@@ -214,7 +214,7 @@ bool SystemInfo::wait_for_file_closure(
     (void)filename;
 #endif // ifdef _MSC_VER
 
-    return std::chrono::system_clock::now() - start < timeout;
+    return std::chrono::steady_clock::now() - start < timeout;
 }
 
 ReturnCode_t SystemInfo::set_environment_file()

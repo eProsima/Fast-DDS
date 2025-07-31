@@ -515,8 +515,8 @@ private:
     bool disable_heartbeat_piggyback_;
     //! True to disable positive ACKs
     bool disable_positive_acks_;
-    //! Keep duration for disable positive ACKs QoS, in microseconds
-    std::chrono::duration<double, std::ratio<1, 1000000>> keep_duration_us_;
+    //! Keep duration for disable positive ACKs QoS
+    Duration_t keep_duration_;
     //! Last acknowledged cache change (only used if using disable positive ACKs QoS)
     SequenceNumber_t last_sequence_number_;
     //! Biggest sequence number removed from history
