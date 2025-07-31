@@ -55,8 +55,8 @@ struct manual_stop_checker
 };
 
 /**
- * @brief seq_until_manual_stop< R1, R2, ..., Rn >
- * @note This rule behaves like a seq< R1, R2, ..., Rn >, but after matching each Ri rule, it checks if the
+ * @brief seq_until_manual_stop< R1, R2, ..., Rn >.
+ * This rule behaves like a seq< R1, R2, ..., Rn >, but after matching each Ri rule, it checks if the
  * context is configured to stop parsing. If it is, the parsing stops and the match is successful.
  * @tparam Rules The rules to be matched in sequence.
  */
