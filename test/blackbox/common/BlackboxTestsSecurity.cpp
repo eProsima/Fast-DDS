@@ -4607,6 +4607,126 @@ TEST(Security, SerializationOfParticipantGenericMessageWhenAddingProperties)
     writer.wait_authorized();
 }
 
+/**
+ * This test is a regression test for Redmine issue #23431.
+ * On validation failed, the participant generic message
+ * shall be removed from the history and freed from the pool.
+ */
+TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_authentication_failure)
+{
+    // Counter for log entries
+    std::atomic<size_t>n_logs{};
+
+    // Prepare Log module to check that no SECURITY errors are produced
+    eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("SECURITY"));
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Error);
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(new TestConsumer(
+                n_logs)));
+
+    const size_t n_participants = 100;
+
+    // Configure security and handshake properties
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+
+    PropertyPolicy handshake_prop_policy;
+
+    // Set a configuration that fails the authentication fast
+    handshake_prop_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.max_handshake_requests",
+            "1"));
+    handshake_prop_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period",
+            "50"));
+
+    // Create the main participant (pointee by the rest)
+    PubSubWriter<HelloWorldPubSubType> main_participant("HelloWorldTopic");
+
+    // Create 100 secure participants pointing to the main one
+    // 100 is because of the history size for the participant stateless message writer
+    std::vector<std::shared_ptr<PubSubReader<HelloWorldPubSubType>>> participants;
+    participants.reserve(n_participants);
+
+    // Create a test transport that will drop the participant stateless messages only
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    // Filter to drop participant stateless messages
+    test_transport->drop_data_messages_filter_ = [](eprosima::fastdds::rtps::CDRMessage_t& msg)
+            -> bool
+            {
+                auto old_pos = msg.pos;
+
+                // Jump to writer entity id
+                msg.pos += 2 + 2 + 4;
+
+                // Read writer entity id
+                eprosima::fastdds::rtps::GUID_t writer_guid;
+                writer_guid.entityId = eprosima::fastdds::helpers::cdr_parse_entity_id(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos = old_pos;
+
+                if (writer_guid.entityId == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
+                {
+                    // Drop the message if the message comes from participant generic message
+                    return true;
+                }
+
+                return false;
+            };
+
+    // Configure the main participant security
+    CommonPermissionsConfigure(main_participant, governance_file, permissions_file, handshake_prop_policy);
+
+    main_participant.disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .add_to_metatraffic_unicast_locator_list("127.0.0.1", 7650)
+            .init();
+    ASSERT_TRUE(main_participant.isInitialized());
+
+    // Set the initial peers for the rest of the participants
+    // They will all point to the main participant
+    LocatorList_t initial_peers;
+    Locator_t main_participant_locator;
+    main_participant_locator.kind = LOCATOR_KIND_UDPv4;
+    main_participant_locator.port = 7650;
+    IPLocator::setIPv4(main_participant_locator, "127.0.0.1");
+    initial_peers.push_back(main_participant_locator);
+
+    for (size_t i = 0; i < n_participants; ++i)
+    {
+        participants.emplace_back(std::make_shared<PubSubReader<HelloWorldPubSubType>>("HelloWorldTopic"));
+
+        // Configure security for the new participant
+        CommonPermissionsConfigure(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
+
+        // Init participant with the main participant as initial peer
+        // and disable multicast so it does not try to discover noone else
+        participants.back()->disable_multicast(i + 1)
+                .initial_peers(initial_peers)
+                .init();
+
+        ASSERT_TRUE(participants.back()->isInitialized());
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    // Wait for the main participant to fail authentication with the rest
+    main_participant.wait_unauthorized(std::chrono::seconds::zero(), n_participants);
+
+    // If the participant stateless messages history of the main participant is not correctly freed,
+    // the main participant will fail creating a new participant stateless message for him
+    auto failing_participant = std::make_shared<PubSubReader<HelloWorldPubSubType>>("HelloWorldTopic");
+    CommonPermissionsConfigure(*failing_participant, governance_file, permissions_file, handshake_prop_policy);
+    failing_participant->disable_multicast(n_participants + 1)
+            .initial_peers(initial_peers)
+            .init();
+
+    // Wait for the main participant to unauthorize the new one
+    main_participant.wait_unauthorized(std::chrono::seconds::zero(), n_participants + 1);
+
+    // In case logs are not flushed immediately, we wait a bit
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // No SECURITY error logs should have been produced
+    eprosima::fastdds::dds::Log::Flush();
+    EXPECT_EQ(0u, n_logs);
 }
 
 void blackbox_security_init()
