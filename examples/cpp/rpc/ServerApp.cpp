@@ -62,19 +62,36 @@ ServerApp::~ServerApp()
 {
     timeout_thread_.join();
 
+    // __FLAG__
+    std::cout << "[ServerApp::~ServerApp()] begin..." << std::endl;
+    //////////////////////////////////
+
     // As a precautionary measure, delete the server here because participant_->delete_contained_entities()
     // does not automatically disable the service. This line can be removed once the RPC internal API
     // supports service disabling.
+    // __FLAG__
+    std::cout << "[ServerApp::~ServerApp()] server use count: " << server_.use_count() << std::endl;
+    //////////////////////////////////
     server_.reset();
 
     if (participant_)
     {
         // Delete DDS entities contained within the DomainParticipant
+        // __FLAG__
+        std::cout << "[ServerApp::~ServerApp()]before delete_contained_entities..." << std::endl;
+        //////////////////////////////////
         participant_->delete_contained_entities();
+        // __FLAG__
+        std::cout << "[ServerApp::~ServerApp()]...after delete_contained_entities" << std::endl;
+        //////////////////////////////////
 
         // Delete DomainParticipant
         DomainParticipantFactory::get_shared_instance()->delete_participant(participant_);
     }
+
+    // __FLAG__
+    std::cout << "[ServerApp::~ServerApp()] ...end" << std::endl;
+    //////////////////////////////////
 }
 
 void ServerApp::run()
@@ -91,6 +108,10 @@ void ServerApp::run()
 
 void ServerApp::stop()
 {
+    if (is_stopped())
+    {
+        return;
+    }
     stop_.store(true);
     server_->stop();
 

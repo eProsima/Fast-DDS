@@ -626,6 +626,11 @@ const Publisher* PublisherImpl::get_publisher() const
 
 ReturnCode_t PublisherImpl::delete_contained_entities()
 {
+
+    // __FLAG__
+    std::cout << "[PublisherImpl::delete_contained_entities()]begin..." << std::endl;
+    // throw std::runtime_error("fuck");
+    //////////////////////////////////
     // Let's be optimistic
     ReturnCode_t result = RETCODE_OK;
 
@@ -666,6 +671,10 @@ ReturnCode_t PublisherImpl::delete_contained_entities()
         writer_impl->get_topic()->get_impl()->dereference();
         delete (writer_impl);
     }
+
+    // __FLAG__
+    std::cout << "[PublisherImpl::delete_contained_entities()]end..." << std::endl;
+    //////////////////////////////////
     return result;
 }
 

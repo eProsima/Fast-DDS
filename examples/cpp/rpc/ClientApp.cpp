@@ -703,6 +703,10 @@ void ClientApp::run()
 
 void ClientApp::stop()
 {
+    if (is_stopped())
+    {
+        return;
+    }
     stop_.store(true);
     client_server_info("ClientApp", "Client execution stopped");
 }

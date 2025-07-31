@@ -295,6 +295,10 @@ ReturnCode_t ReplierImpl::delete_contained_entities()
 {
     // Check if DataWriter and DataReader can be deleted.
     // If not, do nothing and return an error code
+
+    // __FLAG__
+    std::cout << "[ReplierImpl::delete_contained_entities()]begin..." << std::endl;
+    //////////////////////////////////
     if (replier_writer_)
     {
         if (!service_->get_publisher()->can_be_deleted(replier_writer_))
@@ -318,7 +322,9 @@ ReturnCode_t ReplierImpl::delete_contained_entities()
     replier_writer_ = nullptr;
     service_->get_subscriber()->delete_datareader(replier_reader_);
     replier_reader_ = nullptr;
-
+    // __FLAG__
+    std::cout << "[ReplierImpl::delete_contained_entities()]...end" << std::endl;
+    //////////////////////////////////
     return RETCODE_OK;
 }
 

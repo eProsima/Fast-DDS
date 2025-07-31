@@ -122,6 +122,9 @@ public:
 
     ~CalculatorServerLogic() override
     {
+        // __FLAG__
+        std::cout << "[~CalculatorServerLogic()]begin..." << std::endl;
+        //////////////////////////////////
         if (nullptr != replier_)
         {
             participant_.delete_service_replier(service_->get_service_name(), replier_);
@@ -131,6 +134,10 @@ public:
         {
             participant_.delete_service(service_);
         }
+
+        // __FLAG__
+        std::cout << "[~CalculatorServerLogic()]...end" << std::endl;
+        //////////////////////////////////
     }
 
     void run() override
@@ -188,6 +195,9 @@ public:
         }
 
         // Wait for all threads to finish
+        // __FLAG__
+        std::cout << "[CalculatorSErverLogic::stop()]before server_stopped..." << std::endl;
+        //////////////////////////////////
         request_scheduler_->server_stopped(shared_from_this());
     }
 
@@ -1064,6 +1074,10 @@ private:
 
                             // Process the request
                             server_.execute_request(req);
+
+                            // __FLAG__
+                            std::this_thread::sleep_for(std::chrono::milliseconds(3000)); // Simulate processing time
+                            //////////////////////////////////
                         }
                     };
 
@@ -1366,10 +1380,17 @@ struct CalculatorServerProxy
 
     ~CalculatorServerProxy() override
     {
+        // __FLAG__
+        std::cout << "[~CalculatorServerProxy()]begin..." << std::endl;
+        //////////////////////////////////
         if (impl_)
         {
             impl_->stop();
         }
+
+        // __FLAG__
+        std::cout << "[~CalculatorServerProxy()]...end" << std::endl;
+        //////////////////////////////////
     }
 
     void run() override
