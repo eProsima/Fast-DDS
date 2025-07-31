@@ -254,8 +254,8 @@ inline void iHandle2GUID(
 }
 
 /**
- * Convert GUID to InstanceHandle_t
- * @param ihandle InstanceHandle_t to store the results
+ * Convert InstanceHandle_t to GUID
+ * @param ihandle InstanceHandle_t to copy
  * @return GUID_t
  */
 inline GUID_t iHandle2GUID(
