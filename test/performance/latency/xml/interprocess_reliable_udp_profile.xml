@@ -29,6 +29,12 @@
                 </historyQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>10</sec>
+                    </duration>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -48,6 +54,12 @@
                 </historyQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>10</sec>
+                    </duration>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -79,6 +91,12 @@
                 </historyQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>10</sec>
+                    </duration>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -98,6 +116,12 @@
                 </historyQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>10</sec>
+                    </duration>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
