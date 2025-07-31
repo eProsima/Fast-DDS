@@ -4634,7 +4634,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
 
     // Set a configuration that fails the authentication fast
     handshake_prop_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.max_handshake_requests",
-            "1"));
+            "10"));
     handshake_prop_policy.properties().emplace_back(Property(
                 "dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period",
                 "50"));
@@ -4701,7 +4701,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
 
         // Init participant with the main participant as initial peer
         // and disable multicast so it does not try to discover noone else
-        participants.back()->disable_multicast(i + 1)
+        participants.back()->disable_multicast(static_cast<int32_t>(i + 1))
                 .initial_peers(initial_peers)
                 .init();
 
@@ -4716,7 +4716,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     // the main participant will fail creating a new participant stateless message for him
     auto failing_participant = std::make_shared<PubSubReader<HelloWorldPubSubType>>("HelloWorldTopic");
     CommonPermissionsConfigure(*failing_participant, governance_file, permissions_file, handshake_prop_policy);
-    failing_participant->disable_multicast(n_participants + 1)
+    failing_participant->disable_multicast(static_cast<int32_t>(n_participants + 1))
             .initial_peers(initial_peers)
             .init();
 
