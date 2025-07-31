@@ -8,7 +8,7 @@ Forthcoming
   * Extend `TypeDescriptor` with `literal_type()` to store the literal type in enumerations.
 * Add field `original_writer_guid` to `WriteParams` and `SampleInfo`
 * Iterate over declared types processed with IDL Parser:
-  * Add new `for_each_type_w_uri` method in `DynamicTypeBuilderFactory`.
+  * Add new `for_each_type_w_uri()` method in `DynamicTypeBuilderFactory`.
 
 Version v3.3.0
 --------------
