@@ -510,7 +510,7 @@ void MessageReceiver::processCDRMsg(
                     }
                     else
                     {
-                        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Acknack Submsg received, processing...");
+                        EPROSIMA_LOG_ERROR(RTPS_MSG_IN, IDSTRING "Acknack Submsg received, processing...");
                         valid = proc_Submsg_Acknack(submessage, &submsgh, current_message_was_decoded);
                     }
                     break;
