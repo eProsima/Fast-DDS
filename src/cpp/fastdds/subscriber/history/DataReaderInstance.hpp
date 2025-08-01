@@ -58,8 +58,6 @@ struct DataReaderInstance
     int32_t disposed_generation_count = 0;
     //! Current no_writers generation of the instance
     int32_t no_writers_generation_count = 0;
-    //! Whether the instance has a state notification sample available
-    bool has_state_notification_sample = false;
 
     DataReaderInstance(
             const eprosima::fastrtps::ResourceLimitedContainerConfig& changes_allocation,
@@ -134,7 +132,6 @@ struct DataReaderInstance
                 break;
         }
 
-        has_state_notification_sample = false;
         return ret_val;
     }
 
@@ -160,7 +157,6 @@ struct DataReaderInstance
                 if (alive_writers.empty() && (InstanceStateKind::ALIVE_INSTANCE_STATE == instance_state))
                 {
                     instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
-                    has_state_notification_sample = true;
                 }
                 if (ALIVE_INSTANCE_STATE == instance_state)
                 {
@@ -295,7 +291,6 @@ private:
             {
                 instance_state = InstanceStateKind::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE;
                 counters_update(counters.instances_alive, counters.instances_no_writers, counters, false);
-                has_state_notification_sample = true;
             }
 
             ret_val = true;
