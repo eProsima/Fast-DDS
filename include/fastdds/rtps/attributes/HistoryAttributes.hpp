@@ -24,6 +24,7 @@
 #include <fastdds/fastdds_dll.hpp>
 
 #include <cstdint>
+#include <iostream>
 
 namespace eprosima {
 namespace fastdds {
@@ -115,6 +116,11 @@ public:
         , maximumReservedCaches(maxRes)
         , extraReservedCaches(extra)
     {
+        std::cout << "HistoryAttributes created with memoryPolicy: "
+                  << memoryPolicy << ", payloadMaxSize: " << payloadMaxSize
+                  << ", initialReservedCaches: " << initialReservedCaches
+                  << ", maximumReservedCaches: " << maximumReservedCaches
+                  << ", extraReservedCaches: " << extraReservedCaches << std::endl;
     }
 
     virtual ~HistoryAttributes()
