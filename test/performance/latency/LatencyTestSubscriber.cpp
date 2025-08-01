@@ -420,13 +420,10 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
     std::ostringstream log;
     bool notify = false;
 
-    while (reader->take_next_sample(&command, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(
+                &command, &info) == ReturnCode_t::RETCODE_OK
+            && info.valid_data)
     {
-        if (!info.valid_data)
-        {
-            continue;
-        }
-
         std::unique_lock<std::mutex> lock(latency_subscriber_->mutex_);
 
         log << "RCOMMAND: " << command.m_command;
@@ -459,6 +456,10 @@ void LatencyTestSubscriber::CommandReaderListener::on_data_available(
             latency_subscriber_->command_msg_cv_.notify_one();
         }
     }
+    else
+    {
+        log << "Problem reading command message";
+    }
 
     EPROSIMA_LOG_INFO(LatencyTest, log.str());
 }
@@ -467,149 +468,123 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
         DataReader* reader)
 {
     auto sub = latency_subscriber_;
-    ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
 
-    while (ReturnCode_t::RETCODE_OK == ret_code)
+    // Bounce back the message from the Publisher as fast as possible
+    // dynamic_data_ and latency_data_type do not require locks
+    // because the command message exchange assures this calls atomicity
+    if (sub->data_loans_)
     {
-        // Bounce back the message from the Publisher as fast as possible
-        // dynamic_data_ and latency_data_type do not require locks
-        // because the command message exchange assures this calls atomicity
-        if (sub->data_loans_)
-        {
-            SampleInfoSeq infos;
-            LoanableSequence<LatencyType> data_seq;
-            // reader loan buffer
-            LatencyType* echoed_data = nullptr;
-            // writer loan buffer
-            void* echoed_loan = nullptr;
+        SampleInfoSeq infos;
+        LoanableSequence<LatencyType> data_seq;
+        // reader loan buffer
+        LatencyType* echoed_data = nullptr;
+        // writer loan buffer
+        void* echoed_loan = nullptr;
 
-            ret_code = reader->take(data_seq, infos, 1);
-            if (ReturnCode_t::RETCODE_OK != ret_code)
+        if (ReturnCode_t::RETCODE_OK != reader->take(data_seq, infos, 1))
+        {
+            EPROSIMA_LOG_INFO(LatencyTest, "Problem reading Subscriber echoed loaned test data");
+            return;
+        }
+
+        // we have requested a single sample
+        assert(infos.length() == 1 && data_seq.length() == 1);
+        // the buffer must be there
+        assert(sub->latency_data_ != nullptr);
+        // reference the loan
+        echoed_data = &data_seq[0];
+
+        // echo the sample
+        if (sub->echo_)
+        {
+            // begin measuring overhead = loan->buffer copy + write loan + buffer->loan copy
+            auto start_time = std::chrono::steady_clock::now();
+
+            // Copy the data from reader loan to aux buffer
+            auto data_type = std::static_pointer_cast<LatencyDataType>(sub->latency_data_type_);
+            data_type->copy_data(*echoed_data, *sub->latency_data_);
+
+            // release the reader loan
+            if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
             {
-                if (ReturnCode_t::RETCODE_NO_DATA != ret_code)
-                {
-                    EPROSIMA_LOG_ERROR(LatencyTest, "Problem reading Subscriber echoed test data");
-                }
+                EPROSIMA_LOG_INFO(LatencyTest, "Problem returning loaned test data");
                 return;
             }
 
-            // we have requested a single sample
-            assert(infos.length() == 1 && data_seq.length() == 1);
-            // the buffer must be there
-            assert(sub->latency_data_ != nullptr);
-            if (!infos[0].valid_data)
+            // writer loan
+            int trials = 10;
+            bool loaned = false;
+            while (trials-- != 0 && !loaned)
             {
-                // release the reader loan
-                reader->return_loan(data_seq, infos);
-                continue;
-            }
+                loaned = (ReturnCode_t::RETCODE_OK
+                        == sub->data_writer_->loan_sample(
+                            echoed_loan,
+                            DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
 
-            // reference the loan
-            echoed_data = &data_seq[0];
-
-            // echo the sample
-            if (sub->echo_)
-            {
-                // begin measuring overhead = loan->buffer copy + write loan + buffer->loan copy
-                auto start_time = std::chrono::steady_clock::now();
-
-                // Copy the data from reader loan to aux buffer
-                auto data_type = std::static_pointer_cast<LatencyDataType>(sub->latency_data_type_);
-                data_type->copy_data(*echoed_data, *sub->latency_data_);
-
-                // release the reader loan
-                if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
-                {
-                    EPROSIMA_LOG_INFO(LatencyTest, "Problem returning loaned test data");
-                    return;
-                }
-
-                // writer loan
-                int trials = 10;
-                bool loaned = false;
-                while (trials-- != 0 && !loaned)
-                {
-                    loaned = (ReturnCode_t::RETCODE_OK
-                            == sub->data_writer_->loan_sample(
-                                echoed_loan,
-                                DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
-
-                    std::this_thread::yield();
-
-                    if (!loaned)
-                    {
-                        EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber trying to loan: " << trials);
-                    }
-                }
+                std::this_thread::yield();
 
                 if (!loaned)
                 {
-                    EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data with loan");
-                    // release the reader loan
-                    reader->return_loan(data_seq, infos);
-                    return;
-                }
-
-                // copy the data from aux buffer to writer loan
-                data_type->copy_data(*sub->latency_data_, *(LatencyType*)echoed_loan);
-
-                //end measuring overhead
-                auto end_time = std::chrono::steady_clock::now();
-                std::chrono::duration<uint32_t, std::nano> bounce_time(end_time - start_time);
-                reinterpret_cast<LatencyType*>(echoed_loan)->bounce = bounce_time.count();
-
-                if (true != sub->data_writer_->write(echoed_loan))
-                {
-                    EPROSIMA_LOG_ERROR(LatencyTest, "Problem echoing Publisher test data with loan");
-                    sub->data_writer_->discard_loan(echoed_loan);
+                    EPROSIMA_LOG_ERROR(LatencyTest, "Subscriber trying to loan: " << trials);
                 }
             }
-            else
+
+            if (!loaned)
             {
-                // release the loan
-                if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+                EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data with loan");
+                // release the reader loan
+                reader->return_loan(data_seq, infos);
+                return;
+            }
+
+            // copy the data from aux buffer to writer loan
+            data_type->copy_data(*sub->latency_data_, *(LatencyType*)echoed_loan);
+
+            //end measuring overhead
+            auto end_time = std::chrono::steady_clock::now();
+            std::chrono::duration<uint32_t, std::nano> bounce_time(end_time - start_time);
+            reinterpret_cast<LatencyType*>(echoed_loan)->bounce = bounce_time.count();
+
+            if (!sub->data_writer_->write(echoed_loan))
+            {
+                EPROSIMA_LOG_ERROR(LatencyTest, "Problem echoing Publisher test data with loan");
+                sub->data_writer_->discard_loan(echoed_loan);
+            }
+        }
+        else
+        {
+            // release the loan
+            if (ReturnCode_t::RETCODE_OK != reader->return_loan(data_seq, infos))
+            {
+                EPROSIMA_LOG_ERROR(LatencyTest, "Problem returning loaned test data");
+            }
+        }
+    }
+    else
+    {
+        SampleInfo info;
+        void* data = sub->dynamic_types_ ?
+                (void*)sub->dynamic_data_ :
+                (void*)sub->latency_data_;
+
+        if (reader->take_next_sample(
+                    data, &info) == ReturnCode_t::RETCODE_OK
+                && info.valid_data)
+        {
+            if (sub->echo_)
+            {
+                // no bounce overload recorded
+                reinterpret_cast<LatencyType*>(data)->bounce = 0;
+
+                if (!sub->data_writer_->write(data))
                 {
-                    EPROSIMA_LOG_ERROR(LatencyTest, "Problem returning loaned test data");
+                    EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data");
                 }
             }
         }
         else
         {
-            SampleInfo info;
-            void* data = sub->dynamic_types_ ?
-                    (void*)sub->dynamic_data_ :
-                    (void*)sub->latency_data_;
-
-            ret_code = reader->take_next_sample(data, &info);
-            if (ReturnCode_t::RETCODE_OK != ret_code)
-            {
-                if (ReturnCode_t::RETCODE_NO_DATA != ret_code)
-                {
-                    EPROSIMA_LOG_INFO(LatencyTest, "Problem reading Publisher test data");
-                }
-                return;
-            }
-            else
-            {
-                if (!info.valid_data)
-                {
-                    continue;
-                }
-
-                if (sub->echo_)
-                {
-                    // no bounce overload recorded
-                    if (!sub->dynamic_types_)
-                    {
-                        reinterpret_cast<LatencyType*>(data)->bounce = 0;
-                    }
-
-                    if (true != sub->data_writer_->write(data))
-                    {
-                        EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data");
-                    }
-                }
-            }
+            EPROSIMA_LOG_INFO(LatencyTest, "Problem reading Publisher test data");
         }
     }
 }

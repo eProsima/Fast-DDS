@@ -37,7 +37,6 @@
 #include <Windows.h>
 #endif // _MSC_VER
 
-#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -1738,10 +1737,7 @@ public:
 
         if (ReturnCode_t::RETCODE_OK == datareader_->take(data_seq, info_seq))
         {
-            if (info_seq[0].publication_handle != eprosima::fastdds::dds::HANDLE_NIL)
-            {
-                current_processed_count_++;
-            }
+            current_processed_count_++;
             return true;
         }
         return false;
@@ -1753,10 +1749,7 @@ public:
         eprosima::fastdds::dds::SampleInfo dds_info;
         if (datareader_->take_next_sample(data, &dds_info) == ReturnCode_t::RETCODE_OK)
         {
-            if (dds_info.publication_handle != eprosima::fastdds::dds::HANDLE_NIL)
-            {
-                current_processed_count_++;
-            }
+            current_processed_count_++;
             return true;
         }
         return false;
@@ -1966,8 +1959,7 @@ protected:
         ReturnCode_t success = take_ ?
                 datareader->take_next_sample(data, &info) :
                 datareader->read_next_sample(data, &info);
-        if ((ReturnCode_t::RETCODE_OK == success) &&
-                (info.publication_handle != eprosima::fastdds::dds::HANDLE_NIL))
+        if (ReturnCode_t::RETCODE_OK == success)
         {
             returnedValue = true;
 
@@ -2028,12 +2020,6 @@ protected:
         {
             type& data = datas[i];
             eprosima::fastdds::dds::SampleInfo& info = infos[i];
-
-            // Skip unknown samples
-            if (info.publication_handle == eprosima::fastdds::dds::HANDLE_NIL)
-            {
-                continue;
-            }
 
             // Check order of changes.
             LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };

@@ -18,7 +18,6 @@
 #include "../dds-pim/PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
@@ -641,22 +640,19 @@ protected:
         {
             returnedValue = true;
 
-            if (info.publication_handle != HANDLE_NIL)
+            std::unique_lock<std::mutex> lock(mutex_);
+
+            // Check order of changes
+            LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
+            ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
+            last_seq[seq_info] = info.sample_identity.sequence_number();
+
             {
-                std::unique_lock<std::mutex> lock(mutex_);
-
-                // Check order of changes
-                LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
-                ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
-                last_seq[seq_info] = info.sample_identity.sequence_number();
-
+                std::lock_guard<std::mutex> guard(validator_mtx_);
+                if (nullptr != sample_validator_)
                 {
-                    std::lock_guard<std::mutex> guard(validator_mtx_);
-                    if (nullptr != sample_validator_)
-                    {
-                        validator_selector(statistics_part_, sample_validator_,
-                                data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
-                    }
+                    validator_selector(statistics_part_, sample_validator_,
+                            data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
                 }
             }
         }

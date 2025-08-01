@@ -666,7 +666,7 @@ void DataReaderHistory::check_and_remove_instance(
 {
     DataReaderInstance* instance = instance_info->second.get();
 
-    if (instance->cache_changes.empty() && (false == instance->has_state_notification_sample))
+    if (instance->cache_changes.empty())
     {
         if (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state &&
                 instance->alive_writers.empty() &&
@@ -892,24 +892,13 @@ bool DataReaderHistory::update_instance_nts(
     return ret;
 }
 
-bool DataReaderHistory::writer_not_alive(
+void DataReaderHistory::writer_not_alive(
         const GUID_t& writer_guid)
 {
-    bool ret_val = false;
-
     for (auto& it : instances_)
     {
-        bool had_notification_sample = it.second->has_state_notification_sample;
         it.second->writer_removed(counters_, writer_guid);
-        if (it.second->has_state_notification_sample && !had_notification_sample)
-        {
-            // Mark instance as data available
-            data_available_instances_[it.first] = it.second;
-            ret_val = true;
-        }
     }
-
-    return ret_val;
 }
 
 StateFilter DataReaderHistory::get_mask_status() const noexcept
