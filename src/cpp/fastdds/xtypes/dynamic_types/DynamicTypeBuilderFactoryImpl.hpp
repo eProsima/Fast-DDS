@@ -70,7 +70,7 @@ public:
             const std::string& type_name,
             const IncludePathSeq& include_paths) noexcept override;
 
-    void for_each_type_w_uri(
+    ReturnCode_t for_each_type_w_uri(
             const std::string& document_url,
             const IncludePathSeq& include_paths,
             std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) noexcept override;

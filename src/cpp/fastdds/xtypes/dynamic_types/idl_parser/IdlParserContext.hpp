@@ -230,7 +230,18 @@ public:
 
     // Results
     bool success = false;
-    std::string target_type_name;
+
+    Context()
+        : Context([](DynamicTypeBuilder::_ref_type) { return true; })
+    {
+    }
+
+    explicit Context(
+            std::function<bool(DynamicTypeBuilder::_ref_type)> on_type_dcl_builder_created)
+        : on_type_dcl_builder_created_(on_type_dcl_builder_created)
+        , should_continue_(true)
+    {
+    }
 
     traits<DynamicType>::ref_type get_type(
             std::map<std::string, std::string>& state,
@@ -336,14 +347,6 @@ public:
         should_continue_ = on_type_dcl_builder_created_(type_builder);
     }
 
-    void set_declared_type_callback(
-            std::function<bool(DynamicTypeBuilder::_ref_type)> callback)
-    {
-        on_type_dcl_builder_created_ = callback;
-    }
-
-    DynamicTypeBuilder::_ref_type builder;
-
     ModuleStack& modules()
     {
         return modules_;
@@ -377,8 +380,8 @@ private:
 
     ModuleStack modules_;
     AnnotationsManager annotations_;
-    std::function<bool(DynamicTypeBuilder::_ref_type)> on_type_dcl_builder_created_ = [](DynamicTypeBuilder::_ref_type) { return true; };
-    bool should_continue_ = true;
+    std::function<bool(DynamicTypeBuilder::_ref_type)> on_type_dcl_builder_created_;
+    bool should_continue_;
 
 };
 

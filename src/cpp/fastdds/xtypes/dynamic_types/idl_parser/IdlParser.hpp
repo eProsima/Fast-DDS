@@ -1421,11 +1421,6 @@ struct action<struct_forward_dcl>
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << scoped_struct_name);
         module->structure(builder);
-
-        if (scoped_struct_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
     }
 
 };
@@ -1485,11 +1480,6 @@ struct action<union_forward_dcl>
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << scoped_union_name);
         module->union_switch(builder);
-
-        if (scoped_union_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
     }
 
 };
@@ -1669,11 +1659,6 @@ struct action<enum_dcl>
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << scoped_enum_name);
         module->enumeration(scoped_enum_name, builder);
-
-        if (scoped_enum_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
 
         ctx->notify_declared_type(builder);
     }
@@ -1882,12 +1867,6 @@ struct action<struct_def>
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << scoped_struct_name);
         module->structure(builder);
-
-        // Check if the scoped name matches the target type name
-        if (scoped_struct_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
 
         ctx->notify_declared_type(builder);
     }
@@ -2286,11 +2265,6 @@ struct action<union_def>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << scoped_union_name);
         module->union_switch(builder);
 
-        if (scoped_union_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
-
         ctx->notify_declared_type(builder);
     }
 
@@ -2430,11 +2404,6 @@ struct action<typedef_dcl>
 
         EPROSIMA_LOG_INFO(IDLPARSER, "Found alias: " << scoped_alias_name);
         module->create_alias(scoped_alias_name, builder);
-
-        if (scoped_alias_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
 
         ctx->notify_declared_type(builder);
     }
@@ -2665,36 +2634,13 @@ public:
         return context;
     }
 
-    Context parse_file(
-            const std::string& idl_file,
-            const std::string& type_name,
-            const IncludePathSeq& include_paths,
-            const std::string& preprocessor)
-    {
-        Context context;
-        context.target_type_name = type_name;
-        if (!include_paths.empty())
-        {
-            context.include_paths = include_paths;
-            context.preprocess = true;
-            context.preprocessor_exec = preprocessor;
-            if (context.preprocessor_exec.empty())
-            {
-                context.preprocessor_exec = EPROSIMA_PLATFORM_PREPROCESSOR;
-            }
-        }
-        parse_file(idl_file, context);
-        return context;
-    }
-
     void parse_file(
             const std::string& idl_file,
             const IncludePathSeq& include_paths,
             const std::string& preprocessor,
             std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback)
     {
-        Context context;
-        context.set_declared_type_callback(callback);
+        Context context(callback);
         if (!include_paths.empty())
         {
             context.include_paths = include_paths;

@@ -195,21 +195,27 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
 {
     traits<DynamicTypeBuilder>::ref_type ret_val;
 
-    try
+    auto callback = [type_name, &ret_val](traits<DynamicTypeBuilder>::ref_type builder) -> bool
     {
-        idlparser::Context context = idlparser::parse_file(document_url, type_name, include_paths, preprocessor_);
-        ret_val = context.builder;
-    }
-    catch (const std::exception& e)
+        if (builder && (builder->get_name() == type_name))
+        {
+            ret_val = builder;
+            return false;
+        }
+
+        return true;
+    };
+
+    if (RETCODE_OK != for_each_type_w_uri(document_url, include_paths, callback))
     {
-        EPROSIMA_LOG_ERROR(IDLPARSER, e.what());
+        EPROSIMA_LOG_ERROR(IDLPARSER, "Error parsing type from: " << document_url);
         ret_val.reset();
     }
 
     return ret_val;
 }
 
-void DynamicTypeBuilderFactoryImpl::for_each_type_w_uri(
+ReturnCode_t DynamicTypeBuilderFactoryImpl::for_each_type_w_uri(
             const std::string& document_url,
             const IncludePathSeq& include_paths,
             std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) noexcept
@@ -221,7 +227,10 @@ void DynamicTypeBuilderFactoryImpl::for_each_type_w_uri(
     catch (const std::exception& e)
     {
         EPROSIMA_LOG_ERROR(IDLPARSER, e.what());
+        return RETCODE_ERROR;
     }
+
+    return RETCODE_OK;
 }
 
 //}}}
