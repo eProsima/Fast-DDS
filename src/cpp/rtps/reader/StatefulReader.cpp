@@ -1572,7 +1572,7 @@ void StatefulReader::send_acknack(
     acknack_count_++;
 
 
-    EPROSIMA_LOG_ERROR(RTPS_READER, "[1] Sending ACKNACK: " << sns);
+    EPROSIMA_LOG_INFO(RTPS_READER, "Sending ACKNACK: " << sns);
 
     RTPSMessageGroup group(getRTPSParticipant(), this, sender);
     group.add_acknack(sns, acknack_count_, is_final);
@@ -1635,7 +1635,7 @@ void StatefulReader::send_acknack(
                         FragmentNumberSet_t frag_sns;
                         incomplete_change->get_missing_fragments(frag_sns);
                         ++nackfrag_count_;
-                        EPROSIMA_LOG_ERROR(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
+                        EPROSIMA_LOG_INFO(RTPS_READER, "Sending NACKFRAG for sample" << seq << ": " << frag_sns; );
 
                         group.add_nackfrag(seq, frag_sns, nackfrag_count_);
                     }
@@ -1643,7 +1643,7 @@ void StatefulReader::send_acknack(
                 });
 
             acknack_count_++;
-            EPROSIMA_LOG_ERROR(RTPS_READER, "[2] Sending ACKNACK: " << sns);
+            EPROSIMA_LOG_INFO(RTPS_READER, "Sending ACKNACK: " << sns; );
 
             bool final = sns.empty();
             group.add_acknack(sns, acknack_count_, final);
