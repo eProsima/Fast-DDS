@@ -16,6 +16,10 @@
                     <transport_id>publisher_transport</transport_id>
                 </userTransports>
                 <useBuiltinTransports>false</useBuiltinTransports>
+                <builtin>
+                    <readerHistoryMemoryPolicy>PREALLOCATED</readerHistoryMemoryPolicy>
+                    <writerHistoryMemoryPolicy>PREALLOCATED</writerHistoryMemoryPolicy>
+                </builtin>
             </rtps>
         </participant>
         <data_writer profile_name="pub_publisher_profile">
@@ -42,6 +46,7 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_writer>
         <data_reader profile_name="pub_subscriber_profile">
             <topic>
@@ -67,6 +72,7 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_reader>
 
         <!-- SUBSCRIBER -->
@@ -110,6 +116,7 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_writer>
         <data_reader profile_name="sub_subscriber_profile">
             <topic>
@@ -135,6 +142,7 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_reader>
     </profiles>
 </dds>
