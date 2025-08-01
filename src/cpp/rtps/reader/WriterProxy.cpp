@@ -95,6 +95,7 @@ WriterProxy::WriterProxy(
     ResourceEvent& event_manager = reader_->getEventResource();
     auto heartbeat_lambda = [this]() -> bool
             {
+                std::cout << "Heartbeat response" << std::endl;
                 perform_heartbeat_response();
                 return false;
             };

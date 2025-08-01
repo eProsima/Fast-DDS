@@ -30,6 +30,7 @@
                 </historyQos>
             </topic>
             <qos>
+                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
                 <disablePositiveAcks>
                     <enabled>true</enabled>
                     <duration>
@@ -46,6 +47,21 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <times>
+                <initial_heartbeat_delay>
+                    <sec>3</sec>
+                </initial_heartbeat_delay>
+                <heartbeat_period>
+                    <sec>3</sec>
+                </heartbeat_period>
+                <nack_response_delay>
+                    <sec>2</sec>
+                </nack_response_delay>
+                <!-- <nack_supression_duration>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_supression_duration> -->
+            </times>
             <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_writer>
         <data_reader profile_name="pub_subscriber_profile">
@@ -72,6 +88,15 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <times>
+                <!-- <initial_acknack_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </initial_acknack_delay> -->
+                <!-- <heartbeat_response_delay>
+                    <sec>1</sec>
+                </heartbeat_response_delay> -->
+            </times>
             <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_reader>
 
@@ -100,6 +125,7 @@
                 </historyQos>
             </topic>
             <qos>
+                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
                 <disablePositiveAcks>
                     <enabled>true</enabled>
                     <duration>
@@ -116,6 +142,21 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <times>
+                <initial_heartbeat_delay>
+                    <sec>3</sec>
+                </initial_heartbeat_delay>
+                <heartbeat_period>
+                    <sec>3</sec>
+                </heartbeat_period>
+                <nack_response_delay>
+                    <sec>2</sec>
+                </nack_response_delay>
+                <!-- <nack_supression_duration>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_supression_duration> -->
+            </times>
             <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_writer>
         <data_reader profile_name="sub_subscriber_profile">
@@ -142,6 +183,15 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
+            <times>
+                <!-- <initial_acknack_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </initial_acknack_delay> -->
+                <!-- <heartbeat_response_delay>
+                    <sec>1</sec>
+                </heartbeat_response_delay> -->
+            </times>
             <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
         </data_reader>
     </profiles>
