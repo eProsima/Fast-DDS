@@ -602,6 +602,7 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
                         reinterpret_cast<LatencyType*>(data)->bounce = 0;
                     }
 
+                    std::cout << "Echoing data of sequence number: " << reinterpret_cast<LatencyType*>(data)->seqnum << std::endl;
                     if (RETCODE_OK != sub->data_writer_->write(data))
                     {
                         EPROSIMA_LOG_INFO(LatencyTest, "Problem echoing Publisher test data");

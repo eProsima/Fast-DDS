@@ -545,6 +545,10 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
                 // No valid data, continue to next sample
                 continue;
             }
+            if (!pub->dynamic_types_)
+            {
+                std::cout << "Received data of sequence number: " << pub->latency_data_in_->seqnum << std::endl;
+            }
         }
 
         // Atomic management of the sample
