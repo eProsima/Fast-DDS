@@ -3048,7 +3048,7 @@ TEST_F(IdlParserTests, get_declared_type_names)
     };
 
     // Store the name of each constructed type declared in the input IDL file
-    factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types);
+    ASSERT_EQ(factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types), RETCODE_OK);
 
     ASSERT_EQ(declared_types, expected_type_names);
 }
@@ -3093,7 +3093,7 @@ TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
         "StructShort"
     };
 
-    factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types);
+    ASSERT_EQ(factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types), RETCODE_OK);
 
     ASSERT_EQ(declared_types, expected_type_names);
 }

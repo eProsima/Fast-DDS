@@ -180,8 +180,9 @@ public:
      * - Bitsets ( Not implemented yet )
      * It receives a @ref DynamicTypeBuilder reference to the parsed type and returns a boolean value, that represents
      * whether the parsing process should continue (`true` return value) or not.
+     * @return RETCODE_OK if the parsing was successful, or an error code otherwise.
      */
-    FASTDDS_EXPORTED_API virtual void for_each_type_w_uri(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t for_each_type_w_uri(
             const std::string& document_url,
             const IncludePathSeq& include_paths,
             std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) = 0;
