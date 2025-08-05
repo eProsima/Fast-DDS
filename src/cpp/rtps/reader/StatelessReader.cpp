@@ -382,7 +382,12 @@ bool StatelessReader::change_received(
             }
             ++total_unread_;
 
-            on_data_notify(guid, change->sourceTimestamp);
+
+            // Statistics callback is called with the original writer GUID if it is set
+            auto statistics_source_guid = change->write_params.original_writer_guid() != GUID_t::unknown() ?
+                    change->write_params.original_writer_guid() : guid;
+
+            on_data_notify(statistics_source_guid, change->sourceTimestamp);
 
             auto listener = get_listener();
             if (listener != nullptr)
@@ -626,7 +631,9 @@ bool StatelessReader::process_data_msg(
             if (!change_pool_->reserve_cache(change_to_add))
             {
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
-                        IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
+                        IDSTRING
+                        "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
+                                    <<
                         m_guid );
                 return false;
             }

@@ -624,7 +624,9 @@ bool StatefulReader::process_data_msg(
             if (!change_pool_->reserve_cache(change_to_add))
             {
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
-                        IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
+                        IDSTRING
+                        "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
+                                    <<
                         m_guid );
                 return false;
             }
@@ -1133,8 +1135,9 @@ bool StatefulReader::change_received(
                     }
                 }
 
-                EPROSIMA_LOG_INFO(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                                       << a_change->sequenceNumber <<
+                EPROSIMA_LOG_INFO(RTPS_READER,
+                        "Change received from " << a_change->writerGUID << " with sequence number: "
+                                                << a_change->sequenceNumber <<
                         " skipped. Higher sequence numbers have been received.");
                 return false;
             }
@@ -1236,7 +1239,12 @@ void StatefulReader::NotifyChanges(
         assert(false == aux_ch->isRead);
         new_data_available = true;
         ++total_unread_;
-        on_data_notify(proxGUID, aux_ch->sourceTimestamp);
+
+        // Statistics callback is called with the original writer GUID if it is set
+        auto statistics_source_guid = aux_ch->write_params.original_writer_guid() != GUID_t::unknown() ?
+                aux_ch->write_params.original_writer_guid() : proxGUID;
+
+        on_data_notify(statistics_source_guid, aux_ch->sourceTimestamp);
 
         ++it;
         do
