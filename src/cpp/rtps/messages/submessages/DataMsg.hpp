@@ -48,6 +48,7 @@ struct DataMsgUtils
                 ((WITH_KEY == topicKind) &&
                 (!change->writerGUID.is_builtin() || expectsInlineQos || change->kind != ALIVE)) ||
                 (change->write_params.related_sample_identity() != SampleIdentity::unknown()) ||
+                (change->write_params.original_writer_guid() != GUID_t::unknown()) ||
                 (change->write_params.has_more_replies());
 
         dataFlag = ALIVE == change->kind &&
@@ -133,6 +134,12 @@ struct DataMsgUtils
             fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_custom_related_sample_identity(
                 msg,
                 change->write_params.related_sample_identity());
+        }
+
+        if (change->write_params.original_writer_guid() != GUID_t::unknown())
+        {
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_original_writer(
+                msg, change->write_params.original_writer_guid());
         }
 
         if (change->write_params.has_more_replies())

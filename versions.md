@@ -6,6 +6,7 @@ Forthcoming
   * Extend `MemberDescriptor` with `position()`, `literal_value()` and `is_default_literal()` methods
     to avoid inconsistencies annotating enumerations and bitmask members.
   * Extend `TypeDescriptor` with `literal_type()` to store the literal type in enumerations.
+* Add field `original_writer_guid` to `WriteParams` and `SampleInfo`
 
 Version v3.3.0
 --------------

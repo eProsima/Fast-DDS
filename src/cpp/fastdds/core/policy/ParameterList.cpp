@@ -112,6 +112,20 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                         break;
                     }
 
+                    case PID_ORIGINAL_WRITER_INFO:
+                    {
+
+                        ParameterGuid_t p(pid, plength);
+                        if (!dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(p,
+                                msg, plength))
+                        {
+                            return false;
+                        }
+
+                        change.write_params.original_writer_guid(p.guid);
+                        break;
+                    }
+
                     case PID_STATUS_INFO:
                     {
                         ParameterStatusInfo_t p(pid, plength);

@@ -99,6 +99,7 @@ public:
     static constexpr uint32_t PARAMETER_KEY_SIZE = 20u;
     static constexpr uint32_t PARAMETER_SENTINEL_SIZE = 4u;
     static constexpr uint32_t PARAMETER_SAMPLE_IDENTITY_SIZE = 28u;
+    static constexpr uint32_t PARAMETER_ORIGINAL_WRITER_INFO_SIZE = 20u;
 
     static bool add_parameter_status(
             rtps::CDRMessage_t* cdr_message,
@@ -211,6 +212,24 @@ public:
 
         rtps::CDRMessage::addUInt16(cdr_message, dds::PID_RPC_MORE_REPLIES);
         rtps::CDRMessage::addUInt16(cdr_message, 0);
+        return true;
+    }
+
+    static inline bool add_parameter_original_writer(
+            rtps::CDRMessage_t* cdr_message,
+            const rtps::GUID_t& original_guid)
+    {
+        // A GUID takes 16 bytes: 12 of prefix plus 4 of entity plus 4 for the PID and length.
+        uint32_t required_size = 12 + 4 + 4; // 12 for the guid prefix, 4 for the entity id, and 4 for PID and length
+        if (cdr_message->pos + required_size > cdr_message->max_size)
+        {
+            return false;
+        }
+
+        rtps::CDRMessage::addUInt16(cdr_message, dds::PID_ORIGINAL_WRITER_INFO);
+        rtps::CDRMessage::addUInt16(cdr_message, 16);
+        rtps::CDRMessage::addData(cdr_message, original_guid.guidPrefix.value, rtps::GuidPrefix_t::size);
+        rtps::CDRMessage::addData(cdr_message, original_guid.entityId.value, rtps::EntityId_t::size);
         return true;
     }
 

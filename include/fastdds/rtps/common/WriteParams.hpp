@@ -231,6 +231,32 @@ public:
         return *this;
     }
 
+
+    /*!
+     * @brief Get the GUID of the original writer.
+     *
+     * @return The GUID of the original writer.
+     */
+    GUID_t original_writer_guid() const
+    {
+        return original_writer_guid_;
+    }
+
+    /*!
+     * @brief Set the GUID of the original writer.
+     *
+     * @param original_writer  New value for the original_writer_guid member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& original_writer_guid(
+            GUID_t original_writer)
+    {
+        original_writer_guid_ = original_writer;
+        return *this;
+    }
+
+
     static WriteParams WRITE_PARAM_DEFAULT;
 
     /**
@@ -273,6 +299,8 @@ private:
     UserWriteDataPtr user_write_data_{nullptr};
     /// Flag to indicate if there are more replies
     bool has_more_replies_ = false;
+    /// Attribute that holds the GUID of the original writer
+    GUID_t original_writer_guid_ = GUID_t::unknown();
 };
 
 }  // namespace rtps

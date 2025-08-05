@@ -78,6 +78,9 @@ struct SampleInfo
     //! Is the same InstanceHandle_t that is returned by the operation get_matched_publications on the DataReader
     InstanceHandle_t publication_handle;
 
+    //!Original publication handle (Extension for computing statistics between routed participants)
+    InstanceHandle_t original_publication_handle;
+
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;
 

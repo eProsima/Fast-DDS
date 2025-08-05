@@ -514,6 +514,198 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
 /**
  * Read a parameterList from a CDRMessage.
+ * Search for PID_ORIGINAL_WRITER in msg.
+ * @param [in] msg Reference to the message.
+ * @param [out] exists_pid_original_writer True if the parameter is inside msg.
+ * @return true if parsing was correct, false otherwise.
+ */
+bool check_original_writer_field(
+        fastdds::rtps::CDRMessage_t& msg,
+        bool& exists_pid_original_writer)
+{
+    uint32_t qos_size = 0;
+
+    uint32_t original_pos = msg.pos;
+    bool is_sentinel = false;
+    while (!is_sentinel)
+    {
+        msg.pos = original_pos + qos_size;
+
+        ParameterId_t pid{PID_SENTINEL};
+        bool valid = true;
+        pid = (ParameterId_t)eprosima::fastdds::helpers::cdr_parse_u16(
+            (char*)&msg.buffer[msg.pos]);
+        msg.pos += 2;
+        uint16_t plength = eprosima::fastdds::helpers::cdr_parse_u16(
+            (char*)&msg.buffer[msg.pos]);
+        msg.pos += 2;
+
+        if (pid == PID_SENTINEL)
+        {
+            // PID_SENTINEL is always considered of length 0
+            plength = 0;
+            is_sentinel = true;
+        }
+
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
+        if (!valid || ((msg.pos + plength) > msg.length))
+        {
+            return false;
+        }
+        else if (!is_sentinel)
+        {
+            if (PID_ORIGINAL_WRITER_INFO == pid)
+            {
+                exists_pid_original_writer = true;
+            }
+        }
+    }
+    return true;
+}
+
+/**
+ * This test checks that PID_ORIGINAL_WRITER is being sent as parameter when original_writer_guid is
+ * specified in WriteParams, and that it is correctly passed into SampleInfo.
+ */
+TEST(DDSBasic, check_original_writer_field)
+{
+    PubSubWriter<HelloWorldPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    // Test transport will be used in order to filter inlineQoS
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    bool exists_pid_original_writer = false;
+
+    test_transport->drop_data_messages_filter_ =
+            [&exists_pid_original_writer]
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
+            {
+                bool ret = check_original_writer_field(msg, exists_pid_original_writer);
+                EXPECT_TRUE(ret);
+                return false;
+            };
+
+    reliable_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_writer.isInitialized());
+
+    reliable_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_reader.isInitialized());
+
+    reliable_writer.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    DataWriter& native_writer = reliable_writer.get_native_writer();
+
+    HelloWorld data;
+    // Send reply associating it with the client request.
+    eprosima::fastdds::rtps::WriteParams write_params;
+
+    // Example prefix to check emission
+    eprosima::fastdds::rtps::GuidPrefix_t custom_prefix;
+    custom_prefix.value[0] = 0x12;
+    custom_prefix.value[1] = 0x34;
+    custom_prefix.value[2] = 0x56;
+    custom_prefix.value[3] = 0x78;
+
+    write_params.original_writer_guid(
+            eprosima::fastdds::rtps::GUID_t(custom_prefix, 0x12345678));
+
+    // Publish the value with original_writer_guid set to a valid GUID
+    ReturnCode_t write_ret = native_writer.write((void*)&data, write_params);
+    ASSERT_EQ(RETCODE_OK, write_ret);
+
+    DataReader& native_reader = reliable_reader.get_native_reader();
+
+    HelloWorld read_data;
+    eprosima::fastdds::dds::SampleInfo info;
+    eprosima::fastdds::dds::Duration_t timeout;
+    timeout.seconds = 2;
+    while (!native_reader.wait_for_unread_message(timeout))
+    {
+    }
+
+    ASSERT_EQ(RETCODE_OK, native_reader.take_next_sample((void*)&read_data, &info));
+    // First, check field existence
+    ASSERT_TRUE(exists_pid_original_writer);
+    // Second, check field value
+    ASSERT_EQ(eprosima::fastdds::rtps::iHandle2GUID(info.original_publication_handle),
+            eprosima::fastdds::rtps::GUID_t(custom_prefix, 0x12345678));
+}
+
+/**
+ * This test checks that PID_ORIGINAL_WRITER is not being sent as parameter when original_writer_guid is
+ * not specified in WriteParams.
+ */
+TEST(DDSBasic, check_unset_original_writer_field)
+{
+    PubSubWriter<HelloWorldPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    // Test transport will be used in order to filter inlineQoS
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    bool exists_pid_original_writer = false;
+
+    test_transport->drop_data_messages_filter_ =
+            [&exists_pid_original_writer]
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
+            {
+                bool ret = check_original_writer_field(msg, exists_pid_original_writer);
+                EXPECT_FALSE(ret);
+                return false;
+            };
+
+    reliable_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_writer.isInitialized());
+
+    reliable_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_reader.isInitialized());
+
+    reliable_writer.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    DataWriter& native_writer = reliable_writer.get_native_writer();
+
+    HelloWorld data;
+    // Send reply associating it with the client request.
+    eprosima::fastdds::rtps::WriteParams write_params;
+
+    // Publish the value with original_writer_guid set to a valid GUID
+    ReturnCode_t write_ret = native_writer.write((void*)&data, write_params);
+    ASSERT_EQ(RETCODE_OK, write_ret);
+
+    DataReader& native_reader = reliable_reader.get_native_reader();
+
+    HelloWorld read_data;
+    eprosima::fastdds::dds::SampleInfo info;
+    eprosima::fastdds::dds::Duration_t timeout;
+    timeout.seconds = 2;
+    while (!native_reader.wait_for_unread_message(timeout))
+    {
+    }
+
+    ASSERT_EQ(RETCODE_OK, native_reader.take_next_sample((void*)&read_data, &info));
+    // Check field does not exist
+    ASSERT_FALSE(exists_pid_original_writer);
+}
+
+/**
+ * Read a parameterList from a CDRMessage.
  * Search for PID_RPC_MORE_REPLIES in msg.
  * @param [in] msg Reference to the message.
  * @param [out] exists_pid_rpc_more_replies True if the parameter is inside msg.
