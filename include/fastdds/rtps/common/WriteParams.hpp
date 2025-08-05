@@ -231,7 +231,6 @@ public:
         return *this;
     }
 
-
     /*!
      * @brief Get the GUID of the original writer.
      *
@@ -255,7 +254,6 @@ public:
         original_writer_guid_ = original_writer;
         return *this;
     }
-
 
     static WriteParams WRITE_PARAM_DEFAULT;
 
