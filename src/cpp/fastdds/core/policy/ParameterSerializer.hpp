@@ -202,6 +202,12 @@ public:
         return true;
     }
 
+    /**
+     * This method fills the more replies parameter to the cdr_message.
+     * The PID used is the standard PID_RPC_MORE_REPLIES.
+     * @param cdr_message Message to be filled up.
+     * @return true if operation is successful, false if the operation would overflow the maximum size of the message.
+     */
     static inline bool add_parameter_more_replies(
             rtps::CDRMessage_t* cdr_message)
     {
@@ -215,6 +221,13 @@ public:
         return true;
     }
 
+    /**
+     * This method fills the original writer info parameter to the cdr_message.
+     * The PID used is the standard PID_ORIGINAL_WRITER_INFO.
+     * @param cdr_message Message to be filled up.
+     * @param original_guid Original writer GUID.
+     * @return true if operation is successful, false if the operation would overflow the maximum size of the message.
+     */
     static inline bool add_parameter_original_writer(
             rtps::CDRMessage_t* cdr_message,
             const rtps::GUID_t& original_guid)
