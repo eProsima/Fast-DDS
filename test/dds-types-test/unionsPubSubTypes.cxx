@@ -31,6 +31,203 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_UnionMap_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionDiscriminatorEnumLabel_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+bool is_UnionLongDouble_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionDiscriminatorULong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionDouble_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionDiscriminatorShort_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionDiscriminatorEnum_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionChar_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionDiscriminatorUShort_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool is_UnionLong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionDiscriminatorAlias_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionFloat_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionOctet_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionInnerAliasHelper_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionFixedStringAlias_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionWChar_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_UnionUShort_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionShort_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionInnerBitsetHelper_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionDiscriminatorLongLong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionDiscriminatorBoolean_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionSeveralFieldsWithDefault_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_UnionDiscriminatorOctet_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionBoolean_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionSeveralFields_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionArray_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionBoundedWString_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionULong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionInnerEnumHelper_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_UnionInnerStructureHelper_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionDiscriminatorLong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionSequence_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionDiscriminatorChar_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionULongLong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionBoundedString_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionDiscriminatorWChar_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionInnerUnionHelper_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_UnionShortExtraMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_UnionDiscriminatorULongLong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_UnionInnerBitMaskHelper_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionLongLong_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_UnionString_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_UnionWString_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
 namespace Fixed_String_Module {
 } // namespace Fixed_String_Module
 
@@ -151,6 +348,17 @@ void UnionShortPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionShort*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionShortPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionShortPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -334,6 +542,17 @@ void UnionUShortPubSubType::delete_data(
     delete(reinterpret_cast<::UnionUShort*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionUShortPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionUShortPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -515,6 +734,17 @@ void UnionLongPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionLong*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionLongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionLongPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -698,6 +928,17 @@ void UnionULongPubSubType::delete_data(
     delete(reinterpret_cast<::UnionULong*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionULongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionULongPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -879,6 +1120,17 @@ void UnionLongLongPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionLongLong*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionLongLongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionLongLongPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1062,6 +1314,17 @@ void UnionULongLongPubSubType::delete_data(
     delete(reinterpret_cast<::UnionULongLong*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionULongLongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionULongLongPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1243,6 +1506,17 @@ void UnionFloatPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionFloat*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionFloatPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionFloatPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1426,6 +1700,17 @@ void UnionDoublePubSubType::delete_data(
     delete(reinterpret_cast<::UnionDouble*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDoublePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDoublePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1607,6 +1892,17 @@ void UnionLongDoublePubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionLongDouble*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionLongDoublePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionLongDoublePubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -1790,6 +2086,17 @@ void UnionBooleanPubSubType::delete_data(
     delete(reinterpret_cast<::UnionBoolean*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionBooleanPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionBooleanPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -1971,6 +2278,17 @@ void UnionOctetPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionOctet*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionOctetPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionOctetPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -2154,6 +2472,17 @@ void UnionCharPubSubType::delete_data(
     delete(reinterpret_cast<::UnionChar*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionCharPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionCharPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -2335,6 +2664,17 @@ void UnionWCharPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionWChar*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionWCharPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionWCharPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -2518,6 +2858,17 @@ void UnionStringPubSubType::delete_data(
     delete(reinterpret_cast<::UnionString*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionStringPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionStringPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -2699,6 +3050,17 @@ void UnionWStringPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionWString*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionWStringPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionWStringPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -2882,6 +3244,17 @@ void UnionBoundedStringPubSubType::delete_data(
     delete(reinterpret_cast<::UnionBoundedString*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionBoundedStringPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionBoundedStringPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -3063,6 +3436,17 @@ void UnionBoundedWStringPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionBoundedWString*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionBoundedWStringPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionBoundedWStringPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -3246,6 +3630,17 @@ void UnionInnerEnumHelperPubSubType::delete_data(
     delete(reinterpret_cast<::UnionInnerEnumHelper*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionInnerEnumHelperPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionInnerEnumHelperPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -3427,6 +3822,17 @@ void UnionInnerBitMaskHelperPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionInnerBitMaskHelper*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionInnerBitMaskHelperPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionInnerBitMaskHelperPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -3610,6 +4016,17 @@ void UnionInnerAliasHelperPubSubType::delete_data(
     delete(reinterpret_cast<::UnionInnerAliasHelper*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionInnerAliasHelperPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionInnerAliasHelperPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -3791,6 +4208,17 @@ void UnionArrayPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionArray*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionArrayPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionArrayPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -3974,6 +4402,17 @@ void UnionSequencePubSubType::delete_data(
     delete(reinterpret_cast<::UnionSequence*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionSequencePubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionSequencePubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -4155,6 +4594,17 @@ void UnionMapPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionMap*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionMapPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionMapPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -4338,6 +4788,17 @@ void UnionInnerUnionHelperPubSubType::delete_data(
     delete(reinterpret_cast<::UnionInnerUnionHelper*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionInnerUnionHelperPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionInnerUnionHelperPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -4519,6 +4980,17 @@ void UnionInnerStructureHelperPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionInnerStructureHelper*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionInnerStructureHelperPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionInnerStructureHelperPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -4702,6 +5174,17 @@ void UnionInnerBitsetHelperPubSubType::delete_data(
     delete(reinterpret_cast<::UnionInnerBitsetHelper*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionInnerBitsetHelperPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionInnerBitsetHelperPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -4883,6 +5366,17 @@ void UnionDiscriminatorShortPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorShort*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorShortPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorShortPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -5066,6 +5560,17 @@ void UnionDiscriminatorUShortPubSubType::delete_data(
     delete(reinterpret_cast<::UnionDiscriminatorUShort*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorUShortPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDiscriminatorUShortPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -5247,6 +5752,17 @@ void UnionDiscriminatorLongPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorLong*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorLongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorLongPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -5430,6 +5946,17 @@ void UnionDiscriminatorULongPubSubType::delete_data(
     delete(reinterpret_cast<::UnionDiscriminatorULong*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorULongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDiscriminatorULongPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -5611,6 +6138,17 @@ void UnionDiscriminatorLongLongPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorLongLong*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorLongLongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorLongLongPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -5794,6 +6332,17 @@ void UnionDiscriminatorULongLongPubSubType::delete_data(
     delete(reinterpret_cast<::UnionDiscriminatorULongLong*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorULongLongPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDiscriminatorULongLongPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -5975,6 +6524,17 @@ void UnionDiscriminatorBooleanPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorBoolean*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorBooleanPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorBooleanPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -6158,6 +6718,17 @@ void UnionDiscriminatorOctetPubSubType::delete_data(
     delete(reinterpret_cast<::UnionDiscriminatorOctet*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorOctetPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDiscriminatorOctetPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -6339,6 +6910,17 @@ void UnionDiscriminatorCharPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorChar*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorCharPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorCharPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -6522,6 +7104,17 @@ void UnionDiscriminatorWCharPubSubType::delete_data(
     delete(reinterpret_cast<::UnionDiscriminatorWChar*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorWCharPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDiscriminatorWCharPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -6703,6 +7296,17 @@ void UnionDiscriminatorEnumPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorEnum*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorEnumPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorEnumPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -6886,6 +7490,17 @@ void UnionDiscriminatorEnumLabelPubSubType::delete_data(
     delete(reinterpret_cast<::UnionDiscriminatorEnumLabel*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorEnumLabelPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionDiscriminatorEnumLabelPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -7067,6 +7682,17 @@ void UnionDiscriminatorAliasPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionDiscriminatorAlias*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionDiscriminatorAliasPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionDiscriminatorAliasPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -7250,6 +7876,17 @@ void UnionSeveralFieldsPubSubType::delete_data(
     delete(reinterpret_cast<::UnionSeveralFields*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionSeveralFieldsPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionSeveralFieldsPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -7431,6 +8068,17 @@ void UnionSeveralFieldsWithDefaultPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionSeveralFieldsWithDefault*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionSeveralFieldsWithDefaultPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionSeveralFieldsWithDefaultPubSubType::compute_key(
         SerializedPayload_t& payload,
@@ -7614,6 +8262,17 @@ void UnionShortExtraMemberPubSubType::delete_data(
     delete(reinterpret_cast<::UnionShortExtraMember*>(data));
 }
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionShortExtraMemberPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
 bool UnionShortExtraMemberPubSubType::compute_key(
         SerializedPayload_t& payload,
         InstanceHandle_t& handle,
@@ -7795,6 +8454,17 @@ void UnionFixedStringAliasPubSubType::delete_data(
 {
     delete(reinterpret_cast<::UnionFixedStringAlias*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool UnionFixedStringAliasPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool UnionFixedStringAliasPubSubType::compute_key(
         SerializedPayload_t& payload,

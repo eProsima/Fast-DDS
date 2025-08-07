@@ -38,39 +38,6 @@
 #endif  // FASTDDS_GEN_API_VER
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct FixedSized_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct FixedSized_f
-{
-    typedef uint16_t FixedSized::* type;
-    friend constexpr type get(
-            FixedSized_f);
-};
-
-template struct FixedSized_rob<FixedSized_f, &FixedSized::m_index>;
-
-template <typename T, typename Tag>
-inline size_t constexpr FixedSized_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type FixedSized defined by the user in the IDL file.
  * @ingroup FixedSized
@@ -126,18 +93,8 @@ public:
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    eProsima_user_DllExport inline bool is_plain(
-            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-    {
-        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-        {
-            return is_plain_xcdrv2_impl();
-        }
-        else
-        {
-            return is_plain_xcdrv1_impl();
-        }
-    }
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
@@ -155,21 +112,6 @@ private:
 
     eprosima::fastdds::MD5 md5_;
     unsigned char* key_buffer_;
-
-
-    static constexpr bool is_plain_xcdrv1_impl()
-    {
-        return 2ULL ==
-               (detail::FixedSized_offset_of<FixedSized, detail::FixedSized_f>() +
-               sizeof(uint16_t));
-    }
-
-    static constexpr bool is_plain_xcdrv2_impl()
-    {
-        return 2ULL ==
-               (detail::FixedSized_offset_of<FixedSized, detail::FixedSized_f>() +
-               sizeof(uint16_t));
-    }
 
 };
 

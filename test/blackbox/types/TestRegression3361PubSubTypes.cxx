@@ -31,6 +31,16 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_TestRegression3361_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
 TestRegression3361PubSubType::TestRegression3361PubSubType()
 {
     set_name("TestRegression3361");
@@ -148,6 +158,17 @@ void TestRegression3361PubSubType::delete_data(
 {
     delete(reinterpret_cast<::TestRegression3361*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool TestRegression3361PubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool TestRegression3361PubSubType::compute_key(
         SerializedPayload_t& payload,

@@ -846,6 +846,326 @@ typedef InnerBitsetHelper inner_bitset_helper_alias;
 
 const std::string const_string = "AAA";
 const std::wstring const_wstring = L"BBB";
+/*!
+ * @brief This class represents the structure InnerBasicPlainStructHelper defined by the user in the IDL file.
+ * @ingroup basic_inner_types
+ */
+class InnerBasicPlainStructHelper
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport InnerBasicPlainStructHelper()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~InnerBasicPlainStructHelper()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object InnerBasicPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerBasicPlainStructHelper(
+            const InnerBasicPlainStructHelper& x)
+    {
+                    m_field1 = x.m_field1;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object InnerBasicPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerBasicPlainStructHelper(
+            InnerBasicPlainStructHelper&& x) noexcept
+    {
+        m_field1 = x.m_field1;
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object InnerBasicPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerBasicPlainStructHelper& operator =(
+            const InnerBasicPlainStructHelper& x)
+    {
+
+                    m_field1 = x.m_field1;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object InnerBasicPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerBasicPlainStructHelper& operator =(
+            InnerBasicPlainStructHelper&& x) noexcept
+    {
+
+        m_field1 = x.m_field1;
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x InnerBasicPlainStructHelper object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const InnerBasicPlainStructHelper& x) const
+    {
+        return (m_field1 == x.m_field1);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x InnerBasicPlainStructHelper object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const InnerBasicPlainStructHelper& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member field1
+     * @param _field1 New value for member field1
+     */
+    eProsima_user_DllExport void field1(
+            int32_t _field1)
+    {
+        m_field1 = _field1;
+    }
+
+    /*!
+     * @brief This function returns the value of member field1
+     * @return Value of member field1
+     */
+    eProsima_user_DllExport int32_t field1() const
+    {
+        return m_field1;
+    }
+
+    /*!
+     * @brief This function returns a reference to member field1
+     * @return Reference to member field1
+     */
+    eProsima_user_DllExport int32_t& field1()
+    {
+        return m_field1;
+    }
+
+
+
+private:
+
+    int32_t m_field1{0};
+
+};
+/*!
+ * @brief This class represents the structure InnerPlainStructHelper defined by the user in the IDL file.
+ * @ingroup basic_inner_types
+ */
+class InnerPlainStructHelper
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport InnerPlainStructHelper()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~InnerPlainStructHelper()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object InnerPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerPlainStructHelper(
+            const InnerPlainStructHelper& x)
+    {
+                    m_field1 = x.m_field1;
+
+                    m_field2 = x.m_field2;
+
+                    m_field3 = x.m_field3;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object InnerPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerPlainStructHelper(
+            InnerPlainStructHelper&& x) noexcept
+    {
+        m_field1 = x.m_field1;
+        m_field2 = x.m_field2;
+        m_field3 = x.m_field3;
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object InnerPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerPlainStructHelper& operator =(
+            const InnerPlainStructHelper& x)
+    {
+
+                    m_field1 = x.m_field1;
+
+                    m_field2 = x.m_field2;
+
+                    m_field3 = x.m_field3;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object InnerPlainStructHelper that will be copied.
+     */
+    eProsima_user_DllExport InnerPlainStructHelper& operator =(
+            InnerPlainStructHelper&& x) noexcept
+    {
+
+        m_field1 = x.m_field1;
+        m_field2 = x.m_field2;
+        m_field3 = x.m_field3;
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x InnerPlainStructHelper object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const InnerPlainStructHelper& x) const
+    {
+        return (m_field1 == x.m_field1 &&
+           m_field2 == x.m_field2 &&
+           m_field3 == x.m_field3);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x InnerPlainStructHelper object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const InnerPlainStructHelper& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function sets a value in member field1
+     * @param _field1 New value for member field1
+     */
+    eProsima_user_DllExport void field1(
+            bool _field1)
+    {
+        m_field1 = _field1;
+    }
+
+    /*!
+     * @brief This function returns the value of member field1
+     * @return Value of member field1
+     */
+    eProsima_user_DllExport bool field1() const
+    {
+        return m_field1;
+    }
+
+    /*!
+     * @brief This function returns a reference to member field1
+     * @return Reference to member field1
+     */
+    eProsima_user_DllExport bool& field1()
+    {
+        return m_field1;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member field2
+     * @param _field2 New value for member field2
+     */
+    eProsima_user_DllExport void field2(
+            int32_t _field2)
+    {
+        m_field2 = _field2;
+    }
+
+    /*!
+     * @brief This function returns the value of member field2
+     * @return Value of member field2
+     */
+    eProsima_user_DllExport int32_t field2() const
+    {
+        return m_field2;
+    }
+
+    /*!
+     * @brief This function returns a reference to member field2
+     * @return Reference to member field2
+     */
+    eProsima_user_DllExport int32_t& field2()
+    {
+        return m_field2;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member field3
+     * @param _field3 New value for member field3
+     */
+    eProsima_user_DllExport void field3(
+            float _field3)
+    {
+        m_field3 = _field3;
+    }
+
+    /*!
+     * @brief This function returns the value of member field3
+     * @return Value of member field3
+     */
+    eProsima_user_DllExport float field3() const
+    {
+        return m_field3;
+    }
+
+    /*!
+     * @brief This function returns a reference to member field3
+     * @return Reference to member field3
+     */
+    eProsima_user_DllExport float& field3()
+    {
+        return m_field3;
+    }
+
+
+
+private:
+
+    bool m_field1{false};
+    int32_t m_field2{0};
+    float m_field3{0.0};
+
+};
 
 #endif // _FAST_DDS_GENERATED_BASIC_INNER_TYPES_HPP_
 

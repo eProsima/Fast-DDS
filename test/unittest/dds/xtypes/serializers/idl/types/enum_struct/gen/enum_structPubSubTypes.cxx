@@ -31,6 +31,16 @@ using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
+namespace eprosima {
+namespace fastcdr {
+
+bool is_EnumStruct_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
 EnumStructPubSubType::EnumStructPubSubType()
 {
     set_name("EnumStruct");
@@ -148,6 +158,17 @@ void EnumStructPubSubType::delete_data(
 {
     delete(reinterpret_cast<::EnumStruct*>(data));
 }
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    bool EnumStructPubSubType::is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 bool EnumStructPubSubType::compute_key(
         SerializedPayload_t& payload,

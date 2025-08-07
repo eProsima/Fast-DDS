@@ -83,6 +83,7 @@ constexpr uint32_t recursive_test_2_max_key_cdr_typesize {0UL};
 
 
 
+
 constexpr uint32_t recursive_union_container_max_cdr_typesize {20UL};
 constexpr uint32_t recursive_union_container_max_key_cdr_typesize {0UL};
 
@@ -94,6 +95,7 @@ constexpr uint32_t map_short_external_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t double_external_max_cdr_typesize {16UL};
 constexpr uint32_t double_external_max_key_cdr_typesize {0UL};
+
 
 
 
@@ -131,109 +133,136 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const short_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ushort_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const long_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulong_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longlong_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ulonglong_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const float_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const double_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const longdouble_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const boolean_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const octet_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const char_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const wchar_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const sequence_short_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_unbounded_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const string_bounded_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const map_short_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const array_short_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructExternal& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ext_struct_external& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ext_and_inner_struct_external& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const struct_external_optional& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_union_container& data);
+
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_test_1& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_structure& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const recursive_test_2& data);
+
 
 
 } // namespace fastcdr
