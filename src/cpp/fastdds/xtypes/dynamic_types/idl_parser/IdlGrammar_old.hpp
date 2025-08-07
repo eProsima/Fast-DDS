@@ -17,8 +17,6 @@
 
 #include "pegtl.hpp"
 
-#include "CustomRules.hpp"
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -26,14 +24,18 @@ namespace idlparser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
 
-/* Whitespaces */
+// *INDENT-OFF*  Allow curly braces on the same line to improve grammar readability
+
+// comments
 struct line_comment : seq<star<space>, seq<one<'/'>, one<'/'>>, until<eolf>> {};
 struct block_comment : seq<star<space>, seq<one<'/'>, one<'*'>>, until<seq<one<'*'>, one<'/'>>>, star<space>> {};
 struct comment : sor<line_comment, block_comment> {};
 struct ws : sor<comment, plus<space>> {};
 
-/* Symbols */
+// octal digits
 struct odigit : range<'0', '7'> {};
+
+// symbols
 struct semicolon : pad<one<';'>, ws> {};
 struct colon : pad<one<':'>, ws> {};
 struct double_colon : pad<seq<one<':'>, one<':'>>, ws> {};
@@ -47,24 +49,7 @@ struct close_ang_bracket : pad<one<'>'>, ws> {};
 struct open_brace : pad<one<'{'>, ws> {};
 struct close_brace : pad<one<'}'>, ws> {};
 
-/* Operators */
-struct equal_op : pad<one<'='>, ws> {};
-struct or_op : pad<one<'|'>, ws> {};
-struct xor_op : pad<one<'^'>, ws> {};
-struct and_op : pad<one<'&'>, ws> {};
-struct lshift_op : pad<seq<one<'<'>, one<'<'>>, ws> {};
-struct rshift_op : pad<seq<one<'>'>, one<'>'>>, ws> {};
-struct add_op : pad<one<'+'>, ws> {};
-struct sub_op : pad<one<'-'>, ws> {};
-struct mult_op : pad<one<'*'>, ws> {};
-struct div_op : pad<one<'/'>, ws> {};
-struct mod_op : pad<one<'%'>, ws> {};
-struct neg_op : pad<one<'~'>, ws> {};
-
-/* Preprocessor */
-struct preprocessor_directive : seq<opt<ws>, one<'#'>, until<eolf>> {};
-
-/* keywords */
+// keywords
 struct end_kw : not_at<identifier> {};
 struct kw_const : seq<opt<ws>, TAO_PEGTL_KEYWORD("const"), end_kw, opt<ws>> {};
 struct kw_module : seq<opt<ws>, TAO_PEGTL_KEYWORD("module"), end_kw, opt<ws>> {};
@@ -108,8 +93,9 @@ struct kw_octet : seq<TAO_PEGTL_KEYWORD("octet"), end_kw> {};
 struct kw_float : seq<TAO_PEGTL_KEYWORD("float"), end_kw> {};
 struct kw_double : seq<TAO_PEGTL_KEYWORD("double"), end_kw> {};
 
-/* literals */
-// Boolean literal
+/* literal grammar */
+
+// boolean literal
 struct boolean_literal : sor<TAO_PEGTL_KEYWORD("TRUE"), TAO_PEGTL_KEYWORD("FALSE")> {};
 
 // integer literals
@@ -197,6 +183,7 @@ struct wstring_character : sor<escape_sequence, seq<not_at<doublequote>, utf8::a
 struct wide_substring_literal : seq<one<'L'>, doublequote, star<wstring_character>, doublequote> {};
 struct wide_string_literal : seq<wide_substring_literal, star<seq<space, wide_substring_literal>>> {};
 
+// literals
 struct literal : sor<
                         pad<boolean_literal, ws>,
                         pad<integer_literal, ws>,
@@ -208,120 +195,24 @@ struct literal : sor<
                         pad<wide_string_literal, ws>
                     > {};
 
-/* Aliases */
-struct array_declarator;
-struct simple_declarator;
-struct any_declarator : sor<array_declarator, simple_declarator> {};
-struct any_declarators : seq<any_declarator, star<seq<comma, any_declarator>>> {};
-struct type_declarator : seq<sor<constr_type_dcl, template_type_spec, simple_type_spec>, opt<ws>, any_declarators> {};
-struct typedef_dcl : seq<kw_typedef, type_declarator> {};
+// operators
+struct equal_op : pad<one<'='>, ws> {};
+struct or_op : pad<one<'|'>, ws> {};
+struct xor_op : pad<one<'^'>, ws> {};
+struct and_op : pad<one<'&'>, ws> {};
+struct lshift_op : pad<seq<one<'<'>, one<'<'>>, ws> {};
+struct rshift_op : pad<seq<one<'>'>, one<'>'>>, ws> {};
+struct add_op : pad<one<'+'>, ws> {};
+struct sub_op : pad<one<'-'>, ws> {};
+struct mult_op : pad<one<'*'>, ws> {};
+struct div_op : pad<one<'/'>, ws> {};
+struct mod_op : pad<one<'%'>, ws> {};
+struct neg_op : pad<one<'~'>, ws> {};
 
-/* Native types */
-struct simple_declarator : identifier {};
-struct native_dcl : seq<kw_native, simple_declarator> {};
-
-/* Arrays */
-struct fixed_array_size : seq<open_bracket, positive_int_const, close_bracket> {};
-struct array_declarator : seq<identifier, plus<fixed_array_size>> {};
-
-/* Constructed types */
-// Enumerations
-struct enumerator : seq<star<annotation_appl>, identifier> {};
-struct enum_dcl : seq<kw_enum, identifier, open_brace, enumerator, star<comma, enumerator>, close_brace> {};
-
-// Unions
-struct element_spec : seq<star<annotation_appl>, type_spec, declarator> {};
-struct case_label : sor<seq<kw_case, const_expr, colon>, seq<kw_default, colon>> {};
-struct switch_case : seq<plus<case_label>, element_spec, semicolon> {};
-struct switch_body : plus<switch_case> {};
-struct switch_type_spec : sor<integer_type, char_type, boolean_type, wide_char_type, octet_type, scoped_name> {};
-struct union_discriminator : seq<open_parentheses, star<annotation_appl>, switch_type_spec, close_parentheses> {};
-struct union_def : seq<kw_union, identifier, kw_switch, union_discriminator, open_brace, switch_body, close_brace> {};
-struct union_forward_dcl : seq<kw_union, identifier> {};
-struct union_dcl : sor<union_def, union_forward_dcl> {};
-
-// Structures
-struct inhertance : seq<colon, scoped_name> {};
-struct declarator : sor<array_declarator, simple_declarator> {};
-struct declarators : seq<declarator, star<seq<comma, declarator>>> {};
-struct member : seq<star<annotation_appl>, type_spec, declarators, semicolon> {};
-struct struct_def : seq<kw_struct, identifier, opt<inhertance>, open_brace, star<member>, close_brace> {};
-struct struct_forward_dcl : seq<kw_struct, identifier, not_at<open_brace>> {};
-struct struct_dcl : sor<struct_def, struct_forward_dcl> {};
-
-// Bitsets
-struct destination_type : sor<boolean_type, octet_type, integer_type> {};
-struct bitfield_spec : seq<kw_bitfield, open_ang_bracket, positive_int_const, opt<seq<comma, destination_type>>, close_ang_bracket> {};
-struct bitfield : seq<star<annotation_appl>, bitfield_spec, star<identifier>, semicolon> {};
-struct bitset_dcl : seq<kw_bitset, identifier, opt<inhertance>, open_brace, star<bitfield>, close_brace> {};
-
-// Bitmasks
-struct bit_value : seq<star<seq<annotation_appl, opt<ws>>>, identifier> {};
-struct bitmask_dcl : seq<kw_bitmask, identifier, open_brace, bit_value, star<seq<comma, bit_value>>, close_brace> {};
-
-struct constr_type_dcl : seq<star<annotation_appl>, sor<struct_dcl, union_dcl, enum_dcl, bitset_dcl, bitmask_dcl>> {};
-
-/* Template types */
-// Map type
-struct collection_size : seq<comma, positive_int_const> {};
-struct map_key_type : type_spec {};
-struct map_inner_type : type_spec {};
-struct map_size : opt<collection_size> {};
-struct map_type : seq<kw_map, open_ang_bracket, map_key_type, comma, map_inner_type, map_size, close_ang_bracket> {};
-
-// Sequence type
-struct sequence_size : collection_size {};
-struct sequence_type : seq<kw_sequence, open_ang_bracket, type_spec, opt<sequence_size>, close_ang_bracket> {};
-
-// String type
-struct string_size : seq<open_ang_bracket, positive_int_const, close_ang_bracket> {};
-struct string_type : seq<kw_string, opt<string_size>> {};
-
-// Wide string type
-struct wstring_size : seq<open_ang_bracket, positive_int_const, close_ang_bracket> {};
-struct wide_string_type : seq<kw_wstring, opt<wstring_size>> {};
-
-// Fixed type
-struct fixed_pt_const_type : kw_fixed {};
-struct fixed_pt_type : seq<kw_fixed, open_ang_bracket, positive_int_const, comma, positive_int_const, close_ang_bracket> {};
-
-struct template_type_spec : sor<map_type, sequence_type, string_type, wide_string_type, fixed_pt_type> {};
-
-/* Basic Types */
-struct float_type : seq<opt<ws>, kw_float, opt<ws>> {};
-struct long_double_type : seq<opt<ws>, kw_long_double, opt<ws>> {};
-struct double_type : seq<opt<ws>, kw_double, opt<ws>> {};
-struct signed_tiny_int : seq<opt<ws>, kw_int8, opt<ws>> {};
-struct unsigned_tiny_int : seq<opt<ws>, kw_uint8, opt<ws>> {};
-struct signed_short_int : seq<opt<ws>, sor<kw_short, kw_int16>, opt<ws>> {};
-struct unsigned_short_int : seq<opt<ws>, sor<kw_unsigned_short, kw_uint16>, opt<ws>> {};
-struct unsigned_longlong_int : seq<opt<ws>, sor<kw_unsigned_long_long, kw_uint64>, opt<ws>> {};
-struct unsigned_long_int : seq<opt<ws>, sor<kw_unsigned_long, kw_uint32>, opt<ws>> {};
-struct signed_longlong_int : seq<opt<ws>, sor<kw_long_long, kw_int64>, opt<ws>> {};
-struct signed_long_int : seq<opt<ws>, sor<kw_long, kw_int32>, opt<ws>> {};
-struct unsigned_int : sor<unsigned_tiny_int, unsigned_short_int, unsigned_longlong_int, unsigned_long_int> {};
-struct signed_int : sor<signed_tiny_int, signed_short_int, signed_longlong_int, signed_long_int> {};
-struct integer_type : sor<unsigned_int, signed_int> {};
-struct char_type : seq<opt<ws>, kw_char, opt<ws>> {};
-struct wide_char_type : seq<opt<ws>, kw_wchar, opt<ws>> {};
-struct boolean_type : seq<opt<ws>, kw_boolean, opt<ws>> {};
-struct octet_type : seq<opt<ws>, kw_octet, opt<ws>> {};
-struct any_type : kw_any {};
-struct base_type_spec : sor<
-                            float_type, long_double_type, double_type, integer_type,
-                            char_type, wide_char_type, boolean_type, octet_type, any_type
-                           > {};
-
-/* Referencing Types */
-struct simple_type_spec : sor<base_type_spec, scoped_name> {};
-struct type_spec : seq<opt<ws>, sor<template_type_spec, simple_type_spec>, opt<ws>> {};
-
-/* Constants */
-struct const_expr;
+// const expressions
 struct scoped_name;
-
-struct positive_int_const : const_expr {};
 struct scoped_or_literal : sor<literal, scoped_name> {};
+struct const_expr;
 struct primary_expr : sor<seq<open_parentheses, const_expr, close_parentheses>, scoped_or_literal> {};
 
 struct inv_exec : seq<neg_op, primary_expr> {};
@@ -355,19 +246,89 @@ struct xor_expr : seq<and_expr, opt<xor_exec>> {};
 
 struct or_exec : seq<or_op, const_expr> {};
 struct const_expr : seq<xor_expr, opt<or_exec>> {};
+
+// types
+struct float_type : seq<opt<ws>, kw_float, opt<ws>> {};
+struct long_double_type : seq<opt<ws>, kw_long_double, opt<ws>> {};
+struct double_type : seq<opt<ws>, kw_double, opt<ws>> {};
+struct signed_tiny_int : seq<opt<ws>, kw_int8, opt<ws>> {};
+struct unsigned_tiny_int : seq<opt<ws>, kw_uint8, opt<ws>> {};
+struct signed_short_int : seq<opt<ws>, sor<kw_short, kw_int16>, opt<ws>> {};
+struct unsigned_short_int : seq<opt<ws>, sor<kw_unsigned_short, kw_uint16>, opt<ws>> {};
+struct unsigned_longlong_int : seq<opt<ws>, sor<kw_unsigned_long_long, kw_uint64>, opt<ws>> {};
+struct unsigned_long_int : seq<opt<ws>, sor<kw_unsigned_long, kw_uint32>, opt<ws>> {};
+struct signed_longlong_int : seq<opt<ws>, sor<kw_long_long, kw_int64>, opt<ws>> {};
+struct signed_long_int : seq<opt<ws>, sor<kw_long, kw_int32>, opt<ws>> {};
+struct unsigned_int : sor<unsigned_tiny_int, unsigned_short_int, unsigned_longlong_int, unsigned_long_int> {};
+struct signed_int : sor<signed_tiny_int, signed_short_int, signed_longlong_int, signed_long_int> {};
+struct integer_type : sor<unsigned_int, signed_int> {};
+struct char_type : seq<opt<ws>, kw_char, opt<ws>> {};
+struct wide_char_type : seq<opt<ws>, kw_wchar, opt<ws>> {};
+struct boolean_type : seq<opt<ws>, kw_boolean, opt<ws>> {};
+struct octet_type : seq<opt<ws>, kw_octet, opt<ws>> {};
+struct any_type : kw_any {};
+struct base_type_spec : sor<
+                            float_type, long_double_type, double_type, integer_type,
+                            char_type, wide_char_type, boolean_type, octet_type, any_type
+                           > {};
+struct fixed_pt_const_type : kw_fixed {};
+
+struct scoped_name_tail : seq<double_colon, identifier> {};
+struct scoped_name : seq<opt<double_colon>, identifier, star<scoped_name_tail>> {};
+struct positive_int_const : const_expr {};
+struct fixed_pt_type : seq<kw_fixed, open_ang_bracket, positive_int_const, comma, positive_int_const, close_ang_bracket> {};
+struct string_size : seq<open_ang_bracket, positive_int_const, close_ang_bracket> {};
+struct wstring_size : seq<open_ang_bracket, positive_int_const, close_ang_bracket> {};
+struct collection_size : seq<comma, positive_int_const> {};
+struct string_type : seq<kw_string, opt<string_size>> {};
+struct wide_string_type : seq<kw_wstring, opt<wstring_size>> {};
+struct map_type;
+struct type_spec;
+struct sequence_size : collection_size {};
+struct sequence_type : seq<kw_sequence, open_ang_bracket, type_spec, opt<sequence_size>, close_ang_bracket> {};
+struct template_type_spec : sor<map_type, sequence_type, string_type, wide_string_type, fixed_pt_type> {};
+struct simple_type_spec : sor<base_type_spec, scoped_name> {};
+struct type_spec : seq<opt<ws>, sor<template_type_spec, simple_type_spec>, opt<ws>> {};
+
 struct const_type : sor<
                         float_type, long_double_type, double_type, fixed_pt_const_type, integer_type,
                         char_type, wide_char_type, boolean_type, string_type, wide_string_type, scoped_name
                        > {};
+struct simple_declarator : identifier {};
+struct fixed_array_size : seq<open_bracket, positive_int_const, close_bracket> {};
+struct array_declarator : seq<identifier, plus<fixed_array_size>> {};
+struct declarator : sor<array_declarator, simple_declarator> {}; // same as any_declarator
+struct declarators : seq<declarator, star<seq<comma, declarator>>> {};
+struct any_declarator : sor<array_declarator, simple_declarator> {};
+struct any_declarators : seq<any_declarator, star<seq<comma, any_declarator>>> {};
+struct type_declarator;
+struct typedef_dcl : seq<kw_typedef, type_declarator> {};
+struct native_dcl : seq<kw_native, simple_declarator> {};
+struct annotation_appl;
+struct enumerator : seq<star<annotation_appl>, identifier> {};
+struct enum_dcl : seq<kw_enum, identifier, open_brace, enumerator, star<comma, enumerator>, close_brace> {};
+struct union_forward_dcl : seq<kw_union, identifier> {};
+struct element_spec : seq<star<annotation_appl>, type_spec, declarator> {};
+struct case_label : sor<seq<kw_case, const_expr, colon>, seq<kw_default, colon>> {};
+struct switch_case : seq<plus<case_label>, element_spec, semicolon> {};
+struct switch_body : plus<switch_case> {};
+struct switch_type_spec : sor<integer_type, char_type, boolean_type, wide_char_type, octet_type, scoped_name> {};
+struct union_discriminator : seq<open_parentheses, star<annotation_appl>, switch_type_spec, close_parentheses> {};
+struct union_def : seq<kw_union, identifier, kw_switch, union_discriminator, open_brace, switch_body, close_brace> {};
+struct union_dcl : sor<union_def, union_forward_dcl> {};
+struct struct_forward_dcl : seq<kw_struct, identifier, not_at<open_brace>> {};
+struct member : seq<star<annotation_appl>, type_spec, declarators, semicolon> {};
+struct inhertance : seq<colon, scoped_name> {};
+struct struct_def : seq<kw_struct, identifier, opt<inhertance>, open_brace, star<member>, close_brace> {};
+struct struct_dcl : sor<struct_def, struct_forward_dcl> {};
+struct bitset_dcl;
+struct bitmask_dcl;
+struct constr_type_dcl : seq<star<annotation_appl>, sor<struct_dcl, union_dcl, enum_dcl, bitset_dcl, bitmask_dcl>> {};
+struct type_declarator : seq<sor<constr_type_dcl, template_type_spec, simple_type_spec>, opt<ws>, any_declarators> {};
+struct type_dcl : sor<constr_type_dcl, native_dcl, typedef_dcl> {};
 struct const_dcl : seq<kw_const, const_type, opt<ws>, identifier, equal_op, const_expr> {};
 
-/* Modules */
-struct definition;
-struct scoped_name_tail : seq<double_colon, identifier> {};
-struct scoped_name : seq<opt<double_colon>, identifier, star<scoped_name_tail>> {};
-struct module_dcl : seq<star<annotation_appl>, kw_module, identifier, open_brace, plus<definition>, close_brace> {};
-
-/* Annotations */
+// ANNOTATIONS
 struct annotation_appl_param : seq<identifier, equal_op, const_expr> {};
 struct annotation_appl_params : sor<seq<annotation_appl_param, star<seq<comma, annotation_appl_param>>>, const_expr> {};
 struct annotation_begin : TAO_PEGTL_STRING("@"){};
@@ -381,15 +342,24 @@ struct annotation_body : star<sor<annotation_member, seq<enum_dcl, semicolon>, s
 struct annotation_header : seq<kw_annotation, identifier> {};
 struct annotation_dcl : seq<annotation_header, open_brace, annotation_body, close_brace> {};
 
-/* IDL specification */
-struct type_dcl : sor<constr_type_dcl, native_dcl, typedef_dcl> {};
-struct definition : sor<seq_until_manual_stop<sor<module_dcl, const_dcl, type_dcl, annotation_dcl>, semicolon>, preprocessor_directive> {};
+// XTYPES
+struct map_key_type : type_spec {};
+struct map_inner_type : type_spec {};
+struct map_size : opt<collection_size> {};
+struct map_type : seq<kw_map, open_ang_bracket, map_key_type, comma, map_inner_type, map_size, close_ang_bracket> {};
+struct bit_value : seq<star<seq<annotation_appl, opt<ws>>>, identifier> {};
+struct bitmask_dcl : seq<kw_bitmask, identifier, open_brace, bit_value, star<seq<comma, bit_value>>, close_brace> {};
+struct destination_type : sor<boolean_type, octet_type, integer_type> {};
+struct bitfield_spec : seq<kw_bitfield, open_ang_bracket, positive_int_const, opt<seq<comma, destination_type>>, close_ang_bracket> {};
+struct bitfield : seq<star<annotation_appl>, bitfield_spec, star<identifier>, semicolon> {};
+struct bitset_dcl : seq<kw_bitset, identifier, opt<inhertance>, open_brace, star<bitfield>, close_brace> {};
+
+struct preprocessor_directive : seq<opt<ws>, one<'#'>, until<eolf>> {};
+struct module_dcl; // forward declaration
+struct definition : sor<seq<sor<module_dcl, const_dcl, type_dcl, annotation_dcl>, semicolon>, preprocessor_directive> {};
+struct module_dcl : seq<star<annotation_appl>, kw_module, identifier, open_brace, plus<definition>, close_brace> {};
 struct specification : plus<definition> {};
-
-/* Top-level parsing rule */
 struct document : seq<opt<ws>, specification, opt<ws>> {};
-
-// *INDENT-ON*
 
 } //namespace idlparser
 } //namespace dds
