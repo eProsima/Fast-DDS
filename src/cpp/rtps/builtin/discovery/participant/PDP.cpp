@@ -1553,7 +1553,16 @@ void PDP::set_initial_announcement_interval()
         EPROSIMA_LOG_WARNING(RTPS_PDP, "Initial announcement period is not strictly positive. Changing to 1ms.");
         initial_announcements_.period = { 0, 1000000 };
     }
-    set_next_announcement_interval();
+
+    {
+        std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
+        if (initial_announcements_.count > 0)
+        {
+            --initial_announcements_.count;
+        }
+
+        resend_participant_info_event_->update_interval({ 0, 1000000 });
+    }
 }
 
 void PDP::resend_ininitial_announcements()
@@ -1564,7 +1573,7 @@ void PDP::resend_ininitial_announcements()
             std::lock_guard<std::recursive_mutex> guardPDP(*mp_mutex);
             initial_announcements_ = m_discovery.discovery_config.initial_announcements;
         }
-        set_next_announcement_interval();
+        set_initial_announcement_interval();
         resetParticipantAnnouncement();
     }
 }
