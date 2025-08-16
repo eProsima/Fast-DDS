@@ -15,6 +15,13 @@ endif()
 
 if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
     find_package(TinyXML2 CONFIG QUIET)
+    if(NOT TinyXML2_FOUND)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(TinyXML2 REQUIRED IMPORTED_TARGET tinyxml2)
+        if(TARGET PkgConfig::TinyXML2)
+            add_library(tinyxml2::tinyxml2 ALIAS PkgConfig::TinyXML2)
+        endif()
+    endif()
 endif()
 
 if(TinyXML2_FOUND AND NOT TINYXML2_FROM_THIRDPARTY)
