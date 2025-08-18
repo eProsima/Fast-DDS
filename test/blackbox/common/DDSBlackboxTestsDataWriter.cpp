@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <chrono>
+#include <set>
 
 #include <gtest/gtest.h>
 
@@ -31,13 +32,17 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 using namespace eprosima::fastdds;
 
@@ -1185,7 +1190,7 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_b)
     EXPECT_EQ(expected_qos_pids.size(), 0u);
 }
 
-// This tests checks that non-default optional QoS are correctly sent in the Data(r)
+// This tests checks that non-default optional QoS are correctly sent in the Data(w)
 // QoS that should be sent:
 // - ResourceLimitsQosPolicy
 // - TransportPriorityQosPolicy
@@ -1294,6 +1299,755 @@ TEST_P(DDSDataWriter, datawriter_sends_non_default_qos_optional)
 
     // Check that no optional QoS are serialized. Only PID_DURABILITY as it is always sent
     EXPECT_EQ(qos_found.load(), 1u);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test checks that prefilter reset correctly works.
+ */
+TEST(DDSDataWriter, datawriter_prefilter_reset)
+{
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload&,
+                const FilterSampleInfo&,
+                const rtps::GUID_t& ) const override
+        {
+            /* sample should not be sent */
+            return false;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Initialize writer
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Set a prefilter on the writer
+    // discarding all samples
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Initialize reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // The reader should not receive any sample
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    // Wait for the reader to timeout receiving the samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
+
+    // Reset the prefilter
+    ASSERT_EQ(writer.set_sample_prefilter(
+                nullptr),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    data = default_helloworld_data_generator();
+
+    // The reader should now receive the samples
+    writer.send(data);
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(3)), 10u);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test checks that prefilter works correctly with standard filtering disabled.
+ */
+TEST(DDSDataWriter, datawriter_prefilter_no_standard_filtering)
+{
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload&,
+                const FilterSampleInfo&,
+                const rtps::GUID_t& ) const override
+        {
+            /* sample should not be sent */
+            return false;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Initialize writer
+    // with no standard filtering enabled (set liveliness lease duration
+    // to something other than infinite)
+    writer.liveliness_lease_duration({2, 0})
+            .liveliness_announcement_period({1, 0 })
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Set a prefilter on the writer
+    // discarding all samples
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Initialize reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // The reader should not receive any sample
+    // As the prefilter is set to discard all samples
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+    writer.send(data);
+
+    // Wait for the reader to timeout receiving the samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test asserts that prefiltering by write_params on a DataWriter
+ * correctly works. The test sets a prefilter to only send samples
+ * to the second reader discovered.
+ */
+TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_write_params)
+{
+    struct CustomUserWriteData : public rtps::WriteParams::UserWriteData
+    {
+        CustomUserWriteData(
+                const rtps::GuidPrefix_t& guid_prefix)
+            : filtered_out_prefix_(guid_prefix)
+        {
+        }
+
+        rtps::GuidPrefix_t filtered_out_prefix_;
+    };
+
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload&,
+                const FilterSampleInfo& filter_sample_info,
+                const rtps::GUID_t& reader_guid) const override
+        {
+            bool sample_should_be_sent = true;
+
+            auto custom_write_data =
+                    std::static_pointer_cast<CustomUserWriteData>(filter_sample_info.user_write_data);
+
+            // If the reader is the one we want to filter out, do not send the sample
+            if (custom_write_data->filtered_out_prefix_ == reader_guid.guidPrefix)
+            {
+                sample_should_be_sent = false;
+            }
+            return sample_should_be_sent;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> filtered_reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> receiving_reader(TEST_TOPIC_NAME);
+
+    // Initialize writer and the filtered reader
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    filtered_reader.init();
+    ASSERT_TRUE(filtered_reader.isInitialized());
+
+    // wait for discovery between writer and filtered reader
+    writer.wait_discovery();
+    filtered_reader.wait_discovery();
+
+    // Set a prefilter on the filtered reader
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Create a second reader that will not be filtered
+    receiving_reader.init();
+    ASSERT_TRUE(receiving_reader.isInitialized());
+
+    // Wait for discovery between the receiving reader and the writer
+    writer.wait_discovery(2);
+    receiving_reader.wait_discovery();
+
+    // Set a user write data on the writer to filter out the filtered reader
+    rtps::WriteParams write_params;
+    write_params.user_write_data(std::make_shared<CustomUserWriteData>(
+                filtered_reader.datareader_guid().guidPrefix));
+
+    auto data = default_helloworld_data_generator();
+
+    filtered_reader.startReception(data);
+    receiving_reader.startReception(data);
+
+    writer.send(data, 50, &write_params);
+    // Wait for the filtered reader to timeout receiving the sample
+    ASSERT_EQ(filtered_reader.block_for_all(std::chrono::seconds(1)), 0u);
+    // The receiving reader should have received the samples
+    ASSERT_EQ(receiving_reader.block_for_all(std::chrono::seconds(1)), 10u);
+}
+
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test asserts that prefiltering by payload on a DataWriter
+ * correctly works. The test sets a prefilter to only send samples
+ * with index >= 5 to the discovered reader.
+ */
+TEST_P(DDSDataWriter, datawriter_prefilter_filtering_by_payload)
+{
+    // TODO(Mario-DL): Remove when multiple filtering readers case is fixed for data-sharing
+    if (enable_datasharing)
+    {
+        GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
+    }
+
+    struct CustomUserWriteData : public rtps::WriteParams::UserWriteData
+    {
+        CustomUserWriteData(
+                const uint16_t& desired_idx)
+            : desired_idx_(desired_idx)
+        {
+        }
+
+        uint16_t desired_idx_;
+    };
+
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload& payload,
+                const FilterSampleInfo& filter_sample_info,
+                const rtps::GUID_t&) const override
+        {
+            HelloWorldPubSubType hello_world_type_support;
+            HelloWorld hello_world_sample;
+
+            hello_world_type_support.deserialize(*const_cast<SerializedPayload*>(&payload), &hello_world_sample);
+
+            bool sample_should_be_sent = true;
+
+            auto custom_write_data =
+                    std::static_pointer_cast<CustomUserWriteData>(filter_sample_info.user_write_data);
+
+            // Filter out samples <= desired_index
+            if (hello_world_sample.index() <= custom_write_data->desired_idx_)
+            {
+                sample_should_be_sent = false;
+            }
+            return sample_should_be_sent;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    // Initialize writer and the filtered reader
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // wait for discovery between writer and filtered reader
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Set a prefilter on the filtered reader
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set a user write data on the writer to filter out samples with idx <= 5
+    rtps::WriteParams write_params;
+    write_params.user_write_data(std::make_shared<CustomUserWriteData>(
+                (uint16_t)5u));
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    writer.send(data, 50, &write_params);
+    // Reader should have received the samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5u);
+}
+
+/**
+ * @brief Helper class to capture the transport priorities seen by a custom transport.
+ */
+class TransportPriorityCaptures
+{
+public:
+
+    /**
+     * @brief Constructor that initializes the destination locator and expected priorities.
+     *
+     * @param ip_address  The IP address of the destination locator.
+     * @param port        The port of the destination locator.
+     */
+    TransportPriorityCaptures(
+            const std::string& ip_address,
+            uint32_t port)
+    {
+        IPLocator::createLocator(LOCATOR_KIND_UDPv4, ip_address, port, destination_locator_);
+        expected_priorities_set_.insert(0);
+    }
+
+    /**
+     * @brief Method called for each destination locator seen by the transport.
+     *
+     * @param locator             The locator that was seen.
+     * @param transport_priority  The transport priority being used in the send operation.
+     */
+    void seen_locator_and_priority(
+            const rtps::Locator& locator,
+            int32_t transport_priority)
+    {
+        std::lock_guard<std::mutex> lock(mtx_);
+        if (locator == destination_locator_)
+        {
+            // Checks that when sending to the specified destination locator the transport priority is the expected one.
+            EXPECT_EQ(transport_priority, expected_transport_priority_);
+        }
+        else
+        {
+            // Checks that when sending to other locators the transport priority is `0`.
+            EXPECT_EQ(transport_priority, 0);
+        }
+        // Add the transport priority to `seen_priorities_set`.
+        seen_priorities_set_.insert(transport_priority);
+    }
+
+    /**
+     * @brief Sets the expected transport priority for the following send operations.
+     *
+     * @param priority  The expected transport priority.
+     */
+    void set_expected_transport_priority(
+            int32_t priority)
+    {
+        std::lock_guard<std::mutex> lock(mtx_);
+        expected_transport_priority_ = priority;
+        expected_priorities_set_.insert(priority);
+    }
+
+    /**
+     * @brief Checks that the seen priorities match the expected priorities.
+     *
+     * This method is used to assert that the transport priorities seen during the test match the expected ones.
+     */
+    void check_seen_priorities() const
+    {
+        std::lock_guard<std::mutex> lock(mtx_);
+        EXPECT_EQ(seen_priorities_set_, expected_priorities_set_);
+    }
+
+private:
+
+    mutable std::mutex mtx_;
+    int32_t expected_transport_priority_ = 0;
+    std::set<int32_t> seen_priorities_set_;
+    std::set<int32_t> expected_priorities_set_;
+    rtps::Locator destination_locator_;
+};
+
+/**
+ * @test TRP-FUN-01 Check that the values set in the `TRANSPORT_PRIORITY` QoS of a DataWriter
+ *       are passed to the transport layer.
+ */
+TEST(DDSDataWriter, transport_priority)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    // ----------- Configuration -----------
+    constexpr int32_t PRIORITY_1 = 12;
+    constexpr int32_t PRIORITY_2 = -23;
+    const std::string ip_address = "127.0.0.1";
+    constexpr uint16_t port = 6999;
+    TransportPriorityCaptures captures(ip_address, port);
+
+    // ----------- Setup -----------
+
+    // 1. Set `expected_transport_priority` to `PRIORITY_1`.
+    captures.set_expected_transport_priority(PRIORITY_1);
+
+    // 2. Prepare a custom transport for which the `transport_priority` lambda is set to a function that:
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    // a. Captures a `destination_locator`, a `expected_transport_priority`, and a `seen_priorities_set`.
+    test_transport->locator_filter_ = [&captures](
+        const rtps::Locator& locator, int32_t transport_priority)
+            {
+                // b. Checks that when sending to the captured destination locator the transport priority is the expected one.
+                // c. Checks that when sending to other locators the transport priority is `0`.
+                // d. Adds the transport priority to `seen_priorities_set`.
+                captures.seen_locator_and_priority(locator, transport_priority);
+                // Never drop the destination locator
+                return false;
+            };
+
+    // 3. Prepare a `PubSubReader`:
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.history_depth(10)
+    // a. Using the custom transport described above.
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+    // b. Using `destination_locator` as the DataReader reception locator.
+            .add_to_unicast_locator_list(ip_address, port);
+
+    // 4. Prepare a `PubSubWriter`:
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.history_depth(10)
+    // a. Using the custom transport described above.
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+    // b. Configured with a `TRANSPORT_PRIORITY` of `PRIORITY_1`.
+            .transport_priority(PRIORITY_1);
+
+    // ----------- Procedure -----------
+
+    // 1. Initialize both the `PubSubReader` and the `PubSubWriter`.
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // 2. Wait for them to match.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // 3. Write some samples using the `PubSubWriter`.
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // 4. Block till the `PubSubReader` receives all samples.
+    reader.block_for_all();
+
+    // 5. Change the value of `expected_transport_priority` to `PRIORITY_2` and update the `TRANSPORT_PRIORITY` of the `PubSubWriter` accordingly.
+    captures.set_expected_transport_priority(PRIORITY_2);
+    writer.transport_priority(PRIORITY_2);
+    EXPECT_TRUE(writer.set_qos());
+
+    // 6. Write some samples using the `PubSubWriter`.
+    data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // 7. Block till the `PubSubReader` receives all samples.
+    reader.block_for_all();
+
+    // ----------- Assertions -----------
+
+    // 1. Every datagram sent to `destination_locator` uses a transport priority of `expected_transport_priority`.
+    // Automatically checked inside the locator filter lambda.
+
+    // 2. Number of entries in `seen_priorities_set` is `3`, and it contains values `0`, `PRIORITY_1`, and `PRIORITY_2`.
+    captures.check_seen_priorities();
+}
+
+/**
+ * @test TRP-FUN-02 Check that retransmission of samples use updated values of the transport priority
+ *                  (i.e. that priority is not associated to the sample, but to the `DataWriter`)
+ */
+TEST(DDSDataWriter, transport_priority_late_joiner)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    // ----------- Configuration -----------
+    constexpr int32_t PRIORITY_1 = 42;
+    const std::string ip_address = "127.0.0.1";
+    constexpr uint16_t port = 6998;
+    TransportPriorityCaptures captures(ip_address, port);
+
+    // ----------- Setup -----------
+
+    // 1. Set `expected_transport_priority` to `PRIORITY_1`.
+    captures.set_expected_transport_priority(PRIORITY_1);
+
+    // 2. Prepare a custom transport for which the `transport_priority` lambda is set to a function that:
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    // a. Captures a `destination_locator`, a `expected_transport_priority`, and a `seen_priorities_set`.
+    test_transport->locator_filter_ = [&captures](
+        const rtps::Locator& locator, int32_t transport_priority)
+            {
+                // b. Checks that when sending to the captured destination locator the transport priority is the expected one.
+                // c. Checks that when sending to other locators the transport priority is `0`.
+                // d. Adds the transport priority to `seen_priorities_set`.
+                captures.seen_locator_and_priority(locator, transport_priority);
+                // Never drop the destination locator
+                return false;
+            };
+
+    // 3. Prepare a `PubSubReader`:
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.history_depth(10)
+    // a. Using `destination_locator` as the DataReader reception locator.
+            .add_to_unicast_locator_list(ip_address, port)
+    // b. Using `TRANSIENT_LOCAL` durability, and `RELIABLE` reliability.
+            .durability_kind(fdds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(fdds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+
+    // 4. Prepare a `PubSubWriter`:
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.history_depth(10)
+    // a. Using the custom transport described above.
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+    // b. Configured with a `TRANSPORT_PRIORITY` of `0`.
+            .transport_priority(0)
+    // c. Using `TRANSIENT_LOCAL` durability, and `RELIABLE` reliability.
+            .durability_kind(fdds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(fdds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+
+    // ----------- Procedure -----------
+
+    // 1. Initialize the `PubSubWriter`.
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // 2. Write some samples using the `PubSubWriter`.
+    auto original_data = default_helloworld_data_generator();
+    auto data = original_data;
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // 3. Update the `TRANSPORT_PRIORITY` of the `PubSubWriter` to `expected_transport_priority`.
+    writer.transport_priority(PRIORITY_1);
+    EXPECT_TRUE(writer.set_qos());
+
+    // 4. Initialize the `PubSubReader`.
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // 5. Block till the `PubSubReader` receives all samples.
+    reader.startReception(original_data);
+    reader.block_for_all();
+
+    // ----------- Assertions -----------
+
+    // 1. Every datagram sent to `destination_locator` uses a transport priority of `expected_transport_priority`.
+    // Automatically checked inside the locator filter lambda.
+
+    // 2. Number of entries in `seen_priorities_set` is `2`, and it contains values `0` and `PRIORITY_1`.
+    captures.check_seen_priorities();
+}
+
+/**
+ * @test TRP-FUN-03 Check that TRANSPORT_PRIORITY QoS is mutable.
+ */
+TEST(DDSDataWriter, transport_priority_mutable)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    // ----------- Configuration -----------
+    constexpr int32_t PRIORITY_2 = -23;
+    constexpr int32_t PRIORITY_3 = 42;
+
+    // ----------- Setup -----------
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    // We want to check that the transport priority is correctly transmitted,
+    // so we need to serialize the optional QoS in the DataWriter discovery.
+    rtps::PropertyPolicy properties;
+    properties.properties().emplace_back("fastdds.serialize_optional_qos", "true");
+    writer.property_policy(properties);
+
+    // ----------- Procedure -----------
+
+    // 1. Create a participant with a custom listener that captures the transport priority
+    //    of the discovered writer.
+    struct CustomListener : public fdds::DomainParticipantListener
+    {
+        void on_data_writer_discovery(
+                fdds::DomainParticipant* /* participant */,
+                rtps::WriterDiscoveryStatus reason,
+                const fdds::PublicationBuiltinTopicData& info,
+                bool& should_be_ignored) override
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+
+            if (reason == rtps::WriterDiscoveryStatus::DISCOVERED_WRITER)
+            {
+                // Capture the transport priority of the discovered writer.
+                EXPECT_TRUE(info.transport_priority.has_value());
+                if (info.transport_priority.has_value())
+                {
+                    discovered_transport_priority_ = info.transport_priority->value;
+                }
+            }
+            else if (reason == rtps::WriterDiscoveryStatus::CHANGED_QOS_WRITER)
+            {
+                // Capture the updated transport priority of the writer.
+                EXPECT_TRUE(info.transport_priority.has_value());
+                if (info.transport_priority.has_value())
+                {
+                    updated_transport_priority_ = info.transport_priority->value;
+                }
+            }
+            cv_.notify_all();
+
+            should_be_ignored = false;
+        }
+
+        void wait_discovery()
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            // Wait for the transport priority to be discovered.
+            cv_.wait(lock, [this]
+                    {
+                        return discovered_transport_priority_ != 0;
+                    });
+        }
+
+        void wait_update()
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            // Wait for the transport priority to be updated.
+            cv_.wait(lock, [this]
+                    {
+                        return updated_transport_priority_ != 0;
+                    });
+        }
+
+        void check_expectations() const
+        {
+            std::lock_guard<std::mutex> lock(mtx_);
+            int32_t prio = PRIORITY_2;
+            EXPECT_EQ(discovered_transport_priority_, prio);
+            prio = PRIORITY_3;
+            EXPECT_EQ(updated_transport_priority_, prio);
+        }
+
+    private:
+
+        mutable std::mutex mtx_;
+        std::condition_variable cv_;
+        int32_t discovered_transport_priority_ = 0;
+        int32_t updated_transport_priority_ = 0;
+    };
+
+    CustomListener custom_listener;
+    auto factory = fdds::DomainParticipantFactory::get_shared_instance();
+    fdds::DomainId_t domain_id = static_cast<fdds::DomainId_t>(GET_PID()) % 230;
+    fdds::DomainParticipant* participant = factory->create_participant(
+        domain_id, fdds::PARTICIPANT_QOS_DEFAULT, &custom_listener, fdds::StatusMask::none());
+
+    // 2. Create a disabled `DataWriter` with default QoS.
+    fdds::PublisherQos pub_qos{};
+    pub_qos.entity_factory().autoenable_created_entities = false;
+    writer.publisher_qos(pub_qos).init();
+    fdds::DataWriter& data_writer = writer.get_native_writer();
+
+    // 3. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_1`.
+    auto current_qos = data_writer.get_qos();
+    int32_t transport_priority_1 = current_qos.transport_priority().value;
+
+    // 4. Update the transport priority in `current_qos` to `PRIORITY_2` and set the `DataWriter` QoS to `current_qos`.
+    current_qos.transport_priority().value = PRIORITY_2;
+    EXPECT_EQ(data_writer.set_qos(current_qos), fdds::RETCODE_OK);
+
+    // 5. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_2`.
+    current_qos = data_writer.get_qos();
+    int32_t transport_priority_2 = current_qos.transport_priority().value;
+
+    // 6. Enable the `DataWriter`.
+    EXPECT_EQ(data_writer.enable(), fdds::RETCODE_OK);
+    custom_listener.wait_discovery();
+
+    // 7. Update the transport priority in `current_qos` to `PRIORITY_3` and set the `DataWriter` QoS to `current_qos`.
+    current_qos.transport_priority().value = PRIORITY_3;
+    EXPECT_EQ(data_writer.set_qos(current_qos), fdds::RETCODE_OK);
+
+    // 8. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_3`.
+    current_qos = data_writer.get_qos();
+    int32_t transport_priority_3 = current_qos.transport_priority().value;
+
+    // 9. Wait for the participant to discover the `DataWriter` and update the transport priority.
+    custom_listener.wait_update();
+
+    // ----------- Assertions -----------
+
+    // 1. `transport_priority_1` equals `0`.
+    EXPECT_EQ(transport_priority_1, 0);
+
+    // 2. `transport_priority_2` equals `PRIORITY_2`.
+    EXPECT_EQ(transport_priority_2, PRIORITY_2);
+
+    // 3. `transport_priority_3` equals `PRIORITY_3`.
+    EXPECT_EQ(transport_priority_3, PRIORITY_3);
+
+    // 4. The other participant discovered and updated transport priorities
+    //    are equal to `PRIORITY_2` and `PRIORITY_3`, respectively.
+    custom_listener.check_expectations();
+
+    // ----------- Cleanup -----------
+
+    factory->delete_participant(participant);
+}
+
+/**
+ * @test TRP-FUN-04 Check that TRANSPORT_PRIORITY QoS can be loaded from an XML.
+ */
+TEST(DDSDataWriter, transport_priority_xml)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    // ----------- Configuration -----------
+    constexpr int32_t PRIORITY_1 = 12;
+
+    // ----------- Setup -----------
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    // ----------- Procedure -----------
+
+    // 1. Create a `DataWriter` with `create_datawriter_from_profile` using profile `TRP-FUN-04`.
+    writer.set_xml_filename("transport_priority_profile.xml");
+    writer.set_datawriter_profile("TRP-FUN-04");
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    fdds::DataWriter& data_writer = writer.get_native_writer();
+
+    // 2. Get the writer's current QoS into `current_qos` and save the transport priority into `transport_priority_1`.
+    auto current_qos = data_writer.get_qos();
+    int32_t transport_priority_1 = current_qos.transport_priority().value;
+
+    // ----------- Assertions -----------
+
+    // 1. `transport_priority_1` equals `PRIORITY_1`.
+    EXPECT_EQ(transport_priority_1, PRIORITY_1);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

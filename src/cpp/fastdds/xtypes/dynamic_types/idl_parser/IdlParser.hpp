@@ -15,6 +15,7 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSER_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_IDL_PARSER_IDLPARSER_HPP
 
+#include <algorithm>
 #include <array>
 #include <exception>
 #include <fstream>
@@ -23,7 +24,9 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <regex>
+#include <stack>
 #include <string>
 #include <thread>
 #include <type_traits>
@@ -50,8 +53,11 @@
 #include "pegtl.hpp"
 #include "pegtl/analyze.hpp"
 
+#include "AnnotationList.hpp"
+#include "IdlAnnotations.hpp"
 #include "IdlGrammar.hpp"
 #include "IdlModule.hpp"
+#include "IdlParserUtils.hpp"
 #include "IdlPreprocessor.hpp"
 
 namespace eprosima {
@@ -62,6 +68,166 @@ namespace idlparser {
 using namespace tao::TAO_PEGTL_NAMESPACE;
 
 class Parser;
+
+/**
+ * @brief Class representing a hierarchy of nested modules, allowing to manage the current module context during parsing.
+ * @note This class is used to keep track of the current module scope when parsing IDL attributes, types, and other elements.
+ *       It is intended to be always non-empty, starting with a root module representing the global scope.
+ *       The current module can be pushed and popped to navigate through nested modules.
+ *       The root module is created upon instantiation and cannot be popped.
+ */
+class ModuleStack
+{
+public:
+
+    ModuleStack()
+    {
+        // Initialize the stack with a global scope module (root)
+        stack_.push(std::make_shared<Module>());
+    }
+
+    std::shared_ptr<Module> current() const
+    {
+        return stack_.top();
+    }
+
+    std::shared_ptr<Module> push(
+            const std::string& submodule)
+    {
+        auto current = stack_.top();
+
+        if (!current->has_submodule(submodule))
+        {
+            current->create_submodule(submodule);
+        }
+
+        auto new_module = current->submodule(submodule);
+        stack_.push(new_module);
+
+        return new_module;
+    }
+
+    void pop()
+    {
+        if (stack_.size() == 1)
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Cannot pop the root module.");
+            return;
+        }
+
+        stack_.pop();
+    }
+
+    void reset()
+    {
+        while (stack_.size() > 1)
+        {
+            stack_.pop();
+        }
+    }
+
+private:
+
+    std::stack<std::shared_ptr<Module>, std::vector<std::shared_ptr<Module>>> stack_;
+};
+
+class AnnotationsManager
+{
+public:
+
+    using AnnotationInfo = std::pair<const Annotation*, AnnotationParameterValues>;
+    using PendingAnnotations = std::vector<AnnotationInfo>;
+
+    enum class AnnotationTargetKind
+    {
+        DISCRIMINATOR,
+        MEMBER,
+        TYPE
+    };
+
+    AnnotationsManager()
+        : declared_annotations_(AnnotationList::from_builtin())
+    {
+    }
+
+    static AnnotationTargetKind string_to_target_kind(
+            const std::string& target)
+    {
+        if (target == "discriminator")
+        {
+            return AnnotationTargetKind::DISCRIMINATOR;
+        }
+        else if (target == "member")
+        {
+            return AnnotationTargetKind::MEMBER;
+        }
+        else if (target == "type")
+        {
+            return AnnotationTargetKind::TYPE;
+        }
+        else
+        {
+            throw std::runtime_error("Invalid annotation target kind: " + target);
+        }
+    }
+
+    static std::string target_kind_to_string(
+            AnnotationTargetKind target_kind)
+    {
+        switch (target_kind)
+        {
+            case AnnotationTargetKind::DISCRIMINATOR:
+                return "discriminator";
+            case AnnotationTargetKind::MEMBER:
+                return "member";
+            case AnnotationTargetKind::TYPE:
+                return "type";
+            default:
+                throw std::runtime_error("Invalid annotation target kind.");
+        }
+    }
+
+    const AnnotationList& declared_annotations() const
+    {
+        return declared_annotations_;
+    }
+
+    const PendingAnnotations& pending_type_annotations() const
+    {
+        return pending_type_annotations_;
+    }
+
+    const PendingAnnotations& pending_discriminator_annotations() const
+    {
+        return pending_discriminator_annotations_;
+    }
+
+    const std::map<std::string, PendingAnnotations>& pending_member_annotations() const
+    {
+        return pending_member_annotations_;
+    }
+
+    bool update_pending_annotations(
+            std::map<std::string, std::string>& state);
+
+    void set_target(
+            std::map<std::string, std::string>& state);
+
+    void reset()
+    {
+        pending_type_annotations_.clear();
+        pending_discriminator_annotations_.clear();
+        pending_member_annotations_.clear();
+    }
+
+protected:
+
+    AnnotationList declared_annotations_;
+    // Pending annotations
+    PendingAnnotations pending_type_annotations_;
+    PendingAnnotations pending_discriminator_annotations_;
+    std::map<std::string, PendingAnnotations> pending_member_annotations_;
+};
 
 class Context
     : public PreprocessorContext
@@ -97,29 +263,16 @@ public:
             std::map<std::string, std::string>& state,
             const std::string& type);
 
-    std::vector<std::string> split_string(
-            const std::string& str,
-            char delimiter)
-    {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream ss(str);
-        while (std::getline(ss, token, delimiter))
-        {
-            tokens.push_back(token);
-        }
-        return tokens;
-    }
-
     DynamicTypeBuilder::_ref_type builder;
 
-    Module& module()
+    ModuleStack& modules()
     {
-        if (!module_)
-        {
-            module_ = std::make_shared<Module>();
-        }
-        return *module_;
+        return modules_;
+    }
+
+    AnnotationsManager& annotations()
+    {
+        return annotations_;
     }
 
     void clear_context()
@@ -127,7 +280,8 @@ public:
         if (clear)
         {
             parser_.reset();
-            module_.reset();
+            modules_.reset();
+            annotations_.reset();
         }
     }
 
@@ -140,10 +294,10 @@ private:
 
     friend class Parser;
     std::shared_ptr<Parser> parser_;
-    std::shared_ptr<Module> module_;
+    ModuleStack modules_;
+    AnnotationsManager annotations_;
 
 }; // class Context
-
 
 // Actions
 template<typename Rule>
@@ -167,11 +321,13 @@ struct action<identifier>
     template<typename Input>
     static void apply(
             const Input& in,
-            Context* /*ctx*/,
+            Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        std::string identifier_name = in.string();
+        auto module = ctx->modules().current();
+        const std::string identifier_name = in.string();
+        const std::string scoped_identifier_name = module->create_scoped_name(identifier_name);
 
         if (state.count("enum_name"))
         {
@@ -181,7 +337,29 @@ struct action<identifier>
             }
             else
             {
-                state["enum_member_names"] += identifier_name + ";";
+                if (state.count("parsing_annotation") && state["parsing_annotation"] == "true")
+                {
+                    // identifier is an annotation's name, and handled in action<scoped_name>. Do nothing
+                    return;
+                }
+                if (state.count("parsing_annotation_params") && state["parsing_annotation_params"] == "true")
+                {
+                    // identifier is an annotation's parameter name, and handled in action<annotation_appl_param>. Do nothing
+                    return;
+                }
+                else
+                {
+                    state["enum_member_names"] +=  scoped_identifier_name + ";";
+                    if (state.count("annotation_names") && !state["annotation_names"].empty())
+                    {
+                        state["annotation_member_name"] = identifier_name;
+                        if (!ctx->annotations().update_pending_annotations(state))
+                        {
+                            EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum member");
+                            return;
+                        }
+                    }
+                }
             }
         }
         else if (state.count("struct_name"))
@@ -202,6 +380,14 @@ struct action<identifier>
                         {
                             // The identifier is the member name
                             state["current_struct_member_name"] = identifier_name;
+
+                            if (state.count("annotation_target") &&
+                                    (state["annotation_target"] ==
+                                    AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                            AnnotationTargetKind::MEMBER)))
+                            {
+                                state["annotation_member_name"] = state["current_struct_member_name"];
+                            }
                         }
                         // 2. Matched identifier is the element type of the sequence.
                         //    Element type should be previously declared, so updating state
@@ -214,6 +400,14 @@ struct action<identifier>
                     {
                         // The identifier is a member name
                         state["current_struct_member_name"] = identifier_name;
+
+                        if (state.count("annotation_target") &&
+                                (state["annotation_target"] ==
+                                AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                        AnnotationTargetKind::MEMBER)))
+                        {
+                            state["annotation_member_name"] = state["current_struct_member_name"];
+                        }
                     }
                 }
             }
@@ -228,7 +422,8 @@ struct action<identifier>
             {
                 if (state["union_discriminant"].empty())
                 {
-                    state["union_discriminant"] = identifier_name;
+                    // Discriminant can be a scoped name. Handle it in action<scoped_name>.
+                    return;
                 }
                 else if (state.count("arithmetic_expr"))
                 {
@@ -245,6 +440,14 @@ struct action<identifier>
                         {
                             // The identifier is the member name
                             state["current_union_member_name"] = identifier_name;
+
+                            if (state.count("annotation_target") &&
+                                    (state["annotation_target"] ==
+                                    AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                            AnnotationTargetKind::MEMBER)))
+                            {
+                                state["annotation_member_name"] = state["current_union_member_name"];
+                            }
                         }
                         // 2. Matched identifier is the element type of the sequence. In this case, element type
                         //    should be previously declared,
@@ -257,6 +460,14 @@ struct action<identifier>
                     {
                         // The identifier is a member name
                         state["current_union_member_name"] = identifier_name;
+
+                        if (state.count("annotation_target") &&
+                                (state["annotation_target"] ==
+                                AnnotationsManager::target_kind_to_string(AnnotationsManager::
+                                        AnnotationTargetKind::MEMBER)))
+                        {
+                            state["annotation_member_name"] = state["current_union_member_name"];
+                        }
                     }
                 }
             }
@@ -305,6 +516,12 @@ struct action<identifier>
                 return;
             }
         }
+        else if (state.count("parsing_module") && state["parsing_module"] == "true")
+        {
+            // Update the scope adding a the new module
+            ctx->modules().push(identifier_name);
+            state.erase("parsing_module");
+        }
         else
         {
             // Keep the identifier for super-expression use
@@ -324,15 +541,16 @@ struct action<scoped_name>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        Module& module = ctx->module();
+        auto module = ctx->modules().current();
         std::string identifier_name = in.string();
 
         if (state.count("arithmetic_expr"))
         {
-            if (module.has_constant(identifier_name))
+            if (module->has_constant(identifier_name))
             {
-                DynamicData::_ref_type xdata = module.constant(identifier_name);
+                DynamicData::_ref_type xdata = module->constant(identifier_name);
                 operands.push_back(xdata);
+                return;
             }
             else
             {
@@ -340,23 +558,55 @@ struct action<scoped_name>
                 throw std::runtime_error("Unknown constant or identifier: " + identifier_name);
             }
         }
-        else if (state["type"] == "sequence" && state["element_type"].empty())
+
+        if (state.count("parsing_annotation") && state["parsing_annotation"] == "true")
+        {
+            // Check that it is not a custom annotation definition (unsupported yet)
+            if (state.count("is_annotation_definition") && state["is_annotation_definition"] == "true")
+            {
+                EPROSIMA_LOG_WARNING(IDLPARSER,
+                        "Custom annotation definitions are not supported yet. "
+                        "Ignoring annotation: " << identifier_name);
+            }
+            else
+            {
+                state["annotation_names"] += identifier_name + ";";
+                // For now, assume that the annotation does not have parameters.
+                state["annotation_params"] += ";";
+                state.erase("parsing_annotation");
+
+                ctx->annotations().set_target(state);
+            }
+            return;
+        }
+
+        if (state["type"] == "sequence" && state["element_type"].empty())
         {
             // <scoped_name> is the element type of a sequence (previously declared)
             state["element_type"] = identifier_name;
 
             // Ready to parse the sequence size (if provided)
             state["arithmetic_expr"] = "";
+            return;
         }
-        else if (state.count("alias"))
+
+        if (state.count("enum_name") && !state["enum_name"].empty())
+        {
+            if (state["union_discriminant"].empty())
+            {
+                state["union_discriminant"] = identifier_name;
+                return;
+            }
+        }
+
+        if (state.count("alias"))
         {
             // <scoped_name> makes reference to the aliased type name.
             state["alias"] = identifier_name;
+            return;
         }
-        else
-        {
-            state["type"] = identifier_name;
-        }
+
+        state["type"] = identifier_name;
     }
 
 };
@@ -367,7 +617,7 @@ struct action<semicolon>
     template<typename Input>
     static void apply(
             const Input& /*in*/,
-            Context* /*ctx*/,
+            Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
@@ -384,7 +634,8 @@ struct action<semicolon>
                 state["struct_member_names"] += state["current_struct_member_name"] + ";";
 
                 // Add the array dimensions for this member to `all_array_sizes`
-                std::string current_array_sizes = state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
+                std::string current_array_sizes =
+                        state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
                 if (!state["all_array_sizes"].empty())
                 {
                     state["all_array_sizes"] += ";" + current_array_sizes;
@@ -466,6 +717,16 @@ struct action<semicolon>
                 state["current_array_sizes"].clear();
             }
         }
+
+        // Add pending member annotations
+        if (state.count("annotation_names") && !state["annotation_names"].empty())
+        {
+            if (!ctx->annotations().update_pending_annotations(state))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Failed to update pending annotations for member");
+                return;
+            }
+        }
     }
 
 };
@@ -481,7 +742,8 @@ struct action<semicolon>
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
-            std::string type{#id}; \
+            std::string type{#id \
+            }; \
             if (type == "sequence") \
             { \
                 state["type"] = type; \
@@ -842,6 +1104,7 @@ struct action<kw_sequence>
             state.erase("arithmetic_expr");
         }
     }
+
 };
 
 template<>
@@ -1382,24 +1645,25 @@ struct action<struct_forward_dcl>
         }
         cleanup_guard{state};
 
-        Module& module = ctx->module();
-        const std::string& struct_name = state["struct_name"];
-        if (module.has_symbol(struct_name, false))
+        auto module = ctx->modules().current();
+        const std::string scoped_struct_name = module->create_scoped_name(state["struct_name"]);
+
+        if (module->has_symbol(scoped_struct_name, false))
         {
-            EPROSIMA_LOG_ERROR(IDLPARSER, "Struct " << struct_name << " was already declared.");
-            throw std::runtime_error("Struct " + struct_name + " was already declared.");
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Struct " << scoped_struct_name << " was already declared.");
+            throw std::runtime_error("Struct " + scoped_struct_name + " was already declared.");
         }
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_STRUCTURE);
-        type_descriptor->name(struct_name);
+        type_descriptor->name(scoped_struct_name);
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << struct_name);
-        module.structure(builder);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << scoped_struct_name);
+        module->structure(builder);
 
-        if (struct_name == ctx->target_type_name)
+        if (scoped_struct_name == ctx->target_type_name)
         {
             ctx->builder = builder;
         }
@@ -1444,25 +1708,26 @@ struct action<union_forward_dcl>
         }
         cleanup_guard{state};
 
-        Module& module = ctx->module();
-        const std::string& union_name = state["union_name"];
-        if (module.has_symbol(union_name, false))
+        auto module = ctx->modules().current();
+        const std::string scoped_union_name = module->create_scoped_name(state["union_name"]);
+
+        if (module->has_symbol(scoped_union_name, false))
         {
-            EPROSIMA_LOG_ERROR(IDLPARSER, "Union " << union_name << " was already declared.");
-            throw std::runtime_error("Union " + union_name + " was already declared.");
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Union " << scoped_union_name << " was already declared.");
+            throw std::runtime_error("Union " + scoped_union_name + " was already declared.");
         }
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_UNION);
-        type_descriptor->name(union_name);
+        type_descriptor->name(scoped_union_name);
         type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << union_name);
-        module.union_switch(builder);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << scoped_union_name);
+        module->union_switch(builder);
 
-        if (union_name == ctx->target_type_name)
+        if (scoped_union_name == ctx->target_type_name)
         {
             ctx->builder = builder;
         }
@@ -1496,12 +1761,12 @@ struct action<const_dcl>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& operands)
     {
-        Module& module = ctx->module();
-        const std::string& const_name = state["identifier"];
+        auto module = ctx->modules().current();
+        const std::string scoped_const_name = module->create_scoped_name(state["identifier"]);
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << const_name);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << scoped_const_name);
 
-        module.create_constant(const_name, operands.back());
+        module->create_constant(scoped_const_name, operands.back());
         operands.pop_back();
         if (!operands.empty())
         {
@@ -1519,13 +1784,23 @@ struct action<kw_enum>
     template<typename Input>
     static void apply(
             const Input& /*in*/,
-            Context* /*ctx*/,
+            Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
         // Create empty enum states to indicate the start of parsing enum
         state["enum_name"] = "";
         state["enum_member_names"] = "";
+
+        // Add pending enum annotations
+        if (state.count("annotation_names") && !state["annotation_names"].empty())
+        {
+            if (!ctx->annotations().update_pending_annotations(state))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum");
+                return;
+            }
+        }
     }
 
 };
@@ -1533,90 +1808,14 @@ struct action<kw_enum>
 template<>
 struct action<enum_dcl>
 {
-    template<typename Input>
-    static void apply(
-            const Input& /*in*/,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
-    {
-        Module& module = ctx->module();
-        const std::string& enum_name = state["enum_name"];
-
-        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
-        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-        type_descriptor->kind(TK_ENUM);
-        type_descriptor->name(enum_name);
-        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
-
-        std::vector<std::string> tokens = ctx->split_string(state["enum_member_names"], ';');
-
-        for (size_t i = 0; i < tokens.size(); i++)
-        {
-            MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-            member_descriptor->name(tokens[i]);
-            member_descriptor->type(factory->get_primitive_type(TK_INT32));
-            builder->add_member(member_descriptor);
-
-            DynamicType::_ref_type member_type {factory->get_primitive_type(TK_INT32)};
-            DynamicData::_ref_type member_data {DynamicDataFactory::get_instance()->create_data(member_type)};
-            member_data->set_int32_value(MEMBER_ID_INVALID, (int32_t)i);
-
-            module.create_constant(tokens[i], member_data, false, true); // Mark it as "from_enum"
-        }
-
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << enum_name);
-        module.enum_32(enum_name, builder);
-
-        if (enum_name == ctx->target_type_name)
-        {
-            ctx->builder = builder;
-        }
-
-        state.erase("enum_name");
-        state.erase("enum_member_names");
-    }
-
-};
-
-template<>
-struct action<kw_struct>
-{
-    template<typename Input>
-    static void apply(
-            const Input& /*in*/,
-            Context* /*ctx*/,
-            std::map<std::string, std::string>& state,
-            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
-    {
-        // Create empty struct states to indicate the start of parsing struct
-        state["struct_name"] = "";
-        state["struct_member_types"] = "";
-        state["struct_member_names"] = "";
-        state["current_struct_member_name"] = "";
-        state["type"] = "";
-        state["all_array_sizes"] = "";
-        state["current_array_sizes"] = "";
-        state["sequence_sizes"] = "";
-    }
-
-};
-
-template<>
-struct action<struct_def>
-{
     // Function to handle the cleanup of state
     static void cleanup_state(
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            Context* ctx)
     {
-        state.erase("struct_name");
-        state.erase("struct_member_types");
-        state.erase("struct_member_names");
-        state.erase("current_struct_member_name");
-        state["type"] = "";
-        state["all_array_sizes"] = "";
-        state["current_array_sizes"] = "";
-        state["sequence_sizes"] = "";
+        state.erase("enum_name");
+        state.erase("enum_member_names");
+        ctx->annotations().reset();
     }
 
     template<typename Input>
@@ -1630,27 +1829,196 @@ struct action<struct_def>
         struct CleanupGuard
         {
             std::map<std::string, std::string>& state;
+            Context* ctx;
             ~CleanupGuard()
             {
-                cleanup_state(state);
+                cleanup_state(state, ctx);
             }
 
         }
-        cleanup_guard{state};
+        cleanup_guard{state, ctx};
 
-        Module& module = ctx->module();
-        const std::string& struct_name = state["struct_name"];
+        auto module = ctx->modules().current();
+        const std::string scoped_enum_name = module->create_scoped_name(state["enum_name"]);
+
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_ENUM);
+        type_descriptor->name(scoped_enum_name);
+
+        // Annotate the type descriptor with the annotations collected during parsing
+        const auto& type_annotations = ctx->annotations().pending_type_annotations();
+        if (!type_annotations.empty())
+        {
+            for (const auto& info : type_annotations)
+            {
+                if (!info.first->annotate_descriptor(type_descriptor, info.second))
+                {
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating type descriptor for enum: " << scoped_enum_name);
+                    return;
+                }
+            }
+        }
+
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+
+        std::vector<std::string> tokens = utils::split_string(state["enum_member_names"], ';');
+
+        for (size_t i = 0; i < tokens.size(); i++)
+        {
+            const std::string& member_name = tokens[i];
+            MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+            member_descriptor->name(member_name);
+
+            if (type_descriptor->literal_type())
+            {
+                member_descriptor->type(type_descriptor->literal_type());
+            }
+            else
+            {
+                member_descriptor->type(factory->get_primitive_type(TK_INT32));
+            }
+
+            // Annotate the member descriptor with the annotations collected during parsing
+            const auto& member_annotations = ctx->annotations().pending_member_annotations();
+            if (member_annotations.count(member_name))
+            {
+                for (const auto& info : member_annotations.at(member_name))
+                {
+                    if (!info.first->annotate_descriptor(member_descriptor, info.second))
+                    {
+                        EPROSIMA_LOG_ERROR(IDLPARSER,
+                                "Error annotating member descriptor for enum: " << scoped_enum_name);
+                        return;
+                    }
+                }
+            }
+
+            if (RETCODE_OK != builder->add_member(member_descriptor))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to enum: " << scoped_enum_name
+                                                                               << ", member: " << member_name);
+                return;
+            }
+
+            DynamicType::_ref_type member_type {factory->get_primitive_type(TK_INT32)};
+            DynamicData::_ref_type member_data {DynamicDataFactory::get_instance()->create_data(member_type)};
+            member_data->set_int32_value(MEMBER_ID_INVALID, (int32_t)i);
+
+            module->create_constant(tokens[i], member_data, false, true); // Mark it as "from_enum"
+        }
+
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << scoped_enum_name);
+        module->enumeration(scoped_enum_name, builder);
+
+        if (scoped_enum_name == ctx->target_type_name)
+        {
+            ctx->builder = builder;
+        }
+    }
+
+};
+
+template<>
+struct action<kw_struct>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        // Create empty struct states to indicate the start of parsing struct
+        state["struct_name"] = "";
+        state["struct_member_types"] = "";
+        state["struct_member_names"] = "";
+        state["current_struct_member_name"] = "";
+        state["type"] = "";
+        state["all_array_sizes"] = "";
+        state["current_array_sizes"] = "";
+        state["sequence_sizes"] = "";
+
+        // Add pending struct annotations if were processed
+        if (state.count("annotation_names") && !state["annotation_names"].empty())
+        {
+            if (!ctx->annotations().update_pending_annotations(state))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating struct");
+                return;
+            }
+        }
+    }
+
+};
+
+template<>
+struct action<struct_def>
+{
+    // Function to handle the cleanup of state
+    static void cleanup_state(
+            std::map<std::string, std::string>& state,
+            Context* ctx)
+    {
+        state.erase("struct_name");
+        state.erase("struct_member_types");
+        state.erase("struct_member_names");
+        state.erase("current_struct_member_name");
+        state["type"] = "";
+        state["all_array_sizes"] = "";
+        state["current_array_sizes"] = "";
+        state["sequence_sizes"] = "";
+        ctx->annotations().reset();
+    }
+
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        // Ensure cleanup happens at the end of this scope using a RAII-style guard
+        struct CleanupGuard
+        {
+            std::map<std::string, std::string>& state;
+            Context* ctx;
+            ~CleanupGuard()
+            {
+                cleanup_state(state, ctx);
+            }
+
+        }
+        cleanup_guard{state, ctx};
+        auto module = ctx->modules().current();
+        const std::string scoped_struct_name = module->create_scoped_name(state["struct_name"]);
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_STRUCTURE);
-        type_descriptor->name(struct_name);
+        type_descriptor->name(scoped_struct_name);
+
+        // Annotate the type descriptor with the annotations collected during parsing
+        const auto& type_annotations = ctx->annotations().pending_type_annotations();
+        if (!type_annotations.empty())
+        {
+            for (const auto& info : type_annotations)
+            {
+                if (!info.first->annotate_descriptor(type_descriptor, info.second))
+                {
+                    EPROSIMA_LOG_ERROR(IDLPARSER,
+                            "Error annotating type descriptor for struct: " << scoped_struct_name);
+                    return;
+                }
+            }
+        }
+
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        std::vector<std::string> types = ctx->split_string(state["struct_member_types"], ';');
-        std::vector<std::string> names = ctx->split_string(state["struct_member_names"], ';');
-        std::vector<std::string> all_array_sizes = ctx->split_string(state["all_array_sizes"], ';');
-        std::vector<std::string> sequence_sizes = ctx->split_string(state["sequence_sizes"], ';');
+        std::vector<std::string> types = utils::split_string(state["struct_member_types"], ';');
+        std::vector<std::string> names = utils::split_string(state["struct_member_names"], ';');
+        std::vector<std::string> all_array_sizes = utils::split_string(state["all_array_sizes"], ';');
+        std::vector<std::string> sequence_sizes = utils::split_string(state["sequence_sizes"], ';');
 
         for (size_t i = 0; i < types.size(); i++)
         {
@@ -1665,13 +2033,13 @@ struct action<struct_def>
             // If array sizes are specified for this member, create an array type
             if (i < all_array_sizes.size() && all_array_sizes[i] != "0")
             {
-                std::vector<std::string> array_sizes = ctx->split_string(all_array_sizes[i], ',');
+                std::vector<std::string> array_sizes = utils::split_string(all_array_sizes[i], ',');
                 std::vector<uint32_t> sizes;
                 for (const auto& size : array_sizes)
                 {
-                    if (module.has_constant(size))
+                    if (module->has_constant(size))
                     {
-                        DynamicData::_ref_type xdata = module.constant(size);
+                        DynamicData::_ref_type xdata = module->constant(size);
                         int64_t size_val = 0;
                         xdata->get_int64_value(size_val, MEMBER_ID_INVALID);
                         sizes.push_back(static_cast<uint32_t>(size_val));
@@ -1700,9 +2068,9 @@ struct action<struct_def>
             {
                 uint32_t size;
 
-                if (module.has_constant(sequence_sizes[i]))
+                if (module->has_constant(sequence_sizes[i]))
                 {
-                    DynamicData::_ref_type xdata = module.constant(sequence_sizes[i]);
+                    DynamicData::_ref_type xdata = module->constant(sequence_sizes[i]);
                     int64_t size_val = 0;
                     xdata->get_int64_value(size_val, MEMBER_ID_INVALID);
                     size = static_cast<uint32_t>(size_val);
@@ -1727,13 +2095,35 @@ struct action<struct_def>
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(names[i]);
             member_descriptor->type(member_type);
-            builder->add_member(member_descriptor);
+
+            // Annotate the member descriptor with the annotations collected during parsing
+            const auto& member_annotations = ctx->annotations().pending_member_annotations();
+            if (member_annotations.count(names[i]))
+            {
+                for (const auto& info : member_annotations.at(names[i]))
+                {
+                    if (!info.first->annotate_descriptor(member_descriptor, info.second))
+                    {
+                        EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating member descriptor for struct: "
+                                << scoped_struct_name << ", member: " << names[i]);
+                        return;
+                    }
+                }
+            }
+
+            if (RETCODE_OK != builder->add_member(member_descriptor))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to struct: " << scoped_struct_name
+                                                                                << ", member: " << names[i]);
+                return;
+            }
         }
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << struct_name);
-        module.structure(builder);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << scoped_struct_name);
+        module->structure(builder);
 
-        if (struct_name == ctx->target_type_name)
+        // Check if the scoped name matches the target type name
+        if (scoped_struct_name == ctx->target_type_name)
         {
             ctx->builder = builder;
         }
@@ -1747,7 +2137,7 @@ struct action<kw_union>
     template<typename Input>
     static void apply(
             const Input& /*in*/,
-            Context* /*ctx*/,
+            Context* ctx,
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
@@ -1760,6 +2150,31 @@ struct action<kw_union>
         state["current_union_member_name"] = "";
         state["sequence_sizes"] = "";
         state["type"] = "";
+
+        // Add pending union annotations if were processed
+        if (state.count("annotation_names") && !state["annotation_names"].empty())
+        {
+            if (!ctx->annotations().update_pending_annotations(state))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating union");
+                return;
+            }
+        }
+    }
+
+};
+
+template<>
+struct action<kw_module>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["parsing_module"] = "true";
     }
 
 };
@@ -1889,11 +2304,35 @@ struct action<switch_case>
 };
 
 template<>
+struct action<union_discriminator>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        // Add pending union discriminator annotations
+        if (state.count("annotation_names") && !state["annotation_names"].empty())
+        {
+            if (!ctx->annotations().update_pending_annotations(state))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating union discriminator");
+                return;
+            }
+        }
+    }
+
+};
+
+template<>
 struct action<union_def>
 {
     // Function to handle the cleanup of state
     static void cleanup_state(
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            Context* ctx)
     {
         state.erase("union_name");
         state.erase("union_discriminant");
@@ -1901,6 +2340,7 @@ struct action<union_def>
         state.erase("union_member_types");
         state.erase("union_member_names");
         state.erase("sequence_sizes");
+        ctx->annotations().reset();
     }
 
     template<typename Input>
@@ -1914,34 +2354,60 @@ struct action<union_def>
         struct CleanupGuard
         {
             std::map<std::string, std::string>& state;
+            Context* ctx;
             ~CleanupGuard()
             {
-                cleanup_state(state);
+                cleanup_state(state, ctx);
             }
 
         }
-        cleanup_guard{state};
+        cleanup_guard{state, ctx};
 
-        Module& module = ctx->module();
-        const std::string& union_name = state["union_name"];
+        auto module = ctx->modules().current();
+        const std::string scoped_union_name = module->create_scoped_name(state["union_name"]);
 
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-        DynamicType::_ref_type discriminant_type = ctx->get_type(state, state["union_discriminant"]);
-        if (!discriminant_type)
+        DynamicTypeBuilder::_ref_type discriminator_builder =
+                factory->create_type_copy(ctx->get_type(state, state["union_discriminant"]));
+        if (!discriminator_builder)
         {
             EPROSIMA_LOG_WARNING(IDLPARSER, "[TODO] union type not supported: " << state["union_discriminant"]);
             return;
         }
+
+        // Annotate discriminator type descriptor with the annotations collected during parsing
+        const auto& discriminator_annotations = ctx->annotations().pending_discriminator_annotations();
+        if (!discriminator_annotations.empty())
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Annotations for union discriminators are not supported yet.");
+            return;
+        }
+
         type_descriptor->kind(TK_UNION);
-        type_descriptor->name(union_name);
-        type_descriptor->discriminator_type(discriminant_type);
+        type_descriptor->name(scoped_union_name);
+        type_descriptor->discriminator_type(discriminator_builder->build());
+
+        // Annotate the type descriptor with the annotations collected during parsing
+        const auto& type_annotations = ctx->annotations().pending_type_annotations();
+        if (!type_annotations.empty())
+        {
+            for (const auto& info : type_annotations)
+            {
+                if (!info.first->annotate_descriptor(type_descriptor, info.second))
+                {
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating type descriptor for union: " << scoped_union_name);
+                    return;
+                }
+            }
+        }
+
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        std::vector<std::string> label_groups = ctx->split_string(state["union_labels"], ';');
-        std::vector<std::string> types = ctx->split_string(state["union_member_types"], ';');
-        std::vector<std::string> names = ctx->split_string(state["union_member_names"], ';');
-        std::vector<std::string> sequence_sizes = ctx->split_string(state["sequence_sizes"], ';');
+        std::vector<std::string> label_groups = utils::split_string(state["union_labels"], ';');
+        std::vector<std::string> types = utils::split_string(state["union_member_types"], ';');
+        std::vector<std::string> names = utils::split_string(state["union_member_names"], ';');
+        std::vector<std::string> sequence_sizes = utils::split_string(state["sequence_sizes"], ';');
 
         std::vector<std::vector<int32_t>> labels(types.size());
         int default_label_index = -1;
@@ -1952,7 +2418,7 @@ struct action<union_def>
             {
                 continue; // Skip empty strings
             }
-            std::vector<std::string> numbers_str = ctx->split_string(label_groups[i], ',');
+            std::vector<std::string> numbers_str = utils::split_string(label_groups[i], ',');
             for (const auto& num_str : numbers_str)
             {
                 if (num_str == "default")
@@ -1989,9 +2455,9 @@ struct action<union_def>
             {
                 uint32_t size;
 
-                if (module.has_constant(sequence_sizes[i]))
+                if (module->has_constant(sequence_sizes[i]))
                 {
-                    DynamicData::_ref_type xdata = module.constant(sequence_sizes[i]);
+                    DynamicData::_ref_type xdata = module->constant(sequence_sizes[i]);
                     int64_t size_val = 0;
                     xdata->get_int64_value(size_val, MEMBER_ID_INVALID);
                     size = static_cast<uint32_t>(size_val);
@@ -2031,13 +2497,33 @@ struct action<union_def>
                 member_descriptor->label(labels[i]);
             }
 
-            builder->add_member(member_descriptor);
+            // Annotate the member descriptor with the annotations collected during parsing
+            const auto& member_annotations = ctx->annotations().pending_member_annotations();
+            if (member_annotations.count(names[i]))
+            {
+                for (const auto& info : member_annotations.at(names[i]))
+                {
+                    if (!info.first->annotate_descriptor(member_descriptor, info.second))
+                    {
+                        EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating member descriptor for union: "
+                                << scoped_union_name << ", member: " << names[i]);
+                        return;
+                    }
+                }
+            }
+
+            if (RETCODE_OK != builder->add_member(member_descriptor))
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to union: " << scoped_union_name
+                                                                               << ", member: " << names[i]);
+                return;
+            }
         }
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << union_name);
-        module.union_switch(builder);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found union: " << scoped_union_name);
+        module->union_switch(builder);
 
-        if (union_name == ctx->target_type_name)
+        if (scoped_union_name == ctx->target_type_name)
         {
             ctx->builder = builder;
         }
@@ -2100,10 +2586,10 @@ struct action<typedef_dcl>
         }
         cleanup_guard{state};
 
-        Module& module = ctx->module();
+        auto module = ctx->modules().current();
 
         std::string alias_name;
-        std::vector<std::string> array_sizes = ctx->split_string(state["current_array_sizes"], ',');
+        std::vector<std::string> array_sizes = utils::split_string(state["current_array_sizes"], ',');
 
         // state["alias"] is supposed to contain up to two fields, alias type (optional) and name
         std::ptrdiff_t comma_count = std::count(state["alias"].begin(), state["alias"].end(), ',');
@@ -2125,6 +2611,13 @@ struct action<typedef_dcl>
             alias_name = state["alias"];
         }
 
+        const std::string scoped_alias_name = module->create_scoped_name(alias_name);
+
+        if (module->has_alias(scoped_alias_name))
+        {
+            return; // Already defined alias
+        }
+
         // For sequence types, ctx->get_type() should return the type of the elements
         DynamicType::_ref_type alias_type = (state["type"] == "sequence") ? ctx->get_type(state, state["element_type"])
                 : ctx->get_type(state, state["type"]);
@@ -2138,7 +2631,7 @@ struct action<typedef_dcl>
         DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
         TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
         type_descriptor->kind(TK_ALIAS);
-        type_descriptor->name(alias_name);
+        type_descriptor->name(scoped_alias_name);
 
         if (state["type"] == "sequence")
         {
@@ -2170,10 +2663,10 @@ struct action<typedef_dcl>
 
         DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
 
-        EPROSIMA_LOG_INFO(IDLPARSER, "Found alias: " << alias_name);
-        module.create_alias(alias_name, builder);
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found alias: " << scoped_alias_name);
+        module->create_alias(scoped_alias_name, builder);
 
-        if (alias_name == ctx->target_type_name)
+        if (scoped_alias_name == ctx->target_type_name)
         {
             ctx->builder = builder;
         }
@@ -2182,7 +2675,53 @@ struct action<typedef_dcl>
 };
 
 template<>
-struct action<annotation_appl>
+struct action<annotation_begin>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["parsing_annotation"] = "true";
+        state["is_annotation_definition"] = "false";
+    }
+
+};
+
+template<>
+struct action<annotation_param_context_begin>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        state["parsing_annotation_params"] = "true";
+    }
+};
+
+template<>
+struct action<annotation_param_context_end>
+{
+    template<typename Input>
+    static void apply(
+            const Input& /*in*/,
+            Context* /*ctx*/,
+            std::map<std::string, std::string>& state,
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/)
+    {
+        assert(state.count("parsing_annotation_params"));
+        state.erase("parsing_annotation_params");
+    }
+};
+
+
+template<>
+struct action<annotation_appl_params>
 {
     template<typename Input>
     static void apply(
@@ -2191,8 +2730,13 @@ struct action<annotation_appl>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        state["type"] = in.string();
-        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] annotation_appl parsing not supported: " << state["type"]);
+        const std::string& last_ann_params = in.string();
+        std::string& current_ann_params = state["annotation_params"];
+
+        // Last parsed annotation has parameters, update the state
+        std::vector<std::string> tokens = utils::split_string(current_ann_params, ';');
+        tokens.back() = last_ann_params;
+        current_ann_params = utils::join_strings(tokens, ';');
     }
 
 };
@@ -2209,6 +2753,11 @@ struct action<bitmask_dcl>
     {
         state["type"] = in.string();
         EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitmask_dcl parsing not supported: " << state["type"]);
+        // Ignore bitmask annotations (Unsupported type)
+        state.erase("annotation_names");
+        state.erase("annotation_params");
+        state.erase("annotation_target");
+        state.erase("annotation_member_name");
     }
 
 };
@@ -2225,6 +2774,11 @@ struct action<bitset_dcl>
     {
         state["type"] = in.string();
         EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] bitset_dcl parsing not supported: " << state["type"]);
+        // Ignore bitset annotations (Unsupported type)
+        state.erase("annotation_names");
+        state.erase("annotation_params");
+        state.erase("annotation_target");
+        state.erase("annotation_member_name");
     }
 
 };
@@ -2234,13 +2788,13 @@ struct action<module_dcl>
 {
     template<typename Input>
     static void apply(
-            const Input& in,
-            Context* /*ctx*/,
-            std::map<std::string, std::string>& state,
+            const Input& /*in*/,
+            Context* ctx,
+            std::map<std::string, std::string>& /*state*/,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        state["type"] = in.string();
-        EPROSIMA_LOG_INFO(IDLPARSER, "[TODO] module_dcl parsing not supported: " << state["type"]);
+        // Move scope to the parent module
+        ctx->modules().pop();
     }
 
 };
@@ -2495,7 +3049,7 @@ private:
         }
         else
         {
-            builder = context_->module().get_builder(type);
+            builder = context_->modules().current()->get_builder(type);
             if (builder)
             {
                 xtype = builder->build();
@@ -2513,6 +3067,121 @@ traits<DynamicType>::ref_type Context::get_type(
         const std::string& type)
 {
     return parser_->type_spec(state, type);
+}
+
+bool AnnotationsManager::update_pending_annotations(
+        std::map<std::string, std::string>& state)
+{
+    if (!state.count("annotation_names") || !state.count("annotation_params") || !state.count("annotation_target"))
+    {
+        EPROSIMA_LOG_ERROR(IDLPARSER, "Unable to update pending annotations: missing required state keys.");
+        return false;
+    }
+
+    std::vector<std::string> ann_names = utils::split_string(state["annotation_names"], ';');
+    std::vector<std::string> ann_params = utils::split_string(state["annotation_params"], ';');
+
+    // The number of annotation names and parameters should match
+    if (ann_names.size() != ann_params.size())
+    {
+        EPROSIMA_LOG_ERROR(IDLPARSER, "Annotation names and parameters count mismatch: "
+                << ann_names.size() << " names vs " << ann_params.size() << " parameters.");
+        return false;
+    }
+
+    auto add_to_pending_ann = [this, &ann_names, &ann_params](PendingAnnotations& pending_ann)
+            {
+                for (size_t i = 0; i < ann_names.size(); i++)
+                {
+                    const Annotation* declared_ann = declared_annotations_.get_annotation(ann_names[i]);
+                    if (!declared_ann)
+                    {
+                        EPROSIMA_LOG_ERROR(IDLPARSER, "Annotation '" << ann_names[i] << "' is not declared.");
+                        return false;
+                    }
+
+                    AnnotationParameterValues param_values = AnnotationParameterValues::from_string(ann_params[i]);
+                    pending_ann.push_back(std::make_pair(declared_ann, param_values));
+                }
+
+                return true;
+            };
+
+    bool success = true;
+    switch (string_to_target_kind(state["annotation_target"]))
+    {
+        case AnnotationTargetKind::TYPE:
+        {
+            success = add_to_pending_ann(pending_type_annotations_);
+            break;
+        }
+        case AnnotationTargetKind::MEMBER:
+        {
+            if (!state.count("annotation_member_name") || state["annotation_member_name"].empty())
+            {
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid annotation member name");
+                return false;
+            }
+            const std::string& member_name = state["annotation_member_name"];
+            pending_member_annotations_[member_name] = PendingAnnotations();
+            success = add_to_pending_ann(pending_member_annotations_[member_name]);
+            break;
+        }
+        case AnnotationTargetKind::DISCRIMINATOR:
+        {
+            success = add_to_pending_ann(pending_discriminator_annotations_);
+            break;
+        }
+    }
+
+    // Info about pending annotations consumed, delete it
+    state.erase("annotation_names");
+    state.erase("annotation_params");
+    state.erase("annotation_target");
+    state.erase("annotation_member_name");
+
+    return success;
+}
+
+void AnnotationsManager::set_target(
+        std::map<std::string, std::string>& state)
+{
+    // Determine the annotation's target (type or a member of a type) if it is not already set.
+    if (!state.count("annotation_target"))
+    {
+        AnnotationTargetKind kind;
+        if (state.count("struct_name") && !state["struct_name"].empty())
+        {
+            kind = AnnotationTargetKind::MEMBER;
+            // We don't know yet the struct's member name
+            state["annotation_member_name"] = "";
+
+        }
+        else if (state.count("union_name") && !state["union_name"].empty())
+        {
+            if (state["union_discriminant"].empty())
+            {
+                kind = AnnotationTargetKind::DISCRIMINATOR;
+            }
+            else
+            {
+                // We don't know yet the union's member name
+                kind = AnnotationTargetKind::MEMBER;
+            }
+        }
+        else if (state.count("enum_name") && !state["enum_name"].empty())
+        {
+            kind = AnnotationTargetKind::MEMBER;
+            // We don't know yet the enum's member name
+            state["annotation_member_name"] = "";
+        }
+        else
+        {
+            kind = AnnotationTargetKind::TYPE;
+        }
+
+        state["annotation_target"] = target_kind_to_string(kind);
+    }
 }
 
 } // namespace idlparser

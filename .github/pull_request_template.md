@@ -21,7 +21,7 @@
     In case of bug fixes, please provide the list of supported branches where this fix should be also merged.
     Please uncomment following line, adjusting the corresponding target branches for the backport.
 -->
-<!-- @Mergifyio backport 3.1.x 2.14.x 2.10.x -->
+<!-- @Mergifyio backport 3.3.x 3.2.x 2.14.x -->
 
 <!--
     In case of critical bug fix, please uncomment following line, adjusting the corresponding LTS target branches for the backport.

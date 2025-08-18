@@ -7,7 +7,7 @@ All information is provided as a general guidelines only, and this section may b
 
 Disclaimer:
 
-* This section has been last updated in March 2025.
+* This section has been last updated in July 2025.
   Please take into account its content could be obsolete.
 
 ## Short term
@@ -15,7 +15,6 @@ Disclaimer:
 The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.3.0):
 
 * Consolidation of some [properties](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/property_policies.html) into QoS policies
-* SHM permissions override
 * Ignore local endpoints configured at endpoint level
 
 ## Medium term

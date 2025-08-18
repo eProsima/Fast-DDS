@@ -346,7 +346,7 @@ bool CDRMessage::readTimestamp(
     return valid;
 }
 
-bool CDRMessage::readLocator(
+bool CDRMessage::read_locator(
         CDRMessage_t* msg,
         Locator_t* loc)
 {
@@ -358,6 +358,67 @@ bool CDRMessage::readLocator(
     bool valid = readInt32(msg, &loc->kind);
     valid &= readUInt32(msg, &loc->port);
     valid &= readData(msg, loc->address, 16);
+
+    return valid;
+}
+
+bool CDRMessage::read_locator_list(
+        CDRMessage_t* msg,
+        LocatorList* locator_list)
+{
+    assert(locator_list != nullptr);
+
+    uint32_t locator_list_size = 0;
+    bool valid = rtps::CDRMessage::readUInt32(msg, &locator_list_size);
+    locator_list->reserve(locator_list_size);
+    for (uint32_t i = 0; i < locator_list_size; ++i)
+    {
+        rtps::Locator_t locator;
+        valid &= rtps::CDRMessage::read_locator(msg, &locator);
+        locator_list->push_back(locator);
+    }
+
+    return valid;
+}
+
+bool CDRMessage::read_external_locator(
+        CDRMessage_t* msg,
+        LocatorWithMask* loc,
+        uint8_t* externality,
+        uint8_t* cost)
+{
+    bool ret = false;
+
+    if (msg->pos + 28 <= msg->length)
+    {
+        ret = read_locator(msg, loc);
+        ret &= readOctet(msg, externality);
+        ret &= readOctet(msg, cost);
+        uint8_t mask = 0;
+        ret &= readOctet(msg, &mask);
+        loc->mask(mask);
+        msg->pos += 1; // padding
+    }
+
+    return ret;
+}
+
+bool CDRMessage::read_external_locator_list(
+        CDRMessage_t* msg,
+        ExternalLocators* external_locators)
+{
+    assert(external_locators != nullptr);
+
+    uint32_t external_locators_size = 0;
+    bool valid = rtps::CDRMessage::readUInt32(msg, &external_locators_size);
+    for (uint32_t i = 0; i < external_locators_size; ++i)
+    {
+        rtps::Locator_t locator;
+        rtps::LocatorWithMask locator_with_mask;
+        uint8_t externality = 0, cost = 0;
+        valid &= rtps::CDRMessage::read_external_locator(msg, &locator_with_mask, &externality, &cost);
+        (*external_locators)[externality][cost].push_back(locator_with_mask);
+    }
 
     return valid;
 }
@@ -437,7 +498,7 @@ bool CDRMessage::readOctetVector(
     return valid;
 }
 
-bool CDRMessage::readString(
+bool CDRMessage::read_string(
         CDRMessage_t* msg,
         std::string* stri)
 {
@@ -464,7 +525,7 @@ bool CDRMessage::readString(
     return valid;
 }
 
-bool CDRMessage::readString(
+bool CDRMessage::read_string(
         CDRMessage_t* msg,
         fastcdr::string_255* stri)
 {
@@ -603,13 +664,17 @@ bool CDRMessage::addOctetVector(
         const std::vector<octet>* ocvec,
         bool add_final_padding)
 {
-    // TODO Calculate without padding
-    auto final_size = msg->pos + ocvec->size();
+    auto final_size = msg->pos + 4 + ocvec->size();
     if (add_final_padding)
     {
-        final_size += 4;
+        size_t rest = ocvec->size() % 4;
+        if (rest != 0)
+        {
+            rest = 4 - rest; // How many you have to add
+            final_size += rest;
+        }
     }
-    if (final_size >= msg->max_size)
+    if (final_size > msg->max_size)
     {
         return false;
     }
@@ -618,13 +683,11 @@ bool CDRMessage::addOctetVector(
 
     if (add_final_padding)
     {
-        int rest = ocvec->size() % 4;
-        if (rest != 0)
+        size_t rest = final_size - msg->pos;
+        if (rest > 0)
         {
-            rest = 4 - rest; //how many you have to add
-
             octet oc = '\0';
-            for (int i = 0; i < rest; i++)
+            for (size_t i = 0; i < rest; i++)
             {
                 valid &= CDRMessage::addOctet(msg, oc);
             }
@@ -638,7 +701,7 @@ bool CDRMessage::addEntityId(
         CDRMessage_t* msg,
         const EntityId_t* ID)
 {
-    if (msg->pos + 4 >= msg->max_size)
+    if (msg->pos + 4 > msg->max_size)
     {
         return false;
     }
@@ -721,7 +784,7 @@ bool CDRMessage::addFragmentNumberSet(
     return true;
 }
 
-bool CDRMessage::addLocator(
+bool CDRMessage::add_locator(
         CDRMessage_t* msg,
         const Locator_t& loc)
 {
@@ -729,6 +792,68 @@ bool CDRMessage::addLocator(
     addUInt32(msg, loc.port);
     addData(msg, loc.address, 16);
     return true;
+}
+
+bool CDRMessage::add_locator_list(
+        CDRMessage_t* msg,
+        const LocatorList& locator_list)
+{
+    bool valid = rtps::CDRMessage::addUInt32(msg, (uint32_t)locator_list.size());
+    for (const auto& locator : locator_list)
+    {
+        valid &= rtps::CDRMessage::add_locator(msg, locator);
+    }
+    return valid;
+}
+
+bool CDRMessage::add_external_locator(
+        CDRMessage_t* msg,
+        const LocatorWithMask& loc,
+        const uint8_t& externality,
+        const uint8_t& cost)
+{
+    bool ret = false;
+
+    if (msg->pos + 28 <= msg->max_size)
+    {
+        ret = add_locator(msg, loc);
+        ret &= addOctet(msg, externality);
+        ret &= addOctet(msg, cost);
+        ret &= addOctet(msg, loc.mask());
+        ret &= addOctet(msg, 0); // Padding
+    }
+
+    return ret;
+}
+
+bool CDRMessage::add_external_locator_list(
+        CDRMessage_t* msg,
+        const ExternalLocators& external_locators)
+{
+    uint32_t external_locator_list_size = 0;
+    for (const auto& externality__cost_locator_list : external_locators)
+    {
+        for (const auto& cost__locator_list : externality__cost_locator_list.second)
+        {
+            external_locator_list_size += static_cast<uint32_t>(cost__locator_list.second.size());
+        }
+    }
+    bool valid =
+            rtps::CDRMessage::addUInt32(msg, external_locator_list_size);
+    for (const auto& externality__cost_locator_list : external_locators)
+    {
+        for (const auto& cost__locator_list : externality__cost_locator_list.second)
+        {
+            for (const auto& locator : cost__locator_list.second)
+            {
+                valid &= rtps::CDRMessage::add_external_locator(msg, locator,
+                                externality__cost_locator_list.first,
+                                cost__locator_list.first);
+            }
+        }
+    }
+
+    return valid;
 }
 
 bool CDRMessage::add_string(
@@ -787,11 +912,11 @@ bool CDRMessage::readProperty(
 {
     assert(msg);
 
-    if (!CDRMessage::readString(msg, &property.name()))
+    if (!CDRMessage::read_string(msg, &property.name()))
     {
         return false;
     }
-    if (!CDRMessage::readString(msg, &property.value()))
+    if (!CDRMessage::read_string(msg, &property.value()))
     {
         return false;
     }
@@ -827,7 +952,7 @@ bool CDRMessage::readBinaryProperty(
 {
     assert(msg);
 
-    if (!CDRMessage::readString(msg, &binary_property.name()))
+    if (!CDRMessage::read_string(msg, &binary_property.name()))
     {
         return false;
     }
@@ -1045,7 +1170,7 @@ bool CDRMessage::readDataHolder(
 {
     assert(msg);
 
-    if (!CDRMessage::readString(msg, &data_holder.class_id()))
+    if (!CDRMessage::read_string(msg, &data_holder.class_id()))
     {
         return false;
     }
@@ -1250,7 +1375,7 @@ bool CDRMessage::readParticipantGenericMessage(
     {
         return false;
     }
-    if (!CDRMessage::readString(msg, &message.message_class_id()))
+    if (!CDRMessage::read_string(msg, &message.message_class_id()))
     {
         return false;
     }

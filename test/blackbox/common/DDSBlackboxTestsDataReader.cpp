@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <mutex>
 #include <thread>
 #include <type_traits>
 
@@ -1290,6 +1291,297 @@ TEST_P(DDSDataReader, datareader_sends_non_default_qos_optional)
 
     // Check that no optional QoS are serialized. Only PID_DURABILITY as it is always sent
     EXPECT_EQ(qos_found.load(), 1u);
+}
+
+// This is a regression test to check the reception time used when Samples are lost and need to be resent.
+TEST(DDSDataReader, reception_timestamp_for_resent_samples)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // A reliable Pub-Sub scenario will be created.
+    // One sample will be filtered out to force the publisher to resend it.
+    // The reception timestamp of the sample will be checked.
+
+    class CustomPubSubReader : public PubSubReader<HelloWorldPubSubType>
+    {
+    public:
+
+        CustomPubSubReader(
+                const std::string& topic_name)
+            : PubSubReader(topic_name)
+        {
+        }
+
+        std::map<uint16_t, rtps::Time_t> reception_timestamps;
+
+    private:
+
+        void postprocess_sample(
+                const type& sample,
+                const SampleInfo& info) override final
+        {
+            if (info.valid_data)
+            {
+                reception_timestamps[sample.index()] = info.reception_timestamp;
+                std::cout << "Sample " << sample.index() << " received at "
+                          << info.reception_timestamp.seconds() << "." << info.reception_timestamp.nanosec()
+                          << std::endl;
+            }
+        }
+
+    };
+
+    std::atomic<bool> filter_activated { false };
+    auto block_data_msgs = [&filter_activated](CDRMessage_t& msg)
+            {
+                // Filter Data messages
+                if (filter_activated.load(std::memory_order::memory_order_seq_cst))
+                {
+                    uint32_t old_pos = msg.pos;
+
+                    SequenceNumber_t sn;
+
+                    msg.pos += 2; // Flags
+                    msg.pos += 2; // Octets to inline QoS
+                    msg.pos += 4; // Reader ID
+                    msg.pos += 4; // Writer ID
+                    sn.high = (int32_t)eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+                    msg.pos += 4;
+                    sn.low = eprosima::fastdds::helpers::cdr_parse_u32(
+                        (char*)&msg.buffer[msg.pos]);
+
+                    // Restore buffer pos
+                    msg.pos = old_pos;
+
+                    // Filter only first Data sent with Sequence number 0-1
+                    if (sn == SequenceNumber_t{0, 1})
+                    {
+                        std::cout << "Blocking Data msg of Sequence number 0-1." << std::endl;
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+    // Declare a test transport that will block DATA msgs sent
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    test_transport->drop_data_messages_filter_ = [&](CDRMessage_t& msg)
+            {
+                return block_data_msgs(msg);
+            };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    CustomPubSubReader reader(TEST_TOPIC_NAME);
+
+    // The writer will use the test transport. Both reliable and history depth will be set to 5.
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .history_kind(KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .init();
+    reader.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+            .history_kind(KEEP_LAST_HISTORY_QOS)
+            .history_depth(3)
+            .init();
+
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Activate the filter and send first sample
+    filter_activated.store(true, std::memory_order::memory_order_seq_cst);
+
+    auto data = default_helloworld_data_generator(3);
+    reader.startReception(data);
+
+    auto samples_it = data.begin();
+    writer.send_sample(*samples_it);
+    // Ensure that the sample has not been received yet
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 0u);
+
+    // Send the rest of the samples and then deactivate the filter
+    ++samples_it;
+    for (; samples_it != data.end(); ++samples_it)
+    {
+        writer.send_sample(*samples_it);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    filter_activated.store(false, std::memory_order::memory_order_seq_cst);
+    // Wait for the reception of all samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(5)), 3u);
+
+    // Check timestamps. reception_timestamps map is accesed by index of HelloWorld data
+    ASSERT_EQ(reader.reception_timestamps.size(), 3u);
+    auto reception_ts_1 = reader.reception_timestamps[1];
+    auto reception_ts_2 = reader.reception_timestamps[2];
+    auto reception_ts_3 = reader.reception_timestamps[3];
+    EXPECT_TRUE(reception_ts_1 <= reception_ts_2);
+    EXPECT_TRUE(reception_ts_2 <= reception_ts_3);
+}
+
+/* This is a regression test for redmine issue 22929.
+ *
+ * Considers the following scenario:
+ * - A DataReader is created on keyed topic A
+ * - A DataWriter is created on the same topic
+ * - DataWriter writes sample 1 to instance 1
+ * - DataReader takes sample 1
+ * - DataWriter is deleted
+ *
+ * The following behavior is expected:
+ * - Calling take on the DataReader returns a sample on instance 1 with
+ *   valid_data = false to inform about the change in the instance state
+ *   to NOT_ALIVE_NO_WRITERS
+ */
+TEST_P(DDSDataReader, return_sample_when_writer_disappears)
+{
+    namespace fdds = eprosima::fastdds::dds;
+
+    struct CustomReaderListener : public fdds::DataReaderListener
+    {
+        void on_data_available(
+                fdds::DataReader* /* reader */) override
+        {
+            inc_data_available_count();
+        }
+
+        void on_subscription_matched(
+                fdds::DataReader* /* reader */,
+                const fdds::SubscriptionMatchedStatus& info) override
+        {
+            set_current_matched(info.current_count);
+        }
+
+        size_t get_data_available_count() const
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            return data_available_count_;
+        }
+
+        void wait_for_match()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait(lock,
+                    [this]()
+                    {
+                        return current_matched_ > 0;
+                    });
+        }
+
+        void wait_for_unmatch()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            cv_.wait(lock,
+                    [this]()
+                    {
+                        return current_matched_ == 0;
+                    });
+        }
+
+    private:
+
+        void inc_data_available_count()
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            ++data_available_count_;
+        }
+
+        void set_current_matched(
+                int32_t current_count)
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            current_matched_ = current_count;
+            cv_.notify_all();
+        }
+
+        mutable std::mutex mutex_;
+        std::condition_variable cv_;
+        size_t data_available_count_ = 0;
+        int32_t current_matched_ = 0;
+    };
+
+    fdds::InstanceHandle_t instance_handle{};
+    CustomReaderListener listener;
+
+    // Create a DataReader on a keyed topic
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+    fdds::DataReader& data_reader = reader.get_native_reader();
+    data_reader.set_listener(&listener, fdds::StatusMask::all());
+
+    // Create a DataWriter on the same topic
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(1)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+    listener.wait_for_match();
+
+    // DataWriter writes sample 1 to instance 1
+    {
+        KeyedHelloWorldPubSubType::type sample;
+        sample.key(1);
+        sample.index(1);
+        sample.message("Hello World");
+        EXPECT_TRUE(writer.send_sample(sample));
+    }
+
+    // DataReader takes sample 1
+    {
+        EXPECT_TRUE(data_reader.wait_for_unread_message(fdds::c_TimeInfinite));
+        EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+        EXPECT_EQ(listener.get_data_available_count(), 1u);
+
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
+        EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
+        EXPECT_FALSE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+
+        EXPECT_TRUE(info.valid_data);
+        EXPECT_EQ(info.instance_state, fdds::ALIVE_INSTANCE_STATE);
+        EXPECT_EQ(sample.key(), 1);
+        EXPECT_EQ(sample.index(), 1);
+        EXPECT_EQ(sample.message(), "Hello World");
+
+        // Store the instance handle for later use
+        instance_handle = info.instance_handle;
+    }
+
+    // DataWriter is deleted
+    writer.destroy();
+    listener.wait_for_unmatch();
+
+    // Verify expectations
+    {
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
+
+        EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+        EXPECT_EQ(listener.get_data_available_count(), 2u);
+
+        EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
+        EXPECT_FALSE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
+
+        EXPECT_FALSE(info.valid_data);
+        EXPECT_EQ(info.instance_handle, instance_handle);
+        EXPECT_EQ(info.instance_state, fdds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE);
+    }
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

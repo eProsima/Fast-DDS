@@ -80,10 +80,8 @@ constexpr Endianness_t DEFAULT_ENDIAN = BIGEND;
 constexpr Endianness_t DEFAULT_ENDIAN = LITTLEEND;
 #endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
 
-using octet = unsigned char;
-// typedef unsigned int uint;
-// typedef unsigned short ushort;
-using SubmessageFlag = unsigned char;
+using octet = uint8_t;
+using SubmessageFlag = octet;
 using BuiltinEndpointSet_t = uint32_t;
 using NetworkConfigSet_t = uint32_t;
 using Count_t = uint32_t;

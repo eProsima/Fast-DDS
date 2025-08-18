@@ -125,6 +125,10 @@ private:
             tail.writer_info.previous = &head;
         }
 
+        // TODO: remove optimization with GCC > 15
+        #if defined(__linux__)
+        [[gnu::optimize("no-delete-null-pointer-checks")]]
+        #endif // if defined(__GNUC__)
         bool is_empty() const noexcept
         {
             assert((&tail == head.writer_info.next && &head == tail.writer_info.previous) ||
@@ -554,7 +558,8 @@ struct FlowControllerRoundRobinSchedule
             do
             {
                 ret_change = std::get<1>(*next_writer_).get_next_change();
-            } while (nullptr == ret_change && starting_it != set_next_writer());
+            }
+            while (nullptr == ret_change && starting_it != set_next_writer());
         }
 
         return ret_change;
@@ -789,7 +794,12 @@ struct FlowControllerPriorityWithReservationSchedule
             BaseWriter* writer)
     {
         auto it = writers_queue_.find(writer);
-        assert(it != writers_queue_.end());
+        if (it == writers_queue_.end())
+        {
+            EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                    "FlowControllerPriorityWithReservationSchedule::unregister_writer: writer not found");
+            return;
+        }
         int32_t priority = std::get<1>(it->second);
         writers_queue_.erase(it);
         auto priority_it = priorities_.find(priority);
@@ -805,7 +815,15 @@ struct FlowControllerPriorityWithReservationSchedule
         {
             assert(0 != size_being_processed_);
             auto writer = writers_queue_.find(writer_being_processed_);
-            std::get<3>(writer->second) += size_being_processed_;
+            if (writer == writers_queue_.end())
+            {
+                EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                        "work_done(): writer_being_processed_ not found in writers_queue_");
+            }
+            else
+            {
+                std::get<3>(writer->second) += size_being_processed_;
+            }
             writer_being_processed_ = nullptr;
             size_being_processed_ = 0;
         }

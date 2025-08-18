@@ -621,9 +621,9 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     property_policy.properties().emplace_back(
         eprosima::fastdds::dds::parameter_policy_physical_data_process, "test_process");
 
-    writer.static_discovery("file://PubSubWriter_static_disc.xml")
+    writer.static_discovery("file://RTPSParticipant_static_disc.xml")
             .unicastLocatorList(WriterUnicastLocators)
-            .multicastLocatorList(WriterMulticastLocators)
+            .multicast_locator_list(WriterMulticastLocators)
             .setPublisherIDs(1, 2)
             .setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
             .property_policy(property_policy)
@@ -659,9 +659,9 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     // Total: 240 Bytes
 
     reader.properties_max_size(240)
-            .static_discovery("file://PubSubReader_static_disc.xml")
+            .static_discovery("file://RTPSParticipant_static_disc.xml")
             .unicastLocatorList(ReaderUnicastLocators)
-            .multicastLocatorList(ReaderMulticastLocators)
+            .multicast_locator_list(ReaderMulticastLocators)
             .setSubscriberIDs(3, 4)
             .setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
             .property_policy(property_policy)
@@ -740,8 +740,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     WriterMulticastLocators.push_back(LocatorBuffer);
 
-    writer.static_discovery("file://PubSubWriter_static_disc.xml").
-            unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
+    writer.static_discovery("file://RTPSParticipant_static_disc.xml").
+            unicastLocatorList(WriterUnicastLocators).multicast_locator_list(WriterMulticastLocators).
             setPublisherIDs(1,
             2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 
@@ -759,8 +759,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataExceedsSizeLimit)
 
     //Expected properties have size 92
     reader.properties_max_size(50)
-            .static_discovery("file://PubSubReader_static_disc.xml")
-            .unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators)
+            .static_discovery("file://RTPSParticipant_static_disc.xml")
+            .unicastLocatorList(ReaderUnicastLocators).multicast_locator_list(ReaderMulticastLocators)
             .setSubscriberIDs(3,
             4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
 

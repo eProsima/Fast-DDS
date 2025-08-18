@@ -87,16 +87,16 @@ class TCPTransportInterface : public TransportInterface
 
 protected:
 
-    asio::io_service io_service_;
-    asio::io_service io_service_timers_;
+    asio::io_context io_context_;
+    asio::io_context io_context_timers_;
     std::unique_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
     uint16_t initial_peer_local_locator_port_;
 
 #if TLS_FOUND
     asio::ssl::context ssl_context_;
 #endif // if TLS_FOUND
-    eprosima::thread io_service_thread_;
-    eprosima::thread io_service_timers_thread_;
+    eprosima::thread io_context_thread_;
+    eprosima::thread io_context_timers_thread_;
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
@@ -403,13 +403,15 @@ public:
      * so should not be reuse.
      * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
      * so should not be reuse.
+     * @param transport_priority Transport priority to use for this send.
      */
     bool send(
             const std::vector<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             const Locator_t& locator,
             LocatorsIterator* destination_locators_begin,
-            LocatorsIterator* destination_locators_end);
+            LocatorsIterator* destination_locators_end,
+            const int32_t transport_priority);
 
     /**
      * Performs the locator selection algorithm for this transport.

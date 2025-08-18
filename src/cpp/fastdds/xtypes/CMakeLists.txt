@@ -82,6 +82,8 @@ target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
     serializers/idl/dynamic_type_idl.hpp
     serializers/json/dynamic_data_json.cpp
     serializers/json/dynamic_data_json.hpp
+    serializers/json/json_dynamic_data.cpp
+    serializers/json/json_dynamic_data.hpp
     utils.cpp
     )
 

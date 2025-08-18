@@ -2187,6 +2187,88 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
 }
 
 /*!
+ * This test checks that Fast DDS can properly serialize ResourceLimitsQos in DATA(w) when it has more fields than
+ * max_samples, max_instances and max_samples_per_instance. It also checks that those fields are not serialized
+ * into the allocated_samples and extra samples fields.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_other_vendor_writer_resource_limits)
+{
+    const VendorId_t other_vendor_id = { 0, 1 };
+    // DATA(w)
+    {
+        octet data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Resource limits
+            0x41, 0x00, 0x14, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        WriterProxyData wpd(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(wpd.read_from_cdr_message(&msg, other_vendor_id)));
+
+        ASSERT_TRUE(wpd.resource_limits);
+        ASSERT_EQ(wpd.resource_limits->max_samples, 1);
+        ASSERT_EQ(wpd.resource_limits->max_instances, 2);
+        ASSERT_EQ(wpd.resource_limits->max_samples_per_instance, 3);
+        // Allocated samples and extra samples should have default values as they should not be read because
+        // they come from another vendor
+        dds::ResourceLimitsQosPolicy default_values {};
+        ASSERT_EQ(wpd.resource_limits->allocated_samples, default_values.allocated_samples);
+        ASSERT_EQ(wpd.resource_limits->extra_samples, default_values.extra_samples);
+    }
+}
+
+/*!
+ * This test checks that Fast DDS can properly serialize ResourceLimitsQos in DATA(r) when it has more fields than
+ * max_samples, max_instances and max_samples_per_instance. It also checks that those fields are not serialized
+ * into the allocated_samples and extra samples fields.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_other_vendor_reader_resource_limits)
+{
+    const VendorId_t other_vendor_id = { 0, 1 };
+    // DATA(r)
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Resource limits
+            0x41, 0x00, 0x14, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData rpd(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(rpd.read_from_cdr_message(&msg, other_vendor_id)));
+
+        ASSERT_TRUE(rpd.resource_limits);
+        ASSERT_EQ(rpd.resource_limits->max_samples, 1);
+        ASSERT_EQ(rpd.resource_limits->max_instances, 2);
+        ASSERT_EQ(rpd.resource_limits->max_samples_per_instance, 3);
+        // Allocated samples and extra samples should have default values as they should not be read because
+        // they come from another vendor
+        dds::ResourceLimitsQosPolicy default_values {};
+        ASSERT_EQ(rpd.resource_limits->allocated_samples, default_values.allocated_samples);
+        ASSERT_EQ(rpd.resource_limits->extra_samples, default_values.extra_samples);
+    }
+}
+
+/*!
  * This is a regression test for redmine issue #21537
  *
  * It checks deserialization of builtin data with big parameters.
@@ -2655,6 +2737,41 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader)
 }
 
 /*!
+ * This test checks that a correct ReaderProxyData is obtained when sending only max_samples, max_instances
+ * and max_samples_per_instance in the ResourceLimits QoS policy
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_reader_resource_limits)
+{
+    // DATA(r)
+    uint8_t data_r_buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+        // Resource limits (without allocated samples nor extra samples)
+        0x41, 0x00, 0x0c, 0x00,
+        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+    msg.length = msg.max_size;
+
+    ReaderProxyData rpd(max_unicast_locators, max_multicast_locators);
+    EXPECT_NO_THROW(EXPECT_TRUE(rpd.read_from_cdr_message(&msg, c_VendorId_eProsima)));
+
+    ASSERT_TRUE(rpd.resource_limits);
+    ASSERT_EQ(rpd.resource_limits->max_samples, 1);
+    ASSERT_EQ(rpd.resource_limits->max_instances, 2);
+    ASSERT_EQ(rpd.resource_limits->max_samples_per_instance, 3);
+    // Allocated samples and extra samples should have default values as they are not present in the data
+    dds::ResourceLimitsQosPolicy default_values {};
+    ASSERT_EQ(rpd.resource_limits->allocated_samples, default_values.allocated_samples);
+    ASSERT_EQ(rpd.resource_limits->extra_samples, default_values.extra_samples);
+}
+
+/*!
  * This test checks that a correct WriterProxyData is obtained
  * from eProsima's optional qos extensions in PublicationBuiltinTopicData
  */
@@ -2771,6 +2888,41 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer)
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.initial, 4u);
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.maximum, 5u);
     ASSERT_EQ(wpd.writer_resource_limits->reader_filters_allocation.increment, 6u);
+}
+
+/*!
+ * This test checks that a correct WriterProxyData is obtained when sending only max_samples, max_instances
+ * and max_samples_per_instance in the ResourceLimits QoS policy
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer_resource_limits)
+{
+    // DATA(w)
+    octet data_w_buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+        // Resource limits (without allocated samples nor extra samples)
+        0x41, 0x00, 0x0c, 0x00,
+        0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    CDRMessage_t msg(0);
+    msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+    msg.length = msg.max_size;
+
+    WriterProxyData wpd(max_unicast_locators, max_multicast_locators);
+    EXPECT_NO_THROW(EXPECT_TRUE(wpd.read_from_cdr_message(&msg, c_VendorId_eProsima)));
+
+    ASSERT_TRUE(wpd.resource_limits);
+    ASSERT_EQ(wpd.resource_limits->max_samples, 1);
+    ASSERT_EQ(wpd.resource_limits->max_instances, 2);
+    ASSERT_EQ(wpd.resource_limits->max_samples_per_instance, 3);
+    // Allocated samples and extra samples should have default values as they are not present in the data
+    dds::ResourceLimitsQosPolicy default_values {};
+    ASSERT_EQ(wpd.resource_limits->allocated_samples, default_values.allocated_samples);
+    ASSERT_EQ(wpd.resource_limits->extra_samples, default_values.extra_samples);
 }
 
 /**
@@ -2951,6 +3103,154 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_writer_serialize_non
     ASSERT_EQ(in.rtps_reliable_writer, out.rtps_reliable_writer);
     ASSERT_EQ(in.endpoint, out.endpoint);
     ASSERT_EQ(in.writer_resource_limits, out.writer_resource_limits);
+}
+
+/*!
+ * This test checks that a correct ParticipantProxyData is obtained
+ * from eProsima's optional qos extensions in ParticipantBuiltinTopicData
+ */
+TEST(BuiltinDataSerializationTests, optional_qos_extensions_participant)
+{
+    RTPSParticipantAllocationAttributes allocation;
+
+    ParticipantProxyData in(allocation);
+    ParticipantProxyData out(allocation);
+
+    dds::WireProtocolConfigQos wire_protocol_qos;
+    std::istringstream guidprefix_is("01.02.03.04.05.06.07.08.09.0A.0B.0C");
+    guidprefix_is >> wire_protocol_qos.prefix;
+    wire_protocol_qos.participant_id = 0x2;
+
+    rtps::Locator locator;
+    rtps::LocatorWithMask locator_mask;
+    //builtin
+    {
+        //discovery config
+        wire_protocol_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SUPER_CLIENT;
+        wire_protocol_qos.builtin.discovery_config.leaseDuration = dds::Duration_t(10, 0);
+        wire_protocol_qos.builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
+        wire_protocol_qos.builtin.discovery_config.initial_announcements.count = 3;
+        wire_protocol_qos.builtin.discovery_config.initial_announcements.period = dds::Duration_t(1, 0);
+        wire_protocol_qos.builtin.discovery_config.discoveryServer_client_syncperiod = dds::Duration_t(2, 0);
+        locator.port = 11235;
+        locator.kind = LOCATOR_KIND_UDPv4;
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.reserve(2);
+        wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
+        locator.port = 11236;
+        wire_protocol_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator);
+        wire_protocol_qos.builtin.discovery_config.ignoreParticipantFlags =
+                ParticipantFilteringFlags::FILTER_DIFFERENT_HOST;
+        wire_protocol_qos.builtin.discovery_config.static_edp_xml_config("/path/to/file.xml");
+
+        wire_protocol_qos.builtin.network_configuration = 0x2;
+        locator.port = 11237;
+        IPLocator::setIPv4(locator, 10, 34, 0, 2);
+        wire_protocol_qos.builtin.metatrafficUnicastLocatorList.push_back(locator);
+        locator.port = 11238;
+        wire_protocol_qos.builtin.metatrafficMulticastLocatorList.push_back(locator);
+        locator.port = 11239;
+        locator_mask.port = 11240;
+        IPLocator::setIPv4(locator_mask, 10, 34, 0, 3);
+        locator_mask.mask(0xA7);
+        wire_protocol_qos.builtin.metatraffic_external_unicast_locators[0][0].push_back(locator_mask);
+        locator_mask.port = 11241;
+        IPLocator::setIPv4(locator_mask, 172, 10, 0, 1);
+        locator_mask.mask(0xB4);
+        wire_protocol_qos.builtin.metatraffic_external_unicast_locators[0][1].push_back(locator_mask);
+        IPLocator::setIPv4(locator_mask, 172, 10, 0, 2);
+        wire_protocol_qos.builtin.metatraffic_external_unicast_locators[1][0].push_back(locator_mask);
+        locator.port = 11242;
+        IPLocator::setIPv4(locator, 192, 34, 0, 100);
+        wire_protocol_qos.builtin.initialPeersList.push_back(locator);
+        wire_protocol_qos.builtin.readerHistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        wire_protocol_qos.builtin.readerPayloadSize = 100;
+        wire_protocol_qos.builtin.writerHistoryMemoryPolicy = DYNAMIC_RESERVE_MEMORY_MODE;
+        wire_protocol_qos.builtin.writerPayloadSize = 200;
+        wire_protocol_qos.builtin.mutation_tries = 13;
+        wire_protocol_qos.builtin.avoid_builtin_multicast = true;
+        wire_protocol_qos.builtin.flow_controller_name = "example_builtin_flow_controller";
+    }
+
+    wire_protocol_qos.port.portBase = 7450;
+    wire_protocol_qos.port.domainIDGain = 0x2;
+    wire_protocol_qos.port.participantIDGain = 0x3;
+    wire_protocol_qos.port.offsetd0 = 50;
+    wire_protocol_qos.port.offsetd1 = 100;
+    wire_protocol_qos.port.offsetd2 = 150;
+    wire_protocol_qos.port.offsetd3 = 200;
+    wire_protocol_qos.port.offsetd4 = 250;
+
+    locator.port = 11811;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(locator, 127, 0, 0, 1);
+    wire_protocol_qos.default_unicast_locator_list.push_back(locator);
+    wire_protocol_qos.default_multicast_locator_list.push_back(locator);
+    wire_protocol_qos.default_external_unicast_locators[3][5].push_back(locator_mask);
+
+    wire_protocol_qos.ignore_non_matching_locators = true;
+    wire_protocol_qos.easy_mode("192.168.0.97");
+
+    in.wire_protocol = wire_protocol_qos;
+
+    // Enable optional qos serialization
+    in.should_send_optional_qos(true);
+
+    // Perform serialization
+    uint32_t msg_size = in.get_serialized_size(true);
+    CDRMessage_t msg(msg_size);
+    EXPECT_TRUE(in.write_to_cdr_message(&msg, true));
+
+    // Perform deserialization
+    msg.pos = 0;
+    EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false, c_VendorId_eProsima));
+
+    ASSERT_EQ(in.wire_protocol.value(), out.wire_protocol.value());
+}
+
+/*!
+ * This test checks that a correct Reader/WriterProxyData is obtained
+ * when having a related_datareader/writer set.
+ */
+TEST(BuiltinDataSerializationTests, rpc_related_entity)
+{
+    WriterProxyData wpd_in(max_unicast_locators, max_multicast_locators), wpd_out(max_unicast_locators,
+            max_multicast_locators);
+    ReaderProxyData rpd_in(max_unicast_locators, max_multicast_locators), rpd_out(max_unicast_locators,
+            max_multicast_locators);
+
+    // These fields cannot be empty
+    wpd_in.topic_name = "TEST";
+    wpd_in.type_name = "TestType";
+    rpd_in.topic_name = "TEST";
+    rpd_in.type_name = "TestType";
+
+    // Fill related entities
+    std::istringstream("44.53.00.5f.45.60.52.4f.53.49.7c.41") >> wpd_in.related_datareader_key.guidPrefix;
+    wpd_in.related_datareader_key.entityId.value[2] = 1;
+    wpd_in.related_datareader_key.entityId.value[3] = 3;
+    std::istringstream("44.53.00.45.52.1A.52.4f.53.49.7c.41") >> rpd_in.related_datawriter_key.guidPrefix;
+    rpd_in.related_datawriter_key.entityId.value[2] = 1;
+    rpd_in.related_datawriter_key.entityId.value[3] = 4;
+
+    // Perform serialization
+    uint32_t wpd_msg_size = wpd_in.get_serialized_size(true);
+    CDRMessage_t wpd_msg(wpd_msg_size);
+    EXPECT_TRUE(wpd_in.write_to_cdr_message(&wpd_msg, true));
+
+    uint32_t rpd_msg_size = rpd_in.get_serialized_size(true);
+    CDRMessage_t rpd_msg(rpd_msg_size);
+    EXPECT_TRUE(rpd_in.write_to_cdr_message(&rpd_msg, true));
+
+    // Perform deserialization
+    wpd_msg.pos = 0;
+    EXPECT_TRUE(wpd_out.read_from_cdr_message(&wpd_msg, c_VendorId_eProsima));
+    rpd_msg.pos = 0;
+    EXPECT_TRUE(rpd_out.read_from_cdr_message(&rpd_msg, c_VendorId_eProsima));
+
+    // Check that the related entities are correctly set
+    ASSERT_EQ(wpd_out.related_datareader_key, wpd_in.related_datareader_key);
+    ASSERT_EQ(rpd_out.related_datawriter_key, rpd_in.related_datawriter_key);
 }
 
 } // namespace rtps

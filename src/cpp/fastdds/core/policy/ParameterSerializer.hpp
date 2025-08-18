@@ -155,7 +155,9 @@ public:
             rtps::CDRMessage_t* cdr_message,
             const rtps::SampleIdentity& sample_id)
     {
-        if (cdr_message->pos + 28 > cdr_message->max_size)
+        uint32_t required_size = 24 + 4; // 24 for the sample identity and 4 for the PID and length
+
+        if (cdr_message->pos + required_size > cdr_message->max_size)
         {
             return false;
         }
@@ -168,6 +170,7 @@ public:
                 sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
         rtps::CDRMessage::addInt32(cdr_message, sample_id.sequence_number().high);
         rtps::CDRMessage::addUInt32(cdr_message, sample_id.sequence_number().low);
+
         return true;
     }
 
@@ -195,6 +198,19 @@ public:
                 sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
         rtps::CDRMessage::addInt32(cdr_message, sample_id.sequence_number().high);
         rtps::CDRMessage::addUInt32(cdr_message, sample_id.sequence_number().low);
+        return true;
+    }
+
+    static inline bool add_parameter_more_replies(
+            rtps::CDRMessage_t* cdr_message)
+    {
+        if (cdr_message->pos + 4 > cdr_message->max_size)
+        {
+            return false;
+        }
+
+        rtps::CDRMessage::addUInt16(cdr_message, dds::PID_RPC_MORE_REPLIES);
+        rtps::CDRMessage::addUInt16(cdr_message, 0);
         return true;
     }
 
@@ -242,7 +258,7 @@ inline bool ParameterSerializer<ParameterLocator_t>::add_content_to_cdr_message(
         const ParameterLocator_t& parameter,
         rtps::CDRMessage_t* cdr_message)
 {
-    return rtps::CDRMessage::addLocator(cdr_message, parameter.locator);
+    return rtps::CDRMessage::add_locator(cdr_message, parameter.locator);
 }
 
 template<>
@@ -256,7 +272,7 @@ inline bool ParameterSerializer<ParameterLocator_t>::read_content_from_cdr_messa
         return false;
     }
     parameter.length = parameter_length;
-    return rtps::CDRMessage::readLocator(cdr_message, &parameter.locator);
+    return rtps::CDRMessage::read_locator(cdr_message, &parameter.locator);
 }
 
 template<>
@@ -324,7 +340,7 @@ inline bool ParameterSerializer<ParameterString_t>::read_content_from_cdr_messag
 
     parameter.length = parameter_length;
     fastcdr::string_255 aux;
-    bool valid = rtps::CDRMessage::readString(cdr_message, &aux);
+    bool valid = rtps::CDRMessage::read_string(cdr_message, &aux);
     parameter.setName(aux.c_str());
     return valid;
 }
@@ -846,6 +862,7 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
                     parameter.sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
     valid &= rtps::CDRMessage::readInt32(cdr_message, &parameter.sample_id.sequence_number().high);
     valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
+
     return valid;
 }
 
@@ -963,7 +980,7 @@ public:
             }
             if (valid)
             {
-                valid = rtps::CDRMessage::readString(cdr_message, &parameter.filter_expression) &&
+                valid = rtps::CDRMessage::read_string(cdr_message, &parameter.filter_expression) &&
                         (0 < parameter.filter_expression.size());
             }
 

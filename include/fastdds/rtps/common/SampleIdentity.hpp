@@ -35,57 +35,6 @@ class FASTDDS_EXPORTED_API SampleIdentity
 public:
 
     /*!
-     * @brief Default constructor. Constructs an unknown SampleIdentity.
-     */
-    SampleIdentity()
-        : writer_guid_(GUID_t::unknown())
-        , sequence_number_(SequenceNumber_t::unknown())
-    {
-    }
-
-    /*!
-     * @brief Copy constructor.
-     */
-    SampleIdentity(
-            const SampleIdentity& sample_id)
-        : writer_guid_(sample_id.writer_guid_)
-        , sequence_number_(sample_id.sequence_number_)
-    {
-    }
-
-    /*!
-     * @brief Move constructor.
-     */
-    SampleIdentity(
-            SampleIdentity&& sample_id)
-        : writer_guid_(std::move(sample_id.writer_guid_))
-        , sequence_number_(std::move(sample_id.sequence_number_))
-    {
-    }
-
-    /*!
-     * @brief Assignment operator.
-     */
-    SampleIdentity& operator =(
-            const SampleIdentity& sample_id)
-    {
-        writer_guid_ = sample_id.writer_guid_;
-        sequence_number_ = sample_id.sequence_number_;
-        return *this;
-    }
-
-    /*!
-     * @brief Move constructor.
-     */
-    SampleIdentity& operator =(
-            SampleIdentity&& sample_id)
-    {
-        writer_guid_ = std::move(sample_id.writer_guid_);
-        sequence_number_ = std::move(sample_id.sequence_number_);
-        return *this;
-    }
-
-    /*!
      * @brief
      */
     bool operator ==(
@@ -171,9 +120,9 @@ public:
 
 private:
 
-    GUID_t writer_guid_;
+    GUID_t writer_guid_ = GUID_t::unknown();
 
-    SequenceNumber_t sequence_number_;
+    SequenceNumber_t sequence_number_ = SequenceNumber_t::unknown();
 
     friend std::istream& operator >>(
             std::istream& input,

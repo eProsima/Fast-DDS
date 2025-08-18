@@ -28,6 +28,7 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
@@ -285,6 +286,7 @@ ReturnCode_t DataWriterImpl::enable()
     w_att.liveliness_announcement_period = qos_.liveliness().announcement_period;
     w_att.matched_readers_allocation = qos_.writer_resource_limits().matched_subscriber_allocation;
     w_att.disable_heartbeat_piggyback = qos_.reliable_writer_qos().disable_heartbeat_piggyback;
+    w_att.transport_priority = qos_.transport_priority().value;
 
     // TODO(Ricardo) Remove in future
     // Insert topic_name and partitions
@@ -347,8 +349,10 @@ ReturnCode_t DataWriterImpl::enable()
     bool filtering_enabled =
             qos_.liveliness().lease_duration.is_infinite() &&
             (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
+
     if (filtering_enabled)
     {
+        std::lock_guard<std::mutex> lock(filters_mtx_);
         reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
     }
 
@@ -427,10 +431,10 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     writer_ = BaseWriter::downcast(writer);
-    if (filtering_enabled)
-    {
-        writer_->reader_data_filter(this);
-    }
+
+    // Set DataWriterImpl as the implementer of the
+    // IReaderDataFilter interface
+    writer_->reader_data_filter(this);
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_->rebuild_instances();
@@ -1218,14 +1222,18 @@ ReturnCode_t DataWriterImpl::set_qos(
 
     if (enabled)
     {
-        if (qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
-                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos())
+        int32_t transport_priority = writer_->get_transport_priority();
+
+        if ((qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
+                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos()) ||
+                (transport_priority != qos_to_set.transport_priority().value))
         {
             // Update times and positive_acks attributes on RTPS Layer
             WriterAttributes w_att;
             w_att.times = qos_.reliable_writer_qos().times;
             w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
             w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+            w_att.transport_priority = qos_to_set.transport_priority().value;
             writer_->update_attributes(w_att);
         }
 
@@ -1500,6 +1508,49 @@ ReturnCode_t DataWriterImpl::get_publication_matched_status(
     return RETCODE_OK;
 }
 
+ReturnCode_t DataWriterImpl::set_sample_prefilter(
+        std::shared_ptr<IContentFilter> prefilter)
+{
+    if (is_data_sharing_compatible_)
+    {
+        EPROSIMA_LOG_WARNING(DATA_WRITER,
+                "Data-sharing is enabled on this DataWriter, which is not compatible with sample prefiltering. \
+                 Ensure that transport is used for communicating with DataReaders.");
+    }
+
+    std::lock_guard<std::mutex> lock(filters_mtx_);
+    sample_prefilter_ = prefilter;
+    return RETCODE_OK;
+}
+
+ReturnCode_t DataWriterImpl::set_related_datareader(
+        const DataReader* related_reader)
+{
+    ReturnCode_t ret = RETCODE_ILLEGAL_OPERATION;
+
+    if (nullptr == writer_)
+    {
+        if (nullptr != related_reader &&
+                related_reader->guid() != c_Guid_Unknown)
+        {
+            if (related_reader->guid().guidPrefix == guid_.guidPrefix)
+            {
+                related_datareader_key_ = related_reader->guid();
+                ret = RETCODE_OK;
+            }
+            else
+            {
+                ret = RETCODE_PRECONDITION_NOT_MET;
+            }
+        }
+        else
+        {
+            ret = RETCODE_BAD_PARAMETER;
+        }
+    }
+    return ret;
+}
+
 bool DataWriterImpl::deadline_timer_reschedule()
 {
     assert(qos_.deadline().period != dds::c_TimeInfinite);
@@ -1712,6 +1763,9 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     // XTypes 1.3
     publisher_->get_participant_impl()->fill_type_information(type_, publication_data.type_information);
     publication_data.representation = qos_.representation();
+
+    // RPC over DDS
+    publication_data.related_datareader_key = related_datareader_key_;
 
     // eProsima extensions
 
@@ -2372,9 +2426,24 @@ bool DataWriterImpl::is_relevant(
         const fastdds::rtps::CacheChange_t& change,
         const fastdds::rtps::GUID_t& reader_guid) const
 {
-    assert(reader_filters_);
-    const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
-    return writer_change.is_relevant_for(reader_guid);
+    bool is_relevant_for_reader = true;
+    std::lock_guard<std::mutex> lock(filters_mtx_);
+
+    if (sample_prefilter_)
+    {
+        IContentFilter::FilterSampleInfo filter_sample_info(change.write_params);
+        is_relevant_for_reader = sample_prefilter_->evaluate(change.serializedPayload,
+                        filter_sample_info,
+                        reader_guid);
+    }
+
+    if (is_relevant_for_reader && reader_filters_)
+    {
+        const DataWriterFilteredChange& writer_change = static_cast<const DataWriterFilteredChange&>(change);
+        is_relevant_for_reader = writer_change.is_relevant_for(reader_guid);
+    }
+
+    return is_relevant_for_reader;
 }
 
 } // namespace dds

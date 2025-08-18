@@ -215,8 +215,14 @@ bool DataReaderHistory::received_change_keep_all(
 {
     if (!compute_key_for_change_fn_(a_change))
     {
-        // Store the sample temporally only in ReaderHistory. When completed it will be stored in DataReaderHistory too.
-        return add_to_reader_history_if_not_full(a_change, rejection_reason);
+        if (!a_change->is_fully_assembled())
+        {
+            // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
+            return add_to_reader_history_if_not_full(a_change, rejection_reason);
+        }
+
+        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+        return false;
     }
 
     bool ret_value = false;
@@ -251,8 +257,14 @@ bool DataReaderHistory::received_change_keep_last(
 {
     if (!compute_key_for_change_fn_(a_change))
     {
-        // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
-        return add_to_reader_history_if_not_full(a_change, rejection_reason);
+        if (!a_change->is_fully_assembled())
+        {
+            // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
+            return add_to_reader_history_if_not_full(a_change, rejection_reason);
+        }
+
+        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+        return false;
     }
 
     bool ret_value = false;
@@ -661,7 +673,7 @@ void DataReaderHistory::check_and_remove_instance(
 {
     DataReaderInstance* instance = instance_info->second.get();
 
-    if (instance->cache_changes.empty())
+    if (instance->cache_changes.empty() && (false == instance->has_state_notification_sample))
     {
         if (InstanceStateKind::ALIVE_INSTANCE_STATE != instance->instance_state &&
                 instance->alive_writers.empty() &&
@@ -887,13 +899,24 @@ bool DataReaderHistory::update_instance_nts(
     return ret;
 }
 
-void DataReaderHistory::writer_not_alive(
+bool DataReaderHistory::writer_not_alive(
         const GUID_t& writer_guid)
 {
+    bool ret_val = false;
+
     for (auto& it : instances_)
     {
+        bool had_notification_sample = it.second->has_state_notification_sample;
         it.second->writer_removed(counters_, writer_guid);
+        if (it.second->has_state_notification_sample && !had_notification_sample)
+        {
+            // Mark instance as data available
+            data_available_instances_[it.first] = it.second;
+            ret_val = true;
+        }
     }
+
+    return ret_val;
 }
 
 StateFilter DataReaderHistory::get_mask_status() const noexcept

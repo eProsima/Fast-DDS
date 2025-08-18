@@ -336,6 +336,37 @@ ReturnCode_t TypeObjectRegistry::get_type_object(
     return eprosima::fastdds::dds::RETCODE_OK;
 }
 
+ReturnCode_t TypeObjectRegistry::get_complete_type_object(
+        const TypeIdentifierPair& type_identifiers,
+        CompleteTypeObject& type_object)
+{
+    TypeIdentifier complete_type_identifier;
+    if (xtypes::EK_COMPLETE == type_identifiers.type_identifier1()._d())
+    {
+        complete_type_identifier = type_identifiers.type_identifier1();
+    }
+    else if (xtypes::EK_COMPLETE == type_identifiers.type_identifier2()._d())
+    {
+        complete_type_identifier = type_identifiers.type_identifier2();
+    }
+    else
+    {
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+    }
+
+    try
+    {
+        std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+        type_object = type_registry_entries_.at(complete_type_identifier).type_object.complete();
+    }
+    catch (std::exception&)
+    {
+        return eprosima::fastdds::dds::RETCODE_NO_DATA;
+    }
+
+    return eprosima::fastdds::dds::RETCODE_OK;
+}
+
 ReturnCode_t TypeObjectRegistry::get_type_information(
         const TypeIdentifierPair& type_ids,
         TypeInformation& type_information,
@@ -2140,10 +2171,10 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
         MemberDescriptorImpl& member_descriptor {literal->get_descriptor()};
         EnumeratedLiteralFlag flags {TypeObjectUtils::build_enumerated_literal_flag(
                                          member_descriptor.is_default_label())};
-        // Literal value might be automatically assigned or taken from default_value (@value annotation)
+        // Literal value might be automatically assigned or taken from literal_value (@value annotation)
         CommonEnumeratedLiteral common_literal {TypeObjectUtils::build_common_enumerated_literal(
-                                                    member_descriptor.default_value().empty() ? member_descriptor.index() :
-                                                    std::stol(member_descriptor.default_value()), flags)};
+                                                    member_descriptor.literal_value().empty() ? member_descriptor.index() :
+                                                    std::stol(member_descriptor.literal_value()), flags)};
         CompleteMemberDetail member_detail;
         complete_member_detail(literal, member_detail);
         CompleteEnumeratedLiteral literal_member {TypeObjectUtils::build_complete_enumerated_literal(
@@ -2187,7 +2218,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     {
         MemberDescriptorImpl& member_descriptor {bitflag->get_descriptor()};
         CommonBitflag common_bitflag {TypeObjectUtils::build_common_bitflag(
-                                          static_cast<uint16_t>(member_descriptor.id()), 0)};
+                                          static_cast<uint16_t>(member_descriptor.position()), 0)};
         CompleteMemberDetail member_detail;
         complete_member_detail(bitflag, member_detail);
         CompleteBitflag bitflag_member {TypeObjectUtils::build_complete_bitflag(

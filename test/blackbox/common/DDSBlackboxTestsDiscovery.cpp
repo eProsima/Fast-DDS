@@ -34,6 +34,8 @@
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
+#include <fastdds/utils/IPFinder.hpp>
+
 #include <gtest/gtest.h>
 
 #include "../utils/filter_helpers.hpp"
@@ -2404,4 +2406,95 @@ TEST(DDSDiscovery, proxy_data_assignment_operator_always_include_type_informatio
 
     // The second reader should match with the writer
     ASSERT_TRUE(readers.wait_discovery({0u, 1u}, std::chrono::seconds(3)));
+}
+
+/*!
+ * @test: regression test for redmine issue #23252
+ *
+ * This test checks that only one packet is sent to multicast (per interface)
+ * when a writer is matched with multiple readers.
+ * Typically, it is expected to send one via localhost and another via local lan interface.
+ */
+TEST(DDSDiscovery, multicast_only_one_packet_sent_when_multiple_multicast_readers_matched)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+    using namespace eprosima::fastdds::rtps;
+
+    std::vector<std::shared_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    auto writer_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    const uint8_t n_readers = 5u;
+    uint8_t n_multicast_times_sent = 0u;
+
+    // Add new multicast locator with IP 239.255.0.4 and port 7900
+    DataReaderQos reader_qos;
+    eprosima::fastdds::rtps::Locator_t new_multicast_locator;
+    eprosima::fastdds::rtps::LocatorList multicast_locators;
+    eprosima::fastdds::rtps::IPLocator::setIPv4(new_multicast_locator, "239.255.0.4");
+    new_multicast_locator.port = 6900u;
+    multicast_locators.push_back(new_multicast_locator);
+
+    writer_test_transport->locator_filter_ = [&n_multicast_times_sent, &new_multicast_locator](
+        const eprosima::fastdds::rtps::Locator& destination, int32_t)
+            {
+                if (destination == new_multicast_locator)
+                {
+                    ++n_multicast_times_sent;
+                }
+                // Do not drop the packet in any case
+                return false;
+            };
+
+    writer.disable_builtin_transport().add_user_transport_to_pparams(writer_test_transport);
+
+    readers.reserve(n_readers);
+    for (size_t i = 0; i < n_readers; ++i)
+    {
+        readers.emplace_back(
+            std::make_shared<PubSubReader<HelloWorldPubSubType>>(TEST_TOPIC_NAME));
+        readers.back()->multicast_locator_list(multicast_locators);
+        readers.back()->init();
+        ASSERT_TRUE(readers.back()->isInitialized());
+    }
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discoveries
+    writer.wait_discovery(5);
+    auto default_helloworld_data = default_helloworld_data_generator(1);
+
+    for (const auto& reader : readers)
+    {
+        reader->wait_discovery(std::chrono::seconds::zero(), 1u);
+        reader->startReception(default_helloworld_data);
+    }
+
+    writer.send_sample(default_helloworld_data.back());
+
+    // Sample should be received by all readers
+    for (const auto& reader : readers)
+    {
+        ASSERT_EQ(reader->block_for_all(std::chrono::seconds(3)), 1u);
+    }
+
+    std::vector<eprosima::fastdds::rtps::IPFinder::info_IP> ips;
+
+    ASSERT_TRUE(IPFinder::getIPs(&ips, true));
+
+    uint8_t n_v4_addresses = 0u;
+    for (const auto& ip : ips)
+    {
+        if (ip.type == eprosima::fastdds::rtps::IPFinder::IP4 ||
+                ip.type == eprosima::fastdds::rtps::IPFinder::IP4_LOCAL)
+        {
+            ++n_v4_addresses;
+        }
+    }
+
+    // Check sample was only sent one per interface
+    ASSERT_EQ(n_multicast_times_sent, n_v4_addresses);
 }

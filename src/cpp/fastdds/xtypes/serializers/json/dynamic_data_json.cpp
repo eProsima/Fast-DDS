@@ -16,8 +16,10 @@
 #ifndef MINGW_COMPILER
     #include <codecvt>
 #endif  // ifndef MINGW_COMPILER
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <string>
 
 #include <nlohmann/json.hpp>
@@ -56,36 +58,43 @@ ReturnCode_t json_serialize(
         return RETCODE_BAD_PARAMETER;
     }
 
-    switch (data->type()->get_kind())
+    if (TK_STRUCTURE != data->type()->get_kind())
     {
-        case TK_STRUCTURE:
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Only structs are supported by json_serialize method.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    return json_serialize_aggregate(data, output, format);
+}
+
+ReturnCode_t json_serialize_aggregate(
+        const traits<DynamicDataImpl>::ref_type& data,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    std::string kind_str = (data->enclosing_type()->get_kind() == TK_STRUCTURE) ? "structure" : "bitset";
+    DynamicTypeMembersById members;
+    ReturnCode_t ret = data->enclosing_type()->get_all_members(members);
+    if (RETCODE_OK != ret)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing " << kind_str <<
+                " to JSON: get_all_members failed.");
+        return ret;
+    }
+
+    // Serialize each member
+    for (const auto& it : members)
+    {
+        if (RETCODE_OK != (ret = json_serialize_member(data, it.second, output, format)))
         {
-            DynamicTypeMembersById members;
-            ReturnCode_t ret = data->type()->get_all_members(members);
-            if (RETCODE_OK != ret)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing structure to JSON: get_all_members failed.");
-                return ret;
-            }
-            for (const auto& it : members)
-            {
-                if (RETCODE_OK != (ret = json_serialize_member(data, it.second, output, format)))
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                            "Error encountered while serializing structure member '" << it.second->get_name() <<
-                            "' to JSON.");
-                    break;
-                }
-            }
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing " << kind_str << " member '" << it.second->get_name() <<
+                    "' to JSON.");
             return ret;
         }
-        default:
-        {
-            EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Only structs are supported by json_serialize method.");
-            return RETCODE_BAD_PARAMETER;
-        }
     }
+    return ret;
 }
 
 ReturnCode_t json_serialize_member(
@@ -97,7 +106,19 @@ ReturnCode_t json_serialize_member(
     MemberDescriptorImpl& member_desc =
             traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)->get_descriptor();
 
-    return json_serialize_member(data, type_member->get_id(),
+    TypeKind parent_kind = member_desc.parent_kind();
+    MemberId member_id;
+
+    if (TK_BITMASK == parent_kind)
+    {
+        member_id = member_desc.position();
+    }
+    else
+    {
+        member_id = member_desc.id();
+    }
+
+    return json_serialize_member(data, member_id,
                    traits<DynamicType>::narrow<DynamicTypeImpl>(
                        member_desc.type())->resolve_alias_enclosed_type()->get_kind(),
                    type_member->get_name().to_string(), output, format);
@@ -138,361 +159,30 @@ ReturnCode_t json_serialize_member(
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            std::string kind_str = (member_kind == TK_STRUCTURE) ? "structure" : "bitset";
-            traits<DynamicDataImpl>::ref_type st_data =
-                    traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
-            if (nullptr == st_data)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing " << kind_str << " member to JSON: loan_value failed.");
-                return RETCODE_BAD_PARAMETER;
-            }
-
-            // Fill JSON object with loaned value
-            nlohmann::json j_struct;
-            DynamicTypeMembersById members;
-            ReturnCode_t ret = st_data->enclosing_type()->get_all_members(members);
-            if (RETCODE_OK != ret)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing " << kind_str <<
-                        " member to JSON: get_all_members failed.");
-            }
-            else
-            {
-                for (const auto& it : members)
-                {
-                    if (RETCODE_OK != (ret = json_serialize_member(st_data, it.second, j_struct, format)))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while serializing " << kind_str << " member '" << it.second->get_name() <<
-                                "' to JSON.");
-                        break;
-                    }
-                }
-                // Insert into JSON object if all members were serialized successfully
-                if (RETCODE_OK == ret)
-                {
-                    json_insert(member_name, j_struct, output);
-                }
-            }
-
-            // Return loaned value
-            // NOTE: this should always be done, even if something went wrong before
-            ReturnCode_t ret_return_loan;
-            if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while returning " << kind_str << " loaned value.");
-            }
-            // Give priority to prior error if occurred
-            return RETCODE_OK != ret ? ret : ret_return_loan;
+            return json_serialize_member_with_loan(data, member_id,
+                           (member_kind == TK_STRUCTURE) ? "structure" : "bitset", json_serialize_aggregate_member,
+                           member_name, output, format);
         }
         case TK_UNION:
         {
-            traits<DynamicDataImpl>::ref_type st_data =
-                    traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
-            if (nullptr == st_data)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing union member to JSON: loan_value failed.");
-                return RETCODE_BAD_PARAMETER;
-            }
-
-            // Fill JSON object with loaned value
-            nlohmann::json j_union;
-            ReturnCode_t ret = RETCODE_OK;
-            MemberId selected_member = st_data->selected_union_member();
-
-            if (MEMBER_ID_INVALID == selected_member)
-            {
-                // No member selected, insert empty JSON object
-                json_insert(member_name, j_union, output);
-            }
-            else
-            {
-                DynamicTypeMember::_ref_type active_type_member;
-                ret = st_data->enclosing_type()->get_member(active_type_member, selected_member);
-                if (RETCODE_OK != ret)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                            "Error encountered while serializing union member to JSON: get_member failed.");
-                }
-                else
-                {
-                    if (RETCODE_OK == (ret = json_serialize_member(st_data, active_type_member, j_union, format)))
-                    {
-                        json_insert(member_name, j_union, output);
-                    }
-                }
-            }
-
-            // Return loaned value
-            // NOTE: this should always be done, even if something went wrong before
-            ReturnCode_t ret_return_loan;
-            if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning union loaned value.");
-            }
-            // Give priority to prior error if occurred
-            return RETCODE_OK != ret ? ret : ret_return_loan;
+            return json_serialize_member_with_loan(data, member_id, "union", json_serialize_union_member, member_name,
+                           output, format);
         }
         case TK_SEQUENCE:
         case TK_ARRAY:
         {
-            std::string kind_str = (member_kind == TK_SEQUENCE) ? "sequence" : "array";
-            traits<DynamicDataImpl>::ref_type st_data =
-                    traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
-            if (nullptr == st_data)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing " << kind_str << " member to JSON: loan_value failed.");
-                return RETCODE_BAD_PARAMETER;
-            }
-
-            // Fill JSON object with loaned value
-            ReturnCode_t ret = json_serialize_collection(st_data, member_name, output, format);
-
-            // Return loaned value
-            // NOTE: this should always be done, even if something went wrong before
-            ReturnCode_t ret_return_loan;
-            if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while returning " << kind_str << " loaned value.");
-            }
-            // Give priority to prior error if occurred
-            return RETCODE_OK != ret ? ret : ret_return_loan;
+            return json_serialize_member_with_loan(data, member_id, (member_kind == TK_SEQUENCE) ? "sequence" : "array",
+                           json_serialize_collection_member, member_name, output, format);
         }
         case TK_MAP:
         {
-            traits<DynamicDataImpl>::ref_type st_data =
-                    traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
-            if (nullptr == st_data)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing map member to JSON: loan_value failed.");
-                return RETCODE_BAD_PARAMETER;
-            }
-
-            ReturnCode_t ret = RETCODE_OK;
-            nlohmann::json j_map;
-            const TypeDescriptorImpl& map_desc = st_data->enclosing_type()->get_descriptor();
-            traits<DynamicTypeImpl>::ref_type key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
-                map_desc.key_element_type())->resolve_alias_enclosed_type();
-            traits<DynamicTypeImpl>::ref_type value_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
-                map_desc.element_type())->resolve_alias_enclosed_type();
-
-            std::map<std::string, MemberId> key_to_id;
-            if (RETCODE_OK != (ret = st_data->get_keys(key_to_id)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing map member to JSON: get_keys failed.");
-            }
-
-            if (RETCODE_OK == ret)
-            {
-                std::map<MemberId, std::string> id_to_key;
-                for (const auto& it : key_to_id)
-                {
-                    id_to_key[it.second] = it.first;
-                }
-                assert(id_to_key.size() == key_to_id.size());
-
-                uint32_t size = st_data->get_item_count();
-                assert(size == key_to_id.size());
-                for (uint32_t i = 0; i < size; ++i)
-                {
-                    MemberId id = st_data->get_member_id_at_index(i);
-                    if (MEMBER_ID_INVALID == id)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while serializing map member's member to JSON: invalid member id.");
-                        ret = RETCODE_BAD_PARAMETER;
-                        break;
-                    }
-
-                    auto it = id_to_key.find(id);
-                    if (it == id_to_key.end())
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while serializing map member's member to JSON: key not found.");
-                        ret = RETCODE_BAD_PARAMETER;
-                        break;
-                    }
-
-                    if (RETCODE_OK !=
-                            (ret =
-                            json_serialize_member(st_data, id, value_type->get_kind(), it->second, j_map,
-                            format)))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while serializing map member's member to JSON.");
-                        break;
-                    }
-                }
-            }
-
-            // Insert into JSON object if all members were serialized successfully
-            if (RETCODE_OK == ret)
-            {
-                json_insert(member_name, j_map, output);
-            }
-
-            // Return loaned value
-            // NOTE: this should always be done, even if something went wrong before
-            ReturnCode_t ret_return_loan;
-            if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning map loaned value.");
-            }
-            // Give priority to prior error if occurred
-            return RETCODE_OK != ret ? ret : ret_return_loan;
+            return json_serialize_member_with_loan(data, member_id, "map", json_serialize_map_member, member_name,
+                           output, format);
         }
         case TK_BITMASK:
         {
-            traits<DynamicDataImpl>::ref_type st_data =
-                    traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
-            if (nullptr == st_data)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing bitmask member to JSON: loan_value failed.");
-                return RETCODE_BAD_PARAMETER;
-            }
-
-            ReturnCode_t ret = RETCODE_OK;
-            traits<DynamicTypeImpl>::ref_type bitmask_type = st_data->enclosing_type();
-            const TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
-
-            auto bound = bitmask_desc.bound().at(0);
-
-            if (format == DynamicDataJsonFormat::OMG)
-            {
-                if (9 > bound)
-                {
-                    uint8_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint8_value(value, MEMBER_ID_INVALID)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-                else if (17 > bound)
-                {
-                    uint16_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint16_value(value, MEMBER_ID_INVALID)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-                else if (33 > bound)
-                {
-                    uint32_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint32_value(value, MEMBER_ID_INVALID)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-                else
-                {
-                    uint64_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint64_value(value, MEMBER_ID_INVALID)))
-                    {
-                        json_insert(member_name, value, output);
-                    }
-                }
-
-                if (RETCODE_OK != ret)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                            "Error encountered while serializing bitmask member to JSON: failed to get value.");
-                }
-            }
-            else if (format == DynamicDataJsonFormat::EPROSIMA)
-            {
-                nlohmann::json bitmask_dict;
-                uint64_t u64_value{0}; // Auxiliar variable to check active bits afterwards
-                if (9 > bound)
-                {
-                    uint8_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint8_value(value, MEMBER_ID_INVALID)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<8>(value).to_string();
-                        u64_value = static_cast<uint64_t>(value);
-                    }
-                }
-                else if (17 > bound)
-                {
-                    uint16_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint16_value(value, MEMBER_ID_INVALID)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<16>(value).to_string();
-                        u64_value = static_cast<uint64_t>(value);
-                    }
-                }
-                else if (33 > bound)
-                {
-                    uint32_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint32_value(value, MEMBER_ID_INVALID)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<32>(value).to_string();
-                        u64_value = static_cast<uint64_t>(value);
-                    }
-                }
-                else
-                {
-                    uint64_t value;
-                    if (RETCODE_OK == (ret = st_data->get_uint64_value(value, MEMBER_ID_INVALID)))
-                    {
-                        bitmask_dict["value"] = value;
-                        bitmask_dict["binary"] = std::bitset<64>(value).to_string();
-                        u64_value = value;
-                    }
-                }
-
-                if (RETCODE_OK != ret)
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                            "Error encountered while serializing bitmask member to JSON: failed to get value.");
-                }
-                else
-                {
-                    // Check active bits
-                    DynamicTypeMembersById bitmask_members;
-                    if (RETCODE_OK != (ret = bitmask_type->get_all_members(bitmask_members)))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while serializing bitmask member to JSON: get_all_members failed.");
-                    }
-                    else
-                    {
-                        std::vector<std::string> active_bits;
-                        for (const auto& it : bitmask_members)
-                        {
-                            if (u64_value & (0x01ull << it.second->get_id()))
-                            {
-                                active_bits.push_back(it.second->get_name().to_string());
-                            }
-                        }
-                        bitmask_dict["active"] = active_bits;
-
-                        // Insert custom bitmask value
-                        json_insert(member_name, bitmask_dict, output);
-                    }
-                }
-            }
-
-            // Return loaned value
-            // NOTE: this should always be done, even if something went wrong before
-            ReturnCode_t ret_return_loan;
-            if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning bitmask loaned value.");
-            }
-            // Give priority to prior error if occurred
-            return RETCODE_OK != ret ? ret : ret_return_loan;
+            return json_serialize_member_with_loan(data, member_id, "bitmask", json_serialize_bitmask_member,
+                           member_name, output, format);
         }
         case TK_ALIAS:
         {
@@ -503,7 +193,7 @@ ReturnCode_t json_serialize_member(
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing map member to JSON: unexpected kind " << member_kind <<
+                    "Error encountered while serializing member to JSON: unexpected kind " << member_kind <<
                     " found.");
             return RETCODE_BAD_PARAMETER;
     }
@@ -716,6 +406,14 @@ ReturnCode_t json_serialize_basic_member(
             ReturnCode_t ret = data->get_float128_value(value, member_id);
             if (RETCODE_OK == ret)
             {
+                // Fail if value exceeds double limits, as JSON does not support long double
+                if (value < std::numeric_limits<double>::lowest() ||
+                        value > std::numeric_limits<double>::max())
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_FLOAT128 member to JSON: value out of range.");
+                    return RETCODE_BAD_PARAMETER;
+                }
                 json_insert(member_name, value, output);
             }
             else
@@ -746,20 +444,40 @@ ReturnCode_t json_serialize_basic_member(
             if (RETCODE_OK == ret)
             {
                 // Insert UTF-8 converted value
-#if defined(MINGW_COMPILER)
                 std::wstring aux_wstring_value({value});
-                std::string utf8_value;
-                int size_needed = std::wcstombs(nullptr, aux_wstring_value.data(), 0);
-                if (size_needed > 0)
+                std::string utf8_value("\0", 1);
+#if defined(MINGW_COMPILER)
+                // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
+                size_t size_needed = std::wcstombs(nullptr, aux_wstring_value.c_str(), 0);
+                if (size_needed == static_cast<size_t>(-1))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_CHAR16 member to JSON: encountered invalid character.");
+                    return RETCODE_BAD_PARAMETER;
+                }
+                else if (size_needed > 0)
                 {
                     utf8_value.resize(size_needed);
-                    std::wcstombs(&utf8_value[0], aux_wstring_value.data(), size_needed);
+                    if (std::wcstombs(&utf8_value[0], aux_wstring_value.c_str(),
+                            size_needed) == static_cast<std::size_t>(-1))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                                "Error encountered while serializing TK_CHAR16 member to JSON: encountered invalid character.");
+                        return RETCODE_BAD_PARAMETER;
+                    }
                 }
 #else
-                std::wstring aux_wstring_value({value});
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-                std::string utf8_value = converter.to_bytes(aux_wstring_value);
-
+                try
+                {
+                    utf8_value = converter.to_bytes(aux_wstring_value);
+                }
+                catch (const std::exception& e)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_CHAR16 member to JSON: " << e.what());
+                    return RETCODE_BAD_PARAMETER;
+                }
 #endif  // defined(MINGW_COMPILER)
                 json_insert(member_name, utf8_value, output);
             }
@@ -790,17 +508,38 @@ ReturnCode_t json_serialize_basic_member(
             if (RETCODE_OK == ret)
             {
                 // Insert UTF-8 converted value
-#ifdef MINGW_COMPILER
                 std::string utf8_value;
-                int size_needed = std::wcstombs(nullptr, value.data(), 0);
-                if (size_needed > 0)
+#ifdef MINGW_COMPILER
+                // WARNING: it is the user responsibility to set the appropriate UTF-8 locale before calling this method
+                size_t size_needed = std::wcstombs(nullptr, value.c_str(), 0);
+                if (size_needed == static_cast<size_t>(-1))
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_STRING16 member to JSON: encountered invalid character.");
+                    return RETCODE_BAD_PARAMETER;
+                }
+                else if (size_needed > 0)
                 {
                     utf8_value.resize(size_needed);
-                    std::wcstombs(&utf8_value[0], value.data(), size_needed);
+                    if (std::wcstombs(&utf8_value[0], value.c_str(), size_needed) == static_cast<std::size_t>(-1))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                                "Error encountered while serializing TK_STRING16 member to JSON: encountered invalid character.");
+                        return RETCODE_BAD_PARAMETER;
+                    }
                 }
 #else
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-                std::string utf8_value = converter.to_bytes(value);
+                try
+                {
+                    utf8_value = converter.to_bytes(value);
+                }
+                catch (const std::exception& e)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                            "Error encountered while serializing TK_STRING16 member to JSON: " << e.what());
+                    return RETCODE_BAD_PARAMETER;
+                }
 #endif  // defined(MINGW_COMPILER)
                 json_insert(member_name, utf8_value, output);
             }
@@ -812,80 +551,7 @@ ReturnCode_t json_serialize_basic_member(
         }
         case TK_ENUM:
         {
-            int32_t value;
-            ReturnCode_t ret = data->get_int32_value(value, member_id);
-            if (RETCODE_OK != ret)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_ENUM member to JSON.");
-                return ret;
-            }
-
-            // Get enumeration type to obtain the names of the different values
-            // NOTE: a different approach is required for collections and other "holder" types (e.g. structures),
-            // as unlike with DynamicData::loan_value or DynamicData::get_X_value, DynamicData::get_descriptor method
-            // is not meant to work with sequences nor arrays according to XTypes standard.
-            traits<DynamicType>::ref_type enum_type;
-            TypeKind holder_kind = data->enclosing_type()->get_kind();
-            if (TK_ARRAY == holder_kind || TK_SEQUENCE == holder_kind)
-            {
-                const TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
-                enum_type = collection_descriptor.element_type();
-            }
-            else
-            {
-                MemberDescriptor::_ref_type enum_desc{traits<MemberDescriptor>::make_shared()};
-                if (RETCODE_OK != (ret = data->get_descriptor(enum_desc, member_id)))
-                {
-                    EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                            "Error encountered while serializing TK_ENUM member to JSON: get_descriptor failed.");
-                    return ret;
-                }
-                enum_type = enum_desc->type();
-            }
-
-            DynamicTypeMembersByName all_members;
-            if (RETCODE_OK !=
-                    (ret =
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type)->resolve_alias_enclosed_type()->
-                            get_all_members_by_name(all_members)))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing TK_ENUM member to JSON: get_all_members_by_name failed.");
-                return ret;
-            }
-
-            ObjectName name;
-            ret = RETCODE_BAD_PARAMETER;
-            for (const auto& it : all_members)
-            {
-                MemberDescriptorImpl& enum_member_desc = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                    it.second)->get_descriptor();
-                if (enum_member_desc.default_value() == std::to_string(value))
-                {
-                    name = it.first;
-                    assert(name == it.second->get_name());
-                    ret = RETCODE_OK;
-                    break;
-                }
-            }
-            if (RETCODE_OK == ret)
-            {
-                if (format == DynamicDataJsonFormat::OMG)
-                {
-                    json_insert(member_name, name, output);
-                }
-                else if (format == DynamicDataJsonFormat::EPROSIMA)
-                {
-                    nlohmann::json enum_dict = {{"name", name}, {"value", value}};
-                    json_insert(member_name, enum_dict, output);
-                }
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while serializing TK_ENUM member to JSON: enum value not found.");
-            }
-            return ret;
+            return json_serialize_enum_member(data, member_id, member_name, output, format);
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
@@ -895,46 +561,281 @@ ReturnCode_t json_serialize_basic_member(
     }
 }
 
-ReturnCode_t json_serialize_collection(
+ReturnCode_t json_serialize_enum_member(
+        const traits<DynamicDataImpl>::ref_type& data,
+        MemberId member_id,
+        const std::string& member_name,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    // Get enumeration type to obtain the names of the different values, and also the underlying primitive type
+    // NOTE: a different approach is required for collections and other "holder" types (e.g. structures),
+    // as unlike with DynamicData::loan_value or DynamicData::get_X_value, DynamicData::get_descriptor method
+    // is not meant to work with sequences nor arrays according to XTypes standard.
+    traits<DynamicTypeImpl>::ref_type enum_type;
+    TypeKind holder_kind = data->enclosing_type()->get_kind();
+    ReturnCode_t ret = RETCODE_OK;
+    if (TK_ARRAY == holder_kind || TK_SEQUENCE == holder_kind)
+    {
+        const TypeDescriptorImpl& collection_descriptor = data->enclosing_type()->get_descriptor();
+        enum_type =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(collection_descriptor.element_type())->
+                        resolve_alias_enclosed_type();
+    }
+    else
+    {
+        MemberDescriptor::_ref_type enum_desc{traits<MemberDescriptor>::make_shared()};
+        if (RETCODE_OK != (ret = data->get_descriptor(enum_desc, member_id)))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing TK_ENUM member to JSON: get_descriptor failed.");
+            return ret;
+        }
+        enum_type = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_desc->type())->resolve_alias_enclosed_type();
+    }
+
+    // Get value depending on the enclosing type
+    assert(enum_type->get_kind() == TK_ENUM);
+    auto enclosing_type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(enum_type->get_all_members_by_index().at(
+                        0)->get_descriptor().type()); // Unfortunately DynamicDataImpl::get_enclosing_typekind is private
+    if (nullptr == enclosing_type_impl)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing TK_ENUM member to JSON: null enclosing type.");
+        return RETCODE_BAD_PARAMETER;
+    }
+    TypeKind enclosing_kind = enclosing_type_impl->get_kind();
+
+    nlohmann::json j_value;
+    if (TK_INT8 == enclosing_kind)
+    {
+        int8_t value;
+        ret = data->get_int8_value(value, member_id);
+        j_value = value;
+    }
+    else if (TK_UINT8 == enclosing_kind)
+    {
+        uint8_t value;
+        ret = data->get_uint8_value(value, member_id);
+        j_value = value;
+    }
+    else if (TK_INT16 == enclosing_kind)
+    {
+        int16_t value;
+        ret = data->get_int16_value(value, member_id);
+        j_value = value;
+    }
+    else if (TK_UINT16 == enclosing_kind)
+    {
+        uint16_t value;
+        ret = data->get_uint16_value(value, member_id);
+        j_value = value;
+    }
+    else if (TK_INT32 == enclosing_kind)
+    {
+        int32_t value;
+        ret = data->get_int32_value(value, member_id);
+        j_value = value;
+    }
+    else if (TK_UINT32 == enclosing_kind)
+    {
+        uint32_t value;
+        ret = data->get_uint32_value(value, member_id);
+        j_value = value;
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing TK_ENUM member to JSON: unexpected enclosing kind " <<
+                enclosing_kind << " found.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    if (RETCODE_OK != ret)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing TK_ENUM member to JSON.");
+        return ret;
+    }
+
+    DynamicTypeMembersByName all_members;
+    if (RETCODE_OK !=
+            (ret =
+            enum_type->get_all_members_by_name(all_members)))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing TK_ENUM member to JSON: get_all_members_by_name failed.");
+        return ret;
+    }
+
+    ObjectName name;
+    ret = RETCODE_BAD_PARAMETER;
+    for (const auto& it : all_members)
+    {
+        MemberDescriptorImpl& enum_member_desc = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+            it.second)->get_descriptor();
+        if (enum_member_desc.literal_value() == j_value.dump())
+        {
+            name = it.first;
+            assert(name == it.second->get_name());
+            ret = RETCODE_OK;
+            break;
+        }
+    }
+    if (RETCODE_OK == ret)
+    {
+        if (DynamicDataJsonFormat::OMG == format)
+        {
+            json_insert(member_name, name, output);
+        }
+        else if (DynamicDataJsonFormat::EPROSIMA == format)
+        {
+            nlohmann::json enum_dict = {{"name", name}, {"value", j_value}};
+            json_insert(member_name, enum_dict, output);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing TK_ENUM member to JSON: unsupported format.");
+            return RETCODE_BAD_PARAMETER;
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing TK_ENUM member to JSON: enum value not found.");
+    }
+    return ret;
+}
+
+ReturnCode_t json_serialize_member_with_loan(
+        const traits<DynamicDataImpl>::ref_type& data,
+        MemberId member_id,
+        const std::string& kind_str,
+        MemberSerializer member_serializer,
+        const std::string& member_name,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    traits<DynamicDataImpl>::ref_type st_data =
+            traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
+
+    if (nullptr == st_data)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing " << kind_str
+                                                       << " member to JSON: loan_value failed.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    // WARNING: make sure the serializer is noexcept as the compiler might not perform that check
+    ReturnCode_t ret = member_serializer(st_data, member_name, output, format);
+
+    // Return loaned value
+    // NOTE: this should always be done, even if something went wrong before
+    ReturnCode_t ret_return_loan;
+    if (RETCODE_OK != (ret_return_loan = data->return_loaned_value(st_data)))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while returning " << kind_str << " loaned value.");
+    }
+    // Give priority to prior error if occurred
+    return RETCODE_OK != ret ? ret : ret_return_loan;
+}
+
+ReturnCode_t json_serialize_aggregate_member(
+        const traits<DynamicDataImpl>::ref_type& data,
+        const std::string& member_name,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    nlohmann::json j_struct;
+    std::string kind_str = (data->enclosing_type()->get_kind() == TK_STRUCTURE) ? "structure" : "bitset";
+    ReturnCode_t ret;
+    if (RETCODE_OK != (ret = json_serialize_aggregate(data, j_struct, format)))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing " << kind_str <<
+                " member to JSON: json_serialize_aggregate failed.");
+        return ret;
+    }
+
+    // Insert aggregate member into JSON object
+    json_insert(member_name, j_struct, output);
+
+    return ret;
+}
+
+ReturnCode_t json_serialize_union_member(
+        const traits<DynamicDataImpl>::ref_type& data,
+        const std::string& member_name,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    nlohmann::json j_union;
+    ReturnCode_t ret = RETCODE_OK;
+    MemberId selected_member = data->selected_union_member();
+
+    if (MEMBER_ID_INVALID == selected_member)
+    {
+        // No member selected, insert empty JSON object
+        json_insert(member_name, j_union, output);
+    }
+    else
+    {
+        DynamicTypeMember::_ref_type active_type_member;
+        if (RETCODE_OK != (ret = data->enclosing_type()->get_member(active_type_member, selected_member)))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing union member to JSON: get_member failed.");
+        }
+        else if (RETCODE_OK != (ret = json_serialize_member(data, active_type_member, j_union, format)))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing union member '" << active_type_member->get_name() <<
+                    "' to JSON.");
+        }
+        else
+        {
+            // Insert union member into JSON object
+            json_insert(member_name, j_union, output);
+        }
+    }
+    return ret;
+}
+
+ReturnCode_t json_serialize_collection_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
         DynamicDataJsonFormat format) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
-    if (data->enclosing_type()->get_kind() == TK_SEQUENCE)
+    const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
+    auto element_kind =
+            traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()
+                    ->get_kind();
+    if (TK_SEQUENCE == data->enclosing_type()->get_kind())
     {
-        const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
-
+        assert(descriptor.bound().size() == 1);
         auto count = data->get_item_count();
         nlohmann::json j_array = nlohmann::json::array();
         for (uint32_t index = 0; index < count; ++index)
         {
             if (RETCODE_OK !=
                     (ret =
-                    json_serialize_member(data, static_cast<MemberId>(index),
-                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()
-                            ->get_kind(), j_array,
-                    format)))
+                    json_serialize_member(data, static_cast<MemberId>(index), element_kind, j_array, format)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing sequence collection to JSON.");
-                break;
+                return ret;
             }
         }
-        if (RETCODE_OK == ret)
-        {
-            json_insert(member_name, j_array, output);
-        }
+        json_insert(member_name, j_array, output);
     }
     else
     {
-        const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
-
         const BoundSeq& bounds = descriptor.bound();
         nlohmann::json j_array = nlohmann::json::array();
         unsigned int index = 0;
-        if (RETCODE_OK != (ret = json_serialize_array(data, traits<DynamicType>::narrow<DynamicTypeImpl>(
-                    descriptor.element_type())->resolve_alias_enclosed_type()->get_kind(), index, bounds, j_array,
+        if (RETCODE_OK != (ret = json_serialize_array(data, element_kind, index, bounds, j_array,
                 format)))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing array collection to JSON.");
@@ -949,7 +850,7 @@ ReturnCode_t json_serialize_collection(
 
 ReturnCode_t json_serialize_array(
         const traits<DynamicDataImpl>::ref_type& data,
-        TypeKind member_kind,
+        TypeKind element_kind,
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
         nlohmann::json& j_array,
@@ -963,7 +864,7 @@ ReturnCode_t json_serialize_array(
         {
             if (RETCODE_OK !=
                     (ret =
-                    json_serialize_member(data, static_cast<MemberId>(index++), member_kind, j_array,
+                    json_serialize_member(data, static_cast<MemberId>(index++), element_kind, j_array,
                     format)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Error encountered while serializing array element to JSON.");
@@ -978,7 +879,7 @@ ReturnCode_t json_serialize_array(
             nlohmann::json inner_array = nlohmann::json::array();
             if (RETCODE_OK !=
                     (ret =
-                    json_serialize_array(data, member_kind, index,
+                    json_serialize_array(data, element_kind, index,
                     std::vector<unsigned int>(bounds.begin() + 1, bounds.end()), inner_array, format)))
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,
@@ -987,6 +888,212 @@ ReturnCode_t json_serialize_array(
             }
             j_array.push_back(inner_array);
         }
+    }
+    return ret;
+}
+
+ReturnCode_t json_serialize_map_member(
+        const traits<DynamicDataImpl>::ref_type& data,
+        const std::string& member_name,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+    nlohmann::json j_map;
+    const TypeDescriptorImpl& map_desc = data->enclosing_type()->get_descriptor();
+    traits<DynamicTypeImpl>::ref_type key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
+        map_desc.key_element_type())->resolve_alias_enclosed_type();
+    traits<DynamicTypeImpl>::ref_type value_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
+        map_desc.element_type())->resolve_alias_enclosed_type();
+
+    std::map<std::string, MemberId> key_to_id;
+    if (RETCODE_OK != (ret = data->get_keys(key_to_id)))
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing map member to JSON: get_keys failed.");
+        return ret;
+    }
+
+    std::map<MemberId, std::string> id_to_key;
+    for (const auto& it : key_to_id)
+    {
+        id_to_key[it.second] = it.first;
+    }
+    assert(id_to_key.size() == key_to_id.size());
+
+    uint32_t size = data->get_item_count();
+    assert(size == key_to_id.size());
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        MemberId id = data->get_member_id_at_index(i);
+        if (MEMBER_ID_INVALID == id)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing map member's member to JSON: invalid member id.");
+            return RETCODE_BAD_PARAMETER;
+        }
+
+        auto it = id_to_key.find(id);
+        if (it == id_to_key.end())
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing map member's member to JSON: key not found.");
+            return RETCODE_BAD_PARAMETER;
+        }
+
+        if (RETCODE_OK !=
+                (ret =
+                json_serialize_member(data, id, value_type->get_kind(), it->second, j_map,
+                format)))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing map member's member to JSON.");
+            return ret;
+        }
+    }
+
+    // All map entries were serialized successfully -> Insert into JSON object
+    assert(RETCODE_OK == ret);
+    json_insert(member_name, j_map, output);
+
+    return ret;
+}
+
+ReturnCode_t json_serialize_bitmask_member(
+        const traits<DynamicDataImpl>::ref_type& data,
+        const std::string& member_name,
+        nlohmann::json& output,
+        DynamicDataJsonFormat format) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+    traits<DynamicTypeImpl>::ref_type bitmask_type = data->enclosing_type();
+    const TypeDescriptorImpl& bitmask_desc = bitmask_type->get_descriptor();
+
+    // Get the bitmask bound to determine the value precision
+    auto bound = bitmask_desc.bound().at(0);
+
+    if (DynamicDataJsonFormat::OMG == format)
+    {
+        if (9 > bound)
+        {
+            uint8_t value;
+            if (RETCODE_OK == (ret = data->get_uint8_value(value, MEMBER_ID_INVALID)))
+            {
+                json_insert(member_name, value, output);
+            }
+        }
+        else if (17 > bound)
+        {
+            uint16_t value;
+            if (RETCODE_OK == (ret = data->get_uint16_value(value, MEMBER_ID_INVALID)))
+            {
+                json_insert(member_name, value, output);
+            }
+        }
+        else if (33 > bound)
+        {
+            uint32_t value;
+            if (RETCODE_OK == (ret = data->get_uint32_value(value, MEMBER_ID_INVALID)))
+            {
+                json_insert(member_name, value, output);
+            }
+        }
+        else
+        {
+            uint64_t value;
+            if (RETCODE_OK == (ret = data->get_uint64_value(value, MEMBER_ID_INVALID)))
+            {
+                json_insert(member_name, value, output);
+            }
+        }
+
+        if (RETCODE_OK != ret)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing bitmask member to JSON: failed to get value.");
+        }
+    }
+    else if (DynamicDataJsonFormat::EPROSIMA == format)
+    {
+        nlohmann::json bitmask_dict;
+        uint64_t u64_value{0}; // Auxiliar variable to check active bits afterwards
+        if (9 > bound)
+        {
+            uint8_t value;
+            if (RETCODE_OK == (ret = data->get_uint8_value(value, MEMBER_ID_INVALID)))
+            {
+                bitmask_dict["value"] = value;
+                bitmask_dict["binary"] = std::bitset<8>(value).to_string();
+                u64_value = static_cast<uint64_t>(value);
+            }
+        }
+        else if (17 > bound)
+        {
+            uint16_t value;
+            if (RETCODE_OK == (ret = data->get_uint16_value(value, MEMBER_ID_INVALID)))
+            {
+                bitmask_dict["value"] = value;
+                bitmask_dict["binary"] = std::bitset<16>(value).to_string();
+                u64_value = static_cast<uint64_t>(value);
+            }
+        }
+        else if (33 > bound)
+        {
+            uint32_t value;
+            if (RETCODE_OK == (ret = data->get_uint32_value(value, MEMBER_ID_INVALID)))
+            {
+                bitmask_dict["value"] = value;
+                bitmask_dict["binary"] = std::bitset<32>(value).to_string();
+                u64_value = static_cast<uint64_t>(value);
+            }
+        }
+        else
+        {
+            uint64_t value;
+            if (RETCODE_OK == (ret = data->get_uint64_value(value, MEMBER_ID_INVALID)))
+            {
+                bitmask_dict["value"] = value;
+                bitmask_dict["binary"] = std::bitset<64>(value).to_string();
+                u64_value = value;
+            }
+        }
+
+        if (RETCODE_OK != ret)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing bitmask member to JSON: failed to get value.");
+            return ret;
+        }
+
+        // Check active bits
+        DynamicTypeMembersById bitmask_members;
+        if (RETCODE_OK != (ret = bitmask_type->get_all_members(bitmask_members)))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                    "Error encountered while serializing bitmask member to JSON: get_all_members failed.");
+            return ret;
+        }
+        std::vector<std::string> active_bits;
+        for (const auto& it : bitmask_members)
+        {
+            MemberDescriptorImpl& member_desc =
+                            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
+
+            if (u64_value & (0x01ull << member_desc.position()))
+            {
+                active_bits.push_back(it.second->get_name().to_string());
+            }
+        }
+        bitmask_dict["active"] = active_bits;
+
+        // Insert custom bitmask value
+        json_insert(member_name, bitmask_dict, output);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while serializing bitmask member to JSON: unsupported format.");
+        return RETCODE_BAD_PARAMETER;
     }
     return ret;
 }

@@ -442,6 +442,18 @@ public:
         return RETCODE_ERROR;
     }
 
+    ReturnCode_t set_sample_prefilter(
+            std::shared_ptr<IContentFilter>)
+    {
+        return RETCODE_OK;
+    }
+
+    ReturnCode_t set_related_datareader(
+            const DataReader* /*related_reader*/)
+    {
+        return RETCODE_OK;
+    }
+
     //! Pointer to the associated Data Writer.
     fastdds::rtps::RTPSWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;

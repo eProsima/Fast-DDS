@@ -30,7 +30,6 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
-#include <rtps/builtin/data/NetworkConfiguration.hpp>
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
@@ -42,6 +41,7 @@
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpointsSecure.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/network/NetworkConfiguration.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/StatefulReader.hpp>
@@ -575,12 +575,27 @@ void PDPSimple::unmatch_pdp_remote_endpoints(
 
     {
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
-        assert(nullptr != endpoints);
+        if (nullptr == endpoints)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP,
+                    "unmatch_pdp_remote_endpoints(): builtin_endpoints_ is null or wrong type");
+            return;
+        }
 
         guid.entityId = c_EntityId_SPDPWriter;
+        if (!endpoints->reader.reader_)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "SPDPReader is null, cannot unmatch remote endpoints for " << guid);
+            return;
+        }
         endpoints->reader.reader_->matched_writer_remove(guid);
 
         guid.entityId = c_EntityId_SPDPReader;
+        if (!endpoints->writer.writer_)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PDP, "SPDPWriter is null, cannot unmatch remote endpoints for " << guid);
+            return;
+        }
         endpoints->writer.writer_->matched_reader_remove(guid);
     }
 

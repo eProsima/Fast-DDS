@@ -29,7 +29,7 @@ endif()
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastdds VERSION "3.2.2" LANGUAGES C CXX)
+project(fastdds VERSION "3.4.0" LANGUAGES C CXX)
 
 set(PROJECT_NAME_LARGE "Fast DDS")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
@@ -255,7 +255,9 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 eprosima_find_package(fastcdr 2 REQUIRED)
+
 eprosima_find_thirdparty(Asio asio VERSION 1.30.2)
+
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
 find_package(foonathan_memory REQUIRED)

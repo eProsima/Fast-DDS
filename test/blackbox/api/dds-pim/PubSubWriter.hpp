@@ -359,6 +359,7 @@ public:
 
     eprosima::fastdds::dds::DataWriter& get_native_writer() const
     {
+        EXPECT_NE(datawriter_, nullptr);
         return *datawriter_;
     }
 
@@ -514,13 +515,25 @@ public:
 
     void send(
             std::list<type>& msgs,
-            uint32_t milliseconds = 0)
+            uint32_t milliseconds = 0,
+            eprosima::fastdds::rtps::WriteParams* write_params = nullptr)
     {
         auto it = msgs.begin();
 
         while (it != msgs.end())
         {
-            if (eprosima::fastdds::dds::RETCODE_OK == datawriter_->write((void*)&(*it)))
+            auto ret = eprosima::fastdds::dds::RETCODE_OK;
+
+            if (nullptr != write_params)
+            {
+                ret = datawriter_->write((void*)&(*it), *write_params);
+            }
+            else
+            {
+                ret = datawriter_->write((void*)&(*it));
+            }
+
+            if (eprosima::fastdds::dds::RETCODE_OK == ret)
             {
                 default_send_print<type>(*it);
                 it = msgs.erase(it);
@@ -557,10 +570,20 @@ public:
     }
 
     bool send_sample(
-            type& msg)
+            type& msg,
+            eprosima::fastdds::rtps::WriteParams* write_params = nullptr)
     {
         default_send_print(msg);
-        return (eprosima::fastdds::dds::RETCODE_OK == datawriter_->write((void*)&msg));
+        auto ret = eprosima::fastdds::dds::RETCODE_OK;
+        if (write_params != nullptr)
+        {
+            ret = datawriter_->write((void*)&msg, *write_params);
+        }
+        else
+        {
+            ret = datawriter_->write((void*)&msg);
+        }
+        return (eprosima::fastdds::dds::RETCODE_OK == ret);
     }
 
     eprosima::fastdds::dds::ReturnCode_t send_sample(
@@ -1267,7 +1290,7 @@ public:
         return *this;
     }
 
-    PubSubWriter& multicastLocatorList(
+    PubSubWriter& multicast_locator_list(
             const eprosima::fastdds::rtps::LocatorList& multicastLocators)
     {
         datawriter_qos_.endpoint().multicast_locator_list = multicastLocators;
@@ -1655,6 +1678,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& transport_priority(
+            int32_t prio)
+    {
+        datawriter_qos_.transport_priority().value = prio;
+        return *this;
+    }
+
     const std::string& topic_name() const
     {
         return topic_name_;
@@ -1856,6 +1886,12 @@ public:
     eprosima::fastdds::dds::TypeSupport get_type_support()
     {
         return type_;
+    }
+
+    eprosima::fastdds::dds::ReturnCode_t set_sample_prefilter(
+            std::shared_ptr<eprosima::fastdds::dds::IContentFilter> prefilter)
+    {
+        return datawriter_->set_sample_prefilter(prefilter);
     }
 
 protected:

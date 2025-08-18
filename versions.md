@@ -1,9 +1,37 @@
 Forthcoming
 -----------
 
+* Pass value of `TransportPriorityQosPolicy` to transport layer.
+* Support annotated types and builtin annotations in IDL Parser.
+  * Extend `MemberDescriptor` with `position()`, `literal_value()` and `is_default_literal()` methods
+    to avoid inconsistencies annotating enumerations and bitmask members.
+  * Extend `TypeDescriptor` with `literal_type()` to store the literal type in enumerations.
+
+Version v3.3.0
+--------------
+
 * QoS Policies are now only added to EDP messages if they do not have the default value.
 * HistoryQosPolicy has been included to EDP messages (when non-default value is used).
 * New property to extend EDP messages with eProsima Extensions QoS.
+  * Added optional serialization of `WireProtocolConfigQos` to the `ParticipantDiscoveryData`.
+* Monitor service now serializes all optional QoS in the ProxyDatas.
+* Removed Request-Reply example in favor of the new RPC over DDS example.
+* Add DataWriter Sample Prefilter feature:
+  * New `DataWriter::set_sample_prefilter` method.
+  * New `WriteParams::UserWriteData` extensible struct.
+* Add `get_complete_type_object` to `ITypeObjectRegistry`
+* Support modules in `IdlParser`
+* New version of EDP static discovery which reduces greatly the Data(p) messages size.
+* Bump to asio 1.34.2 release.
+* Add methods for TypeObject registration of RPC types.
+* RPC enhanced discovery feature:
+  * New `DataWriter::set_related_datareader` method.
+  * New `DataReader::set_related_datawriter` method.
+  * Implemented Requester and Replier matching algorithm.
+* Process key-only payloads:
+  * New `is_serialized_key` attribute in `SerializedPayload_t`.
+* Add field `has_more_replies` to `WriteParams` and `SampleInfo`
+* Add new JSON to DynamicData deserializer (`json_deserialize`).
 
 Version v3.2.2
 --------------

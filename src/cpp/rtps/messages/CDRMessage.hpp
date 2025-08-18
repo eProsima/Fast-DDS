@@ -22,6 +22,7 @@
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
+#include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
 #include <fastdds/rtps/common/Property.hpp>
 #include <fastdds/rtps/common/BinaryProperty.hpp>
@@ -30,6 +31,8 @@
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include <rtps/security/common/ParticipantGenericMessage.h>
@@ -104,9 +107,23 @@ bool readUInt16(
         CDRMessage_t* msg,
         uint16_t* i16);
 
-bool readLocator(
+bool read_locator(
         CDRMessage_t* msg,
         Locator_t* loc);
+
+bool read_locator_list(
+        CDRMessage_t* msg,
+        LocatorList_t* loc_list);
+
+bool read_external_locator(
+        CDRMessage_t* msg,
+        LocatorWithMask* loc,
+        uint8_t* externality,
+        uint8_t* cost);
+
+bool read_external_locator_list(
+        CDRMessage_t* msg,
+        ExternalLocators* external_locators);
 
 bool readOctet(
         CDRMessage_t* msg,
@@ -123,11 +140,11 @@ bool readTimestamp(
         CDRMessage_t* msg,
         Time_t* ts);
 
-bool readString(
+bool read_string(
         CDRMessage_t* msg,
         std::string* p_str);
 
-bool readString(
+bool read_string(
         CDRMessage_t* msg,
         fastcdr::string_255* stri);
 
@@ -281,9 +298,23 @@ bool addFragmentNumberSet(
         CDRMessage_t* msg,
         FragmentNumberSet_t* fns);
 
-bool addLocator(
+bool add_locator(
         CDRMessage_t* msg,
         const Locator_t& loc);
+
+bool add_locator_list(
+        CDRMessage_t* msg,
+        const LocatorList& loc_list);
+
+bool add_external_locator(
+        CDRMessage_t* msg,
+        const LocatorWithMask& loc,
+        const uint8_t& externality,
+        const uint8_t& cost);
+
+bool add_external_locator_list(
+        CDRMessage_t* msg,
+        const ExternalLocators& external_locators);
 
 bool add_string(
         CDRMessage_t* msg,

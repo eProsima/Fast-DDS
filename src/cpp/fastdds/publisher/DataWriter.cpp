@@ -40,8 +40,24 @@ DataWriter::DataWriter(
         DataWriterListener* listener,
         const StatusMask& mask)
     : DomainEntity(mask)
-    , impl_(pub->create_datawriter(topic, qos, listener, mask)->impl_)
+    , impl_(nullptr)
 {
+    if (nullptr == pub)
+    {
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Publisher pointer is null");
+    }
+    else
+    {
+        DataWriter* dw = pub->create_datawriter(topic, qos, listener, mask);
+        if (nullptr == dw)
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Publisher::create_datawriter returned null");
+        }
+        else
+        {
+            impl_ = dw->impl_;
+        }
+    }
 }
 
 DataWriter::~DataWriter()
@@ -303,6 +319,18 @@ ReturnCode_t DataWriter::get_publication_builtin_topic_data(
         PublicationBuiltinTopicData& publication_data) const
 {
     return impl_->get_publication_builtin_topic_data(publication_data);
+}
+
+ReturnCode_t DataWriter::set_sample_prefilter(
+        std::shared_ptr<IContentFilter> prefilter)
+{
+    return impl_->set_sample_prefilter(prefilter);
+}
+
+ReturnCode_t DataWriter::set_related_datareader(
+        const DataReader* related_reader)
+{
+    return impl_->set_related_datareader(related_reader);
 }
 
 } // namespace dds

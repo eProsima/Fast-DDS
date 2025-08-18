@@ -153,7 +153,7 @@ bool UDPTransportInterface::init(
     }
 
     asio::error_code ec;
-    ip::udp::socket socket(io_service_);
+    ip::udp::socket socket(io_context_);
     socket.open(generate_protocol(), ec);
     if (!!ec)
     {
@@ -249,7 +249,7 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
         const ip::udp::endpoint& endpoint,
         uint16_t& port)
 {
-    eProsimaUDPSocket socket = createUDPSocket(io_service_);
+    eProsimaUDPSocket socket = createUDPSocket(io_context_);
     getSocketPtr(socket)->open(generate_protocol());
     if (mSendBufferSize != 0)
     {
@@ -506,7 +506,8 @@ bool UDPTransportInterface::send(
         fastdds::rtps::LocatorsIterator* destination_locators_end,
         bool only_multicast_purpose,
         bool whitelisted,
-        const std::chrono::steady_clock::time_point& max_blocking_time_point)
+        const std::chrono::steady_clock::time_point& max_blocking_time_point,
+        const int32_t /* transport_priority */)
 {
     fastdds::rtps::LocatorsIterator& it = *destination_locators_begin;
 

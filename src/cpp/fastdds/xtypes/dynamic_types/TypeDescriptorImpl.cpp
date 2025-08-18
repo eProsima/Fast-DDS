@@ -125,6 +125,7 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
     name_ = descriptor.name_;
     base_type_ = descriptor.base_type_;
     discriminator_type_ = descriptor.discriminator_type_;
+    literal_type_ = descriptor.literal_type_;
     bound_ = descriptor.bound_;
     element_type_ = descriptor.element_type_;
     key_element_type_ = descriptor.key_element_type_;
@@ -149,6 +150,8 @@ bool TypeDescriptorImpl::equals(
            ((!base_type_ && !descriptor.base_type_) || (base_type_ && base_type_->equals(descriptor.base_type_))) &&
            ((!discriminator_type_ && !descriptor.discriminator_type_) ||
            (discriminator_type_ && discriminator_type_->equals(descriptor.discriminator_type_))) &&
+           ((!literal_type_ && !descriptor.literal_type_) ||
+           (literal_type_ && literal_type_->equals(descriptor.literal_type_))) &&
            bound_ == descriptor.bound_ &&
            ((!element_type_ && !descriptor.element_type_) ||
            (element_type_ && element_type_->equals(descriptor.element_type_))) &&
@@ -202,6 +205,28 @@ bool TypeDescriptorImpl::is_consistent() noexcept
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "ExtensibilityKind is different from that of base type.");
                 return false;
             }
+        }
+    }
+
+    if (literal_type_)
+    {
+        // Literal types are only used by enumerations.
+        if (TK_ENUM != kind_)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor describes a type which does not support literal types");
+            return false;
+        }
+
+        TypeKind literal_kind =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(literal_type_)->resolve_alias_enclosed_type()
+                        ->get_kind();
+
+        if (TK_INT8 != literal_kind &&
+                TK_INT16 != literal_kind &&
+                TK_INT32 != literal_kind)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor contains a literal type of an invalid kind");
+            return false;
         }
     }
 

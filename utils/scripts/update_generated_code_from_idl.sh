@@ -3,8 +3,9 @@
 set -e
 
 files_to_exclude=(
-    './thirdparty/dds-types-test/IDL/relative_path_include.idl' # Relative path not working in current location.
-    './test/feature/idl_parser/no_path_included.idl'            # Relative path not working in current location.
+    './thirdparty/dds-types-test/IDL/relative_path_include.idl'       # Relative path not working in current location.
+    './test/feature/idl_parser/no_path_included.idl'                  # Relative path not working in current location.
+    './test/feature/idl_parser/idl_extra_cases/extra_structures.idl'  # Contains features not supported by IDL parser (scoped name beginning with double colon).
 )
 
 files_not_needing_typeobject=(
@@ -32,6 +33,7 @@ files_needing_output_dir=(
     './test/unittest/dds/xtypes/serializers/idl/types/extensibility_struct/extensibility_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/key_struct/key_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/map_struct/map_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/module_struct/module_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/primitives_struct/primitives_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/sequence_struct/sequence_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/string_struct/string_struct.idl|./gen'

@@ -374,7 +374,8 @@ TEST_F(IdlParserTests, structures)
     DynamicType::_ref_type type21 = builder21->build();
     ASSERT_TRUE(type21);
 
-    DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/structures.idl", "StructSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder22 = factory->create_type_w_uri("IDL/structures.idl", "StructSequence",
+                    include_paths);
     EXPECT_TRUE(builder22);
     DynamicType::_ref_type type22 = builder22->build();
     ASSERT_TRUE(type22);
@@ -415,7 +416,66 @@ TEST_F(IdlParserTests, structures)
     // DynamicType::_ref_type type28 = builder28->build();
     // ASSERT_TRUE(type28);
 
-    // TODO The rest types are skipped since module parsing is not supported.
+    DynamicTypeBuilder::_ref_type builder29 = factory->create_type_w_uri("IDL/structures.idl", "testing_1::foo",
+                    include_paths);
+    EXPECT_TRUE(builder29);
+    DynamicType::_ref_type type29 = builder29->build();
+    ASSERT_TRUE(type29);
+
+    DynamicTypeBuilder::_ref_type builder30 = factory->create_type_w_uri("IDL/structures.idl", "testing_2::foo",
+                    include_paths);
+    EXPECT_TRUE(builder30);
+    DynamicType::_ref_type type30 = builder30->build();
+    ASSERT_TRUE(type30);
+
+    DynamicTypeBuilder::_ref_type builder31 = factory->create_type_w_uri("IDL/structures.idl", "bar",
+                    include_paths);
+    EXPECT_TRUE(builder31);
+    DynamicType::_ref_type type31 = builder31->build();
+    ASSERT_TRUE(type31);
+
+    DynamicTypeBuilder::_ref_type builder32 = factory->create_type_w_uri("IDL/structures.idl", "root1",
+                    include_paths);
+    EXPECT_TRUE(builder32);
+    DynamicType::_ref_type type32 = builder32->build();
+    ASSERT_TRUE(type32);
+
+    DynamicTypeBuilder::_ref_type builder33 = factory->create_type_w_uri("IDL/structures.idl", "root2",
+                    include_paths);
+    EXPECT_TRUE(builder33);
+    DynamicType::_ref_type type33 = builder33->build();
+    ASSERT_TRUE(type33);
+
+    DynamicTypeBuilder::_ref_type builder34 = factory->create_type_w_uri("IDL/structures.idl", "root",
+                    include_paths);
+    EXPECT_TRUE(builder34);
+    DynamicType::_ref_type type34 = builder34->build();
+    ASSERT_TRUE(type34);
+
+    /* Additional cases */
+    DynamicTypeBuilder::_ref_type builder35 = factory->create_type_w_uri(
+        "IDL/extra_structures.idl",
+        "Module_1::Module_2::NestedModuleStruct",
+        include_paths);
+    EXPECT_TRUE(builder35);
+    DynamicType::_ref_type type35 = builder35->build();
+    ASSERT_TRUE(type35);
+
+    DynamicTypeBuilder::_ref_type builder36 = factory->create_type_w_uri(
+        "IDL/extra_structures.idl",
+        "Outer::StructWithInnerAlias",
+        include_paths);
+    EXPECT_TRUE(builder36);
+    DynamicType::_ref_type type36 = builder36->build();
+    ASSERT_TRUE(type36);
+
+    DynamicTypeBuilder::_ref_type builder37 = factory->create_type_w_uri(
+        "IDL/extra_structures.idl",
+        "MyModule::ScopedNamesStruct",
+        include_paths);
+    EXPECT_TRUE(builder37);
+    DynamicType::_ref_type type37 = builder37->build();
+    ASSERT_TRUE(type37);
 }
 
 TEST_F(IdlParserTests, aliases)
@@ -545,7 +605,8 @@ TEST_F(IdlParserTests, aliases)
     DynamicType::_ref_type type20 = builder20->build();
     ASSERT_TRUE(type20);
 
-    DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_uri("IDL/aliases.idl", "AliasSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder21 = factory->create_type_w_uri("IDL/aliases.idl", "AliasSequence",
+                    include_paths);
     EXPECT_TRUE(builder21);
     DynamicType::_ref_type type21 = builder21->build();
     ASSERT_TRUE(type21);
@@ -708,7 +769,8 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type22 = builder22->build();
     ASSERT_TRUE(type22);
 
-    DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder23 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySequence",
+                    include_paths);
     EXPECT_TRUE(builder23);
     DynamicType::_ref_type type23 = builder23->build();
     ASSERT_TRUE(type23);
@@ -859,7 +921,8 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type47 = builder47->build();
     ASSERT_TRUE(type47);
 
-    DynamicTypeBuilder::_ref_type builder48 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder48 = factory->create_type_w_uri("IDL/arrays.idl",
+                    "ArrayMultiDimensionSequence", include_paths);
     EXPECT_TRUE(builder48);
     DynamicType::_ref_type type48 = builder48->build();
     ASSERT_TRUE(type48);
@@ -1034,7 +1097,9 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type73 = builder73->build();
     ASSERT_TRUE(type73);
 
-    DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_uri("IDL/arrays.idl", "ArraySingleDimensionLiteralsSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder74 = factory->create_type_w_uri("IDL/arrays.idl",
+                    "ArraySingleDimensionLiteralsSequence",
+                    include_paths);
     EXPECT_TRUE(builder74);
     DynamicType::_ref_type type74 = builder74->build();
     ASSERT_TRUE(type74);
@@ -1204,7 +1269,9 @@ TEST_F(IdlParserTests, arrays)
     DynamicType::_ref_type type98 = builder98->build();
     ASSERT_TRUE(type98);
 
-    DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_uri("IDL/arrays.idl", "ArrayMultiDimensionLiteralsSequence", include_paths);
+    DynamicTypeBuilder::_ref_type builder99 = factory->create_type_w_uri("IDL/arrays.idl",
+                    "ArrayMultiDimensionLiteralsSequence",
+                    include_paths);
     EXPECT_TRUE(builder99);
     DynamicType::_ref_type type99 = builder99->build();
     ASSERT_TRUE(type99);
@@ -1401,7 +1468,7 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-     builder = factory->create_type_w_uri("IDL/unions.idl", "Union_BoundedString", include_paths);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_BoundedString", include_paths);
     EXPECT_TRUE(builder);
     type = builder->build();
     ASSERT_TRUE(type);
@@ -1586,13 +1653,12 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO Union_Fixed_String_In_Module_Alias is skipped since module parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Fixed_String_In_Module_Alias", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/unions.idl", "Union_Fixed_String_In_Module_Alias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 
     builder = factory->create_type_w_uri("IDL/unions.idl", "UnionShort", include_paths);
     EXPECT_TRUE(builder);
@@ -1884,7 +1950,42 @@ TEST_F(IdlParserTests, unions)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO The rest types are skipped since annotation/module parsing are not supported.
+    // TODO The following types are skipped since annotation parsing is not supported.
+    // builder = factory->create_type_w_uri("IDL/unions.idl", "DefaultAnnotation", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    // builder = factory->create_type_w_uri("IDL/unions.idl", "DefaultAnnotationExternalValue", include_paths);
+    // EXPECT_TRUE(builder);
+    // type = builder->build();
+    // ASSERT_TRUE(type);
+    // data = DynamicDataFactory::get_instance()->create_data(type);
+    // ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionShortExtraMember", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    builder = factory->create_type_w_uri("IDL/unions.idl", "UnionFixedStringAlias", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    /* Additional cases */
+    builder = factory->create_type_w_uri("IDL/extra_unions.idl", "UnionScopedDiscriminator", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
 }
 
 TEST_F(IdlParserTests, sequences)
@@ -1894,7 +1995,8 @@ TEST_F(IdlParserTests, sequences)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     /* sequence<short> */
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceShort", include_paths);
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/sequences.idl", "SequenceShort",
+                    include_paths);
     EXPECT_TRUE(builder);
     DynamicType::_ref_type type = builder->build();
     ASSERT_TRUE(type);
@@ -2126,20 +2228,754 @@ TEST_F(IdlParserTests, sequences)
     data = DynamicDataFactory::get_instance()->create_data(type);
     ASSERT_TRUE(data);
 
-    // TODO: The rest types are skipped since module parsing is not supported.
-    // builder = factory->create_type_w_uri("IDL/sequences.idl", "Common_Module", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+    builder = factory->create_type_w_uri("IDL/sequences.idl", "NoCommon_Module::My_Structure", include_paths);
+    EXPECT_TRUE(builder);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+}
 
-    // builder = factory->create_type_w_uri("IDL/sequences.idl", "NoCommon_Module", include_paths);
-    // EXPECT_TRUE(builder);
-    // type = builder->build();
-    // ASSERT_TRUE(type);
-    // data = DynamicDataFactory::get_instance()->create_data(type);
-    // ASSERT_TRUE(data);
+TEST_F(IdlParserTests, id_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set custom ids and test that they are correctly parsed (struct members)
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_valid_struct",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 4), RETCODE_OK);
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+    ASSERT_TRUE(data);
+
+    // Set custom ids and test that they are correctly parsed (union members)
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_valid_union",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+    EXPECT_EQ(builder->get_member(member, 4), RETCODE_OK);
+    type = builder->build();
+    ASSERT_TRUE(type);
+    data = DynamicDataFactory::get_instance()->create_data(type);
+    ASSERT_TRUE(data);
+
+    // Negative case: Try to modify the union's discriminator member id
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @id with missing value
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_missing_value",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @id with invalid value type
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @id with additional parameters
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate multiple members with the same @id
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_duplicated_ids",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with an @id value used implicitly by another member
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_implicit_duplicated_ids",
+                    include_paths);
+    ASSERT_FALSE(builder);
+    // Negative case: Trying to annotate with @id a constructed type (struct)
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @id a constructed type (enumeration)
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate with @id a constructed type (union)
+    builder = factory->create_type_w_uri("IDL/id_annotation.idl", "id_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, optional_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set optional members using default value, keyword and positional parameters
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/optional_annotation.idl", "optional_ann_valid",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_optional());
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_optional());
+    EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_optional());
+
+    // Negative case: Trying to annotate using @optional with invalid value type
+    builder = factory->create_type_w_uri("IDL/optional_annotation.idl", "optional_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @optional with additional parameters
+    builder = factory->create_type_w_uri("IDL/optional_annotation.idl", "optional_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @optional
+    builder = factory->create_type_w_uri("IDL/optional_annotation.idl", "optional_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a member of a constructed type different from struct using @optional.
+    builder = factory->create_type_w_uri("IDL/optional_annotation.idl", "optional_ann_invalid_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, position_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // TODO: Add positive/negative test cases with bitmasks when bitmask parsing is supported.
+
+    // Negative case: Try to annotate a struct type with @position
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a struct member with @position
+    builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a union type with @position
+    builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a union discriminator with @position
+    builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a union member with @position
+    builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a enumeration type with @position
+    builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Try to annotate a enumeration member with @position
+    builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_enum_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, extensibility_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set extensibility kind to FINAL using positional parameter
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_final_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::FINAL);
+
+    // Set extensibility kind to APPENDABLE using positional parameter
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_appendable_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::APPENDABLE);
+
+    // Set extensibility kind to MUTABLE using positional parameter
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_mutable_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
+
+    // Set extensibility kind to MUTABLE using keyword parameter
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_mutable_keyword_param_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
+
+    // Negative case: Trying to annotate using @extensibility with invalid value type
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_invalid_value_type_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @extensibility with additional parameters
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @extensibility with missing value
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_missing_value_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annote a member with @extensibility
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, final_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set final to struct type and check that it is correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/final_annotation.idl", "final_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::FINAL);
+
+    // Negative case: Trying to annotate using @final with parameters
+    builder = factory->create_type_w_uri("IDL/final_annotation.idl", "final_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @final
+    builder = factory->create_type_w_uri("IDL/final_annotation.idl", "final_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, appendable_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set appendable to struct type and check that it is correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/appendable_annotation.idl", "appendable_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::APPENDABLE);
+
+    // Negative case: Trying to annotate using @appendable with parameters
+    builder = factory->create_type_w_uri("IDL/appendable_annotation.idl", "appendable_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @appendable
+    builder = factory->create_type_w_uri("IDL/appendable_annotation.idl", "appendable_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, mutable_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set mutable to struct type and check that it is correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/mutable_annotation.idl", "mutable_ann_valid_struct",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
+
+    // Negative case: Trying to annotate using @mutable with parameters
+    builder = factory->create_type_w_uri("IDL/mutable_annotation.idl", "mutable_ann_extra_parameter_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @mutable
+    builder = factory->create_type_w_uri("IDL/mutable_annotation.idl", "mutable_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, key_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set key members using default value, keyword and positional parameters
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/key_annotation.idl", "key_ann_valid_struct",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_key());
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_key());
+    EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_key());
+
+    // TODO: Uncomment when annotating descriptors of unions' discriminators is supported
+    // Set union discriminator as key member and check that it is correctly parsed
+    // builder = factory->create_type_w_uri("IDL/key_annotation.idl", "key_ann_valid_union",
+    //                 include_paths);
+    // ASSERT_TRUE(builder);
+    // EXPECT_EQ(builder->get_member_by_name(member, "discriminator"), RETCODE_OK);
+    // EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    // EXPECT_TRUE(member_descriptor->is_key());
+
+    // Negative case: Trying to annotate using @key with invalid value type
+    builder = factory->create_type_w_uri("IDL/key_annotation.idl", "key_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @key with additional parameters
+    builder = factory->create_type_w_uri("IDL/key_annotation.idl", "key_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @key
+    builder = factory->create_type_w_uri("IDL/key_annotation.idl", "key_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, default_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set default values for struct members and check that they are correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_annotation.idl", "default_ann_valid_struct",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->default_value(), "2");
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->default_value(), "foo");
+
+    // Set default values for union members and check that they are correctly parsed
+    builder = factory->create_type_w_uri("IDL/default_annotation.idl", "default_ann_valid_union",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member_by_name(member, "first"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->default_value(), "1");
+    EXPECT_EQ(builder->get_member_by_name(member, "second"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->default_value(), "foo");
+    EXPECT_EQ(builder->get_member_by_name(member, "third"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->default_value(), "3.14");
+
+    // Negative case: Trying to annotate using @default with invalid value type
+    builder = factory->create_type_w_uri("IDL/default_annotation.idl", "default_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @default with additional parameters
+    builder = factory->create_type_w_uri("IDL/default_annotation.idl", "default_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @default
+    builder = factory->create_type_w_uri("IDL/default_annotation.idl", "default_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, bit_bound_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // TODO: Add positive tests for bitmasks when bitmask parsing is supported.
+
+    // Set bit_bound annotation on enum members and check that they are correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_valid_enum_8",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_1"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT8));
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_2"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT8));
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_valid_enum_16",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_1"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT16));
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_2"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->type(), factory->get_primitive_type(TK_INT16));
+    type = builder->build();
+    ASSERT_TRUE(type);
+
+    // Negative case: Trying to annotate using @bit_bound with invalid bound value
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_invalid_bound_value",
+                    include_paths);
+    EXPECT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @bit_bound with invalid value type
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @bit_bound without specifying the bound value
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_missing_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @bit_bound with additional parameters
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct type with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct mmember with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a enumeration's member with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_enum_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union type with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union member with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union's discriminator with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a non-primitive type different from bitset/bitmask with @bit_bound
+    builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, external_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set external annotation on struct members and check that they are correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/external_annotation.idl", "external_ann_struct_valid",
+                    include_paths);
+    DynamicTypeMember::_ref_type member;
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_shared());
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_shared());
+    EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_FALSE(member_descriptor->is_shared());
+
+    // Negative case: Trying to annotate using @external with invalid value type
+    builder = factory->create_type_w_uri("IDL/external_annotation.idl", "external_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @external with additional parameters
+    builder = factory->create_type_w_uri("IDL/external_annotation.idl", "external_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @external
+    builder = factory->create_type_w_uri("IDL/external_annotation.idl", "external_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, nested_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    TypeDescriptor::_ref_type type_descriptor{traits<TypeDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set nested annotations on struct (constructed type) and check that they are correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/nested_annotation.idl", "nested_ann_struct_valid",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->is_nested(), true);
+    builder = factory->create_type_w_uri("IDL/nested_annotation.idl", "nested_ann_struct_keyword_valid",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
+    EXPECT_EQ(type_descriptor->is_nested(), true);
+
+    // Negative case: Trying to annotate using @nested with invalid value type
+    builder = factory->create_type_w_uri("IDL/nested_annotation.idl", "nested_ann_struct_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @nested with extra parameters
+    builder = factory->create_type_w_uri("IDL/nested_annotation.idl", "nested_ann_struct_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @nested
+    builder = factory->create_type_w_uri("IDL/nested_annotation.idl", "nested_ann_on_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, try_construct_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set try_construct annotation on struct members and check that they are correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_struct_valid",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::USE_DEFAULT);
+    EXPECT_EQ(builder->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::USE_DEFAULT);
+    EXPECT_EQ(builder->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::TRIM);
+    EXPECT_EQ(builder->get_member(member, 3), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::DISCARD);
+
+    // Set try_construct annotation on union members and check that they are correctly parsed
+    builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_union_valid",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_member_by_name(member, "first"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::USE_DEFAULT);
+    EXPECT_EQ(builder->get_member_by_name(member, "second"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->try_construct_kind(), TryConstructKind::TRIM);
+
+    // Negative case: Trying to annotate using @try_construct with invalid value type
+    builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @try_construct with additional parameters
+    builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type using @try_construct
+    builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union discriminator using @try_construct
+    builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, value_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set value annotation on enumeration members and check that they are correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_valid_enum",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE1"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->literal_value(), "3");
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE2"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(member_descriptor->literal_value(), "8");
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+
+    // Negative case: Trying to annotate using @value with invalid value type
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_invalid_value_type",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using the same @value on multiple members
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_duplicated_values",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate using @value with additional parameters
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a enum type with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct type with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_struct",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct member with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union type with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_union",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union member with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union discriminator with @value
+    builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
+}
+
+TEST_F(IdlParserTests, default_literal_builtin_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    MemberDescriptor::_ref_type member_descriptor{traits<MemberDescriptor>::make_shared()};
+    std::vector<std::string> include_paths;
+
+    include_paths.push_back("IDL/helpers/basic_inner_types.idl");
+
+    // Set @default_literal annotation on a enumeration's member and check that it is correctly parsed
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_valid_enum",
+                    include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member_by_name(member, "ENUM_VALUE_2"), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(member_descriptor), RETCODE_OK);
+    EXPECT_TRUE(member_descriptor->is_default_literal());
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+
+    // Negative case: Trying to annotate multiple members with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_multiple_default_members",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a member with @default_literal using parameters
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_extra_parameter",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a constructed type with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_enum",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a struct member with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_struct_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union member with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_union_member",
+                    include_paths);
+    ASSERT_FALSE(builder);
+
+    // Negative case: Trying to annotate a union discriminator with @default_literal
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_union_discriminator",
+                    include_paths);
+    ASSERT_FALSE(builder);
 }
 
 int main(

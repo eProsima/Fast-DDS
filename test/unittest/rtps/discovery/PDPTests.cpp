@@ -149,6 +149,7 @@ public:
         RTPSParticipantAllocationAttributes attrs;
         ParticipantProxyData* pdata = new ParticipantProxyData(attrs);
         pdata->guid = part_guid;
+        pdata->wire_protocol = dds::WireProtocolConfigQos();
 
         add_participant_proxy_data(part_guid, false, pdata);
         pdatas_.push_back(pdata);

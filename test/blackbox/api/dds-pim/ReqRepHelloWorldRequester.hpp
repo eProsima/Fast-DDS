@@ -76,10 +76,25 @@ public:
 
     void wait_discovery();
 
-    void matched();
+    void matched(
+            bool is_pub);
+
+    /**
+     * Sends a request without checking the matching status.
+     *
+     * @param number The number to send.
+     */
+    void direct_send(
+            const uint16_t number);
 
     void send(
             const uint16_t number);
+
+    void send(
+            const uint16_t number,
+            std::function<void(eprosima::fastdds::dds::rpc::Requester*,
+            eprosima::fastdds::dds::rpc::RequestInfo* info,
+            void*)> send_evaluator);
 
     void send(
             const uint16_t number,
@@ -114,7 +129,8 @@ private:
     eprosima::fastdds::dds::WaitSet wait_set_;
 
     bool initialized_;
-    unsigned int matched_;
+    unsigned int pub_matched_;
+    unsigned int sub_matched_;
     eprosima::fastdds::rtps::SampleIdentity related_sample_identity_;
     eprosima::fastdds::rtps::SampleIdentity received_sample_identity_;
 

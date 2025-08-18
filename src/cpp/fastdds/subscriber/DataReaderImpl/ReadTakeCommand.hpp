@@ -180,6 +180,18 @@ struct ReadTakeCommand
             ++it;
         }
 
+        // Check if there is a state notification sample available
+        if (!finished_ && instance_->second->has_state_notification_sample)
+        {
+            // Add sample and info to collections
+            bool deserialization_error = false;
+            bool added = add_sample(nullptr, deserialization_error);
+            if (added && take_samples)
+            {
+                instance_->second->has_state_notification_sample = false;
+            }
+        }
+
         if (current_slot_ > first_slot)
         {
             history_.instance_viewed_nts(instance_->second);
@@ -247,6 +259,7 @@ struct ReadTakeCommand
         info.sample_identity.writer_guid(item->writerGUID);
         info.sample_identity.sequence_number(item->sequenceNumber);
         info.related_sample_identity = item->write_params.sample_identity();
+        info.has_more_replies = item->write_params.has_more_replies();
 
         info.valid_data = true;
 
@@ -394,7 +407,34 @@ private:
         }
 
         SampleInfo& info = sample_infos_[current_slot_];
-        generate_info(info, *instance_->second, item);
+        const DataReaderInstance& instance = *instance_->second;
+        if (item)
+        {
+            generate_info(info, instance, item);
+        }
+        else
+        {
+            fastdds::rtps::Time_t current_time;
+            fastdds::rtps::Time_t::now(current_time);
+
+            info.sample_state = NOT_READ_SAMPLE_STATE;
+            info.instance_state = instance.instance_state;
+            info.view_state = instance.view_state;
+            info.disposed_generation_count = instance.disposed_generation_count;
+            info.no_writers_generation_count = instance.no_writers_generation_count;
+            info.sample_rank = 0;
+            info.generation_rank = 0;
+            info.absolute_generation_rank = 0;
+            info.source_timestamp = current_time;
+            info.reception_timestamp = current_time;
+            info.instance_handle = instance_->first;
+            info.publication_handle = HANDLE_NIL;
+
+            info.sample_identity = rtps::SampleIdentity{};
+            info.related_sample_identity = rtps::SampleIdentity{};
+
+            info.valid_data = false;
+        }
     }
 
     bool check_datasharing_validity(

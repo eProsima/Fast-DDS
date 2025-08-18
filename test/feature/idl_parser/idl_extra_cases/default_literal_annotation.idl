@@ -1,0 +1,45 @@
+enum default_literal_ann_valid_enum
+{
+    ENUM_VALUE_1,
+    @default_literal ENUM_VALUE_2
+};
+
+enum default_literal_ann_multiple_default_members
+{
+    ENUM_VALUE_1,
+    @default_literal ENUM_VALUE_2,
+    @default_literal ENUM_VALUE_3
+};
+
+enum default_literal_ann_extra_parameter
+{
+    ENUM_VALUE_1,
+    @default_literal(value = "extra") ENUM_VALUE_2
+};
+
+@default_literal enum default_literal_ann_on_enum
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+struct default_literal_ann_on_struct_member
+{
+    @default_literal long invalid_member;
+};
+
+union default_literal_ann_on_union_member switch(long)
+{
+    case 0:
+        @default_literal long invalid_member;
+    default:
+        float invalid_member;
+};
+
+union default_literal_ann_on_union_discriminator switch(@default_literal long)
+{
+    case 0:
+        long first;
+    default:
+        string second;
+};

@@ -18,6 +18,9 @@
 #include <fastdds/dds/rpc/interfaces.hpp>
 #include <fastdds/dds/rpc/RemoteExceptionCode_t.hpp>
 
+#include "ReqRepHelloWorldReplier.hpp"
+#include "ReqRepHelloWorldRequester.hpp"
+
 namespace rpc = eprosima::fastdds::dds::rpc;
 
 TEST(RPC, ExceptionCodes)
@@ -127,4 +130,109 @@ TEST(RPC, ThrowExceptions)
     EXPECT_THROW(throw rpc::RemoteUnsupportedError("Still not implemented"), rpc::RemoteUnsupportedError);
     EXPECT_THROW(throw rpc::RemoteUnsupportedError("Still not implemented"), rpc::RpcRemoteException);
     EXPECT_THROW(throw rpc::RemoteUnsupportedError("Still not implemented"), rpc::RpcException);
+}
+
+/**
+ * RPC enhanced discovery algotithm.
+ *
+ * This test checks that the requester correctly behaves when
+ * the replier is still unmatched and the request is sent.
+ */
+TEST(RPC, replier_unmatched_before_sending_request)
+{
+    ReqRepHelloWorldRequester requester;
+    ReqRepHelloWorldReplier replier;
+
+    // Initialize the requester and replier
+    requester.init();
+    ASSERT_TRUE(requester.isInitialized());
+
+    // Write a request, expecting it to fail
+    requester.send(0, [](
+                eprosima::fastdds::dds::rpc::Requester* requester,
+                eprosima::fastdds::dds::rpc::RequestInfo* info,
+                void* request)
+            {
+                ASSERT_EQ(requester->send_request(request,
+                *info), eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET);
+            });
+
+    auto future_send = std::async(std::launch::async, [&requester]()
+                    {
+                        // Write a request, this time matching after 300ms
+                        requester.send(0);
+                    });
+
+    // At the same time, initialize the replier
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    replier.init();
+    ASSERT_TRUE(replier.isInitialized());
+
+    // The requester should now be able to receive the reply
+    requester.block(std::chrono::seconds(5));
+}
+
+/**
+ * RPC enhanced discovery algotithm.
+ *
+ * Requester is unmatched during request processing in the server side.
+ * This test checks that after waiting for the timeout, the send_reply()
+ * fails.
+ */
+TEST(RPC, requester_unmatched_during_request_processing)
+{
+    std::shared_ptr<ReqRepHelloWorldRequester> requester = std::make_shared<ReqRepHelloWorldRequester>();
+
+    std::condition_variable replier_finished_cv;
+    std::atomic<bool> finished{false};
+    std::mutex replier_finished_mutex;
+    eprosima::fastdds::dds::Duration_t reply_elapsed;
+
+    // Simulate a Replier with heavy processing
+    ReqRepHelloWorldReplier replier
+        ([&replier_finished_cv, &finished, &reply_elapsed](eprosima::fastdds::dds::rpc::RequestInfo& info,
+            eprosima::fastdds::dds::rpc::Replier* replier,
+            const void* const request)
+            {
+                // Simulate heavy processing
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+                const HelloWorld* hello_request = static_cast<const HelloWorld*>(request);
+                ASSERT_EQ(hello_request->message().compare("HelloWorld"), 0);
+                HelloWorld reply;
+
+                Duration_t t0, t1;
+                Duration_t::now(t0);
+
+                // send_reply() should fail because the requester will be unmatched
+                ASSERT_EQ(replier->send_reply((void*)&reply, info), eprosima::fastdds::dds::RETCODE_NO_DATA);
+                finished.store(true);
+                Duration_t::now(t1);
+                reply_elapsed = t1 - t0;
+                replier_finished_cv.notify_one();
+            });
+
+    // Initialize the requester and replier
+    requester->init();
+    ASSERT_TRUE(requester->isInitialized());
+    replier.init();
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery
+    requester->wait_discovery();
+    replier.wait_discovery();
+
+    // Write a request
+    requester->send(0);
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    requester.reset();
+
+    // Wait for the replier to finish processing
+    std::unique_lock<std::mutex> lock(replier_finished_mutex);
+    replier_finished_cv.wait(lock, [&finished]()
+            {
+                return finished.load();
+            });
+    ASSERT_TRUE(finished.load());
+    // Check that the reply took at least the wait_matching timeout (3 secs)
+    ASSERT_GT(reply_elapsed, Duration_t{2});
 }

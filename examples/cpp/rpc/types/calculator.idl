@@ -1,0 +1,42 @@
+module calculator_example
+{
+    // This exception will be thrown when an operation result cannot be represented in a long
+    exception OverflowException
+    {
+    };
+
+    // For the filter operation
+    enum FilterKind
+    {
+	    EVEN,  // return even numbers
+        ODD,   // return odd numbers
+        PRIME  // return positive prime numbers
+    };
+
+    interface Calculator
+    {
+        // Returns the minimum and maximum representable values
+        void representation_limits(out long min_value, out long max_value);
+
+        // Returns the result of value1 + value2
+        long addition(in long value1, in long value2) raises (OverflowException);
+
+        // Returns the result of value1 - value2
+        long subtraction(in long value1, in long value2) raises (OverflowException);
+
+        // Returns a feed of results with the n_results first elements of the Fibonacci sequence
+        // E.g. for an input of 5, returns a feed with {1, 1, 2, 3, 5}
+        @feed long fibonacci_seq(in unsigned long n_results) raises (OverflowException);
+
+        // Waits for an input feed to finish and returns the sum of all the received values
+        // E.g. for an input of {1, 2, 3, 4, 5} returns 15
+        long sum_all(@feed in long value) raises (OverflowException);
+
+        // Returns a feed of results with the sum of all received values
+        // E.g. for an input of {1, 2, 3, 4, 5}, returns a feed with {1, 3, 6, 10, 15}
+        @feed long accumulator(@feed in long value) raises (OverflowException);
+
+        // Returns a feed of results with the received values that match the input filter kind
+        @feed long filter(@feed in long value, in FilterKind filter_kind);
+    };
+};

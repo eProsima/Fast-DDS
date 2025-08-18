@@ -134,6 +134,7 @@ public:
      * @param only_multicast_purpose multicast network interface
      * @param whitelisted network interface included in the user whitelist
      * @param max_blocking_time_point maximum blocking time.
+     * @param transport_priority Transport priority to be used for the send operation.
      *
      * @pre Open the output channel of each remote locator by invoking \ref OpenOutputChannel function.
      */
@@ -145,7 +146,8 @@ public:
             LocatorsIterator* destination_locators_end,
             bool only_multicast_purpose,
             bool whitelisted,
-            const std::chrono::steady_clock::time_point& max_blocking_time_point);
+            const std::chrono::steady_clock::time_point& max_blocking_time_point,
+            const int32_t transport_priority);
 
     /**
      * Performs the locator selection algorithm for this transport.
@@ -197,7 +199,7 @@ protected:
     friend class UDPChannelResource;
 
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
-    asio::io_service io_service_;
+    asio::io_context io_context_;
 
     mutable std::recursive_mutex mInputMapMutex;
     std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;

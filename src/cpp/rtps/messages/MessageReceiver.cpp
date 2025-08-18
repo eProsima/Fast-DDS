@@ -867,28 +867,10 @@ bool MessageReceiver::proc_Submsg_Data(
         uint32_t next_pos = msg->pos + payload_size;
         if (msg->length >= next_pos && payload_size > 0)
         {
-            FASTDDS_TODO_BEFORE(3, 3, "Pass keyFlag in serializedPayload, and always pass input data upwards");
-            if (dataFlag)
-            {
-                ch.serializedPayload.data = &msg->buffer[msg->pos];
-                ch.serializedPayload.length = payload_size;
-                ch.serializedPayload.max_size = payload_size;
-            }
-            else // keyFlag would be true since we are inside an if (dataFlag || keyFlag)
-            {
-                if (payload_size <= PARAMETER_KEY_HASH_LENGTH)
-                {
-                    if (!ch.instanceHandle.isDefined())
-                    {
-                        memcpy(ch.instanceHandle.value, &msg->buffer[msg->pos], payload_size);
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Ignoring Serialized Payload for too large key-only data (" <<
-                            payload_size << ")");
-                }
-            }
+            ch.serializedPayload.data = &msg->buffer[msg->pos];
+            ch.serializedPayload.length = payload_size;
+            ch.serializedPayload.max_size = payload_size;
+            ch.serializedPayload.is_serialized_key = keyFlag;
             msg->pos = next_pos;
         }
         else
@@ -977,6 +959,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
     CacheChange_t ch;
+    ch.kind = ALIVE;
     ch.writerGUID.guidPrefix = source_guid_prefix_;
     valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
 
@@ -1046,49 +1029,24 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     // Validations??? XXX TODO
 
-    if (!keyFlag)
+    uint32_t next_pos = msg->pos + payload_size;
+    if (msg->length >= next_pos && payload_size > 0)
     {
-        uint32_t next_pos = msg->pos + payload_size;
-        if (msg->length >= next_pos && payload_size > 0)
-        {
-            ch.kind = ALIVE;
-            ch.serializedPayload.data = &msg->buffer[msg->pos];
-            ch.serializedPayload.length = payload_size;
-            ch.serializedPayload.max_size = payload_size;
-            ch.setFragmentSize(fragmentSize);
+        ch.serializedPayload.data = &msg->buffer[msg->pos];
+        ch.serializedPayload.length = payload_size;
+        ch.serializedPayload.max_size = payload_size;
+        ch.serializedPayload.is_serialized_key = keyFlag;
+        ch.setFragmentSize(fragmentSize);
 
-            msg->pos = next_pos;
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
-                    "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
-            ch.serializedPayload.data = nullptr;
-            ch.inline_qos.data = nullptr;
-            return false;
-        }
+        msg->pos = next_pos;
     }
-    else if (keyFlag)
+    else
     {
-        /* XXX TODO
-           Endianness_t previous_endian = msg->msg_endian;
-           if (ch->serializedPayload.encapsulation == PL_CDR_BE)
-           msg->msg_endian = BIGEND;
-           else if (ch->serializedPayload.encapsulation == PL_CDR_LE)
-           msg->msg_endian = LITTLEEND;
-           else
-           {
-           EPROSIMA_LOG_ERROR(RTPS_MSG_IN, IDSTRING"Bad encapsulation for KeyHash and status parameter list");
-           return false;
-           }
-           //uint32_t param_size;
-           if (ParameterList::readParameterListfromCDRMsg(msg, &m_ParamList, ch, false) <= 0)
-           {
-           EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING"SubMessage Data ERROR, keyFlag ParameterList");
-           return false;
-           }
-           msg->msg_endian = previous_endian;
-         */
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
+                "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
+        ch.serializedPayload.data = nullptr;
+        ch.inline_qos.data = nullptr;
+        return false;
     }
 
     // Set sourcetimestamp

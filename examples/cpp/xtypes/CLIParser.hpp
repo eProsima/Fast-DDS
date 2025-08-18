@@ -45,6 +45,7 @@ public:
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         uint16_t samples = 0;
+        uint16_t matched = 1;
         bool use_xml = false;
     };
 
@@ -74,6 +75,8 @@ public:
         std::cout << "                                  The xml file to use must be set "          << std::endl;
         std::cout << "                                  through environment variable."             << std::endl;
         std::cout << "                                  (Default: Types defined with C++ API) "    << std::endl;
+        std::cout << "  -m,       --matched             Number of participants to discover"        << std::endl;
+        std::cout << "                                  before start publishing (Default: 1)"      << std::endl;
         std::exit(return_code);
     }
 
@@ -178,6 +181,40 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --xml-type flag");
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-m" || arg == "--matched")
+            {
+                try
+                {
+                    int input = std::stoi(argv[++i]);
+                    if (input < std::numeric_limits<std::uint16_t>::min() ||
+                            input > std::numeric_limits<std::uint16_t>::max())
+                    {
+                        throw std::out_of_range("matched argument out of range");
+                    }
+                    else
+                    {
+                        if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                        {
+                            config.matched = static_cast<uint16_t>(input);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "matched can only be used with the publisher entity");
+                            print_help(EXIT_FAILURE);
+                        }
+                    }
+                }
+                catch (const std::invalid_argument& e)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg + ": " + e.what());
+                    print_help(EXIT_FAILURE);
+                }
+                catch (const std::out_of_range& e)
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "sample argument out of range for " + arg + ": " + e.what());
                     print_help(EXIT_FAILURE);
                 }
             }

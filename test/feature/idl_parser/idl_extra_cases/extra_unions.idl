@@ -1,0 +1,20 @@
+// Union with scoped discriminator
+module MyModule
+{
+    enum ScopedEnumHelper
+    {
+        ENUM_VALUE_1,
+        ENUM_VALUE_2,
+        ENUM_VALUE_3
+    };
+};
+
+union UnionScopedDiscriminator switch (MyModule::ScopedEnumHelper)
+{
+    case MyModule::ENUM_VALUE_1:
+        long first;
+    case MyModule::ENUM_VALUE_2:
+        long long second;
+    default:
+        octet third;
+};

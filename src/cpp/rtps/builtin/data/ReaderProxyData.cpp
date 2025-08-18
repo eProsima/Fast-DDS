@@ -120,6 +120,8 @@ ReaderProxyData& ReaderProxyData::operator =(
 
     type_information = readerInfo.type_information;
 
+    related_datawriter_key = readerInfo.related_datawriter_key;
+
     if (readerInfo.history)
     {
         history = readerInfo.history;
@@ -208,7 +210,8 @@ void ReaderProxyData::init(
 }
 
 uint32_t ReaderProxyData::get_serialized_size(
-        bool include_encapsulation) const
+        bool include_encapsulation,
+        bool force_including_optional_qos) const
 {
     uint32_t ret_val = include_encapsulation ? 4 : 0;
 
@@ -320,6 +323,12 @@ uint32_t ReaderProxyData::get_serialized_size(
                 dds::QosPoliciesSerializer<dds::xtypes::TypeInformationParameter>::cdr_serialized_size(
             type_information);
     }
+
+    if (related_datawriter_key != c_Guid_Unknown)
+    {
+        ret_val += 4 + PARAMETER_GUID_LENGTH;
+    }
+
     if (dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::should_be_sent(type_consistency))
     {
         ret_val += dds::QosPoliciesSerializer<dds::TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
@@ -370,7 +379,7 @@ uint32_t ReaderProxyData::get_serialized_size(
     }
 
     // Send the optional QoS policies if they are enabled
-    if (should_send_optional_qos())
+    if (force_including_optional_qos || should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
@@ -408,7 +417,8 @@ uint32_t ReaderProxyData::get_serialized_size(
 
 bool ReaderProxyData::write_to_cdr_message(
         CDRMessage_t* msg,
-        bool write_encapsulation) const
+        bool write_encapsulation,
+        bool force_write_optional_qos) const
 {
     if (write_encapsulation)
     {
@@ -686,6 +696,15 @@ bool ReaderProxyData::write_to_cdr_message(
         }
     }
 
+    if (related_datawriter_key != c_Guid_Unknown)
+    {
+        ParameterGuid_t p(fastdds::dds::PID_RELATED_ENTITY_GUID, PARAMETER_GUID_LENGTH, related_datawriter_key);
+        if (!dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
+        {
+            return false;
+        }
+    }
+
     if (dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::should_be_sent(history))
     {
         if (!dds::QosPoliciesSerializer<dds::HistoryQosPolicy>::add_to_cdr_message(
@@ -696,7 +715,7 @@ bool ReaderProxyData::write_to_cdr_message(
     }
 
     // Send the optional QoS policies if they are enabled
-    if (should_send_optional_qos())
+    if (force_write_optional_qos || should_send_optional_qos())
     {
         if (dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::should_be_sent(resource_limits))
         {
@@ -995,7 +1014,7 @@ bool ReaderProxyData::read_from_cdr_message(
                             return false;
                         }
 
-                        remote_locators.add_unicast_locator(p.locator);
+                        remote_locators.add_multicast_locator(p.locator);
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
@@ -1076,7 +1095,18 @@ bool ReaderProxyData::read_from_cdr_message(
                         }
                         break;
                     }
+                    case fastdds::dds::PID_RELATED_ENTITY_GUID:
+                    {
+                        ParameterGuid_t p(pid, plength);
+                        if (!dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(
+                                    p, msg, plength))
+                        {
+                            return false;
+                        }
 
+                        related_datawriter_key = p.guid;
+                        break;
+                    }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
@@ -1183,13 +1213,19 @@ bool ReaderProxyData::read_from_cdr_message(
 
                     case fastdds::dds::PID_RESOURCE_LIMITS:
                     {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == vendor_id) ? c_VendorId_eProsima : vendor_id);
+                        }
+
                         if (!resource_limits)
                         {
                             resource_limits.reset(true);
                         }
 
                         if (!dds::QosPoliciesSerializer<dds::ResourceLimitsQosPolicy>::read_from_cdr_message(
-                                    resource_limits.value(), msg, plength))
+                                    local_vendor_id, resource_limits.value(), msg, plength))
                         {
                             EPROSIMA_LOG_ERROR(RTPS_READER_PROXY_DATA,
                                     "Received with error.");
@@ -1435,6 +1471,7 @@ void ReaderProxyData::clear()
     lifespan.clear();
     disable_positive_acks.clear();
     representation.clear();
+    related_datawriter_key = c_Guid_Unknown;
     type_consistency.clear();
     type_information.clear();
     data_sharing.clear();

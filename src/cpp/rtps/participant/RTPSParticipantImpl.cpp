@@ -232,6 +232,25 @@ static bool get_unique_flows_parameters(
     return true;
 }
 
+/**
+ * @brief This method checks if the maximum message size is equal or higher than the PDP package size.
+ * @return true if the maximum message size is equal or higher than the PDP package size, false otherwise.
+ */
+static bool is_max_message_size_big_enough(
+        const uint32_t max_message_size)
+{
+    constexpr uint32_t info_dst_message_length = 16;
+    constexpr uint32_t info_ts_message_length = 12;
+    uint32_t statistics_message_length = 0;
+#ifdef FASTDDS_STATISTICS
+    statistics_message_length = eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif // FASTDDS_STATISTICS
+
+    return max_message_size >=
+           (RTPSMESSAGE_HEADER_SIZE + BUILTIN_DATA_MAX_SIZE + info_dst_message_length +
+           info_ts_message_length + statistics_message_length);
+}
+
 Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
         Locator_t& loc)
 {
@@ -482,6 +501,14 @@ bool RTPSParticipantImpl::setup_transports()
                 register_transport = false;
             }
         }
+        auto max_message_size = transportDescriptor->max_message_size();
+        if (!is_max_message_size_big_enough(max_message_size))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                    "User transport failed to register. Maximum message size needs to be equal or higher than "
+                    "the PDP package size.");
+            register_transport = false;
+        }
 
         bool transport_registered = register_transport && m_network_Factory.RegisterTransport(
             transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag);
@@ -497,12 +524,12 @@ bool RTPSParticipantImpl::setup_transports()
         if (transport_registered)
         {
             has_shm_transport_ |=
-                    (dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
+                    (nullptr != dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()));
         }
         else
         {
             // SHM transport could be disabled
-            if ((dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr))
+            if ((nullptr != dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get())))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                         "Unable to Register SHM Transport. SHM Transport is not supported in"
@@ -975,6 +1002,7 @@ bool RTPSParticipantImpl::create_writer(
         if (!m_security_manager.register_local_writer(SWriter->getGuid(),
                 param.endpoint.properties, SWriter->getAttributes().security_attributes()))
         {
+            SWriter->local_actions_on_writer_removed();
             delete(SWriter);
             return false;
         }
@@ -984,6 +1012,7 @@ bool RTPSParticipantImpl::create_writer(
         if (!m_security_manager.register_local_builtin_writer(SWriter->getGuid(),
                 SWriter->getAttributes().security_attributes()))
         {
+            SWriter->local_actions_on_writer_removed();
             delete(SWriter);
             return false;
         }
@@ -1111,6 +1140,7 @@ bool RTPSParticipantImpl::create_reader(
         if (!m_security_manager.register_local_reader(SReader->getGuid(),
                 param.endpoint.properties, SReader->getAttributes().security_attributes()))
         {
+            SReader->local_actions_on_reader_removed();
             delete(SReader);
             return false;
         }
@@ -1120,6 +1150,7 @@ bool RTPSParticipantImpl::create_reader(
         if (!m_security_manager.register_local_builtin_reader(SReader->getGuid(),
                 SReader->getAttributes().security_attributes()))
         {
+            SReader->local_actions_on_reader_removed();
             delete(SReader);
             return false;
         }
@@ -1453,18 +1484,23 @@ dds::ReturnCode_t RTPSParticipantImpl::register_reader(
 
 bool RTPSParticipantImpl::should_send_optional_qos() const
 {
-    bool should_send_opt_qos = false;
-    if (m_att.properties.properties().size() > 0)
+    if (should_send_optional_qos_ < 0) // not evaluated yet
     {
-        const Property* const serialize_optional_qos_property =
-                PropertyPolicyHelper::get_property(m_att.properties, fastdds::dds::parameter_serialize_optional_qos);
-
-        if (serialize_optional_qos_property != nullptr)
+        should_send_optional_qos_ = false;
+        if (m_att.properties.properties().size() > 0)
         {
-            should_send_opt_qos = PropertyParser::as_bool(*serialize_optional_qos_property);
+            const Property* const serialize_optional_qos_property =
+                    PropertyPolicyHelper::get_property(m_att.properties,
+                            fastdds::dds::parameter_serialize_optional_qos);
+
+            if (serialize_optional_qos_property != nullptr)
+            {
+                should_send_optional_qos_ = PropertyParser::as_bool(*serialize_optional_qos_property);
+            }
         }
     }
-    return should_send_opt_qos;
+
+    return should_send_optional_qos_ > 0;
 }
 
 void RTPSParticipantImpl::update_attributes(
@@ -2674,6 +2710,13 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
             if (locals.empty())
             {
                 IPFinder::getIP4Address(&locals);
+                // If no local interfaces found, use localhost
+                if (locals.empty())
+                {
+                    Locator_t loc_lo;
+                    IPLocator::setIPv4(loc_lo, "127.0.0.1");
+                    locals.push_back(loc_lo);
+                }
             }
 
             // add a locator for each local

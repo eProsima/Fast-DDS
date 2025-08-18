@@ -81,6 +81,7 @@ static CacheChange_t* create_change_for_message(
         WriterHistory* history)
 {
     uint32_t cdr_size = static_cast<uint32_t>(ParticipantGenericMessageHelper::serialized_size(message));
+    cdr_size += (4 - (cdr_size % 4)) & (4 - 1); // Align to 4 bytes
     cdr_size += 4; // Encapsulation
     return history->create_change(cdr_size, ALIVE, c_InstanceHandle_Unknown);
 }
@@ -235,7 +236,8 @@ bool SecurityManager::init(
                                 part_attributes,
                                 participant_->getGuid(),
                                 exception);
-            } while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
+            }
+            while (ret == VALIDATION_PENDING_RETRY && usleep_bool());
 
             if (ret == VALIDATION_OK)
             {

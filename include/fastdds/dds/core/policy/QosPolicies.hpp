@@ -1984,8 +1984,6 @@ public:
 /**
  * This policy is a hint to the infrastructure as to how to set the priority of the underlying transport used to send the data.
  *
- * @warning This QosPolicy can be defined and is transmitted to the rest of the network but is not implemented in this version.
- *
  * @note Mutable Qos Policy
  */
 class TransportPriorityQosPolicy : public Parameter_t, public QosPolicy
@@ -1993,7 +1991,7 @@ class TransportPriorityQosPolicy : public Parameter_t, public QosPolicy
 public:
 
     //!Priority <br> By default, 0.
-    uint32_t value;
+    int32_t value;
 
     /**
      * @brief Constructor

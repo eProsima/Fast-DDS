@@ -67,4 +67,21 @@ add_custom_command(
     TARGET IdlParserTests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL ${CMAKE_CURRENT_BINARY_DIR}/IDL
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_structures.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_unions.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/appendable_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extensibility_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/final_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/id_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/key_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/mutable_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/optional_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/position_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/bit_bound_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/external_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/nested_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/try_construct_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/value_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_literal_annotation.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
 )

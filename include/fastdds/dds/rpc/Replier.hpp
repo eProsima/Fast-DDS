@@ -50,7 +50,12 @@ public:
      *
      * @param data Data to send
      * @param info Information about the reply sample. This information is used to match the reply with the request through the SampleIdentity
-     * @return RETCODE_OK if the reply was sent successfully or a ReturnCode related to the specific error otherwise
+     *
+     * @return RETCODE_OK if the reply was sent successfully
+     * @return RETCODE_PRECONDITION_NOT_MET if the replier is not enabled
+     * @return RETCODE_NO_DATA if the requester that sent the request has disconnected (this usually means that the reply can be dropped)
+     * @return RETCODE_TIMEOUT if waiting for the requester to be fully matched timed out
+     * @return a ReturnCode from the underlying DataWriter
      */
     virtual ReturnCode_t send_reply(
             void* data,

@@ -804,12 +804,14 @@ TEST_F(XMLEndpointParserTests, lookforReader)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLNode(xml_doc));
 
-    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforReader("HelloWorldPublisher", 3, &rdataptr));
+    uint32_t position {100};
+    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforReader("HelloWorldPublisher", 3, &rdataptr, position));
     ASSERT_NE(rdataptr, nullptr);
     EXPECT_EQ(rdataptr->topic_name, "HelloWorldTopic");
     EXPECT_EQ(rdataptr->topic_kind, TopicKind_t::WITH_KEY);
     EXPECT_EQ(rdataptr->type_name, "HelloWorld");
     EXPECT_EQ(rdataptr->has_locators(), true);
+    EXPECT_EQ(0u, position);
 
     // Locators
     Locator_t uni_loc;
@@ -822,7 +824,7 @@ TEST_F(XMLEndpointParserTests, lookforReader)
     multi_loc.port = static_cast<uint16_t>(7000);
     EXPECT_EQ(rdataptr->remote_locators.multicast[0],  multi_loc);
 
-    ASSERT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->lookforReader("WrongName", 15, &rdataptr));
+    ASSERT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->lookforReader("WrongName", 15, &rdataptr, position));
 }
 
 /*
@@ -856,11 +858,13 @@ TEST_F(XMLEndpointParserTests, lookforWriter)
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     EXPECT_EQ(XMLP_ret::XML_OK, mp_edpXML->loadXMLNode(xml_doc));
 
-    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforWriter("HelloWorldPublisher", 3, &wdataptr));
+    uint32_t position {100};
+    ASSERT_EQ(XMLP_ret::XML_OK, mp_edpXML->lookforWriter("HelloWorldPublisher", 3, &wdataptr, position));
     EXPECT_EQ(wdataptr->topic_name, "HelloWorldTopic");
     EXPECT_EQ(wdataptr->topic_kind, TopicKind_t::WITH_KEY);
     EXPECT_EQ(wdataptr->type_name, "HelloWorld");
     EXPECT_EQ(wdataptr->has_locators(), true);
+    EXPECT_EQ(0u, position);
 
     // Locators
     Locator_t uni_loc;
@@ -873,7 +877,7 @@ TEST_F(XMLEndpointParserTests, lookforWriter)
     multi_loc.port = static_cast<uint16_t>(7000);
     EXPECT_EQ(wdataptr->remote_locators.multicast[0],  multi_loc);
 
-    ASSERT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->lookforWriter("WrongName", 15, &wdataptr));
+    ASSERT_EQ(XMLP_ret::XML_ERROR, mp_edpXML->lookforWriter("WrongName", 15, &wdataptr, position));
 }
 
 

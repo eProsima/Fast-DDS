@@ -96,6 +96,8 @@ target_include_directories(BlackboxTests_RTPS PRIVATE
     ${Asio_INCLUDE_DIR})
 target_link_libraries(BlackboxTests_RTPS fastdds fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
+    PROPERTIES
+            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
     TEST_PREFIX "BlackboxTests_RTPS."
     TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
     NO_PRETTY_VALUES
@@ -154,10 +156,8 @@ if(W_UNICAST_PORT_RANDOM_NUMBER LESS 1025)
 endif()
 math(EXPR R_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 1")
 math(EXPR MULTICAST_PORT_RANDOM_NUMBER "${R_UNICAST_PORT_RANDOM_NUMBER} + 1")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriter_static_disc.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter_static_disc.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader_static_disc.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader_static_disc.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/RTPSParticipant_static_disc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/RTPSParticipant_static_disc.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriterPersistence_static_disc.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriterPersistence_static_disc.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReaderPersistence_static_disc.xml.in
@@ -178,10 +178,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builtin_transports_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/builtin_transports_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/auth_handshake_props_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/auth_handshake_props_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/security_bug_participant_generic_message.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/security_bug_participant_generic_message.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/discovery_participants_initial_peers_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/discovery_participants_initial_peers_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/discovery_participants_client_server_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/discovery_participants_client_server_profile.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/transport_priority_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/transport_priority_profile.xml)
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 if(FASTDDS_PIM_API_TESTS)
