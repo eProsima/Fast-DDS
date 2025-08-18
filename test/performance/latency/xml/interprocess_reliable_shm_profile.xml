@@ -28,6 +28,13 @@
                     <kind>KEEP_LAST</kind>
                     <depth>2500</depth>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>5000</max_samples>
+                    <max_instances>10</max_instances>
+                    <max_samples_per_instance>400</max_samples_per_instance>
+                    <allocated_samples>2500</allocated_samples>
+                    <extra_samples>1</extra_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
@@ -70,6 +77,13 @@
                     <kind>KEEP_LAST</kind>
                     <depth>2500</depth>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>5000</max_samples>
+                    <max_instances>10</max_instances>
+                    <max_samples_per_instance>400</max_samples_per_instance>
+                    <allocated_samples>2500</allocated_samples>
+                    <extra_samples>1</extra_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <disablePositiveAcks>
@@ -123,6 +137,13 @@
                     <kind>KEEP_LAST</kind>
                     <depth>2500</depth>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>5000</max_samples>
+                    <max_instances>10</max_instances>
+                    <max_samples_per_instance>400</max_samples_per_instance>
+                    <allocated_samples>2500</allocated_samples>
+                    <extra_samples>1</extra_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
@@ -165,6 +186,13 @@
                     <kind>KEEP_LAST</kind>
                     <depth>2500</depth>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>5000</max_samples>
+                    <max_instances>10</max_instances>
+                    <max_samples_per_instance>400</max_samples_per_instance>
+                    <allocated_samples>2500</allocated_samples>
+                    <extra_samples>1</extra_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <disablePositiveAcks>
