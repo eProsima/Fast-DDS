@@ -232,8 +232,9 @@ public:
             rtps::CDRMessage_t* cdr_message,
             const rtps::GUID_t& original_guid)
     {
-        // A GUID takes 16 bytes: 12 of prefix plus 4 of entity plus 4 for the PID and length.
-        uint32_t required_size = 12 + 4 + 4; // 12 for the guid prefix, 4 for the entity id, and 4 for PID and length
+        // A GUID takes 16 bytes: 12 of prefix plus 4 of entity
+        // The PID and the length take 4 bytes: 2 for PID and 2 for length
+        uint32_t required_size = 16 + 4;
         if (cdr_message->pos + required_size > cdr_message->max_size)
         {
             return false;

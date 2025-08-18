@@ -236,7 +236,7 @@ public:
      *
      * @return The GUID of the original writer.
      */
-    GUID_t original_writer_guid() const
+    GUID_t& original_writer_guid() const
     {
         return original_writer_guid_;
     }
@@ -249,10 +249,34 @@ public:
      * @return Reference to the modified object in order to allow daisy chaining.
      */
     WriteParams& original_writer_guid(
-            GUID_t original_writer)
+            const GUID_t &original_writer)
     {
         original_writer_guid_ = original_writer;
         return *this;
+    }
+
+    /*!
+     * @brief Set the GUID of the original writer using move semantics
+     *
+     * @param original_writer_guid  New value for the original_writer_guid member.
+     *
+     * @return Reference to the modified object in order to allow daisy chaining.
+     */
+    WriteParams& original_writer_guid(
+            GUID_t&& original_writer_guid)
+    {
+        original_writer_guid_ = std::move(original_writer_guid);
+        return *this;
+    }
+
+    /*!
+     * @brief Get the GUID of the original writer.
+     *
+     * @return The GUID of the original writer.
+     */
+    const GUID_t& original_writer_guid() const
+    {
+        return original_writer_guid_;
     }
 
     static WriteParams WRITE_PARAM_DEFAULT;
