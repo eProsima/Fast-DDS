@@ -21,8 +21,7 @@
         <data_writer profile_name="pub_publisher_profile">
             <topic>
                 <historyQos>
-                    <kind>KEEP_LAST</kind>
-                    <depth>2500</depth>
+                    <kind>KEEP_ALL</kind>
                 </historyQos>
             </topic>
             <qos>
@@ -40,8 +39,7 @@
         <data_reader profile_name="pub_subscriber_profile">
             <topic>
                 <historyQos>
-                    <kind>KEEP_LAST</kind>
-                    <depth>2500</depth>
+                    <kind>KEEP_ALL</kind>
                 </historyQos>
             </topic>
             <qos>
@@ -77,8 +75,7 @@
         <data_writer profile_name="sub_publisher_profile">
             <topic>
                 <historyQos>
-                    <kind>KEEP_LAST</kind>
-                    <depth>2500</depth>
+                    <kind>KEEP_ALL</kind>
                 </historyQos>
             </topic>
             <qos>
@@ -96,8 +93,7 @@
         <data_reader profile_name="sub_subscriber_profile">
             <topic>
                 <historyQos>
-                    <kind>KEEP_LAST</kind>
-                    <depth>2500</depth>
+                    <kind>KEEP_ALL</kind>
                 </historyQos>
             </topic>
             <qos>
