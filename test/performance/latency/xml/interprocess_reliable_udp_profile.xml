@@ -26,6 +26,11 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
@@ -44,6 +49,11 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
@@ -74,6 +84,11 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
@@ -92,6 +107,11 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
             </topic>
             <qos>
                 <reliability>
