@@ -26,8 +26,22 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>40000</max_samples>
+                    <!-- <max_instances>10</max_instances> -->
+                    <max_samples_per_instance>40000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                    <!-- <extra_samples>1</extra_samples> -->
+                </resourceLimitsQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>5</sec>
+                    </duration>
+                </disablePositiveAcks>
+                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -44,8 +58,18 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>40000</max_samples>
+                    <!-- <max_instances>10</max_instances> -->
+                    <max_samples_per_instance>40000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                    <!-- <extra_samples>1</extra_samples> -->
+                </resourceLimitsQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -74,8 +98,22 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>40000</max_samples>
+                    <!-- <max_instances>10</max_instances> -->
+                    <max_samples_per_instance>40000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                    <!-- <extra_samples>1</extra_samples> -->
+                </resourceLimitsQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>5</sec>
+                    </duration>
+                </disablePositiveAcks>
+                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -92,8 +130,18 @@
                 <historyQos>
                     <kind>KEEP_ALL</kind>
                 </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>40000</max_samples>
+                    <!-- <max_instances>10</max_instances> -->
+                    <max_samples_per_instance>40000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                    <!-- <extra_samples>1</extra_samples> -->
+                </resourceLimitsQos>
             </topic>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
