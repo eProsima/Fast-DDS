@@ -34,14 +34,19 @@
                     <!-- <extra_samples>1</extra_samples> -->
                 </resourceLimitsQos>
             </topic>
+            <times>
+                <heartbeat_period>
+                    <nanosec>10000000</nanosec>
+                </heartbeat_period>
+            </times>
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                     <duration>
                         <sec>5</sec>
                     </duration>
                 </disablePositiveAcks>
-                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
+                <disable_heartbeat_piggyback>false</disable_heartbeat_piggyback>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -68,7 +73,7 @@
             </topic>
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                 </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -106,14 +111,19 @@
                     <!-- <extra_samples>1</extra_samples> -->
                 </resourceLimitsQos>
             </topic>
+            <times>
+                <heartbeat_period>
+                    <nanosec>10000000</nanosec>
+                </heartbeat_period>
+            </times>
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                     <duration>
                         <sec>5</sec>
                     </duration>
                 </disablePositiveAcks>
-                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
+                <disable_heartbeat_piggyback>false</disable_heartbeat_piggyback>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -140,7 +150,7 @@
             </topic>
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                 </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>

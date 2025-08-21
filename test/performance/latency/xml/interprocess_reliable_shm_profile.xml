@@ -31,14 +31,30 @@
                     <!-- <extra_samples>1</extra_samples> -->
                 </resourceLimitsQos>
             </topic>
+            <times>
+                <!-- <initial_heartbeat_delay>
+                    <nanosec>800000000</nanosec>
+                </initial_heartbeat_delay> -->
+                <heartbeat_period>
+                    <nanosec>10000000</nanosec>
+                </heartbeat_period>
+                <!-- <nack_response_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_response_delay>
+                <nack_supression_duration>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_supression_duration> -->
+            </times>
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                     <duration>
                         <sec>5</sec>
                     </duration>
                 </disablePositiveAcks>
-                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
+                <disable_heartbeat_piggyback>false</disable_heartbeat_piggyback>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -63,7 +79,20 @@
                     <!-- <extra_samples>1</extra_samples> -->
                 </resourceLimitsQos>
             </topic>
+            <times>
+                <!-- <nack_response_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_response_delay>
+                <nack_supression_duration>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_supression_duration> -->
+            </times>
             <qos>
+                <disablePositiveAcks>
+                    <enabled>false</enabled>
+                </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -106,14 +135,31 @@
                     <!-- <extra_samples>1</extra_samples> -->
                 </resourceLimitsQos>
             </topic>
+            <times>
+                <!-- <initial_heartbeat_delay>
+                    <nanosec>800000000</nanosec>
+                </initial_heartbeat_delay> -->
+                <heartbeat_period>
+                    <nanosec>10000000</nanosec>
+                </heartbeat_period>
+                <!-- <nack_response_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_response_delay>
+                <nack_supression_duration>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_supression_duration> -->
+            </times>
+
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                     <duration>
                         <sec>5</sec>
                     </duration>
                 </disablePositiveAcks>
-                <disable_heartbeat_piggyback>true</disable_heartbeat_piggyback>
+                <disable_heartbeat_piggyback>false</disable_heartbeat_piggyback>
                 <reliability>
                     <kind>RELIABLE</kind>
                 </reliability>
@@ -138,9 +184,20 @@
                     <!-- <extra_samples>1</extra_samples> -->
                 </resourceLimitsQos>
             </topic>
+            <times>
+                <!-- <nack_response_delay>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_response_delay>
+                <nack_supression_duration>
+                    <sec>1</sec>
+                    <nanosec>856000</nanosec>
+                </nack_supression_duration> -->
+            </times>
+
             <qos>
                 <disablePositiveAcks>
-                    <enabled>true</enabled>
+                    <enabled>false</enabled>
                 </disablePositiveAcks>
                 <reliability>
                     <kind>RELIABLE</kind>
