@@ -99,7 +99,7 @@ public:
     static constexpr uint32_t PARAMETER_KEY_SIZE = 20u;
     static constexpr uint32_t PARAMETER_SENTINEL_SIZE = 4u;
     static constexpr uint32_t PARAMETER_SAMPLE_IDENTITY_SIZE = 28u;
-    static constexpr uint32_t PARAMETER_ORIGINAL_WRITER_INFO_SIZE = 20u;
+    static constexpr uint32_t PARAMETER_ORIGINAL_WRITER_INFO_SIZE = 28u;
 
     static bool add_parameter_status(
             rtps::CDRMessage_t* cdr_message,
@@ -230,20 +230,27 @@ public:
      */
     static inline bool add_parameter_original_writer(
             rtps::CDRMessage_t* cdr_message,
-            const rtps::GUID_t& original_guid)
+            const rtps::OriginalWriterInfo& original_writer_info)
     {
         // A GUID takes 16 bytes: 12 of prefix plus 4 of entity
+        // A Sequence number takes 8 bytes: 4 for high and 4 for low
+        //
         // The PID and the length take 4 bytes: 2 for PID and 2 for length
-        uint32_t required_size = 16 + 4;
+        uint32_t required_size = 24 + 4;
         if (cdr_message->pos + required_size > cdr_message->max_size)
         {
             return false;
         }
 
         rtps::CDRMessage::addUInt16(cdr_message, dds::PID_ORIGINAL_WRITER_INFO);
-        rtps::CDRMessage::addUInt16(cdr_message, 16);
-        rtps::CDRMessage::addData(cdr_message, original_guid.guidPrefix.value, rtps::GuidPrefix_t::size);
-        rtps::CDRMessage::addData(cdr_message, original_guid.entityId.value, rtps::EntityId_t::size);
+        rtps::CDRMessage::addUInt16(cdr_message, PARAMETER_ORIGINAL_WRITER_INFO_SIZE - 4);
+        rtps::CDRMessage::addData(cdr_message,
+             original_writer_info.original_writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
+        rtps::CDRMessage::addData(cdr_message,
+             original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
+        rtps::CDRMessage::addInt32(cdr_message, original_writer_info.sequence_number().high);
+        rtps::CDRMessage::addUInt32(cdr_message, original_writer_info.sequence_number().low);
+        // NOTE: original_writer_qos_ is not serialized because is not currently used
         return true;
     }
 

@@ -28,6 +28,7 @@
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/common/OriginalWriterInfo.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 
 namespace eprosima {
@@ -79,7 +80,7 @@ struct SampleInfo
     InstanceHandle_t publication_handle;
 
     //! Original publication handle
-    InstanceHandle_t original_publication_handle;
+    rtps::OriginalWriterInfo original_publication_info;
 
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;

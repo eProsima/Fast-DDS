@@ -122,7 +122,10 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                             return false;
                         }
 
-                        change.write_params.original_writer_guid(p.guid);
+                        fastdds::rtps::OriginalWriterInfo original_writer_info;
+                        original_writer_info.original_writer_guid(p.guid);
+                        // SequenceNumber and original_writer_qos are left to default
+                        change.write_params.original_writer_info(original_writer_info);
                         break;
                     }
 

@@ -21,6 +21,7 @@
 #include <memory>
 
 #include <fastdds/rtps/common/SampleIdentity.hpp>
+#include <fastdds/rtps/common/OriginalWriterInfo.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 
 namespace eprosima {
@@ -232,51 +233,26 @@ public:
     }
 
     /*!
-     * @brief Get the GUID of the original writer.
-     *
-     * @return The GUID of the original writer.
+     * @brief Get the Original Writer Info.
+     * @return Constant reference to the original_writer_info_ member.
      */
-    GUID_t& original_writer_guid() const
+    const OriginalWriterInfo& original_writer_info() const
     {
-        return original_writer_guid_;
+        return original_writer_info_;
     }
 
     /*!
-     * @brief Set the GUID of the original writer.
+     * @brief Set the Original Writer Info of the original writer.
      *
-     * @param original_writer  New value for the original_writer_guid member.
+     * @param original_writer  New value for the original_writer_info_ member.
      *
      * @return Reference to the modified object in order to allow daisy chaining.
      */
-    WriteParams& original_writer_guid(
-            const GUID_t &original_writer)
+    WriteParams& original_writer_info(
+            const OriginalWriterInfo &original_writer)
     {
-        original_writer_guid_ = original_writer;
+        original_writer_info_ = original_writer;
         return *this;
-    }
-
-    /*!
-     * @brief Set the GUID of the original writer using move semantics
-     *
-     * @param original_writer_guid  New value for the original_writer_guid member.
-     *
-     * @return Reference to the modified object in order to allow daisy chaining.
-     */
-    WriteParams& original_writer_guid(
-            GUID_t&& original_writer_guid)
-    {
-        original_writer_guid_ = std::move(original_writer_guid);
-        return *this;
-    }
-
-    /*!
-     * @brief Get the GUID of the original writer.
-     *
-     * @return The GUID of the original writer.
-     */
-    const GUID_t& original_writer_guid() const
-    {
-        return original_writer_guid_;
     }
 
     static WriteParams WRITE_PARAM_DEFAULT;
@@ -322,7 +298,7 @@ private:
     /// Flag to indicate if there are more replies
     bool has_more_replies_ = false;
     /// Attribute that holds the GUID of the original writer
-    GUID_t original_writer_guid_ = GUID_t::unknown();
+    OriginalWriterInfo original_writer_info_;
 };
 
 }  // namespace rtps

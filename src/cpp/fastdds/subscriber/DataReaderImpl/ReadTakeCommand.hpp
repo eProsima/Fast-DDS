@@ -260,7 +260,7 @@ struct ReadTakeCommand
         info.sample_identity.sequence_number(item->sequenceNumber);
         info.related_sample_identity = item->write_params.sample_identity();
         info.has_more_replies = item->write_params.has_more_replies();
-        info.original_publication_handle = item->write_params.original_writer_guid();
+        info.original_publication_info = item->write_params.original_writer_info();
 
         info.valid_data = true;
 

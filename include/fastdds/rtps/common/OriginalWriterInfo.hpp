@@ -21,13 +21,11 @@
 
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/core/policy/ParameterList.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 class FASTDDS_EXPORTED_API OriginalWriterInfo
 {
@@ -37,21 +35,17 @@ public:
 
     OriginalWriterInfo(
             const GUID_t& original_writer_guid,
-            const SequenceNumber_t& sequence_number,
-            const ParameterList& original_writer_qos)
+            const SequenceNumber_t& sequence_number)
         : original_writer_guid_(original_writer_guid)
         , sequence_number_(sequence_number)
-        , original_writer_qos_(original_writer_qos)
     {
     }
 
     OriginalWriterInfo(
             GUID_t&& original_writer_guid,
-            SequenceNumber_t&& sequence_number,
-            ParameterList&& original_writer_qos)
+            SequenceNumber_t&& sequence_number)
         : original_writer_guid_(std::move(original_writer_guid))
         , sequence_number_(std::move(sequence_number))
-        , original_writer_qos_(std::move(original_writer_qos))
     {
     }
 
@@ -67,19 +61,6 @@ public:
     OriginalWriterInfo& operator =(
             OriginalWriterInfo&& other) = default;
 
-    bool operator ==(
-            const OriginalWriterInfo& other) const
-    {
-        return (original_writer_guid_ == other.original_writer_guid_) &&
-               (sequence_number_ == other.sequence_number_) &&
-               (original_writer_qos_ == other.original_writer_qos_);
-    }
-
-    bool operator !=(
-            const OriginalWriterInfo& other) const
-    {
-        return !(*this == other);
-    }
 
     const GUID_t& original_writer_guid() const
     {
@@ -125,26 +106,44 @@ public:
         sequence_number_ = std::move(seq);
     }
 
-    const ParameterList& original_writer_qos() const
+    // const ParameterList& original_writer_qos() const
+    // {
+    //     return original_writer_qos_;
+    // }
+
+    // ParameterList& original_writer_qos()
+    // {
+    //     return original_writer_qos_;
+    // }
+
+    // void original_writer_qos(
+    //         const ParameterList& qos)
+    // {
+    //     original_writer_qos_ = qos;
+    // }
+
+    // void original_writer_qos(
+    //         ParameterList&& qos)
+    // {
+    //     original_writer_qos_ = std::move(qos);
+    // }
+
+    static OriginalWriterInfo unknown()
     {
-        return original_writer_qos_;
+        return OriginalWriterInfo();
     }
 
-    ParameterList& original_writer_qos()
+    bool operator ==(
+            const OriginalWriterInfo& other) const
     {
-        return original_writer_qos_;
+        return (original_writer_guid_ == other.original_writer_guid_) &&
+               (sequence_number_ == other.sequence_number_);
     }
 
-    void original_writer_qos(
-            const ParameterList& qos)
+    bool operator !=(
+            const OriginalWriterInfo& other) const
     {
-        original_writer_qos_ = qos;
-    }
-
-    void original_writer_qos(
-            ParameterList&& qos)
-    {
-        original_writer_qos_ = std::move(qos);
+        return !(*this == other);
     }
 
 private:
@@ -153,7 +152,8 @@ private:
 
     SequenceNumber_t sequence_number_ = SequenceNumber_t::unknown();
 
-    ParameterList original_writer_qos_;
+    // This attribute is not used in the current Fast DDS implementation.
+    // ParameterList original_writer_qos_;
 };
 
 } //namespace rtps
