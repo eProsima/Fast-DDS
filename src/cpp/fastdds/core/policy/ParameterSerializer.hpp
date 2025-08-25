@@ -99,7 +99,7 @@ public:
     static constexpr uint32_t PARAMETER_KEY_SIZE = 20u;
     static constexpr uint32_t PARAMETER_SENTINEL_SIZE = 4u;
     static constexpr uint32_t PARAMETER_SAMPLE_IDENTITY_SIZE = 28u;
-    static constexpr uint32_t PARAMETER_ORIGINAL_WRITER_INFO_SIZE = 28u;
+    static constexpr uint32_t PARAMETER_ORIGINAL_WRITER_INFO_SIZE = 32u;
 
     static bool add_parameter_status(
             rtps::CDRMessage_t* cdr_message,
@@ -234,9 +234,10 @@ public:
     {
         // A GUID takes 16 bytes: 12 of prefix plus 4 of entity
         // A Sequence number takes 8 bytes: 4 for high and 4 for low
-        //
+        // An empty parameter list takes 4 bytes (the end sentinel and 0 as len)
         // The PID and the length take 4 bytes: 2 for PID and 2 for length
-        uint32_t required_size = 24 + 4;
+
+        uint32_t required_size = PARAMETER_ORIGINAL_WRITER_INFO_SIZE;
         if (cdr_message->pos + required_size > cdr_message->max_size)
         {
             return false;
@@ -250,7 +251,12 @@ public:
              original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
         rtps::CDRMessage::addInt32(cdr_message, original_writer_info.sequence_number().high);
         rtps::CDRMessage::addUInt32(cdr_message, original_writer_info.sequence_number().low);
-        // NOTE: original_writer_qos_ is not serialized because is not currently used
+
+        // NOTE: original_writer_qos_ is not serialized because it is not currently used,
+        // but an empty ParameterList is serialized as a placeholder for future implementations.
+        // The end sentinel is added to be fully compliant
+        add_parameter_sentinel(cdr_message);
+
         return true;
     }
 
@@ -902,6 +908,46 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
                     parameter.sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
     valid &= rtps::CDRMessage::readInt32(cdr_message, &parameter.sample_id.sequence_number().high);
     valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
+
+    return valid;
+}
+
+template<>
+inline bool ParameterSerializer<ParameterOriginalWriterInfo_t>::add_content_to_cdr_message(
+        const ParameterOriginalWriterInfo_t& parameter,
+        rtps::CDRMessage_t* cdr_message)
+{
+    bool valid = rtps::CDRMessage::addData(cdr_message,
+                    parameter.original_writer_info.original_writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
+    valid &= rtps::CDRMessage::addData(cdr_message,
+                    parameter.original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
+    valid &= rtps::CDRMessage::addInt32(cdr_message, parameter.original_writer_info.sequence_number().high);
+    valid &= rtps::CDRMessage::addUInt32(cdr_message, parameter.original_writer_info.sequence_number().low);
+
+    // If anyone has to implement original_writer_qos_ serialization, this is the place to do it.
+
+    return valid;
+}
+
+template<>
+inline bool ParameterSerializer<ParameterOriginalWriterInfo_t>::read_content_from_cdr_message(
+        ParameterOriginalWriterInfo_t& parameter,
+        rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length < PARAMETER_ORIGINALWRITERINFO_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    bool valid = rtps::CDRMessage::readData(cdr_message,
+                    parameter.original_writer_info.original_writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
+    valid &= rtps::CDRMessage::readData(cdr_message,
+                    parameter.original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
+    valid &= rtps::CDRMessage::readInt32(cdr_message, &parameter.original_writer_info.sequence_number().high);
+    valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.original_writer_info.sequence_number().low);
+
+    // If anyone has to implement original_writer_qos_ deserialization, this is the place to do it.
 
     return valid;
 }

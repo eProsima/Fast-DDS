@@ -114,18 +114,19 @@ bool ParameterList::updateCacheChangeFromInlineQos(
 
                     case PID_ORIGINAL_WRITER_INFO:
                     {
-
-                        ParameterGuid_t p(pid, plength);
-                        if (!dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(p,
-                                msg, plength))
+                        /* A valid original writer info must have, at least, 24 bytes */
+                        if (plength >= 24)
                         {
-                            return false;
+                            ParameterOriginalWriterInfo_t p(pid, plength);
+                            if (!dds::ParameterSerializer<ParameterOriginalWriterInfo_t>::read_from_cdr_message(p,
+                                    msg, plength))
+                            {
+                                return false;
+                            }
+
+                            change.write_params.original_writer_info(p.original_writer_info);
                         }
 
-                        fastdds::rtps::OriginalWriterInfo original_writer_info;
-                        original_writer_info.original_writer_guid(p.guid);
-                        // SequenceNumber and original_writer_qos are left to default
-                        change.write_params.original_writer_info(original_writer_info);
                         break;
                     }
 

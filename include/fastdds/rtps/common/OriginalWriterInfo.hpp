@@ -152,7 +152,9 @@ private:
 
     SequenceNumber_t sequence_number_ = SequenceNumber_t::unknown();
 
-    // This attribute is not used in the current Fast DDS implementation.
+    // NOTE: Even though the standard define the QoS of the original writer as a ParameterList
+    // in this class, they are not used in the current Fast DDS implementation. However, an empty
+    // ParameterList is serialized as a placeholder for future implementations.
     // ParameterList original_writer_qos_;
 };
 
