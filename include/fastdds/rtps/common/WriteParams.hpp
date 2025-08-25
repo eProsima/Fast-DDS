@@ -242,6 +242,15 @@ public:
     }
 
     /*!
+     * @brief Get the Original Writer Info.
+     * @return Constant reference to the original_writer_info_ member.
+     */
+    OriginalWriterInfo& original_writer_info()
+    {
+        return original_writer_info_;
+    }
+
+    /*!
      * @brief Set the Original Writer Info of the original writer.
      *
      * @param original_writer  New value for the original_writer_info_ member.
