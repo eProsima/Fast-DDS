@@ -639,7 +639,7 @@ TEST(DDSBasic, check_original_writer_field)
     // First, check field existence
     ASSERT_TRUE(exists_pid_original_writer);
     // Second, check field value
-    ASSERT_EQ(eprosima::fastdds::rtps::iHandle2GUID(info.original_publication_info.original_writer_guid()),
+    ASSERT_EQ(eprosima::fastdds::rtps::iHandle2GUID(info.original_writer_info.original_writer_guid()),
             eprosima::fastdds::rtps::GUID_t(custom_prefix, 0x12345678));
 }
 

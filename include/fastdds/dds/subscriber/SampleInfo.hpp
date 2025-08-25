@@ -79,8 +79,8 @@ struct SampleInfo
     //! Is the same InstanceHandle_t that is returned by the operation get_matched_publications on the DataReader
     InstanceHandle_t publication_handle;
 
-    //! Original publication handle
-    rtps::OriginalWriterInfo original_publication_info;
+    //! Original writer handle
+    rtps::OriginalWriterInfo original_writer_info;
 
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;
