@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file OriginalWriterInfo_t.hpp
+ * @file OriginalWriterInfo.hpp
  */
 
 #ifndef FASTDDS_RTPS_COMMON__ORIGINALWRITERINFO_HPP
