@@ -1241,8 +1241,8 @@ void StatefulReader::NotifyChanges(
         ++total_unread_;
 
         // Statistics callback is called with the original writer GUID if it is set
-        auto statistics_source_guid = aux_ch->write_params.original_writer_guid() != GUID_t::unknown() ?
-                aux_ch->write_params.original_writer_guid() : proxGUID;
+        auto statistics_source_guid = aux_ch->write_params.original_writer_info() != OriginalWriterInfo::unknown() ?
+                aux_ch->write_params.original_writer_info().original_writer_guid() : proxGUID;
 
         on_data_notify(statistics_source_guid, aux_ch->sourceTimestamp);
 

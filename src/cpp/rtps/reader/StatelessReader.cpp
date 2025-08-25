@@ -384,8 +384,8 @@ bool StatelessReader::change_received(
 
 
             // Statistics callback is called with the original writer GUID if it is set
-            auto statistics_source_guid = change->write_params.original_writer_guid() != GUID_t::unknown() ?
-                    change->write_params.original_writer_guid() : guid;
+            auto statistics_source_guid = change->write_params.original_writer_info() != OriginalWriterInfo::unknown() ?
+                    change->write_params.original_writer_info().original_writer_guid() : guid;
 
             on_data_notify(statistics_source_guid, change->sourceTimestamp);
 
