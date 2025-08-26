@@ -70,6 +70,10 @@ public:
 
     void wait_discovery();
 
+    void wait_discovery(
+            unsigned int min_pub_matched,
+            unsigned int min_sub_matched);
+
     void matched(
             bool is_pub);
 
