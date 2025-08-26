@@ -25,6 +25,7 @@
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/rpc/RequestInfo.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
@@ -210,9 +211,15 @@ ReturnCode_t RequesterImpl::create_dds_entities(
         return RETCODE_ERROR;
     }
 
+    ContentFilteredTopic* reply_topic = service_->get_reply_filtered_topic();
+
     requester_reader_ =
             service_->get_subscriber()->create_datareader(
+<<<<<<< HEAD
         service_->get_reply_filtered_topic(), qos.reader_qos, nullptr);
+=======
+        reply_topic, qos.reader_qos, this, StatusMask::subscription_matched());
+>>>>>>> 5e01f498 (Set different content filter signatures for each requester (#5972))
 
     if (!requester_reader_)
     {
@@ -220,6 +227,19 @@ ReturnCode_t RequesterImpl::create_dds_entities(
         return RETCODE_ERROR;
     }
 
+<<<<<<< HEAD
+=======
+    // Set the content filter signature to be different from the one used in other requesters
+    std::stringstream guid;
+    guid << requester_reader_->guid();
+    std::vector<std::string> expression_parameters;
+    reply_topic->set_filter_expression(guid.str(), expression_parameters);
+
+    // Set the related entity key on both entities
+    requester_reader_->set_related_datawriter(requester_writer_);
+    requester_writer_->set_related_datareader(requester_reader_);
+
+>>>>>>> 5e01f498 (Set different content filter signatures for each requester (#5972))
     return RETCODE_OK;
 }
 

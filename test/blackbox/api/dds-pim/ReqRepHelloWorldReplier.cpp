@@ -115,13 +115,24 @@ void ReqRepHelloWorldReplier::newNumber(
 
 void ReqRepHelloWorldReplier::wait_discovery()
 {
+    wait_discovery(1, 1);
+}
+
+void ReqRepHelloWorldReplier::wait_discovery(
+        unsigned int min_pub_matched,
+        unsigned int min_sub_matched)
+{
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
     std::cout << "Replier is waiting discovery..." << std::endl;
 
     cvDiscovery_.wait(lock, [&]()
             {
+<<<<<<< HEAD
                 return matched_ > 1;
+=======
+                return pub_matched_ >= min_pub_matched && sub_matched_ >= min_sub_matched;
+>>>>>>> 5e01f498 (Set different content filter signatures for each requester (#5972))
             });
 
     std::cout << "Replier discovery finished..." << std::endl;
