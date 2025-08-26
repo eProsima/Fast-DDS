@@ -225,7 +225,8 @@ public:
     void end_sample_access_nts(
             CacheChange_t* change,
             WriterProxy*& writer,
-            bool mark_as_read) override;
+            bool mark_as_read,
+            bool should_send_ack = false) override;
 
     /**
      * @brief Fills the provided vector with the GUIDs of the matched writers.
