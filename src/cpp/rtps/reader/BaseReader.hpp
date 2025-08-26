@@ -228,7 +228,8 @@ public:
     virtual void end_sample_access_nts(
             fastdds::rtps::CacheChange_t* change,
             fastdds::rtps::WriterProxy*& writer,
-            bool mark_as_read) = 0;
+            bool mark_as_read,
+            bool should_send_ack = false) = 0;
 
     /**
      * @brief A method to update the liveliness changed status of the reader
