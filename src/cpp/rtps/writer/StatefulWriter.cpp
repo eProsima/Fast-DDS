@@ -1486,30 +1486,47 @@ void StatefulWriter::check_acked_status()
                         min_seq : next_all_acked_notify_sequence_;
 
                 // The iterator starts pointing to the change inmediately after min_low_mark
-                --cit;
-
+                //--cit;
+                auto nit = history_->changesBegin();
                 do
                 {
-                    // Avoid notifying changes before next_all_acked_notify_sequence_
-                    CacheChange_t* change = *cit;
+                    CacheChange_t* change = *nit;
                     seq = change->sequenceNumber;
                     if (seq < next_all_acked_notify_sequence_)
                     {
-                        break;
+                        nit++;
+                        continue;
                     }
 
-                    // Change iterator before it possibly becomes invalidated
-                    if (cit != history_->changesBegin())
-                    {
-                        --cit;
-                    }
+                    nit--;
 
-                    // Notify reception of change (may remove that change on VOLATILE writers)
+                      // Notify reception of change (may remove that change on VOLATILE writers)
                     listener_->on_writer_change_received_by_all(this, change);
+                    nit++;
+                } while (seq > end_seq);
 
-                    // Stop if we got to either next_all_acked_notify_sequence_ or the first change
-                }
-                while (seq > end_seq);
+                // do
+                // {
+                //         // Avoid notifying changes before next_all_acked_notify_sequence_
+                //         CacheChange_t* change = *cit;
+                //         seq = change->sequenceNumber;
+                //         if (seq < next_all_acked_notify_sequence_)
+                //         {
+                //             break;
+                //         }
+
+                //         // Change iterator before it possibly becomes invalidated
+                //         if (cit != history_->changesBegin())
+                //         {
+                //             --cit;
+                //         }
+
+                //         // Notify reception of change (may remove that change on VOLATILE writers)
+                //         listener_->on_writer_change_received_by_all(this, change);
+
+                //         // Stop if we got to either next_all_acked_notify_sequence_ or the first change
+                //     }
+                //     while (seq > end_seq);
             }
 
             next_all_acked_notify_sequence_ = min_low_mark + 1;
