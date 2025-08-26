@@ -135,13 +135,20 @@ void ReqRepHelloWorldReplier::init_with_custom_qos(
 
 void ReqRepHelloWorldReplier::wait_discovery()
 {
+    wait_discovery(1, 1);
+}
+
+void ReqRepHelloWorldReplier::wait_discovery(
+        unsigned int min_pub_matched,
+        unsigned int min_sub_matched)
+{
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
     std::cout << "Replier is waiting discovery..." << std::endl;
 
     cvDiscovery_.wait(lock, [&]()
             {
-                return pub_matched_ > 0 && sub_matched_ > 0;
+                return pub_matched_ >= min_pub_matched && sub_matched_ >= min_sub_matched;
             });
 
     std::cout << "Replier discovery finished..." << std::endl;

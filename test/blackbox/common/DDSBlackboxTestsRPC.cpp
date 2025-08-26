@@ -236,3 +236,37 @@ TEST(RPC, requester_unmatched_during_request_processing)
     // Check that the reply took at least the wait_matching timeout (3 secs)
     ASSERT_GT(reply_elapsed, Duration_t{2});
 }
+
+/**
+ * Test RPC communication with multiple requesters and one replier.
+ *
+ * This test checks that multiple requesters can send requests to a single replier
+ * and receive replies correctly.
+ */
+TEST(RPC, multiple_requesters_one_replier)
+{
+    ReqRepHelloWorldRequester requester_1;
+    ReqRepHelloWorldRequester requester_2;
+    ReqRepHelloWorldReplier replier;
+
+    // Initialize the requesters and the replier
+    requester_1.init();
+    ASSERT_TRUE(requester_1.isInitialized());
+    requester_2.init();
+    ASSERT_TRUE(requester_2.isInitialized());
+    replier.init();
+    ASSERT_TRUE(replier.isInitialized());
+
+    // Wait for discovery
+    requester_1.wait_discovery();
+    requester_2.wait_discovery();
+    replier.wait_discovery(2, 2);
+
+    // Send requests from both requesters
+    requester_1.send(1);
+    requester_2.send(2);
+
+    // Block to wait for replies
+    requester_1.block(std::chrono::seconds(5));
+    requester_2.block(std::chrono::seconds(5));
+}
