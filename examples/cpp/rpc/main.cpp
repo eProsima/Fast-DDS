@@ -37,9 +37,8 @@ using eprosima::fastdds::dds::Log;
 using namespace eprosima::fastdds::examples::rpc;
 
 std::function<void(int)> stop_app_handler;
-std::mutex stop_app_mtx;
-std::condition_variable stop_app_cv;
 std::atomic<bool> stop_requested {false};
+std::atomic<int> received_signum {0};
 
 void signal_handler(
         int signum)
@@ -73,11 +72,8 @@ int main(
 
         stop_app_handler = [&](int signum)
                 {
-                    client_server_info("main",
-                            CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
-
+                    received_signum.store(signum);
                     stop_requested.store(true);
-                    stop_app_cv.notify_all();
                 };
 
         signal(SIGINT, signal_handler);
@@ -89,6 +85,27 @@ int main(
 
         client_server_info("main",
                 app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
+
+        while (true)
+        {
+            if (app->is_stopped())
+            {
+                break;
+            }
+            else if (stop_requested.load())
+            {
+                client_server_info("main",
+                        CLIParser::parse_signal(
+                            received_signum.load()) << " received, stopping " << app_name << " execution.");
+
+                app->stop();
+                break;
+            }
+            else
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
 
         thread.join();
     }
