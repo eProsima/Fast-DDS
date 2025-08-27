@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,27 +106,6 @@ public:
         sequence_number_ = std::move(seq);
     }
 
-    // const ParameterList& original_writer_qos() const
-    // {
-    //     return original_writer_qos_;
-    // }
-
-    // ParameterList& original_writer_qos()
-    // {
-    //     return original_writer_qos_;
-    // }
-
-    // void original_writer_qos(
-    //         const ParameterList& qos)
-    // {
-    //     original_writer_qos_ = qos;
-    // }
-
-    // void original_writer_qos(
-    //         ParameterList&& qos)
-    // {
-    //     original_writer_qos_ = std::move(qos);
-    // }
 
     static OriginalWriterInfo unknown()
     {

@@ -1752,7 +1752,7 @@ class ParameterOriginalWriterInfo_t : public Parameter_t
 {
 public:
 
-    //!Sample Identity <br> By default, unknown.
+    //! Original Writer Info <br> By default, unknown.
     fastdds::rtps::OriginalWriterInfo original_writer_info;
 
     /**

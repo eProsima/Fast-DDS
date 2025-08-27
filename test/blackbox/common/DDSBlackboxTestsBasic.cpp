@@ -561,6 +561,7 @@ bool check_original_writer_field(
             if (PID_ORIGINAL_WRITER_INFO == pid)
             {
                 exists_pid_original_writer = true;
+                break;
             }
         }
     }
