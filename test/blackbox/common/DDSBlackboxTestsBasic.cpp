@@ -480,7 +480,6 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     DataWriter& native_writer = reliable_writer.get_native_writer();
 
     HelloWorld data;
-    // Send reply associating it with the client request.
     eprosima::fastdds::rtps::WriteParams write_params;
     eprosima::fastdds::rtps::SampleIdentity related_sample_identity_;
     eprosima::fastdds::rtps::GUID_t unknown_guid;
@@ -608,7 +607,6 @@ TEST(DDSBasic, check_original_writer_field)
     DataWriter& native_writer = reliable_writer.get_native_writer();
 
     HelloWorld data;
-    // Send reply associating it with the client request.
     eprosima::fastdds::rtps::WriteParams write_params;
 
     // Example prefix to check emission
@@ -801,7 +799,6 @@ TEST(DDSBasic, PidRpcMoreReplies)
     DataWriter& native_writer = reliable_writer.get_native_writer();
 
     HelloWorld data;
-    // Send reply associating it with the client request.
     eprosima::fastdds::rtps::WriteParams write_params;
     write_params.has_more_replies(true);
 
