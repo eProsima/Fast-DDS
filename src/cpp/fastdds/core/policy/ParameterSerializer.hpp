@@ -913,23 +913,6 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
 }
 
 template<>
-inline bool ParameterSerializer<ParameterOriginalWriterInfo_t>::add_content_to_cdr_message(
-        const ParameterOriginalWriterInfo_t& parameter,
-        rtps::CDRMessage_t* cdr_message)
-{
-    bool valid = rtps::CDRMessage::addData(cdr_message,
-                    parameter.original_writer_info.original_writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
-    valid &= rtps::CDRMessage::addData(cdr_message,
-                    parameter.original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
-    valid &= rtps::CDRMessage::addInt32(cdr_message, parameter.original_writer_info.sequence_number().high);
-    valid &= rtps::CDRMessage::addUInt32(cdr_message, parameter.original_writer_info.sequence_number().low);
-
-    // If anyone has to implement original_writer_qos_ serialization, this is the place to do it.
-
-    return valid;
-}
-
-template<>
 inline bool ParameterSerializer<ParameterOriginalWriterInfo_t>::read_content_from_cdr_message(
         ParameterOriginalWriterInfo_t& parameter,
         rtps::CDRMessage_t* cdr_message,

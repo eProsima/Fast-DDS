@@ -684,7 +684,6 @@ TEST(DDSBasic, check_unset_original_writer_field)
     DataWriter& native_writer = reliable_writer.get_native_writer();
 
     HelloWorld data;
-    // Send reply associating it with the client request.
     eprosima::fastdds::rtps::WriteParams write_params;
 
     // Publish the value with original_writer_guid set to a valid GUID
