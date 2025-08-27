@@ -106,7 +106,6 @@ public:
         sequence_number_ = std::move(seq);
     }
 
-
     static OriginalWriterInfo unknown()
     {
         return OriginalWriterInfo();
@@ -140,4 +139,4 @@ private:
 } //namespace rtps
 } //namespace fastdds
 } //namespace eprosima
-#endif
+#endif // ifndef FASTDDS_RTPS_COMMON__ORIGINALWRITERINFO_HPP

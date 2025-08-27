@@ -246,9 +246,9 @@ public:
         rtps::CDRMessage::addUInt16(cdr_message, dds::PID_ORIGINAL_WRITER_INFO);
         rtps::CDRMessage::addUInt16(cdr_message, PARAMETER_ORIGINAL_WRITER_INFO_SIZE - 4);
         rtps::CDRMessage::addData(cdr_message,
-             original_writer_info.original_writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
+                original_writer_info.original_writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
         rtps::CDRMessage::addData(cdr_message,
-             original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
+                original_writer_info.original_writer_guid().entityId.value, rtps::EntityId_t::size);
         rtps::CDRMessage::addInt32(cdr_message, original_writer_info.sequence_number().high);
         rtps::CDRMessage::addUInt32(cdr_message, original_writer_info.sequence_number().low);
 

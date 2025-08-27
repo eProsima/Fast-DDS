@@ -258,7 +258,7 @@ public:
      * @return Reference to the modified object in order to allow daisy chaining.
      */
     WriteParams& original_writer_info(
-            const OriginalWriterInfo &original_writer)
+            const OriginalWriterInfo& original_writer)
     {
         original_writer_info_ = original_writer;
         return *this;
