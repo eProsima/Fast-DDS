@@ -231,11 +231,6 @@ public:
     // Results
     bool success = false;
 
-    Context()
-        : Context([](DynamicTypeBuilder::_ref_type) { return true; })
-    {
-    }
-
     explicit Context(
             std::function<bool(DynamicTypeBuilder::_ref_type)> on_type_dcl_builder_created)
         : on_type_dcl_builder_created_(on_type_dcl_builder_created)

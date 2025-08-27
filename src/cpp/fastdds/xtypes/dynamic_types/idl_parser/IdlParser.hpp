@@ -2571,7 +2571,7 @@ public:
     Context parse(
             const std::string& idl_string)
     {
-        Context context;
+        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
         parse(idl_string, context);
         return context;
     }
@@ -2629,7 +2629,7 @@ public:
     Context parse_file(
             const std::string& idl_file)
     {
-        Context context;
+        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
         parse_file(idl_file, context);
         return context;
     }
@@ -2672,7 +2672,7 @@ public:
     Context parse_string(
             const std::string& idl_string)
     {
-        Context context;
+        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
         parse_string(idl_string, context);
         return context;
     }
@@ -2681,7 +2681,7 @@ public:
             const std::string& idl_file,
             const std::vector<std::string>& includes)
     {
-        Context context;
+        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
         context.include_paths = includes;
         return context.preprocess_file(idl_file);
     }
