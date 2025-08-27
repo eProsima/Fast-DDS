@@ -86,13 +86,9 @@ int main(
         client_server_info("main",
                 app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
 
-        while (true)
+        while (!app->is_stopped())
         {
-            if (app->is_stopped())
-            {
-                break;
-            }
-            else if (stop_requested.load())
+            if (stop_requested.load())
             {
                 client_server_info("main",
                         CLIParser::parse_signal(
