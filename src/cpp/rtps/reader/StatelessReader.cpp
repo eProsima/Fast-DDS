@@ -513,7 +513,8 @@ bool StatelessReader::begin_sample_access_nts(
 void StatelessReader::end_sample_access_nts(
         CacheChange_t* change,
         WriterProxy*& /*writer*/,
-        bool mark_as_read)
+        bool mark_as_read,
+        bool /*should_send_ack*/)
 {
     // Mark change as read
     if (mark_as_read && !change->isRead)

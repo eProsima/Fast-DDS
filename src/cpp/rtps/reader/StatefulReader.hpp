@@ -295,14 +295,16 @@ public:
 
     /**
      * Called after the change has been deserialized.
-     * @param [in] change        Pointer to the change being accessed.
-     * @param [in] writer        Writer proxy the @c change belongs to.
-     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
+     * @param [in] change          Pointer to the change being accessed.
+     * @param [in] writer          Writer proxy the @c change belongs to.
+     * @param [in] mark_as_read    Whether the @c change should be marked as read or not.
+     * @param [in] should_send_ack Whether an ACKNACK should be sent to the writer or not.
      */
     void end_sample_access_nts(
             CacheChange_t* change,
             WriterProxy*& writer,
-            bool mark_as_read) override;
+            bool mark_as_read,
+            bool should_send_ack = false) override;
 
     /**
      * @brief Fills the provided vector with the GUIDs of the matched writers.
