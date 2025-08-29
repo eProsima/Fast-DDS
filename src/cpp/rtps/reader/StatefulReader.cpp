@@ -1236,7 +1236,12 @@ void StatefulReader::NotifyChanges(
         assert(false == aux_ch->isRead);
         new_data_available = true;
         ++total_unread_;
-        on_data_notify(proxGUID, aux_ch->sourceTimestamp);
+
+        // Statistics callback is called with the original writer GUID if it is set
+        auto statistics_source_guid = aux_ch->write_params.original_writer_info() != OriginalWriterInfo::unknown() ?
+                aux_ch->write_params.original_writer_info().original_writer_guid() : proxGUID;
+
+        on_data_notify(statistics_source_guid, aux_ch->sourceTimestamp);
 
         ++it;
         do
