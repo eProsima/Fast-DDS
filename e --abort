@@ -1,0 +1,36 @@
+[33md083bca94[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/3.x[m[33m, [m[1;31morigin/3.4.x[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{0}: rebase (start): checkout master
+[33m338d1f498[m[33m ([m[1;31morigin/feature/og-writer-in-statistics[m[33m, [m[1;32mfeature/og-writer-in-statistics[m[33m)[m HEAD@{1}: checkout: moving from master to feature/og-writer-in-statistics
+[33md083bca94[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/3.x[m[33m, [m[1;31morigin/3.4.x[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{2}: checkout: moving from 338d1f4980a047b7a83fe84a056585ecbd996552 to master
+[33m338d1f498[m[33m ([m[1;31morigin/feature/og-writer-in-statistics[m[33m, [m[1;32mfeature/og-writer-in-statistics[m[33m)[m HEAD@{3}: checkout: moving from master to origin/feature/og-writer-in-statistics
+[33md083bca94[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/3.x[m[33m, [m[1;31morigin/3.4.x[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{4}: checkout: moving from feature/og-writer-in-statistics to master
+[33m162a01767[m HEAD@{5}: pull: Merge made by the 'ort' strategy.
+[33m5e6dca78b[m HEAD@{6}: checkout: moving from master to feature/og-writer-in-statistics
+[33md083bca94[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/3.x[m[33m, [m[1;31morigin/3.4.x[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{7}: pull: Fast-forward
+[33maba95a5f9[m HEAD@{8}: checkout: moving from feature/add_original_writer_parameter to master
+[33m12dc42606[m[33m ([m[1;31morigin/feature/add_original_writer_parameter[m[33m, [m[1;32mfeature/add_original_writer_parameter[m[33m)[m HEAD@{9}: commit: Another review
+[33m20ceaad82[m HEAD@{10}: commit: Uncrustify
+[33m1082cb86f[m HEAD@{11}: commit: Refs #23573, applying corrections
+[33m5b03e7fbc[m HEAD@{12}: pull: Fast-forward
+[33mf4c8b84c5[m HEAD@{13}: checkout: moving from master to feature/add_original_writer_parameter
+[33maba95a5f9[m HEAD@{14}: checkout: moving from feature/og-writer-in-statistics to master
+[33m5e6dca78b[m HEAD@{15}: commit: Refs #23573, reflecting changes in original writer info struct
+[33m5d8e6b847[m HEAD@{16}: reset: moving to HEAD^
+[33mb15a274f2[m HEAD@{17}: commit: Refs #23573, reflecting changes in new struct
+[33m5d8e6b847[m HEAD@{18}: merge feature/add_original_writer_parameter: Merge made by the 'ort' strategy.
+[33m785d09f2f[m HEAD@{19}: pull: Fast-forward
+[33m141161b32[m HEAD@{20}: reset: moving to HEAD~1
+[33m785d09f2f[m HEAD@{21}: checkout: moving from feature/add_original_writer_parameter to feature/og-writer-in-statistics
+[33mf4c8b84c5[m HEAD@{22}: commit: Minor change in @file
+[33mbd018923d[m HEAD@{23}: commit: Refs #23573, change misleading name in SampleInfo
+[33m3bc33ecf4[m HEAD@{24}: commit: Refs #27573, implementing empty ParameterList serialization as part of original_writer_info
+[33m0733f5542[m HEAD@{25}: commit: Refs #23573, changing tests to support structure change
+[33m5e6f2b0d7[m HEAD@{26}: commit: Replace original writer guid with dedicated structure
+[33ma0f5099fc[m HEAD@{27}: pull: Merge made by the 'ort' strategy.
+[33m0fa6c9bf8[m HEAD@{28}: commit: Refs #23573 adding OriginalWriterInfo struct
+[33m4a535b6dd[m HEAD@{29}: checkout: moving from feature/original-writer-info to feature/add_original_writer_parameter
+[33m288533eba[m[33m ([m[1;32mfeature/original-writer-info[m[33m)[m HEAD@{30}: reset: moving to HEAD^
+[33me85631ebb[m[33m ([m[1;31morigin/feature/original-writer-info[m[33m)[m HEAD@{31}: commit: Refs #23573 adding OriginalWriterInfo struct
+[33m288533eba[m[33m ([m[1;32mfeature/original-writer-info[m[33m)[m HEAD@{32}: checkout: moving from master to feature/original-writer-info
+[33maba95a5f9[m HEAD@{33}: checkout: moving from feature/add_original_writer_parameter to master
+[33m4a535b6dd[m HEAD@{34}: checkout: moving from 3.3.0 to feature/add_original_writer_parameter
+[33m949401694[m[33m ([m[1;33mtag: [m[1;33mv3.3.0[m[33m, [m[1;31morigin/3.3.0[m[33m, [m[1;32m3.3.0[m[33m)[m HEAD@{35}: clone: from https://github.com/eProsima/Fast-DDS.git
