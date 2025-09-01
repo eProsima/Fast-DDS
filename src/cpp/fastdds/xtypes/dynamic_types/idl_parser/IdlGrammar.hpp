@@ -363,6 +363,8 @@ struct module_dcl : seq<star<annotation_appl>, kw_module, identifier, open_brace
 struct specification : plus<definition> {};
 struct document : seq<opt<ws>, specification, opt<ws>> {};
 
+// *INDENT-ON*
+
 } //namespace idlparser
 } //namespace dds
 } //namespace fastdds

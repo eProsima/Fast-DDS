@@ -196,15 +196,15 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
     traits<DynamicTypeBuilder>::ref_type ret_val;
 
     auto callback = [type_name, &ret_val](traits<DynamicTypeBuilder>::ref_type builder) -> bool
-    {
-        if (builder && (builder->get_name() == type_name))
-        {
-            ret_val = builder;
-            return false;
-        }
+            {
+                if (builder && (builder->get_name() == type_name))
+                {
+                    ret_val = builder;
+                    return false;
+                }
 
-        return true;
-    };
+                return true;
+            };
 
     if (RETCODE_OK != for_each_type_w_uri(document_url, include_paths, callback))
     {
@@ -216,9 +216,9 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
 }
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::for_each_type_w_uri(
-            const std::string& document_url,
-            const IncludePathSeq& include_paths,
-            std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) noexcept
+        const std::string& document_url,
+        const IncludePathSeq& include_paths,
+        std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback) noexcept
 {
     try
     {

@@ -1646,7 +1646,7 @@ struct action<enum_dcl>
             if (RETCODE_OK != builder->add_member(member_descriptor))
             {
                 EPROSIMA_LOG_ERROR(IDLPARSER, "Error adding member to enum: " << scoped_enum_name
-                                                                               << ", member: " << member_name);
+                                                                              << ", member: " << member_name);
                 return;
             }
 
@@ -2438,6 +2438,7 @@ struct action<annotation_param_context_begin>
     {
         state["parsing_annotation_params"] = "true";
     }
+
 };
 
 template<>
@@ -2453,6 +2454,7 @@ struct action<annotation_param_context_end>
         assert(state.count("parsing_annotation_params"));
         state.erase("parsing_annotation_params");
     }
+
 };
 
 
@@ -2571,7 +2573,10 @@ public:
     Context parse(
             const std::string& idl_string)
     {
-        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
+        Context context([](DynamicTypeBuilder::_ref_type)
+                {
+                    return true;
+                });
         parse(idl_string, context);
         return context;
     }
@@ -2629,7 +2634,10 @@ public:
     Context parse_file(
             const std::string& idl_file)
     {
-        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
+        Context context([](DynamicTypeBuilder::_ref_type)
+                {
+                    return true;
+                });
         parse_file(idl_file, context);
         return context;
     }
@@ -2672,7 +2680,10 @@ public:
     Context parse_string(
             const std::string& idl_string)
     {
-        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
+        Context context([](DynamicTypeBuilder::_ref_type)
+                {
+                    return true;
+                });
         parse_string(idl_string, context);
         return context;
     }
@@ -2681,7 +2692,10 @@ public:
             const std::string& idl_file,
             const std::vector<std::string>& includes)
     {
-        Context context([](DynamicTypeBuilder::_ref_type) { return true; });
+        Context context([](DynamicTypeBuilder::_ref_type)
+                {
+                    return true;
+                });
         context.include_paths = includes;
         return context.preprocess_file(idl_file);
     }

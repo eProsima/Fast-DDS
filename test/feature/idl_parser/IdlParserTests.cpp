@@ -2323,7 +2323,8 @@ TEST_F(IdlParserTests, optional_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set optional members using default value, keyword and positional parameters
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/optional_annotation.idl", "optional_ann_valid",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/optional_annotation.idl",
+                    "optional_ann_valid",
                     include_paths);
     DynamicTypeMember::_ref_type member;
     ASSERT_TRUE(builder);
@@ -2367,7 +2368,8 @@ TEST_F(IdlParserTests, position_builtin_annotation)
     // TODO: Add positive/negative test cases with bitmasks when bitmask parsing is supported.
 
     // Negative case: Try to annotate a struct type with @position
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/position_annotation.idl", "position_ann_on_struct",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/position_annotation.idl",
+                    "position_ann_on_struct",
                     include_paths);
     ASSERT_FALSE(builder);
 
@@ -2411,7 +2413,8 @@ TEST_F(IdlParserTests, extensibility_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set extensibility kind to FINAL using positional parameter
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_final_struct",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl",
+                    "extensibility_ann_final_struct",
                     include_paths);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
@@ -2432,14 +2435,16 @@ TEST_F(IdlParserTests, extensibility_builtin_annotation)
     EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
 
     // Set extensibility kind to MUTABLE using keyword parameter
-    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_mutable_keyword_param_struct",
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl",
+                    "extensibility_ann_mutable_keyword_param_struct",
                     include_paths);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
     EXPECT_EQ(type_descriptor->extensibility_kind(), ExtensibilityKind::MUTABLE);
 
     // Negative case: Trying to annotate using @extensibility with invalid value type
-    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl", "extensibility_ann_invalid_value_type_struct",
+    builder = factory->create_type_w_uri("IDL/extensibility_annotation.idl",
+                    "extensibility_ann_invalid_value_type_struct",
                     include_paths);
     ASSERT_FALSE(builder);
 
@@ -2468,7 +2473,8 @@ TEST_F(IdlParserTests, final_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set final to struct type and check that it is correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/final_annotation.idl", "final_ann_valid_struct",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/final_annotation.idl",
+                    "final_ann_valid_struct",
                     include_paths);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
@@ -2494,7 +2500,8 @@ TEST_F(IdlParserTests, appendable_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set appendable to struct type and check that it is correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/appendable_annotation.idl", "appendable_ann_valid_struct",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/appendable_annotation.idl",
+                    "appendable_ann_valid_struct",
                     include_paths);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
@@ -2520,7 +2527,8 @@ TEST_F(IdlParserTests, mutable_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set mutable to struct type and check that it is correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/mutable_annotation.idl", "mutable_ann_valid_struct",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/mutable_annotation.idl",
+                    "mutable_ann_valid_struct",
                     include_paths);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
@@ -2594,7 +2602,8 @@ TEST_F(IdlParserTests, default_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set default values for struct members and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_annotation.idl", "default_ann_valid_struct",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_annotation.idl",
+                    "default_ann_valid_struct",
                     include_paths);
     DynamicTypeMember::_ref_type member;
     ASSERT_TRUE(builder);
@@ -2646,7 +2655,8 @@ TEST_F(IdlParserTests, bit_bound_builtin_annotation)
     // TODO: Add positive tests for bitmasks when bitmask parsing is supported.
 
     // Set bit_bound annotation on enum members and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl", "bit_bound_ann_valid_enum_8",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/bit_bound_annotation.idl",
+                    "bit_bound_ann_valid_enum_8",
                     include_paths);
     DynamicTypeMember::_ref_type member;
     ASSERT_TRUE(builder);
@@ -2736,7 +2746,8 @@ TEST_F(IdlParserTests, external_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set external annotation on struct members and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/external_annotation.idl", "external_ann_struct_valid",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/external_annotation.idl",
+                    "external_ann_struct_valid",
                     include_paths);
     DynamicTypeMember::_ref_type member;
     ASSERT_TRUE(builder);
@@ -2775,7 +2786,8 @@ TEST_F(IdlParserTests, nested_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set nested annotations on struct (constructed type) and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/nested_annotation.idl", "nested_ann_struct_valid",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/nested_annotation.idl",
+                    "nested_ann_struct_valid",
                     include_paths);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_descriptor(type_descriptor), RETCODE_OK);
@@ -2811,7 +2823,8 @@ TEST_F(IdlParserTests, try_construct_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set try_construct annotation on struct members and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl", "try_construct_ann_struct_valid",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/try_construct_annotation.idl",
+                    "try_construct_ann_struct_valid",
                     include_paths);
     ASSERT_TRUE(builder);
     DynamicTypeMember::_ref_type member;
@@ -2869,7 +2882,8 @@ TEST_F(IdlParserTests, value_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set value annotation on enumeration members and check that they are correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/value_annotation.idl", "value_ann_valid_enum",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/value_annotation.idl",
+                    "value_ann_valid_enum",
                     include_paths);
     ASSERT_TRUE(builder);
     DynamicTypeMember::_ref_type member;
@@ -2937,7 +2951,8 @@ TEST_F(IdlParserTests, default_literal_builtin_annotation)
     include_paths.push_back("IDL/helpers/basic_inner_types.idl");
 
     // Set @default_literal annotation on a enumeration's member and check that it is correctly parsed
-    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_valid_enum",
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl",
+                    "default_literal_ann_valid_enum",
                     include_paths);
     ASSERT_TRUE(builder);
     DynamicTypeMember::_ref_type member;
@@ -2948,7 +2963,8 @@ TEST_F(IdlParserTests, default_literal_builtin_annotation)
     ASSERT_TRUE(type);
 
     // Negative case: Trying to annotate multiple members with @default_literal
-    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_multiple_default_members",
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl",
+                    "default_literal_ann_multiple_default_members",
                     include_paths);
     ASSERT_FALSE(builder);
 
@@ -2973,7 +2989,8 @@ TEST_F(IdlParserTests, default_literal_builtin_annotation)
     ASSERT_FALSE(builder);
 
     // Negative case: Trying to annotate a union discriminator with @default_literal
-    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl", "default_literal_ann_on_union_discriminator",
+    builder = factory->create_type_w_uri("IDL/default_literal_annotation.idl",
+                    "default_literal_ann_on_union_discriminator",
                     include_paths);
     ASSERT_FALSE(builder);
 }
@@ -2986,14 +3003,14 @@ TEST_F(IdlParserTests, get_declared_type_names)
     std::vector<std::string> declared_types;
 
     auto store_declared_types = [&declared_types](traits<DynamicTypeBuilder>::ref_type builder)
-    {
-        if (builder)
-        {
-            declared_types.emplace_back(builder->get_name().to_string());
-        }
+            {
+                if (builder)
+                {
+                    declared_types.emplace_back(builder->get_name().to_string());
+                }
 
-        return true; // continue parsing
-    };
+                return true; // continue parsing
+            };
 
     std::vector<std::string> expected_type_names = {
         "InnerEnumHelper",
@@ -3062,17 +3079,17 @@ TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
 
     // Stop parsing when the type "StructShort" is parsed
     auto store_declared_types = [&declared_types](traits<DynamicTypeBuilder>::ref_type builder)
-    {
-        std::string type_name;
+            {
+                std::string type_name;
 
-        if (builder)
-        {
-            type_name = builder->get_name().to_string();
-            declared_types.emplace_back(type_name);
-        }
+                if (builder)
+                {
+                    type_name = builder->get_name().to_string();
+                    declared_types.emplace_back(type_name);
+                }
 
-        return (type_name != "StructShort");
-    };
+                return (type_name != "StructShort");
+            };
 
     std::vector<std::string> expected_type_names = {
         "InnerEnumHelper",

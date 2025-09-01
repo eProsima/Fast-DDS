@@ -35,10 +35,10 @@ struct manual_stop_checker
     using analyze_t = analysis::generic< analysis::rule_type::opt >;
 
     template< tao::pegtl::apply_mode A,
-             tao::pegtl::rewind_mode M,
-             template< typename... > class Action,
-             template< typename... > class Control,
-             typename ParseInput>
+            tao::pegtl::rewind_mode M,
+            template< typename ... > class Action,
+            template< typename ... > class Control,
+            typename ParseInput>
     static bool match(
             ParseInput& /*in*/,
             Context* ctx,
@@ -52,6 +52,7 @@ struct manual_stop_checker
 
         return false;
     }
+
 };
 
 /**
@@ -60,7 +61,7 @@ struct manual_stop_checker
  * context is configured to stop parsing. If it is, the parsing stops and the match is successful.
  * @tparam Rules The rules to be matched in sequence.
  */
-template < typename... Rules >
+template < typename ... Rules >
 struct seq_until_manual_stop;
 
 // 1-rule specialization: just match the rule
@@ -69,12 +70,12 @@ struct seq_until_manual_stop<Rule> : Rule {};
 
 // N-rule specialization (N > 1): match each rule and check for manual stop
 // If manual stop is requested, consume the remaining input
-template < typename Rule, typename... Rules >
+template < typename Rule, typename ... Rules >
 struct seq_until_manual_stop< Rule, Rules... >
     : seq< Rule,
-           if_then_else< manual_stop_checker,
-                         star< any >,
-                         seq_until_manual_stop< Rules... > > > {};
+            if_then_else< manual_stop_checker,
+            star< any >,
+            seq_until_manual_stop< Rules... >>> {};
 
 } // namespace idlparser
 } // namespace dds
