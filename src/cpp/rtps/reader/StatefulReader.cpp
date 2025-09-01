@@ -61,7 +61,7 @@ static void send_datasharing_ack(
 {
     // This may not be the change read with highest SN,
     // need to find largest SN to ACK
-    for (std::vector<CacheChange_t*>::iterator it = history->changesBegin(); it != history->changesEnd(); ++it)
+    for (std::deque<CacheChange_t*>::iterator it = history->changesBegin(); it != history->changesEnd(); ++it)
     {
         if (!(*it)->isRead)
         {
@@ -1287,8 +1287,8 @@ void StatefulReader::remove_changes_from(
         bool is_payload_pool_lost)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::vector<CacheChange_t*> toremove;
-    for (std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    std::deque<CacheChange_t*> toremove;
+    for (std::deque<CacheChange_t*>::iterator it = history_->changesBegin();
             it != history_->changesEnd(); ++it)
     {
         if ((*it)->writerGUID == writerGUID)
@@ -1297,7 +1297,7 @@ void StatefulReader::remove_changes_from(
         }
     }
 
-    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
+    for (std::deque<CacheChange_t*>::iterator it = toremove.begin();
             it != toremove.end(); ++it)
     {
         EPROSIMA_LOG_INFO(RTPS_READER,
@@ -1326,7 +1326,7 @@ CacheChange_t* StatefulReader::next_untaken_cache()
 
     bool takeok = false;
     WriterProxy* wp;
-    std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    std::deque<CacheChange_t*>::iterator it = history_->changesBegin();
     while (it != history_->changesEnd())
     {
         if (this->matched_writer_lookup((*it)->writerGUID, &wp))
@@ -1367,10 +1367,10 @@ CacheChange_t* StatefulReader::next_unread_cache()
         return nullptr;
     }
 
-    std::vector<CacheChange_t*> toremove;
+    std::deque<CacheChange_t*> toremove;
     bool readok = false;
     WriterProxy* wp = nullptr;
-    std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    std::deque<CacheChange_t*>::iterator it = history_->changesBegin();
     while (it != history_->changesEnd())
     {
         if ((*it)->isRead)

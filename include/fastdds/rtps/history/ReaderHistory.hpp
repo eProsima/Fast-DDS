@@ -244,7 +244,7 @@ protected:
         assert(nullptr != mp_mutex);
 
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        std::vector<CacheChange_t*>::iterator chit = m_changes.begin();
+        std::deque<CacheChange_t*>::iterator chit = m_changes.begin();
         while (chit != m_changes.end())
         {
             if (pred(*chit))

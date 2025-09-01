@@ -1457,6 +1457,9 @@ void StatefulWriter::check_acked_status()
     SequenceNumber_t min_seq = get_seq_num_min();
     if (min_seq != SequenceNumber_t::unknown())
     {
+        // Measure time of operations
+        // auto start = std::chrono::steady_clock::now();
+
         // In the case where we haven't received an acknack from a recently matched reader,
         // min_low_mark will be zero, and no change will be notified as received by all
         if (next_all_acked_notify_sequence_ <= min_low_mark)
@@ -1467,70 +1470,128 @@ void StatefulWriter::check_acked_status()
                 // on min_low_mark down until next_all_acked_notify_sequence_. This way we can
                 // safely proceed with the traversal, in case a change is removed from the history
                 // inside the callback
-                History::iterator history_end = history_->changesEnd();
-                History::iterator cit =
-                        std::lower_bound(history_->changesBegin(), history_end, min_low_mark,
-                                [](
-                                    const CacheChange_t* change,
-                                    const SequenceNumber_t& seq)
-                                {
-                                    return change->sequenceNumber < seq;
-                                });
-                if (cit != history_end && (*cit)->sequenceNumber == min_low_mark)
-                {
-                    ++cit;
-                }
+                // History::iterator history_end = history_->changesEnd();
+                // History::iterator cit =
+                //         std::lower_bound(history_->changesBegin(), history_end, min_low_mark,
+                //                 [](
+                //                     const CacheChange_t* change,
+                //                     const SequenceNumber_t& seq)
+                //                 {
+                //                     return change->sequenceNumber < seq;
+                //                 });
+                // if (cit != history_end && (*cit)->sequenceNumber == min_low_mark)
+                // {
+                //     ++cit;
+                // }
 
-                SequenceNumber_t seq{};
-                SequenceNumber_t end_seq = min_seq > next_all_acked_notify_sequence_ ?
-                        min_seq : next_all_acked_notify_sequence_;
+                // SequenceNumber_t seq{};
+                // SequenceNumber_t end_seq = min_seq > next_all_acked_notify_sequence_ ?
+                //         min_seq : next_all_acked_notify_sequence_;
 
-                // The iterator starts pointing to the change inmediately after min_low_mark
-                //--cit;
-                auto nit = history_->changesBegin();
-                do
+                const SequenceNumber_t start_seq =
+                    (get_seq_num_min() > next_all_acked_notify_sequence_)
+                        ? get_seq_num_min()
+                        : next_all_acked_notify_sequence_;
+
+                // EPROSIMA_LOG_ERROR(DEBUG,
+                //         "Notifying changes received by all readers from " << start_seq << " to " << min_low_mark);
+                auto comp = [](const CacheChange_t* ch, const SequenceNumber_t& seq)
                 {
-                    CacheChange_t* change = *nit;
-                    seq = change->sequenceNumber;
-                    if (seq < next_all_acked_notify_sequence_)
+                    return ch->sequenceNumber < seq;
+                };
+
+                // auto pre_loop = std::chrono::steady_clock::now();
+                // EPROSIMA_LOG_ERROR(RTPS_WRITER, "pre_loop took "
+                //         << std::chrono::duration_cast<std::chrono::nanoseconds>(pre_loop - start).count() << "ns");
+
+                // Notify changes received by all readers in [next_all_acked_notify_sequence_, min_low_mark]
+                auto it = std::lower_bound(
+                        history_->changesBegin(),
+                        history_->changesEnd(),
+                        start_seq,
+                        comp);
+
+                while (it != history_->changesEnd())
+                {
+                    // auto iter_loop = std::chrono::steady_clock::now();
+                    CacheChange_t* change = *it;
+                    const SequenceNumber_t seq = change->sequenceNumber;
+                    if (seq > min_low_mark)
                     {
-                        nit++;
-                        continue;
+                        break;
                     }
 
-                    nit--;
-
-                      // Notify reception of change (may remove that change on VOLATILE writers)
+                    // Advance iterator before callback in case the callback removes the change (VOLATILE)
+                    // ++it;
+                    // EPROSIMA_LOG_ERROR(DEBUG,
+                    //         "Notifying change " << change->sequenceNumber << " received by all readers");
                     listener_->on_writer_change_received_by_all(this, change);
-                    nit++;
-                } while (seq > end_seq);
+                    const SequenceNumber_t next_seq = seq + 1;
+                    it = std::lower_bound(history_->changesBegin(), history_->changesEnd(), next_seq, comp);
+                    // auto end_iter_loop = std::chrono::steady_clock::now();
+                    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "loop iteration of "<< seq << " took "
+                    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(end_iter_loop - iter_loop).count() << "ns");
+                }
+
+                // auto nit = history_->changesBegin();
+                // do
+                // {
+                //     CacheChange_t* change = *nit;
+                //     seq = change->sequenceNumber;
+                //     if (seq < next_all_acked_notify_sequence_)
+                //     {
+                //         nit++;
+                //         continue;
+                //     }
+
+                //     nit--;
+
+                //       // Notify reception of change (may remove that change on VOLATILE writers)
+                //     listener_->on_writer_change_received_by_all(this, change);
+                //     nit++;
+                // } while (seq > end_seq);
+                // auto pre_loop = std::chrono::steady_clock::now();
+                // EPROSIMA_LOG_ERROR(RTPS_WRITER, "pre_loop took "
+                //         << std::chrono::duration_cast<std::chrono::nanoseconds>(pre_loop - start).count() << "ns");
+
+                // The iterator starts pointing to the change inmediately after min_low_mark
+                // --cit;
 
                 // do
                 // {
-                //         // Avoid notifying changes before next_all_acked_notify_sequence_
-                //         CacheChange_t* change = *cit;
-                //         seq = change->sequenceNumber;
-                //         if (seq < next_all_acked_notify_sequence_)
-                //         {
-                //             break;
-                //         }
-
-                //         // Change iterator before it possibly becomes invalidated
-                //         if (cit != history_->changesBegin())
-                //         {
-                //             --cit;
-                //         }
-
-                //         // Notify reception of change (may remove that change on VOLATILE writers)
-                //         listener_->on_writer_change_received_by_all(this, change);
-
-                //         // Stop if we got to either next_all_acked_notify_sequence_ or the first change
+                //     auto iter_loop = std::chrono::steady_clock::now();
+                //     // Avoid notifying changes before next_all_acked_notify_sequence_
+                //     CacheChange_t* change = *cit;
+                //     seq = change->sequenceNumber;
+                //     if (seq < next_all_acked_notify_sequence_)
+                //     {
+                //         break;
                 //     }
-                //     while (seq > end_seq);
+
+                //     // Change iterator before it possibly becomes invalidated
+                //     if (cit != history_->changesBegin())
+                //     {
+                //         --cit;
+                //     }
+
+                //     // Notify reception of change (may remove that change on VOLATILE writers)
+                //     listener_->on_writer_change_received_by_all(this, change);
+
+                //     // Stop if we got to either next_all_acked_notify_sequence_ or the first change
+                //     auto end_iter_loop = std::chrono::steady_clock::now();
+                //     EPROSIMA_LOG_ERROR(RTPS_WRITER, "loop iteration of "<< seq << " took "
+                //             << std::chrono::duration_cast<std::chrono::nanoseconds>(end_iter_loop - iter_loop).count() << "ns");
+
+                // }
+                // while (seq > end_seq);
             }
 
             next_all_acked_notify_sequence_ = min_low_mark + 1;
         }
+
+        // auto end = std::chrono::steady_clock::now();
+        // EPROSIMA_LOG_ERROR(RTPS_WRITER, "check_acked_status took "
+        //         << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << "ns");
 
         if (min_low_mark >= get_seq_num_min())
         {

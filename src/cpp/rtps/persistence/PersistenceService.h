@@ -107,7 +107,7 @@ public:
             const GUID_t& writer_guid,
             const SequenceNumber_t& seq_number) = 0;
 
-    static std::vector<CacheChange_t*>& get_changes(
+    static std::deque<CacheChange_t*>& get_changes(
             WriterHistory* history);
 
     static void set_fragments(

@@ -269,7 +269,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
         sqlite3_reset(load_writer_stmt_);
         sqlite3_bind_text(load_writer_stmt_, 1, persistence_guid.c_str(), -1, SQLITE_STATIC);
 
-        std::vector<CacheChange_t*>& changes = get_changes(history);
+        std::deque<CacheChange_t*>& changes = get_changes(history);
 
         while (SQLITE_ROW == sqlite3_step(load_writer_stmt_))
         {

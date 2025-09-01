@@ -425,8 +425,8 @@ void StatelessReader::remove_changes_from(
         bool is_payload_pool_lost)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    std::vector<CacheChange_t*> toremove;
-    for (std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    std::deque<CacheChange_t*> toremove;
+    for (std::deque<CacheChange_t*>::iterator it = history_->changesBegin();
             it != history_->changesEnd(); ++it)
     {
         if ((*it)->writerGUID == writerGUID)
@@ -435,7 +435,7 @@ void StatelessReader::remove_changes_from(
         }
     }
 
-    for (std::vector<CacheChange_t*>::iterator it = toremove.begin();
+    for (std::deque<CacheChange_t*>::iterator it = toremove.begin();
             it != toremove.end(); ++it)
     {
         EPROSIMA_LOG_INFO(RTPS_READER,
@@ -465,7 +465,7 @@ CacheChange_t* StatelessReader::next_unread_cache()
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     bool found = false;
-    std::vector<CacheChange_t*>::iterator it = history_->changesBegin();
+    std::deque<CacheChange_t*>::iterator it = history_->changesBegin();
     while (it != history_->changesEnd())
     {
         if ((*it)->isRead)

@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <functional>
+#include <deque>
 #include <memory>
 #include <mutex>
 
@@ -55,9 +56,9 @@ protected:
 
 public:
 
-    using iterator = std::vector<CacheChange_t*>::iterator;
-    using reverse_iterator = std::vector<CacheChange_t*>::reverse_iterator;
-    using const_iterator = std::vector<CacheChange_t*>::const_iterator;
+    using iterator = std::deque<CacheChange_t*>::iterator;
+    using reverse_iterator = std::deque<CacheChange_t*>::reverse_iterator;
+    using const_iterator = std::deque<CacheChange_t*>::const_iterator;
 
     //!Attributes of the History
     HistoryAttributes m_att;
@@ -260,7 +261,7 @@ public:
 protected:
 
     //!Vector of pointers to the CacheChange_t.
-    std::vector<CacheChange_t*> m_changes;
+    std::deque<CacheChange_t*> m_changes;
 
     //!Variable to know if the history is full without needing to block the History mutex.
     bool m_isHistoryFull = false;

@@ -30,7 +30,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-std::vector<CacheChange_t*>& IPersistenceService::get_changes(
+std::deque<CacheChange_t*>& IPersistenceService::get_changes(
         WriterHistory* history)
 {
     return history->m_changes;

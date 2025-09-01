@@ -36,8 +36,8 @@ History::History(
         const HistoryAttributes& att)
     : m_att(att)
 {
-    uint32_t initial_size = static_cast<uint32_t>(att.initialReservedCaches < 0 ? 0 : att.initialReservedCaches);
-    m_changes.reserve(static_cast<size_t>(initial_size));
+    // uint32_t initial_size = static_cast<uint32_t>(att.initialReservedCaches < 0 ? 0 : att.initialReservedCaches);
+    // m_changes.reserve(static_cast<size_t>(initial_size));
 }
 
 History::~History()
@@ -120,10 +120,14 @@ bool History::remove_change(
         return false;
     }
 #else
+    // auto remove_change_start = std::chrono::steady_clock::now();
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 #endif // if HAVE_STRICT_REALTIME
+    // auto remove_change_end_lock = std::chrono::steady_clock::now();
 
     const_iterator it = find_change_nts(ch);
+
+    // auto find_change_end = std::chrono::steady_clock::now();
 
     if (it == changesEnd())
     {
@@ -131,13 +135,19 @@ bool History::remove_change(
         return false;
     }
 
+    // auto after_find = std::chrono::steady_clock::now();
+
     // Dummy change just used to compare original change with change returned from remove_change_nts function
     CacheChange_t dummy_change;
     dummy_change.writerGUID = (*it)->writerGUID;
     dummy_change.sequenceNumber = (*it)->sequenceNumber;
 
+    // auto after_dummy = std::chrono::steady_clock::now();
+
     // Remove using the virtual method
     History::iterator history_it = remove_change_nts(it, max_blocking_time);
+
+    // auto remove_end = std::chrono::steady_clock::now();
 
     // If remove_change_nts returns a valid iterator (not end()) and this is the same iterator means that it
     // could not remove it so this function should fail
@@ -146,6 +156,22 @@ bool History::remove_change(
         EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Failed to remove a change from history");
         return false;
     }
+    // auto remove_change_end = std::chrono::steady_clock::now();
+
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "Locking mutex took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(remove_change_end_lock - remove_change_start).count() << "ns");
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "Finding change took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(find_change_end - remove_change_end_lock).count() << "ns");
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "Before dummy of "<< dummy_change.sequenceNumber << " took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(after_find - find_change_end).count() << "ns");
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "After dummy of "<< dummy_change.sequenceNumber << " took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(after_dummy - after_find).count() << "ns");
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "Deletion of  "<< dummy_change.sequenceNumber << " took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(remove_end - after_dummy).count() << "ns");
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "last checks of "<< dummy_change.sequenceNumber << " took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(remove_change_end - remove_end).count() << "ns");
+    // EPROSIMA_LOG_ERROR(RTPS_WRITER, "Total remove_change of  "<< dummy_change.sequenceNumber << " took "
+    //         << std::chrono::duration_cast<std::chrono::nanoseconds>(remove_change_end - remove_change_start).count() << "ns");
 
     return true;
 }
@@ -283,7 +309,7 @@ namespace rtps {
 void History::print_changes_seqNum2()
 {
     std::stringstream ss;
-    for (std::vector<CacheChange_t*>::iterator it = m_changes.begin();
+    for (std::deque<CacheChange_t*>::iterator it = m_changes.begin();
             it != m_changes.end(); ++it)
     {
         ss << (*it)->sequenceNumber << "-";
