@@ -66,21 +66,6 @@ inline Context& parse_file(
     return context;
 }
 
-/// \brief Parse IDL file input and save the DynamicTypeBuilder object corresponding to the given target type name,
-/// conforming to IDL specification V4.2.
-/// \param[in] idl_file Path to the IDL file
-/// \param[in] type_name Fully qualified target type name to load from the IDL file
-/// \param[in] include_paths A collection of directories to search for additional type description
-/// \return A Context object with data related to the parse output
-inline Context parse_file(
-        const std::string& idl_file,
-        const std::string& type_name,
-        const IncludePathSeq& include_paths,
-        const std::string& preprocessor)
-{
-    return Parser::instance()->parse_file(idl_file, type_name, include_paths, preprocessor);
-}
-
 /// \brief Preprocess IDL file.
 /// \param[in] idl_file Path to the IDL file
 /// \param[in] includes A collection of directories to search for additional type description
@@ -90,6 +75,20 @@ inline std::string preprocess(
         const std::vector<std::string>& includes)
 {
     return Parser::preprocess(idl_file, includes);
+}
+
+/// \brief Parse IDL file input conforming to IDL specification V4.2.
+/// \param[in] idl_file Path to the IDL file
+/// \param[in] include_paths A collection of directories to search for additional type description
+/// \param[in] Preprocessor Preprocessor executable path
+/// \param[in] callback Callback function to be called for each parsed aggregated type
+inline void parse_file(
+        const std::string& idl_file,
+        const IncludePathSeq& include_paths,
+        const std::string& preprocessor,
+        std::function<bool(traits<DynamicTypeBuilder>::ref_type)> callback)
+{
+    Parser::instance()->parse_file(idl_file, include_paths, preprocessor, callback);
 }
 
 } //namespace idlparser
