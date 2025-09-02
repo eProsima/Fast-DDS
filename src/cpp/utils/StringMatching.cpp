@@ -72,12 +72,7 @@ static bool do_match_pattern(
 
     std::regex path_regex(path);
     std::smatch spec_match;
-    if (std::regex_match(spec, spec_match, path_regex))
-    {
-        return true;
-    }
-
-    return false;
+    return std::regex_match(spec, spec_match, path_regex);
 }
 
 #elif defined(_WIN32)
@@ -104,11 +99,7 @@ static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
-    if (fnmatch(pattern, str, FNM_NOESCAPE) == 0)
-    {
-        return true;
-    }
-    return false;
+    return fnmatch(pattern, str, FNM_NOESCAPE) == 0;
 }
 
 #endif // if defined(__cplusplus_winrt)
