@@ -45,17 +45,17 @@ public:
 
     void stop() override;
 
+    bool is_stopped() const override
+    {
+        return stop_.load();
+    }
+
 protected:
 
     void create_participant();
 
     void create_server(
             const std::string& server_name);
-
-    bool is_stopped()
-    {
-        return stop_.load();
-    }
 
 private:
 
