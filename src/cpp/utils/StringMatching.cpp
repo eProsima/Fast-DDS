@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <regex>
 #elif defined(_WIN32)
+#include <cstring>
 #include "Shlwapi.h"
 #else
 #include <fnmatch.h>
@@ -84,11 +85,18 @@ static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
-    if (PathMatchSpecA(str, pattern))
+    // An empty pattern only matches an empty string
+    if (strlen(pattern) == 0)
     {
-        return true;
+        return strlen(str) == 0;
     }
-    return false;
+    // An empty string also matches a pattern of "*"
+    if (strlen(str) == 0)
+    {
+        return strcmp(pattern, "*") == 0;
+    }
+    // Leave rest of cases to PathMatchSpecA
+    return PathMatchSpecA(str, pattern);
 }
 
 #else
