@@ -17,13 +17,16 @@
  *
  */
 
+#include <condition_variable>
 #include <csignal>
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <atomic>
 
 #include "app_utils.hpp"
 #include "Application.hpp"
@@ -34,6 +37,8 @@ using eprosima::fastdds::dds::Log;
 using namespace eprosima::fastdds::examples::rpc;
 
 std::function<void(int)> stop_app_handler;
+std::atomic<bool> stop_requested {false};
+std::atomic<int> received_signum {0};
 
 void signal_handler(
         int signum)
@@ -67,10 +72,8 @@ int main(
 
         stop_app_handler = [&](int signum)
                 {
-                    client_server_info("main",
-                            CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
-
-                    app->stop();
+                    received_signum.store(signum);
+                    stop_requested.store(true);
                 };
 
         signal(SIGINT, signal_handler);
@@ -82,6 +85,23 @@ int main(
 
         client_server_info("main",
                 app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
+
+        while (!app->is_stopped())
+        {
+            if (stop_requested.load())
+            {
+                client_server_info("main",
+                        CLIParser::parse_signal(
+                            received_signum.load()) << " received, stopping " << app_name << " execution.");
+
+                app->stop();
+                break;
+            }
+            else
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
 
         thread.join();
     }
