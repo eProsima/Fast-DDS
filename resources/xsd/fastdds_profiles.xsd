@@ -915,14 +915,14 @@
         ├ receiveBufferSize                     [uint32],
         ├ maxMessageSize                        [uint32],
         ├ maxInitialPeersRange                  [uint32],
-        ├ interfaceWhiteList                    [0~*],                            (NOT  available for   SHM type)
+        ├ interfaceWhiteList                    [0~*],                            (NOT  available for SHM   type)
         |   └ address                           [ipv4Address|ipv6Address]
         |   └ interface                         [string]
-        ├ netmask_filter                        [string] ("OFF", "AUTO", "ON"),   (NOT  available for   SHM type)
-        ├ interfaces                            [interfacesType],                 (NOT  available for   SHM type)
-        ├ TTL                                   [uint8],                          (ONLY available for  UDP  type)
-        ├ non_blocking_send                     [boolean],                        (NOT  available for   SHM type)
-        ├ output_port                           [uint16],                         (ONLY available for  UDP  type)
+        ├ netmask_filter                        [string] ("OFF", "AUTO", "ON"),   (NOT  available for SHM   type)
+        ├ interfaces                            [interfacesType],                 (NOT  available for SHM   type)
+        ├ TTL                                   [uint8],                          (ONLY available for UDP   type)
+        ├ non_blocking_send                     [boolean],                        (NOT  available for SHM   type)
+        ├ output_port                           [uint16],                         (ONLY available for UDP   type)
         ├ wan_addr                              [ipv4AddressFormat],              (ONLY available for TCPv4 type)
         ├ keep_alive_frequency_ms               [uint32],                         (ONLY available for TCP   type)
         ├ keep_alive_timeout_ms                 [uint32],                         (ONLY available for TCP   type)
@@ -935,15 +935,16 @@
         ├ calculate_crc                         [bool],                           (ONLY available for TCP   type)
         ├ check_crc                             [bool],                           (ONLY available for TCP   type)
         ├ enable_tcp_nodelay                    [bool],                           (ONLY available for TCP   type)
+        ├ tcp_negotiation_timeout               [uint32],                         (ONLY available for TCP   type)
         ├ keep_alive_thread                     [threadSettingsType],             (ONLY available for TCP   type)
         ├ accept_thread                         [threadSettingsType],             (ONLY available for TCP   type)
-        ├ segment_size                          [uint32],                         (ONLY available for   SHM type)
-        ├ port_queue_capacity                   [uint32],                         (ONLY available for   SHM type)
-        ├ healthy_check_timeout_ms              [uint32],                         (ONLY available for   SHM type)
-        ├ rtps_dump_file                        [string]                          (ONLY available for   SHM type)
+        ├ segment_size                          [uint32],                         (ONLY available for SHM   type)
+        ├ port_queue_capacity                   [uint32],                         (ONLY available for SHM   type)
+        ├ healthy_check_timeout_ms              [uint32],                         (ONLY available for SHM   type)
+        ├ rtps_dump_file                        [string]                          (ONLY available for SHM   type)
         ├ default_reception_threads             [threadSettingsType]
-        ├ reception_threads                     [receptionThreadsListType]        (ONLY available for   SHM type)
-        └ dump_thread                           [threadSettingsType]              (ONLY available for   SHM type) -->
+        ├ reception_threads                     [receptionThreadsListType]        (ONLY available for SHM   type)
+        └ dump_thread                           [threadSettingsType]              (ONLY available for SHM   type) -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
