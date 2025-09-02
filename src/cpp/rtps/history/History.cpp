@@ -54,11 +54,19 @@ History::const_iterator History::find_change_nts(
         return const_iterator();
     }
 
-    return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* chi)
-                   {
-                       // use the derived classes comparison criteria for searching
-                       return this->matches_change(chi, ch);
-                   });
+    // Use binary search to find the change
+    auto lb = std::lower_bound(changesBegin(), changesEnd(), ch,
+                    [](const CacheChange_t* a, const CacheChange_t* b)
+                    {
+                        return a->sequenceNumber < b->sequenceNumber;
+                    });
+
+    if (lb != changesEnd() && matches_change(*lb, ch))
+    {
+        return lb;
+    }
+
+    return changesEnd();
 }
 
 bool History::matches_change(
