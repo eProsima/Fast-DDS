@@ -46,7 +46,7 @@ StringMatching::~StringMatching()
 }
 
 #if defined(__cplusplus_winrt)
-void replace_all(
+static void replace_all(
         std::string& subject,
         const std::string& search,
         const std::string& replace)
@@ -59,7 +59,7 @@ void replace_all(
     }
 }
 
-bool StringMatching::matchPattern(
+static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
@@ -79,25 +79,8 @@ bool StringMatching::matchPattern(
     return false;
 }
 
-bool StringMatching::matchString(
-        const char* str1,
-        const char* str2)
-{
-    if (StringMatching::matchPattern(str1, str2))
-    {
-        return true;
-    }
-
-    if (StringMatching::matchPattern(str2, str1))
-    {
-        return true;
-    }
-
-    return false;
-}
-
 #elif defined(_WIN32)
-bool StringMatching::matchPattern(
+static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
@@ -108,23 +91,8 @@ bool StringMatching::matchPattern(
     return false;
 }
 
-bool StringMatching::matchString(
-        const char* str1,
-        const char* str2)
-{
-    if (PathMatchSpecA(str1, str2))
-    {
-        return true;
-    }
-    if (PathMatchSpecA(str2, str1))
-    {
-        return true;
-    }
-    return false;
-}
-
 #else
-bool StringMatching::matchPattern(
+static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
@@ -135,22 +103,21 @@ bool StringMatching::matchPattern(
     return false;
 }
 
+#endif // if defined(__cplusplus_winrt)
+
+bool StringMatching::matchPattern(
+        const char* pattern,
+        const char* str)
+{
+    return do_match_pattern(pattern, str);
+}
+
 bool StringMatching::matchString(
         const char* str1,
         const char* str2)
 {
-    if (fnmatch(str1, str2, FNM_NOESCAPE) == 0)
-    {
-        return true;
-    }
-    if (fnmatch(str2, str1, FNM_NOESCAPE) == 0)
-    {
-        return true;
-    }
-    return false;
+    return do_match_pattern(str1, str2) || do_match_pattern(str2, str1);
 }
-
-#endif // if defined(__cplusplus_winrt)
 
 } /* namespace rtps */
 } /* namespace fastdds */
