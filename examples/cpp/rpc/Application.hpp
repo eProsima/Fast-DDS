@@ -43,6 +43,9 @@ public:
     //! Trigger the end of execution
     virtual void stop() = 0;
 
+    //! Check if the application is stopped
+    virtual bool is_stopped() const = 0;
+
     //! Factory method to create applications based on configuration
     static std::shared_ptr<Application> make_app(
             const CLIParser::config& config,
