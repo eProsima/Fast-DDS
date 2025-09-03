@@ -61,6 +61,8 @@ namespace rtps {
 #define LOCATOR_KIND_TCPv6 8
 /// Shared memory locator kind
 #define LOCATOR_KIND_SHM 16 + FASTDDS_VERSION_MAJOR
+/// Ethernet locator kind
+#define LOCATOR_KIND_ETHERNET 0x02000000
 
 /**
  * @brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
