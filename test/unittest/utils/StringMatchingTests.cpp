@@ -62,6 +62,14 @@ TEST_F(StringMatchingTests, patterns_with_wildcards)
     ASSERT_FALSE(StringMatching::matchString(path, pattern9));
 }
 
+TEST_F(StringMatchingTests, empty_string)
+{
+    ASSERT_TRUE(StringMatching::matchString("", ""));
+    ASSERT_TRUE(StringMatching::matchString("", "*"));
+    ASSERT_FALSE(StringMatching::matchString("", "?"));
+    ASSERT_FALSE(StringMatching::matchString("", "a"));
+}
+
 
 int main(
         int argc,
