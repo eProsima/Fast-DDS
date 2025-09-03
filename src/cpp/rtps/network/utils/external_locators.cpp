@@ -86,6 +86,12 @@ static void get_mask_and_cost(
             mask = 128;
             break;
 
+        // Ethernet locators match independently of the MAC address (mask 0), and have a cost equivalent to IPv4
+        case LOCATOR_KIND_ETHERNET:
+            cost = 1;
+            mask = 0;
+            break;
+
         default:
             assert(false && "Unexpected locator kind");
             break;
