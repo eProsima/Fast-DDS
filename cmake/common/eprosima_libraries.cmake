@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Macro to find cmake built thirdparty libraries.
+# Funtion to find cmake built thirdparty libraries.
 #
 # Arguments:
 #   :package: The name of the packge to find. Used for find_package(${package})
@@ -29,7 +29,7 @@
 #        THIRDPARTY.
 #   :THIRDPARTY_UPDATE: Activate the auto-update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
 #
-# The macro's procedure is as follows:
+# The function's procedure is as follows:
 #   1. Try to find the package with find_package.
 #         1.1. This step is not taken if THIRDPARTY_${package} is set to FORCE. This happens when the user specifically
 #              sets THIRDPARTY_${package} to FORCE, or when THIRDPARTY is set to FORCE and THIRDPARTY_${package} is
@@ -44,11 +44,16 @@
 macro(eprosima_find_package package)
     # Parse arguments.
     set(options REQUIRED)
+    set(oneValueArgs THIRDPARTIES_ROOT_DIR)
     set(multiValueArgs OPTIONS)
-    cmake_parse_arguments(FIND "${options}" "" "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(FIND "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Define a list of allowed values for the options THIRDPARTY and THIRDPARTY_${package}
     set(ALLOWED_VALUES ON OFF FORCE)
+
+    if (NOT FIND_THIRDPARTIES_ROOT_DIR)
+        set(FIND_THIRDPARTIES_ROOT_DIR ${PROJECT_SOURCE_DIR})
+    endif()
 
     # Create the THIRDPARTY variable defaulting to OFF
     set(THIRDPARTY OFF CACHE STRING "Activate use of internal submodules.")
@@ -98,7 +103,7 @@ macro(eprosima_find_package package)
             message(STATUS "Updating submodule thirdparty/${package}")
             execute_process(
                 COMMAND git submodule update --quiet --recursive --init "thirdparty/${package}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                WORKING_DIRECTORY ${FIND_THIRDPARTIES_ROOT_DIR}
                 RESULT_VARIABLE EXECUTE_RESULT
                 )
             # A result different than 0 means that the submodule could not be updated.
@@ -109,7 +114,7 @@ macro(eprosima_find_package package)
 
         # Check that the package is correctly initialized by looking for its CMakeLists.txt file.
         set(SUBDIRECTORY_EXIST FALSE)
-        if(EXISTS "${PROJECT_SOURCE_DIR}/thirdparty/${package}/CMakeLists.txt")
+        if(EXISTS "${FIND_THIRDPARTIES_ROOT_DIR}/thirdparty/${package}/CMakeLists.txt")
             set(SUBDIRECTORY_EXIST TRUE)
         endif()
 
@@ -118,10 +123,10 @@ macro(eprosima_find_package package)
             foreach(opt_ ${FIND_OPTIONS})
                 set(${opt_} ON)
             endforeach()
-            add_subdirectory(${PROJECT_SOURCE_DIR}/thirdparty/${package})
+            add_subdirectory(${FIND_THIRDPARTIES_ROOT_DIR}/thirdparty/${package})
             set(${package}_FOUND TRUE)
             set(${package}_LIB_DIR ${PROJECT_BINARY_DIR}/thirdparty/${package}/src/cpp)
-            message(STATUS "Found ${package}: ${PROJECT_SOURCE_DIR}/thirdparty/${package}")
+            message(STATUS "Found ${package}: ${FIND_THIRDPARTIES_ROOT_DIR}/thirdparty/${package}")
         endif()
     endif()
 
@@ -137,7 +142,7 @@ macro(eprosima_find_package package)
     endif()
 endmacro()
 
-# Macro to find all Fast DDS thirdparty libraries expect for Fast CDR (look at eprosima_find_package).
+# Function to find all Fast DDS thirdparty libraries expect for Fast CDR (look at eprosima_find_package).
 #
 # Arguments:
 #   :package: The name of the package to find. Used for find_package(${package})
@@ -155,7 +160,7 @@ endmacro()
 #        THIRDPARTY.
 #   :THIRDPARTY_UPDATE: Activate the auto update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
 #
-# The macro's procedure is as follows:
+# The function's procedure is as follows:
 #   1. Try to find the package with find_package.
 #         1.1. This step is not taken if THIRDPARTY_${package} is set to FORCE. This happens when the user specifically
 #              sets THIRDPARTY_${package} to FORCE, or when THIRDPARTY is set to FORCE and THIRDPARTY_${package} is
@@ -168,10 +173,14 @@ endmacro()
 #   3. If the package was not found anywhere, then print an FATAL_ERROR message.
 macro(eprosima_find_thirdparty package thirdparty_name)
     # Parse arguments.
-    set(oneValueArgs VERSION)
+    set(oneValueArgs VERSION THIRDPARTIES_ROOT_DIR)
     cmake_parse_arguments(FIND "" "${oneValueArgs}" "" ${ARGN})
     # Define a list of allowed values for the options THIRDPARTY and THIRDPARTY_${package}
     set(ALLOWED_VALUES ON OFF FORCE)
+
+    if (NOT FIND_THIRDPARTIES_ROOT_DIR)
+        set(FIND_THIRDPARTIES_ROOT_DIR ${PROJECT_SOURCE_DIR})
+    endif()
 
     # Create the THIRDPARTY variable defaulting to OFF
     set(THIRDPARTY OFF CACHE STRING "Activate use of internal submodules.")
@@ -221,7 +230,7 @@ macro(eprosima_find_thirdparty package thirdparty_name)
             message(STATUS "Updating submodule thirdparty/${thirdparty_name}")
             execute_process(
                 COMMAND git submodule update --quiet --recursive --init "thirdparty/${thirdparty_name}"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                WORKING_DIRECTORY ${FIND_THIRDPARTIES_ROOT_DIR}
                 RESULT_VARIABLE EXECUTE_RESULT
                 )
             # A result different than 0 means that the submodule could not be updated.
@@ -232,8 +241,8 @@ macro(eprosima_find_thirdparty package thirdparty_name)
 
         # Prepend CMAKE_PREFIX_PATH with the package thirdparty directory. The second path is needed for asio, since the
         # directory is "thirdparty/asio/asio"
-        set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name} ${CMAKE_PREFIX_PATH})
-        set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name} ${CMAKE_PREFIX_PATH})
+        set(CMAKE_PREFIX_PATH ${FIND_THIRDPARTIES_ROOT_DIR}/thirdparty/${thirdparty_name} ${CMAKE_PREFIX_PATH})
+        set(CMAKE_PREFIX_PATH ${FIND_THIRDPARTIES_ROOT_DIR}/thirdparty/${thirdparty_name}/${thirdparty_name} ${CMAKE_PREFIX_PATH})
         find_package(${package} REQUIRED)
     endif()
 
