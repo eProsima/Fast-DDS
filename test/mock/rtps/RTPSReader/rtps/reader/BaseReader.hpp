@@ -154,7 +154,8 @@ public:
     virtual void end_sample_access_nts(
             fastdds::rtps::CacheChange_t* /*change*/,
             fastdds::rtps::WriterProxy*& /*wp*/,
-            bool /*mark_as_read*/)
+            bool /*mark_as_read*/,
+            bool /*should_send_ack*/ = false)
     {
     }
 
