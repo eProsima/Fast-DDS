@@ -566,6 +566,11 @@ bool CliDiscoveryManager::add_tcp_servers()
 
 void CliDiscoveryManager::configure_transports()
 {
+    if (serverQos.transport().user_transports.size() > 0)
+    {
+        // User transports already configured in XML file
+        return;
+    }
     if (!serverQos.wire_protocol().builtin.metatrafficUnicastLocatorList.has_kind<LOCATOR_KIND_UDPv4>())
     {
         serverQos.transport().use_builtin_transports = false;
