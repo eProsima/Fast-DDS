@@ -41,6 +41,7 @@
         test_fast_discovery_several_server_ids,
         test_fast_discovery_invalid_locator,
         test_fast_discovery_non_existent_profile,
+        test_fast_discovery_tcp_via_XML,
 
 """
 
@@ -639,6 +640,19 @@ def test_fast_discovery_security_enabled_cli_prefix(fast_discovery_tool):
     exit_code = check_output(output, err, EXPECTED_OUTPUT, False, False)
     sys.exit(exit_code)
 
+def test_fast_discovery_tcp_via_XML(fast_discovery_tool):
+    """Test TCP transport loaded via XML configuration"""
+
+    XML_file_path = "test_xml_discovery_server_tcp.xml"
+    command = [fast_discovery_tool, str(command_to_int_test[Command_test.SERVER]), '-x', XML_file_path]
+    output, err, exit_code = send_command(command)
+    if exit_code != 0:
+        print(output)
+        sys.exit(exit_code)
+    EXPECTED_OUTPUT = "TCPv4:[127.0.0.1]:12345-12345"
+    exit_code = check_output(output, err, EXPECTED_OUTPUT, False, False)
+    sys.exit(exit_code)
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -693,7 +707,9 @@ if __name__ == '__main__':
         'test_fast_discovery_security_enabled_xml_prefix': lambda:
             test_fast_discovery_security_enabled_xml_prefix(args.binary_path),
         'test_fast_discovery_security_enabled_cli_prefix': lambda:
-            test_fast_discovery_security_enabled_cli_prefix(args.binary_path)
+            test_fast_discovery_security_enabled_cli_prefix(args.binary_path),
+        'test_fast_discovery_tcp_via_XML': lambda:
+            test_fast_discovery_tcp_via_XML(args.binary_path)
     }
 
     tests[args.test_name]()
