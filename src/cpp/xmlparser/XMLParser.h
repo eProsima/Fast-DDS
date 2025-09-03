@@ -270,6 +270,20 @@ protected:
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
 
+    /**
+     * @brief Parses an unknown transport descriptor.
+     *
+     * @param p_root Pointer to the XML element representing the transport configuration.
+     * @param transport_type String representing the type of the transport.
+     * @param p_transport Shared pointer to the transport descriptor to be populated.
+     *
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    static XMLP_ret parse_xml_unknown_transport(
+            tinyxml2::XMLElement* p_root,
+            const std::string& transport_type,
+            sp_transport_t& p_transport);
+
     static XMLP_ret parse_tls_config(
             tinyxml2::XMLElement* p_root,
             sp_transport_t tcp_transport);
@@ -414,6 +428,18 @@ protected:
             uint8_t ident);
 
     static XMLP_ret getXMLLocatorTCPv6(
+            tinyxml2::XMLElement* elem,
+            rtps::Locator_t& locator,
+            uint8_t ident);
+
+    /**
+     * @brief Parses an XML element to populate an Ethernet locator.
+     *
+     * @param elem Pointer to the XML element representing the Ethernet locator configuration.
+     * @param locator Reference to the Locator_t object to be populated.
+     * @param ident Indentation level for logging purposes.
+     */
+    static XMLP_ret get_xml_locator_ethernet(
             tinyxml2::XMLElement* elem,
             rtps::Locator_t& locator,
             uint8_t ident);

@@ -202,6 +202,7 @@ extern const char* UDPv4_LOCATOR;
 extern const char* UDPv6_LOCATOR;
 extern const char* TCPv4_LOCATOR;
 extern const char* TCPv6_LOCATOR;
+extern const char* ETH_LOCATOR;
 extern const char* KIND;
 extern const char* ADDRESS;
 extern const char* UNIQUE_LAN_ID;

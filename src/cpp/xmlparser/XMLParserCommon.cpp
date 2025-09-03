@@ -186,6 +186,7 @@ const char* UDPv4_LOCATOR = "udpv4";
 const char* UDPv6_LOCATOR = "udpv6";
 const char* TCPv4_LOCATOR = "tcpv4";
 const char* TCPv6_LOCATOR = "tcpv6";
+const char* ETH_LOCATOR = "ethernet";
 const char* KIND = "kind";
 const char* ADDRESS = "address";
 const char* UNIQUE_LAN_ID = "unique_lan_id";
