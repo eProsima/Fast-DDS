@@ -1470,6 +1470,7 @@ bool StatefulReader::begin_sample_access_nts(
 
 void StatefulReader::end_sample_access_nts(
         CacheChange_t* change,
+<<<<<<< HEAD
         WriterProxy*& wp,
         bool mark_as_read)
 {
@@ -1480,6 +1481,11 @@ void StatefulReader::change_read_by_user(
         CacheChange_t* change,
         WriterProxy* writer,
         bool mark_as_read)
+=======
+        WriterProxy*& writer,
+        bool mark_as_read,
+        bool should_send_ack)
+>>>>>>> 8421fb02 (Avoid sending duplicated ACKs in DataSharing (#5986))
 {
     assert(!writer || change->writerGUID == writer->guid());
 
@@ -1493,7 +1499,7 @@ void StatefulReader::change_read_by_user(
         }
     }
 
-    if (mark_as_read)
+    if (should_send_ack && mark_as_read)
     {
         send_ack_if_datasharing(this, mp_history, writer, change->sequenceNumber);
     }
