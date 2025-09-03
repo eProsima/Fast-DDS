@@ -67,10 +67,21 @@ namespace rtps {
 using reader_map_helper = utilities::collections::map_size_helper<GUID_t, SubscriptionMatchedStatus>;
 using writer_map_helper = utilities::collections::map_size_helper<GUID_t, PublicationMatchedStatus>;
 
+<<<<<<< HEAD
 static bool is_partition_empty(
         const fastdds::dds::Partition_t& partition)
 {
     return partition.size() <= 1 && 0 == strlen(partition.name());
+=======
+static bool is_same_type(
+        const dds::xtypes::TypeInformation& t1,
+        const dds::xtypes::TypeInformation& t2)
+{
+    return (dds::xtypes::TK_NONE != t1.complete().typeid_with_size().type_id()._d()
+           && t1.complete().typeid_with_size() == t2.complete().typeid_with_size())
+           || (dds::xtypes::TK_NONE != t1.minimal().typeid_with_size().type_id()._d()
+           && t1.minimal().typeid_with_size() == t2.minimal().typeid_with_size());
+>>>>>>> 27ce90d9 (Allow empty partition list to match against `"*"` (#5989))
 }
 
 EDP::EDP(
@@ -816,7 +827,7 @@ bool EDP::valid_matching(
         for (auto rnameit = rdata->m_qos.m_partition.begin();
                 rnameit != rdata->m_qos.m_partition.end(); ++rnameit)
         {
-            if (is_partition_empty(*rnameit))
+            if (StringMatching::matchString("", rnameit->name()))
             {
                 matched = true;
                 break;
@@ -828,7 +839,7 @@ bool EDP::valid_matching(
         for (auto wnameit = wdata->m_qos.m_partition.begin();
                 wnameit !=  wdata->m_qos.m_partition.end(); ++wnameit)
         {
-            if (is_partition_empty(*wnameit))
+            if (StringMatching::matchString(wnameit->name(), ""))
             {
                 matched = true;
                 break;
