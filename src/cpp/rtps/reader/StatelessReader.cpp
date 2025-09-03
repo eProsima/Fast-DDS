@@ -382,7 +382,12 @@ bool StatelessReader::change_received(
             }
             ++total_unread_;
 
-            on_data_notify(guid, change->sourceTimestamp);
+
+            // Statistics callback is called with the original writer GUID if it is set
+            auto statistics_source_guid = change->write_params.original_writer_info() != OriginalWriterInfo::unknown() ?
+                    change->write_params.original_writer_info().original_writer_guid() : guid;
+
+            on_data_notify(statistics_source_guid, change->sourceTimestamp);
 
             auto listener = get_listener();
             if (listener != nullptr)
