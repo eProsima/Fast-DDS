@@ -944,7 +944,11 @@
         ├ rtps_dump_file                        [string]                          (ONLY available for SHM   type)
         ├ default_reception_threads             [threadSettingsType]
         ├ reception_threads                     [receptionThreadsListType]        (ONLY available for SHM   type)
-        └ dump_thread                           [threadSettingsType]              (ONLY available for SHM   type) -->
+        ├ dump_thread                           [threadSettingsType]              (ONLY available for SHM   type)
+        ├ eth_interface_name                    [string]                          (ONLY available for ETH   type)
+        ├ eth_output_port                       [uint16]                          (ONLY available for ETH   type)
+        └ eth_priority_mappings                 [ethernetPriorityMappingsType]    (ONLY available for ETH   type)
+    -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
@@ -957,6 +961,7 @@
                         <xs:enumeration value="TCPv4"/>
                         <xs:enumeration value="TCPv6"/>
                         <xs:enumeration value="SHM"/>
+                        <xs:enumeration value="ETH"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -1018,6 +1023,9 @@
             <xs:element name="default_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="eth_interface_name" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="eth_output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="eth_priority_mappings" type="ethernetPriorityMappingsType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -1149,6 +1157,26 @@
             </xs:element>
             <xs:element name="server_name" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
+    </xs:complexType>
+
+    <!--eth_priority_mappings:
+        └ priority            [0~*]
+          ╠ att. value        [int32] REQ
+          ╠ att. source_port  [uint16]
+          ╠ att. pcp          [uint8]
+          ╚ att. vlan_id      [uint16]
+    -->
+    <xs:complexType name="ethernetPriorityMappingsType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="priority" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="value" type="int32" use="required"/>
+                    <xs:attribute name="source_port" type="uint16" default="0"/>
+                    <xs:attribute name="pcp" type="uint8" default="0"/>
+                    <xs:attribute name="vlan_id" type="uint16" default="0"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
     </xs:complexType>
 
 
