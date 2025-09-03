@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <regex>
 #elif defined(_WIN32)
+#include <cstring>
 #include "Shlwapi.h"
 #else
 #include <fnmatch.h>
@@ -46,7 +47,7 @@ StringMatching::~StringMatching()
 }
 
 #if defined(__cplusplus_winrt)
-void replace_all(
+static void replace_all(
         std::string& subject,
         const std::string& search,
         const std::string& replace)
@@ -59,7 +60,7 @@ void replace_all(
     }
 }
 
-bool StringMatching::matchPattern(
+static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
@@ -71,86 +72,51 @@ bool StringMatching::matchPattern(
 
     std::regex path_regex(path);
     std::smatch spec_match;
-    if (std::regex_match(spec, spec_match, path_regex))
-    {
-        return true;
-    }
-
-    return false;
-}
-
-bool StringMatching::matchString(
-        const char* str1,
-        const char* str2)
-{
-    if (StringMatching::matchPattern(str1, str2))
-    {
-        return true;
-    }
-
-    if (StringMatching::matchPattern(str2, str1))
-    {
-        return true;
-    }
-
-    return false;
+    return std::regex_match(spec, spec_match, path_regex);
 }
 
 #elif defined(_WIN32)
-bool StringMatching::matchPattern(
+static bool do_match_pattern(
         const char* pattern,
         const char* str)
 {
-    if (PathMatchSpecA(str, pattern))
+    // An empty pattern only matches an empty string
+    if (strlen(pattern) == 0)
     {
-        return true;
+        return strlen(str) == 0;
     }
-    return false;
-}
-
-bool StringMatching::matchString(
-        const char* str1,
-        const char* str2)
-{
-    if (PathMatchSpecA(str1, str2))
+    // An empty string also matches a pattern of "*"
+    if (strlen(str) == 0)
     {
-        return true;
+        return strcmp(pattern, "*") == 0;
     }
-    if (PathMatchSpecA(str2, str1))
-    {
-        return true;
-    }
-    return false;
+    // Leave rest of cases to PathMatchSpecA
+    return PathMatchSpecA(str, pattern);
 }
 
 #else
+static bool do_match_pattern(
+        const char* pattern,
+        const char* str)
+{
+    return fnmatch(pattern, str, FNM_NOESCAPE) == 0;
+}
+
+#endif // if defined(__cplusplus_winrt)
+
 bool StringMatching::matchPattern(
         const char* pattern,
         const char* str)
 {
-    if (fnmatch(pattern, str, FNM_NOESCAPE) == 0)
-    {
-        return true;
-    }
-    return false;
+    return do_match_pattern(pattern, str);
 }
 
 bool StringMatching::matchString(
         const char* str1,
         const char* str2)
 {
-    if (fnmatch(str1, str2, FNM_NOESCAPE) == 0)
-    {
-        return true;
-    }
-    if (fnmatch(str2, str1, FNM_NOESCAPE) == 0)
-    {
-        return true;
-    }
-    return false;
+    return do_match_pattern(str1, str2) || do_match_pattern(str2, str1);
 }
-
-#endif // if defined(__cplusplus_winrt)
 
 } /* namespace rtps */
 } /* namespace fastdds */
