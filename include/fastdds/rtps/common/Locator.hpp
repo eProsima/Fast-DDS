@@ -304,6 +304,7 @@ inline bool operator !=(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
+ *            - ETHERNET
  *        \c address IP address unless \c kind is SHM
  *        \c port number
  *
@@ -343,6 +344,11 @@ inline std::ostream& operator <<(
             output << "SHM:[";
             break;
         }
+        case LOCATOR_KIND_ETHERNET:
+        {
+            output << "ETH:[";
+            break;
+        }
         default:
         {
             output << "Invalid_locator:[_]:0";
@@ -351,24 +357,29 @@ inline std::ostream& operator <<(
     }
 
     // Stream address
-    if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
+    switch (loc.kind)
     {
-        output << IPLocator::toIPv4string(loc);
-    }
-    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
-    {
-        output << IPLocator::toIPv6string(loc);
-    }
-    else if (loc.kind == LOCATOR_KIND_SHM)
-    {
-        if (loc.address[0] == 'M')
-        {
-            output << "M";
-        }
-        else
-        {
-            output << "_";
-        }
+        case LOCATOR_KIND_UDPv4:
+        case LOCATOR_KIND_TCPv4:
+            output << IPLocator::toIPv4string(loc);
+            break;
+
+        case LOCATOR_KIND_ETHERNET:
+        case LOCATOR_KIND_UDPv6:
+        case LOCATOR_KIND_TCPv6:
+            output << IPLocator::toIPv6string(loc);
+            break;
+
+        case LOCATOR_KIND_SHM:
+            if (loc.address[0] == 'M')
+            {
+                output << "M";
+            }
+            else
+            {
+                output << "_";
+            }
+            break;
     }
 
     // Stream port
@@ -394,6 +405,7 @@ inline std::ostream& operator <<(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
+ *            - ETHERNET
  *        \c address must be either a name which can be resolved by DNS or the IP address unless \c kind is SHM
  *        \c port number
  *
@@ -433,6 +445,10 @@ inline std::istream& operator >>(
             if (str_kind == "SHM")
             {
                 kind = LOCATOR_KIND_SHM;
+            }
+            else if (str_kind == "ETH")
+            {
+                kind = LOCATOR_KIND_ETHERNET;
             }
             else if (str_kind == "TCPv4")
             {
