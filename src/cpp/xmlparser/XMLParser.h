@@ -271,7 +271,7 @@ protected:
             sp_transport_t p_transport);
 
     /**
-     * @brief Parses an unknown transport descriptor.
+     * @brief Create a transport descriptor from an XML element and a transport type.
      *
      * @param p_root Pointer to the XML element representing the transport configuration.
      * @param transport_type String representing the type of the transport.
@@ -279,7 +279,7 @@ protected:
      *
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    static XMLP_ret parse_xml_unknown_transport(
+    static XMLP_ret create_transport_descriptor_from_xml_type(
             tinyxml2::XMLElement* p_root,
             const std::string& transport_type,
             sp_transport_t& p_transport);

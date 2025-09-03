@@ -18,11 +18,17 @@
  */
 
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #include <tinyxml2.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
 #include <xmlparser/XMLParser.h>
 #include <xmlparser/XMLParserCommon.h>
@@ -67,16 +73,44 @@ XMLP_ret XMLParser::get_xml_locator_ethernet(
     return XMLP_ret::XML_ERROR;
 }
 
-XMLP_ret XMLParser::parse_xml_unknown_transport(
+XMLP_ret XMLParser::create_transport_descriptor_from_xml_type(
         tinyxml2::XMLElement* p_root,
         const std::string& transport_type,
         sp_transport_t& p_transport)
 {
     static_cast<void>(p_root);
-    static_cast<void>(p_transport);
-    static_cast<void>(transport_type);
 
-    EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid transport type: '" << transport_type << "'");
+    if (transport_type == UDPv4)
+    {
+        p_transport = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
+        return XMLP_ret::XML_OK;
+    }
+
+    if (transport_type == UDPv6)
+    {
+        p_transport = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+        return XMLP_ret::XML_OK;
+    }
+
+    if (transport_type == TCPv4)
+    {
+        p_transport = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
+        return XMLP_ret::XML_OK;
+    }
+
+    if (transport_type == TCPv6)
+    {
+        p_transport = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
+        return XMLP_ret::XML_OK;
+    }
+
+    if (transport_type == SHM)
+    {
+        p_transport = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
+        return XMLP_ret::XML_OK;
+    }
+
+    EPROSIMA_LOG_ERROR(XMLPARSER, "Unknown transport type: '" << transport_type << "'");
     return XMLP_ret::XML_ERROR;
 }
 
