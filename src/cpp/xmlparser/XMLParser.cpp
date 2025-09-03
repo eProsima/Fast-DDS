@@ -402,8 +402,11 @@ XMLP_ret XMLParser::parseXMLTransportData(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid transport type: '" << sType << "'");
-        return XMLP_ret::XML_ERROR;
+        ret = parse_xml_unknown_transport(p_root, sType, pDescriptor);
+        if (ret != XMLP_ret::XML_OK)
+        {
+            return ret;
+        }
     }
 
     ret = parseXMLCommonTransportData(p_root, pDescriptor);

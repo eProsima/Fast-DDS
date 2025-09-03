@@ -1171,6 +1171,7 @@
                         <xs:element name="udpv6" type="udpv6LocatorType" maxOccurs="unbounded"/>
                         <xs:element name="tcpv4" type="tcpv4LocatorType" maxOccurs="unbounded"/>
                         <xs:element name="tcpv6" type="tcpv6LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="ethernet" type="ethernetLocatorType" maxOccurs="unbounded"/>
                     </xs:choice>
                 </xs:complexType>
             </xs:element>
@@ -1436,6 +1437,20 @@
             <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="physical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--ethernet Locator:
+        ├ port     [uint16],
+        ├ pcp      [uint8],
+        ├ vlan_id  [uint16],
+        └ address  [octectVector]-->
+    <xs:complexType name="ethernetLocatorType">
+        <xs:all>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="pcp" type="uint8" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="vlan_id" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="address" type="octectVector" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
