@@ -4252,6 +4252,12 @@ void SecurityManager::resend_handshake_message_token(
                         participant_stateless_message_writer_history_->remove_change(
                             remote_participant_info->change_sequence_number_);
                         remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+                        // Return the handshake handle
+                        if (remote_participant_info->handshake_handle_ != nullptr) {
+                            authentication_plugin_->return_handshake_handle(
+                                remote_participant_info->handshake_handle_, exception);
+                            remote_participant_info->handshake_handle_ = nullptr;
+                        }
                     }
                 }
             }
