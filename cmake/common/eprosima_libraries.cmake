@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Funtion to find cmake built thirdparty libraries.
+# Macro to find cmake built thirdparty libraries.
 #
 # Arguments:
 #   :package: The name of the packge to find. Used for find_package(${package})
-#   :extra arguments: Arguments passed after ${package} are parsed with cmake_parse_arguments()
+#   :extra arguments: Optional arguments passed after ${package} are parsed with cmake_parse_arguments()
+#       - REQUIRED: stops processing with an error message if the package cannot be found.
+#       - THIRDPARTIES_ROOT_DIR <directory>: The root directory where the thirdparty subdirectory is located.
+#       - OPTIONS <option1> <option2> ... : List of options passed to the package when it is added as subdirectory.
 #
 # Related CMake options:
 #   :THIRDPARTY: Activate the use of internal thirdparties [Defaults: OFF]. Set to ON if EPROSIMA_BUILD is set to ON.
@@ -29,7 +32,7 @@
 #        THIRDPARTY.
 #   :THIRDPARTY_UPDATE: Activate the auto-update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
 #
-# The function's procedure is as follows:
+# The macro's procedure is as follows:
 #   1. Try to find the package with find_package.
 #         1.1. This step is not taken if THIRDPARTY_${package} is set to FORCE. This happens when the user specifically
 #              sets THIRDPARTY_${package} to FORCE, or when THIRDPARTY is set to FORCE and THIRDPARTY_${package} is
@@ -142,12 +145,14 @@ macro(eprosima_find_package package)
     endif()
 endmacro()
 
-# Function to find all Fast DDS thirdparty libraries expect for Fast CDR (look at eprosima_find_package).
+# Macro to find all Fast DDS thirdparty libraries expect for Fast CDR (look at eprosima_find_package).
 #
 # Arguments:
 #   :package: The name of the package to find. Used for find_package(${package})
 #   :thirdparty_name: The name of the package directory under thirdparty, i.e. thirdparty/${thirdparty_name}
-#   :VERSION: [Optional] The minimum required version of the package.
+#   :extra arguments: Optional arguments passed after ${package} are parsed with cmake_parse_arguments()
+#       - VERSION: The minimum required version of the package.
+#       - THIRDPARTIES_ROOT_DIR <directory>: The root directory where the thirdparty subdirectory is located.
 #
 # Related CMake options:
 #   :THIRDPARTY: Activate the use of internal thirdparties [Defaults: OFF]. Set to ON if EPROSIMA_BUILD is set to ON.
@@ -160,7 +165,7 @@ endmacro()
 #        THIRDPARTY.
 #   :THIRDPARTY_UPDATE: Activate the auto update of internal thirdparties [Defaults: ON]. Possible values: ON/OFF.
 #
-# The function's procedure is as follows:
+# The macro's procedure is as follows:
 #   1. Try to find the package with find_package.
 #         1.1. This step is not taken if THIRDPARTY_${package} is set to FORCE. This happens when the user specifically
 #              sets THIRDPARTY_${package} to FORCE, or when THIRDPARTY is set to FORCE and THIRDPARTY_${package} is
