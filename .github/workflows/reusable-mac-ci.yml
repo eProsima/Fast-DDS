@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       label:
-        description: 'ID associated to the workflow'
+        description: 'ID associated to the workflow. Must univocally identify artifacts.'
         required: true
         type: string
       colcon-args:
@@ -33,13 +33,18 @@ on:
         required: false
         type: boolean
         default: false
+      run-tests:
+        description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  reusable-mac-ci:
+  fastdds_build:
     # As explained in https://github.com/actions/runner-images/tree/main?tab=readme-ov-file#available-images,
     # *-latest images are not always the latest available versions. The minimum version of the macOS image
     # with clang 15 is macos-13 (see
@@ -60,7 +65,8 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds-branch }}
 
-      - uses: eProsima/eProsima-CI/external/setup-python@v0
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
@@ -90,18 +96,6 @@ jobs:
         if: ${{ inputs.use-ccache == true }}
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up hosts file for DNS testing
-        run: |
-          sudo echo "" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
-          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
       # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
@@ -149,9 +143,69 @@ jobs:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
+      - name: Upload build artifacts
+        uses: eProsima/eProsima-CI/external/upload-artifact@v0
+        with:
+          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          path: ${{ github.workspace }}
+
+  fastdds_test:
+    needs: fastdds_build
+    if: ${{ inputs.run-tests == true }}
+    name: fastdds_test (${{ matrix.cmake_build_type }})
+    runs-on: macos-13
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake-build-type:
+          - 'RelWithDebInfo'
+    steps:
+      - name: Download build artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          path: ${{ github.workspace }}
+
+      - name: Set up hosts file for DNS testing
+        run: |
+          sudo echo "" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
+          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install brew dependencies
+        uses: eProsima/eProsima-CI/macos/install_brew_packages@v0
+        with:
+          packages: llvm tinyxml2 openssl@3.0
+          update: false
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/multiplatform/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema psutil
+          upgrade: false
+
       - name: Colcon test
         id: test
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
@@ -164,7 +218,7 @@ jobs:
 
       - name: Test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
-        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        if: ${{ !cancelled() }}
         with:
           junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
           print_summary: 'True'
