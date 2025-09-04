@@ -14,9 +14,6 @@
 
 include(CheckCXXSourceCompiles)
 
-add_subdirectory(fastdds/log)
-add_subdirectory(fastdds/xtypes)
-
 # Set source files
 if(WIN32)
 
@@ -31,347 +28,13 @@ add_definitions(-DNOMINMAX)
 
 endif(WIN32)
 
-file(GLOB DDSSQLFILTER_SOURCES fastdds/topic/DDSSQLFilter/*.cpp)
+set(FASTDDS_DIR ${PROJECT_SOURCE_DIR})
+set(FASTDDS_SOURCE_DIR .)
+include(source.cmake)
 
-
-set(${PROJECT_NAME}_source_files
-    ${ALL_HEADERS}
-
-    ${DDSSQLFILTER_SOURCES}
-
-    fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
-    fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
-    fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
-    fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
-    fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
-    fastdds/core/condition/Condition.cpp
-    fastdds/core/condition/ConditionNotifier.cpp
-    fastdds/core/condition/GuardCondition.cpp
-    fastdds/core/condition/StatusCondition.cpp
-    fastdds/core/condition/StatusConditionImpl.cpp
-    fastdds/core/condition/WaitSet.cpp
-    fastdds/core/condition/WaitSetImpl.cpp
-    fastdds/core/Entity.cpp
-    fastdds/core/policy/ParameterList.cpp
-    fastdds/core/policy/QosPolicyUtils.cpp
-    fastdds/core/Time_t.cpp
-    fastdds/domain/DomainParticipant.cpp
-    fastdds/domain/DomainParticipantFactory.cpp
-    fastdds/domain/DomainParticipantImpl.cpp
-    fastdds/domain/qos/DomainParticipantFactoryQos.cpp
-    fastdds/domain/qos/DomainParticipantQos.cpp
-    fastdds/log/FileConsumer.cpp
-    fastdds/log/Log.cpp
-    fastdds/log/OStreamConsumer.cpp
-    fastdds/log/StdoutConsumer.cpp
-    fastdds/log/StdoutErrConsumer.cpp
-    fastdds/publisher/DataWriter.cpp
-    fastdds/publisher/DataWriterHistory.cpp
-    fastdds/publisher/DataWriterImpl.cpp
-    fastdds/publisher/Publisher.cpp
-    fastdds/publisher/PublisherImpl.cpp
-    fastdds/publisher/qos/DataWriterQos.cpp
-    fastdds/publisher/qos/PublisherQos.cpp
-    fastdds/publisher/qos/WriterQos.cpp
-    fastdds/rpc/ServiceImpl.cpp
-    fastdds/rpc/ReplierImpl.cpp
-    fastdds/rpc/RequesterImpl.cpp
-    fastdds/rpc/RPCTypeObjectSupport.cpp
-    fastdds/rpc/ServiceTypeSupport.cpp
-    fastdds/subscriber/DataReader.cpp
-    fastdds/subscriber/DataReaderImpl.cpp
-    fastdds/subscriber/history/DataReaderHistory.cpp
-    fastdds/subscriber/qos/DataReaderQos.cpp
-    fastdds/subscriber/qos/ReaderQos.cpp
-    fastdds/subscriber/qos/SubscriberQos.cpp
-    fastdds/subscriber/ReadCondition.cpp
-    fastdds/subscriber/Subscriber.cpp
-    fastdds/subscriber/SubscriberImpl.cpp
-    fastdds/topic/ContentFilteredTopic.cpp
-    fastdds/topic/ContentFilteredTopicImpl.cpp
-    fastdds/topic/qos/TopicQos.cpp
-    fastdds/topic/Topic.cpp
-    fastdds/topic/TopicImpl.cpp
-    fastdds/topic/TopicProxyFactory.cpp
-    fastdds/topic/TypeSupport.cpp
-    fastdds/utils/QosConverters.cpp
-    fastdds/utils/TypePropagation.cpp
-    fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
-    fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
-    fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
-    fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
-    fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
-    fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
-    fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
-    fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
-    fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
-    fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
-    fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
-    fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
-    fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
-    fastdds/xtypes/exception/Exception.cpp
-    fastdds/xtypes/serializers/idl/dynamic_type_idl.cpp
-    fastdds/xtypes/serializers/json/dynamic_data_json.cpp
-    fastdds/xtypes/serializers/json/json_dynamic_data.cpp
-    fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
-    fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
-    fastdds/xtypes/type_representation/TypeObjectUtils.cpp
-    fastdds/xtypes/utils.cpp
-    rtps/attributes/EndpointSecurityAttributes.cpp
-    rtps/attributes/PropertyPolicy.cpp
-    rtps/attributes/RTPSParticipantAttributes.cpp
-    rtps/attributes/ServerAttributes.cpp
-    rtps/attributes/ThreadSettings.cpp
-    rtps/builtin/BuiltinProtocols.cpp
-    rtps/builtin/data/ParticipantBuiltinTopicData.cpp
-    rtps/builtin/data/ParticipantProxyData.cpp
-    rtps/builtin/data/PublicationBuiltinTopicData.cpp
-    rtps/builtin/data/SubscriptionBuiltinTopicData.cpp
-    rtps/builtin/data/ReaderProxyData.cpp
-    rtps/builtin/data/WriterProxyData.cpp
-    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
-    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
-    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
-    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
-    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
-    rtps/builtin/discovery/endpoint/EDP.cpp
-    rtps/builtin/discovery/endpoint/EDPClient.cpp
-    rtps/builtin/discovery/endpoint/EDPServer.cpp
-    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
-    rtps/builtin/discovery/endpoint/EDPSimple.cpp
-    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-    rtps/builtin/discovery/endpoint/EDPStatic.cpp
-    rtps/builtin/discovery/participant/DirectMessageSender.cpp
-    rtps/builtin/discovery/participant/PDP.cpp
-    rtps/builtin/discovery/participant/PDPClient.cpp
-    rtps/builtin/discovery/participant/PDPClientListener.cpp
-    rtps/builtin/discovery/participant/PDPListener.cpp
-    rtps/builtin/discovery/participant/PDPServer.cpp
-    rtps/builtin/discovery/participant/PDPServerListener.cpp
-    rtps/builtin/discovery/participant/PDPSimple.cpp
-    rtps/builtin/discovery/participant/simple/PDPStatelessWriter.cpp
-    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
-    rtps/builtin/liveliness/WLP.cpp
-    rtps/builtin/liveliness/WLPListener.cpp
-    rtps/common/GuidPrefix_t.cpp
-    rtps/common/SerializedPayload.cpp
-    rtps/common/LocatorWithMask.cpp
-    rtps/common/Time_t.cpp
-    rtps/common/Token.cpp
-    rtps/DataSharing/DataSharingListener.cpp
-    rtps/DataSharing/DataSharingNotification.cpp
-    rtps/DataSharing/DataSharingPayloadPool.cpp
-    rtps/exceptions/Exception.cpp
-    rtps/flowcontrol/FlowControllerConsts.cpp
-    rtps/flowcontrol/FlowControllerFactory.cpp
-    rtps/history/CacheChangePool.cpp
-    rtps/history/History.cpp
-    rtps/history/ReaderHistory.cpp
-    rtps/history/TopicPayloadPool.cpp
-    rtps/history/TopicPayloadPoolRegistry.cpp
-    rtps/history/WriterHistory.cpp
-    rtps/messages/CDRMessage.cpp
-    rtps/messages/MessageReceiver.cpp
-    rtps/messages/RTPSGapBuilder.cpp
-    rtps/messages/RTPSMessageCreator.cpp
-    rtps/messages/RTPSMessageGroup.cpp
-    rtps/messages/SendBuffersManager.cpp
-    rtps/messages/submessages/AckNackMsg.hpp
-    rtps/messages/submessages/DataMsg.hpp
-    rtps/messages/submessages/GapMsg.hpp
-    rtps/messages/submessages/HeartbeatMsg.hpp
-    rtps/network/NetworkBuffer.cpp
-    rtps/network/NetworkConfiguration.cpp
-    rtps/network/NetworkFactory.cpp
-    rtps/network/ReceiverResource.cpp
-    rtps/network/utils/external_locators.cpp
-    rtps/network/utils/netmask_filter.cpp
-    rtps/network/utils/network.cpp
-    rtps/participant/RTPSParticipant.cpp
-    rtps/participant/RTPSParticipantImpl.cpp
-    rtps/persistence/PersistenceFactory.cpp
-    rtps/reader/BaseReader.cpp
-    rtps/reader/reader_utils.cpp
-    rtps/reader/RTPSReader.cpp
-    rtps/reader/StatefulPersistentReader.cpp
-    rtps/reader/StatefulReader.cpp
-    rtps/reader/StatelessPersistentReader.cpp
-    rtps/reader/StatelessReader.cpp
-    rtps/reader/WriterProxy.cpp
-    rtps/resources/ResourceEvent.cpp
-    rtps/resources/TimedEvent.cpp
-    rtps/resources/TimedEventImpl.cpp
-    rtps/RTPSDomain.cpp
-    rtps/transport/ChainingTransport.cpp
-    rtps/transport/ChannelResource.cpp
-    rtps/transport/network/NetmaskFilterKind.cpp
-    rtps/transport/network/NetworkInterface.cpp
-    rtps/transport/network/NetworkInterfaceWithFilter.cpp
-    rtps/transport/PortBasedTransportDescriptor.cpp
-    rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
-    rtps/transport/tcp/RTCPMessageManager.cpp
-    rtps/transport/tcp/TCPControlMessage.cpp
-    rtps/transport/TCPAcceptor.cpp
-    rtps/transport/TCPAcceptorBasic.cpp
-    rtps/transport/TCPChannelResource.cpp
-    rtps/transport/TCPChannelResourceBasic.cpp
-    rtps/transport/TCPTransportInterface.cpp
-    rtps/transport/TCPv4Transport.cpp
-    rtps/transport/TCPv6Transport.cpp
-    rtps/transport/test_UDPv4Transport.cpp
-    rtps/transport/TransportInterface.cpp
-    rtps/transport/UDPChannelResource.cpp
-    rtps/transport/UDPTransportInterface.cpp
-    rtps/transport/UDPv4Transport.cpp
-    rtps/transport/UDPv6Transport.cpp
-    rtps/writer/BaseWriter.cpp
-    rtps/writer/LivelinessManager.cpp
-    rtps/writer/LocatorSelectorSender.cpp
-    rtps/writer/PersistentWriter.cpp
-    rtps/writer/ReaderLocator.cpp
-    rtps/writer/ReaderProxy.cpp
-    rtps/writer/RTPSWriter.cpp
-    rtps/writer/StatefulPersistentWriter.cpp
-    rtps/writer/StatefulWriter.cpp
-    rtps/writer/StatelessPersistentWriter.cpp
-    rtps/writer/StatelessWriter.cpp
-    statistics/fastdds/domain/DomainParticipant.cpp
-    statistics/fastdds/publisher/qos/DataWriterQos.cpp
-    statistics/fastdds/subscriber/qos/DataReaderQos.cpp
-    utils/Host.cpp
-    utils/IPFinder.cpp
-    utils/IPLocator.cpp
-    utils/md5.cpp
-    utils/StringMatching.cpp
-    utils/SystemInfo.cpp
-    utils/TimedConditionVariable.cpp
-    utils/UnitsParser.cpp
-    xmlparser/attributes/TopicAttributes.cpp
-    xmlparser/XMLDynamicParser.cpp
-    xmlparser/XMLElementParser.cpp
-    xmlparser/XMLEndpointParser.cpp
-    xmlparser/XMLParser.cpp
-    xmlparser/XMLParserCommon.cpp
-    xmlparser/XMLProfileManager.cpp
-    )
-
-# Statistics support
-if (FASTDDS_STATISTICS)
-
-    set(statistics_sources
-        statistics/fastdds/domain/DomainParticipantImpl.cpp
-        statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
-        statistics/rtps/monitor-service/MonitorService.cpp
-        statistics/rtps/monitor-service/MonitorServiceListener.cpp
-        statistics/rtps/reader/StatisticsReaderImpl.cpp
-        statistics/rtps/StatisticsBase.cpp
-        statistics/rtps/writer/StatisticsWriterImpl.cpp
-        statistics/types/monitorservice_typesPubSubTypes.cxx
-        statistics/types/monitorservice_typesTypeObjectSupport.cxx
-        statistics/types/typesPubSubTypes.cxx
-        statistics/types/typesTypeObjectSupport.cxx
-        )
-
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${statistics_sources}
-        )
-
-endif()
-
-# SHM Transport
-if(IS_THIRDPARTY_BOOST_OK)
-    list(APPEND ${PROJECT_NAME}_source_files
-        rtps/transport/shared_mem/test_SharedMemTransport.cpp
-        rtps/transport/shared_mem/SharedMemTransport.cpp
-        )
-endif()
-
-# TLS Support
-if(TLS_FOUND)
-    list(APPEND ${PROJECT_NAME}_source_files
-        rtps/transport/TCPChannelResourceSecure.cpp
-        rtps/transport/TCPAcceptorSecure.cpp
-        )
-endif()
-
-# Security sources
-set(${PROJECT_NAME}_security_source_files
-    rtps/security/exceptions/SecurityException.cpp
-    rtps/security/common/SharedSecretHandle.cpp
-    rtps/security/logging/Logging.cpp
-    rtps/security/logging/LoggingLevel.cpp
-    rtps/security/SecurityManager.cpp
-    rtps/security/SecurityPluginFactory.cpp
-    rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp
-    security/authentication/PKIDH.cpp
-    security/accesscontrol/Permissions.cpp
-    security/accesscontrol/DistinguishedName.cpp
-    security/cryptography/AESGCMGMAC.cpp
-    security/cryptography/AESGCMGMAC_KeyExchange.cpp
-    security/cryptography/AESGCMGMAC_KeyFactory.cpp
-    security/cryptography/AESGCMGMAC_Transform.cpp
-    security/cryptography/AESGCMGMAC_Types.cpp
-    security/authentication/PKIIdentityHandle.cpp
-    security/authentication/PKIHandshakeHandle.cpp
-    security/accesscontrol/AccessPermissionsHandle.cpp
-    security/accesscontrol/CommonParser.cpp
-    security/accesscontrol/GovernanceParser.cpp
-    security/accesscontrol/PermissionsParser.cpp
-    security/logging/LogTopic.cpp
-    security/artifact_providers/FileProvider.cpp
-    security/artifact_providers/Pkcs11Provider.cpp
-    )
-
-if(SECURITY)
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${${PROJECT_NAME}_security_source_files}
-        )
-    set(HAVE_SECURITY 1)
-else()
-    set(HAVE_SECURITY 0)
-endif()
-
-if(WIN32 AND (MSVC OR MSVC_IDE))
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds.rc
-        )
-endif()
-
-
-#SQLITE3 persistence service sources
-set(${PROJECT_NAME}_sqlite3_source_files
-    rtps/persistence/SQLite3PersistenceService.cpp
-    rtps/persistence/sqlite3.c
-    )
-
-if(SQLITE3_SUPPORT)
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${${PROJECT_NAME}_sqlite3_source_files}
-        )
-    set(HAVE_SQLITE3 1)
-    # sqlite.c requires a C compiler
-    enable_language(C)
-else()
-    set(HAVE_SQLITE3 0)
-endif()
-
-
-# External sources
-if(TINYXML2_SOURCE_DIR)
-    set(TINYXML2_SOURCE_DIR_ ${TINYXML2_SOURCE_DIR})
-    list(APPEND ${PROJECT_NAME}_source_files
-        ${TINYXML2_SOURCE_DIR_}/tinyxml2.cpp
-        )
-endif()
-
-if(ANDROID)
-    if((ANDROID_PLATFORM LESS_EQUAL 23) OR (ANDROID_NATIVE_API_LEVEL LESS_EQUAL 23))
-        list(APPEND ${PROJECT_NAME}_source_files
-            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
-            )
-    endif()
-endif()
+foreach(MODULE_DIR ${${PROJECT_NAME}_module_dirs})
+    add_subdirectory(${MODULE_DIR})
+endforeach()
 
 # Option to enable strict real-time. In this case, several API functions have a real-time behaviour.
 # * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
@@ -420,7 +83,7 @@ if(SM_COMPILE_RESULT AND NOT SM_RUN_RESULT)
 endif()
 
 if(SM_RUN_OUTPUT STREQUAL "PTHREAD_RWLOCK_PREFER_READER_NP")
-    set(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY ON)
+    set(USER_CAN_CHOOSE_SHARED_MUTEX_THIRDPARTY ON)
 else()
     message(STATUS "Forcing third party shared_mutex")
     set(USE_THIRDPARTY_SHARED_MUTEX ON)
@@ -435,10 +98,10 @@ This implementation will be used by default on frameworks
 lacking the shared_mutex feature like those not fulfilling
 C++17.
 ]=] OFF
-    "USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY"
+    "USER_CAN_CHOOSE_SHARED_MUTEX_THIRDPARTY"
     ON)
 
-unset(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY)
+unset(USER_CAN_CHOOSE_SHARED_MUTEX_THIRDPARTY)
 unset(SM_RUN_RESULT)
 unset(SM_COMPILE_RESULT)
 unset(SM_RUN_OUTPUT)

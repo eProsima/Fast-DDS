@@ -23,23 +23,23 @@ add_library(fastdds::xtypes::dynamic-types::api ALIAS fastdds-xtypes-dynamic-typ
 target_compile_features(fastdds-xtypes-dynamic-types-api INTERFACE cxx_std_11)
 
 target_sources(fastdds-xtypes-dynamic-types-api INTERFACE
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicData.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicType.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/type_traits.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/Types.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicData.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicType.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/type_traits.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/Types.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp
 
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp
 
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/utils.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/utils.hpp
 
     dynamic_types/DynamicDataFactory.cpp
     dynamic_types/DynamicTypeBuilderFactory.cpp
@@ -56,7 +56,7 @@ add_library(fastdds::xtypes::dynamic-types::impl ALIAS fastdds-xtypes-dynamic-ty
 target_compile_features(fastdds-xtypes-dynamic-types-impl INTERFACE cxx_std_11)
 
 target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp
     dynamic_types/AnnotationDescriptorImpl.cpp
     dynamic_types/AnnotationDescriptorImpl.hpp
     dynamic_types/DynamicDataImpl.cpp
@@ -102,14 +102,14 @@ add_library(fastdds::xtypes::type-representation ALIAS fastdds-xtypes-type-repre
 target_compile_features(fastdds-xtypes-type-representation INTERFACE cxx_std_11)
 
 target_sources(fastdds-xtypes-type-representation INTERFACE
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/exception/Exception.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/TypeObject.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/exception/Exception.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/type_representation/TypeObject.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp
 
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp
+    ${FASTDDS_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp
 
     exception/Exception.cpp
     type_representation/dds_xtypes_typeobjectCdrAux.ipp
