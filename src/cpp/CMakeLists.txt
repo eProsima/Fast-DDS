@@ -83,7 +83,7 @@ if(SM_COMPILE_RESULT AND NOT SM_RUN_RESULT)
 endif()
 
 if(SM_RUN_OUTPUT STREQUAL "PTHREAD_RWLOCK_PREFER_READER_NP")
-    set(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY ON)
+    set(USER_CAN_CHOOSE_SHARED_MUTEX_THIRDPARTY ON)
 else()
     message(STATUS "Forcing third party shared_mutex")
     set(USE_THIRDPARTY_SHARED_MUTEX ON)
@@ -98,10 +98,10 @@ This implementation will be used by default on frameworks
 lacking the shared_mutex feature like those not fulfilling
 C++17.
 ]=] OFF
-    "USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY"
+    "USER_CAN_CHOOSE_SHARED_MUTEX_THIRDPARTY"
     ON)
 
-unset(USER_CAN_CHOOSE_SHARED_MEMORY_THIRDPARTY)
+unset(USER_CAN_CHOOSE_SHARED_MUTEX_THIRDPARTY)
 unset(SM_RUN_RESULT)
 unset(SM_COMPILE_RESULT)
 unset(SM_RUN_OUTPUT)
