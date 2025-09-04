@@ -366,16 +366,24 @@ public:
             // PubSub options
             else if (arg == "-t" || arg == "--topic")
             {
-                if (config.entity == CLIParser::EntityKind::CLIENT_PUBLISHER ||
-                        config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
+                if (++i < argc)
                 {
-                    config.pub_config.topic_name = argv[i];
-                    config.sub_config.topic_name = argv[i];
+                    if (config.entity == CLIParser::EntityKind::CLIENT_PUBLISHER ||
+                            config.entity == CLIParser::EntityKind::CLIENT_SUBSCRIBER)
+                    {
+                        config.pub_config.topic_name = argv[i];
+                        config.sub_config.topic_name = argv[i];
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSER,
+                                "wrong or missing entity for --topic argument: only available for publisher and subscriber");
+                        print_help(EXIT_FAILURE);
+                    }
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER,
-                            "wrong or missing entity for --topic argument: only available for publisher and subscriber");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
                     print_help(EXIT_FAILURE);
                 }
             }
