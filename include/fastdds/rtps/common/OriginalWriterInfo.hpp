@@ -129,11 +129,6 @@ private:
     GUID_t original_writer_guid_ = GUID_t::unknown();
 
     SequenceNumber_t sequence_number_ = SequenceNumber_t::unknown();
-
-    // NOTE: Even though the standard define the QoS of the original writer as a ParameterList
-    // in this class, they are not used in the current Fast DDS implementation. However, an empty
-    // ParameterList is serialized as a placeholder for future implementations.
-    // ParameterList original_writer_qos_;
 };
 
 } //namespace rtps
