@@ -176,7 +176,7 @@ jobs:
           sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
           sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
           sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/
+          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
