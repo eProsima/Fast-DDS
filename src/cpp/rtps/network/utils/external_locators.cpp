@@ -86,8 +86,17 @@ static void get_mask_and_cost(
             mask = 128;
             break;
 
+        // Ethernet locators match independently of the MAC address (mask 0), and have a cost equivalent to IPv4
+        case LOCATOR_KIND_ETHERNET:
+            cost = 1;
+            mask = 0;
+            break;
+
+        // Other kinds of locators would come from custom transports, so we let them always match (mask 0)
+        // with the highest cost (255)
         default:
-            assert(false && "Unexpected locator kind");
+            cost = 255;
+            mask = 0;
             break;
     }
 }

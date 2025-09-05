@@ -36,6 +36,10 @@ foreach(MODULE_DIR ${${PROJECT_NAME}_module_dirs})
     add_subdirectory(${MODULE_DIR})
 endforeach()
 
+list(APPEND ${PROJECT_NAME}_source_files
+    xmlparser/XMLParserExtras.cpp
+	)
+
 # Option to enable strict real-time. In this case, several API functions have a real-time behaviour.
 # * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
 # * Subscriber::takeNextData() - Uses ReliabilityQosPolicy.max_blocking_time
