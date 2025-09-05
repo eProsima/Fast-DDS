@@ -619,6 +619,20 @@ protected:
             std::vector<rtps::octet>& octet_vector,
             uint8_t ident);
 
+    /**
+     * @brief Parses an XML element to populate an octet vector.
+     *
+     * @param elem Pointer to the XML element representing the octet vector.
+     * @param octet_vector Reference to the vector of octets to be populated.
+     * @param allow_empty Boolean flag indicating whether an empty octet vector is allowed.
+     *
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    static XMLP_ret parseXMLOctetVector(
+            tinyxml2::XMLElement* elem,
+            std::vector<rtps::octet>& octet_vector,
+            bool allow_empty);
+
     static XMLP_ret getXMLInt(
             tinyxml2::XMLElement* elem,
             int* i,
