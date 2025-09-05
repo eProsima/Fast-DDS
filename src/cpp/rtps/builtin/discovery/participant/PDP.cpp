@@ -315,6 +315,7 @@ void PDP::initializeParticipantProxyData(
     participant_data->product_version.major = FASTDDS_VERSION_MAJOR;
     participant_data->product_version.minor = FASTDDS_VERSION_MINOR;
     participant_data->product_version.patch = FASTDDS_VERSION_MICRO;
+    participant_data->product_version.tweak = FASTDDS_VERSION_TWEAK;
     participant_data->machine_id = SystemInfo::instance().machine_id();
 
     // TODO: participant_data->m_available_builtin_endpoints |= mp_builtin->available_builtin_endpoints();
