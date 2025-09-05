@@ -128,10 +128,13 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
-      # TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
+      ## TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
       #   - Issue: https://github.com/boostorg/mpl/issues/69.
       # We are disabling the warning for now, as the proposed solution does not fix the issue:
       #   - Not working solution: https://github.com/macports/macports-ports/pull/21839/files
+      ## Compiling Fast DDS tools has a problem with the symbolic link when the artifact is uploaded
+      # and downloaded, as it loses its permissions and then the tests fail. To work around this issue,
+      # we disable the compilation of the tools here and enable it in the Fast DDS test job.
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
@@ -139,14 +142,14 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion"
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion" -DCOMPILE_TOOLS=OFF
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
       - name: Upload build artifacts
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
   fastdds_test:
@@ -163,7 +166,7 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
       - name: Set up hosts file for DNS testing
@@ -203,6 +206,31 @@ jobs:
         with:
           packages: vcstool xmlschema psutil
           upgrade: false
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      # Build tools in this test to avoid issues with symbolic links in the artifacts
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion" -DCOMPILE_TOOLS=ON
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: test
