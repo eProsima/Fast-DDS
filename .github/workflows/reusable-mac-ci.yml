@@ -146,11 +146,20 @@ jobs:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
+      # Upload build and install directories to cache to speed up subsequent jobs
+      - name: Upload build and install to cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/build
+            ${{ github.workspace }}/install
+          key: fastdds_build_${{ inputs.label }}_${{ github.sha }}
+
       - name: Upload build artifacts
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
           name: fastdds_build_${{ inputs.label }}
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/src
 
   fastdds_test:
     needs: fastdds_build
@@ -167,19 +176,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
           name: fastdds_build_${{ inputs.label }}
-          path: ${{ github.workspace }}
-
-      - name: Set up hosts file for DNS testing
-        run: |
-          sudo echo "" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
-          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
+          path: ${{ github.workspace }}/src
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -213,12 +210,26 @@ jobs:
         with:
           api_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+      - name: Set up hosts file for DNS testing
+        run: |
+          sudo echo "" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
+          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
+
+      # Download build and install directories from cache to speed up the build
+      - name: Restore build and install from cache
+        uses: actions/cache@v4
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
-          destination_workspace: src
-          skip_existing: 'true'
+          path: |
+            ${{ github.workspace }}/build
+            ${{ github.workspace }}/install
+          key: fastdds_build_${{ inputs.label }}_${{ github.sha }}
 
       # Build tools in this test to avoid issues with symbolic links in the artifacts
       - name: Colcon build
