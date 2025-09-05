@@ -139,7 +139,7 @@ namespace xmlparser {
 using namespace eprosima::fastdds::xml::detail;
 using namespace eprosima::fastdds::rtps;
 
-static XMLP_ret parseXMLOctetVector(
+XMLP_ret XMLParser::parseXMLOctetVector(
         tinyxml2::XMLElement* elem,
         std::vector<octet>& octet_vector,
         bool allow_empty)
