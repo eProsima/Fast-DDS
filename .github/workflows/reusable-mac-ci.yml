@@ -146,7 +146,7 @@ jobs:
       - name: Upload build artifacts
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
   fastdds_test:
@@ -163,20 +163,13 @@ jobs:
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Set up hosts file for DNS testing
+      - name: Fix permissions after downloading build artifacts
         run: |
-          sudo echo "" | sudo tee -a /etc/hosts
-          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
-          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
-          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
-          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
+          find ${{ github.workspace }}/build -type f -name "*" -exec chmod +x {} \;
+          find ${{ github.workspace }}/install -type f -name "*" -exec chmod +x {} \;
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -203,6 +196,18 @@ jobs:
         with:
           packages: vcstool xmlschema psutil
           upgrade: false
+
+      - name: Set up hosts file for DNS testing
+        run: |
+          sudo echo "" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
+          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
       - name: Colcon test
         id: test
