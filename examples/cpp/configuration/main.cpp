@@ -42,6 +42,8 @@ int main(
         int argc,
         char** argv)
 {
+    Log::SetVerbosity(Log::Warning);
+    Log::SetVerbosity(Log::Kind::Info);
     auto ret = EXIT_SUCCESS;
     CLIParser::configuration_config config = CLIParser::parse_cli_options(argc, argv);
     uint16_t samples = 0;

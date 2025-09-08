@@ -125,6 +125,18 @@ PublisherApp::PublisherApp(
     {
         DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
         publisher_->get_default_datawriter_qos(writer_qos);
+        // Helper: milliseconds (double) -> Duration_t (sec + nsec), rounded to nearest ns
+        auto ms_to_duration = [](double ms) -> eprosima::fastdds::dds::Duration_t
+        {
+            if (ms == 0.0) {
+                return eprosima::fastdds::dds::Duration_t{0, 0}; // preserve zero => triggers warning & disables timer
+            }
+            long long ns  = static_cast<long long>(std::llround(ms * 1e6)); // 1 ms = 1e6 ns
+            int32_t  sec  = static_cast<int32_t>(ns / 1000000000LL);
+            uint32_t nsec = static_cast<uint32_t>(ns - static_cast<long long>(sec) * 1000000000LL);
+            return eprosima::fastdds::dds::Duration_t{sec, nsec};
+        };
+
         writer_qos.publish_mode().kind = config.publish_mode;
         writer_qos.reliability().kind = config.reliability;
         writer_qos.durability().kind = config.durability;
@@ -141,10 +153,8 @@ PublisherApp::PublisherApp(
                       "DataWriter initialization failed: ownership strength is only valid with exclusive ownership");
         }
         writer_qos.ownership_strength().value = config.ownership_strength;
-        if (config.deadline > 0)
-        {
-            writer_qos.deadline().period = eprosima::fastdds::dds::Duration_t(config.deadline * 1e-3);
-        }
+        writer_qos.deadline().period = ms_to_duration(static_cast<double>(config.deadline));
+        
         writer_qos.reliable_writer_qos().disable_positive_acks.enabled = config.disable_positive_ack;
         if (config.ack_keep_duration > 0)
         {
@@ -175,6 +185,22 @@ PublisherApp::PublisherApp(
     {
         throw std::runtime_error("DataWriter initialization failed");
     }
+    // right after you confirm writer_ was created successfully
+    eprosima::fastdds::dds::DataWriter* w = writer_;
+    std::thread([w]() {
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+        eprosima::fastdds::dds::DataWriterQos q;
+        w->get_qos(q);
+
+        // set deadline to 200 ms
+        q.deadline().period = eprosima::fastdds::dds::Duration_t{0, 200000000u}; // 0s + 200,000,000 ns
+
+        auto rc = w->set_qos(q);
+        (void)rc; // silence -Werror=unused-variable
+    }).detach();
+
+
 }
 
 PublisherApp::~PublisherApp()

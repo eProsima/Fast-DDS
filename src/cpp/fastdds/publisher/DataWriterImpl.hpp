@@ -771,6 +771,8 @@ protected:
 
 private:
 
+    void configure_deadline_timer_locked_();
+
     void create_history(
             const std::shared_ptr<IPayloadPool>& payload_pool,
             const std::shared_ptr<IChangePool>& change_pool);
