@@ -206,8 +206,5 @@ endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
 endif()
-if (APPLE)
-    target_link_libraries(ListenerTests "-framework CoreFoundation" "-framework IOKit")
-endif()
 
 gtest_discover_tests(ListenerTests)

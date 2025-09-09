@@ -158,10 +158,6 @@ target_link_libraries(MonitorServiceTests
 
 gtest_discover_tests(MonitorServiceTests)
 
-if (APPLE)
-    target_link_libraries(MonitorServiceTests "-framework CoreFoundation" "-framework IOKit")
-endif()
-
 if(QNX)
     target_link_libraries(RTPSStatisticsTests socket)
     target_link_libraries(MonitorServiceTests socket)

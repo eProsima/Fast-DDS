@@ -174,9 +174,6 @@ target_link_libraries(SystemInfoTests
     fastdds::log
     GTest::gtest
     )
-if(APPLE)
-    target_link_libraries(SystemInfoTests "-framework CoreFoundation" "-framework IOKit")
-endif()
 gtest_discover_tests(SystemInfoTests)
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)

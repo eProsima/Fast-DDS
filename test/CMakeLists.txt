@@ -55,6 +55,10 @@ if(EPROSIMA_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
+    if(APPLE)
+        link_libraries("-framework CoreFoundation" "-framework IOKit")
+    endif()
+
     add_subdirectory(blackbox)
     add_subdirectory(feature)
     add_subdirectory(unittest)
