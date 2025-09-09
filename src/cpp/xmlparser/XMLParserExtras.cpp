@@ -60,7 +60,7 @@ XMLP_ret XMLParser::get_xml_locator_ethernet(
                 <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="pcp" type="uint8" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="vlan_id" type="uint16" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="address" type="octectVector" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
      */
