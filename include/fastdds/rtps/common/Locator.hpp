@@ -214,19 +214,9 @@ inline bool IsAddressDefined(
             }
         }
     }
-    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
+    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6 || loc.kind == LOCATOR_KIND_ETHERNET)
     {
         for (uint8_t i = 0; i < 16; ++i)
-        {
-            if (loc.address[i] != 0)
-            {
-                return true;
-            }
-        }
-    }
-    else if (loc.kind == LOCATOR_KIND_ETHERNET)
-    {
-        for (uint8_t i = 10; i < 16; ++i)
         {
             if (loc.address[i] != 0)
             {
