@@ -24,6 +24,7 @@
 #include <cstring>
 #include <iomanip>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <fastdds/config.hpp>
@@ -191,6 +192,19 @@ public:
     {
         LOCATOR_ADDRESS_INVALID(address);
     }
+
+    /**
+     * @brief Create a locator with the given parameters.
+     *
+     * @param kind Kind of the locator.
+     * @param address IP Address of the locator as string.
+     * @param port Port of the locator.
+     * @return Locator_t object initialized with the given parameters.
+     */
+    static Locator_t create_locator(
+            int32_t kind,
+            const std::string& address,
+            uint32_t port);
 
 };
 
@@ -366,10 +380,17 @@ inline std::ostream& operator <<(
             output << IPLocator::toIPv4string(loc);
             break;
 
-        case LOCATOR_KIND_ETHERNET:
         case LOCATOR_KIND_UDPv6:
         case LOCATOR_KIND_TCPv6:
             output << IPLocator::toIPv6string(loc);
+            break;
+
+        case LOCATOR_KIND_ETHERNET:
+            output << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[0];
+            for (int i = 1; i < 6; ++i)
+            {
+                output << ":" << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[i];
+            }
             break;
 
         case LOCATOR_KIND_SHM:
@@ -515,7 +536,7 @@ inline std::istream& operator >>(
                 // Get port
                 input >> port;
 
-                IPLocator::createLocator(kind, address, port, loc);
+                loc = Locator_t::create_locator(kind, address, port);
             }
         }
         catch (std::ios_base::failure& )
