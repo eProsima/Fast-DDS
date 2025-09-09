@@ -44,7 +44,7 @@ MonitorServiceDataReaderQos::MonitorServiceDataReaderQos()
     reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     history().kind = eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-    history().depth = 1;
+    history().depth = 100;
 
     resource_limits().max_instances = 1500;
     resource_limits().max_samples = 1600;

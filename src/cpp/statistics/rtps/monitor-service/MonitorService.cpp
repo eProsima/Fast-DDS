@@ -294,57 +294,57 @@ bool MonitorService::write_status(
                         data.entity_proxy().assign(msg.buffer, msg.buffer + msg.length);
                         break;
                     }
-                    case StatusKind::CONNECTION_LIST:
-                    {
-                        data.connection_list({});
-                        std::vector<statistics::Connection> conns;
-                        status_retrieved = conns_queryable_->get_entity_connections(local_entity_guid, conns);
-                        data.connection_list(conns);
-                        break;
-                    }
-                    case StatusKind::INCOMPATIBLE_QOS:
-                    {
-                        data.incompatible_qos_status(IncompatibleQoSStatus_s{});
-                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
-                        break;
-                    }
-                    //Not triggered for the moment
-                    case StatusKind::INCONSISTENT_TOPIC:
-                    {
-                        EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Inconsistent topic status not supported yet");
-                        static_cast<void>(local_entity_guid);
-                        break;
-                    }
-                    case StatusKind::LIVELINESS_LOST:
-                    {
-                        data.liveliness_lost_status(LivelinessLostStatus_s{});
-                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
-                        break;
-                    }
-                    case StatusKind::LIVELINESS_CHANGED:
-                    {
-                        data.liveliness_changed_status(LivelinessChangedStatus_s{});
-                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
-                        break;
-                    }
-                    case StatusKind::DEADLINE_MISSED:
-                    {
-                        data.deadline_missed_status(DeadlineMissedStatus_s{});
-                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
-                        break;
-                    }
-                    case StatusKind::SAMPLE_LOST:
-                    {
-                        data.sample_lost_status(SampleLostStatus_s{});
-                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
-                        break;
-                    }
-                    case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
-                    {
-                        std::lock_guard<std::mutex> lock(extended_incompatible_qos_mtx_);
-                        data.extended_incompatible_qos_status(extended_incompatible_qos_collection_[local_entity_guid]);
-                        break;
-                    }
+                    // case StatusKind::CONNECTION_LIST:
+                    // {
+                    //     data.connection_list({});
+                    //     std::vector<statistics::Connection> conns;
+                    //     status_retrieved = conns_queryable_->get_entity_connections(local_entity_guid, conns);
+                    //     data.connection_list(conns);
+                    //     break;
+                    // }
+                    // case StatusKind::INCOMPATIBLE_QOS:
+                    // {
+                    //     data.incompatible_qos_status(IncompatibleQoSStatus_s{});
+                    //     status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
+                    //     break;
+                    // }
+                    // //Not triggered for the moment
+                    // case StatusKind::INCONSISTENT_TOPIC:
+                    // {
+                    //     EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Inconsistent topic status not supported yet");
+                    //     static_cast<void>(local_entity_guid);
+                    //     break;
+                    // }
+                    // case StatusKind::LIVELINESS_LOST:
+                    // {
+                    //     data.liveliness_lost_status(LivelinessLostStatus_s{});
+                    //     status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
+                    //     break;
+                    // }
+                    // case StatusKind::LIVELINESS_CHANGED:
+                    // {
+                    //     data.liveliness_changed_status(LivelinessChangedStatus_s{});
+                    //     status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
+                    //     break;
+                    // }
+                    // case StatusKind::DEADLINE_MISSED:
+                    // {
+                    //     data.deadline_missed_status(DeadlineMissedStatus_s{});
+                    //     status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
+                    //     break;
+                    // }
+                    // case StatusKind::SAMPLE_LOST:
+                    // {
+                    //     data.sample_lost_status(SampleLostStatus_s{});
+                    //     status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
+                    //     break;
+                    // }
+                    // case StatusKind::EXTENDED_INCOMPATIBLE_QOS:
+                    // {
+                    //     std::lock_guard<std::mutex> lock(extended_incompatible_qos_mtx_);
+                    //     data.extended_incompatible_qos_status(extended_incompatible_qos_collection_[local_entity_guid]);
+                    //     break;
+                    // }
                     default:
                     {
                         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Referring to an unknown status");
@@ -355,9 +355,13 @@ bool MonitorService::write_status(
 
                 if (status_retrieved)
                 {
-                    status_data.status_kind(static_cast<StatusKind::StatusKind>(i));
-                    status_data.value(data);
-                    add_change(status_data, false);
+                    if (i == StatusKind::PROXY)
+                    {
+                        status_data.value().entity_proxy(std::vector<uint8_t>());
+                        status_data.status_kind(static_cast<StatusKind::StatusKind>(i));
+                        status_data.value(data);
+                        add_change(status_data, false);
+                    }
                 }
                 else
                 {
@@ -384,8 +388,11 @@ bool MonitorService::write_status(
         //! Send a dispose for every statuskind of this entity
         for (uint32_t i = StatusKind::PROXY; i < StatusKind::STATUSES_SIZE; i++)
         {
-            status_data.status_kind(i);
-            add_change(status_data, true);
+            if (i == StatusKind::PROXY)
+            {
+                status_data.status_kind(i);
+                add_change(status_data, true);
+            }
         }
     }
 
@@ -470,13 +477,13 @@ bool MonitorService::create_endpoint()
 
     dds::HistoryQosPolicy hqos;
     hqos.kind = dds::KEEP_LAST_HISTORY_QOS;
-    hqos.depth = 1;
+    hqos.depth = 100;
 
     TopicKind_t topic_kind = WITH_KEY;
 
     dds::ResourceLimitsQosPolicy rl_qos;
     rl_qos.max_instances = 0;
-    rl_qos.max_samples_per_instance = 1;
+    rl_qos.max_samples_per_instance = 100;
 
     PoolConfig writer_pool_cfg = PoolConfig::from_history_attributes(hatt);
     status_writer_payload_pool_ = TopicPayloadPoolRegistry::get(MONITOR_SERVICE_TOPIC, writer_pool_cfg);
