@@ -228,7 +228,8 @@ inline bool IsAddressDefined(
             }
         }
     }
-    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6 || loc.kind == LOCATOR_KIND_ETHERNET)
+    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6 ||
+            loc.kind == LOCATOR_KIND_SHM || loc.kind == LOCATOR_KIND_ETHERNET)
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -386,10 +387,10 @@ inline std::ostream& operator <<(
             break;
 
         case LOCATOR_KIND_ETHERNET:
-            output << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[0];
+            output << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[10];
             for (int i = 1; i < 6; ++i)
             {
-                output << ":" << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[i];
+                output << ":" << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[10 + i];
             }
             break;
 
@@ -528,6 +529,12 @@ inline std::istream& operator >>(
                         return input;
                     }
                     address = *addresses.second.begin();
+                }
+                if ((kind == LOCATOR_KIND_SHM) && (address != "M") && (address != "_"))
+                {
+                    loc.kind = LOCATOR_KIND_INVALID;
+                    EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
+                    return input;
                 }
 
                 // Get char ]:

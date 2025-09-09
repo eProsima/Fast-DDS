@@ -71,6 +71,8 @@ Locator Locator::create_locator(
         case LOCATOR_KIND_ETHERNET:
             if (std::regex_match(address, ETHERNET_REGEX))
             {
+                locator.kind = LOCATOR_KIND_ETHERNET;
+                locator.port = port;
                 locator.address[0] = 0xFF;
                 for (size_t i = 0; i < 6; ++i)
                 {
