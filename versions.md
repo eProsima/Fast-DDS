@@ -11,6 +11,7 @@ Forthcoming
   * Add new `for_each_type_w_uri()` method in `DynamicTypeBuilderFactory`.
 * __Fast DDS Pro__ features:
   * Added Ethernet transport (Linux only).
+  * Mapping transport priority to DSCP, interface and source port in UDP transport.
 
 Version v3.3.0
 --------------
