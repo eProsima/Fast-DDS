@@ -42,6 +42,7 @@ const char* REPLIER = "replier";
 const char* TRANSPORT_DESCRIPTOR = "transport_descriptor";
 const char* TRANSPORT_ID = "transport_id";
 const char* UDP_OUTPUT_PORT = "output_port";
+const char* UDP_PRIORITY_MAPPINGS = "udp_priority_mappings";
 const char* TCP_WAN_ADDR = "wan_addr";
 const char* RECEIVE_BUFFER_SIZE = "receiveBufferSize";
 const char* SEND_BUFFER_SIZE = "sendBufferSize";

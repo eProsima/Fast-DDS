@@ -441,6 +441,7 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, TTL) == 0 ||
                 strcmp(name, NON_BLOCKING_SEND) == 0 ||
                 strcmp(name, UDP_OUTPUT_PORT) == 0 ||
+                strcmp(name, UDP_PRIORITY_MAPPINGS) == 0 ||
                 strcmp(name, TCP_WAN_ADDR) == 0 ||
                 strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 ||
                 strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
