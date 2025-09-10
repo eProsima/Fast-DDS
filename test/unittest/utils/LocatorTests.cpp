@@ -541,15 +541,25 @@ TEST_F(IPLocatorTests, createLocator)
     // create ETHERNET
     kind = LOCATOR_KIND_ETHERNET;
     probe_locator.kind = kind;
-    res_locator = Locator_t::create_locator(kind, "00:11:22:33:44:55", port1);
+    res_locator = Locator_t::create_locator(kind, "11:22:33:44:55:66", port1);
     ASSERT_EQ(res_locator.kind, kind);
     ASSERT_EQ(res_locator.port, port1);
-    ASSERT_EQ(res_locator.address[10], 0x00);
-    ASSERT_EQ(res_locator.address[11], 0x11);
-    ASSERT_EQ(res_locator.address[12], 0x22);
-    ASSERT_EQ(res_locator.address[13], 0x33);
-    ASSERT_EQ(res_locator.address[14], 0x44);
-    ASSERT_EQ(res_locator.address[15], 0x55);
+    ASSERT_EQ(res_locator.address[0],  0xFF);
+    ASSERT_EQ(res_locator.address[1],  0x00);
+    ASSERT_EQ(res_locator.address[2],  0x00);
+    ASSERT_EQ(res_locator.address[3],  0x00);
+    ASSERT_EQ(res_locator.address[4],  0x00);
+    ASSERT_EQ(res_locator.address[5],  0x00);
+    ASSERT_EQ(res_locator.address[6],  0x00);
+    ASSERT_EQ(res_locator.address[7],  0x00);
+    ASSERT_EQ(res_locator.address[8],  0x00);
+    ASSERT_EQ(res_locator.address[9],  0x00);
+    ASSERT_EQ(res_locator.address[10], 0x11);
+    ASSERT_EQ(res_locator.address[11], 0x22);
+    ASSERT_EQ(res_locator.address[12], 0x33);
+    ASSERT_EQ(res_locator.address[13], 0x44);
+    ASSERT_EQ(res_locator.address[14], 0x55);
+    ASSERT_EQ(res_locator.address[15], 0x66);
 }
 
 /*
