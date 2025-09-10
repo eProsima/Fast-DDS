@@ -1068,7 +1068,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return RETCODE_TIMEOUT;
         }
 
-        if (deadline_timer_ != nullptr && qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != dds::c_TimeInfinite)
+        if (deadline_timer_ != nullptr && qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != dds::c_TimeInfinite && deadline_missed_status_.total_count < std::numeric_limits<int32_t>::max())
         {
             if (!history_->set_next_deadline(
                         handle,
@@ -1245,6 +1245,11 @@ ReturnCode_t DataWriterImpl::set_qos(
         // If the deadline period actually changed, (re)configure the timer.
         if (qos_.deadline().period != prev_deadline)
         {
+            // Resetting total count value whenever the deadline period changes
+            deadline_missed_status_.total_count = 0;
+            deadline_missed_status_.total_count_change = 0;
+            deadline_missed_status_.last_instance_handle = InstanceHandle_t();
+
             configure_deadline_timer_locked_();
         }
 
@@ -1550,7 +1555,7 @@ ReturnCode_t DataWriterImpl::set_related_datareader(
 bool DataWriterImpl::deadline_timer_reschedule()
 {
     assert(qos_.deadline().period != dds::c_TimeInfinite);
-    if (deadline_timer_ == nullptr)
+    if (deadline_timer_ == nullptr || deadline_missed_status_.total_count >= std::numeric_limits<int32_t>::max())
     {
         return false;
     }
@@ -1572,24 +1577,18 @@ bool DataWriterImpl::deadline_timer_reschedule()
 void DataWriterImpl::configure_deadline_timer_locked_()
 {
 
-    // Tear down any existing timer
-    if (deadline_missed_status_.total_count >= std::numeric_limits<int32_t>::max())
-    {
-        if (deadline_timer_)              // if it exists, shut it down
-        {
-            deadline_timer_->cancel_timer();
-            delete deadline_timer_;
-            deadline_timer_ = nullptr;
-        }
-        return;                            // do not create a new timer
-    }
-
     // Tear down any existing timer (normal reconfigure path)
     if (deadline_timer_ != nullptr)
     {
         deadline_timer_->cancel_timer();
         delete deadline_timer_;
         deadline_timer_ = nullptr;
+    }
+
+    // If we had previously hit the max, keep timer disabled until QoS changes reset the count.
+    if (deadline_missed_status_.total_count >= std::numeric_limits<int32_t>::max())
+    {
+        return; // no new timer
     }
 
     // Refresh cached duration and guards
@@ -1611,7 +1610,8 @@ void DataWriterImpl::configure_deadline_timer_locked_()
                     DATA_WRITER,
                     "Deadline period is "
                         << (qos_.deadline().period.to_ns() == 0 ? "0" : "infinite")
-                        << ", it will be ignored from now on. Timer is going to be canceled.");   
+                        << ", it will be ignored from now on. Timer is going to be canceled."); 
+                deadline_missed_status_.total_count = std::numeric_limits<int32_t>::max();
 
                 if (deadline_timer_ != nullptr)
                 {
@@ -1658,10 +1658,9 @@ bool DataWriterImpl::deadline_missed()
     assert(qos_.deadline().period != dds::c_TimeInfinite);
 
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
-    
+
     if (deadline_missed_status_.total_count >= std::numeric_limits<int32_t>::max() && deadline_timer_ != nullptr)
     {
-        EPROSIMA_LOG_WARNING(DATA_WRITER, "Maximum number of deadline missed messages reached. Stopping deadline timer.");
         deadline_timer_->cancel_timer();
         return false; 
     }
@@ -1669,6 +1668,15 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
+
+    // If we just reached the max -> log ONCE, stop timer, and bail.
+    if (deadline_missed_status_.total_count == std::numeric_limits<int32_t>::max())
+    {
+        EPROSIMA_LOG_WARNING(DATA_WRITER, "Maximum number of deadline missed messages reached. Stopping deadline timer.");
+        deadline_timer_->cancel_timer();
+        return false; // do not reschedule
+    }
+
     StatusMask notify_status = StatusMask::offered_deadline_missed();
     auto listener = get_listener_for(notify_status);
     if (nullptr != listener)
