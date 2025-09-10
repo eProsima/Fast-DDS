@@ -9,6 +9,8 @@ Forthcoming
 * Add field `original_writer_info` to `WriteParams` and `SampleInfo`
 * Iterate over declared types processed with IDL Parser:
   * Add new `for_each_type_w_uri()` method in `DynamicTypeBuilderFactory`.
+* __Fast DDS Pro__ features:
+  * Added Ethernet transport (Linux only).
 
 Version v3.3.0
 --------------
