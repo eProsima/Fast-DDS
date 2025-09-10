@@ -647,17 +647,18 @@ public:
                 {
                     try
                     {
-                        // Always interpret as milliseconds (decimals allowed)
-                        double ms = std::stod(argv[i]);
-                        if (ms < 0.0 || ms > static_cast<double>(max_duration))
+                        int input = std::stoi(argv[i]);
+                        if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                         {
-                            throw std::out_of_range(
-                                "deadline argument " + std::string(argv[i]) +
-                                " out of range [0, " + std::to_string(max_duration) + "] ms.");
+                            throw std::out_of_range("deadline argument " + std::string(
+                                              argv[i]) + " out of range [1, " + std::to_string(
+                                              max_duration) + "].");
                         }
-                        uint32_t deadline_ms = static_cast<uint32_t>(std::llround(ms));
-                        config.pub_config.deadline = deadline_ms;
-                        config.sub_config.deadline = deadline_ms;
+                        else
+                        {
+                            config.pub_config.deadline = static_cast<uint32_t>(input);
+                            config.sub_config.deadline = static_cast<uint32_t>(input);
+                        }
                     }
                     catch (const std::invalid_argument& e)
                     {
@@ -677,7 +678,6 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-
             else if (arg == "--disable-positive-ack")
             {
                 config.pub_config.disable_positive_ack = true;
