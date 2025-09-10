@@ -91,6 +91,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -319,6 +320,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLEndpointParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
         )
 
@@ -506,6 +508,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLEndpointParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
         )
 
@@ -610,9 +613,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
             iphlpapi Shlwapi
             )
     endif()
-    if (APPLE)
-        target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
-    endif()
 
     gtest_discover_tests(StatisticsDomainParticipantMockTests)
 
@@ -662,9 +662,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
             iphlpapi Shlwapi
             )
-    endif()
-    if (APPLE)
-        target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
     endif()
 
     gtest_discover_tests(StatisticsDomainParticipantStatusQueryableTests)

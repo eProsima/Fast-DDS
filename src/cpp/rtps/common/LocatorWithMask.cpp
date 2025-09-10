@@ -49,14 +49,25 @@ bool LocatorWithMask::matches(
         {
             case LOCATOR_KIND_UDPv4:
             case LOCATOR_KIND_TCPv4:
+                // IPv4 address is in the last 4 octets of the 16-octet array
                 assert(32 >= mask());
                 return network::address_matches(loc.address + 12, address + 12, mask());
 
             case LOCATOR_KIND_UDPv6:
             case LOCATOR_KIND_TCPv6:
             case LOCATOR_KIND_SHM:
+                // IPv6 and SHM address use the full 16-octet array
                 assert(128 >= mask());
                 return network::address_matches(loc.address, address, mask());
+
+            case LOCATOR_KIND_ETHERNET:
+                // Ethernet locators match independently of the MAC address (mask 0)
+                assert(0 == mask());
+                return true;
+
+            default:
+                // Other kinds of locators would come from custom transports, so we let them always match (mask 0)
+                return true;
         }
     }
 

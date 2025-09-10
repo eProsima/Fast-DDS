@@ -17,13 +17,22 @@
  *
  */
 
+#include <cstdint>
+#include <cstring>
+#include <exception>
 #include <regex>
 #include <set>
+#include <string>
 
 #include <asio.hpp>
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/Types.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <fastdds/utils/IPFinder.hpp>
+
+#include <rtps/transport/shared_mem/SHMLocator.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,6 +41,74 @@ namespace rtps {
 static const std::regex IPv4_REGEX("^(?:(?:0*25[0-5]|0*2[0-4][0-9]|0*[01]?[0-9][0-9]?)\\.){3}"
         "(?:0*25[0-5]|0*2[0-4][0-9]|0*[01]?[0-9][0-9]?)$");
 static const std::regex IPv6_QUARTET_REGEX("^(?:[A-Fa-f0-9]){0,4}$");
+static const std::regex ETHERNET_REGEX("^([0-9A-Fa-f]{2}(:[0-9A-Fa-f]{2}){5})$");
+
+Locator Locator::create_locator(
+        int32_t kind,
+        const std::string& address,
+        uint32_t port)
+{
+    SHMLocator::Type shm_type = SHMLocator::Type::UNICAST;
+    Locator locator;
+    locator.kind = LOCATOR_KIND_INVALID;
+    locator.set_Invalid_Address();
+    locator.port = 0;
+
+    switch (kind)
+    {
+        case LOCATOR_KIND_TCPv4:
+        case LOCATOR_KIND_UDPv4:
+        case LOCATOR_KIND_TCPv6:
+        case LOCATOR_KIND_UDPv6:
+            IPLocator::createLocator(kind, address, port, locator);
+            break;
+
+        case LOCATOR_KIND_SHM:
+            shm_type = address == "M" ? SHMLocator::Type::MULTICAST : SHMLocator::Type::UNICAST;
+            locator = SHMLocator::create_locator(port, shm_type);
+            break;
+
+        case LOCATOR_KIND_ETHERNET:
+            if (std::regex_match(address, ETHERNET_REGEX))
+            {
+                locator.kind = LOCATOR_KIND_ETHERNET;
+                locator.port = port;
+                locator.address[0] = 0xFF;
+                for (size_t i = 0; i < 6; ++i)
+                {
+                    std::string byte_string = address.substr(i * 3, 2);
+                    try
+                    {
+                        locator.address[10 + i] = static_cast<octet>(std::stoul(byte_string, nullptr, 16));
+                    }
+                    catch (const std::exception&)
+                    {
+                        EPROSIMA_LOG_WARNING(IP_LOCATOR,
+                                "Ethernet address " << address << " error format. Expected XX:XX:XX:XX:XX:XX");
+                        locator.kind = LOCATOR_KIND_INVALID;
+                        locator.port = 0;
+                        LOCATOR_ADDRESS_INVALID(locator.address);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(IP_LOCATOR,
+                        "Ethernet address " << address << " error format. Expected XX:XX:XX:XX:XX:XX");
+                locator.kind = LOCATOR_KIND_INVALID;
+                locator.port = 0;
+                LOCATOR_ADDRESS_INVALID(locator.address);
+            }
+            break;
+
+        default:
+            EPROSIMA_LOG_WARNING(IP_LOCATOR, "Trying to create a locator with unsupported kind: " << kind);
+            break;
+    }
+
+    return locator;
+}
 
 // Factory
 void IPLocator::createLocator(

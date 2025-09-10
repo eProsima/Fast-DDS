@@ -204,6 +204,7 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLEndpointParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
     )
 
@@ -388,11 +389,6 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(DataWriterTests ${PRIVACY}
         iphlpapi Shlwapi
         )
-endif()
-if (APPLE)
-    target_link_libraries(DataWriterTests ${PRIVACY}
-    "-framework CoreFoundation" "-framework IOKit"
-    )
 endif()
 gtest_discover_tests(DataWriterTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
