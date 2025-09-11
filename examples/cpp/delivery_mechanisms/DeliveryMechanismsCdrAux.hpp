@@ -37,6 +37,39 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DeliveryMechanisms& data);
 
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct DeliveryMechanisms_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct DeliveryMechanisms_f
+{
+    typedef std::array<char, 32> DeliveryMechanisms::* type;
+    friend constexpr type get(
+            DeliveryMechanisms_f);
+};
+
+template struct DeliveryMechanisms_rob<DeliveryMechanisms_f, &DeliveryMechanisms::m_message>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr DeliveryMechanisms_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
 
 } // namespace fastcdr
 } // namespace eprosima

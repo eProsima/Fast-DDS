@@ -30,6 +30,366 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
+namespace fastcdr {
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteStructMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteBitflag_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_PlainArraySElemDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonEnumeratedLiteral_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalBitsetType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonBitflag_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalAliasType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteEnumeratedType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteUnionHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalDiscriminatorMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteAliasHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteStructType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonCollectionElement_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalCollectionElement_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_PlainCollectionHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_ExtendedAnnotationParameterValue_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalUnionHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalCollectionHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalAnnotationType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalAliasHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonUnionMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonCollectionHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalArrayType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteBitsetType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_PlainArrayLElemDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonAliasBody_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonBitfield_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalStructHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalAnnotationParameter_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteExtendedType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteAnnotationHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalEnumeratedLiteral_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteAliasType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonBitmaskHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalStructMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteTypeDetail_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalBitmaskType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteArrayHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalStructType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteMapType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteEnumeratedHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_Dummy_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteBitfield_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_TypeIdentifierPair_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_AppliedBuiltinMemberAnnotations_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalMemberDetail_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_AppliedBuiltinTypeAnnotations_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteCollectionHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalMapType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_TypeInformation_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteEnumeratedLiteral_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteCollectionElement_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalAnnotationHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_TypeIdentifierWithDependencies_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalEnumeratedType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteArrayType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteStructHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteAnnotationType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_AppliedAnnotationParameter_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_PlainMapSTypeDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalAliasBody_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_PlainSequenceLElemDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_StringSTypeDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_ExtendedTypeDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteElementDetail_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteAliasBody_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_StringLTypeDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteSequenceType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteBitmaskType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonDiscriminatorMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalUnionMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CommonAnnotationParameter_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_PlainMapLTypeDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_CommonEnumeratedHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_TypeIdentifierTypeObjectPair_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalSequenceType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalBitflag_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalBitsetHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteAnnotationParameter_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_AppliedAnnotation_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CommonStructMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_CommonArrayHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalEnumeratedHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalTypeDetail_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteDiscriminatorMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalUnionType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalBitfield_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalExtendedType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_StronglyConnectedComponentId_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_TypeIdentfierWithSize_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_MinimalArrayHeader_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_PlainSequenceSElemDefn_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+bool is_eprosima_fastdds_dds_xtypes_AppliedVerbatimAnnotation_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteMemberDetail_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteUnionMember_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+bool is_eprosima_fastdds_dds_xtypes_CompleteUnionType_cdr_plain(
+        DataRepresentationId_t data_representation);
+
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
 
 namespace fastdds {
 

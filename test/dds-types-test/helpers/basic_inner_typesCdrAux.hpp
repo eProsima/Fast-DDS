@@ -27,12 +27,18 @@ constexpr uint32_t InnerStructureHelper_max_cdr_typesize {12UL};
 constexpr uint32_t InnerStructureHelper_max_key_cdr_typesize {0UL};
 
 
+constexpr uint32_t InnerPlainStructHelper_max_cdr_typesize {12UL};
+constexpr uint32_t InnerPlainStructHelper_max_key_cdr_typesize {0UL};
+
 constexpr uint32_t InnerEmptyStructureHelper_max_cdr_typesize {4UL};
 constexpr uint32_t InnerEmptyStructureHelper_max_key_cdr_typesize {0UL};
 
 
 
 
+
+constexpr uint32_t InnerBasicPlainStructHelper_max_cdr_typesize {4UL};
+constexpr uint32_t InnerBasicPlainStructHelper_max_key_cdr_typesize {0UL};
 
 
 
@@ -53,9 +59,85 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerStructureHelper& data);
 
+
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const InnerEmptyStructureHelper& data);
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const InnerBasicPlainStructHelper& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct InnerBasicPlainStructHelper_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct InnerBasicPlainStructHelper_f
+{
+    typedef int32_t InnerBasicPlainStructHelper::* type;
+    friend constexpr type get(
+            InnerBasicPlainStructHelper_f);
+};
+
+template struct InnerBasicPlainStructHelper_rob<InnerBasicPlainStructHelper_f, &InnerBasicPlainStructHelper::m_field1>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr InnerBasicPlainStructHelper_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
+
+eProsima_user_DllExport void serialize_key(
+        eprosima::fastcdr::Cdr& scdr,
+        const InnerPlainStructHelper& data);
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct InnerPlainStructHelper_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
+
+};
+
+struct InnerPlainStructHelper_f
+{
+    typedef float InnerPlainStructHelper::* type;
+    friend constexpr type get(
+            InnerPlainStructHelper_f);
+};
+
+template struct InnerPlainStructHelper_rob<InnerPlainStructHelper_f, &InnerPlainStructHelper::m_field3>;
+
+template <typename T, typename Tag>
+inline std::size_t constexpr InnerPlainStructHelper_offset_of()
+{
+    return ((std::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
+
 
 
 } // namespace fastcdr

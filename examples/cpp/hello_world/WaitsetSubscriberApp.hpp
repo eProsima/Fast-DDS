@@ -30,7 +30,7 @@
 
 #include "Application.hpp"
 #include "CLIParser.hpp"
-#include "HelloWorld.hpp"
+#include "LatencySample.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -60,7 +60,7 @@ private:
     //! Return the current state of execution
     bool is_stopped();
 
-    HelloWorld hello_;
+    my_namespace::LatencySample6m sample_;
 
     DomainParticipant* participant_;
 

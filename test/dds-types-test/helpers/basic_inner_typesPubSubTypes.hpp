@@ -46,5 +46,161 @@ typedef std::map<int32_t, int32_t> Inner_alias_map_helper;
 typedef InnerStructureHelper inner_structure_helper_alias;
 typedef InnerBitsetHelper inner_bitset_helper_alias;
 
+/*!
+ * @brief This class represents the TopicDataType of the type InnerBasicPlainStructHelper defined by the user in the IDL file.
+ * @ingroup basic_inner_types
+ */
+class InnerBasicPlainStructHelperPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef ::InnerBasicPlainStructHelper type;
+
+    eProsima_user_DllExport InnerBasicPlainStructHelperPubSubType();
+
+    eProsima_user_DllExport ~InnerBasicPlainStructHelperPubSubType() override;
+
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            void* data) override;
+
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport bool compute_key(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport void* create_data() override;
+
+    eProsima_user_DllExport void delete_data(
+            void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) InnerBasicPlainStructHelper();
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+private:
+
+    eprosima::fastdds::MD5 md5_;
+    unsigned char* key_buffer_;
+
+};
+
+
+/*!
+ * @brief This class represents the TopicDataType of the type InnerPlainStructHelper defined by the user in the IDL file.
+ * @ingroup basic_inner_types
+ */
+class InnerPlainStructHelperPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef ::InnerPlainStructHelper type;
+
+    eProsima_user_DllExport InnerPlainStructHelperPubSubType();
+
+    eProsima_user_DllExport ~InnerPlainStructHelperPubSubType() override;
+
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            void* data) override;
+
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport bool compute_key(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport void* create_data() override;
+
+    eProsima_user_DllExport void delete_data(
+            void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    eProsima_user_DllExport bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override;
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) InnerPlainStructHelper();
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+private:
+
+    eprosima::fastdds::MD5 md5_;
+    unsigned char* key_buffer_;
+
+};
+
+
 #endif // FAST_DDS_GENERATED__BASIC_INNER_TYPES_PUBSUBTYPES_HPP
 

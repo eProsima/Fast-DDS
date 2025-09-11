@@ -27,12 +27,21 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
 
 namespace eprosima {
 namespace fastcdr {
+
+
+eProsima_user_DllExport bool is_FixId_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -88,6 +97,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const FixId* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixId_cdr_plain(data_representation) &&
+                sizeof(FixId) == FixId_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(FixId));
+
+            scdr.jump((array_size -1) * sizeof(FixId));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -125,6 +172,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        FixId* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixId_cdr_plain(data_representation) &&
+            sizeof(FixId) == FixId_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(FixId));
+
+            scdr.jump((array_size - 1) * sizeof(FixId));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixId& data)
@@ -142,6 +225,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_FixHexId_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -197,6 +288,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const FixHexId* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixHexId_cdr_plain(data_representation) &&
+                sizeof(FixHexId) == FixHexId_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(FixHexId));
+
+            scdr.jump((array_size -1) * sizeof(FixHexId));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -234,6 +363,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        FixHexId* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixHexId_cdr_plain(data_representation) &&
+            sizeof(FixHexId) == FixHexId_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(FixHexId));
+
+            scdr.jump((array_size - 1) * sizeof(FixHexId));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixHexId& data)
@@ -251,6 +416,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_FixHashidDefault_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -306,6 +479,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const FixHashidDefault* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixHashidDefault_cdr_plain(data_representation) &&
+                sizeof(FixHashidDefault) == FixHashidDefault_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(FixHashidDefault));
+
+            scdr.jump((array_size -1) * sizeof(FixHashidDefault));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -343,6 +554,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        FixHashidDefault* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixHashidDefault_cdr_plain(data_representation) &&
+            sizeof(FixHashidDefault) == FixHashidDefault_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(FixHashidDefault));
+
+            scdr.jump((array_size - 1) * sizeof(FixHashidDefault));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixHashidDefault& data)
@@ -360,6 +607,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_FixHashid_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -415,6 +670,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const FixHashid* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixHashid_cdr_plain(data_representation) &&
+                sizeof(FixHashid) == FixHashid_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(FixHashid));
+
+            scdr.jump((array_size -1) * sizeof(FixHashid));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -452,6 +745,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        FixHashid* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixHashid_cdr_plain(data_representation) &&
+            sizeof(FixHashid) == FixHashid_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(FixHashid));
+
+            scdr.jump((array_size - 1) * sizeof(FixHashid));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixHashid& data)
@@ -469,6 +798,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_FixMix_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -528,6 +865,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const FixMix* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixMix_cdr_plain(data_representation) &&
+                sizeof(FixMix) == FixMix_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(FixMix));
+
+            scdr.jump((array_size -1) * sizeof(FixMix));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -569,6 +944,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        FixMix* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_FixMix_cdr_plain(data_representation) &&
+            sizeof(FixMix) == FixMix_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(FixMix));
+
+            scdr.jump((array_size - 1) * sizeof(FixMix));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FixMix& data)
@@ -588,6 +999,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_AutoidDefault_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -647,6 +1066,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const AutoidDefault* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_AutoidDefault_cdr_plain(data_representation) &&
+                sizeof(AutoidDefault) == AutoidDefault_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(AutoidDefault));
+
+            scdr.jump((array_size -1) * sizeof(AutoidDefault));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -688,6 +1145,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        AutoidDefault* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_AutoidDefault_cdr_plain(data_representation) &&
+            sizeof(AutoidDefault) == AutoidDefault_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(AutoidDefault));
+
+            scdr.jump((array_size - 1) * sizeof(AutoidDefault));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AutoidDefault& data)
@@ -707,6 +1200,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_AutoidSequential_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -766,6 +1267,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const AutoidSequential* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_AutoidSequential_cdr_plain(data_representation) &&
+                sizeof(AutoidSequential) == AutoidSequential_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(AutoidSequential));
+
+            scdr.jump((array_size -1) * sizeof(AutoidSequential));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -807,6 +1346,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        AutoidSequential* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_AutoidSequential_cdr_plain(data_representation) &&
+            sizeof(AutoidSequential) == AutoidSequential_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(AutoidSequential));
+
+            scdr.jump((array_size - 1) * sizeof(AutoidSequential));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AutoidSequential& data)
@@ -826,6 +1401,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_AutoidHash_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -885,6 +1468,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const AutoidHash* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_AutoidHash_cdr_plain(data_representation) &&
+                sizeof(AutoidHash) == AutoidHash_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(AutoidHash));
+
+            scdr.jump((array_size -1) * sizeof(AutoidHash));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -926,6 +1547,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        AutoidHash* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_AutoidHash_cdr_plain(data_representation) &&
+            sizeof(AutoidHash) == AutoidHash_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(AutoidHash));
+
+            scdr.jump((array_size - 1) * sizeof(AutoidHash));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AutoidHash& data)
@@ -945,6 +1602,14 @@ void serialize_key(
 
 }
 
+
+
+eProsima_user_DllExport bool is_DerivedAutoidDefault_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1024,6 +1689,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const DerivedAutoidDefault* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedAutoidDefault_cdr_plain(data_representation) &&
+                sizeof(DerivedAutoidDefault) == DerivedAutoidDefault_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(DerivedAutoidDefault));
+
+            scdr.jump((array_size -1) * sizeof(DerivedAutoidDefault));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -1085,6 +1788,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        DerivedAutoidDefault* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedAutoidDefault_cdr_plain(data_representation) &&
+            sizeof(DerivedAutoidDefault) == DerivedAutoidDefault_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(DerivedAutoidDefault));
+
+            scdr.jump((array_size - 1) * sizeof(DerivedAutoidDefault));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidDefault& data)
@@ -1095,6 +1834,14 @@ void serialize_key(
     serialize_key(scdr, static_cast<const AutoidDefault&>(data));
 }
 
+
+
+eProsima_user_DllExport bool is_DerivedEmptyAutoidSequential_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1154,6 +1901,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const DerivedEmptyAutoidSequential* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedEmptyAutoidSequential_cdr_plain(data_representation) &&
+                sizeof(DerivedEmptyAutoidSequential) == DerivedEmptyAutoidSequential_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(DerivedEmptyAutoidSequential));
+
+            scdr.jump((array_size -1) * sizeof(DerivedEmptyAutoidSequential));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -1195,6 +1980,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        DerivedEmptyAutoidSequential* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedEmptyAutoidSequential_cdr_plain(data_representation) &&
+            sizeof(DerivedEmptyAutoidSequential) == DerivedEmptyAutoidSequential_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(DerivedEmptyAutoidSequential));
+
+            scdr.jump((array_size - 1) * sizeof(DerivedEmptyAutoidSequential));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedEmptyAutoidSequential& data)
@@ -1205,6 +2026,14 @@ void serialize_key(
     serialize_key(scdr, static_cast<const AutoidSequential&>(data));
 }
 
+
+
+eProsima_user_DllExport bool is_DerivedAutoidSequential_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1284,6 +2113,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const DerivedAutoidSequential* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedAutoidSequential_cdr_plain(data_representation) &&
+                sizeof(DerivedAutoidSequential) == DerivedAutoidSequential_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(DerivedAutoidSequential));
+
+            scdr.jump((array_size -1) * sizeof(DerivedAutoidSequential));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -1345,6 +2212,42 @@ eProsima_user_DllExport void deserialize(
             });
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        DerivedAutoidSequential* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedAutoidSequential_cdr_plain(data_representation) &&
+            sizeof(DerivedAutoidSequential) == DerivedAutoidSequential_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(DerivedAutoidSequential));
+
+            scdr.jump((array_size - 1) * sizeof(DerivedAutoidSequential));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DerivedAutoidSequential& data)
@@ -1355,6 +2258,14 @@ void serialize_key(
     serialize_key(scdr, static_cast<const DerivedEmptyAutoidSequential&>(data));
 }
 
+
+
+eProsima_user_DllExport bool is_DerivedAutoidHash_cdr_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+{
+    static_cast<void>(data_representation);
+    return false;
+}
 
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
@@ -1434,6 +2345,44 @@ eProsima_user_DllExport void serialize(
     scdr.end_serialize_type(current_state);
 }
 
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void serialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        const DerivedAutoidHash* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedAutoidHash_cdr_plain(data_representation) &&
+                sizeof(DerivedAutoidHash) == DerivedAutoidHash_max_cdr_typesize)
+        {
+            // Serialize the first element
+            // to ensure correct alignment
+            scdr.serialize(
+                array_ptr[0]);
+
+            ++array_ptr;
+
+            std::memcpy(
+                scdr.get_current_position(),
+                array_ptr,
+                (array_size - 1) * sizeof(DerivedAutoidHash));
+
+            scdr.jump((array_size -1) * sizeof(DerivedAutoidHash));
+        }
+        else
+        {
+            scdr.serialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
+
 template<>
 eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
@@ -1494,6 +2443,42 @@ eProsima_user_DllExport void deserialize(
                 return ret_value;
             });
 }
+
+#if FASTCDR_VERSION_MAJOR > 2
+template<>
+eProsima_user_DllExport void deserialize_array(
+        eprosima::fastcdr::Cdr& scdr,
+        DerivedAutoidHash* array_ptr,
+        const std::size_t array_size)
+{
+    if (array_size > 0)
+    {
+        using namespace ::eprosima::fastdds::dds;
+        DataRepresentationId_t data_representation = (scdr.get_cdr_version() == eprosima::fastcdr::CdrVersion::XCDRv1 ?
+                    DataRepresentationId_t::XCDR_DATA_REPRESENTATION : DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+        if (is_DerivedAutoidHash_cdr_plain(data_representation) &&
+            sizeof(DerivedAutoidHash) == DerivedAutoidHash_max_cdr_typesize)
+        {
+            // Deserialize the first element
+            // accounting for alignment
+            scdr.deserialize_array(&array_ptr[0], 1);
+            ++array_ptr;
+
+            std::memcpy(
+                reinterpret_cast<char*>(array_ptr),
+                scdr.get_current_position(),
+                (array_size - 1) * sizeof(DerivedAutoidHash));
+
+            scdr.jump((array_size - 1) * sizeof(DerivedAutoidHash));
+        }
+        else
+        {
+            scdr.deserialize_array(array_ptr, array_size);
+        }
+    }
+}
+#endif // FASTCDR_VERSION_MAJOR > 2
 
 void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
