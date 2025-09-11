@@ -5,7 +5,21 @@ set -e
 files_to_exclude=(
     './thirdparty/dds-types-test/IDL/relative_path_include.idl'       # Relative path not working in current location.
     './test/feature/idl_parser/no_path_included.idl'                  # Relative path not working in current location.
-    './test/feature/idl_parser/idl_extra_cases/extra_structures.idl'  # Contains features not supported by IDL parser (scoped name beginning with double colon).
+
+    # These files contain features not supported by Fast DDS Gen parser, used for negative tests in create_type_w_uri.
+    './test/feature/idl_parser/idl_extra_cases/extra_structures.idl'
+    './test/feature/idl_parser/idl_extra_cases/try_construct_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/optional_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/value_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/extensibility_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/key_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/external_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/position_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/bit_bound_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/nested_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/default_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/id_annotation.idl'
+    './test/feature/idl_parser/idl_extra_cases/default_literal_annotation.idl'
 )
 
 files_not_needing_typeobject=(
