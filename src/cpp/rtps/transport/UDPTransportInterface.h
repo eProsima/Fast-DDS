@@ -39,6 +39,7 @@ namespace rtps {
 class UDPTransportInterface : public TransportInterface
 {
     friend class UDPSenderResource;
+    friend struct TSN_UDPSender;
 
     using TransportInterface::transform_remote_locator;
 
