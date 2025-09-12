@@ -40,22 +40,22 @@ namespace dds {
 // Name of all the primitive fields used along the tests
 static const std::vector<std::pair<std::string, std::string>> primitive_fields
 {
-    {"char_field",        "CHAR"},
-    {"uint8_field",       "INT"},
-    {"int16_field",       "INT"},
-    {"uint16_field",      "INT"},
-    {"int32_field",       "INT"},
-    {"uint32_field",      "INT"},
-    {"int64_field",       "INT"},
-    {"uint64_field",      "INT"},
-    {"float_field",       "FLOAT"},
-    {"double_field",      "FLOAT"},
-    {"long_double_field", "FLOAT"},
-    {"bool_field",        "BOOL"},
-    {"string_field",      "STRING"},
-    {"alias_string_field","STRING"},
-    {"enum_field",        "ENUM"},
-    {"enum2_field",       "ENUM2"}
+    {"char_field",         "CHAR"},
+    {"uint8_field",        "INT"},
+    {"int16_field",        "INT"},
+    {"uint16_field",       "INT"},
+    {"int32_field",        "INT"},
+    {"uint32_field",       "INT"},
+    {"int64_field",        "INT"},
+    {"uint64_field",       "INT"},
+    {"float_field",        "FLOAT"},
+    {"double_field",       "FLOAT"},
+    {"long_double_field",  "FLOAT"},
+    {"bool_field",         "BOOL"},
+    {"string_field",       "STRING"},
+    {"alias_string_field", "STRING"},
+    {"enum_field",         "ENUM"},
+    {"enum2_field",        "ENUM2"}
 };
 
 static const std::map<std::string, std::set<std::string>> type_compatibility_matrix
