@@ -128,7 +128,7 @@ DomainParticipantImpl::DomainParticipantImpl(
 
     // Pre calculate participant id and generated guid
     participant_id_ = qos_.wire_protocol().participant_id;
-    if (!eprosima::fastdds::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_))
+    if (!eprosima::fastdds::rtps::RTPSDomainImpl::get_instance()->create_participant_guid(participant_id_, guid_))
     {
         EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Error generating GUID for participant");
     }
