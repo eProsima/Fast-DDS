@@ -264,6 +264,22 @@ protected:
      */
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
+    /**
+     * Set socket options before binding the output socket.
+     *
+     * @param socket Reference to the socket to set options on.
+     */
+    virtual void set_output_pre_bind_options(
+            eProsimaUDPSocket& socket) const;
+
+    /**
+     * Set socket options after binding the output socket.
+     *
+     * @param socket Reference to the socket to set options on.
+     */
+    virtual void set_output_post_bind_options(
+            eProsimaUDPSocket& socket) const;
+
     bool OpenAndBindInputSockets(
             const Locator& locator,
             TransportReceiverInterface* receiver,
