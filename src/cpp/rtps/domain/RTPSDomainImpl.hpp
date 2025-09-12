@@ -66,7 +66,7 @@ public:
      *
      * @return Shared pointer to RTPSDomainImpl singleton instance.
      */
-    static std::shared_ptr<RTPSDomainImpl> get_instance();
+    static std::shared_ptr<IDomainImpl> get_instance();
 
     /**
      * Method to shut down all RTPSParticipants, readers, writers, etc.

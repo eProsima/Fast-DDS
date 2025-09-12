@@ -39,7 +39,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class RTPSDomainImpl;
+class IDomainImpl;
 
 namespace detail {
 class TopicPayloadPoolRegistry;
@@ -482,7 +482,7 @@ protected:
 
     std::shared_ptr<fastdds::rtps::detail::TopicPayloadPoolRegistry> topic_pool_;
 
-    std::shared_ptr<fastdds::rtps::RTPSDomainImpl> rtps_domain_;
+    std::shared_ptr<fastdds::rtps::IDomainImpl> rtps_domain_;
 
     std::shared_ptr<detail::LogResources> log_resources_;
 

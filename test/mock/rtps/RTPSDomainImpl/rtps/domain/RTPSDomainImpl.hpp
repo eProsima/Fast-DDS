@@ -17,10 +17,13 @@
 
 #include <memory>
 
+#include <gmock/gmock.h>
+
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
+#include <rtps/domain/IDomainImpl.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
 
 namespace eprosima {
@@ -36,15 +39,47 @@ class RTPSWriter;
  * @brief Class RTPSDomainImpl, contains the private implementation of the RTPSDomain
  * @ingroup RTPS_MODULE
  */
-class RTPSDomainImpl
+class RTPSDomainImpl : public testing::NiceMock<IDomainImpl>
 {
 public:
 
-    static std::shared_ptr<RTPSDomainImpl> get_instance()
+    ~RTPSDomainImpl() override = default;
+
+    static std::shared_ptr<IDomainImpl> get_instance()
     {
         static std::shared_ptr<RTPSDomainImpl> instance = std::make_shared<RTPSDomainImpl>();
         return instance;
     }
+
+    MOCK_METHOD(void, stop_all, (), (override));
+    MOCK_METHOD(RTPSParticipant*, create_participant,
+            (uint32_t, bool, const RTPSParticipantAttributes&, RTPSParticipantListener*),
+            (override));
+    MOCK_METHOD(RTPSParticipant*, create_client_server_participant,
+            (uint32_t, bool, const RTPSParticipantAttributes&, RTPSParticipantListener*),
+            (override));
+    MOCK_METHOD(bool, remove_writer,
+            (RTPSWriter*), (override));
+    MOCK_METHOD(bool, remove_reader,
+            (RTPSReader*), (override));
+    MOCK_METHOD(bool, remove_participant,
+            (RTPSParticipant*), (override));
+    MOCK_METHOD(RTPSWriter*, create_writer,
+            (RTPSParticipant*, const EntityId_t&, WriterAttributes&, WriterHistory*, WriterListener*),
+            (override));
+    MOCK_METHOD(RTPSParticipantImpl*, find_participant,
+            (const GUID_t&), (override));
+    MOCK_METHOD(void, find_reader,
+            (std::shared_ptr<LocalReaderPointer>&, const GUID_t&), (override));
+    MOCK_METHOD(BaseWriter*, find_writer,
+            (const GUID_t&), (override));
+    MOCK_METHOD(bool, should_intraprocess_between_guids,
+            (const GUID_t&, const GUID_t&), (override));
+    MOCK_METHOD(void, file_watch_callback, (), (override));
+    MOCK_METHOD(void, set_filewatch_thread_config,
+            (const ThreadSettings&, const ThreadSettings&), (override));
+    MOCK_METHOD(bool, run_easy_mode_discovery_server,
+            (uint32_t, const std::string&), (override));
 
     /**
      * Check whether intraprocess delivery should be used between two GUIDs.
@@ -73,9 +108,9 @@ public:
         return nullptr;
     }
 
-    static bool create_participant_guid(
+    bool create_participant_guid(
             int32_t& /*participant_id*/,
-            GUID_t& guid)
+            GUID_t& guid) override
     {
         guid.guidPrefix.value[11] = 1;
         return true;
@@ -113,26 +148,26 @@ public:
         return RTPSDomain::createParticipant(domain_id, enabled, att, listen);
     }
 
-    static bool get_library_settings(
-            fastdds::LibrarySettings&)
+    bool get_library_settings(
+            fastdds::LibrarySettings&) override
     {
         return true;
     }
 
-    static bool set_library_settings(
-            const fastdds::LibrarySettings&)
+    bool set_library_settings(
+            const fastdds::LibrarySettings&) override
     {
         return true;
     }
 
-    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry()
+    fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry() override
     {
-        return get_instance()->type_object_registry_;
+        return type_object_registry_;
     }
 
-    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
+    fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer() override
     {
-        return get_instance()->type_object_registry_;
+        return type_object_registry_;
     }
 
     static void find_local_reader(

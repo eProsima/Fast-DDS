@@ -42,6 +42,7 @@
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
+#include <rtps/domain/IDomainImpl.hpp>
 #include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/transport/TCPv4Transport.h>
 #include <rtps/transport/TCPv6Transport.h>
@@ -96,7 +97,7 @@ static void guid_prefix_create(
     eprosima::fastdds::rtps::GuidUtils::instance().guid_prefix_create(ID, guidP);
 }
 
-std::shared_ptr<RTPSDomainImpl> RTPSDomainImpl::get_instance()
+std::shared_ptr<IDomainImpl> RTPSDomainImpl::get_instance()
 {
     static std::shared_ptr<RTPSDomainImpl> instance = std::make_shared<RTPSDomainImpl>();
     return instance;

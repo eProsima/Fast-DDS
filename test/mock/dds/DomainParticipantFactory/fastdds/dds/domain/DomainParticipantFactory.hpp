@@ -58,7 +58,7 @@ public:
 
 private:
 
-    std::shared_ptr<fastdds::rtps::RTPSDomainImpl> rtps_domain_;
+    std::shared_ptr<fastdds::rtps::IDomainImpl> rtps_domain_;
 
 };
 
