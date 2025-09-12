@@ -923,6 +923,7 @@
         ├ TTL                                   [uint8],                          (ONLY available for UDP   type)
         ├ non_blocking_send                     [boolean],                        (NOT  available for SHM   type)
         ├ output_port                           [uint16],                         (ONLY available for UDP   type)
+        ├ udp_priority_mappings                 [udpPriorityMappingsType],        (ONLY available for UDP   type)
         ├ wan_addr                              [ipv4AddressFormat],              (ONLY available for TCPv4 type)
         ├ keep_alive_frequency_ms               [uint32],                         (ONLY available for TCP   type)
         ├ keep_alive_timeout_ms                 [uint32],                         (ONLY available for TCP   type)
@@ -996,6 +997,7 @@
             <xs:element name="TTL" type="uint8" minOccurs="0" maxOccurs="1"/>
             <xs:element name="non_blocking_send" type="boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="udp_priority_mappings" type="udpPriorityMappingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="wan_addr" type="ipv4AddressFormat" minOccurs="0" maxOccurs="1"/>
             <xs:element name="keep_alive_frequency_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="keep_alive_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
@@ -1157,6 +1159,26 @@
             </xs:element>
             <xs:element name="server_name" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
+    </xs:complexType>
+
+    <!--udp_priority_mappings:
+        └ priority            [0~*]
+          ╠ att. value        [int32] REQ
+          ╠ att. dscp         [uint8]
+          ╠ att. source_port  [uint16]
+          ╚ att. interface    [string]
+    -->
+    <xs:complexType name="udpPriorityMappingsType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="priority" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="value" type="int32" use="required"/>
+                    <xs:attribute name="dscp" type="uint8" default="0"/>
+                    <xs:attribute name="source_port" type="uint16" default="0"/>
+                    <xs:attribute name="interface" type="string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
     </xs:complexType>
 
     <!--eth_priority_mappings:
