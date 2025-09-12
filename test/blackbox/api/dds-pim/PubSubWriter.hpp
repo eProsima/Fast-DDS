@@ -55,6 +55,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 
 using eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;
@@ -286,6 +287,12 @@ public:
 
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
+
+    eprosima::fastdds::dds::ReturnCode_t get_offered_deadline_missed_status(
+            eprosima::fastdds::dds::OfferedDeadlineMissedStatus& st)
+    {
+        return datawriter_->get_offered_deadline_missed_status(st);
+    }
 
     PubSubWriter(
             const std::string& topic_name)
