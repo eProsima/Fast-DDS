@@ -29,6 +29,7 @@
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/domain/IDomainImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/writer/BaseWriter.hpp>
@@ -40,6 +41,8 @@
 #endif // HAVE_SECURITY
 
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
+#include <rtps/builtin/discovery/participant/PDP.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -49,10 +52,12 @@ namespace rtps {
  * @brief Class RTPSDomainImpl, contains the private implementation of the RTPSDomain
  * @ingroup RTPS_MODULE
  */
-class RTPSDomainImpl
+class RTPSDomainImpl : public IDomainImpl
 {
 
 public:
+
+    ~RTPSDomainImpl() override = default;
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
 
@@ -73,6 +78,8 @@ public:
      */
     static void stopAll();
 
+    void stop_all() override;
+
     /**
      * @brief Create a RTPSParticipant.
      * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
@@ -89,6 +96,12 @@ public:
             bool enabled,
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* plisten);
+
+    RTPSParticipant* create_participant(
+            uint32_t domain_id,
+            bool enabled,
+            const RTPSParticipantAttributes& attrs,
+            RTPSParticipantListener* plisten) override;
 
     /**
      * @brief Create a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
@@ -122,11 +135,11 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    static RTPSParticipant* create_client_server_participant(
+    RTPSParticipant* create_client_server_participant(
             uint32_t domain_id,
             bool enabled,
             const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* plisten);
+            RTPSParticipantListener* plisten) override;
 
     /**
      * Remove a RTPSWriter.
@@ -136,6 +149,9 @@ public:
     static bool removeRTPSWriter(
             RTPSWriter* writer);
 
+    bool remove_writer(
+            RTPSWriter* writer) override;
+
     /**
      * Remove a RTPSReader.
      * @param reader Pointer to the reader you want to remove.
@@ -144,6 +160,9 @@ public:
     static bool removeRTPSReader(
             RTPSReader* reader);
 
+    bool remove_reader(
+            RTPSReader* reader) override;
+
     /**
      * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
      * @param [in] p Pointer to the RTPSParticipant;
@@ -151,6 +170,9 @@ public:
      */
     static bool removeRTPSParticipant(
             RTPSParticipant* p);
+
+    bool remove_participant(
+            RTPSParticipant* p) override;
 
     /**
      * Fills RTPSParticipantAttributes to create a RTPSParticipant as default server or client
@@ -188,6 +210,13 @@ public:
             WriterHistory* hist,
             WriterListener* listen);
 
+    RTPSWriter* create_writer(
+            RTPSParticipant* p,
+            const EntityId_t& entity_id,
+            WriterAttributes& watt,
+            WriterHistory* hist,
+            WriterListener* listen) override;
+
     /**
      * Creates the guid of a participant given its identifier.
      * @param [in, out] participant_id   Participant identifier for which to generate the GUID.
@@ -196,9 +225,9 @@ public:
      *
      * @return True value if guid was created. False in other case.
      */
-    static bool create_participant_guid(
+    bool create_participant_guid(
             int32_t& participant_id,
-            GUID_t& guid);
+            GUID_t& guid) override;
 
     /**
      * Find a participant given its GUID.
@@ -209,6 +238,9 @@ public:
      */
     static RTPSParticipantImpl* find_local_participant(
             const GUID_t& guid);
+
+    RTPSParticipantImpl* find_participant(
+            const GUID_t& guid) override;
 
     /**
      * Find a local-process reader.
@@ -223,6 +255,10 @@ public:
             std::shared_ptr<LocalReaderPointer>& local_reader,
             const GUID_t& reader_guid);
 
+    void find_reader(
+            std::shared_ptr<LocalReaderPointer>& local_reader,
+            const GUID_t& reader_guid) override;
+
     /**
      * Find a local-process writer.
      *
@@ -232,6 +268,9 @@ public:
      */
     static BaseWriter* find_local_writer(
             const GUID_t& writer_guid);
+
+    BaseWriter* find_writer(
+            const GUID_t& writer_guid) override;
 
     /**
      * Check whether intraprocess delivery should be used between two GUIDs.
@@ -245,10 +284,14 @@ public:
             const GUID_t& local_guid,
             const GUID_t& matched_guid);
 
+    bool should_intraprocess_between_guids(
+            const GUID_t& local_guid,
+            const GUID_t& matched_guid) override;
+
     /**
      * Callback run when the monitored environment file is modified
      */
-    static void file_watch_callback();
+    void file_watch_callback() override;
 
     /**
      * Method to set the configuration of the threads created by the file watcher for the environment file.
@@ -258,9 +301,9 @@ public:
      * @param watch_thread     Settings for the thread watching the environment file.
      * @param callback_thread  Settings for the thread executing the callback when the environment file changed.
      */
-    static void set_filewatch_thread_config(
+    void set_filewatch_thread_config(
             const fastdds::rtps::ThreadSettings& watch_thread,
-            const fastdds::rtps::ThreadSettings& callback_thread);
+            const fastdds::rtps::ThreadSettings& callback_thread) override;
 
     /**
      * @brief Get the library settings.
@@ -268,8 +311,8 @@ public:
      * @param library_settings LibrarySettings reference where the settings are returned.
      * @return True.
      */
-    static bool get_library_settings(
-            fastdds::LibrarySettings& library_settings);
+    bool get_library_settings(
+            fastdds::LibrarySettings& library_settings) override;
 
     /**
      * @brief Set the library settings.
@@ -278,22 +321,22 @@ public:
      * @return False if there is any RTPSParticipant already created.
      *         True if correctly set.
      */
-    static bool set_library_settings(
-            const fastdds::LibrarySettings& library_settings);
+    bool set_library_settings(
+            const fastdds::LibrarySettings& library_settings) override;
 
     /**
      * @brief Return the ITypeObjectRegistry member to access the interface for the public API.
      *
      * @return const xtypes::ITypeObjectRegistry reference.
      */
-    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry();
+    fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry() override;
 
     /**
      * @brief Return the TypeObjectRegistry member to access the  API.
      *
      * @return const xtypes::TypeObjectRegistry reference.
      */
-    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer();
+    fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer() override;
 
     /**
      * @brief Run the Easy Mode discovery server using the Fast DDS CLI command
@@ -303,9 +346,9 @@ public:
      *
      * @return True if the server was successfully started, false otherwise.
      */
-    static bool run_easy_mode_discovery_server(
+    bool run_easy_mode_discovery_server(
             uint32_t domain_id,
-            const std::string& easy_mode_ip);
+            const std::string& easy_mode_ip) override;
 
 private:
 
