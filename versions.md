@@ -12,6 +12,7 @@ Forthcoming
 * __Fast DDS Pro__ features:
   * Added Ethernet transport (Linux only).
   * Mapping transport priority to DSCP, interface and source port in UDP transport.
+* Support aliases in Content Filtered Topic.
 
 Version v3.3.0
 --------------
