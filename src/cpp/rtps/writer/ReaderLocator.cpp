@@ -29,7 +29,7 @@
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
-#include "rtps/RTPSDomainImpl.hpp"
+#include "rtps/domain/RTPSDomainImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {

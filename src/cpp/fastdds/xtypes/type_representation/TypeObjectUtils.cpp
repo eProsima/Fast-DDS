@@ -29,7 +29,7 @@
 #include <fastdds/utils/md5.hpp>
 
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -50,7 +50,7 @@
 #include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
 #include <utils/TimeConversion.hpp>

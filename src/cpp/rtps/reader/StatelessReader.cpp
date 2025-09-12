@@ -29,7 +29,7 @@
 #include <fastdds/rtps/reader/ReaderListener.hpp>
 
 #include "reader_utils.hpp"
-#include "rtps/RTPSDomainImpl.hpp"
+#include "rtps/domain/RTPSDomainImpl.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingListener.hpp>
