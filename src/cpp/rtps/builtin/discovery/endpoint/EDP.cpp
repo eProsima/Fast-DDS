@@ -44,7 +44,7 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <utils/BuiltinTopicKeyConversions.hpp>
 #if HAVE_SECURITY
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>

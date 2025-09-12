@@ -22,7 +22,7 @@
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 
 using eprosima::fastdds::rtps::RTPSReader;
 using eprosima::fastdds::rtps::CacheChange_t;

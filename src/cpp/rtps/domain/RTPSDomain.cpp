@@ -42,7 +42,7 @@
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/transport/TCPv4Transport.h>
 #include <rtps/transport/TCPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
