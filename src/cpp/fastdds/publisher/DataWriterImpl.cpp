@@ -1242,7 +1242,7 @@ ReturnCode_t DataWriterImpl::set_qos(
 
         std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-        // If the deadline period actually changed, (re)configure the timer.
+        // If the deadline period actually changed, (re) the timer.
         if (qos_.deadline().period != prev_deadline)
         {
             // Resetting total count value whenever the deadline period changes
@@ -1574,10 +1574,13 @@ bool DataWriterImpl::deadline_timer_reschedule()
     return true;
 }
 
+/**
+ * This function tears down any existing deadline timer and creates a new one
+ * configured for the current deadline period. If the period is 0 or infinite,
+ * the timer is created to fire only once to log a warning and then cancel itself.
+ */
 void DataWriterImpl::configure_deadline_timer_locked_()
 {
-
-    // Tear down any existing timer (normal reconfigure path)
     if (deadline_timer_ != nullptr)
     {
         deadline_timer_->cancel_timer();
@@ -1602,7 +1605,6 @@ void DataWriterImpl::configure_deadline_timer_locked_()
         {
             std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-            // If QoS is 0 or infinite, warn once, self-disable, and stop.
             if ((qos_.deadline().period.to_ns() == 0) || (qos_.deadline().period == dds::c_TimeInfinite))
             {
                 
@@ -1624,8 +1626,6 @@ void DataWriterImpl::configure_deadline_timer_locked_()
             return deadline_missed();
         },
         0.0);
-
-    // Initial arming logic
 
     if ((qos_.deadline().period.to_ns() > 0) && (qos_.deadline().period != dds::c_TimeInfinite))
     {
