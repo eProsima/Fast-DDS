@@ -1236,7 +1236,12 @@ void StatefulReader::NotifyChanges(
         assert(false == aux_ch->isRead);
         new_data_available = true;
         ++total_unread_;
-        on_data_notify(proxGUID, aux_ch->sourceTimestamp);
+
+        // Statistics callback is called with the original writer GUID if it is set
+        auto statistics_source_guid = aux_ch->write_params.original_writer_info() != OriginalWriterInfo::unknown() ?
+                aux_ch->write_params.original_writer_info().original_writer_guid() : proxGUID;
+
+        on_data_notify(statistics_source_guid, aux_ch->sourceTimestamp);
 
         ++it;
         do
@@ -1468,7 +1473,8 @@ bool StatefulReader::begin_sample_access_nts(
 void StatefulReader::end_sample_access_nts(
         CacheChange_t* change,
         WriterProxy*& writer,
-        bool mark_as_read)
+        bool mark_as_read,
+        bool should_send_ack)
 {
     assert(!writer || change->writerGUID == writer->guid());
 
@@ -1482,7 +1488,7 @@ void StatefulReader::end_sample_access_nts(
         }
     }
 
-    if (mark_as_read)
+    if (should_send_ack && mark_as_read)
     {
         send_ack_if_datasharing(this, history_, writer, change->sequenceNumber);
     }

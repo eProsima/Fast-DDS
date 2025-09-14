@@ -382,7 +382,12 @@ bool StatelessReader::change_received(
             }
             ++total_unread_;
 
-            on_data_notify(guid, change->sourceTimestamp);
+
+            // Statistics callback is called with the original writer GUID if it is set
+            auto statistics_source_guid = change->write_params.original_writer_info() != OriginalWriterInfo::unknown() ?
+                    change->write_params.original_writer_info().original_writer_guid() : guid;
+
+            on_data_notify(statistics_source_guid, change->sourceTimestamp);
 
             auto listener = get_listener();
             if (listener != nullptr)
@@ -513,7 +518,8 @@ bool StatelessReader::begin_sample_access_nts(
 void StatelessReader::end_sample_access_nts(
         CacheChange_t* change,
         WriterProxy*& /*writer*/,
-        bool mark_as_read)
+        bool mark_as_read,
+        bool /*should_send_ack*/)
 {
     // Mark change as read
     if (mark_as_read && !change->isRead)

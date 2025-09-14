@@ -24,6 +24,7 @@
 #include <cstring>
 #include <iomanip>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <fastdds/config.hpp>
@@ -61,6 +62,8 @@ namespace rtps {
 #define LOCATOR_KIND_TCPv6 8
 /// Shared memory locator kind
 #define LOCATOR_KIND_SHM 16 + FASTDDS_VERSION_MAJOR
+/// Ethernet locator kind
+#define LOCATOR_KIND_ETHERNET 0x02000000
 
 /**
  * @brief Class Locator_t, uniquely identifies a communication channel for a particular transport.
@@ -83,6 +86,8 @@ public:
      * LOCATOR_KIND_TCPv6
      *
      * LOCATOR_KIND_SHM
+     *
+     * LOCATOR_KIND_ETHERNET
      */
     int32_t kind;
     /// Network port
@@ -188,6 +193,19 @@ public:
         LOCATOR_ADDRESS_INVALID(address);
     }
 
+    /**
+     * @brief Create a locator with the given parameters.
+     *
+     * @param kind Kind of the locator.
+     * @param address IP Address of the locator as string.
+     * @param port Port of the locator.
+     * @return Locator_t object initialized with the given parameters.
+     */
+    static Locator_t create_locator(
+            int32_t kind,
+            const std::string& address,
+            uint32_t port);
+
 };
 
 /**
@@ -210,7 +228,8 @@ inline bool IsAddressDefined(
             }
         }
     }
-    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
+    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6 ||
+            loc.kind == LOCATOR_KIND_SHM || loc.kind == LOCATOR_KIND_ETHERNET)
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -302,6 +321,7 @@ inline bool operator !=(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
+ *            - ETHERNET
  *        \c address IP address unless \c kind is SHM
  *        \c port number
  *
@@ -341,6 +361,11 @@ inline std::ostream& operator <<(
             output << "SHM:[";
             break;
         }
+        case LOCATOR_KIND_ETHERNET:
+        {
+            output << "ETH:[";
+            break;
+        }
         default:
         {
             output << "Invalid_locator:[_]:0";
@@ -349,24 +374,36 @@ inline std::ostream& operator <<(
     }
 
     // Stream address
-    if (loc.kind == LOCATOR_KIND_UDPv4 || loc.kind == LOCATOR_KIND_TCPv4)
+    switch (loc.kind)
     {
-        output << IPLocator::toIPv4string(loc);
-    }
-    else if (loc.kind == LOCATOR_KIND_UDPv6 || loc.kind == LOCATOR_KIND_TCPv6)
-    {
-        output << IPLocator::toIPv6string(loc);
-    }
-    else if (loc.kind == LOCATOR_KIND_SHM)
-    {
-        if (loc.address[0] == 'M')
-        {
-            output << "M";
-        }
-        else
-        {
-            output << "_";
-        }
+        case LOCATOR_KIND_UDPv4:
+        case LOCATOR_KIND_TCPv4:
+            output << IPLocator::toIPv4string(loc);
+            break;
+
+        case LOCATOR_KIND_UDPv6:
+        case LOCATOR_KIND_TCPv6:
+            output << IPLocator::toIPv6string(loc);
+            break;
+
+        case LOCATOR_KIND_ETHERNET:
+            output << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[10];
+            for (int i = 1; i < 6; ++i)
+            {
+                output << ":" << std::hex << std::setfill('0') << std::setw(2) << (int)loc.address[10 + i];
+            }
+            break;
+
+        case LOCATOR_KIND_SHM:
+            if (loc.address[0] == 'M')
+            {
+                output << "M";
+            }
+            else
+            {
+                output << "_";
+            }
+            break;
     }
 
     // Stream port
@@ -392,6 +429,7 @@ inline std::ostream& operator <<(
  *            - TCPv4
  *            - TCPv6
  *            - SHM
+ *            - ETHERNET
  *        \c address must be either a name which can be resolved by DNS or the IP address unless \c kind is SHM
  *        \c port number
  *
@@ -431,6 +469,10 @@ inline std::istream& operator >>(
             if (str_kind == "SHM")
             {
                 kind = LOCATOR_KIND_SHM;
+            }
+            else if (str_kind == "ETH")
+            {
+                kind = LOCATOR_KIND_ETHERNET;
             }
             else if (str_kind == "TCPv4")
             {
@@ -488,6 +530,12 @@ inline std::istream& operator >>(
                     }
                     address = *addresses.second.begin();
                 }
+                if ((kind == LOCATOR_KIND_SHM) && (address != "M") && (address != "_"))
+                {
+                    loc.kind = LOCATOR_KIND_INVALID;
+                    EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
+                    return input;
+                }
 
                 // Get char ]:
                 input >> punct >> punct;
@@ -495,7 +543,7 @@ inline std::istream& operator >>(
                 // Get port
                 input >> port;
 
-                IPLocator::createLocator(kind, address, port, loc);
+                loc = Locator_t::create_locator(kind, address, port);
             }
         }
         catch (std::ios_base::failure& )

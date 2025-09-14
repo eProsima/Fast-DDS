@@ -92,8 +92,4 @@ else()
     target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} fastcdr)
 endif()
 
-if (APPLE)
-    target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
-endif()
-
 gtest_discover_tests(BuiltinDataSerializationTests)

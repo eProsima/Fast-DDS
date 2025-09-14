@@ -25,6 +25,7 @@
 #include <fastdds/dds/subscriber/ViewState.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include <fastdds/rtps/common/OriginalWriterInfo.hpp>
 #include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/common/Types.hpp>
@@ -77,6 +78,9 @@ struct SampleInfo
     //!
     //! Is the same InstanceHandle_t that is returned by the operation get_matched_publications on the DataReader
     InstanceHandle_t publication_handle;
+
+    //! Original writer info
+    rtps::OriginalWriterInfo original_writer_info;
 
     //! whether the DataSample contains data or is only used to communicate of a change in the instance
     bool valid_data;

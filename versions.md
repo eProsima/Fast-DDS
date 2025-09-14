@@ -6,6 +6,12 @@ Forthcoming
   * Extend `MemberDescriptor` with `position()`, `literal_value()` and `is_default_literal()` methods
     to avoid inconsistencies annotating enumerations and bitmask members.
   * Extend `TypeDescriptor` with `literal_type()` to store the literal type in enumerations.
+* Add field `original_writer_info` to `WriteParams` and `SampleInfo`
+* Iterate over declared types processed with IDL Parser:
+  * Add new `for_each_type_w_uri()` method in `DynamicTypeBuilderFactory`.
+* __Fast DDS Pro__ features:
+  * Added Ethernet transport (Linux only).
+  * Mapping transport priority to DSCP, interface and source port in UDP transport.
 
 Version v3.3.0
 --------------

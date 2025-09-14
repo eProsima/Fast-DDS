@@ -14,8 +14,10 @@
 //
 #include <xmlparser/XMLParser.h>
 
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #ifdef _WIN32
@@ -33,10 +35,11 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/SocketTransportDescriptor.hpp>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
+#include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 
 #include <rtps/network/utils/netmask_filter.hpp>
 #include <xmlparser/XMLParserUtils.hpp>
@@ -326,18 +329,17 @@ XMLP_ret XMLParser::parseXMLTransportData(
         return XMLP_ret::XML_ERROR;
     }
 
-    if (sType == UDPv4 || sType == UDPv6)
+    ret = create_transport_descriptor_from_xml_type(p_root, sType, pDescriptor);
+    if (ret != XMLP_ret::XML_OK)
     {
-        std::shared_ptr<fastdds::rtps::UDPTransportDescriptor> pUDPDesc;
-        if (sType == UDPv4)
-        {
-            pDescriptor = pUDPDesc = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
-        }
-        else
-        {
-            pDescriptor = pUDPDesc = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
-        }
+        return ret;
+    }
 
+    auto udp_descriptor = std::dynamic_pointer_cast<fastdds::rtps::UDPTransportDescriptor>(pDescriptor);
+    auto tcp_descriptor = std::dynamic_pointer_cast<fastdds::rtps::TCPTransportDescriptor>(pDescriptor);
+    auto shm_descriptor = std::dynamic_pointer_cast<fastdds::rtps::SharedMemTransportDescriptor>(pDescriptor);
+    if (udp_descriptor)
+    {
         // Output UDP Socket
         if (nullptr != (p_aux0 = p_root->FirstChildElement(UDP_OUTPUT_PORT)))
         {
@@ -346,30 +348,28 @@ XMLP_ret XMLParser::parseXMLTransportData(
             {
                 return XMLP_ret::XML_ERROR;
             }
-            pUDPDesc->m_output_udp_socket = static_cast<uint16_t>(iSocket);
+            udp_descriptor->m_output_udp_socket = static_cast<uint16_t>(iSocket);
         }
         // Non-blocking send
         if (nullptr != (p_aux0 = p_root->FirstChildElement(NON_BLOCKING_SEND)))
         {
-            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &pUDPDesc->non_blocking_send, 0))
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &udp_descriptor->non_blocking_send, 0))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
     }
-    else if (sType == TCPv4)
+    else if (tcp_descriptor)
     {
-        pDescriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
-        ret = parseXMLCommonTCPTransportData(p_root, pDescriptor);
+        ret = parseXMLCommonTCPTransportData(p_root, tcp_descriptor);
         if (ret != XMLP_ret::XML_OK)
         {
             return ret;
         }
-        else
-        {
-            std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> pTCPv4Desc =
-                    std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(pDescriptor);
 
+        auto tcp4_descriptor = std::dynamic_pointer_cast<fastdds::rtps::TCPv4TransportDescriptor>(tcp_descriptor);
+        if (tcp4_descriptor)
+        {
             // Wan Address
             if (nullptr != (p_aux0 = p_root->FirstChildElement(TCP_WAN_ADDR)))
             {
@@ -378,32 +378,17 @@ XMLP_ret XMLParser::parseXMLTransportData(
                 {
                     return XMLP_ret::XML_ERROR;
                 }
-                pTCPv4Desc->set_WAN_address(s);
+                tcp4_descriptor->set_WAN_address(s);
             }
         }
     }
-    else if (sType == TCPv6)
+    else if (shm_descriptor)
     {
-        pDescriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
-        ret = parseXMLCommonTCPTransportData(p_root, pDescriptor);
+        ret = parseXMLCommonSharedMemTransportData(p_root, shm_descriptor);
         if (ret != XMLP_ret::XML_OK)
         {
             return ret;
         }
-    }
-    else if (sType == SHM)
-    {
-        pDescriptor = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
-        ret = parseXMLCommonSharedMemTransportData(p_root, pDescriptor);
-        if (ret != XMLP_ret::XML_OK)
-        {
-            return ret;
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid transport type: '" << sType << "'");
-        return XMLP_ret::XML_ERROR;
     }
 
     ret = parseXMLCommonTransportData(p_root, pDescriptor);
@@ -412,19 +397,20 @@ XMLP_ret XMLParser::parseXMLTransportData(
         return ret;
     }
 
-    std::shared_ptr<fastdds::rtps::PortBasedTransportDescriptor> temp_1 =
-            std::dynamic_pointer_cast<fastdds::rtps::PortBasedTransportDescriptor>(pDescriptor);
-    ret = parseXMLPortBasedTransportData(p_root, temp_1);
-    if (ret != XMLP_ret::XML_OK)
+    auto port_based_descriptor = std::dynamic_pointer_cast<fastdds::rtps::PortBasedTransportDescriptor>(pDescriptor);
+    if (port_based_descriptor)
     {
-        return ret;
+        ret = parseXMLPortBasedTransportData(p_root, port_based_descriptor);
+        if (ret != XMLP_ret::XML_OK)
+        {
+            return ret;
+        }
     }
 
-    if (sType != SHM)
+    auto socket_descriptor = std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(pDescriptor);
+    if (socket_descriptor)
     {
-        std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> temp_2 =
-                std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(pDescriptor);
-        ret = parseXMLSocketTransportData(p_root, temp_2);
+        ret = parseXMLSocketTransportData(p_root, socket_descriptor);
         if (ret != XMLP_ret::XML_OK)
         {
             return ret;
@@ -455,6 +441,7 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, TTL) == 0 ||
                 strcmp(name, NON_BLOCKING_SEND) == 0 ||
                 strcmp(name, UDP_OUTPUT_PORT) == 0 ||
+                strcmp(name, UDP_PRIORITY_MAPPINGS) == 0 ||
                 strcmp(name, TCP_WAN_ADDR) == 0 ||
                 strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 ||
                 strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
@@ -477,7 +464,11 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, RECEPTION_THREADS) == 0 ||
                 strcmp(name, DUMP_THREAD) == 0 ||
                 strcmp(name, PORT_OVERFLOW_POLICY) == 0 ||
-                strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0))
+                strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
+                strcmp(name, ETH_INTERFACE_NAME) == 0 ||
+                strcmp(name, ETH_OUTPUT_PORT) == 0 ||
+                strcmp(name, ETH_PRIORITY_MAPPINGS) == 0
+                ))
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'transportDescriptorType'. Name: " << name);
             ret = XMLP_ret::XML_ERROR;

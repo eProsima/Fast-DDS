@@ -37,6 +37,7 @@ if(Python3_Interpreter_FOUND)
         test_fast_discovery_several_server_ids
         test_fast_discovery_invalid_locator
         test_fast_discovery_non_existent_profile
+        test_fast_discovery_tcp_via_XML
     )
 
     if(SECURITY)
@@ -124,6 +125,7 @@ if(Python3_Interpreter_FOUND)
 
     configure_file("test_xml_discovery_server_profile.xml" "test_xml_discovery_server_profile.xml" COPYONLY)
     configure_file("test_wrong_xml_discovery_server_profile.xml" "test_wrong_xml_discovery_server_profile.xml" COPYONLY)
+    configure_file("test_xml_discovery_server_tcp.xml" "test_xml_discovery_server_tcp.xml" COPYONLY)
     unset(TEST_ENVIRONMENT)
 
 endif()

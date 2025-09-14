@@ -915,14 +915,15 @@
         ├ receiveBufferSize                     [uint32],
         ├ maxMessageSize                        [uint32],
         ├ maxInitialPeersRange                  [uint32],
-        ├ interfaceWhiteList                    [0~*],                            (NOT  available for   SHM type)
+        ├ interfaceWhiteList                    [0~*],                            (NOT  available for SHM   type)
         |   └ address                           [ipv4Address|ipv6Address]
         |   └ interface                         [string]
-        ├ netmask_filter                        [string] ("OFF", "AUTO", "ON"),   (NOT  available for   SHM type)
-        ├ interfaces                            [interfacesType],                 (NOT  available for   SHM type)
-        ├ TTL                                   [uint8],                          (ONLY available for  UDP  type)
-        ├ non_blocking_send                     [boolean],                        (NOT  available for   SHM type)
-        ├ output_port                           [uint16],                         (ONLY available for  UDP  type)
+        ├ netmask_filter                        [string] ("OFF", "AUTO", "ON"),   (NOT  available for SHM   type)
+        ├ interfaces                            [interfacesType],                 (NOT  available for SHM   type)
+        ├ TTL                                   [uint8],                          (ONLY available for UDP   type)
+        ├ non_blocking_send                     [boolean],                        (NOT  available for SHM   type)
+        ├ output_port                           [uint16],                         (ONLY available for UDP   type)
+        ├ udp_priority_mappings                 [udpPriorityMappingsType],        (ONLY available for UDP   type)
         ├ wan_addr                              [ipv4AddressFormat],              (ONLY available for TCPv4 type)
         ├ keep_alive_frequency_ms               [uint32],                         (ONLY available for TCP   type)
         ├ keep_alive_timeout_ms                 [uint32],                         (ONLY available for TCP   type)
@@ -935,15 +936,20 @@
         ├ calculate_crc                         [bool],                           (ONLY available for TCP   type)
         ├ check_crc                             [bool],                           (ONLY available for TCP   type)
         ├ enable_tcp_nodelay                    [bool],                           (ONLY available for TCP   type)
+        ├ tcp_negotiation_timeout               [uint32],                         (ONLY available for TCP   type)
         ├ keep_alive_thread                     [threadSettingsType],             (ONLY available for TCP   type)
         ├ accept_thread                         [threadSettingsType],             (ONLY available for TCP   type)
-        ├ segment_size                          [uint32],                         (ONLY available for   SHM type)
-        ├ port_queue_capacity                   [uint32],                         (ONLY available for   SHM type)
-        ├ healthy_check_timeout_ms              [uint32],                         (ONLY available for   SHM type)
-        ├ rtps_dump_file                        [string]                          (ONLY available for   SHM type)
+        ├ segment_size                          [uint32],                         (ONLY available for SHM   type)
+        ├ port_queue_capacity                   [uint32],                         (ONLY available for SHM   type)
+        ├ healthy_check_timeout_ms              [uint32],                         (ONLY available for SHM   type)
+        ├ rtps_dump_file                        [string]                          (ONLY available for SHM   type)
         ├ default_reception_threads             [threadSettingsType]
-        ├ reception_threads                     [receptionThreadsListType]        (ONLY available for   SHM type)
-        └ dump_thread                           [threadSettingsType]              (ONLY available for   SHM type) -->
+        ├ reception_threads                     [receptionThreadsListType]        (ONLY available for SHM   type)
+        ├ dump_thread                           [threadSettingsType]              (ONLY available for SHM   type)
+        ├ eth_interface_name                    [string]                          (ONLY available for ETH   type)
+        ├ eth_output_port                       [uint16]                          (ONLY available for ETH   type)
+        └ eth_priority_mappings                 [ethernetPriorityMappingsType]    (ONLY available for ETH   type)
+    -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
@@ -956,6 +962,7 @@
                         <xs:enumeration value="TCPv4"/>
                         <xs:enumeration value="TCPv6"/>
                         <xs:enumeration value="SHM"/>
+                        <xs:enumeration value="ETH"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -990,6 +997,7 @@
             <xs:element name="TTL" type="uint8" minOccurs="0" maxOccurs="1"/>
             <xs:element name="non_blocking_send" type="boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="udp_priority_mappings" type="udpPriorityMappingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="wan_addr" type="ipv4AddressFormat" minOccurs="0" maxOccurs="1"/>
             <xs:element name="keep_alive_frequency_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="keep_alive_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
@@ -1017,6 +1025,9 @@
             <xs:element name="default_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="eth_interface_name" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="eth_output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="eth_priority_mappings" type="ethernetPriorityMappingsType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -1150,6 +1161,46 @@
         </xs:all>
     </xs:complexType>
 
+    <!--udp_priority_mappings:
+        └ priority            [0~*]
+          ╠ att. value        [int32] REQ
+          ╠ att. dscp         [uint8]
+          ╠ att. source_port  [uint16]
+          ╚ att. interface    [string]
+    -->
+    <xs:complexType name="udpPriorityMappingsType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="priority" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="value" type="int32" use="required"/>
+                    <xs:attribute name="dscp" type="uint8" default="0"/>
+                    <xs:attribute name="source_port" type="uint16" default="0"/>
+                    <xs:attribute name="interface" type="string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--eth_priority_mappings:
+        └ priority            [0~*]
+          ╠ att. value        [int32] REQ
+          ╠ att. source_port  [uint16]
+          ╠ att. pcp          [uint8]
+          ╚ att. vlan_id      [uint16]
+    -->
+    <xs:complexType name="ethernetPriorityMappingsType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="priority" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="value" type="int32" use="required"/>
+                    <xs:attribute name="source_port" type="uint16" default="0"/>
+                    <xs:attribute name="pcp" type="uint8" default="0"/>
+                    <xs:attribute name="vlan_id" type="uint16" default="0"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
 
     <!--+==================================================================================+-->
 
@@ -1170,6 +1221,7 @@
                         <xs:element name="udpv6" type="udpv6LocatorType" maxOccurs="unbounded"/>
                         <xs:element name="tcpv4" type="tcpv4LocatorType" maxOccurs="unbounded"/>
                         <xs:element name="tcpv6" type="tcpv6LocatorType" maxOccurs="unbounded"/>
+                        <xs:element name="ethernet" type="ethernetLocatorType" maxOccurs="unbounded"/>
                     </xs:choice>
                 </xs:complexType>
             </xs:element>
@@ -1435,6 +1487,20 @@
             <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="physical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--ethernet Locator:
+        ├ port     [uint16],
+        ├ pcp      [uint8],
+        ├ vlan_id  [uint16],
+        └ address  [octectVector]-->
+    <xs:complexType name="ethernetLocatorType">
+        <xs:all>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="pcp" type="uint8" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="vlan_id" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="address" type="octectVector" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
