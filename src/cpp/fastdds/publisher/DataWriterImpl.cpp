@@ -1035,7 +1035,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         }
     }
 
-    // create_change seeds the next per-instance deadline and reschedules the timer for the next sample.
+    // create_change seeds the next per-instance deadline and reschedules the timer for the next sample
     CacheChange_t* ch = history_->create_change(change_kind, handle);
     if (ch != nullptr)
     {
