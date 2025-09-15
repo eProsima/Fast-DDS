@@ -97,12 +97,6 @@ static void guid_prefix_create(
     eprosima::fastdds::rtps::GuidUtils::instance().guid_prefix_create(ID, guidP);
 }
 
-std::shared_ptr<IDomainImpl> RTPSDomainImpl::get_instance()
-{
-    static std::shared_ptr<RTPSDomainImpl> instance = std::make_shared<RTPSDomainImpl>();
-    return instance;
-}
-
 void RTPSDomain::set_filewatch_thread_config(
         const fastdds::rtps::ThreadSettings& watch_thread,
         const fastdds::rtps::ThreadSettings& callback_thread)
