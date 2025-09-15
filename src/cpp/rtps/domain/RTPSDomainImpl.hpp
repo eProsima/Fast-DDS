@@ -350,7 +350,7 @@ public:
             uint32_t domain_id,
             const std::string& easy_mode_ip) override;
 
-private:
+protected:
 
     /**
      * @brief Get Id to create a RTPSParticipant.
