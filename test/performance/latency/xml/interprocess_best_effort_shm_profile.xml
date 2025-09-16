@@ -20,6 +20,16 @@
             </rtps>
         </participant>
         <data_writer profile_name="pub_publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
@@ -33,6 +43,16 @@
             </qos>
         </data_writer>
         <data_reader profile_name="pub_subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
@@ -64,6 +84,16 @@
             </rtps>
         </participant>
         <data_writer profile_name="sub_publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
@@ -77,6 +107,16 @@
             </qos>
         </data_writer>
         <data_reader profile_name="sub_subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>11000</max_samples>
+                    <max_samples_per_instance>11000</max_samples_per_instance>
+                    <allocated_samples>11000</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
             <qos>
                 <reliability>
                     <kind>BEST_EFFORT</kind>
