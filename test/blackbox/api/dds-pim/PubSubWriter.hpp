@@ -55,7 +55,6 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
-#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 
 using eprosima::fastdds::dds::DomainParticipantFactory;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;

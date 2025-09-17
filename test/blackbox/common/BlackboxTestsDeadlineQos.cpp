@@ -12,10 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <memory>
-#include <sstream>
-#include <thread>
-
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <gtest/gtest.h>
@@ -26,50 +22,8 @@
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
-using eprosima::fastdds::dds::Duration_t;
-using eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-using eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS;
-using eprosima::fastdds::dds::RETCODE_OK;
-using eprosima::fastdds::dds::StatusMask;
 
-// ---- Fast DDS logging API (new) OR Fast RTPS (old) ----
-#if __has_include(<fastdds/dds/log/Log.hpp>)
-  #include <fastdds/dds/log/Log.hpp>
-  #include <fastdds/dds/log/OStreamConsumer.hpp>
-  namespace fastlog = eprosima::fastdds::dds;
-#elif __has_include(<fastrtps/log/Log.h>)
-  #include <fastrtps/log/Log.h>
-  #include <fastrtps/log/OStreamConsumer.h>
-  namespace fastlog = eprosima::fastrtps;
-#else
-  #error "No Fast DDS/RTPS log header found"
-#endif
-
-// Consumer: counts matching warnings and mirrors them to an ostringstream
-class TestStringConsumer : public fastlog::LogConsumer
-{
-public:
-    TestStringConsumer(std::ostringstream& out, std::string needle)
-        : out_(out), needle_(std::move(needle))
-    {}
-
-    void Consume(const fastlog::Log::Entry& e) override
-    {
-        // Count exactly the warning we expect
-        if (e.kind == fastlog::Log::Kind::Warning &&
-            e.message.find(needle_) != std::string::npos)
-        {
-            count_.fetch_add(1, std::memory_order_relaxed);
-        }
-    }
-
-    size_t count() const { return count_.load(std::memory_order_relaxed); }
-
-private:
-    std::ostringstream& out_;
-    std::string needle_;
-    std::atomic<size_t> count_{0};
-};
+namespace fastlog = eprosima::fastdds::dds;
 
 enum communication_type
 {
@@ -356,18 +310,37 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
 }
 
 /**
+ * Fixes Redmine issue #23289.
  * Regression test for the zero-deadline period bug.
  * Creating a DataWriter with a deadline of 0.
  * Checking if a warning is logged exactly once, the timer is cancelled without missed deadline
  * messages and a total count set to max integer.
  */
-TEST_P(DeadlineQos, DeadlineZeroWithoutDeadlineMissedMessages)
+TEST_P(DeadlineQos, ZeroDeadlinePeriod)
 {
-    std::ostringstream logbuf;
+    // Local helper used only by this test
+    struct LocalWarningCounter : fastlog::LogConsumer
+    {
+        explicit LocalWarningCounter(std::string needle) : needle_(std::move(needle)) {}
+        void Consume(const fastlog::Log::Entry& e) override
+        {
+            if (e.kind == fastlog::Log::Kind::Warning &&
+                e.message.find(needle_) != std::string::npos)
+            {
+                count_.fetch_add(1, std::memory_order_relaxed);
+            }
+        }
+        size_t count() const { return count_.load(std::memory_order_relaxed); }
+        std::string needle_;
+        std::atomic<size_t> count_{0};
+    };
+
     const char* needle = "Deadline period is 0";
-    auto *consumer_ptr = new TestStringConsumer(logbuf, needle);
+    auto consumer = std::make_unique<LocalWarningCounter>(needle);
+    auto* consumer_ptr = consumer.get(); // keep raw pointer for assertions
+
     fastlog::Log::ClearConsumers();
-    fastlog::Log::RegisterConsumer(std::unique_ptr<fastlog::LogConsumer>(consumer_ptr));
+    fastlog::Log::RegisterConsumer(std::move(consumer));
     fastlog::Log::SetVerbosity(fastlog::Log::Kind::Warning);
 
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -391,10 +364,10 @@ TEST_P(DeadlineQos, DeadlineZeroWithoutDeadlineMissedMessages)
     eprosima::fastdds::dds::OfferedDeadlineMissedStatus st{};
     ASSERT_EQ(writer.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
 
-    EXPECT_EQ(st.total_count, std::numeric_limits<int32_t>::max()) << "Expected the max value after a zero-deadline warning.";
+    EXPECT_EQ(st.total_count, std::numeric_limits<uint32_t>::max()) << "Expected the max value after a zero-deadline warning.";
     EXPECT_EQ(st.total_count_change, 0);
 
-    EXPECT_EQ(consumer_ptr->count(), 1u) << "Expected exactly one 'deadline=0' warning\n" << logbuf.str();
+    EXPECT_EQ(consumer_ptr->count(), 1u) << "Expected exactly one 'deadline=0' warning\n";
 
     eprosima::fastdds::dds::OfferedDeadlineMissedStatus st_pre_wait{};
     ASSERT_EQ(writer.get_offered_deadline_missed_status(st_pre_wait), eprosima::fastdds::dds::RETCODE_OK);
@@ -406,7 +379,6 @@ TEST_P(DeadlineQos, DeadlineZeroWithoutDeadlineMissedMessages)
     ASSERT_EQ(writer.get_offered_deadline_missed_status(st_post_wait), eprosima::fastdds::dds::RETCODE_OK);
 
     EXPECT_EQ(st_pre_wait.total_count, st_post_wait.total_count) << "The total count should not change, as the timer was canceled.";
-
     EXPECT_EQ(st_post_wait.total_count_change, 0u) << "The total_count_change should be 0, as the timer was canceled.";
 
     auto prev = consumer_ptr->count();

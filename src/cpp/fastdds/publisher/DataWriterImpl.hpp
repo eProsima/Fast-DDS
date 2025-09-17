@@ -771,7 +771,17 @@ protected:
 
 private:
 
-    void configure_deadline_timer_locked_();
+    /**
+    * This function tears down any existing deadline timer and creates a new one
+    * configured for the current deadline period. If the period is 0 or infinite,
+    * the timer is created to fire only once to log a warning and then cancel itself.
+    */
+    void configure_deadline_timer_();
+
+    /**
+    * Notifies listeners that a deadline has been missed without touching the counters.
+    */
+    void notify_deadline_missed_no_increment_();
 
     void create_history(
             const std::shared_ptr<IPayloadPool>& payload_pool,
