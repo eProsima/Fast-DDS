@@ -83,30 +83,26 @@ struct identifier_processor
         switch (ti._d())
         {
             case xtypes::TI_PLAIN_ARRAY_SMALL:
-                out_type =
-                        std::make_shared<xtypes::TypeIdentifier>(resolve_type(*ti.array_sdefn().element_identifier(),
-                                pos));
+                out_type = std::make_shared<xtypes::TypeIdentifier>(
+                    resolve_type(*ti.array_sdefn().element_identifier(), pos));
                 max_size = process_bounds(ti.array_sdefn().array_bound_seq());
                 return true;
 
             case xtypes::TI_PLAIN_ARRAY_LARGE:
-                out_type =
-                        std::make_shared<xtypes::TypeIdentifier>(resolve_type(*ti.array_ldefn().element_identifier(),
-                                pos));
+                out_type = std::make_shared<xtypes::TypeIdentifier>(
+                    resolve_type(*ti.array_ldefn().element_identifier(), pos));
                 max_size = process_bounds(ti.array_ldefn().array_bound_seq());
                 return true;
 
             case xtypes::TI_PLAIN_SEQUENCE_SMALL:
-                out_type =
-                        std::make_shared<xtypes::TypeIdentifier>(resolve_type(*ti.seq_sdefn().element_identifier(),
-                                pos));
+                out_type = std::make_shared<xtypes::TypeIdentifier>(
+                    resolve_type(*ti.seq_sdefn().element_identifier(), pos));
                 max_size = process_bound(ti.seq_sdefn().bound());
                 return true;
 
             case xtypes::TI_PLAIN_SEQUENCE_LARGE:
-                out_type =
-                        std::make_shared<xtypes::TypeIdentifier>(resolve_type(*ti.seq_ldefn().element_identifier(),
-                                pos));
+                out_type = std::make_shared<xtypes::TypeIdentifier>(
+                    resolve_type(*ti.seq_ldefn().element_identifier(), pos));
                 max_size = process_bound(ti.seq_ldefn().bound());
                 return true;
 
@@ -144,8 +140,8 @@ struct identifier_processor
             throw parse_error("field not found", name_node.begin());
         }
 
-        const xtypes::TypeIdentifier& ti = resolve_type(members[member_index].common().member_type_id(),
-                        name_node.begin());
+        const xtypes::TypeIdentifier& ti =
+                resolve_type(members[member_index].common().member_type_id(), name_node.begin());
         bool has_index = n->children.size() > 1;
         size_t max_size = 0;
         size_t array_index = std::numeric_limits<size_t>::max();
