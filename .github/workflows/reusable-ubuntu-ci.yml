@@ -61,10 +61,10 @@ on:
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
-  fastdds-python-branch: 'main'
-  fastdds-docs-branch: 'master'
-  shapes-demo-branch: 'master'
-  discovery-server-branch: 'master'
+  fastdds-python-branch: '2.3.x'
+  fastdds-docs-branch: '3.3.x'
+  shapes-demo-branch: '3.3.x'
+  discovery-server-branch: '2.1.x'
   
 defaults:
   run:
@@ -481,11 +481,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
-<<<<<<< HEAD
-          fallback_branch: 3.3.x
-=======
           fallback_branch: ${{ env.fastdds-docs-branch }}
->>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -592,11 +588,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/ShapesDemo
-<<<<<<< HEAD
-          fallback_branch: '3.3.x'
-=======
           fallback_branch: ${{ env.shapes-demo-branch }}
->>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Shapes Demo repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -676,11 +668,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Discovery-Server
-<<<<<<< HEAD
-          fallback_branch: '2.1.x'
-=======
           fallback_branch: ${{ env.discovery-server-branch }}
->>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Discovery Server repo
         uses: eProsima/eProsima-CI/external/checkout@v0
