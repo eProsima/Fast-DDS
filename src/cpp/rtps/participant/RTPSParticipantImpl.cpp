@@ -1515,14 +1515,6 @@ void RTPSParticipantImpl::update_attributes(
 
     bool local_interfaces_changed = false;
 
-    // Update cached network interfaces
-    if (!SystemInfo::update_interfaces())
-    {
-        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                "Failed to update cached network interfaces during " << temp_atts.getName() <<
-                " attributes update");
-    }
-
     // Check if new interfaces have been added
     if (internal_metatraffic_locators_)
     {
