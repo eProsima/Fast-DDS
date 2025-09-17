@@ -60,7 +60,16 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
+<<<<<<< HEAD
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
+=======
+  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
+  fastdds-python-branch: 'main'
+  fastdds-docs-branch: 'master'
+  shapes-demo-branch: 'master'
+  discovery-server-branch: 'master'
+  
+>>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 defaults:
   run:
     shell: bash
@@ -313,7 +322,11 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-python
+<<<<<<< HEAD
           fallback_branch: 2.2.x
+=======
+          fallback_branch: ${{ env.fastdds-python-branch }}
+>>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -476,7 +489,11 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
+<<<<<<< HEAD
           fallback_branch: 3.2.x
+=======
+          fallback_branch: ${{ env.fastdds-docs-branch }}
+>>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -583,7 +600,11 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/ShapesDemo
+<<<<<<< HEAD
           fallback_branch: '3.2.x'
+=======
+          fallback_branch: ${{ env.shapes-demo-branch }}
+>>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Shapes Demo repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -663,7 +684,11 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Discovery-Server
+<<<<<<< HEAD
           fallback_branch: '2.1.x'
+=======
+          fallback_branch: ${{ env.discovery-server-branch }}
+>>>>>>> 50ff2296 (Update fallback branches to use environment variables (#6039))
 
       - name: Download Discovery Server repo
         uses: eProsima/eProsima-CI/external/checkout@v0
