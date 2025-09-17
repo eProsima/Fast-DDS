@@ -55,15 +55,15 @@ if(EPROSIMA_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
-    if (COMPILE_FASTDDS_BASIC_TEST_SUITE)
-        # TODO: Support other test suites in Fast DDS Pro builds
-        add_subdirectory(blackbox)
-    else()
-		if(APPLE)
-			link_libraries("-framework CoreFoundation" "-framework IOKit")
-		endif()
+    if(APPLE)
+		link_libraries("-framework CoreFoundation" "-framework IOKit")
+	endif()
 
-		add_subdirectory(blackbox)
+    # TODO: Support other test suites in Fast DDS Pro builds
+    add_subdirectory(blackbox)
+
+    # Fast DDS basic is identified with a tweak version of 0
+    if (PROJECT_VERSION_TWEAK EQUAL 0)
 		add_subdirectory(feature)
 		add_subdirectory(unittest)
 		add_subdirectory(dds/communication)
