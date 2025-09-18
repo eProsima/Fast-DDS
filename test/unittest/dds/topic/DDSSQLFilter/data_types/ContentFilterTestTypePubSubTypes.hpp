@@ -37,6 +37,8 @@
     Generated ContentFilterTestType is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // FASTDDS_GEN_API_VER
 
+typedef eprosima::fastcdr::fixed_string<64> string_64;
+typedef string_64 alias_string;
 
 /*!
  * @brief This class represents the TopicDataType of the type ContentFilterTestType defined by the user in the IDL file.
