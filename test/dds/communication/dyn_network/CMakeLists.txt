@@ -13,6 +13,11 @@
 # limitations under the License.
 message(STATUS "Configuring dynamic network interfaces tests")
 
+if(PROJECT_VERSION_TWEAK EQUAL 0)
+    message("Disabling dds.communication.dynamic_interfaces, since it tests a feature only available in Fast DDS Pro")
+    return()
+endif()
+
 # Find docker
 find_program(DOCKER_EXECUTABLE docker)
 if(NOT DOCKER_EXECUTABLE)

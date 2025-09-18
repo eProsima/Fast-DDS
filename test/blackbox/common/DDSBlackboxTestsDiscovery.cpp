@@ -372,6 +372,9 @@ TEST(DDSDiscovery, ServersConnectionTCP)
  */
 TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
 {
+    GTEST_SKIP() << "This functionality has been moved to Fast DDS Pro. "
+        "A test will be added in that repository.";
+
     using namespace eprosima::fastdds::rtps;
 
     PubSubWriter<HelloWorldPubSubType> datawriter(TEST_TOPIC_NAME);
