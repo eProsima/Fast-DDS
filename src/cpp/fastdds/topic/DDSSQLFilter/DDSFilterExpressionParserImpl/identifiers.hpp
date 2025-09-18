@@ -48,32 +48,57 @@ struct identifier_processor
         return process_bound(bound_seq[0]);
     }
 
+    static std::shared_ptr<xtypes::TypeIdentifier> resolve_type(
+            const xtypes::TypeIdentifier& ti,
+            const position& pos)
+    {
+        if (xtypes::EK_COMPLETE != ti._d())
+        {
+            return std::make_shared<xtypes::TypeIdentifier>(ti);
+        }
+
+        std::shared_ptr<xtypes::TypeObject> type_object = std::make_shared<xtypes::TypeObject>();
+        if (RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                    ti, *type_object) && xtypes::EK_COMPLETE == type_object->_d())
+        {
+            if (xtypes::TK_ALIAS == type_object->complete()._d())
+            {
+                const xtypes::TypeIdentifier& aliased_id =
+                        type_object->complete().alias_type().body().common().related_type();
+                return resolve_type(aliased_id, pos);
+            }
+            return std::make_shared<xtypes::TypeIdentifier>(ti);
+        }
+        throw parse_error("could not find type object definition", pos);
+    }
+
     static bool type_should_be_indexed(
             const xtypes::TypeIdentifier& ti,
             std::shared_ptr<xtypes::TypeIdentifier>& out_type,
-            size_t& max_size)
+            size_t& max_size,
+            const position& pos)
     {
         max_size = 0;
 
         switch (ti._d())
         {
             case xtypes::TI_PLAIN_ARRAY_SMALL:
-                out_type = std::make_shared<xtypes::TypeIdentifier>(*ti.array_sdefn().element_identifier());
+                out_type = resolve_type(*ti.array_sdefn().element_identifier(), pos);
                 max_size = process_bounds(ti.array_sdefn().array_bound_seq());
                 return true;
 
             case xtypes::TI_PLAIN_ARRAY_LARGE:
-                out_type = std::make_shared<xtypes::TypeIdentifier>(*ti.array_ldefn().element_identifier());
+                out_type = resolve_type(*ti.array_ldefn().element_identifier(), pos);
                 max_size = process_bounds(ti.array_ldefn().array_bound_seq());
                 return true;
 
             case xtypes::TI_PLAIN_SEQUENCE_SMALL:
-                out_type = std::make_shared<xtypes::TypeIdentifier>(*ti.seq_sdefn().element_identifier());
+                out_type = resolve_type(*ti.seq_sdefn().element_identifier(), pos);
                 max_size = process_bound(ti.seq_sdefn().bound());
                 return true;
 
             case xtypes::TI_PLAIN_SEQUENCE_LARGE:
-                out_type = std::make_shared<xtypes::TypeIdentifier>(*ti.seq_ldefn().element_identifier());
+                out_type = resolve_type(*ti.seq_ldefn().element_identifier(), pos);
                 max_size = process_bound(ti.seq_ldefn().bound());
                 return true;
 
@@ -111,11 +136,11 @@ struct identifier_processor
             throw parse_error("field not found", name_node.begin());
         }
 
-        const xtypes::TypeIdentifier& ti = members[member_index].common().member_type_id();
+        auto ti = resolve_type(members[member_index].common().member_type_id(), name_node.begin());
         bool has_index = n->children.size() > 1;
         size_t max_size = 0;
         size_t array_index = std::numeric_limits<size_t>::max();
-        if (type_should_be_indexed(ti, identifier_state.current_type, max_size))
+        if (type_should_be_indexed(*ti, identifier_state.current_type, max_size, name_node.begin()))
         {
             if (!has_index)
             {
@@ -184,15 +209,10 @@ struct identifier_processor
                 if (RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
                             ti, *type_object) && xtypes::EK_COMPLETE == type_object->_d())
                 {
+                    assert(xtypes::TK_ALIAS != type_object->complete()._d()); // should be resolved already at this point
                     if (xtypes::TK_ENUM == type_object->complete()._d())
                     {
                         return DDSFilterValue::ValueKind::ENUM;
-                    }
-                    if (xtypes::TK_ALIAS == type_object->complete()._d())
-                    {
-                        const xtypes::TypeIdentifier& aliasedId =
-                                type_object->complete().alias_type().body().common().related_type();
-                        return get_value_kind(aliasedId, pos);
                     }
                 }
             }
@@ -210,6 +230,11 @@ struct identifier_processor
     {
         if (n->is<fieldname>())
         {
+            if (!state.current_type)
+            {
+                throw parse_error("undefined type identifier", n->begin());
+            }
+
             // Set data for fieldname node
             n->field_kind = get_value_kind(*state.current_type, n->end());
             n->field_access_path = state.access_path;
@@ -223,6 +248,10 @@ struct identifier_processor
         {
             if (!state.current_type)
             {
+                if (!state.type_object)
+                {
+                    throw parse_error("undefined type object", n->begin());
+                }
                 add_member_access(n, state, state.type_object->complete());
             }
             else
