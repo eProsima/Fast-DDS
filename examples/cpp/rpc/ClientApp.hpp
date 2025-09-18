@@ -221,6 +221,11 @@ public:
 
     void stop() override;
 
+    bool is_stopped() const override
+    {
+        return stop_.load();
+    }
+
 protected:
 
     //! Create a participant for internal RPCDDS entities
@@ -237,11 +242,6 @@ protected:
     //! @return true if the server is reachable, false otherwise
     bool ping_server(
             std::size_t attempts);
-
-    bool is_stopped()
-    {
-        return stop_.load();
-    }
 
     std::shared_ptr<calculator_example::Calculator> client_;
     dds::DomainParticipant* participant_;
