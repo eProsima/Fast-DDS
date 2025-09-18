@@ -61,6 +61,11 @@ on:
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
+  fastdds-python-branch: '1.4.x'
+  fastdds-docs-branch: '2.14.x'
+  shapes-demo-branch: '2.14.x'
+  discovery-server-branch: '1.2.x'
+  
 defaults:
   run:
     shell: bash
@@ -313,7 +318,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-python
-          fallback_branch: '1.4.x'
+          fallback_branch: ${{ env.fastdds-python-branch }}
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -476,7 +481,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-DDS-docs
-          fallback_branch: '2.14.x'
+          fallback_branch: ${{ env.fastdds-docs-branch }}
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -583,7 +588,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/ShapesDemo
-          fallback_branch: '2.14.x'
+          fallback_branch: ${{ env.shapes-demo-branch }}
 
       - name: Download Shapes Demo repo
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -663,7 +668,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Discovery-Server
-          fallback_branch: '1.2.x'
+          fallback_branch: ${{ env.discovery-server-branch }}
 
       - name: Download Discovery Server repo
         uses: eProsima/eProsima-CI/external/checkout@v0
