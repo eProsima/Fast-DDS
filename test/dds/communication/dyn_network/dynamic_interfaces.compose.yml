@@ -26,7 +26,9 @@ services:
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --wait 1 --samples 10 --loops 1 --seed 0 --magic T"
 
   subscriber:
-    build: .
+    build:
+        context: .
+        dockerfile: net-tools.Dockerfile
     image: ubuntu-net-tools:22.04
     privileged: true
     volumes:
