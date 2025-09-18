@@ -12,7 +12,8 @@ class IDLProcessor:
         self.files_to_ignore = {
             "external.idl",
             "member_id.idl", # Not support while @autoid(HASH) StructTypeFlag information cannot be pass to DynamicType API.
-            "relative_path_include.idl"
+            "relative_path_include.idl",
+            "inner_const_and_typedef.idl"
         }
         # List of struct names to ignore
         self.struct_names_to_ignore = ["MapWString*", "MapInnerAliasBoundedWStringHelper*", "AnnotatedStruct"]
@@ -256,7 +257,7 @@ def main():
                                      processor.structs_info, processor.struct_names_to_ignore, processor.idl_without_typeobjects)
     update_participant_headers_file("TypeLookupServiceSubscriber.h", "SUBSCRIBER_TYPE_CREATOR_FUNCTION",
                                      processor.structs_info, processor.struct_names_to_ignore, processor.idl_without_typeobjects)
-    
+
 
 if __name__ == "__main__":
     main()
