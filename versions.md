@@ -8,6 +8,7 @@ Forthcoming
 * Monitor service now serializes all optional QoS in the ProxyDatas.
 * Removed Request-Reply example in favor of the new RPC over DDS example.
 * Bump to asio 1.34.2 release.
+* Support aliases in Content Filtered Topic.
 
 Version v3.2.2
 --------------

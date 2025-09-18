@@ -23,12 +23,13 @@
 #define FAST_DDS_GENERATED__CONTENTFILTERTESTTYPECDRAUX_HPP
 
 #include "ContentFilterTestType.hpp"
-
-constexpr uint32_t StructType_max_cdr_typesize {344UL};
+constexpr uint32_t StructType_max_cdr_typesize {416UL};
 constexpr uint32_t StructType_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t ContentFilterTestType_max_cdr_typesize {6248UL};
+
+constexpr uint32_t ContentFilterTestType_max_cdr_typesize {7560UL};
 constexpr uint32_t ContentFilterTestType_max_key_cdr_typesize {0UL};
+
 
 
 
