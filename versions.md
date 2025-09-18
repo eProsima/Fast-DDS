@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Support aliases in Content Filtered Topic.
+
 Version 2.14.5
 --------------
 
