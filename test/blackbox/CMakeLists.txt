@@ -97,7 +97,7 @@ target_include_directories(BlackboxTests_RTPS PRIVATE
 target_link_libraries(BlackboxTests_RTPS fastdds fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
     PROPERTIES
-            ENVIRONMENT "CERTS_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../test/certs"
+            ENVIRONMENT "CERTS_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../certs"
     TEST_PREFIX "BlackboxTests_RTPS."
     TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
     NO_PRETTY_VALUES
@@ -230,7 +230,7 @@ if(FASTDDS_PIM_API_TESTS)
         )
     gtest_discover_tests(BlackboxTests_DDS_PIM
         PROPERTIES
-            ENVIRONMENT "CERTS_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../test/certs"
+            ENVIRONMENT "CERTS_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../certs"
             ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
             ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
             ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
