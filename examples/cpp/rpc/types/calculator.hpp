@@ -23,14 +23,11 @@
 #define FAST_DDS_GENERATED__CALCULATOR_HPP
 
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <utility>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastcdr/xcdr/optional.hpp>
 #include <fastdds/dds/rpc/exceptions/RpcOperationError.hpp>
-#include <fastdds/dds/rpc/interfaces/RpcClientReader.hpp>
-#include <fastdds/dds/rpc/interfaces/RpcClientWriter.hpp>
 #include <fastdds/dds/rpc/interfaces/RpcFuture.hpp>
 
 
@@ -118,16 +115,6 @@ private:
 
 };
 
-/*!
- * @brief This class represents the enumeration FilterKind defined by the user in the IDL file.
- * @ingroup calculator
- */
-enum class FilterKind : int32_t
-{
-    EVEN,
-    ODD,
-    PRIME
-};
 
 namespace detail {
 
@@ -157,23 +144,6 @@ public:
     virtual eprosima::fastdds::dds::rpc::RpcFuture<int32_t> subtraction(
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) = 0;
-
-
-    virtual std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t> > fibonacci_seq(
-            /*in*/ uint32_t n_results) = 0;
-
-
-    virtual eprosima::fastdds::dds::rpc::RpcFuture<int32_t> sum_all(
-            /*in*/ std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>>& value) = 0;
-
-
-    virtual std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t> > accumulator(
-            /*in*/ std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>>& value) = 0;
-
-
-    virtual std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientReader<int32_t> > filter(
-            /*in*/ std::shared_ptr<eprosima::fastdds::dds::rpc::RpcClientWriter<int32_t>>& value,
-            /*in*/ calculator_example::FilterKind filter_kind) = 0;
 
 };
 

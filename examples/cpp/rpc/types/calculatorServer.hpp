@@ -56,34 +56,6 @@ struct CalculatorServer_IServerImplementation
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) = 0;
 
-
-
-    virtual void fibonacci_seq(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ uint32_t n_results,
-            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
-
-
-
-    virtual int32_t sum_all(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value) = 0;
-
-
-
-    virtual void accumulator(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
-            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
-
-
-
-    virtual void filter(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
-            /*in*/ calculator_example::FilterKind filter_kind,
-            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
-
 };
 
 /**
