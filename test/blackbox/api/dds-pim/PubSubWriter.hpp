@@ -287,6 +287,12 @@ public:
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
+    eprosima::fastdds::dds::ReturnCode_t get_offered_deadline_missed_status(
+            eprosima::fastdds::dds::OfferedDeadlineMissedStatus& st)
+    {
+        return datawriter_->get_offered_deadline_missed_status(st);
+    }
+
     PubSubWriter(
             const std::string& topic_name)
         : participant_listener_(*this)
