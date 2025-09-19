@@ -56,32 +56,32 @@ if(NOT BLACKBOX_HIGH_LEVEL_IGNORED_TESTS STREQUAL "")
 endif()
 message(STATUS "BLACKBOX_HIGH_LEVEL_IGNORED_TESTS set to '${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}'")
 
-file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
+file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
-    types/Data1mbPubSubTypes.cxx
-    types/Data1mbTypeObjectSupport.cxx
-    types/Data100kbPubSubTypes.cxx
-    types/Data100kbTypeObjectSupport.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data64kbTypeObjectSupport.cxx
-    types/FixedSizedPubSubTypes.cxx
-    types/FixedSizedTypeObjectSupport.cxx
-    types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObjectSupport.cxx
-    types/KeyedData1mbPubSubTypes.cxx
-    types/KeyedData1mbTypeObjectSupport.cxx
-    types/KeyedHelloWorldPubSubTypes.cxx
-    types/KeyedHelloWorldTypeObjectSupport.cxx
-    types/core/core_typesPubSubTypes.cxx
-    types/core/core_typesTypeObjectSupport.cxx
-    types/StringTestPubSubTypes.cxx
-    types/StringTestTypeObjectSupport.cxx
-    types/UnboundedHelloWorldPubSubTypes.cxx
-    types/UnboundedHelloWorldTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data1mbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data1mbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data100kbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data100kbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data64kbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data64kbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/FixedSizedPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/FixedSizedTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/HelloWorldPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/HelloWorldTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedData1mbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedData1mbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedHelloWorldPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedHelloWorldTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/core/core_typesPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/core/core_typesTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/StringTestPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/StringTestTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/UnboundedHelloWorldPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/UnboundedHelloWorldTypeObjectSupport.cxx
 
-    utils/data_generators.cpp
-    utils/lambda_functions.cpp
-    utils/print_functions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/data_generators.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/lambda_functions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/print_functions.cpp
     )
 add_executable(BlackboxTests_RTPS ${RTPS_BLACKBOXTESTS_SOURCE})
 target_compile_definitions(BlackboxTests_RTPS PRIVATE
@@ -97,53 +97,53 @@ target_include_directories(BlackboxTests_RTPS PRIVATE
 target_link_libraries(BlackboxTests_RTPS fastdds fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
     PROPERTIES
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            ENVIRONMENT "CERTS_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../certs"
     TEST_PREFIX "BlackboxTests_RTPS."
     TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
     NO_PRETTY_VALUES
     )
 
-file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
+file(GLOB BLACKBOXTESTS_TEST_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
-    types/Data1mbPubSubTypes.cxx
-    types/Data1mbTypeObjectSupport.cxx
-    types/Data100kbPubSubTypes.cxx
-    types/Data100kbTypeObjectSupport.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data64kbTypeObjectSupport.cxx
-    types/FixedSizedPubSubTypes.cxx
-    types/FixedSizedTypeObjectSupport.cxx
-    types/HelloWorldPubSubTypes.cxx
-    types/HelloWorldTypeObjectSupport.cxx
-    types/KeyedData1mbPubSubTypes.cxx
-    types/KeyedData1mbTypeObjectSupport.cxx
-    types/KeyedHelloWorldPubSubTypes.cxx
-    types/KeyedHelloWorldTypeObjectSupport.cxx
-    types/core/core_typesPubSubTypes.cxx
-    types/core/core_typesTypeObjectSupport.cxx
-    types/StringTestPubSubTypes.cxx
-    types/StringTestTypeObjectSupport.cxx
-    types/TestIncludeRegression3361TypeObjectSupport.cxx
-    types/TestRegression3361PubSubTypes.cxx
-    types/TestRegression3361TypeObjectSupport.cxx
-    types/UnboundedHelloWorldPubSubTypes.cxx
-    types/UnboundedHelloWorldTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data1mbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data1mbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data100kbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data100kbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data64kbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/Data64kbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/FixedSizedPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/FixedSizedTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/HelloWorldPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/HelloWorldTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedData1mbPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedData1mbTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedHelloWorldPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/KeyedHelloWorldTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/core/core_typesPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/core/core_typesTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/StringTestPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/StringTestTypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/TestIncludeRegression3361TypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/TestRegression3361PubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/TestRegression3361TypeObjectSupport.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/UnboundedHelloWorldPubSubTypes.cxx
+    ${CMAKE_CURRENT_SOURCE_DIR}/types/UnboundedHelloWorldTypeObjectSupport.cxx
 
-    utils/data_generators.cpp
-    utils/lambda_functions.cpp
-    utils/print_functions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/data_generators.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/lambda_functions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/print_functions.cpp
 
-    common/DatagramInjectionTransport.cpp
-    api/dds-pim/TCPReqRepHelloWorldRequester.cpp
-    api/dds-pim/TCPReqRepHelloWorldReplier.cpp
-    api/dds-pim/TCPReqRepHelloWorldService.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/common/DatagramInjectionTransport.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/TCPReqRepHelloWorldRequester.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/TCPReqRepHelloWorldReplier.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/TCPReqRepHelloWorldService.cpp
     )
 
-file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "common/DDSBlackboxTests*.cpp")
+file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/common/DDSBlackboxTests*.cpp")
 set(DDS_BLACKBOXTESTS_SOURCE
     ${DDS_BLACKBOXTESTS_TEST_SOURCE}
     ${BLACKBOXTESTS_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cpp/rtps/messages/CDRMessage.cpp
     )
 
 # Prepare static discovery xml file for blackbox tests.
@@ -191,18 +191,18 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_B
 if(FASTDDS_PIM_API_TESTS)
     set(BLACKBOXTESTS_FASTDDS_PIM_SOURCE
         ${DDS_BLACKBOXTESTS_SOURCE}
-        api/dds-pim/ReqRepHelloWorldRequester.cpp
-        api/dds-pim/ReqRepHelloWorldReplier.cpp
-        api/dds-pim/ReqRepHelloWorldService.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/ReqRepHelloWorldRequester.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/ReqRepHelloWorldReplier.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/ReqRepHelloWorldService.cpp
         )
 
     if (FASTDDS_STATISTICS)
 
         set(statistics_sources
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cpp/statistics/types/typesPubSubTypes.cxx
+            ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cpp/statistics/types/typesTypeObjectSupport.cxx
             )
 
         list(APPEND BLACKBOXTESTS_FASTDDS_PIM_SOURCE ${statistics_sources})
@@ -220,7 +220,7 @@ if(FASTDDS_PIM_API_TESTS)
         )
     target_include_directories(BlackboxTests_DDS_PIM PRIVATE
         ${Asio_INCLUDE_DIR}
-        api/dds-pim)
+        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim)
     target_link_libraries(BlackboxTests_DDS_PIM
         fastdds
         fastcdr
@@ -230,7 +230,7 @@ if(FASTDDS_PIM_API_TESTS)
         )
     gtest_discover_tests(BlackboxTests_DDS_PIM
         PROPERTIES
-            ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs"
+            ENVIRONMENT "CERTS_PATH=${CMAKE_CURRENT_SOURCE_DIR}/../certs"
             ENVIRONMENT "TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
             ENVIRONMENT "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
             ENVIRONMENT "R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
