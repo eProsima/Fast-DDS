@@ -13,6 +13,11 @@
 # limitations under the License.
 message(STATUS "Configuring dynamic network interfaces tests")
 
+if(PROJECT_VERSION_TWEAK EQUAL 0)
+    message("Disabling dds.communication.dynamic_interfaces, since it tests a feature only available in Fast DDS Pro")
+    return()
+endif()
+
 # Find docker
 find_program(DOCKER_EXECUTABLE docker)
 if(NOT DOCKER_EXECUTABLE)
@@ -53,8 +58,8 @@ if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
     set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
 endif()
 
-configure_file(Dockerfile
-               ${CMAKE_CURRENT_BINARY_DIR}/Dockerfile @ONLY)
+configure_file(net-tools.Dockerfile
+               ${CMAKE_CURRENT_BINARY_DIR}/net-tools.Dockerfile @ONLY)
 configure_file(dynamic_interfaces.compose.yml
                ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml @ONLY)
 configure_file(launch_subscriber.bash
@@ -63,6 +68,8 @@ add_test(NAME dds.communication.dynamic_interfaces
          COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml up
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+configure_file(cli.Dockerfile
+               ${CMAKE_CURRENT_BINARY_DIR}/cli.Dockerfile @ONLY)
 configure_file(ds_init_no_interfaces.compose.yml
          ${CMAKE_CURRENT_BINARY_DIR}/ds_init_no_interfaces.compose.yml @ONLY)
 configure_file(launch_ds_no_interfaces.bash

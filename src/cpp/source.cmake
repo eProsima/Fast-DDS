@@ -178,7 +178,7 @@ set(${PROJECT_NAME}_source_files
     ${FASTDDS_SOURCE_DIR}/rtps/resources/ResourceEvent.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/resources/TimedEvent.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/resources/TimedEventImpl.cpp
-    ${FASTDDS_SOURCE_DIR}/rtps/RTPSDomain.cpp
+    ${FASTDDS_SOURCE_DIR}/rtps/domain/RTPSDomain.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/ChainingTransport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/ChannelResource.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetmaskFilterKind.cpp

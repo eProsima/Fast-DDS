@@ -679,6 +679,9 @@ TEST_P(RTPS, RTPSAsReliableTransientLocalTwoWritersConsecutives)
  */
 TEST(RTPS, RTPSNetworkInterfaceChangesAtRunTime)
 {
+    GTEST_SKIP() << "This functionality has been moved to Fast DDS Pro. "
+        "A test will be added in that repository.";
+
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 

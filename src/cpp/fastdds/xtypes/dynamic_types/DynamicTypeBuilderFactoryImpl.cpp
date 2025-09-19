@@ -29,7 +29,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 
 #include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 
 #include "idl_parser/Idl.hpp"
 
