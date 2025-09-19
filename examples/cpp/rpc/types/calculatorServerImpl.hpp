@@ -62,50 +62,6 @@ struct CalculatorServerImplementation :
         throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'subtraction' is not implemented");
     }
 
-    void fibonacci_seq(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ uint32_t n_results,
-            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override
-    {
-        static_cast<void>(info);
-        static_cast<void>(n_results);
-        static_cast<void>(result_writer);
-        throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'fibonacci_seq' is not implemented");
-    }
-
-    int32_t sum_all(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value) override
-    {
-        static_cast<void>(info);
-        static_cast<void>(value);
-        throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'sum_all' is not implemented");
-    }
-
-    void accumulator(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
-            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override
-    {
-        static_cast<void>(info);
-        static_cast<void>(value);
-        static_cast<void>(result_writer);
-        throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'accumulator' is not implemented");
-    }
-
-    void filter(
-            const eprosima::fastdds::dds::rpc::RpcRequest& info,
-            /*in*/ eprosima::fastdds::dds::rpc::RpcServerReader<int32_t>& value,
-            /*in*/ calculator_example::FilterKind filter_kind,
-            /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override
-    {
-        static_cast<void>(info);
-        static_cast<void>(value);
-        static_cast<void>(filter_kind);
-        static_cast<void>(result_writer);
-        throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'filter' is not implemented");
-    }
-
 };
 
 //} interface Calculator

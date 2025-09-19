@@ -50,10 +50,6 @@ public:
         ADDITION,
         SUBSTRACTION,
         REPRESENTATION_LIMITS,
-        FIBONACCI,
-        SUM_ALL,
-        ACCUMULATOR,
-        FILTER,
         UNDEFINED
     };
 
@@ -105,30 +101,6 @@ public:
         std::cout << "  -r, --representation-limits                          Computes the representation"  << std::endl;
         std::cout << "                                                       limits of a 32-bit integer"   << std::endl;
         std::cout << "                                                                                   " << std::endl;
-        std::cout << "  -f <num>, --fibonacci <num>                          Returns a feed of results"    << std::endl;
-        std::cout << "                                                       with the <num> first elements" <<
-            std::endl;
-        std::cout << "                                                       of the Fibonacci sequence"    << std::endl;
-        std::cout << "                                                                                   " << std::endl;
-        std::cout << "      --sum-all                                        Sum all the values provided"  << std::endl;
-        std::cout << "                                                       in the input feed"            << std::endl;
-        std::cout << "                                                                                   " << std::endl;
-        std::cout << "      --accumulator                                    Return a feed of results"     << std::endl;
-        std::cout << "                                                       with the sum of all received" << std::endl;
-        std::cout << "                                                       values from an input feed"    << std::endl;
-        std::cout << "                                                                                   " << std::endl;
-        std::cout << "      --filter <filter_kind>                           Return a feed of results"     << std::endl;
-        std::cout << "                                                       with the values that match"   << std::endl;
-        std::cout << "                                                       the input filter kind"        << std::endl;
-        std::cout << "                                                       [<filter_kind> = 0, 1, 2]"    << std::endl;
-        std::cout << "                                                       [0 = EVEN,"                   << std::endl;
-        std::cout << "                                                        1 = ODD,"                    << std::endl;
-        std::cout << "                                                        2 = PRIME]"                  << std::endl;
-        std::cout << "                                                                                   " << std::endl;
-        std::cout << "      --feed <list>                                    Provide a feed instead of   " << std::endl;
-        std::cout << "                                                       capturing from stdin in the " << std::endl;
-        std::cout << "                                                       form of <num>,<num>,<num> "   << std::endl;
-        std::cout << "                                                       [default: empty]"             << std::endl;
         std::cout << "      --connection-attempts <num>                      Number of attempts to connect" <<
             std::endl;
         std::cout << "                                                       to a server before failing"   << std::endl;
@@ -288,104 +260,6 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-            else if (arg == "-f" || arg == "--fibonacci")
-            {
-                if (config.entity == CLIParser::EntityKind::CLIENT)
-                {
-                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
-                        print_help(EXIT_FAILURE);
-                    }
-
-                    if (++i < argc)
-                    {
-                        config.n_results = consume_integer_argument<std::uint32_t>(argv[i], arg);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing fibonacci argument");
-                        print_help(EXIT_FAILURE);
-                    }
-
-                    config.operation = CLIParser::OperationKind::FIBONACCI;
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "fibonacci argument is only valid for client entity");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "--sum-all")
-            {
-                if (config.entity == CLIParser::EntityKind::CLIENT)
-                {
-                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
-                        print_help(EXIT_FAILURE);
-                    }
-
-                    config.operation = CLIParser::OperationKind::SUM_ALL;
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "sum-all argument is only valid for client entity");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "--accumulator")
-            {
-                if (config.entity == CLIParser::EntityKind::CLIENT)
-                {
-                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
-                        print_help(EXIT_FAILURE);
-                    }
-
-                    config.operation = CLIParser::OperationKind::ACCUMULATOR;
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "accumulator argument is only valid for client entity");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "--filter")
-            {
-                if (config.entity == CLIParser::EntityKind::CLIENT)
-                {
-                    if (CLIParser::OperationKind::UNDEFINED != config.operation)
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "Only one operation can be selected");
-                        print_help(EXIT_FAILURE);
-                    }
-
-                    if (++i < argc)
-                    {
-                        config.filter_kind = consume_integer_argument<std::uint8_t>(argv[i], arg);
-
-                        if (config.filter_kind > 2)
-                        {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "filter kind must be 0, 1 or 2");
-                            print_help(EXIT_FAILURE);
-                        }
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "missing filter argument");
-                        print_help(EXIT_FAILURE);
-                    }
-
-                    config.operation = CLIParser::OperationKind::FILTER;
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "filter argument is only valid for client entity");
-                    print_help(EXIT_FAILURE);
-                }
-            }
             else if (arg == "--connection-attempts")
             {
                 if (config.entity == CLIParser::EntityKind::CLIENT)
@@ -467,27 +341,6 @@ public:
                 else
                 {
                     EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing timeout argument");
-                    print_help(EXIT_FAILURE);
-                }
-            }
-            else if (arg == "--feed")
-            {
-                if (++i < argc)
-                {
-                    if (config.entity == CLIParser::EntityKind::CLIENT)
-                    {
-                        // Error handling for reading in performed in InputFeedProcessor
-                        InputFeedProcessor::provided_input_feed.reset(new std::stringstream(argv[i]));
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "--feed argument is only valid for client entity");
-                        print_help(EXIT_FAILURE);
-                    }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing feed argument");
                     print_help(EXIT_FAILURE);
                 }
             }

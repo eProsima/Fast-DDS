@@ -88,28 +88,6 @@ struct Timestamp
     std::cerr << C_B_WHITE << Timestamp::now() << C_B_RED << " [ERROR] " << C_B_WHITE \
               << "[" << context << "] " << C_DEF << message << std::endl
 
-//! Get the filter kind from the user input
-inline calculator_example::FilterKind get_filter_kind(
-        std::uint8_t filter_kind)
-{
-    if (filter_kind == 0)
-    {
-        return calculator_example::FilterKind::EVEN;
-    }
-    else if (filter_kind == 1)
-    {
-        return calculator_example::FilterKind::ODD;
-    }
-    else if (filter_kind == 2)
-    {
-        return calculator_example::FilterKind::PRIME;
-    }
-    else
-    {
-        throw std::invalid_argument("Invalid filter kind");
-    }
-}
-
 } // namespace rpc
 } // namespace examples
 } // namespace fastdds
