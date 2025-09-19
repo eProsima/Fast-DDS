@@ -212,11 +212,12 @@ bool DDSFilterField::set_value_using_member_id(
 
         case eprosima::fastdds::dds::xtypes::EK_COMPLETE:
         {
+            // WARNING: this assumes EK_COMPLETE is always an enumeration, aliases should be resolved when parsing
             int32_t valueenum {0};
             ret = RETCODE_OK == data->get_int32_value(valueenum, member_id);
             signed_integer_value = valueenum;
-            break;
         }
+        break;
 
         default:
             break;
