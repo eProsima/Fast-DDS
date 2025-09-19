@@ -23,6 +23,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CacheChange.h>
 
+#include <rtps/common/ChangeComparison.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 
@@ -54,11 +55,23 @@ History::const_iterator History::find_change_nts(
         return const_iterator();
     }
 
+<<<<<<< HEAD
     return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* chi)
                    {
                        // use the derived classes comparisson criteria for searching
                        return this->matches_change(chi, ch);
                    });
+=======
+    // Use binary search to find the first change with the same sequence number
+    auto lb = std::lower_bound(changesBegin(), changesEnd(), ch, history_order_cmp);
+
+    if (lb != changesEnd() && matches_change(*lb, ch))
+    {
+        return lb;
+    }
+
+    return changesEnd();
+>>>>>>> 434af1bd (Use binary search in 'find_change_nts' (#5997))
 }
 
 bool History::matches_change(
