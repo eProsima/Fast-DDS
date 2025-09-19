@@ -948,7 +948,10 @@
         ├ dump_thread                           [threadSettingsType]              (ONLY available for SHM   type)
         ├ eth_interface_name                    [string]                          (ONLY available for ETH   type)
         ├ eth_output_port                       [uint16]                          (ONLY available for ETH   type)
-        └ eth_priority_mappings                 [ethernetPriorityMappingsType]    (ONLY available for ETH   type)
+        ├ eth_priority_mappings                 [ethernetPriorityMappingsType]    (ONLY available for ETH   type)
+        └ low_level_transport                   [string]                          (ONLY available for PAYLOAD_COMPRESSION
+                                                                                                      HEADER_REDUCTION
+                                                                                                      SOURCE_TIMESTAMP types)
     -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
@@ -963,6 +966,9 @@
                         <xs:enumeration value="TCPv6"/>
                         <xs:enumeration value="SHM"/>
                         <xs:enumeration value="ETH"/>
+                        <xs:enumeration value="PAYLOAD_COMPRESSION"/>
+                        <xs:enumeration value="HEADER_REDUCTION"/>
+                        <xs:enumeration value="SOURCE_TIMESTAMP"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -1028,6 +1034,7 @@
             <xs:element name="eth_interface_name" type="string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="eth_output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="eth_priority_mappings" type="ethernetPriorityMappingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="low_level_transport" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 

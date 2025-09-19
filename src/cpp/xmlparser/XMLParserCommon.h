@@ -90,6 +90,7 @@ extern const char* HEALTHY_CHECK_TIMEOUT_MS;
 extern const char* ETH_INTERFACE_NAME;
 extern const char* ETH_OUTPUT_PORT;
 extern const char* ETH_PRIORITY_MAPPINGS;
+extern const char* LOW_LEVEL_TRANSPORT;
 extern const char* DISCARD;
 extern const char* FAIL;
 extern const char* RTPS_DUMP_FILE;

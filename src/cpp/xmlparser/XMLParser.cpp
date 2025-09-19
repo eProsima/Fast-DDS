@@ -467,7 +467,8 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
                 strcmp(name, ETH_INTERFACE_NAME) == 0 ||
                 strcmp(name, ETH_OUTPUT_PORT) == 0 ||
-                strcmp(name, ETH_PRIORITY_MAPPINGS) == 0
+                strcmp(name, ETH_PRIORITY_MAPPINGS) == 0 ||
+                strcmp(name, LOW_LEVEL_TRANSPORT) == 0
                 ))
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'transportDescriptorType'. Name: " << name);

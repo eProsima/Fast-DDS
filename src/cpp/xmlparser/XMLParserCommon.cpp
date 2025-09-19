@@ -77,6 +77,7 @@ const char* HEALTHY_CHECK_TIMEOUT_MS = "healthy_check_timeout_ms";
 const char* ETH_INTERFACE_NAME = "eth_interface_name";
 const char* ETH_OUTPUT_PORT = "eth_output_port";
 const char* ETH_PRIORITY_MAPPINGS = "eth_priority_mappings";
+const char* LOW_LEVEL_TRANSPORT = "low_level_transport";
 const char* DISCARD = "DISCARD";
 const char* FAIL = "FAIL";
 const char* RTPS_DUMP_FILE = "rtps_dump_file";
