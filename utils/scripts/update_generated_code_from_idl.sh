@@ -56,6 +56,7 @@ files_needing_output_dir=(
     './test/unittest/dds/xtypes/serializers/json/types/comprehensive_type/ComprehensiveType.idl|./gen'
     './thirdparty/dds-types-test/IDL/aliases.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/annotations.idl|../../../test/dds-types-test'
+    './thirdparty/dds-types-test/IDL/inner_const_and_typedef.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/appendable.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/arrays.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/bitsets.idl|../../../test/dds-types-test'
