@@ -37,8 +37,8 @@ foreach(MODULE_DIR ${${PROJECT_NAME}_module_dirs})
 endforeach()
 
 list(APPEND ${PROJECT_NAME}_source_files
-    xmlparser/XMLParserExtras.cpp
     rtps/domain/RTPSDomainExtras.cpp
+    xmlparser/XMLParserExtras.cpp
 	)
 
 # Option to enable strict real-time. In this case, several API functions have a real-time behaviour.

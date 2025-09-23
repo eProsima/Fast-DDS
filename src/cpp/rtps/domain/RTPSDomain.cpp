@@ -21,6 +21,7 @@
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
+#include <functional>
 #include <memory>
 #include <regex>
 #include <string>
@@ -54,7 +55,6 @@
 #include <utils/SystemCommandBuilder.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/XMLProfileManager.h>
-#include <functional>
 
 namespace eprosima {
 namespace fastdds {
