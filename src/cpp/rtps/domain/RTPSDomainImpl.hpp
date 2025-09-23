@@ -103,38 +103,6 @@ public:
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* plisten) override;
 
-    /**
-     * @brief Create a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
-     * The RTPSParticipant is created as a ros easy mode client and its corresponding easy mode server is spawned
-     * if at least one of the following conditions are met:
-     *
-     * CONDITION_A:
-     *  - `easy_mode_ip` member of the input RTPSParticipantAttributes is a non-empty string.
-     *
-     * CONDITION_B:
-     *  - ROS2_EASY_MODE_URI environment variable is set.
-     *
-     * In case of both conditions are met at the same time, the value of `easy_mode_ip` member is used
-     * as the easy mode server IP and ROS2_EASY_MODE_URI value is ignored. A warning log is displayed in this case.
-     *
-     * @param domain_id DomainId to be used by the RTPSParticipant.
-     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
-     * @param attrs RTPSParticipant Attributes.
-     * @param plisten Pointer to the ParticipantListener.
-     * @return Pointer to the RTPSParticipant or nullptr in the following cases:
-     *
-     *        - The input attributes are not overriden by the environment variables.
-     *          In this case no errors ocurred,
-     *          but preconditions are not met and the entire Participant setup is skipped.
-     *
-     *        - An error ocurred during the RTPSParticipant creation.
-     *
-     *        - RTPSParticipant is created correctly, but an error ocurred during the Easy Mode discovery server launch.
-     *          In this case, the RTPSParticipant is removed before returning.
-     *
-     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
-     *          so its use may result in undefined behaviour.
-     */
     RTPSParticipant* create_client_server_participant(
             uint32_t domain_id,
             bool enabled,
@@ -217,14 +185,6 @@ public:
             WriterHistory* hist,
             WriterListener* listen) override;
 
-    /**
-     * Creates the guid of a participant given its identifier.
-     * @param [in, out] participant_id   Participant identifier for which to generate the GUID.
-     *                                   When negative, it will be modified to the first non-existent participant id.
-     * @param [out]     guid             GUID corresponding to participant_id
-     *
-     * @return True value if guid was created. False in other case.
-     */
     bool create_participant_guid(
             int32_t& participant_id,
             GUID_t& guid) override;
@@ -288,64 +248,22 @@ public:
             const GUID_t& local_guid,
             const GUID_t& matched_guid) override;
 
-    /**
-     * Callback run when the monitored environment file is modified
-     */
     void file_watch_callback() override;
 
-    /**
-     * Method to set the configuration of the threads created by the file watcher for the environment file.
-     * In order for these settings to take effect, this method must be called before the first call
-     * to @ref createParticipant.
-     *
-     * @param watch_thread     Settings for the thread watching the environment file.
-     * @param callback_thread  Settings for the thread executing the callback when the environment file changed.
-     */
     void set_filewatch_thread_config(
             const fastdds::rtps::ThreadSettings& watch_thread,
             const fastdds::rtps::ThreadSettings& callback_thread) override;
 
-    /**
-     * @brief Get the library settings.
-     *
-     * @param library_settings LibrarySettings reference where the settings are returned.
-     * @return True.
-     */
     bool get_library_settings(
             fastdds::LibrarySettings& library_settings) override;
 
-    /**
-     * @brief Set the library settings.
-     *
-     * @param library_settings LibrarySettings to be set.
-     * @return False if there is any RTPSParticipant already created.
-     *         True if correctly set.
-     */
     bool set_library_settings(
             const fastdds::LibrarySettings& library_settings) override;
 
-    /**
-     * @brief Return the ITypeObjectRegistry member to access the interface for the public API.
-     *
-     * @return const xtypes::ITypeObjectRegistry reference.
-     */
     fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry() override;
 
-    /**
-     * @brief Return the TypeObjectRegistry member to access the  API.
-     *
-     * @return const xtypes::TypeObjectRegistry reference.
-     */
     fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer() override;
 
-    /**
-     * @brief Run the Easy Mode discovery server using the Fast DDS CLI command
-     *
-     * @param domain_id Domain ID to use for the discovery server
-     * @param easy_mode_ip IP address to use for the discovery server
-     *
-     * @return True if the server was successfully started, false otherwise.
-     */
     bool run_easy_mode_discovery_server(
             uint32_t domain_id,
             const std::string& easy_mode_ip) override;
