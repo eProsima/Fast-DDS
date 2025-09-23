@@ -76,7 +76,16 @@ public:
 
     void wait_discovery();
 
+<<<<<<< HEAD
     void matched();
+=======
+    void wait_discovery(
+            unsigned int min_pub_matched,
+            unsigned int min_sub_matched);
+
+    void matched(
+            bool is_pub);
+>>>>>>> 5e01f498 (Set different content filter signatures for each requester (#5972))
 
     /**
      * Sends a request without checking the matching status.
