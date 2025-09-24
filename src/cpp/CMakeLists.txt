@@ -338,7 +338,7 @@ if(MSVC OR MSVC_IDE)
     if(PDB_FILE)
         get_target_property(PDB_DIR ${PROJECT_NAME} PDB_OUTPUT_DIRECTORY_DEBUG)
         set(PDB_FILE "${PDB_DIR}/${PDB_FILE}.pdb")
-    else()
+    elseif(NOT CMAKE_CXX_COMPILER_LAUNCHER STREQUAL "ccache")
         # fallback to static lib symbols
         get_target_property(PDB_FILE ${PROJECT_NAME} COMPILE_PDB_NAME_DEBUG)
         if(PDB_FILE)
