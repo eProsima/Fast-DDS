@@ -221,14 +221,16 @@ public:
     /**
      * @brief Called after the change has been deserialized.
      *
-     * @param [in] change        Pointer to the change being accessed.
-     * @param [in] writer        Writer proxy the @c change belongs to.
-     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
+     * @param [in] change          Pointer to the change being accessed.
+     * @param [in] writer          Writer proxy the @c change belongs to.
+     * @param [in] mark_as_read    Whether the @c change should be marked as read or not.
+     * @param [in] should_send_ack Whether an ACKNACK should be sent to the writer or not.
      */
     virtual void end_sample_access_nts(
             fastdds::rtps::CacheChange_t* change,
             fastdds::rtps::WriterProxy*& writer,
-            bool mark_as_read) = 0;
+            bool mark_as_read,
+            bool should_send_ack = false) = 0;
 
     /**
      * @brief A method to update the liveliness changed status of the reader
