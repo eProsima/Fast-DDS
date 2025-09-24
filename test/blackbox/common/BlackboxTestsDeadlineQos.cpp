@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <thread>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <gtest/gtest.h>
@@ -314,7 +316,7 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
  * Regression test for the zero-deadline period bug.
  * Creating a DataWriter with a deadline of 0.
  * Checking if a warning is logged exactly once, the timer is cancelled without missed deadline
- * messages and a total count set to max integer.
+ * messages and a total count and count change set to max integer.
  */
 TEST_P(DeadlineQos, ZeroDeadlinePeriod)
 {
@@ -360,26 +362,22 @@ TEST_P(DeadlineQos, ZeroDeadlinePeriod)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
-    // To directly read the status struct
-    eprosima::fastdds::dds::OfferedDeadlineMissedStatus st{};
-    ASSERT_EQ(writer.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
-
-    EXPECT_EQ(st.total_count, std::numeric_limits<uint32_t>::max()) << "Expected the max value after a zero-deadline warning.";
-    EXPECT_EQ(st.total_count_change, 0);
+    EXPECT_EQ(writer.missed_deadlines(), std::numeric_limits<uint32_t>::max()) << "Expected the max value after a zero-deadline warning.";
+    EXPECT_EQ(writer.missed_deadlines_change(), std::numeric_limits<uint32_t>::max());
 
     EXPECT_EQ(consumer_ptr->count(), 1u) << "Expected exactly one 'deadline=0' warning\n";
 
-    eprosima::fastdds::dds::OfferedDeadlineMissedStatus st_pre_wait{};
-    ASSERT_EQ(writer.get_offered_deadline_missed_status(st_pre_wait), eprosima::fastdds::dds::RETCODE_OK);
+    const auto pre_total = writer.missed_deadlines();
+    const auto pre_change = writer.missed_deadlines_change();
 
     // Wait for a period long enough to expect a new miss if the timer were still active
     std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
-    eprosima::fastdds::dds::OfferedDeadlineMissedStatus st_post_wait{};
-    ASSERT_EQ(writer.get_offered_deadline_missed_status(st_post_wait), eprosima::fastdds::dds::RETCODE_OK);
+    const auto post_total = writer.missed_deadlines();
+    const auto post_change = writer.missed_deadlines_change();
 
-    EXPECT_EQ(st_pre_wait.total_count, st_post_wait.total_count) << "The total count should not change, as the timer was canceled.";
-    EXPECT_EQ(st_post_wait.total_count_change, 0u) << "The total_count_change should be 0, as the timer was canceled.";
+    EXPECT_EQ(pre_total, post_total) << "The total count should not change, as the timer was canceled.";
+    EXPECT_EQ(pre_change, post_change) << "The total_count_change should not change, as the timer was canceled.";
 
     auto prev = consumer_ptr->count();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
