@@ -248,6 +248,8 @@ void DataWriterImpl::create_history(
 
 ReturnCode_t DataWriterImpl::enable()
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     assert(writer_ == nullptr);
 
     auto history_att = DataWriterHistory::to_history_attributes(
@@ -431,7 +433,7 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     writer_ = BaseWriter::downcast(writer);
-    
+
     // Set DataWriterImpl as the implementer of the
     // IReaderDataFilter interface
     writer_->reader_data_filter(this);
@@ -439,7 +441,6 @@ ReturnCode_t DataWriterImpl::enable()
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_->rebuild_instances();
 
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
     configure_deadline_timer_();
 
     lifespan_timer_ = new TimedEvent(publisher_->rtps_participant()->get_resource_event(),
@@ -518,6 +519,8 @@ ReturnCode_t DataWriterImpl::loan_sample(
         void*& sample,
         LoanInitializationKind initialization)
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     // Block lowlevel writer
     auto max_blocking_time = steady_clock::now() +
             microseconds(rtps::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -819,6 +822,8 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
         const InstanceHandle_t instance_handle,
         WriteParams& wparams)
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     // TODO(MiguelCompany): wparams should be used when propagating the register_instance operation to the DataReader.
     // See redmine issue #14494
     static_cast<void>(wparams);
@@ -866,6 +871,8 @@ ReturnCode_t DataWriterImpl::unregister_instance(
         const InstanceHandle_t& handle,
         bool dispose)
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     // Preconditions
     InstanceHandle_t ih;
     ReturnCode_t returned_value = check_instance_preconditions(instance, handle, ih);
@@ -891,6 +898,8 @@ ReturnCode_t DataWriterImpl::unregister_instance_w_timestamp(
         const fastdds::dds::Time_t& timestamp,
         bool dispose)
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     // Preconditions
     InstanceHandle_t instance_handle;
     ReturnCode_t ret = RETCODE_OK;
@@ -1069,7 +1078,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             return RETCODE_TIMEOUT;
         }
 
-        if (deadline_timer_ != nullptr && qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != dds::c_TimeInfinite && deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max())
+        if (qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != dds::c_TimeInfinite && deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max())
         {
             if (!history_->set_next_deadline(
                         handle,
@@ -1178,6 +1187,8 @@ InstanceHandle_t DataWriterImpl::get_instance_handle() const
 
 void DataWriterImpl::publisher_qos_updated()
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     if (writer_ != nullptr)
     {
         // NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
@@ -1210,6 +1221,8 @@ ReturnCode_t DataWriterImpl::set_qos(
         }
     }
 
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     if (enabled && !can_qos_be_updated(qos_, qos_to_set))
     {
         return RETCODE_IMMUTABLE_POLICY;
@@ -1222,7 +1235,6 @@ ReturnCode_t DataWriterImpl::set_qos(
 
     if (enabled)
     {
-        std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
         // Locks after we checked that writer exists
 
         int32_t transport_priority = writer_->get_transport_priority();
@@ -1275,6 +1287,7 @@ ReturnCode_t DataWriterImpl::set_qos(
 
 const DataWriterQos& DataWriterImpl::get_qos() const
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
     return qos_;
 }
 
@@ -1555,27 +1568,18 @@ ReturnCode_t DataWriterImpl::set_related_datareader(
     return ret;
 }
 
-// deadline_timer_reschedule returns true if it could compute and set a new interval; false if there’s no pending deadline.
 bool DataWriterImpl::deadline_timer_reschedule()
 {
-    assert(qos_.deadline().period != dds::c_TimeInfinite);
-    if (deadline_timer_ == nullptr || deadline_missed_status_.total_count >= std::numeric_limits<uint32_t>::max())
-    {
-        return false;
-    }
-
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+
+    assert(qos_.deadline().period != dds::c_TimeInfinite);
+    assert(deadline_timer_ != nullptr);
+    assert(deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max());
 
     steady_clock::time_point next_deadline_us;
     if (!history_->get_next_deadline(timer_owner_, next_deadline_us))
     {
         EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not get the next deadline from the history");
-        return false;
-    }
-
-    if (next_deadline_us <= std::chrono::steady_clock::now())
-    {
-        // Ignore uninitialized or stale deadlines; don't arm to avoid a spurious first miss
         return false;
     }
 
@@ -1588,27 +1592,24 @@ void DataWriterImpl::configure_deadline_timer_()
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
 
-    // Create the timer once 
+    // Create the timer once
     if (deadline_timer_ == nullptr)
     {
         deadline_timer_ = new TimedEvent(
             publisher_->rtps_participant()->get_resource_event(),
             [this]() -> bool
             {
-                std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
-
-                // Normal path: process a deadline miss. This function will
-                // update counters, notify, and ask for reschedule as needed.
                 return deadline_missed();
             },
-            (qos_.deadline().period == dds::c_TimeInfinite) ? std::numeric_limits<double>::max() : qos_.deadline().period.to_ns() * 1e-6
-            // In case of deadline period = infinite, multiplying it by 1e-6 could cause a problem
+            // Park timer with a huge interval (prevents spurious callbacks); we'll arm/cancel explicitly
+            std::numeric_limits<double>::max()
         );
     }
 
     // Handle "infinite" and "zero" outside the callback
     if (qos_.deadline().period == dds::c_TimeInfinite)
     {
+        deadline_duration_us_ = std::chrono::duration<double, std::micro>::max();
         deadline_timer_->cancel_timer();
         return;
     }
@@ -1617,52 +1618,48 @@ void DataWriterImpl::configure_deadline_timer_()
 
     if (qos_.deadline().period.to_ns() == 0)
     {
+        deadline_timer_->cancel_timer();
+
+        deadline_missed_status_.total_count = std::numeric_limits<uint32_t>::max();
+        deadline_missed_status_.total_count_change = std::numeric_limits<uint32_t>::max();
         EPROSIMA_LOG_WARNING(
             DATA_WRITER,
             "Deadline period is 0, it will be ignored from now on. Timer is going to be canceled.");
 
         // Bump once and notify listener exactly once.
-        notify_deadline_missed_no_increment_();
-
-        deadline_missed_status_.total_count = std::numeric_limits<uint32_t>::max();
-        deadline_timer_->cancel_timer();
+        notify_deadline_missed_nts_();
         return;
     }
 
-    if (deadline_timer_reschedule())
-    {
-        deadline_timer_->restart_timer();
-    }
-    else
-    {
-        // Keep the timer object around but idle if there's no pending deadline
-        deadline_timer_->cancel_timer();
-    }
+    deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
 }
 
-void DataWriterImpl::notify_deadline_missed_no_increment_()
+void DataWriterImpl::notify_deadline_missed_nts_()
 {
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
-
     StatusMask notify_status = StatusMask::offered_deadline_missed();
     if (auto* listener = get_listener_for(notify_status))
     {
         listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
     }
+
+#ifdef FASTDDS_STATISTICS
+    writer_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
+#endif // FASTDDS_STATISTICS
+
     user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 bool DataWriterImpl::deadline_missed()
 {
-    assert(qos_.deadline().period != dds::c_TimeInfinite);
-
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+
+    assert(qos_.deadline().period != dds::c_TimeInfinite);
 
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
 
-    notify_deadline_missed_no_increment_();
+    notify_deadline_missed_nts_();
 
     // If we just reached the max -> log ONCE, stop timer, and bail.
     if (deadline_missed_status_.total_count == std::numeric_limits<uint32_t>::max())
@@ -1671,10 +1668,6 @@ bool DataWriterImpl::deadline_missed()
         deadline_timer_->cancel_timer();
         return false; // do not reschedule
     }
-
-#ifdef FASTDDS_STATISTICS
-    writer_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
-#endif // FASTDDS_STATISTICS
 
     if (!history_->set_next_deadline(
                 timer_owner_,
@@ -1804,6 +1797,8 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
 ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
         PublicationBuiltinTopicData& publication_data) const
 {
+    std::unique_lock<RecursiveTimedMutex> il(impl_mtx_);
+
     if (nullptr == writer_)
     {
         return RETCODE_NOT_ENABLED;
