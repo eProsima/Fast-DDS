@@ -68,34 +68,7 @@ public:
      */
     static std::shared_ptr<IDomainImpl> get_instance();
 
-    /**
-     * Method to shut down all RTPSParticipants, readers, writers, etc.
-     * It must be called at the end of the process to avoid memory leaks.
-     * It also shut downs the DomainRTPSParticipant.
-     *
-     * \post After this call, all the pointers to RTPS entities are invalidated and their use may
-     *       result in undefined behaviour.
-     */
-    static void stopAll();
-
     void stop_all() override;
-
-    /**
-     * @brief Create a RTPSParticipant.
-     * @param domain_id DomainId to be used by the RTPSParticipant (80 by default).
-     * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
-     * @param attrs RTPSParticipant Attributes.
-     * @param plisten Pointer to the ParticipantListener.
-     * @return Pointer to the RTPSParticipant.
-     *
-     * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
-     *          so its use may result in undefined behaviour.
-     */
-    static RTPSParticipant* createParticipant(
-            uint32_t domain_id,
-            bool enabled,
-            const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* plisten);
 
     RTPSParticipant* create_participant(
             uint32_t domain_id,
@@ -109,35 +82,11 @@ public:
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* plisten) override;
 
-    /**
-     * Remove a RTPSWriter.
-     * @param writer Pointer to the writer you want to remove.
-     * @return  True if correctly removed.
-     */
-    static bool removeRTPSWriter(
-            RTPSWriter* writer);
-
     bool remove_writer(
             RTPSWriter* writer) override;
 
-    /**
-     * Remove a RTPSReader.
-     * @param reader Pointer to the reader you want to remove.
-     * @return  True if correctly removed.
-     */
-    static bool removeRTPSReader(
-            RTPSReader* reader);
-
     bool remove_reader(
             RTPSReader* reader) override;
-
-    /**
-     * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
-     * @param [in] p Pointer to the RTPSParticipant;
-     * @return True if correct.
-     */
-    static bool removeRTPSParticipant(
-            RTPSParticipant* p);
 
     bool remove_participant(
             RTPSParticipant* p) override;
@@ -158,26 +107,6 @@ public:
             uint32_t domain_id,
             RTPSParticipantAttributes& attrs);
 
-    /**
-     * Create a RTPSWriter in a participant.
-     * @param p Pointer to the RTPSParticipant.
-     * @param entity_id Specific entity id to use for the created writer.
-     * @param watt Writer Attributes.
-     * @param payload_pool Shared pointer to the IPayloadPool
-     * @param hist Pointer to the WriterHistory.
-     * @param listen Pointer to the WriterListener.
-     * @return Pointer to the created RTPSWriter.
-     *
-     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
-     *          so its use may result in undefined behaviour.
-     */
-    static RTPSWriter* create_rtps_writer(
-            RTPSParticipant* p,
-            const EntityId_t& entity_id,
-            WriterAttributes& watt,
-            WriterHistory* hist,
-            WriterListener* listen);
-
     RTPSWriter* create_writer(
             RTPSParticipant* p,
             const EntityId_t& entity_id,
@@ -189,45 +118,12 @@ public:
             int32_t& participant_id,
             GUID_t& guid) override;
 
-    /**
-     * Find a participant given its GUID.
-     *
-     * @param [in] guid GUID of the participant to find
-     *
-     * @return The pointer to the corresponding participant implementation, nullptr if not found.
-     */
-    static RTPSParticipantImpl* find_local_participant(
-            const GUID_t& guid);
-
     RTPSParticipantImpl* find_participant(
             const GUID_t& guid) override;
-
-    /**
-     * Find a local-process reader.
-     *
-     * @param [in, out] local_reader Reference to the shared pointer to be set.
-     * @param           reader_guid GUID of the local reader to search.
-     *
-     * @post If @c local_reader had a non-null value upon entry, it will not be modified.
-     *       Otherwise, it will be set to point to a local reader whose GUID is the one given in @c reader_guid, or nullptr if not found.
-     */
-    static void find_local_reader(
-            std::shared_ptr<LocalReaderPointer>& local_reader,
-            const GUID_t& reader_guid);
 
     void find_reader(
             std::shared_ptr<LocalReaderPointer>& local_reader,
             const GUID_t& reader_guid) override;
-
-    /**
-     * Find a local-process writer.
-     *
-     * @param writer_guid GUID of the local writer to search.
-     *
-     * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
-     */
-    static BaseWriter* find_local_writer(
-            const GUID_t& writer_guid);
 
     BaseWriter* find_writer(
             const GUID_t& writer_guid) override;
@@ -243,10 +139,6 @@ public:
     static bool should_intraprocess_between(
             const GUID_t& local_guid,
             const GUID_t& matched_guid);
-
-    bool should_intraprocess_between_guids(
-            const GUID_t& local_guid,
-            const GUID_t& matched_guid) override;
 
     void file_watch_callback() override;
 

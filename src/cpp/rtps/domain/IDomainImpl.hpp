@@ -220,18 +220,6 @@ public:
             const GUID_t& writer_guid) = 0;
 
     /**
-     * Check whether intraprocess delivery should be used between two GUIDs.
-     *
-     * @param local_guid    GUID of the local endpoint performing the query.
-     * @param matched_guid  GUID being queried about.
-     *
-     * @returns true when intraprocess delivery should be used, false otherwise.
-     */
-    virtual bool should_intraprocess_between_guids(
-            const GUID_t& local_guid,
-            const GUID_t& matched_guid) = 0;
-
-    /**
      * Callback run when the monitored environment file is modified
      */
     virtual void file_watch_callback() = 0;

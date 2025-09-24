@@ -106,7 +106,7 @@ void RTPSDomain::set_filewatch_thread_config(
 
 void RTPSDomain::stopAll()
 {
-    RTPSDomainImpl::stopAll();
+    RTPSDomainImpl::get_instance()->stop_all();
 }
 
 RTPSParticipant* RTPSDomain::createParticipant(
@@ -123,6 +123,15 @@ RTPSParticipant* RTPSDomain::createParticipant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
+    if (attrs.builtin.discovery_config.leaseDuration < dds::c_TimeInfinite &&
+            attrs.builtin.discovery_config.leaseDuration <=
+            attrs.builtin.discovery_config.leaseDuration_announcementperiod)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
+        return nullptr;
+    }
+
     RTPSParticipant* part = nullptr;
 
     // Try to create a participant with the default server-client setup.
@@ -132,7 +141,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
     {
         // Try to create the participant with the input attributes if the auto server-client setup failed
         // or was omitted.
-        part = RTPSDomainImpl::createParticipant(domain_id, enabled, attrs, listen);
+        part = RTPSDomainImpl::get_instance()->create_participant(domain_id, enabled, attrs, listen);
         if (!part)
         {
             EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Unable to create the participant");
@@ -158,12 +167,14 @@ RTPSParticipant* RTPSDomain::create_client_server_participant(
 bool RTPSDomain::removeRTPSParticipant(
         RTPSParticipant* p)
 {
-    return RTPSDomainImpl::removeRTPSParticipant(p);
-}
+    if (p != nullptr)
+    {
+        assert((p->mp_impl != nullptr) && "This participant has been previously invalidated");
 
-void RTPSDomainImpl::stopAll()
-{
-    get_instance()->stop_all();
+        return RTPSDomainImpl::get_instance()->remove_participant(p);
+    }
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant pointer is null");
+    return false;
 }
 
 void RTPSDomainImpl::stop_all()
@@ -189,26 +200,6 @@ void RTPSDomainImpl::stop_all()
 
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-}
-
-RTPSParticipant* RTPSDomainImpl::createParticipant(
-        uint32_t domain_id,
-        bool enabled,
-        const RTPSParticipantAttributes& attrs,
-        RTPSParticipantListener* listen)
-{
-    EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "");
-
-    if (attrs.builtin.discovery_config.leaseDuration < dds::c_TimeInfinite &&
-            attrs.builtin.discovery_config.leaseDuration <=
-            attrs.builtin.discovery_config.leaseDuration_announcementperiod)
-    {
-        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                "RTPSParticipant Attributes: LeaseDuration should be >= leaseDuration announcement period");
-        return nullptr;
-    }
-
-    return get_instance()->create_participant(domain_id, enabled, attrs, listen);
 }
 
 RTPSParticipant* RTPSDomainImpl::create_participant(
@@ -370,7 +361,7 @@ RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
         return nullptr;
     }
 
-    part = createParticipant(domain_id, enabled, env_attrs, plisten);
+    part = create_participant(domain_id, enabled, env_attrs, plisten);
 
     if (!part)
     {
@@ -386,7 +377,7 @@ RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
         {
             EPROSIMA_LOG_ERROR(RTPS_DOMAIN, "Error launching Easy Mode discovery server daemon");
             // Remove the client participant
-            removeRTPSParticipant(part);
+            remove_participant(part);
             part = nullptr;
             return nullptr;
         }
@@ -401,19 +392,6 @@ RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
     part->mp_impl->client_override(true);
 
     return part;
-}
-
-bool RTPSDomainImpl::removeRTPSParticipant(
-        RTPSParticipant* p)
-{
-    if (p != nullptr)
-    {
-        assert((p->mp_impl != nullptr) && "This participant has been previously invalidated");
-
-        return get_instance()->remove_participant(p);
-    }
-    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant pointer is null");
-    return false;
 }
 
 bool RTPSDomainImpl::remove_participant(
@@ -453,7 +431,7 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
         WriterHistory* hist,
         WriterListener* listen)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = RTPSDomainImpl::get_instance()->find_participant(p->getGuid());
     if (impl)
     {
         RTPSWriter* ret_val = nullptr;
@@ -482,16 +460,6 @@ RTPSWriter* RTPSDomain::createRTPSWriter(
     return RTPSDomainImpl::get_instance()->create_writer(p, entity_id, watt, hist, listen);
 }
 
-RTPSWriter* RTPSDomainImpl::create_rtps_writer(
-        RTPSParticipant* p,
-        const EntityId_t& entity_id,
-        WriterAttributes& watt,
-        WriterHistory* hist,
-        WriterListener* listen)
-{
-    return RTPSDomainImpl::get_instance()->create_writer(p, entity_id, watt, hist, listen);
-}
-
 RTPSWriter* RTPSDomainImpl::create_writer(
         RTPSParticipant* p,
         const EntityId_t& entity_id,
@@ -517,15 +485,9 @@ RTPSWriter* RTPSDomainImpl::create_writer(
 bool RTPSDomain::removeRTPSWriter(
         RTPSWriter* writer)
 {
-    return RTPSDomainImpl::removeRTPSWriter(writer);
-}
-
-bool RTPSDomainImpl::removeRTPSWriter(
-        RTPSWriter* writer)
-{
     if (writer != nullptr)
     {
-        return get_instance()->remove_writer(writer);
+        return RTPSDomainImpl::get_instance()->remove_writer(writer);
     }
     return false;
 }
@@ -552,7 +514,7 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderHistory* rhist,
         ReaderListener* rlisten)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = RTPSDomainImpl::get_instance()->find_participant(p->getGuid());
     if (impl)
     {
         RTPSReader* reader;
@@ -571,7 +533,7 @@ RTPSReader* RTPSDomain::createRTPSReader(
         ReaderHistory* rhist,
         ReaderListener* rlisten)
 {
-    RTPSParticipantImpl* impl = RTPSDomainImpl::find_local_participant(p->getGuid());
+    RTPSParticipantImpl* impl = RTPSDomainImpl::get_instance()->find_participant(p->getGuid());
     if (impl)
     {
         RTPSReader* reader;
@@ -606,15 +568,9 @@ RTPSReader* RTPSDomain::createRTPSReader(
 bool RTPSDomain::removeRTPSReader(
         RTPSReader* reader)
 {
-    return RTPSDomainImpl::removeRTPSReader(reader);
-}
-
-bool RTPSDomainImpl::removeRTPSReader(
-        RTPSReader* reader)
-{
     if (reader !=  nullptr)
     {
-        return get_instance()->remove_reader(reader);
+        return RTPSDomainImpl::get_instance()->remove_reader(reader);
     }
     return false;
 }
@@ -875,12 +831,6 @@ bool RTPSDomainImpl::create_participant_guid(
     return ret_value;
 }
 
-RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
-        const GUID_t& guid)
-{
-    return get_instance()->find_participant(guid);
-}
-
 RTPSParticipantImpl* RTPSDomainImpl::find_participant(
         const GUID_t& guid)
 {
@@ -895,13 +845,6 @@ RTPSParticipantImpl* RTPSDomainImpl::find_participant(
     }
 
     return nullptr;
-}
-
-void RTPSDomainImpl::find_local_reader(
-        std::shared_ptr<LocalReaderPointer>& local_reader,
-        const GUID_t& reader_guid)
-{
-    return get_instance()->find_reader(local_reader, reader_guid);
 }
 
 void RTPSDomainImpl::find_reader(
@@ -922,12 +865,6 @@ void RTPSDomainImpl::find_reader(
         }
         // If the reader was not found, local_reader will remain nullptr
     }
-}
-
-BaseWriter* RTPSDomainImpl::find_local_writer(
-        const GUID_t& writer_guid)
-{
-    return get_instance()->find_writer(writer_guid);
 }
 
 BaseWriter* RTPSDomainImpl::find_writer(
@@ -955,13 +892,6 @@ BaseWriter* RTPSDomainImpl::find_writer(
  * @returns true when intraprocess delivery is enabled, false otherwise.
  */
 bool RTPSDomainImpl::should_intraprocess_between(
-        const GUID_t& local_guid,
-        const GUID_t& matched_guid)
-{
-    return get_instance()->should_intraprocess_between_guids(local_guid, matched_guid);
-}
-
-bool RTPSDomainImpl::should_intraprocess_between_guids(
         const GUID_t& local_guid,
         const GUID_t& matched_guid)
 {

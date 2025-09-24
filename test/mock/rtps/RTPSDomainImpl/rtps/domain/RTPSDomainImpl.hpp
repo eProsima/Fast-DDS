@@ -73,8 +73,6 @@ public:
             (std::shared_ptr<LocalReaderPointer>&, const GUID_t&), (override));
     MOCK_METHOD(BaseWriter*, find_writer,
             (const GUID_t&), (override));
-    MOCK_METHOD(bool, should_intraprocess_between_guids,
-            (const GUID_t&, const GUID_t&), (override));
     MOCK_METHOD(void, file_watch_callback, (), (override));
     MOCK_METHOD(void, set_filewatch_thread_config,
             (const ThreadSettings&, const ThreadSettings&), (override));
@@ -96,56 +94,12 @@ public:
         return false;
     }
 
-    static RTPSParticipantImpl* find_local_participant(
-            const GUID_t& /* guid */)
-    {
-        return nullptr;
-    }
-
-    static BaseWriter* find_local_writer(
-            const GUID_t& /* writer_guid */ )
-    {
-        return nullptr;
-    }
-
     bool create_participant_guid(
             int32_t& /*participant_id*/,
             GUID_t& guid) override
     {
         guid.guidPrefix.value[11] = 1;
         return true;
-    }
-
-    /**
-     * Create a RTPSWriter in a participant.
-     * @param p Pointer to the RTPSParticipant.
-     * @param entity_id Specific entity id to use for the created writer.
-     * @param watt Writer Attributes.
-     * @param payload_pool Shared pointer to the IPayloadPool
-     * @param hist Pointer to the WriterHistory.
-     * @param listen Pointer to the WriterListener.
-     * @return Pointer to the created RTPSWriter.
-     *
-     * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
-     *          so its use may result in undefined behaviour.
-     */
-    static RTPSWriter* create_rtps_writer(
-            RTPSParticipant* p,
-            const EntityId_t& entity_id,
-            WriterAttributes& watt,
-            WriterHistory* hist,
-            WriterListener* listen)
-    {
-        return RTPSDomain::createRTPSWriter(p, entity_id, watt, hist, listen);
-    }
-
-    static RTPSParticipant* clientServerEnvironmentCreationOverride(
-            uint32_t domain_id,
-            bool enabled,
-            const RTPSParticipantAttributes& att,
-            RTPSParticipantListener* listen)
-    {
-        return RTPSDomain::createParticipant(domain_id, enabled, att, listen);
     }
 
     bool get_library_settings(
@@ -168,14 +122,6 @@ public:
     fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer() override
     {
         return type_object_registry_;
-    }
-
-    static void find_local_reader(
-            std::shared_ptr<LocalReaderPointer>& local_reader,
-            const GUID_t& reader_guid)
-    {
-        static_cast<void>(local_reader);
-        static_cast<void>(reader_guid);
     }
 
     eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;

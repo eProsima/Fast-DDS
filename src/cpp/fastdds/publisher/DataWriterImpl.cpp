@@ -377,7 +377,7 @@ ReturnCode_t DataWriterImpl::enable()
 
     create_history(pool, change_pool);
 
-    RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
+    RTPSWriter* writer =  RTPSDomainImpl::get_instance()->create_writer(
         publisher_->rtps_participant(),
         guid_.entityId,
         w_att,
@@ -415,7 +415,7 @@ ReturnCode_t DataWriterImpl::enable()
         }
 
         create_history(pool, change_pool);
-        writer = RTPSDomainImpl::create_rtps_writer(
+        writer = RTPSDomainImpl::get_instance()->create_writer(
             publisher_->rtps_participant(),
             guid_.entityId,
             w_att,
