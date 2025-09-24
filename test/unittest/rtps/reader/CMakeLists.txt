@@ -62,10 +62,13 @@ target_include_directories(WriterProxyTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(WriterProxyTests
     fastcdr
     fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
@@ -118,10 +121,13 @@ target_include_directories(WriterProxyStopTest PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(WriterProxyStopTest
     fastcdr
     fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
@@ -173,10 +179,13 @@ target_include_directories(WriterProxyAcknackTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 target_link_libraries(WriterProxyAcknackTests
     fastcdr
     fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
