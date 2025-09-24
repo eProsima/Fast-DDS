@@ -21,8 +21,6 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "InputFeedProcessor.hpp"
-
 namespace eprosima {
 namespace fastdds {
 namespace examples {

@@ -33,15 +33,12 @@
 
 #include "app_utils.hpp"
 #include "CLIParser.hpp"
-#include "InputFeedProcessor.hpp"
 #include "types/calculatorClient.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace examples {
 namespace rpc {
-
-std::unique_ptr<std::stringstream> InputFeedProcessor::provided_input_feed(nullptr);
 
 using calculator_example::create_CalculatorClient;
 using namespace eprosima::fastdds::dds;
