@@ -9,6 +9,7 @@ Forthcoming
 * Removed Request-Reply example in favor of the new RPC over DDS example.
 * Bump to asio 1.34.2 release.
 * Support aliases in Content Filtered Topic.
+* Add methods for TypeObject registration of RPC types.
 
 Version v3.2.2
 --------------
