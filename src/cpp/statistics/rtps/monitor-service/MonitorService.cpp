@@ -27,7 +27,7 @@
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <utils/TimeConversion.hpp>
 

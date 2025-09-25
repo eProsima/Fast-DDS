@@ -27,7 +27,7 @@
 #include "common.hpp"
 #include "DynamicDataImpl.hpp"
 #include "DynamicTypeImpl.hpp"
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

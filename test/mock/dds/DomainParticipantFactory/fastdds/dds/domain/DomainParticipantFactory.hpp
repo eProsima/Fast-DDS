@@ -22,7 +22,7 @@
 
 #include <memory>
 
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -58,7 +58,7 @@ public:
 
 private:
 
-    std::shared_ptr<fastdds::rtps::RTPSDomainImpl> rtps_domain_;
+    std::shared_ptr<fastdds::rtps::IDomainImpl> rtps_domain_;
 
 };
 

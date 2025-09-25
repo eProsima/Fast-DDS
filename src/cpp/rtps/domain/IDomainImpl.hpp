@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,55 +13,57 @@
 // limitations under the License.
 
 
-#ifndef FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
-#define FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
+#ifndef SRC_CPP_RTPS_DOMAIN__IDOMAINIMPL_HPP
+#define SRC_CPP_RTPS_DOMAIN__IDOMAINIMPL_HPP
 
-#include <chrono>
+#include <cstdint>
 #include <memory>
-#include <unordered_map>
+#include <string>
 
-#if defined(_WIN32) || defined(__unix__)
-#include <FileWatch.hpp>
-#endif // defined(_WIN32) || defined(__unix__)
-
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/RTPSDomain.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.hpp>
-
-#include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
-#include <rtps/writer/BaseWriter.hpp>
-#include <utils/shared_memory/BoostAtExitRegistry.hpp>
-#include <utils/SystemInfo.hpp>
-
-#if HAVE_SECURITY
-#include <security/OpenSSLInit.hpp>
-#endif // HAVE_SECURITY
-
-#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 namespace eprosima {
 namespace fastdds {
+
+// Forward declarations
+class LibrarySettings;
+
+namespace dds {
+namespace xtypes {
+
+class ITypeObjectRegistry;
+class TypeObjectRegistry;
+
+} // namespace xtypes
+} // namespace dds
+
 namespace rtps {
 
+// Forward declarations
+class RTPSParticipant;
+class RTPSParticipantImpl;
+class RTPSParticipantListener;
+class RTPSWriter;
+class RTPSReader;
+class WriterHistory;
+class WriterListener;
+class BaseWriter;
+class RTPSParticipantAttributes;
+class WriterAttributes;
+struct EntityId_t;
+struct GUID_t;
+struct ThreadSettings;
+
 /**
- * @brief Class RTPSDomainImpl, contains the private implementation of the RTPSDomain
+ * @brief Interface IDomainImpl, defines the required operations of the private implementation of the RTPSDomain
  * @ingroup RTPS_MODULE
  */
-class RTPSDomainImpl
+class IDomainImpl
 {
 
 public:
 
-    typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
-
-    /**
-     * Get singleton instance.
-     *
-     * @return Shared pointer to RTPSDomainImpl singleton instance.
-     */
-    static std::shared_ptr<RTPSDomainImpl> get_instance();
+    virtual ~IDomainImpl() = default;
 
     /**
      * Method to shut down all RTPSParticipants, readers, writers, etc.
@@ -71,7 +73,7 @@ public:
      * \post After this call, all the pointers to RTPS entities are invalidated and their use may
      *       result in undefined behaviour.
      */
-    static void stopAll();
+    virtual void stop_all() = 0;
 
     /**
      * @brief Create a RTPSParticipant.
@@ -84,11 +86,11 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    static RTPSParticipant* createParticipant(
+    virtual RTPSParticipant* create_participant(
             uint32_t domain_id,
             bool enabled,
             const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* plisten);
+            RTPSParticipantListener* plisten) = 0;
 
     /**
      * @brief Create a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
@@ -122,51 +124,35 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    static RTPSParticipant* create_client_server_participant(
+    virtual RTPSParticipant* create_client_server_participant(
             uint32_t domain_id,
             bool enabled,
             const RTPSParticipantAttributes& attrs,
-            RTPSParticipantListener* plisten);
+            RTPSParticipantListener* plisten) = 0;
 
     /**
      * Remove a RTPSWriter.
      * @param writer Pointer to the writer you want to remove.
      * @return  True if correctly removed.
      */
-    static bool removeRTPSWriter(
-            RTPSWriter* writer);
+    virtual bool remove_writer(
+            RTPSWriter* writer) = 0;
 
     /**
      * Remove a RTPSReader.
      * @param reader Pointer to the reader you want to remove.
      * @return  True if correctly removed.
      */
-    static bool removeRTPSReader(
-            RTPSReader* reader);
+    virtual bool remove_reader(
+            RTPSReader* reader) = 0;
 
     /**
      * Remove a RTPSParticipant and delete all its associated Writers, Readers, resources, etc.
      * @param [in] p Pointer to the RTPSParticipant;
      * @return True if correct.
      */
-    static bool removeRTPSParticipant(
-            RTPSParticipant* p);
-
-    /**
-     * Fills RTPSParticipantAttributes to create a RTPSParticipant as default server or client
-     * if ROS_MASTER_URI environment variable is set.
-     * It also configures ROS 2 Easy Mode IP if ROS2_EASY_MODE_URI environment variable is set
-     * and it was empty in the input attributes.
-     *
-     * @param domain_id DDS domain associated
-     * @param [in, out] attrs RTPSParticipant Attributes.
-     * @return True if the attributes were successfully modified,
-     * false if an error occurred or environment variable not set
-     *
-     */
-    static bool client_server_environment_attributes_override(
-            uint32_t domain_id,
-            RTPSParticipantAttributes& attrs);
+    virtual bool remove_participant(
+            RTPSParticipant* p) = 0;
 
     /**
      * Create a RTPSWriter in a participant.
@@ -181,12 +167,12 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    static RTPSWriter* create_rtps_writer(
+    virtual RTPSWriter* create_writer(
             RTPSParticipant* p,
             const EntityId_t& entity_id,
             WriterAttributes& watt,
             WriterHistory* hist,
-            WriterListener* listen);
+            WriterListener* listen) = 0;
 
     /**
      * Creates the guid of a participant given its identifier.
@@ -196,9 +182,9 @@ public:
      *
      * @return True value if guid was created. False in other case.
      */
-    static bool create_participant_guid(
+    virtual bool create_participant_guid(
             int32_t& participant_id,
-            GUID_t& guid);
+            GUID_t& guid) = 0;
 
     /**
      * Find a participant given its GUID.
@@ -207,8 +193,8 @@ public:
      *
      * @return The pointer to the corresponding participant implementation, nullptr if not found.
      */
-    static RTPSParticipantImpl* find_local_participant(
-            const GUID_t& guid);
+    virtual RTPSParticipantImpl* find_participant(
+            const GUID_t& guid) = 0;
 
     /**
      * Find a local-process reader.
@@ -219,9 +205,9 @@ public:
      * @post If @c local_reader had a non-null value upon entry, it will not be modified.
      *       Otherwise, it will be set to point to a local reader whose GUID is the one given in @c reader_guid, or nullptr if not found.
      */
-    static void find_local_reader(
+    virtual void find_reader(
             std::shared_ptr<LocalReaderPointer>& local_reader,
-            const GUID_t& reader_guid);
+            const GUID_t& reader_guid) = 0;
 
     /**
      * Find a local-process writer.
@@ -230,25 +216,13 @@ public:
      *
      * @returns A pointer to a local writer given its endpoint guid, or nullptr if not found.
      */
-    static BaseWriter* find_local_writer(
-            const GUID_t& writer_guid);
-
-    /**
-     * Check whether intraprocess delivery should be used between two GUIDs.
-     *
-     * @param local_guid    GUID of the local endpoint performing the query.
-     * @param matched_guid  GUID being queried about.
-     *
-     * @returns true when intraprocess delivery should be used, false otherwise.
-     */
-    static bool should_intraprocess_between(
-            const GUID_t& local_guid,
-            const GUID_t& matched_guid);
+    virtual BaseWriter* find_writer(
+            const GUID_t& writer_guid) = 0;
 
     /**
      * Callback run when the monitored environment file is modified
      */
-    static void file_watch_callback();
+    virtual void file_watch_callback() = 0;
 
     /**
      * Method to set the configuration of the threads created by the file watcher for the environment file.
@@ -258,9 +232,9 @@ public:
      * @param watch_thread     Settings for the thread watching the environment file.
      * @param callback_thread  Settings for the thread executing the callback when the environment file changed.
      */
-    static void set_filewatch_thread_config(
+    virtual void set_filewatch_thread_config(
             const fastdds::rtps::ThreadSettings& watch_thread,
-            const fastdds::rtps::ThreadSettings& callback_thread);
+            const fastdds::rtps::ThreadSettings& callback_thread) = 0;
 
     /**
      * @brief Get the library settings.
@@ -268,8 +242,8 @@ public:
      * @param library_settings LibrarySettings reference where the settings are returned.
      * @return True.
      */
-    static bool get_library_settings(
-            fastdds::LibrarySettings& library_settings);
+    virtual bool get_library_settings(
+            fastdds::LibrarySettings& library_settings) = 0;
 
     /**
      * @brief Set the library settings.
@@ -278,22 +252,22 @@ public:
      * @return False if there is any RTPSParticipant already created.
      *         True if correctly set.
      */
-    static bool set_library_settings(
-            const fastdds::LibrarySettings& library_settings);
+    virtual bool set_library_settings(
+            const fastdds::LibrarySettings& library_settings) = 0;
 
     /**
      * @brief Return the ITypeObjectRegistry member to access the interface for the public API.
      *
      * @return const xtypes::ITypeObjectRegistry reference.
      */
-    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry();
+    virtual fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry() = 0;
 
     /**
      * @brief Return the TypeObjectRegistry member to access the  API.
      *
      * @return const xtypes::TypeObjectRegistry reference.
      */
-    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer();
+    virtual fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer() = 0;
 
     /**
      * @brief Run the Easy Mode discovery server using the Fast DDS CLI command
@@ -303,71 +277,13 @@ public:
      *
      * @return True if the server was successfully started, false otherwise.
      */
-    static bool run_easy_mode_discovery_server(
+    virtual bool run_easy_mode_discovery_server(
             uint32_t domain_id,
-            const std::string& easy_mode_ip);
-
-private:
-
-    /**
-     * @brief Get Id to create a RTPSParticipant.
-     *
-     * This function assumes m_mutex is already locked by the caller.
-     *
-     * @return Different ID for each call.
-     */
-    uint32_t getNewId();
-
-    bool prepare_participant_id(
-            int32_t input_id,
-            uint32_t& participant_id);
-
-    /**
-     * Reserves a participant id.
-     * @param [in, out] participant_id   Participant identifier for reservation.
-     *                                   When negative, it will be modified to the first non-reserved participant id.
-     *
-     * @return True value if reservation was possible. False in other case.
-     */
-    bool reserve_participant_id(
-            int32_t& participant_id);
-
-    uint32_t get_id_for_prefix(
-            uint32_t participant_id);
-
-    void removeRTPSParticipant_nts(
-            t_p_RTPSParticipant&);
-
-    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_ { eprosima::detail::
-                                                                                              BoostAtExitRegistry::
-                                                                                              get_instance() };
-#if HAVE_SECURITY
-    std::shared_ptr<security::OpenSSLInit> openssl_singleton_handler_{ security::OpenSSLInit::get_instance() };
-#endif // HAVE_SECURITY
-
-    std::mutex m_mutex;
-
-    std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
-
-    struct ParticipantIDState
-    {
-        uint32_t counter = 0;
-        bool reserved = false;
-        bool used = false;
-    };
-
-    std::unordered_map<uint32_t, ParticipantIDState> m_RTPSParticipantIDs;
-
-    FileWatchHandle file_watch_handle_;
-    fastdds::rtps::ThreadSettings watch_thread_config_;
-    fastdds::rtps::ThreadSettings callback_thread_config_;
-
-    eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
-
+            const std::string& easy_mode_ip) = 0;
 };
 
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // FASTDDS_RTPS__RTPSDOMAINIMPL_HPP
+#endif  // SRC_CPP_RTPS_DOMAIN__IDOMAINIMPL_HPP

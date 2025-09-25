@@ -37,6 +37,7 @@ foreach(MODULE_DIR ${${PROJECT_NAME}_module_dirs})
 endforeach()
 
 list(APPEND ${PROJECT_NAME}_source_files
+    rtps/domain/RTPSDomainExtras.cpp
     xmlparser/XMLParserExtras.cpp
 	)
 

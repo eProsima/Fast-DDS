@@ -22,7 +22,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
-#include "rtps/RTPSDomainImpl.hpp"
+#include "rtps/domain/RTPSDomainImpl.hpp"
 #include "utils/collections/node_size_helpers.hpp"
 #include <rtps/builtin/data/WriterProxyData.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
@@ -54,7 +54,7 @@ WriterProxy::~WriterProxy()
     if (is_alive_ && is_on_same_process_)
     {
         EPROSIMA_LOG_WARNING(RTPS_READER, "Automatically unmatching on ~WriterProxy");
-        BaseWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+        BaseWriter* writer = RTPSDomainImpl::get_instance()->find_writer(guid());
         if (writer)
         {
             writer->matched_reader_remove(reader_->getGuid());
@@ -502,7 +502,7 @@ bool WriterProxy::perform_initial_ack_nack()
         SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
         if (is_on_same_process_)
         {
-            BaseWriter* writer = RTPSDomainImpl::find_local_writer(guid());
+            BaseWriter* writer = RTPSDomainImpl::get_instance()->find_writer(guid());
             if (writer)
             {
                 bool tmp;

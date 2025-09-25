@@ -51,7 +51,7 @@
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
-#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <utils/TimeConversion.hpp>
@@ -377,7 +377,7 @@ ReturnCode_t DataWriterImpl::enable()
 
     create_history(pool, change_pool);
 
-    RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
+    RTPSWriter* writer =  RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
         guid_.entityId,
         w_att,
@@ -415,7 +415,7 @@ ReturnCode_t DataWriterImpl::enable()
         }
 
         create_history(pool, change_pool);
-        writer = RTPSDomainImpl::create_rtps_writer(
+        writer = RTPSDomain::createRTPSWriter(
             publisher_->rtps_participant(),
             guid_.entityId,
             w_att,
