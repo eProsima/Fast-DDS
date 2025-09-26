@@ -49,10 +49,10 @@ include_directories(${Asio_INCLUDE_DIR})
 
 # Standard tests
 set(COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldTypeObjectSupport.cxx
+    ${FASTDDS_BASIC_DIR}/test/blackbox/types/FixedSizedPubSubTypes.cxx
+    ${FASTDDS_BASIC_DIR}/test/blackbox/types/FixedSizedTypeObjectSupport.cxx
+    ${FASTDDS_BASIC_DIR}/test/blackbox/types/HelloWorldPubSubTypes.cxx
+    ${FASTDDS_BASIC_DIR}/test/blackbox/types/HelloWorldTypeObjectSupport.cxx
     )
 
 set(DDS_PUBLISHER_SOURCE ${COMMON_SOURCE}
@@ -64,7 +64,7 @@ target_compile_definitions(DDSCommunicationPublisher PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DDSCommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+target_include_directories(DDSCommunicationPublisher PRIVATE ${FASTDDS_BASIC_DIR}/test/blackbox)
 target_link_libraries(DDSCommunicationPublisher fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
@@ -76,7 +76,7 @@ target_compile_definitions(DDSCommunicationSubscriber PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DDSCommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+target_include_directories(DDSCommunicationSubscriber PRIVATE ${FASTDDS_BASIC_DIR}/test/blackbox)
 target_link_libraries(DDSCommunicationSubscriber fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 set(DDS_PUBSUB_SOURCE ${COMMON_SOURCE}
@@ -89,7 +89,7 @@ target_compile_definitions(DDSCommunicationPubSub PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DDSCommunicationPubSub PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
+target_include_directories(DDSCommunicationPubSub PRIVATE ${FASTDDS_BASIC_DIR}/test/blackbox)
 target_link_libraries(DDSCommunicationPubSub fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 ###############################################################################
@@ -158,23 +158,23 @@ foreach(TEST_FILE IN LISTS TEST_DEFINITIONS)
 endforeach()
 
 # Cmake file
-configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
+configure_file(${FASTDDS_BASIC_DIR}/cmake/common/test_wrapper.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
 if(SECURITY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/maincacert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainpubcert.pem
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/mainpubcert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/mainpubcert.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainpubkey.pem
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/mainpubkey.pem
         ${CMAKE_CURRENT_BINARY_DIR}/mainpubkey.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainsubcert.pem
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/mainsubcert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/mainsubcert.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainsubkey.pem
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/mainsubkey.pem
         ${CMAKE_CURRENT_BINARY_DIR}/mainsubkey.pem COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/governance_helloworld_all_enable.smime
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/governance_helloworld_all_enable.smime
         ${CMAKE_CURRENT_BINARY_DIR}/governance_helloworld_all_enable.smime COPYONLY)
-    configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
+    configure_file(${FASTDDS_BASIC_DIR}/test/certs/permissions_helloworld.smime
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
 endif()
 

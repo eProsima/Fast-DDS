@@ -36,6 +36,8 @@ string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
 message(STATUS "Version: ${PROJECT_VERSION}")
 
+set(FASTDDS_BASIC_DIR ${PROJECT_SOURCE_DIR})
+
 ###############################################################################
 # eProsima build options
 ###############################################################################
