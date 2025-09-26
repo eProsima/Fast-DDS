@@ -774,11 +774,6 @@ protected:
 private:
 
     /**
-    * Protects implementation class
-    */
-    mutable RecursiveTimedMutex impl_mtx_;
-
-    /**
     * (Re)configures the deadline timer:
     *  Create once, parked with a huge interval (idle).
     *  In case of deadline period ∞ cancel it, for 0 warn and notify once; set counts to max and
