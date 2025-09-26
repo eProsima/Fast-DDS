@@ -114,6 +114,52 @@ SecurityManager::~SecurityManager()
     destroy();
 }
 
+bool SecurityManager::check_license(
+    const PropertyPolicy& participant_properties)
+{
+    if (access_plugin_ == nullptr)
+    {
+        access_plugin_ = factory_.create_access_control_plugin(participant_properties);
+    }
+
+    SecurityException exception;
+    auto part_attributes = participant_->get_attributes();
+
+    /*PermissionsHandle* validate_local_permissions(
+            Authentication& auth_plugin,
+            const IdentityHandle& identity,
+            const uint32_t domain_id,
+            const RTPSParticipantAttributes& participant_attr,
+            SecurityException& exception) override;
+
+    eprosima::fastdds::rtps::security::LicenseInfo validate_license(
+            Authentication&,
+            / *const IdentityHandle& identity,
+            const uint32_t domain_id, * /
+            std::string license_path,
+            const RTPSParticipantAttributes& participant_attr,
+            SecurityException& exception);*/
+
+    if(access_plugin_ == nullptr)
+    {
+        return false;
+    }
+    auto license_info = access_plugin_->validate_license(
+        *authentication_plugin_,
+        "path",
+        part_attributes,
+        exception);
+
+    
+
+    /*local_permissions_handle_ = access_plugin_->validate_local_permissions(
+        *authentication_plugin_, *local_identity_handle_,
+        domain_id_,
+        part_attributes,
+        exception);*/
+    return license_info.running_time != 0;
+}
+
 bool SecurityManager::init(
         ParticipantSecurityAttributes& attributes,
         const PropertyPolicy& participant_properties)

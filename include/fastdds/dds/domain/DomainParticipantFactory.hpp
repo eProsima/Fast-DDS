@@ -24,6 +24,8 @@
 #include <memory>
 #include <mutex>
 
+#include <nlohmann/json.hpp>
+
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
@@ -436,6 +438,23 @@ public:
      * @return const xtypes::TypeObjectRegistry reference.
      */
     FASTDDS_EXPORTED_API xtypes::ITypeObjectRegistry& type_object_registry();
+
+
+    // TODO. danip
+    /*FASTDDS_EXPORTED_API void start_runtime_enforcer(
+            std::chrono::minutes limit);
+
+    FASTDDS_EXPORTED_API std::vector<unsigned char> b64url_decode(
+            const std::string& in);
+
+    FASTDDS_EXPORTED_API time_t parse_utc(
+            const std::string& iso8601);
+
+    FASTDDS_EXPORTED_API nlohmann::json verify_license_file(
+            const std::string& path,
+            const unsigned char* ed25519_pubkey / * 32 bytes * /);
+
+    FASTDDS_EXPORTED_API bool check_license();*/
 
 protected:
 

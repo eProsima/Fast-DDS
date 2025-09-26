@@ -293,6 +293,7 @@ set(${PROJECT_NAME}_security_source_files
     ${FASTDDS_SOURCE_DIR}/security/accesscontrol/AccessPermissionsHandle.cpp
     ${FASTDDS_SOURCE_DIR}/security/accesscontrol/CommonParser.cpp
     ${FASTDDS_SOURCE_DIR}/security/accesscontrol/GovernanceParser.cpp
+    ${FASTDDS_SOURCE_DIR}/security/accesscontrol/LicenseParser.cpp
     ${FASTDDS_SOURCE_DIR}/security/accesscontrol/PermissionsParser.cpp
     ${FASTDDS_SOURCE_DIR}/security/logging/LogTopic.cpp
     ${FASTDDS_SOURCE_DIR}/security/artifact_providers/FileProvider.cpp

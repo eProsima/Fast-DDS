@@ -41,6 +41,7 @@
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/DistinguishedName.h>
 #include <security/accesscontrol/GovernanceParser.h>
+#include <security/accesscontrol/LicenseParser.h>
 #include <security/accesscontrol/Permissions.h>
 #include <security/accesscontrol/PermissionsParser.h>
 #include <security/artifact_providers/FileProvider.hpp>
@@ -510,6 +511,45 @@ static bool load_governance_file(
     return returned_value;
 }
 
+static bool load_license_file(
+        AccessPermissionsHandle& ah,
+        std::string& license_file,
+        LicenseInfo& info,
+        SecurityException& exception)
+{
+    bool returned_value = false;
+
+    BIO* file_mem = load_signed_file(ah->store_, license_file, exception);
+
+    if (file_mem != nullptr)
+    {
+        BUF_MEM* ptr = nullptr;
+        BIO_get_mem_ptr(file_mem, &ptr);
+
+        if (ptr != nullptr)
+        {
+            LicenseParser parser;
+            if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
+            {
+                parser.swap(info);
+            }
+            else
+            {
+                exception = _SecurityException_(std::string("Malformed license_file file ") + license_file);
+            }
+        }
+        else
+        {
+            exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
+                            + license_file);
+        }
+
+        BIO_free(file_mem);
+    }
+
+    return returned_value;
+}
+
 static bool load_permissions_file(
         AccessPermissionsHandle& ah,
         std::string& permissions_file,
@@ -892,6 +932,50 @@ PermissionsHandle* Permissions::validate_local_permissions(
     delete ah;
 
     return nullptr;
+}
+
+LicenseInfo Permissions::validate_license(
+        Authentication&,
+        /*const IdentityHandle& identity,
+        const uint32_t domain_id,*/
+        std::string license_path,
+        const RTPSParticipantAttributes& participant_attr,
+        SecurityException& exception)
+{
+    LicenseInfo null_ret{"", "", "", "", "", "", "", "", 0};
+
+    PropertyPolicy access_properties = PropertyPolicyHelper::get_properties_with_prefix(participant_attr.properties,
+                    "dds.sec.access.builtin.Access-Permissions.");
+
+    if (PropertyPolicyHelper::length(access_properties) == 0)
+    {
+        exception = _SecurityException_("Not found any dds.sec.access.builtin.Access-Permissions property");
+        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
+        return null_ret;
+    }
+    std::string* permissions_ca = PropertyPolicyHelper::find_property(access_properties, "permissions_ca");
+
+    if (permissions_ca == nullptr)
+    {
+        exception = _SecurityException_("Not found dds.sec.access.builtin.Access-Permissions.permissions_ca property");
+        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
+        return null_ret;
+    }
+
+    AccessPermissionsHandle* ah = &AccessPermissionsHandle::narrow(*get_permissions_handle(exception));
+
+    LicenseInfo info_ret;
+
+    (*ah)->store_ = load_permissions_ca(*permissions_ca, (*ah)->there_are_crls_, (*ah)->sn, (*ah)->algo, exception);
+
+    if(load_license_file(*ah, license_path, info_ret, exception))
+    {
+        return info_ret;
+    }
+
+    delete ah;
+
+    return null_ret;
 }
 
 bool Permissions::get_permissions_token(

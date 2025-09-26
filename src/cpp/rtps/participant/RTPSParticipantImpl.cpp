@@ -354,7 +354,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
 
-    initialized_ = true;
+    // check license
+    if(!m_security_manager.check_license(m_att.properties))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "License does not pass");
+        initialized_ = false;
+    }
+    else
+    {
+        initialized_ = true;
+    }
 }
 
 RTPSParticipantImpl::RTPSParticipantImpl(

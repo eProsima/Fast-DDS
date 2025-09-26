@@ -222,15 +222,16 @@ void RTPSDomainImpl::stop_all()
         return;
     }
 
-    const auto deadline = std::chrono::steady_clock::now() + limit;
+    //const auto deadline = std::chrono::steady_clock::now() + limit;
 
-    std::thread([deadline, limit]()
+    std::thread([/*deadline, */limit]()
     {
         // Sleep in short bursts so the thread checks deadline periodically
-        while (std::chrono::steady_clock::now() < deadline)
+        /*while (std::chrono::steady_clock::now() < deadline)
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
+        }*/
+        std::this_thread::sleep_for(std::chrono::seconds(limit));
 
         // Time's up — print and exit
         std::cout << "[License] Running time limit reached (" << static_cast<long long>(limit.count())
@@ -243,23 +244,6 @@ void RTPSDomainImpl::stop_all()
 
 // base64url decode (no padding)
 std::vector<unsigned char> RTPSDomainImpl::b64url_decode(const std::string& in)
-/*{
-    std::vector<unsigned char> ret(in.size());
-    size_t ret_len = 0;
-    if (sodium_base642bin(ret.data(), ret.size(),
-                          in.c_str(), in.size(),
-                          "-_", // URL-safe alphabet
-                          &ret_len, nullptr,
-                          sodium_base64_VARIANT_URLSAFE_NO_PADDING) != 0)
-    {
-        throw std::runtime_error("base64url decode failed");
-    }
-
-    ret.resize(ret_len);
-    return ret;
-}*/
-
-//inline std::vector<unsigned char> b64url_decode(const std::string& in)
 {
 
     // mapping from ASCII characters -> 6-bit values (0–63).
@@ -422,7 +406,7 @@ nlohmann::json RTPSDomainImpl::verify_license_file(const std::string& path,
 
     // decode sign
     std::vector<unsigned char> sig = b64url_decode(sig_b64);
-    if (sig.size() != crypto_sign_BYTES)
+    if (sig.size() != 64U)
     {
         throw std::runtime_error("Invalid signature size");
     }
@@ -448,10 +432,10 @@ nlohmann::json RTPSDomainImpl::verify_license_file(const std::string& path,
         throw std::runtime_error("License expired");
     }
 
-    if (payload.value("product_id", "") != "fastddspro") // TODO. danip
+    /*if (payload.value("product_id", "") != "fastddspro") // TODO. danip
     {
         throw std::runtime_error("License not for this product");
-    }
+    }*/
 
     // optional (HWID binding):
     // - Compute current HWID (e.g., hash of MAC addresses, CPU serial, ...)
@@ -470,7 +454,7 @@ bool RTPSDomainImpl::check_license()
     }*/
 
     // TODO. change to driver's key
-    static const unsigned char PUBKEY[crypto_sign_PUBLICKEYBYTES] =
+    static const unsigned char PUBKEY[32U] =
     {
         /* 32 bytes from ed25519.pk */
         0xfa, 0x8e, 0x77, 0x3c, 0x47, 0x8e, 0x27, 0x0b, 0xca, 0x26, 0x66,
@@ -530,8 +514,7 @@ bool RTPSDomainImpl::check_license()
     }
     catch (const std::exception& e)
     {
-        std::cout << "License error: " << e.what() <<"\n";
-        return false;
+        throw std::runtime_error("License error: " + std::string(e.what()) + "\n");
     }
 
 
@@ -544,6 +527,11 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
         const RTPSParticipantAttributes& attrs,
         RTPSParticipantListener* listen)
 {
+    /*if(!check_license()) // TODO. danip use local of license variable
+    {
+        return nullptr;
+    }*/
+
     RTPSParticipantAttributes PParam = attrs;
 
     // Only the first time, initialize environment file watch if the corresponding environment variable is set
