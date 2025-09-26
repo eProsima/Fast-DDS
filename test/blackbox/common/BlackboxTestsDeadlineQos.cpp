@@ -25,6 +25,8 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace fastlog = eprosima::fastdds::dds;
+
 enum communication_type
 {
     TRANSPORT,
@@ -307,6 +309,81 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
     std::this_thread::sleep_for(std::chrono::milliseconds(deadline_period_ms * 2));
 
     EXPECT_GE(writer.missed_deadlines(), 1u);
+}
+
+/**
+ * Fixes Redmine issue #23289.
+ * Regression test for the zero-deadline period bug.
+ * Creating a DataWriter with a deadline of 0.
+ * Checking if a warning is logged exactly once, the timer is cancelled without missed deadline
+ * messages and a total count and count change set to max integer.
+ */
+TEST_P(DeadlineQos, ZeroDeadlinePeriod)
+{
+    // Local helper used only by this test
+    struct LocalWarningCounter : fastlog::LogConsumer
+    {
+        explicit LocalWarningCounter(std::string needle) : needle_(std::move(needle)) {}
+        void Consume(const fastlog::Log::Entry& e) override
+        {
+            if (e.kind == fastlog::Log::Kind::Warning &&
+                e.message.find(needle_) != std::string::npos)
+            {
+                count_.fetch_add(1, std::memory_order_relaxed);
+            }
+        }
+        size_t count() const { return count_.load(std::memory_order_relaxed); }
+        std::string needle_;
+        std::atomic<size_t> count_{0};
+    };
+
+    const char* needle = "Deadline period is 0";
+    auto consumer = std::make_unique<LocalWarningCounter>(needle);
+    auto* consumer_ptr = consumer.get(); // keep raw pointer for assertions
+
+    fastlog::Log::ClearConsumers();
+    fastlog::Log::RegisterConsumer(std::move(consumer));
+    fastlog::Log::SetVerbosity(fastlog::Log::Kind::Warning);
+
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+    writer.deadline_period(0.0).init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+
+    EXPECT_EQ(writer.missed_deadlines(), std::numeric_limits<uint32_t>::max()) << "Expected the max value after a zero-deadline warning.";
+    EXPECT_EQ(writer.missed_deadlines_change(), std::numeric_limits<uint32_t>::max());
+
+    EXPECT_EQ(consumer_ptr->count(), 1u) << "Expected exactly one 'deadline=0' warning\n";
+
+    const auto pre_total = writer.missed_deadlines();
+    const auto pre_change = writer.missed_deadlines_change();
+
+    // Wait for a period long enough to expect a new miss if the timer were still active
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+
+    const auto post_total = writer.missed_deadlines();
+    const auto post_change = writer.missed_deadlines_change();
+
+    EXPECT_EQ(pre_total, post_total) << "The total count should not change, as the timer was canceled.";
+    EXPECT_EQ(pre_change, post_change) << "The total_count_change should not change, as the timer was canceled.";
+
+    auto prev = consumer_ptr->count();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    EXPECT_EQ(consumer_ptr->count(), prev) << "Timer should be canceled; no more warnings";
+
+    fastlog::Log::ClearConsumers();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
