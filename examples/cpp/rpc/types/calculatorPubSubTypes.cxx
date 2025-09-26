@@ -44,7 +44,7 @@ namespace calculator_example {
         Calculator_RequestPubSubType()
         {
             set_name("calculator_example::Calculator_Request");
-            uint32_t type_size = 212UL;
+            uint32_t type_size = 56UL;
             type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
             max_serialized_type_size = type_size + 4; /*encapsulation*/
             is_compute_key_provided = false;
@@ -187,7 +187,7 @@ namespace calculator_example {
         Calculator_ReplyPubSubType()
         {
             set_name("calculator_example::Calculator_Reply");
-            uint32_t type_size = 212UL;
+            uint32_t type_size = 56UL;
             type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
             max_serialized_type_size = type_size + 4; /*encapsulation*/
             is_compute_key_provided = false;

@@ -62,6 +62,7 @@ struct CalculatorServerImplementation :
         throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'subtraction' is not implemented");
     }
 
+<<<<<<< HEAD
     void fibonacci_seq(
             const CalculatorServer_ClientContext& info,
             /*in*/ uint32_t n_results,
@@ -106,6 +107,8 @@ struct CalculatorServerImplementation :
         throw eprosima::fastdds::dds::rpc::RemoteUnsupportedError("Operation 'filter' is not implemented");
     }
 
+=======
+>>>>>>> 0ff6c953 (Remove support for `@feed` operations (#6052))
 };
 
 //} interface Calculator

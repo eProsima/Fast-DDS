@@ -92,6 +92,7 @@ private:
                 /*in*/ int32_t value1,
                 /*in*/ int32_t value2) override;
 
+<<<<<<< HEAD
         void fibonacci_seq(
                 const calculator_example::CalculatorServer_ClientContext& info,
                 /*in*/ uint32_t n_results,
@@ -112,6 +113,8 @@ private:
                 /*in*/ calculator_example::FilterKind filter_kind,
                 /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) override;
 
+=======
+>>>>>>> 0ff6c953 (Remove support for `@feed` operations (#6052))
     };
 
     std::shared_ptr<ServerImpl> server_impl_;

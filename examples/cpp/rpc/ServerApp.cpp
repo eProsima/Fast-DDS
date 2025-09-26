@@ -185,6 +185,7 @@ int32_t ServerApp::ServerImpl::subtraction(
     return result;
 }
 
+<<<<<<< HEAD
 void ServerApp::ServerImpl::fibonacci_seq(
         const CalculatorServer_ClientContext& info,
         /*in*/ uint32_t n_results,
@@ -349,6 +350,8 @@ void ServerApp::ServerImpl::filter(
     }
 }
 
+=======
+>>>>>>> 0ff6c953 (Remove support for `@feed` operations (#6052))
 } // namespace rpc
 } // namespace examples
 } // namespace fastdds

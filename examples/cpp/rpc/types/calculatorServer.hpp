@@ -78,6 +78,7 @@ struct CalculatorServer_IServerImplementation
             /*in*/ int32_t value1,
             /*in*/ int32_t value2) = 0;
 
+<<<<<<< HEAD
 
 
     virtual void fibonacci_seq(
@@ -106,6 +107,8 @@ struct CalculatorServer_IServerImplementation
             /*in*/ calculator_example::FilterKind filter_kind,
             /*result*/ eprosima::fastdds::dds::rpc::RpcServerWriter<int32_t>& result_writer) = 0;
 
+=======
+>>>>>>> 0ff6c953 (Remove support for `@feed` operations (#6052))
 };
 
 struct CalculatorServer

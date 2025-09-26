@@ -39,16 +39,41 @@
 
 namespace calculator_example {
 /**
+<<<<<<< HEAD
  * @brief Register FilterKind related TypeIdentifier.
+=======
+ * @brief Register Calculator_Request related TypeIdentifier.
+>>>>>>> 0ff6c953 (Remove support for `@feed` operations (#6052))
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  *
+<<<<<<< HEAD
  * @param[out] TypeIdentifier of the registered type.
  *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
  *             Invalid TypeIdentifier is returned in case of error.
  */
 eProsima_user_DllExport void register_FilterKind_type_identifier(
+=======
+ * @param[out] type_ids TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_Calculator_Request_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
+/**
+ * @brief Register Calculator_Reply related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] type_ids TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_Calculator_Reply_type_identifier(
+>>>>>>> 0ff6c953 (Remove support for `@feed` operations (#6052))
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
