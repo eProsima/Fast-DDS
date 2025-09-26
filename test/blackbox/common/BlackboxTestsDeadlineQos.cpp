@@ -74,6 +74,29 @@ public:
         }
     }
 
+protected:
+
+    // Convert seconds (double) to Duration_t with seconds + nanoseconds split
+    static eprosima::fastdds::dds::Duration_t seconds_to_duration(
+            double s)
+    {
+        eprosima::fastdds::dds::Duration_t d{};
+        d.seconds = static_cast<int32_t>(s);
+        d.nanosec = static_cast<uint32_t>((s - d.seconds) * 1e9);
+        return d;
+    }
+
+    // Update deadline period on a native DataWriter
+    static void set_deadline_seconds(
+            eprosima::fastdds::dds::DataWriter& native,
+            double seconds)
+    {
+        eprosima::fastdds::dds::DataWriterQos q;
+        ASSERT_EQ(native.get_qos(q), eprosima::fastdds::dds::RETCODE_OK);
+        q.deadline().period = seconds_to_duration(seconds);
+        ASSERT_EQ(native.set_qos(q), eprosima::fastdds::dds::RETCODE_OK);
+    }
+
 };
 
 TEST_P(DeadlineQos, NoKeyTopicLongDeadline)
@@ -312,27 +335,39 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
 }
 
 /**
- * Fixes Redmine issue #23289.
+ * Testing Redmine issue #23289.
  * Regression test for the zero-deadline period bug.
  * Creating a DataWriter with a deadline of 0.
  * Checking if a warning is logged exactly once, the timer is cancelled without missed deadline
  * messages and a total count and count change set to max integer.
+ * Checking warnings, total count and count change when changing the deadline.
  */
 TEST_P(DeadlineQos, ZeroDeadlinePeriod)
 {
     // Local helper used only by this test
     struct LocalWarningCounter : fastlog::LogConsumer
     {
-        explicit LocalWarningCounter(std::string needle) : needle_(std::move(needle)) {}
-        void Consume(const fastlog::Log::Entry& e) override
+        explicit LocalWarningCounter(
+                std::string needle)
+            : needle_(std::move(needle))
+        {
+        }
+
+        void Consume(
+                const fastlog::Log::Entry& e) override
         {
             if (e.kind == fastlog::Log::Kind::Warning &&
-                e.message.find(needle_) != std::string::npos)
+                    e.message.find(needle_) != std::string::npos)
             {
                 count_.fetch_add(1, std::memory_order_relaxed);
             }
         }
-        size_t count() const { return count_.load(std::memory_order_relaxed); }
+
+        size_t count() const
+        {
+            return count_.load(std::memory_order_relaxed);
+        }
+
         std::string needle_;
         std::atomic<size_t> count_{0};
     };
@@ -362,7 +397,8 @@ TEST_P(DeadlineQos, ZeroDeadlinePeriod)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
-    EXPECT_EQ(writer.missed_deadlines(), std::numeric_limits<uint32_t>::max()) << "Expected the max value after a zero-deadline warning.";
+    EXPECT_EQ(writer.missed_deadlines(),
+            std::numeric_limits<uint32_t>::max()) << "Expected the max value after a zero-deadline warning.";
     EXPECT_EQ(writer.missed_deadlines_change(), std::numeric_limits<uint32_t>::max());
 
     EXPECT_EQ(consumer_ptr->count(), 1u) << "Expected exactly one 'deadline=0' warning\n";
@@ -383,7 +419,82 @@ TEST_P(DeadlineQos, ZeroDeadlinePeriod)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     EXPECT_EQ(consumer_ptr->count(), prev) << "Timer should be canceled; no more warnings";
 
+    eprosima::fastdds::dds::DataWriter& native = writer.get_native_writer();
+
+    DeadlineQos::set_deadline_seconds(native, 0.15); // Update 0 -> finite: counters must reset, no new warning
+
+    eprosima::fastdds::dds::OfferedDeadlineMissedStatus st{};
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    ASSERT_EQ(native.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
+    EXPECT_EQ(st.total_count, 0u);
+    EXPECT_EQ(st.total_count_change, 0u);
+    EXPECT_EQ(consumer_ptr->count(), prev) << "No new warning when moving from 0 -> finite";
+
+    DeadlineQos::set_deadline_seconds(native, 0.0); // Update finite -> 0: exactly one new warning, counters jump to max
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    ASSERT_EQ(native.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
+    EXPECT_EQ(consumer_ptr->count(), prev + 1) << "Exactly one extra warning on finite -> 0";
+    EXPECT_EQ(st.total_count, std::numeric_limits<uint32_t>::max());
+    EXPECT_EQ(st.total_count_change, std::numeric_limits<uint32_t>::max());
+
     fastlog::Log::ClearConsumers();
+}
+
+/**
+ * Testing Redmine issue #23289.
+ * Regression test for the deadline period change at runtime.
+ * Creating a DataWriter with a small deadline so missed deadlines are registered.
+ * Changing deadline period to a large value to infer that there are no missed deadlines anymore.
+ * Checking total count and count change when changing the deadline
+ */
+TEST_P(DeadlineQos, ChangeDeadlineAtRuntime)
+{
+    // Writer/Reader setup (same pattern as your other tests)
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    writer.durability_kind(eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+    writer.deadline_period(0.01).init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    eprosima::fastdds::dds::DataWriter& native = writer.get_native_writer();
+
+    // Arm the per-instance timer
+    KeyedHelloWorld sample;
+    sample.key(1);
+    ASSERT_EQ(native.write(&sample), eprosima::fastdds::dds::RETCODE_OK);
+
+    // Let several deadlines pass
+    eprosima::fastdds::dds::OfferedDeadlineMissedStatus st{};
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    ASSERT_EQ(native.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
+    EXPECT_GT(st.total_count, 0u);
+    EXPECT_GT(st.total_count_change, 0u);
+
+    // Switch to a large deadline
+    DeadlineQos::set_deadline_seconds(native, 5000.0);
+
+    // Immediately after the change, there can be one last miss in flight
+    // Give a short window for any straggler
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    ASSERT_EQ(native.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
+    const auto post_change_baseline = st.total_count;
+
+    // Wait for less than the large deadline => no new misses should occur
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+
+    // Re-read and verify no change
+    ASSERT_EQ(native.get_offered_deadline_missed_status(st), eprosima::fastdds::dds::RETCODE_OK);
+    EXPECT_EQ(st.total_count, post_change_baseline);
+    EXPECT_EQ(st.total_count_change, 0u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

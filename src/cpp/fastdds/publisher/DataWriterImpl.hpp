@@ -774,21 +774,16 @@ protected:
 private:
 
     /**
-    * Protects implementation class
-    */
-    mutable RecursiveTimedMutex impl_mtx_;
-
-    /**
-    * (Re)configures the deadline timer:
-    *  Create once, parked with a huge interval (idle).
-    *  In case of deadline period ∞ cancel it, for 0 warn and notify once; set counts to max and
-    *  for values >0 store period.
-    */
+     * (Re)configures the deadline timer:
+     *  Create once, parked with a huge interval (idle).
+     *  In case of deadline period ∞ cancel it, for 0 warn and notify once; set counts to max and
+     *  for values >0 store period.
+     */
     void configure_deadline_timer_();
 
     /**
-    * Notifies listeners that a deadline has been missed without touching the counters.
-    */
+     * Notifies listeners that a deadline has been missed without touching the counters.
+     */
     void notify_deadline_missed_nts_();
 
     void create_history(
