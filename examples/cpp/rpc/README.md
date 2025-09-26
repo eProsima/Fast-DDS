@@ -4,7 +4,7 @@ The *RPC over DDS* example shows how to create a service oriented architecture u
 The RPC architecture is based on the client-server model.
 The client sends a request to the server, and the server sends one or more responses (replies) back to the client.
 [eProsima FastDDS-Gen](https://github.com/eProsima/Fast-DDS-Gen) tool allows the generation of source code for a RPC over DDS application from an IDL file.
-The IDL file must define and interface with the operations that can be called on the client and executed by the server.
+The IDL file must define an interface with the operations that can be called on the client and executed by the server.
 These operations are specified using the concept of interfaces defined in the OMG IDL specification.
 
 Please refer to the [RPC over DDS](https://fast-dds.docs.eprosima.com/en/latest/fastdds/rpc_dds/rpc_dds_intro.html) section in the Fast DDS documentation for further information on this topic.
@@ -31,32 +31,7 @@ This *rpc* example shows the two operating modes of *RPC* over DDS:
 
         -r, --representation-limits                         Computes the representation
                                                             limits of a 32-bit integer
-
-        -f <num>, --fibonacci <num>                         Returns a feed of results
-                                                            with the <num> first elements
-                                                            of the Fibonacci sequence
     ```
-
-* Streaming operations where data is exchanged between a client and a server in a continuous stream of messages, rather than a single, discrete request-response exchange thanks to the `@feed` annotation in the IDL files.
-  Please refer to the [RPC documentation](https://fast-dds.docs.eprosima.com/en/latest/fastdds/rpc_dds/data_streaming/rpc_data_streaming_intro.html) for more information about this feature.
-  In this case, the clients can take one of the following operations:
-
-  ```
-        --sum-all                                       Sum all the values provided
-                                                        in the input feed
-
-        --accumulator                                   Return a feed of results
-                                                        with the sum of all received
-                                                        values from an input feed
-
-        --filter <filter_kind>                          Return a feed of results
-                                                        with the values that match
-                                                        the input filter kind
-                                                        [<filter_kind> = 0, 1, 2]
-                                                        [0 = EVEN,
-                                                         1 = ODD,
-                                                         2 = PRIME]
-  ```
 
 ## Run the example
 
