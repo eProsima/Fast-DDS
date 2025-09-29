@@ -355,7 +355,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     // check license
-    if(!m_security_manager.check_license(m_att.properties))
+    if(!m_security_manager.check_license())
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "License does not pass");
         initialized_ = false;

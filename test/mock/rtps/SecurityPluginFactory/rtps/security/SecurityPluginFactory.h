@@ -46,6 +46,8 @@ public:
     Logging* create_logging_plugin(
             const PropertyPolicy& property_policy) override;
 
+    AccessControl* create_access_control_for_license() override;
+
     static void set_auth_plugin(
             Authentication* plugin);
 

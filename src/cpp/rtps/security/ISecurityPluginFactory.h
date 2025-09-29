@@ -68,6 +68,8 @@ public:
      */
     virtual Logging* create_logging_plugin(
             const PropertyPolicy& property_policy) = 0;
+
+    virtual AccessControl* create_access_control_for_license() = 0;
 };
 
 } //namespace security

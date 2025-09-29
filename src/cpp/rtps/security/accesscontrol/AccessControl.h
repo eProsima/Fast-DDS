@@ -55,7 +55,7 @@ public:
     virtual eprosima::fastdds::rtps::security::LicenseInfo validate_license(
             Authentication& auth_plugin,
             std::string license_path,
-            const RTPSParticipantAttributes& participant_attr,
+            //const RTPSParticipantAttributes& participant_attr,
             SecurityException& exception) = 0;
 
     virtual bool get_permissions_token(

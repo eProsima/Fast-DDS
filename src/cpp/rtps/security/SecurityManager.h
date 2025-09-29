@@ -103,8 +103,7 @@ public:
      * @param participant_properties PropertyPolicy& references configuration provided on participant creation
      * @return true if the license is correct.
      */
-    bool check_license(
-        const PropertyPolicy& participant_properties);
+    bool check_license();
 
     /**
      * Creates all the security builtin endpoints

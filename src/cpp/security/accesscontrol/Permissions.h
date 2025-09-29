@@ -43,10 +43,7 @@ public:
 
     eprosima::fastdds::rtps::security::LicenseInfo validate_license(
             Authentication&,
-            /*const IdentityHandle& identity,
-            const uint32_t domain_id,*/
             std::string license_path,
-            const RTPSParticipantAttributes& participant_attr,
             SecurityException& exception);
 
     bool get_permissions_token(

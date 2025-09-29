@@ -18,6 +18,7 @@
 #include <cstring>
 #include <cassert>
 #include <nlohmann/json.hpp>
+#include <iostream> // TODO. danip remove
 
 #if TIXML2_MAJOR_VERSION >= 6
 #define PRINTLINE(node) node->GetLineNum()
