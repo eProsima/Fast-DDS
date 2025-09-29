@@ -48,6 +48,17 @@ endif()
 message(STATUS "EPROSIMA_TEST_DNS_NOT_SET_UP: '${EPROSIMA_TEST_DNS_NOT_SET_UP}'")
 
 ###############################################################################
+# System tests
+###############################################################################
+if(SYSTEM_TESTS)
+    find_package(GTest CONFIG REQUIRED)
+    include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
+
+    add_subdirectory(system/tools/fastdds)
+    add_subdirectory(system/tools/fds)
+endif()
+
+###############################################################################
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS)
@@ -96,17 +107,6 @@ endif()
 ###############################################################################
 if(PERFORMANCE_TESTS)
     add_subdirectory(performance)
-endif()
-
-###############################################################################
-# System tests
-###############################################################################
-if(SYSTEM_TESTS)
-    find_package(GTest CONFIG REQUIRED)
-    include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
-
-    add_subdirectory(system/tools/fastdds)
-    add_subdirectory(system/tools/fds)
 endif()
 
 if(EPROSIMA_BUILD_TESTS AND QNX)
