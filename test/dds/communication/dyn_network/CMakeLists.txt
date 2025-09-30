@@ -11,12 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-message(STATUS "Configuring dynamic network interfaces tests")
+
+message(STATUS "Configuring docker based communication tests")
 
 # Find docker
 find_program(DOCKER_EXECUTABLE docker)
 if(NOT DOCKER_EXECUTABLE)
-    message(WARNING "Docker executable not found. dds.communication.dynamic_interfaces test won't be compiled.")
+    message(WARNING "Docker executable not found. Docker based communication tests won't be compiled.")
     return()
 endif()
 
@@ -29,7 +30,7 @@ if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
     # Find bash
     find_program(BASH_EXECUTABLE bash)
     if(NOT BASH_EXECUTABLE)
-        message(WARNING "bash executable not found. dds.communication.dynamic_interfaces test won't be compiled.")
+        message(WARNING "bash executable not found. Docker based communication tests won't be compiled.")
         return()
     endif()
 
@@ -38,11 +39,11 @@ if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
 # Windows configurations
 elseif(WIN32)
     # We don't know which docker image to use for Windows yet
-    message(WARNING "Windows not supported yet. dds.communication.dynamic_interfaces test won't be compiled.")
+    message(WARNING "Windows not supported yet. Docker based communication tests won't be compiled.")
     return()
 # Unsupported platform
 else()
-    message(WARNING "Unsupported platform. dds.communication.dynamic_interfaces test won't be compiled.")
+    message(WARNING "Unsupported platform. Docker based communication tests won't be compiled.")
     return()
 endif()
 
