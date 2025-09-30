@@ -344,8 +344,6 @@ void TCPReqRepHelloWorldReplier::process_status_changes()
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))
                 {
-                    std::cout << "TCPReplier: Processing data available status" << std::endl;
-
                     DataReader* reader = dynamic_cast<DataReader*>(entity);
                     ASSERT_NE(reader, nullptr);
                     ASSERT_EQ(reader, replier_->get_replier_reader());
