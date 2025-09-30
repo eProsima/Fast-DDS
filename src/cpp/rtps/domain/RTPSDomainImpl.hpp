@@ -44,8 +44,6 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 
-#include <nlohmann/json.hpp>
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -71,22 +69,6 @@ public:
     static std::shared_ptr<IDomainImpl> get_instance();
 
     void stop_all() override;
-
-
-    void start_runtime_enforcer(
-            std::chrono::minutes limit);
-
-    std::vector<unsigned char> b64url_decode(
-            const std::string& in);
-
-    time_t parse_utc(
-            const std::string& iso8601);
-
-    nlohmann::json verify_license_file(
-            const std::string& path,
-            const unsigned char* ed25519_pubkey /* 32 bytes */);
-
-    //bool check_license();
 
     RTPSParticipant* create_participant(
             uint32_t domain_id,

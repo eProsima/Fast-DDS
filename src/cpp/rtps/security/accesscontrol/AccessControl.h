@@ -20,7 +20,6 @@
 
 #include <fastdds/rtps/common/Token.hpp>
 #include <rtps/security/common/Handle.h>
-#include <security/accesscontrol/LicenseParser.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -50,12 +49,6 @@ public:
             const IdentityHandle& identity,
             const uint32_t domain_id,
             const RTPSParticipantAttributes& participant_attr,
-            SecurityException& exception) = 0;
-
-    virtual eprosima::fastdds::rtps::security::LicenseInfo validate_license(
-            Authentication& auth_plugin,
-            std::string license_path,
-            //const RTPSParticipantAttributes& participant_attr,
             SecurityException& exception) = 0;
 
     virtual bool get_permissions_token(

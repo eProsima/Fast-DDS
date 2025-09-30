@@ -60,13 +60,6 @@ AccessControl* SecurityPluginFactory::create_access_control_plugin(
     return ret;
 }
 
-AccessControl* SecurityPluginFactory::create_access_control_for_license()
-{
-    AccessControl* ret =  access_plugin_;
-    access_plugin_ = nullptr;
-    return ret;
-}
-
 void SecurityPluginFactory::set_access_control_plugin(
         AccessControl* plugin)
 {

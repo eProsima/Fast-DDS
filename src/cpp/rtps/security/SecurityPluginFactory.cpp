@@ -64,11 +64,6 @@ AccessControl* SecurityPluginFactory::create_access_control_plugin(
     return plugin;
 }
 
-AccessControl* SecurityPluginFactory::create_access_control_for_license()
-{
-    return create_builtin_access_control_plugin();
-}
-
 Cryptography* SecurityPluginFactory::create_cryptography_plugin(
         const PropertyPolicy& property_policy)
 {

@@ -56,18 +56,6 @@
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
-#include <nlohmann/json.hpp>
-#include <iostream>
-#include <atomic>
-#include <csignal>
-#include <cstdio>
-#include <ctime>
-// TODO. danip
-#include <sodium.h>
-
-#include <stdexcept>
-
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

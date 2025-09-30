@@ -99,13 +99,6 @@ public:
             const PropertyPolicy& participant_properties);
 
     /**
-     * SecurityManager check license
-     * @param participant_properties PropertyPolicy& references configuration provided on participant creation
-     * @return true if the license is correct.
-     */
-    //bool check_license(); // TODO. danip
-
-    /**
      * Creates all the security builtin endpoints
      *
      * @pre SecurityManager mutex shouldn't have been taken.

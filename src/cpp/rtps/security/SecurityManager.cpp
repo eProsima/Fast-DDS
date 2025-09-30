@@ -114,40 +114,6 @@ SecurityManager::~SecurityManager()
     destroy();
 }
 
-/*bool SecurityManager::check_license() // TODO. danip
-//static bool check_license()
-{
-    if (access_plugin_ == nullptr)
-    {
-        access_plugin_ = factory_.create_access_control_for_license();
-    }
-
-    SecurityException exception;
-    auto part_attributes = participant_->get_attributes();
-
-    if(access_plugin_ == nullptr)
-    {
-        return false;
-    }
-
-    const char* fastddshome_val = std::getenv("FASTDDSHOME");
-    if (fastddshome_val == nullptr)
-    {
-        std::cout << "FASTDDS_HOME environment variable is not set.\n";
-        return false;
-    }
-
-    //std::string license_path = "file://" + (std::string) fastddshome_val + "/include/license.smime";
-    std::string license_path = "file://" + (std::string) fastddshome_val + "/include/data.sig";
-
-    auto license_info = access_plugin_->validate_license(
-        *authentication_plugin_,
-        license_path,
-        exception);
-
-    return license_info.running_time != 0;
-}*/
-
 bool SecurityManager::init(
         ParticipantSecurityAttributes& attributes,
         const PropertyPolicy& participant_properties)

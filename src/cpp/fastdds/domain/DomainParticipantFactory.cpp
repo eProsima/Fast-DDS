@@ -20,8 +20,6 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <thread>
-#include <fstream>
-#include <nlohmann/json.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
@@ -157,10 +155,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listener,
         const StatusMask& mask)
 {
-    if(load_profiles() == RETCODE_ERROR /*|| !check_license()*/)
-    {
-        return nullptr;
-    }
+    load_profiles();
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
@@ -476,12 +471,6 @@ ReturnCode_t DomainParticipantFactory::get_participant_extended_qos_from_default
 
 ReturnCode_t DomainParticipantFactory::load_profiles()
 {
-    /*if(!check_license())
-    {
-        return RETCODE_ERROR;
-    }*/
-
-
     // NOTE: This could be done with a bool atomic to avoid taking the mutex in most cases, however the use of
     // atomic over mutex is not deterministically better, and this way is easier to read and understand.
 

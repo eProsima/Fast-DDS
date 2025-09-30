@@ -28,10 +28,6 @@
 #define OPENSSL_CONST
 #endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
-
-#include <openssl/x509.h>
-#include <openssl/x509_vfy.h>
-
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
@@ -45,7 +41,6 @@
 #include <security/accesscontrol/AccessPermissionsHandle.h>
 #include <security/accesscontrol/DistinguishedName.h>
 #include <security/accesscontrol/GovernanceParser.h>
-#include <security/accesscontrol/LicenseParser.h>
 #include <security/accesscontrol/Permissions.h>
 #include <security/accesscontrol/PermissionsParser.h>
 #include <security/artifact_providers/FileProvider.hpp>
@@ -405,7 +400,6 @@ static BIO* load_and_verify_document(
         }
         else
         {
-            // TODO. danip
             // Verify the input data using exclusively the certificates in the stack.
             // PKCS7_NOINTERN is used to ignore certificates coming alongside the signed data.
             // PKCS7_NOVERIFY is used since the permissions CA certificate will not be chain verified.
@@ -508,76 +502,6 @@ static bool load_governance_file(
         {
             exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
                             + governance_file);
-        }
-
-        BIO_free(file_mem);
-    }
-
-    return returned_value;
-}
-
-static bool load_license_file(
-        AccessPermissionsHandle& ah,
-        std::string& license_file,
-        LicenseInfo& info,
-        SecurityException& exception)
-{
-    bool returned_value = false;
-
-    BIO* file_mem = load_signed_file(ah->store_, license_file, exception);
-
-    if (file_mem != nullptr)
-    {
-        std::string buffer;
-        buffer.reserve(4096);
-
-        for (;;)
-        {
-            char chunk[4096];
-            int n = BIO_read(file_mem, chunk, static_cast<int>(sizeof(chunk)));
-            if (n > 0)
-            {
-                buffer.append(chunk, n);
-                continue;
-            }
-            if (n == 0)
-            {
-                // EOF
-                break;
-            }
-            // n < 0: check if we should retry
-            if (BIO_should_retry(file_mem))
-            {
-                continue;
-            }
-            // Hard error
-            exception = _SecurityException_("OpenSSL BIO_read failed while reading verified license content");
-            BIO_free(file_mem);
-            return false;
-        }
-
-        BIO_free(file_mem);
-
-        
-        BUF_MEM* ptr = nullptr;
-        BIO_get_mem_ptr(file_mem, &ptr);
-
-        if (ptr != nullptr)
-        {
-            LicenseParser parser;
-            if ((returned_value = parser.parse_stream(ptr->data, ptr->length)) == true)
-            {
-                parser.swap(info);
-            }
-            else
-            {
-                exception = _SecurityException_(std::string("Malformed license_file file ") + license_file);
-            }
-        }
-        else
-        {
-            exception = _SecurityException_(std::string("OpenSSL library cannot retrieve mem ptr from file ")
-                            + license_file);
         }
 
         BIO_free(file_mem);
@@ -969,172 +893,6 @@ PermissionsHandle* Permissions::validate_local_permissions(
 
     return nullptr;
 }
-
-static std::string strip_file_prefix(
-    const std::string& path)
-{
-    if (path.rfind("file://", 0) == 0)
-    {
-        return path.substr(7);
-    }
-
-    return path;
-}
-
-static X509* load_x509_from_cer(
-    const std::string& cer_uri,
-    SecurityException& ex)
-{
-    const std::string path = strip_file_prefix(cer_uri);
-
-    BIO* in = BIO_new(BIO_s_file());
-    if (!in)
-    {
-        ex = _SecurityException_("OpenSSL: cannot allocate BIO for file");
-        return nullptr;
-    }
-
-    if (BIO_read_filename(in, path.c_str()) <= 0)
-    {
-        ex = _SecurityException_("OpenSSL: cannot open certificate file " + path);
-        BIO_free(in);
-        return nullptr;
-    }
-
-    // Try PEM first
-    X509* cert = PEM_read_bio_X509(in, nullptr, nullptr, nullptr);
-    if (!cert)
-    {
-        // Rewind and try DER
-        (void)BIO_reset(in);
-        cert = d2i_X509_bio(in, nullptr);
-    }
-
-    BIO_free(in);
-
-    if (!cert)
-    {
-        ex = _SecurityException_("OpenSSL: failed to parse .cer file (neither PEM nor DER)");
-        return nullptr;
-    }
-
-    return cert;
-}
-
-static X509_STORE* make_store_with_cert(
-    X509* cert,
-    SecurityException& ex)
-{
-    X509_STORE* store = X509_STORE_new();
-    if (!store)
-    {
-        ex = _SecurityException_("OpenSSL: failed to create X509 store");
-        return nullptr;
-    }
-
-    if (X509_STORE_add_cert(store, cert) != 1)
-    {
-        // already present, OpenSSL signals an error
-        unsigned long e = ERR_peek_last_error();
-        if (ERR_GET_REASON(e) != X509_R_CERT_ALREADY_IN_HASH_TABLE)
-        {
-            X509_STORE_free(store);
-            ex = _SecurityException_("OpenSSL: failed to add cert to store");
-            return nullptr;
-        }
-    }
-
-    return store;
-}
-
-// High-level helper: load a .cer and return an X509_STORE with that cert.
-static X509_STORE* load_store_from_cer(const std::string& cer_uri, SecurityException& ex) {
-    X509* cert = load_x509_from_cer(cer_uri, ex);
-    if (!cert)
-    {
-        return nullptr;
-    }
-    X509_STORE* store = make_store_with_cert(cert, ex);
-    X509_free(cert); // store keeps its own ref
-
-    return store;
-}
-
-LicenseInfo Permissions::validate_license(
-        Authentication&,
-        std::string license_path,
-        SecurityException& exception)
-{
-    LicenseInfo null_ret{"", "", "", "", "", "", "", "", 0};
-    LicenseInfo info_ret;
-
-    AccessPermissionsHandle* ah = &AccessPermissionsHandle::narrow(*get_permissions_handle(exception));
-
-    const char* fastddshome_val = std::getenv("FASTDDSHOME");
-    if (fastddshome_val == nullptr)
-    {
-        std::cout << "FASTDDS_HOME environment variable is not set.\n";
-        return null_ret;
-    }
-
-    // -- X509_STORE* --
-    // file://${CERTS_PATH}/maincacert.pem
-    //(*ah)->store_ = load_permissions_ca(license_path, (*ah)->there_are_crls_, (*ah)->sn, (*ah)->algo, exception);
-    std::string pub_cert = "file://" + (std::string) fastddshome_val + "/src/fastdds/include/Certi_ePro.cer";
-    /*std::ifstream file_cert(pub_cert);
-    if(!file_cert.good())
-    {
-        std::cout << "FastDDS Public key do not exists.\n";
-        return null_ret;
-    }*/
-
-    (*ah)->store_ = load_store_from_cer(pub_cert, exception);
-    if (!(*ah)->store_)
-    {
-        delete ah;
-        return null_ret;
-    }
-
-    if(load_license_file(*ah, license_path, info_ret, exception))
-    {
-        return info_ret;
-    }
-
-    delete ah;
-
-    return null_ret;
-}
-
-//static LicenseInfo validate_license(
-//        Authentication&,
-//        /*const IdentityHandle& identity,
-//        const uint32_t domain_id,*/
-//        std::string license_path,
-//        //const RTPSParticipantAttributes& participant_attr,
-//        SecurityException& exception)
-//{
-//    LicenseInfo null_ret{"", "", "", "", "", "", "", "", 0};
-//
-//    AccessPermissionsHandle* ah;// = &AccessPermissionsHandle::narrow(*get_permissions_handle(exception));
-//
-//    LicenseInfo info_ret;
-//
-//    // TODO. danip
-//    //std::string license_path_2 = "file:///home/danny/eProsima/Fast-DDS-Pro/workspace_fastddspro_security/license.smime";
-//    // file://${CERTS_PATH}/maincacert.pem
-//
-//    //(*ah)->store_ = load_permissions_ca(license_path, (*ah)->there_are_crls_, (*ah)->sn, (*ah)->algo, exception);
-//
-//    if(load_license_file(*ah, license_path, info_ret, exception))
-//    {
-//        return info_ret;
-//    }
-//
-//    //delete ah;
-//
-//    return null_ret;
-//}
-
 
 bool Permissions::get_permissions_token(
         PermissionsToken** permissions_token,
