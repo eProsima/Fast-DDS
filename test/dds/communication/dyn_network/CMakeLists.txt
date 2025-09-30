@@ -53,18 +53,6 @@ if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
     set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
 endif()
 
-if(PROJECT_VERSION_TWEAK GREATER 0)
-    configure_file(net-tools.Dockerfile
-                   ${CMAKE_CURRENT_BINARY_DIR}/net-tools.Dockerfile @ONLY)
-    configure_file(dynamic_interfaces.compose.yml
-                   ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml @ONLY)
-    configure_file(launch_subscriber.bash
-                   ${CMAKE_CURRENT_BINARY_DIR}/launch_subscriber.bash @ONLY)
-    add_test(NAME dds.communication.dynamic_interfaces
-             COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml up
-             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endif()
-
 configure_file(cli.Dockerfile
                ${CMAKE_CURRENT_BINARY_DIR}/cli.Dockerfile @ONLY)
 configure_file(ds_init_no_interfaces.compose.yml
