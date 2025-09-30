@@ -86,7 +86,7 @@ public:
             const std::string& path,
             const unsigned char* ed25519_pubkey /* 32 bytes */);
 
-    bool check_license();
+    //bool check_license();
 
     RTPSParticipant* create_participant(
             uint32_t domain_id,

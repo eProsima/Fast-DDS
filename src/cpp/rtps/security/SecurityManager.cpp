@@ -114,7 +114,7 @@ SecurityManager::~SecurityManager()
     destroy();
 }
 
-bool SecurityManager::check_license()
+/*bool SecurityManager::check_license() // TODO. danip
 //static bool check_license()
 {
     if (access_plugin_ == nullptr)
@@ -146,7 +146,7 @@ bool SecurityManager::check_license()
         exception);
 
     return license_info.running_time != 0;
-}
+}*/
 
 bool SecurityManager::init(
         ParticipantSecurityAttributes& attributes,
