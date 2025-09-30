@@ -27,11 +27,11 @@
 
 struct CommandLineArgs
 {
-    int kind;
-    int samples;
-    int timeout;
-    int expected_matches;
-    std::vector<std::string> known_types;
+    int kind {0};
+    int samples {0};
+    int timeout {0};
+    int expected_matches {0};
+    std::vector<std::string> known_types {};
     uint32_t seed {10800};
     uint32_t builtin_flow_controller_bytes {0};
 };
@@ -40,7 +40,7 @@ CommandLineArgs parse_args(
         int argc,
         char** argv)
 {
-    CommandLineArgs args = {0, 0, 0, 0, {}};
+    CommandLineArgs args;
 
     for (int i = 1; i < argc; ++i)
     {
