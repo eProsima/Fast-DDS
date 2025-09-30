@@ -137,7 +137,8 @@ bool SecurityManager::check_license()
         return false;
     }
 
-    std::string license_path = "file://" + (std::string) fastddshome_val + "/include/license.smime";
+    //std::string license_path = "file://" + (std::string) fastddshome_val + "/include/license.smime";
+    std::string license_path = "file://" + (std::string) fastddshome_val + "/include/data.sig";
 
     auto license_info = access_plugin_->validate_license(
         *authentication_plugin_,

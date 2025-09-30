@@ -409,12 +409,12 @@ static BIO* load_and_verify_document(
             // Verify the input data using exclusively the certificates in the stack.
             // PKCS7_NOINTERN is used to ignore certificates coming alongside the signed data.
             // PKCS7_NOVERIFY is used since the permissions CA certificate will not be chain verified.
-            /*if (!PKCS7_verify(p7, stack, nullptr, indata, out, PKCS7_TEXT | PKCS7_NOVERIFY | PKCS7_NOINTERN))
+            if (!PKCS7_verify(p7, stack, nullptr, indata, out, PKCS7_TEXT | PKCS7_NOVERIFY | PKCS7_NOINTERN))
             {
                 exception = _SecurityException_("PKCS7 data verification failed");
                 BIO_free(out);
                 out = nullptr;
-            }*/
+            }
         }
 
         // Free the certificate stack
