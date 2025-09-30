@@ -28,6 +28,8 @@ char dummy;
 
 #include "ContentFilterTestType.h"
 
+#if FASTCDR_VERSION_MAJOR > 1
+
 #include "ContentFilterTestTypeTypeObject.h"
 
 #include <fastcdr/Cdr.h>
@@ -3556,3 +3558,4 @@ std::vector<StructType>& ContentFilterTestType::unbounded_sequence_struct_field(
 // Include auxiliary functions like for serializing/deserializing.
 #include "ContentFilterTestTypeCdrAux.ipp"
 
+#endif // FASTCDR_VERSION_MAJOR > 1
