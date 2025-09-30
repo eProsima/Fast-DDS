@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <fastdds/config.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
