@@ -117,6 +117,34 @@ void guid_prefix_to_builtin_topic_key(
             | static_cast<uint32_t>(guid_prefix.value[11]);
 }
 
+#if HAVE_SECURITY
+void blackbox_security_init()
+{
+    certs_path = std::getenv("CERTS_PATH");
+
+    if (certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
+}
+
+#endif  // if HAVE_SECURITY
+
+#if TLS_FOUND
+void tls_init()
+{
+    certs_path = std::getenv("CERTS_PATH");
+
+    if (certs_path == nullptr)
+    {
+        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
+        exit(-1);
+    }
+}
+
+#endif  // if TLS_FOUND
+
 int main(
         int argc,
         char** argv)
