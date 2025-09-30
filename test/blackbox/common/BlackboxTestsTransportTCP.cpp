@@ -480,17 +480,6 @@ TEST_P(TransportTCP, TCP_TLS_server_disconnect_after_client)
     delete replier;
 }
 
-void tls_init()
-{
-    certs_path = std::getenv("CERTS_PATH");
-
-    if (certs_path == nullptr)
-    {
-        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
-        exit(-1);
-    }
-}
-
 #endif // if TLS_FOUND
 
 // Regression test for ShrinkLocators/transform_remote_locators mechanism.

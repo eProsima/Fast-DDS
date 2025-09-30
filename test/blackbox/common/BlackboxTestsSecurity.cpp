@@ -4731,17 +4731,6 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     EXPECT_EQ(0u, n_logs);
 }
 
-void blackbox_security_init()
-{
-    certs_path = std::getenv("CERTS_PATH");
-
-    if (certs_path == nullptr)
-    {
-        std::cout << "Cannot get enviroment variable CERTS_PATH" << std::endl;
-        exit(-1);
-    }
-}
-
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
