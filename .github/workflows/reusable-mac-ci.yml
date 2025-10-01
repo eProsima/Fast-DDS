@@ -51,7 +51,7 @@ jobs:
     # https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md#language-and-runtime),
     # so we'll use that one for now, as clang 15 is the supported compiler for Fast DDS in macOS.
     # (see https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#compilers)
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
@@ -153,7 +153,7 @@ jobs:
   fastdds_test:
     needs: fastdds_build
     name: fastdds_test (${{ matrix.cmake_build_type }})
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       fail-fast: false
       matrix:
