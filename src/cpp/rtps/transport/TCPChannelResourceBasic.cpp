@@ -78,13 +78,7 @@ void TCPChannelResourceBasic::connect(
             asio::async_connect(
                 *socket_,
                 endpoints,
-                [this, channel_weak_ptr](std::error_code ec
-#if ASIO_VERSION >= 101200
-                , ip::tcp::endpoint
-#else
-                , ip::tcp::resolver::iterator
-#endif // if ASIO_VERSION >= 101200
-                )
+                [this, channel_weak_ptr](std::error_code ec, ip::tcp::endpoint)
                 {
                     if (!channel_weak_ptr.expired())
                     {
