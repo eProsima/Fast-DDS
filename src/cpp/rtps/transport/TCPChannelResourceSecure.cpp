@@ -91,13 +91,7 @@ void TCPChannelResourceSecure::connect(
             const auto secure_socket = secure_socket_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                    [secure_socket, channel_weak_ptr, parent](const std::error_code& error
-#if ASIO_VERSION >= 101200
-                    , ip::tcp::endpoint
-#else
-                    , const tcp::resolver::iterator& /*endpoint*/
-#endif // if ASIO_VERSION >= 101200
-                    )
+                    [secure_socket, channel_weak_ptr, parent](const std::error_code& error, ip::tcp::endpoint)
                     {
                         if (!error)
                         {
