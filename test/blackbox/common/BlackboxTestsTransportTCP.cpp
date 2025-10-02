@@ -1622,27 +1622,14 @@ TEST_P(TransportTCP, stop_during_incomplete_read)
         std::to_string(global_port));
 
     asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_context);
-    asio::async_connect(
-        socket,
-        endpoints,
-        [](std::error_code ec
-#if ASIO_VERSION >= 101200
-        , asio::ip::tcp::endpoint
-#else
-        , asio::ip::tcp::resolver::iterator
-#endif // if ASIO_VERSION >= 101200asio
-        )
-        {
-            ASSERT_TRUE(!ec);
-        }
-        );
 
-    // Wait for connection to be established
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    // Synchronous socket connection
+    std::error_code ec;
+    asio::connect(socket, endpoints, ec);
+    ASSERT_TRUE(!ec);
 
     // Send an incomplete header
     TCPHeader h;
-    std::error_code ec;
     asio::write(socket, asio::buffer(&h, 3), ec);
     ASSERT_TRUE(!ec);
 
