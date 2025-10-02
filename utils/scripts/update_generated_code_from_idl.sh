@@ -4,6 +4,8 @@ set -e
 
 files_to_exclude=(
     './thirdparty/dds-types-test/IDL/relative_path_include.idl'       # Relative path not working in current location.
+    './thirdparty/dds-types-test/IDL/interfaces.idl'                  # Operations with feeds not supported.
+    './thirdparty/dds-types-test/IDL/interfaces_2.idl'                # Operations with feeds not supported.
     './test/feature/idl_parser/no_path_included.idl'                  # Relative path not working in current location.
 
     # These files contain features not supported by Fast DDS Gen parser, used for negative tests in create_type_w_uri.
