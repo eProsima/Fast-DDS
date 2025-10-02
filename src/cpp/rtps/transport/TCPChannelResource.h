@@ -53,7 +53,8 @@ protected:
 
     enum eConnectionStatus
     {
-        eDisconnected = 0,
+        eDisconnecting = -1,        // Transition state to disconnected, used to protect from concurrent (dis)connects.
+        eDisconnected = 0,          // Initial state.
         eConnecting,                // Output -> Trying connection.
         eConnected,                 // Output -> Send bind message.
         eWaitingForBind,            // Input -> Waiting for the bind message.
@@ -71,7 +72,6 @@ protected:
     std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
     std::vector<uint16_t> logical_output_ports_;
     std::condition_variable_any logical_output_ports_updated_cv;
-    std::mutex read_mutex_;
     std::recursive_mutex pending_logical_mutex_;
     std::atomic<eConnectionStatus> connection_status_;
 
@@ -111,6 +111,17 @@ public:
     bool connection_established()
     {
         return connection_status_ == eConnectionStatus::eEstablished;
+    }
+
+    bool connected()
+    {
+        return connection_status_ >= eConnectionStatus::eConnected;
+    }
+
+    bool disconnected()
+    {
+        // NOTE: covers both eDisconnected and eDisconnecting states
+        return connection_status_ <= eConnectionStatus::eDisconnected;
     }
 
     eConnectionStatus connection_status()
@@ -275,7 +286,7 @@ protected:
      * @param socket Socket on which to set the options.
      * @param options Descriptor with the options to set.
      */
-    static void set_socket_options(
+    void set_socket_options(
             asio::basic_socket<asio::ip::tcp>& socket,
             const TCPTransportDescriptor* options);
 
