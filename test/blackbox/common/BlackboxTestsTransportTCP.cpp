@@ -1640,9 +1640,9 @@ TEST_P(TransportTCP, stop_during_incomplete_read)
     delete replier;
 
     // Close client's socket
-    socket.shutdown(asio::ip::tcp::socket::shutdown_both);
-    socket.cancel();
-    socket.close();
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+    socket.cancel(ec);
+    socket.close(ec);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
