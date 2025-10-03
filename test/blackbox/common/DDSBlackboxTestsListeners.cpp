@@ -3503,7 +3503,7 @@ TEST(DDSStatus, reliable_keep_all_unack_sample_removed_call)
                 {
                     auto now = std::chrono::steady_clock::now();
                     auto it = std::find_if(delayed_messages.begin(), delayed_messages.end(),
-                                    [&sn](const auto& pair)
+                                    [&sn](decltype(delayed_messages)::const_reference pair)
                                     {
                                         return pair.first == sn;
                                     });
