@@ -20,6 +20,7 @@
 #define _FASTDDS_DATAWRITERIMPL_HPP_
 
 #include <memory>
+#include <mutex>
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -643,6 +644,7 @@ protected:
 
     /**
      * @brief A method to reschedule the deadline timer
+     * @return true if it could compute and set a new interval, if there’s a pending deadline
      */
     bool deadline_timer_reschedule();
 
@@ -770,6 +772,19 @@ protected:
             const fastdds::rtps::GUID_t& reader_guid) const override;
 
 private:
+
+    /**
+     * (Re)configures the deadline timer:
+     *  Create once, parked with a huge interval (idle).
+     *  In case of deadline period ∞ cancel it, for 0 warn and notify once; set counts to max and
+     *  for values >0 store period.
+     */
+    void configure_deadline_timer_();
+
+    /**
+     * Notifies listeners that a deadline has been missed without touching the counters.
+     */
+    void notify_deadline_missed_nts_();
 
     void create_history(
             const std::shared_ptr<IPayloadPool>& payload_pool,
