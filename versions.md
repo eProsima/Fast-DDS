@@ -1,18 +1,22 @@
-Forthcoming
------------
+Version v3.4.0
+--------------
 
+* __Fast DDS Pro__ features:
+  * Added Ethernet transport (Linux only).
+  * Mapping transport priority to DSCP, interface and source port in UDP transport.
+  * Low bandwidth transports.
+  * Automatic detection of changes in IP addresses and network interfaces (IP mobility).
+  * Support for `@feed` operations is now a Fast DDS Pro feature.
 * Pass value of `TransportPriorityQosPolicy` to transport layer.
+* Add field `original_writer_info` to `WriteParams` and `SampleInfo`
 * Support annotated types and builtin annotations in IDL Parser.
   * Extend `MemberDescriptor` with `position()`, `literal_value()` and `is_default_literal()` methods
     to avoid inconsistencies annotating enumerations and bitmask members.
   * Extend `TypeDescriptor` with `literal_type()` to store the literal type in enumerations.
-* Add field `original_writer_info` to `WriteParams` and `SampleInfo`
 * Iterate over declared types processed with IDL Parser:
   * Add new `for_each_type_w_uri()` method in `DynamicTypeBuilderFactory`.
-* __Fast DDS Pro__ features:
-  * Added Ethernet transport (Linux only).
-  * Mapping transport priority to DSCP, interface and source port in UDP transport.
 * Support aliases in Content Filtered Topic.
+* Performance improvements with large history caches.
 
 Version v3.3.0
 --------------
