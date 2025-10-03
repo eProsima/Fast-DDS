@@ -191,7 +191,8 @@ void TCPChannelResourceBasic::set_options(
 
 void TCPChannelResourceBasic::cancel()
 {
-    socket_->cancel(); // thread safe with respect to asio's read and write methods
+    std::error_code ec;
+    socket_->cancel(ec); // thread safe with respect to asio's read and write methods
 }
 
 void TCPChannelResourceBasic::close()
@@ -202,13 +203,15 @@ void TCPChannelResourceBasic::close()
     std::unique_lock<std::mutex> read_lk(read_mutex_, std::defer_lock);
     std::lock(send_lk, read_lk); // Pre C++17 alternative to std::scoped_lock
 
-    socket_->close();
+    std::error_code ec;
+    socket_->close(ec);
 }
 
 void TCPChannelResourceBasic::shutdown(
         asio::socket_base::shutdown_type what)
 {
-    socket_->shutdown(what); // thread safe with respect to asio's read and write methods
+    std::error_code ec;
+    socket_->shutdown(what, ec); // thread safe with respect to asio's read and write methods
 }
 
 } // namespace rtps
