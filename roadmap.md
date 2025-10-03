@@ -7,12 +7,12 @@ All information is provided as a general guidelines only, and this section may b
 
 Disclaimer:
 
-* This section has been last updated in July 2025.
+* This section has been last updated in October 2025.
   Please take into account its content could be obsolete.
 
 ## Short term
 
-The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.3.0):
+The following list of features are planned to be addressed in the short term, and incorporated into the following release of the product (v3.5.0):
 
 * Consolidation of some [properties](https://fast-dds.docs.eprosima.com/en/latest/fastdds/property_policies/property_policies.html) into QoS policies
 * Ignore local endpoints configured at endpoint level
@@ -37,7 +37,6 @@ Please feel free to contact us if you wish to get involved in the implementation
 
 * Full DDS QOS compliance
     * Support for TIME_BASED_FILTER QoS
-	* Support for TRANSPORT_PRIORITY QoS
 	* Support for READER_DATA_LIFECYCLE QoS
 	* Support for LATENCY_BUDGET QoS
 	* Support for PRESENTATION QoS
@@ -54,7 +53,5 @@ Please feel free to contact us if you wish to get involved in the implementation
     * When processed (return_loan / take without loan)
     * On demand (new API on DataReader)
 * New DEBUG log level
-* Compliance with DDS-TSN
 * Service aware DataWriter
 * Compliance with DDS-XML
-* Low bandwidth transports
