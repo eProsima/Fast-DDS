@@ -347,7 +347,7 @@ void TCPChannelResourceSecure::close()
 void TCPChannelResourceSecure::shutdown(
         asio::socket_base::shutdown_type)
 {
-    // WARNING: This function blocks until receiving the peer’s close_notify
+    // WARNING: This function blocks until receiving the peer’s close_notify (or an error occurs).
     secure_socket_->shutdown();
 }
 
