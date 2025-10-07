@@ -176,14 +176,14 @@ target_link_libraries(${PROJECT_NAME}
     ${PRIVACY}
     fastcdr
     foonathan_memory
+
+    PRIVATE
+    eProsima_atomic
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
     ${TINYXML2_LIBRARY}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
-
-    PRIVATE
-    eProsima_atomic
     )
 
 if (APPLE)
@@ -374,30 +374,9 @@ set(INCLUDE_FASTDDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/optionparser-tar
 
 # Add fastdds dependencies in its CMake config file.
 if(LINK_SSL)
-    if(INSTALLER_PLATFORM)
-        # OpenSSL dependency is only propagated on static linking
-        # We must use the deployed OpenSSL binaries to prevent compatibility issues
-        set(FASTDDS_INSTALLER_DEPS_ANCILLARY "\
-        function(find_fastdds_deployed_openssl)\n\
-            if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
-                message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast DDS binaries building, ABI issues may arise\")\n\
-            endif()\n\
-            set(OPENSSL_USE_STATIC_LIBS TRUE)\n\
-            set(OPENSSL_ROOT_DIR  \"\${PACKAGE_PREFIX_DIR}/lib/${INSTALLER_PLATFORM}\")\n\
-            find_package(OpenSSL REQUIRED)\n\
-        endfunction()"
-        )
-        set(FASTDDS_INSTALLER_OPT_DEPS "\
-        if (\${type} STREQUAL \"static\")\n\
-            find_fastdds_deployed_openssl()\n\
-        endif()")
-
-    elseif(WIN32)
+    if(WIN32)
         # windows from sources only requires OpenSSL on static libraries
         set(FASTDDS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
-    else()
-        # linux from sources requires OpenSSL always
-        set(FASTDDS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 endif()
 
