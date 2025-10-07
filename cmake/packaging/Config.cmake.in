@@ -24,9 +24,6 @@ set_and_check(@PROJECT_NAME@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
 find_package(fastcdr REQUIRED)
 find_package(foonathan_memory REQUIRED)
-find_package(TinyXML2 QUIET)
-@FASTDDS_INSTALLER_DEPS_ANCILLARY@
-@FASTDDS_PACKAGE_UNIX_OPT_DEPS@
 
 set(fastdds_known_comps static shared)
 set(fastdds_comp_static NO)
