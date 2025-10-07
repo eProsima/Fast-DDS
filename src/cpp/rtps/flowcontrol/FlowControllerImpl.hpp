@@ -126,7 +126,7 @@ private:
         }
 
         // TODO: remove optimization with GCC > 15
-        #if defined(__linux__)
+        #if defined(__linux__) && defined(__GNUC__)
         [[gnu::optimize("no-delete-null-pointer-checks")]]
         #endif // if defined(__GNUC__)
         bool is_empty() const noexcept
