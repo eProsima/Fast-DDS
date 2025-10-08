@@ -70,6 +70,12 @@ const StatusMask& StatusConditionImpl::get_enabled_statuses() const
     return mask_;
 }
 
+const StatusMask& StatusConditionImpl::get_raw_status() const
+{
+    std::lock_guard<std::mutex> guard(mutex_);
+    return status_;
+}
+
 void StatusConditionImpl::set_status(
         const StatusMask& status,
         bool trigger_value)
