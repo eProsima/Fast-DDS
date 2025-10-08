@@ -78,10 +78,7 @@ struct StatusConditionImpl
      * @brief Retrieves the list of communication statuses that are currently triggered.
      * @return Triggered status.
      */
-    const StatusMask& get_raw_status() const
-    {
-        return status_;
-    }
+    const StatusMask& get_raw_status() const;
 
     /**
      * @brief Set the trigger value of a specific status
