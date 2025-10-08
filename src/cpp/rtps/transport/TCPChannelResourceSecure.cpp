@@ -94,13 +94,7 @@ void TCPChannelResourceSecure::connect(
             const auto secure_socket = secure_socket_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                    [secure_socket, channel_weak_ptr, parent](const std::error_code& error
-#if ASIO_VERSION >= 101200
-                    , ip::tcp::endpoint
-#else
-                    , const tcp::resolver::iterator& /*endpoint*/
-#endif // if ASIO_VERSION >= 101200
-                    )
+                    [secure_socket, channel_weak_ptr, parent](const std::error_code& error, ip::tcp::endpoint)
                     {
                         if (!error)
                         {
@@ -141,18 +135,32 @@ void TCPChannelResourceSecure::connect(
 
 void TCPChannelResourceSecure::disconnect()
 {
-    if (eConnecting < change_status(eConnectionStatus::eDisconnected) && alive())
+    // Go to disconnecting state to protect from concurrent connects and disconnects
+    auto prev_status = change_status(eConnectionStatus::eDisconnecting);
+    if (eConnecting < prev_status && alive())
     {
         auto socket = secure_socket_;
 
         post(context_, [&, socket]()
                 {
                     std::error_code ec;
-                    socket->lowest_layer().close(ec);
                     socket->async_shutdown([&, socket](const std::error_code&)
                     {
                     });
+
+                    // Close the underlying socket after SSL shutdown
+                    // NOTE: the (async) SSL shutdown may not complete before the socket is closed
+                    socket->lowest_layer().shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+                    socket->lowest_layer().cancel(ec);
+                    socket->lowest_layer().close(ec);
+
+                    // Change to disconnected state as the last step
+                    this->change_status(eConnectionStatus::eDisconnected);
                 });
+    }
+    else if (eConnectionStatus::eDisconnecting != prev_status || !alive())
+    {
+        change_status(eConnectionStatus::eDisconnected);
     }
 }
 
@@ -163,7 +171,7 @@ uint32_t TCPChannelResourceSecure::read(
 {
     size_t bytes_read = 0;
 
-    if (eConnecting < connection_status_)
+    if (connected())
     {
         std::promise<size_t> read_bytes_promise;
         auto bytes_future = read_bytes_promise.get_future();
@@ -208,7 +216,7 @@ size_t TCPChannelResourceSecure::send(
 {
     size_t bytes_sent = 0;
 
-    if (eConnecting < connection_status_)
+    if (connected())
     {
         if (parent_->configuration()->non_blocking_send &&
                 !check_socket_send_buffer(header_size + size,
@@ -280,7 +288,7 @@ asio::ip::tcp::endpoint TCPChannelResourceSecure::local_endpoint(
 void TCPChannelResourceSecure::set_options(
         const TCPTransportDescriptor* options)
 {
-    TCPChannelResource::set_socket_options(secure_socket_->lowest_layer(), options);
+    set_socket_options(secure_socket_->lowest_layer(), options);
 }
 
 void TCPChannelResourceSecure::set_tls_verify_mode(
@@ -341,6 +349,7 @@ void TCPChannelResourceSecure::close()
 void TCPChannelResourceSecure::shutdown(
         asio::socket_base::shutdown_type)
 {
+    // WARNING: This function blocks until receiving the peer’s close_notify (or an error occurs).
     secure_socket_->shutdown();
 }
 

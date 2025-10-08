@@ -14,8 +14,9 @@
 
 #include <rtps/transport/TCPChannelResourceBasic.h>
 
-#include <future>
 #include <array>
+#include <future>
+#include <mutex>
 
 #include <asio.hpp>
 #include <fastrtps/utils/IPLocator.h>
@@ -79,13 +80,7 @@ void TCPChannelResourceBasic::connect(
             asio::async_connect(
                 *socket_,
                 endpoints,
-                [this, channel_weak_ptr](std::error_code ec
-#if ASIO_VERSION >= 101200
-                , ip::tcp::endpoint
-#else
-                , ip::tcp::resolver::iterator
-#endif // if ASIO_VERSION >= 101200
-                )
+                [this, channel_weak_ptr](std::error_code ec, ip::tcp::endpoint)
                 {
                     if (!channel_weak_ptr.expired())
                     {
@@ -103,25 +98,22 @@ void TCPChannelResourceBasic::connect(
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (eConnecting < change_status(eConnectionStatus::eDisconnected) && alive())
+    // Go to disconnecting state to protect from concurrent connects and disconnects
+    auto prev_status = change_status(eConnectionStatus::eDisconnecting);
+    if (eConnecting < prev_status && alive())
     {
-        std::lock_guard<std::mutex> read_lock(read_mutex_);
-        auto socket = socket_;
+        // Shutdown the socket to abort any ongoing read and write operations
+        shutdown(asio::ip::tcp::socket::shutdown_both);
 
-        std::error_code ec;
-        socket->shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+        cancel();
+        close(); // Blocks until all read and write operations have finished
 
-        asio::post(context_, [&, socket]()
-                {
-                    try
-                    {
-                        socket->cancel();
-                        socket->close();
-                    }
-                    catch (std::exception&)
-                    {
-                    }
-                });
+        // Change to disconnected state as the last step
+        change_status(eConnectionStatus::eDisconnected);
+    }
+    else if (eConnectionStatus::eDisconnecting != prev_status || !alive())
+    {
+        change_status(eConnectionStatus::eDisconnected);
     }
 }
 
@@ -130,10 +122,9 @@ uint32_t TCPChannelResourceBasic::read(
         std::size_t size,
         asio::error_code& ec)
 {
-    std::unique_lock<std::mutex> read_lock(read_mutex_);
-
-    if (eConnecting < connection_status_)
+    if (connected())
     {
+        std::unique_lock<std::mutex> read_lock(read_mutex_);
         return static_cast<uint32_t>(asio::read(*socket_, asio::buffer(buffer, size), transfer_exactly(size), ec));
     }
 
@@ -149,7 +140,7 @@ size_t TCPChannelResourceBasic::send(
 {
     size_t bytes_sent = 0;
 
-    if (eConnecting < connection_status_)
+    if (connected())
     {
         std::lock_guard<std::mutex> send_guard(send_mutex_);
 
@@ -200,23 +191,32 @@ asio::ip::tcp::endpoint TCPChannelResourceBasic::local_endpoint(
 void TCPChannelResourceBasic::set_options(
         const TCPTransportDescriptor* options)
 {
-    TCPChannelResource::set_socket_options(*socket_, options);
+    set_socket_options(*socket_, options);
 }
 
 void TCPChannelResourceBasic::cancel()
 {
-    socket_->cancel();
+    std::error_code ec;
+    socket_->cancel(ec); // thread safe with respect to asio's read and write methods
 }
 
 void TCPChannelResourceBasic::close()
 {
-    socket_->close();
+    // Wait for read and write operations to finish before closing the socket (otherwise not thread safe)
+    // NOTE: shutdown should have been called before closing to abort any ongoing operation
+    std::unique_lock<std::mutex> send_lk(send_mutex_, std::defer_lock);
+    std::unique_lock<std::mutex> read_lk(read_mutex_, std::defer_lock);
+    std::lock(send_lk, read_lk); // Pre C++17 alternative to std::scoped_lock
+
+    std::error_code ec;
+    socket_->close(ec);
 }
 
 void TCPChannelResourceBasic::shutdown(
         asio::socket_base::shutdown_type what)
 {
-    socket_->shutdown(what);
+    std::error_code ec;
+    socket_->shutdown(what, ec); // thread safe with respect to asio's read and write methods
 }
 
 } // namespace rtps

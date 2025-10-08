@@ -1471,24 +1471,17 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     vm |= asio::ssl::verify_peer;
     secure_socket->set_verify_mode(vm);
 
-    asio::async_connect(secure_socket->lowest_layer(), endpoints,
-            [secure_socket](const std::error_code& ec
-#if ASIO_VERSION >= 101200
-            , asio::ip::tcp::endpoint
-#else
-            , const tcp::resolver::iterator&     /*endpoint*/
-#endif // if ASIO_VERSION >= 101200
-            )
-            {
-                ASSERT_TRUE(!ec);
-                asio::ssl::stream_base::handshake_type role = asio::ssl::stream_base::client;
-                secure_socket->async_handshake(role,
-                [](const std::error_code& ec)
-                {
-                    ASSERT_TRUE(!ec);
-                });
-            });
+    // Synchronous socket connection
+    std::error_code ec;
+    asio::connect(secure_socket->lowest_layer(), endpoints, ec);
+    ASSERT_TRUE(!ec);
 
+    // Synchronous handshake
+    asio::ssl::stream_base::handshake_type role = asio::ssl::stream_base::client;
+    secure_socket->handshake(role, ec);
+    ASSERT_TRUE(!ec);
+
+    // Wait a bit until server accepts the connection
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
     /*
@@ -1504,7 +1497,6 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
             std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
 
     // Prepare the message
-    asio::error_code ec;
     std::vector<octet> message(msg_size, 0);
     const octet* data = message.data();
     size_t size = message.size();
@@ -1997,22 +1989,13 @@ TEST_F(TCPv4Tests, non_blocking_send)
         IPLocator::ip_to_string(serverLoc),
         std::to_string(IPLocator::getPhysicalPort(serverLoc)));
 
+    // Synchronous socket connection
     asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_context);
-    asio::async_connect(
-        socket,
-        endpoints,
-        [](std::error_code ec
-#if ASIO_VERSION >= 101200
-        , asio::ip::tcp::endpoint
-#else
-        , asio::ip::tcp::resolver::iterator
-#endif // if ASIO_VERSION >= 101200
-        )
-        {
-            ASSERT_TRUE(!ec);
-        }
-        );
+    std::error_code ec;
+    asio::connect(socket, endpoints, ec);
+    ASSERT_TRUE(!ec);
 
+    // Wait a bit until server accepts the connection
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     /*
@@ -2027,7 +2010,6 @@ TEST_F(TCPv4Tests, non_blocking_send)
             std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
 
     // Prepare the message
-    asio::error_code ec;
     std::vector<octet> message(msg_size, 0);
     const octet* data = message.data();
     size_t size = message.size();
@@ -2050,9 +2032,9 @@ TEST_F(TCPv4Tests, non_blocking_send)
     bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
     ASSERT_EQ(bytes_sent, 0u);
 
-    socket.shutdown(asio::ip::tcp::socket::shutdown_both);
-    socket.cancel();
-    socket.close();
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+    socket.cancel(ec);
+    socket.close(ec);
 }
 #endif // ifndef _WIN32
 

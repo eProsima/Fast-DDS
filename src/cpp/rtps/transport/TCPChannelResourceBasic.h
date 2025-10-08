@@ -28,6 +28,7 @@ class TCPChannelResourceBasic : public TCPChannelResource
     asio::io_context& context_;
 
     std::mutex send_mutex_;
+    std::mutex read_mutex_;
     std::shared_ptr<asio::ip::tcp::socket> socket_;
 
 public:
