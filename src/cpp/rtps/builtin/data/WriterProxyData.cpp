@@ -1433,6 +1433,7 @@ bool WriterProxyData::read_from_cdr_message(
 
     uint32_t qos_size;
     clear();
+    durability.kind = dds::VOLATILE_DURABILITY_QOS;
     data_sharing.off();
     try
     {
