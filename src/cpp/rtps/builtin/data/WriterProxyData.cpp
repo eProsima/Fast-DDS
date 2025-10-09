@@ -1846,7 +1846,6 @@ void WriterProxyData::clear()
     }
 
     reliability.kind = dds::RELIABLE_RELIABILITY_QOS;
-    durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 
     guid = c_Guid_Unknown;
     persistence_guid = c_Guid_Unknown;
