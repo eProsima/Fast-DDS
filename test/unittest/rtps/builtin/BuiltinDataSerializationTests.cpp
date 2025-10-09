@@ -272,6 +272,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, true)));
+        EXPECT_EQ(out.m_qos.m_durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
     }
 
     // DATA(r)
@@ -324,6 +325,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, true)));
+        EXPECT_EQ(out.m_qos.m_durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
     }
 }
 
@@ -2006,6 +2008,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true, intercom_vendor_id)));
+        EXPECT_EQ(out.m_qos.m_durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
     }
 
     // DATA(r)
@@ -2073,6 +2076,7 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true, intercom_vendor_id)));
+        EXPECT_EQ(out.m_qos.m_durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
     }
 }
 
