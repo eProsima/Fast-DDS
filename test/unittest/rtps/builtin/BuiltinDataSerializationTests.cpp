@@ -271,7 +271,12 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
+<<<<<<< HEAD
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, true)));
+=======
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg)));
+        EXPECT_EQ(out.durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
+>>>>>>> 0e7204f4 (Remote writers considered volatile by default (#6085))
     }
 
     // DATA(r)
@@ -323,7 +328,12 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+<<<<<<< HEAD
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, true)));
+=======
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg)));
+        EXPECT_EQ(out.durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
+>>>>>>> 0e7204f4 (Remote writers considered volatile by default (#6085))
     }
 }
 
@@ -2005,7 +2015,12 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
+<<<<<<< HEAD
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true, intercom_vendor_id)));
+=======
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, intercom_vendor_id)));
+        EXPECT_EQ(out.durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
+>>>>>>> 0e7204f4 (Remote writers considered volatile by default (#6085))
     }
 
     // DATA(r)
@@ -2072,7 +2087,94 @@ TEST(BuiltinDataSerializationTests, interoperability_with_intercomdds)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+<<<<<<< HEAD
         EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true, true, intercom_vendor_id)));
+=======
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, intercom_vendor_id)));
+        EXPECT_EQ(out.durability.kind, eprosima::fastdds::dds::VOLATILE_DURABILITY_QOS);
+    }
+}
+
+/*!
+ * This test checks that Fast DDS can properly serialize ResourceLimitsQos in DATA(w) when it has more fields than
+ * max_samples, max_instances and max_samples_per_instance. It also checks that those fields are not serialized
+ * into the allocated_samples and extra samples fields.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_other_vendor_writer_resource_limits)
+{
+    const VendorId_t other_vendor_id = { 0, 1 };
+    // DATA(w)
+    {
+        octet data_w_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Resource limits
+            0x41, 0x00, 0x14, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_w_buffer, static_cast<uint32_t>(sizeof(data_w_buffer)));
+        msg.length = msg.max_size;
+
+        WriterProxyData wpd(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(wpd.read_from_cdr_message(&msg, other_vendor_id)));
+
+        ASSERT_TRUE(wpd.resource_limits);
+        ASSERT_EQ(wpd.resource_limits->max_samples, 1);
+        ASSERT_EQ(wpd.resource_limits->max_instances, 2);
+        ASSERT_EQ(wpd.resource_limits->max_samples_per_instance, 3);
+        // Allocated samples and extra samples should have default values as they should not be read because
+        // they come from another vendor
+        dds::ResourceLimitsQosPolicy default_values {};
+        ASSERT_EQ(wpd.resource_limits->allocated_samples, default_values.allocated_samples);
+        ASSERT_EQ(wpd.resource_limits->extra_samples, default_values.extra_samples);
+    }
+}
+
+/*!
+ * This test checks that Fast DDS can properly serialize ResourceLimitsQos in DATA(r) when it has more fields than
+ * max_samples, max_instances and max_samples_per_instance. It also checks that those fields are not serialized
+ * into the allocated_samples and extra samples fields.
+ */
+TEST(BuiltinDataSerializationTests, interoperability_with_other_vendor_reader_resource_limits)
+{
+    const VendorId_t other_vendor_id = { 0, 1 };
+    // DATA(r)
+    {
+        uint8_t data_r_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // Resource limits
+            0x41, 0x00, 0x14, 0x00,
+            0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_r_buffer, static_cast<uint32_t>(sizeof(data_r_buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData rpd(max_unicast_locators, max_multicast_locators);
+        EXPECT_NO_THROW(EXPECT_TRUE(rpd.read_from_cdr_message(&msg, other_vendor_id)));
+
+        ASSERT_TRUE(rpd.resource_limits);
+        ASSERT_EQ(rpd.resource_limits->max_samples, 1);
+        ASSERT_EQ(rpd.resource_limits->max_instances, 2);
+        ASSERT_EQ(rpd.resource_limits->max_samples_per_instance, 3);
+        // Allocated samples and extra samples should have default values as they should not be read because
+        // they come from another vendor
+        dds::ResourceLimitsQosPolicy default_values {};
+        ASSERT_EQ(rpd.resource_limits->allocated_samples, default_values.allocated_samples);
+        ASSERT_EQ(rpd.resource_limits->extra_samples, default_values.extra_samples);
+>>>>>>> 0e7204f4 (Remote writers considered volatile by default (#6085))
     }
 }
 
