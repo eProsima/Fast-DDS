@@ -66,7 +66,7 @@ TCPChannelResource::TCPChannelResource(
     , parent_(parent)
     , locator_()
     , waiting_for_keep_alive_(false)
-    , connection_status_(eConnectionStatus::eConnected)
+    , connection_status_(eConnectionStatus::eDisconnected)
     , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
 {
 }
@@ -376,6 +376,9 @@ void TCPChannelResource::set_socket_options(
         asio::basic_socket<asio::ip::tcp>& socket,
         const TCPTransportDescriptor* options)
 {
+    // Options setting should be done before connection is established
+    assert(!connected());
+
     uint32_t minimum_value = options->maxMessageSize;
 
     // Set the send buffer size

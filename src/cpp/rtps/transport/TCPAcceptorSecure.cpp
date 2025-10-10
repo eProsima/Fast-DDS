@@ -55,7 +55,6 @@ void TCPAcceptorSecure::accept(
 
     try
     {
-#if ASIO_VERSION >= 101200
         acceptor_.async_accept(
             [locator, parent, &ssl_context](const std::error_code& error, tcp::socket socket)
             {
@@ -82,33 +81,6 @@ void TCPAcceptorSecure::accept(
                     parent->SecureSocketAccepted(nullptr, locator, error); // This method manages errors too.
                 }
             });
-#else
-        auto secure_socket = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(*io_context_, ssl_context);
-
-        acceptor_.async_accept(secure_socket->lowest_layer(),
-                [locator, parent, secure_socket](const std::error_code& error)
-                {
-                    if (!error)
-                    {
-                        ssl::stream_base::handshake_type role = ssl::stream_base::server;
-                        if (parent->configuration()->tls_config.handshake_role == TLSHSRole::CLIENT)
-                        {
-                            role = ssl::stream_base::client;
-                        }
-
-                        secure_socket->async_handshake(role,
-                        [secure_socket, locator, parent](const std::error_code& error)
-                        {
-                            //EPROSIMA_LOG_ERROR(RTCP_TLS, "Handshake: " << error.message());
-                            parent->SecureSocketAccepted(secure_socket, locator, error);
-                        });
-                    }
-                    else
-                    {
-                        parent->SecureSocketAccepted(nullptr, locator, error); // This method manages errors too.
-                    }
-                });
-#endif // if ASIO_VERSION >= 101200
     }
     catch (std::error_code& error)
     {
