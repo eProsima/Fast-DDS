@@ -57,11 +57,6 @@ LatencyTestPublisher::LatencyTestPublisher()
 
 LatencyTestPublisher::~LatencyTestPublisher()
 {
-    std::string TestCommandType("TestCommandType");
-    participant_->unregister_type(TestCommandType);
-
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
-
     EPROSIMA_LOG_INFO(LatencyTest, "Pub: Participant removed");
 }
 
@@ -661,28 +656,11 @@ void LatencyTestPublisher::run()
 
 void LatencyTestPublisher::destroy_user_entities()
 {
-    // Static type endpoints should have been removed for each payload iteration
-    if (dynamic_types_)
-    {
-        destroy_data_endpoints();
-    }
-    else if (nullptr != data_writer_
-            || nullptr != data_reader_
-            || nullptr != latency_data_pub_topic_
-            || nullptr != latency_data_sub_topic_
-            || !latency_data_type_)
-    {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR unregistering the DATA type and/or removing the endpoints");
-    }
+    // Delete DDS entities contained within the DomainParticipant
+    participant_->delete_contained_entities();
 
-    subscriber_->delete_datareader(command_reader_);
-    participant_->delete_subscriber(subscriber_);
-
-    publisher_->delete_datawriter(command_writer_);
-    participant_->delete_publisher(publisher_);
-
-    participant_->delete_topic(latency_command_sub_topic_);
-    participant_->delete_topic(latency_command_pub_topic_);
+    // Delete DomainParticipant
+    DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void LatencyTestPublisher::export_csv(
