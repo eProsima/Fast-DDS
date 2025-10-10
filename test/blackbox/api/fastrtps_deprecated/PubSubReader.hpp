@@ -144,7 +144,6 @@ private:
         Listener(
                 PubSubReader& reader)
             : reader_(reader)
-            , times_deadline_missed_(0)
         {
         }
 
@@ -191,8 +190,8 @@ private:
                 const eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override
         {
             (void)sub;
-
-            times_deadline_missed_ = status.total_count;
+            std::lock_guard<std::mutex> lk(mutex_);
+            requested_deadline_status_ = status;
         }
 
         void on_liveliness_changed(
@@ -217,7 +216,14 @@ private:
 
         unsigned int missed_deadlines() const
         {
-            return times_deadline_missed_;
+            std::lock_guard<std::mutex> lk(mutex_);
+            return requested_deadline_status_.total_count;
+        }
+
+        unsigned int missed_deadlines_change() const
+        {
+            std::lock_guard<std::mutex> lk(mutex_);
+            return requested_deadline_status_.total_count_change;
         }
 
     private:
@@ -226,9 +232,9 @@ private:
                 const Listener&) = delete;
 
         PubSubReader& reader_;
+        mutable std::mutex mutex_;
 
-        //! Number of times deadline was missed
-        unsigned int times_deadline_missed_;
+        eprosima::fastrtps::RequestedDeadlineMissedStatus requested_deadline_status_{};
 
     }
     listener_;
@@ -1229,7 +1235,7 @@ public:
 
     PubSubReader& ownership_exclusive()
     {
-        subscriber_attr_.qos.m_ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        subscriber_attr_.qos.m_ownership.kind = eprosima::fastrtps::EXCLUSIVE_OWNERSHIP_QOS;
         return *this;
     }
 
@@ -1393,6 +1399,11 @@ public:
         return listener_.missed_deadlines();
     }
 
+    unsigned int missed_deadlines_change() const
+    {
+        return listener_.missed_deadlines_change();
+    }
+
     void liveliness_lost()
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
@@ -1434,6 +1445,40 @@ public:
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
         return liveliness_changed_status_;
+    }
+
+    struct ReaderQosView
+    {
+        eprosima::fastrtps::SubscriberAttributes* att;
+        eprosima::fastrtps::DeadlineQosPolicy& deadline()
+        {
+            return att->qos.m_deadline; // has .period
+        }
+
+    };
+
+    bool set_qos()
+    {
+        return subscriber_->updateAttributes(subscriber_attr_);
+    }
+
+    bool set_qos(
+            const ReaderQosView& v)
+    {
+        (void)v;
+        return subscriber_->updateAttributes(subscriber_attr_);
+    }
+
+    bool set_qos(
+            const eprosima::fastrtps::SubscriberAttributes& att)
+    {
+        subscriber_attr_ = att;
+        return subscriber_->updateAttributes(subscriber_attr_);
+    }
+
+    ReaderQosView get_qos()
+    {
+        return ReaderQosView{& subscriber_attr_ };
     }
 
     bool is_matched() const

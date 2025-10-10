@@ -164,7 +164,6 @@ class PubSubWriter
         Listener(
                 PubSubWriter& writer)
             : writer_(writer)
-            , times_deadline_missed_(0)
             , times_liveliness_lost_(0)
         {
         }
@@ -194,7 +193,8 @@ class PubSubWriter
                 const eprosima::fastrtps::OfferedDeadlineMissedStatus& status) override
         {
             (void)pub;
-            times_deadline_missed_ = status.total_count;
+            std::lock_guard<std::mutex> lk(mutex_);
+            offered_deadline_status_ = status;
         }
 
         void on_liveliness_lost(
@@ -208,7 +208,14 @@ class PubSubWriter
 
         unsigned int missed_deadlines() const
         {
-            return times_deadline_missed_;
+            std::lock_guard<std::mutex> lk(mutex_);
+            return offered_deadline_status_.total_count;
+        }
+
+        unsigned int missed_deadlines_change() const
+        {
+            std::lock_guard<std::mutex> lk(mutex_);
+            return offered_deadline_status_.total_count_change;
         }
 
         unsigned int times_liveliness_lost() const
@@ -222,9 +229,10 @@ class PubSubWriter
                 const Listener&) = delete;
 
         PubSubWriter& writer_;
+        mutable std::mutex mutex_;
 
-        //! The number of times deadline was missed
-        unsigned int times_deadline_missed_;
+        eprosima::fastrtps::OfferedDeadlineMissedStatus offered_deadline_status_{};
+
         //! The number of times liveliness was lost
         unsigned int times_liveliness_lost_;
 
@@ -1236,7 +1244,7 @@ public:
     PubSubWriter& ownership_strength(
             uint32_t strength)
     {
-        publisher_attr_.qos.m_ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+        publisher_attr_.qos.m_ownership.kind = eprosima::fastrtps::EXCLUSIVE_OWNERSHIP_QOS;
         publisher_attr_.qos.m_ownershipStrength.value = strength;
         return *this;
     }
@@ -1332,9 +1340,38 @@ public:
         return publisher_->updateAttributes(publisher_attr_);
     }
 
+    struct WriterQosView
+    {
+        eprosima::fastrtps::PublisherAttributes* att;
+        eprosima::fastrtps::DeadlineQosPolicy& deadline()
+        {
+            return att->qos.m_deadline; // has .period
+        }
+
+    };
+
     bool set_qos()
     {
         return publisher_->updateAttributes(publisher_attr_);
+    }
+
+    bool set_qos(
+            const WriterQosView& v)
+    {
+        (void)v;
+        return publisher_->updateAttributes(publisher_attr_);
+    }
+
+    bool set_qos(
+            const eprosima::fastrtps::PublisherAttributes& att)
+    {
+        publisher_attr_ = att;
+        return publisher_->updateAttributes(publisher_attr_);
+    }
+
+    WriterQosView get_qos()
+    {
+        return WriterQosView{& publisher_attr_ };
     }
 
     bool remove_all_changes(
@@ -1368,6 +1405,11 @@ public:
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
+    }
+
+    unsigned int missed_deadlines_change() const
+    {
+        return listener_.missed_deadlines_change();
     }
 
     unsigned int times_liveliness_lost() const
