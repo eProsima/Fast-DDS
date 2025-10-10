@@ -85,22 +85,8 @@ else()
 endif()
 
 install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}-targets
         RUNTIME DESTINATION ${BIN_INSTALL_DIR}${MSVCARCH_DIR_EXTENSION}
         COMPONENT discovery
-        )
-
-    if(INSTALLER_PLATFORM)
-        set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${CMAKE_PROJECT_NAME}-${INSTALLER_PLATFORM}/cmake)
-    else()
-        set(INSTALL_DESTINATION_PATH ${DATA_INSTALL_DIR}/${CMAKE_PROJECT_NAME}/cmake)
-    endif()
-
-# export library
-install(EXPORT ${PROJECT_NAME}-targets
-        DESTINATION ${INSTALL_DESTINATION_PATH}
-        NAMESPACE fastdds::
-        COMPONENT cmake
         )
 
 # symlink creation requires:
