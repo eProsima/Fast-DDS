@@ -20,6 +20,7 @@
 #define _FASTRTPS_DATAWRITERIMPL_HPP_
 
 #include <memory>
+#include <mutex>
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
@@ -578,6 +579,7 @@ protected:
 
     /**
      * @brief A method to reschedule the deadline timer
+     * @return true if deadline rescheduling succeeded, false otherwise
      */
     bool deadline_timer_reschedule();
 
@@ -736,6 +738,25 @@ protected:
 
 private:
 
+<<<<<<< HEAD
+=======
+    /**
+     * (Re)configures the deadline timer:
+     *  In case of infinite deadline period cancel it, for 0 warn and notify once (with max counts), and
+     *  for non-infinite positive values store period.
+     */
+    void configure_deadline_timer_();
+
+    /**
+     * Notifies listeners that a deadline has been missed.
+     */
+    void notify_deadline_missed_nts_();
+
+    void create_history(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool);
+
+>>>>>>> 3230d1d7 (Handle maximum deadline misses case (#6016))
     DataWriterQos get_datawriter_qos_from_settings(
             const DataWriterQos& qos);
 
