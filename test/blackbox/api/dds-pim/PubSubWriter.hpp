@@ -183,7 +183,6 @@ class PubSubWriter
         Listener(
                 PubSubWriter& writer)
             : writer_(writer)
-            , times_deadline_missed_(0)
             , times_liveliness_lost_(0)
             , times_unack_sample_removed_(0)
         {
@@ -214,7 +213,8 @@ class PubSubWriter
                 const eprosima::fastdds::dds::OfferedDeadlineMissedStatus& status) override
         {
             static_cast<void>(datawriter);
-            times_deadline_missed_ = status.total_count;
+            std::lock_guard<std::mutex> lk(mutex_);
+            offered_deadline_status_ = status;
         }
 
         void on_offered_incompatible_qos(
@@ -245,7 +245,14 @@ class PubSubWriter
 
         unsigned int missed_deadlines() const
         {
-            return times_deadline_missed_;
+            std::lock_guard<std::mutex> lk(mutex_);
+            return offered_deadline_status_.total_count;
+        }
+
+        unsigned int missed_deadlines_change() const
+        {
+            std::lock_guard<std::mutex> lk(mutex_);
+            return offered_deadline_status_.total_count_change;
         }
 
         unsigned int times_liveliness_lost() const
@@ -269,9 +276,10 @@ class PubSubWriter
                 const Listener&) = delete;
 
         PubSubWriter& writer_;
+        mutable std::mutex mutex_;
 
-        //! The number of times deadline was missed
-        unsigned int times_deadline_missed_;
+        eprosima::fastdds::dds::OfferedDeadlineMissedStatus offered_deadline_status_{};
+
         //! The number of times liveliness was lost
         unsigned int times_liveliness_lost_;
         //! The number of times a sample has been removed unacknowledged
@@ -1757,6 +1765,11 @@ public:
     unsigned int missed_deadlines() const
     {
         return listener_.missed_deadlines();
+    }
+
+    unsigned int missed_deadlines_change() const
+    {
+        return listener_.missed_deadlines_change();
     }
 
     unsigned int times_liveliness_lost() const
