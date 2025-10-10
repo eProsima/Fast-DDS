@@ -675,6 +675,17 @@ protected:
 
 private:
 
+    /**
+     *  (Re)configures the deadline timer:
+     *  In case of infinite deadline period cancel it, for 0 warn and notify once (with max counts), and
+     *  for non-infinite positive values store period.
+     */
+    void configure_deadline_timer_();
+
+    /**
+     * Notifies listeners that a deadline has been missed.
+     */
+    void notify_deadline_missed_nts_();
     void update_rtps_reader_qos();
 
     DataReaderQos get_datareader_qos_from_settings(
