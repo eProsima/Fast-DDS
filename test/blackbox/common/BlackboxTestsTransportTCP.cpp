@@ -18,10 +18,12 @@
 #include <thread>
 #include <random>
 
+#include <asio.hpp>
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
+#include <rtps/transport/tcp/RTCPHeader.h>
 
 #include "../api/dds-pim/TCPReqRepHelloWorldRequester.hpp"
 #include "../api/dds-pim/TCPReqRepHelloWorldReplier.hpp"
@@ -1600,6 +1602,58 @@ TEST_P(TransportTCP, large_data_tcp_no_frag)
     // Wait for reception acknowledgement
     reader.block_for_all();
     EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+}
+
+/**
+ * This is a regression test for issue #23655, corresponding to a deadlock produced when destroying the TCP transport of
+ * a participant while a read operation is still ongoing.
+ *
+ * The test creates a replier using TCP transport (TCP server), then creates a raw TCP socket to connect to the replier.
+ * Once connection is established, a partial header is sent to the replier, after which the latter is deleted,
+ * expecting the read operation to be safely aborted and no deadlock to occur.
+ *
+ * This test also verifies thread safety in this particular scenario; the mutex causing the deadlock was introduced
+ * to correct a non-thread-safe access to the socket attribute, so this test also checks thread safety is still present
+ * after solving the deadlock issue.
+ *
+ */
+TEST_P(TransportTCP, stop_during_incomplete_read)
+{
+    // Create replier (TCP server)
+    TCPReqRepHelloWorldReplier* replier = new TCPReqRepHelloWorldReplier();
+    replier->init(0, 0, global_port);
+
+    ASSERT_TRUE(replier->isInitialized());
+
+    // Create raw TCP socket and connect to the server
+    asio::io_context io_context;
+    asio::ip::tcp::resolver resolver(io_context);
+    auto endpoints = resolver.resolve(
+        use_ipv6 ? "::1" : "127.0.0.1",
+        std::to_string(global_port));
+
+    asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_context);
+
+    // Synchronous socket connection
+    std::error_code ec;
+    asio::connect(socket, endpoints, ec);
+    ASSERT_TRUE(!ec);
+
+    // Send an incomplete header
+    TCPHeader h;
+    asio::write(socket, asio::buffer(&h, 3), ec);
+    ASSERT_TRUE(!ec);
+
+    // Wait for data to be received by the server
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    // Destroy participant (and its TCP transport) while read is ongoing
+    delete replier;
+
+    // Close client's socket
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
+    socket.cancel(ec);
+    socket.close(ec);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
