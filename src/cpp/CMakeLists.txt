@@ -704,11 +704,6 @@ endif()
 # include the option parser targets
 set(INCLUDE_FASTDDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/optionparser-targets.cmake)")
 
-if(COMPILE_TOOLS)
-    # include the fast-discovery-server targets (not for linking but to hint binaries location and other target properties)
-    set(INCLUDE_FASTDDS_TARGETS "${INCLUDE_FASTDDS_TARGETS}\ninclude(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
-endif()
-
 # Add fastdds dependencies in its CMake config file.
 if(LINK_SSL)
     if(INSTALLER_PLATFORM)
