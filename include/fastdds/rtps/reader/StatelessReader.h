@@ -233,6 +233,7 @@ public:
 
     /**
      * Called after the change has been deserialized.
+<<<<<<< HEAD:include/fastdds/rtps/reader/StatelessReader.h
      * @param [in] change        Pointer to the change being accessed.
      * @param [in] wp            Writer proxy the @c change belongs to.
      * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
@@ -241,6 +242,18 @@ public:
             CacheChange_t* change,
             WriterProxy*& wp,
             bool mark_as_read) override;
+=======
+     * @param [in] change          Pointer to the change being accessed.
+     * @param [in] writer          Writer proxy the @c change belongs to.
+     * @param [in] mark_as_read    Whether the @c change should be marked as read or not.
+     * @param [in] should_send_ack Whether an ACKNACK should be sent to the writer or not.
+     */
+    void end_sample_access_nts(
+            CacheChange_t* change,
+            WriterProxy*& writer,
+            bool mark_as_read,
+            bool should_send_ack = false) override;
+>>>>>>> 8421fb02 (Avoid sending duplicated ACKs in DataSharing (#5986)):src/cpp/rtps/reader/StatelessReader.hpp
 
     /**
      * Called when the user has retrieved a change from the history.
