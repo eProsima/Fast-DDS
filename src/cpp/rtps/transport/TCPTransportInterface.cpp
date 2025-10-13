@@ -1181,7 +1181,7 @@ void TCPTransportInterface::perform_listen_operation(
         return;
     }
 
-    while (channel && TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
+    while (channel && channel->connected())
     {
         // Blocking receive.
         CDRMessage_t& msg = channel->message_buffer();
@@ -1191,7 +1191,7 @@ void TCPTransportInterface::perform_listen_operation(
             continue;
         }
 
-        if (TCPChannelResource::eConnectionStatus::eConnecting < channel->connection_status())
+        if (channel->connected())
         {
             // Processes the data through the CDR Message interface.
             logicalPort = IPLocator::getLogicalPort(remote_locator);
@@ -1286,7 +1286,7 @@ bool receive_header(
         {
             return false;
         }
-        else if (!channel->connection_status())
+        else if (channel->disconnected())
         {
             return false;
         }
@@ -1305,7 +1305,7 @@ bool receive_header(
         {
             return false;
         }
-        else if (!channel->connection_status())
+        else if (channel->disconnected())
         {
             return false;
         }
@@ -1346,7 +1346,7 @@ bool TCPTransportInterface::Receive(
         {
             header_found = receive_header(channel, tcp_header, ec);
         }
-        while (!header_found && !ec && channel->connection_status());
+        while (!header_found && !ec && !channel->disconnected());
 
         if (ec)
         {
@@ -1357,7 +1357,7 @@ bool TCPTransportInterface::Receive(
             close_tcp_socket(channel);
             success = false;
         }
-        else if (!channel->connection_status())
+        else if (channel->disconnected())
         {
             EPROSIMA_LOG_WARNING(DEBUG, "Failed to read TCP header: channel disconnected while reading.");
             success = false;
@@ -1403,7 +1403,7 @@ bool TCPTransportInterface::Receive(
                     if (tcp_header.logical_port == 0)
                     {
                         std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
-                        if (TCPChannelResource::eConnectionStatus::eDisconnected != channel->connection_status())
+                        if (!channel->disconnected())
                         {
                             std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
                             rtcp_message_manager = rtcp_manager.lock();
@@ -1660,6 +1660,7 @@ void TCPTransportInterface::SocketAccepted(
             }
 
             channel->set_options(configuration());
+            channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
             create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
@@ -1703,6 +1704,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             }
 
             secure_channel->set_options(configuration());
+            secure_channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
             create_listening_thread(secure_channel);
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
@@ -1738,14 +1740,11 @@ void TCPTransportInterface::SocketConnected(
 
         if (channel)
         {
-            if (!error)
+            if (!error && TCPChannelResource::eConnectionStatus::eConnecting == channel->connection_status())
             {
-                if (TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
-                {
-                    channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
-                    channel->set_options(configuration());
-                    create_listening_thread(channel);
-                }
+                channel->set_options(configuration());
+                channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
+                create_listening_thread(channel);
             }
             else
             {
