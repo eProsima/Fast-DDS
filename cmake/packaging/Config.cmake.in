@@ -22,8 +22,10 @@ endif()
 set_and_check(@PROJECT_NAME@_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(@PROJECT_NAME@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
-find_package(fastcdr REQUIRED)
-find_package(foonathan_memory REQUIRED)
+include(CMakeFindDependencyMacro)
+
+find_dependency(fastcdr REQUIRED)
+find_dependency(foonathan_memory REQUIRED)
 
 set(fastdds_known_comps static shared)
 set(fastdds_comp_static NO)
@@ -56,6 +58,11 @@ macro(fastdds_load_targets type)
         set(${CMAKE_FIND_PACKAGE_NAME}_FOUND FALSE)
         return()
     endif ()
+
+    if (${type} STREQUAL "static")
+        # Find related dependency packages like OpenSSL
+        @FASTDDS_STATIC_LINK_ONLY_OPT_DEPS@
+    endif()
 
     include("${fastdds_${type}_targets}")
 endmacro()

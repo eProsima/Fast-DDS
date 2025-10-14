@@ -372,6 +372,15 @@ endif()
 # include the option parser targets
 set(INCLUDE_FASTDDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/optionparser-targets.cmake)")
 
+# Prepare dependencies for static linking.
+set(FASTDDS_STATIC_LINK_ONLY_OPT_DEPS "")
+if (LINK_SSL)
+    set(FASTDDS_STATIC_LINK_ONLY_OPT_DEPS "${FASTDDS_STATIC_LINK_ONLY_OPT_DEPS}\nfind_dependency(OpenSSL REQUIRED)")
+endif()
+if (TARGET tinyxml2::tinyxml2)
+    set(FASTDDS_STATIC_LINK_ONLY_OPT_DEPS "${FASTDDS_STATIC_LINK_ONLY_OPT_DEPS}\nfind_dependency(TinyXml2 REQUIRED)")
+endif()
+
 configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
     ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
     INSTALL_DESTINATION ${INSTALL_DESTINATION_PATH}
