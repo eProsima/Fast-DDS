@@ -164,16 +164,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 
-# No need to expose linked libs when target is a shared library on MSVC.
-if(BUILD_SHARED_LIBS AND MSVC)
-    set(PRIVACY "PRIVATE")
-else()
-    set(PRIVACY "PUBLIC")
-endif()
-
 # Link library to external libraries.
 target_link_libraries(${PROJECT_NAME}
-    ${PRIVACY}
+    PUBLIC
     fastcdr
     foonathan_memory
 
@@ -188,7 +181,7 @@ target_link_libraries(${PROJECT_NAME}
 
 if (APPLE)
     target_link_libraries(${PROJECT_NAME}
-    ${PRIVACY}
+    PRIVATE
     "-framework CoreFoundation"
     "-framework IOKit"
     )

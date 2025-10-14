@@ -115,7 +115,7 @@ if(QNX)
     target_link_libraries(AccessControlTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(AccessControlTests ${PRIVACY} iphlpapi Shlwapi)
+    target_link_libraries(AccessControlTests PRIVATE iphlpapi Shlwapi)
 endif()
 
 

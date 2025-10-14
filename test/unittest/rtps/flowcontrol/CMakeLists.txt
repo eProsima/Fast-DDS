@@ -65,7 +65,7 @@ target_link_libraries(FlowControllerFactoryTests
     GTest::gmock
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(FlowControllerFactoryTests ${PRIVACY}
+    target_link_libraries(FlowControllerFactoryTests PRIVATE
         iphlpapi Shlwapi
         )
 endif()
@@ -103,7 +103,7 @@ target_link_libraries(FlowControllerPublishModesTests
     GTest::gmock
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(FlowControllerPublishModesTests ${PRIVACY}
+    target_link_libraries(FlowControllerPublishModesTests PRIVATE
         iphlpapi Shlwapi
         )
 endif()
@@ -137,7 +137,7 @@ target_link_libraries(FlowControllerSchedulersTests
     GTest::gmock
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(FlowControllerSchedulersTests ${PRIVACY}
+    target_link_libraries(FlowControllerSchedulersTests PRIVATE
         iphlpapi Shlwapi
         )
 endif()

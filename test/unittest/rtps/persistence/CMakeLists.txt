@@ -60,7 +60,7 @@ if(SQLITE3_SUPPORT)
         ${CMAKE_DL_LIBS}
         )
     if(MSVC OR MSVC_IDE)
-        target_link_libraries(PersistenceTests ${PRIVACY}
+        target_link_libraries(PersistenceTests PRIVATE
             iphlpapi Shlwapi
             )
     endif()

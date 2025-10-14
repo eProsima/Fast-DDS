@@ -100,7 +100,7 @@ target_link_libraries(StringMatchingTests
     ${MOCKS}
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
+    target_link_libraries(StringMatchingTests PRIVATE iphlpapi Shlwapi
         )
 endif()
 gtest_discover_tests(StringMatchingTests)

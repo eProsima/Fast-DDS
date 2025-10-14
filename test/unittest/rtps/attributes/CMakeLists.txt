@@ -85,9 +85,9 @@ target_link_libraries(
     ${CMAKE_DL_LIBS})
 
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32 fastdds::log)
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE fastcdr iphlpapi Shlwapi ws2_32 fastdds::log)
 else()
-    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} ${PRIVACY} fastcdr fastdds::log)
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE fastcdr fastdds::log)
 endif()
 
 gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}

@@ -387,7 +387,7 @@ if(QNX)
     target_link_libraries(DataWriterTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(DataWriterTests ${PRIVACY}
+    target_link_libraries(DataWriterTests PRIVATE
         iphlpapi Shlwapi
         )
 endif()

@@ -453,7 +453,7 @@ target_link_libraries(StatefulReaderTests
     eProsima_atomic
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(StatefulReaderTests ${PRIVACY}
+    target_link_libraries(StatefulReaderTests PRIVATE
         iphlpapi Shlwapi
         )
 endif()

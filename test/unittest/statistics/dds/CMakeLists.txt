@@ -596,7 +596,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp
         ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
-    target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
+    target_link_libraries(StatisticsDomainParticipantMockTests PRIVATE
         fastcdr
         fastdds::log
         fastdds::xtypes::dynamic-types::impl
@@ -611,7 +611,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         eProsima_atomic
         )
     if(MSVC OR MSVC_IDE)
-        target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}
+        target_link_libraries(StatisticsDomainParticipantMockTests PRIVATE
             iphlpapi Shlwapi
             )
     endif()
@@ -646,7 +646,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp
         ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
-    target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
+    target_link_libraries(StatisticsDomainParticipantStatusQueryableTests PRIVATE
         fastcdr
         fastdds::log
         fastdds::xtypes::dynamic-types::impl
@@ -661,7 +661,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         eProsima_atomic
         )
     if(MSVC OR MSVC_IDE)
-        target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
+        target_link_libraries(StatisticsDomainParticipantStatusQueryableTests PRIVATE
             iphlpapi Shlwapi
             )
     endif()
