@@ -67,16 +67,12 @@ public:
 
     void wait_discovery();
 
-<<<<<<< HEAD
-    void matched();
-=======
     void wait_discovery(
             unsigned int min_pub_matched,
             unsigned int min_sub_matched);
 
     void matched(
             bool is_pub);
->>>>>>> 5e01f498 (Set different content filter signatures for each requester (#5972))
 
     eprosima::fastdds::dds::ReplierQos create_replier_qos();
 
@@ -98,7 +94,8 @@ private:
 
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    unsigned int matched_;
+    unsigned int pub_matched_;
+    unsigned int sub_matched_;
 
     // Entity status changes are managed using the WaitSet on a different thread
     // The main thread remains blocked until the requester matches with the replier
