@@ -106,6 +106,8 @@ bool PDPStatelessWriter::send_to_fixed_locators(
         const uint32_t& total_bytes,
         std::chrono::steady_clock::time_point& max_blocking_time_point) const
 {
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
     bool ret = true;
 
     if (should_reach_all_destinations_)
