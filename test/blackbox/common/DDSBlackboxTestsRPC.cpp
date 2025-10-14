@@ -18,6 +18,9 @@
 #include <fastdds/dds/rpc/interfaces.hpp>
 #include <fastdds/dds/rpc/RemoteExceptionCode_t.hpp>
 
+#include "ReqRepHelloWorldReplier.hpp"
+#include "ReqRepHelloWorldRequester.hpp"
+
 namespace rpc = eprosima::fastdds::dds::rpc;
 
 TEST(RPC, ExceptionCodes)
