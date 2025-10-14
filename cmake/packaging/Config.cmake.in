@@ -57,10 +57,6 @@ macro(fastdds_load_targets type)
         return()
     endif ()
 
-    # find related dependency packages like OpenSSL
-    @FASTDDS_INSTALLER_OPT_DEPS@
-    @FASTDDS_PACKAGE_WIN32_OPT_DEPS@
-
     include("${fastdds_${type}_targets}")
 endmacro()
 

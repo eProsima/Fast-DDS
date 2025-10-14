@@ -372,14 +372,6 @@ endif()
 # include the option parser targets
 set(INCLUDE_FASTDDS_TARGETS "include(\${CMAKE_CURRENT_LIST_DIR}/optionparser-targets.cmake)")
 
-# Add fastdds dependencies in its CMake config file.
-if(LINK_SSL)
-    if(WIN32)
-        # windows from sources only requires OpenSSL on static libraries
-        set(FASTDDS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
-    endif()
-endif()
-
 configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in
     ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
     INSTALL_DESTINATION ${INSTALL_DESTINATION_PATH}
