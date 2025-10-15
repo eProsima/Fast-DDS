@@ -76,7 +76,12 @@ public:
 
     void wait_discovery();
 
-    void matched();
+    void wait_discovery(
+            unsigned int min_pub_matched,
+            unsigned int min_sub_matched);
+
+    void matched(
+            bool is_pub);
 
     /**
      * Sends a request without checking the matching status.
@@ -122,7 +127,8 @@ private:
     eprosima::fastdds::dds::WaitSet wait_set_;
 
     bool initialized_;
-    unsigned int matched_;
+    unsigned int pub_matched_;
+    unsigned int sub_matched_;
     eprosima::fastdds::rtps::SampleIdentity related_sample_identity_;
     eprosima::fastdds::rtps::SampleIdentity received_sample_identity_;
 

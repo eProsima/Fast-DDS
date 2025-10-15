@@ -41,7 +41,8 @@ ReqRepHelloWorldReplier::ReqRepHelloWorldReplier()
     , service_(nullptr)
     , participant_(nullptr)
     , initialized_(false)
-    , matched_(0)
+    , pub_matched_(0)
+    , sub_matched_(0)
 {
 }
 
@@ -115,23 +116,38 @@ void ReqRepHelloWorldReplier::newNumber(
 
 void ReqRepHelloWorldReplier::wait_discovery()
 {
+    wait_discovery(1, 1);
+}
+
+void ReqRepHelloWorldReplier::wait_discovery(
+        unsigned int min_pub_matched,
+        unsigned int min_sub_matched)
+{
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
 
     std::cout << "Replier is waiting discovery..." << std::endl;
 
     cvDiscovery_.wait(lock, [&]()
             {
-                return matched_ > 1;
+                return pub_matched_ >= min_pub_matched && sub_matched_ >= min_sub_matched;
             });
 
     std::cout << "Replier discovery finished..." << std::endl;
 }
 
-void ReqRepHelloWorldReplier::matched()
+void ReqRepHelloWorldReplier::matched(
+        bool is_pub)
 {
     std::unique_lock<std::mutex> lock(mutexDiscovery_);
-    ++matched_;
-    if (matched_ > 1)
+    if (is_pub)
+    {
+        ++pub_matched_;
+    }
+    else
+    {
+        ++sub_matched_;
+    }
+    if (pub_matched_ > 0 && sub_matched_ > 0)
     {
         cvDiscovery_.notify_one();
     }
@@ -188,9 +204,11 @@ void ReqRepHelloWorldReplier::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)pub_matched_)
                     {
-                        matched();
+                        matched(true);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::subscription_matched()))
@@ -208,9 +226,11 @@ void ReqRepHelloWorldReplier::process_status_changes()
                         continue;
                     }
 
-                    if (status.current_count_change > 0)
+                    // status.current_count_change is shadowed by the internal entity listeners
+                    // so check also the current_count
+                    if (status.current_count_change > 0 || status.current_count > (int32_t)sub_matched_)
                     {
-                        matched();
+                        matched(false);
                     }
                 }
                 else if (status_changes.is_active(StatusMask::data_available()))
