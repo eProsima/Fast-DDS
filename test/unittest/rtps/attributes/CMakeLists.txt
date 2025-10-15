@@ -79,15 +79,14 @@ target_include_directories( ${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 
-target_link_libraries(
-    ${SERVER_ATTRIBUTES_TESTS_EXEC}
+target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC}
+    fastcdr
+    fastdds::log
     GTest::gtest
     ${CMAKE_DL_LIBS})
 
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE fastcdr iphlpapi Shlwapi ws2_32 fastdds::log)
-else()
-    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE fastcdr fastdds::log)
+    target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC} iphlpapi Shlwapi ws2_32)
 endif()
 
 gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}

@@ -101,7 +101,7 @@ target_include_directories(AccessControlTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 
-target_link_libraries(AccessControlTests
+    target_link_libraries(AccessControlTests
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     fastcdr
@@ -115,7 +115,7 @@ if(QNX)
     target_link_libraries(AccessControlTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(AccessControlTests PRIVATE iphlpapi Shlwapi)
+    target_link_libraries(AccessControlTests iphlpapi Shlwapi)
 endif()
 
 

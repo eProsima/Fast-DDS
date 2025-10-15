@@ -453,8 +453,6 @@ target_link_libraries(StatefulReaderTests
     eProsima_atomic
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(StatefulReaderTests PRIVATE
-        iphlpapi Shlwapi
-        )
+    target_link_libraries(StatefulReaderTests iphlpapi Shlwapi)
 endif()
 gtest_discover_tests(StatefulReaderTests)

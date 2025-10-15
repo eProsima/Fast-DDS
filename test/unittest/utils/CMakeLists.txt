@@ -100,8 +100,7 @@ target_link_libraries(StringMatchingTests
     ${MOCKS}
     )
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(StringMatchingTests PRIVATE iphlpapi Shlwapi
-        )
+    target_link_libraries(StringMatchingTests iphlpapi Shlwapi)
 endif()
 gtest_discover_tests(StringMatchingTests)
 
@@ -179,17 +178,17 @@ gtest_discover_tests(SystemInfoTests)
 add_executable(SharedMutexTests shared_mutex_tests.cpp)
 target_compile_definitions(SharedMutexTests PUBLIC USE_THIRDPARTY_SHARED_MUTEX=1)
 target_include_directories(SharedMutexTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
+target_link_libraries(SharedMutexTests GTest::gtest)
 gtest_discover_tests(SharedMutexTests)
 
 add_executable(TreeNodeTests ${TREETESTS_SOURCE})
 target_include_directories(TreeNodeTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(TreeNodeTests PUBLIC GTest::gtest)
+target_link_libraries(TreeNodeTests GTest::gtest)
 gtest_discover_tests(TreeNodeTests)
 
 add_executable(RefCountedPointerTests ${REF_COUNTED_POINTER_TESTS_SOURCE})
 target_include_directories(RefCountedPointerTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(RefCountedPointerTests PUBLIC GTest::gtest)
+target_link_libraries(RefCountedPointerTests GTest::gtest)
 gtest_discover_tests(RefCountedPointerTests)
 
 ###############################################################################

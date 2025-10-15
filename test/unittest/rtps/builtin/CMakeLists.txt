@@ -79,6 +79,7 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(BuiltinDataSerializationTests
+    fastcdr
     fastdds::log
     foonathan_memory
     GTest::gmock
@@ -87,9 +88,7 @@ if(QNX)
     target_link_libraries(BuiltinDataSerializationTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(BuiltinDataSerializationTests PRIVATE fastcdr iphlpapi Shlwapi ws2_32)
-else()
-    target_link_libraries(BuiltinDataSerializationTests PRIVATE fastcdr)
+    target_link_libraries(BuiltinDataSerializationTests iphlpapi Shlwapi ws2_32)
 endif()
 
 gtest_discover_tests(BuiltinDataSerializationTests)

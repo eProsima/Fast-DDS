@@ -60,9 +60,7 @@ if(SQLITE3_SUPPORT)
         ${CMAKE_DL_LIBS}
         )
     if(MSVC OR MSVC_IDE)
-        target_link_libraries(PersistenceTests PRIVATE
-            iphlpapi Shlwapi
-            )
+        target_link_libraries(PersistenceTests iphlpapi Shlwapi)
     endif()
     gtest_discover_tests(PersistenceTests)
 

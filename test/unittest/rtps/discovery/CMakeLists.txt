@@ -77,6 +77,7 @@ target_include_directories(EdpTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 target_link_libraries(EdpTests
+    fastcdr
     fastdds::log
     fastdds::xtypes::type-representation
     fastdds::xtypes::dynamic-types::impl
@@ -87,9 +88,7 @@ if(QNX)
     target_link_libraries(EdpTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(EdpTests PRIVATE fastcdr iphlpapi Shlwapi ws2_32)
-else()
-    target_link_libraries(EdpTests PRIVATE fastcdr)
+    target_link_libraries(EdpTests iphlpapi Shlwapi ws2_32)
 endif()
 
 gtest_discover_tests(EdpTests)
@@ -190,6 +189,7 @@ target_include_directories(PDPTests PRIVATE
     )
 
 target_link_libraries(PDPTests
+    fastcdr
     fastdds::log
     foonathan_memory
     GTest::gmock
@@ -199,9 +199,7 @@ if(QNX)
     target_link_libraries(PDPTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(PDPTests PRIVATE fastcdr iphlpapi Shlwapi ws2_32)
-else()
-    target_link_libraries(PDPTests PRIVATE fastcdr)
+    target_link_libraries(PDPTests iphlpapi Shlwapi ws2_32)
 endif()
 
 gtest_discover_tests(PDPTests)

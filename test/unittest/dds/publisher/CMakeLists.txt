@@ -387,9 +387,7 @@ if(QNX)
     target_link_libraries(DataWriterTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(DataWriterTests PRIVATE
-        iphlpapi Shlwapi
-        )
+    target_link_libraries(DataWriterTests iphlpapi Shlwapi)
 endif()
 gtest_discover_tests(DataWriterTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
