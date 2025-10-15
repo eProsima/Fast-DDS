@@ -98,16 +98,14 @@ target_include_directories(DynamicTypesTests
     ${PROJECT_SOURCE_DIR}/test/utils/
     )
 target_link_libraries(DynamicTypesTests
-    GTest::gtest
-    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
-    $<$<BOOL:${WIN32}>:ws2_32>
-    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     fastcdr
     fastdds
+    GTest::gtest
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     )
-if(QNX)
-    target_link_libraries(DynamicTypesTests socket)
-endif()
 gtest_discover_tests(DynamicTypesTests)
 
 add_executable(DynamicTypesDDSTypesTest ${DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE})

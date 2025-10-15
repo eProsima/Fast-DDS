@@ -97,11 +97,9 @@ target_link_libraries(StringMatchingTests
     fastcdr
     fastdds::log
     GTest::gtest
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${MOCKS}
     )
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(StringMatchingTests iphlpapi Shlwapi)
-endif()
 gtest_discover_tests(StringMatchingTests)
 
 
@@ -140,11 +138,9 @@ target_link_libraries(LocatorTests
     fastcdr
     fastdds::log
     GTest::gtest
+    $<$<BOOL:${QNX}>:socket>
     ${MOCKS}
     )
-if(QNX)
-    target_link_libraries(LocatorTests socket)
-endif()
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     message(STATUS "Ignoring 'LocatorDNSTests*'")
     set(IGNORE_COMMAND "-LocatorDNSTests*")

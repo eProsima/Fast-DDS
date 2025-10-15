@@ -37,7 +37,13 @@ target_include_directories(RTPSStatisticsTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 
-target_link_libraries(RTPSStatisticsTests fastdds fastcdr GTest::gtest GTest::gmock)
+target_link_libraries(RTPSStatisticsTests
+    fastdds
+    fastcdr
+    GTest::gtest
+    GTest::gmock
+    $<$<BOOL:${QNX}>:socket>
+)
 gtest_discover_tests(RTPSStatisticsTests)
 
 set(TCPTransportInterface_SOURCE
@@ -154,11 +160,7 @@ target_link_libraries(MonitorServiceTests
     GTest::gtest
     GTest::gmock
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    $<$<BOOL:${QNX}>:socket>
     )
 
 gtest_discover_tests(MonitorServiceTests)
-
-if(QNX)
-    target_link_libraries(RTPSStatisticsTests socket)
-    target_link_libraries(MonitorServiceTests socket)
-endif()

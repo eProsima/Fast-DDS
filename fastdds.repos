@@ -15,7 +15,3 @@ repositories:
         type: git
         url: https://github.com/eProsima/Fast-DDS-Gen.git
         version: master
-    googletest-distribution:
-        type: git
-        url: https://github.com/google/googletest.git
-        version: release-1.11.0

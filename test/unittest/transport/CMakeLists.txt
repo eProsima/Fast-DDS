@@ -345,13 +345,10 @@ target_link_libraries(UDPv4Tests
     fastdds::log
     GTest::gtest
     ${MOCKS}
-    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-if(QNX)
-    target_link_libraries(UDPv4Tests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(UDPv4Tests iphlpapi Shlwapi )
-endif()
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${QNX}>:socket>
+)
 gtest_discover_tests(UDPv4Tests)
 
 ##########################
@@ -382,13 +379,10 @@ if(NOT DISABLE_UDPV6_TESTS)
         fastdds::log
         GTest::gtest
         ${MOCKS}
-        $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-    if(QNX)
-        target_link_libraries(UDPv6Tests socket)
-    endif()
-    if(MSVC OR MSVC_IDE)
-        target_link_libraries(UDPv6Tests iphlpapi Shlwapi )
-    endif()
+        $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+        $<$<BOOL:${QNX}>:socket>
+    )
     gtest_discover_tests(UDPv6Tests)
 
     ##########################
@@ -416,15 +410,10 @@ if(NOT DISABLE_UDPV6_TESTS)
         fastdds::log
         GTest::gtest
         ${MOCKS}
-        $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-    if(QNX)
-        target_link_libraries(TCPv6Tests socket)
-    endif()
-    if(MSVC OR MSVC_IDE)
-        target_link_libraries(TCPv6Tests fastcdr iphlpapi Shlwapi)
-    else()
-        target_link_libraries(TCPv6Tests fastcdr)
-    endif()
+        $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+        $<$<BOOL:${QNX}>:socket>
+    )
     gtest_discover_tests(TCPv6Tests)
 endif()
 
@@ -453,15 +442,10 @@ target_link_libraries(TCPv4Tests
     fastdds::log
     GTest::gtest
     ${MOCKS}
-    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-if(QNX)
-    target_link_libraries(TCPv4Tests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(TCPv4Tests fastcdr iphlpapi Shlwapi)
-else()
-    target_link_libraries(TCPv4Tests fastcdr)
-endif()
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${QNX}>:socket>
+)
 gtest_discover_tests(TCPv4Tests)
 
 ##########################
@@ -494,15 +478,11 @@ if(IS_THIRDPARTY_BOOST_OK)
         GTest::gtest
         ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+        $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+        $<$<BOOL:${QNX}>:socket>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
         )
-    if(QNX)
-        target_link_libraries(SharedMemTests socket)
-    endif()
-    if(MSVC OR MSVC_IDE)
-        target_link_libraries(SharedMemTests iphlpapi Shlwapi )
-    endif()
     gtest_discover_tests(SharedMemTests)
 endif()
 
@@ -563,11 +543,8 @@ target_link_libraries(AsioHelpersTests
     fastdds::log
     GTest::gtest
     ${MOCKS}
-    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-if(QNX)
-    target_link_libraries(AsioHelpersTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(AsioHelpersTests iphlpapi Shlwapi )
-endif()
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${QNX}>:socket>
+)
 gtest_discover_tests(AsioHelpersTests)

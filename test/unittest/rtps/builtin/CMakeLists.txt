@@ -83,12 +83,9 @@ target_link_libraries(BuiltinDataSerializationTests
     fastdds::log
     foonathan_memory
     GTest::gmock
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS})
-if(QNX)
-    target_link_libraries(BuiltinDataSerializationTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(BuiltinDataSerializationTests iphlpapi Shlwapi ws2_32)
-endif()
 
 gtest_discover_tests(BuiltinDataSerializationTests)

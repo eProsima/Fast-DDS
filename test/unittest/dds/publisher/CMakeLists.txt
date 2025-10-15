@@ -336,10 +336,8 @@ target_include_directories(PublisherTests PRIVATE
     )
 target_link_libraries(PublisherTests fastdds fastcdr foonathan_memory
     GTest::gmock
+    $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS})
-if(QNX)
-    target_link_libraries(PublisherTests socket)
-endif()
 gtest_discover_tests(PublisherTests)
 
 add_executable(DataWriterTests ${DATAWRITERTESTS_SOURCE})
@@ -379,15 +377,10 @@ target_link_libraries(DataWriterTests
     ${TINYXML2_LIBRARY}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${QNX}>:socket>
     ${THIRDPARTY_BOOST_LINK_LIBS}
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     eProsima_atomic
     )
-if(QNX)
-    target_link_libraries(DataWriterTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(DataWriterTests iphlpapi Shlwapi)
-endif()
 gtest_discover_tests(DataWriterTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

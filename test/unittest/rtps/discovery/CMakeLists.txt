@@ -83,13 +83,10 @@ target_link_libraries(EdpTests
     fastdds::xtypes::dynamic-types::impl
     foonathan_memory
     GTest::gmock
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS})
-if(QNX)
-    target_link_libraries(EdpTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(EdpTests iphlpapi Shlwapi ws2_32)
-endif()
 
 gtest_discover_tests(EdpTests)
 
@@ -193,13 +190,10 @@ target_link_libraries(PDPTests
     fastdds::log
     foonathan_memory
     GTest::gmock
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-if(QNX)
-    target_link_libraries(PDPTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(PDPTests iphlpapi Shlwapi ws2_32)
-endif()
 
 gtest_discover_tests(PDPTests)
