@@ -452,9 +452,4 @@ target_link_libraries(StatefulReaderTests
     ${THIRDPARTY_BOOST_LINK_LIBS}
     eProsima_atomic
     )
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(StatefulReaderTests ${PRIVACY}
-        iphlpapi Shlwapi
-        )
-endif()
 gtest_discover_tests(StatefulReaderTests)

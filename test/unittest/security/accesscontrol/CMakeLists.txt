@@ -107,17 +107,12 @@ target_link_libraries(AccessControlTests
     fastcdr
     fastdds::log
     foonathan_memory
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     ${TINYXML2_LIBRARY}
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
-if(QNX)
-    target_link_libraries(AccessControlTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(AccessControlTests ${PRIVACY} iphlpapi Shlwapi)
-endif()
-
 
 gtest_discover_tests(AccessControlTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

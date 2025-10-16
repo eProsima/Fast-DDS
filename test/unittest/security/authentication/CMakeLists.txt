@@ -81,10 +81,8 @@ target_link_libraries(BuiltinPKIDH
     fastdds::log
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
-if(QNX)
-    target_link_libraries(BuiltinPKIDH socket)
-endif()
 gtest_discover_tests(BuiltinPKIDH
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

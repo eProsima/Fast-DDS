@@ -22,11 +22,10 @@ endif()
 set_and_check(@PROJECT_NAME@_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(@PROJECT_NAME@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
-find_package(fastcdr REQUIRED)
-find_package(foonathan_memory REQUIRED)
-find_package(TinyXML2 QUIET)
-@FASTDDS_INSTALLER_DEPS_ANCILLARY@
-@FASTDDS_PACKAGE_UNIX_OPT_DEPS@
+include(CMakeFindDependencyMacro)
+
+find_dependency(fastcdr REQUIRED)
+find_dependency(foonathan_memory REQUIRED)
 
 set(fastdds_known_comps static shared)
 set(fastdds_comp_static NO)
@@ -60,9 +59,10 @@ macro(fastdds_load_targets type)
         return()
     endif ()
 
-    # find related dependency packages like OpenSSL
-    @FASTDDS_INSTALLER_OPT_DEPS@
-    @FASTDDS_PACKAGE_WIN32_OPT_DEPS@
+    if (${type} STREQUAL "static")
+        # Find related dependency packages like OpenSSL
+        @FASTDDS_STATIC_LINK_ONLY_OPT_DEPS@
+    endif()
 
     include("${fastdds_${type}_targets}")
 endmacro()

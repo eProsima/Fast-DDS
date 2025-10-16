@@ -95,13 +95,9 @@ target_link_libraries(GuidUtilsTests
     fastcdr
     fastdds::log
     GTest::gtest
+    $<$<BOOL:${WIN32}>:ws2_32>
+    $<$<BOOL:${QNX}>:socket>
     )
-if(QNX)
-    target_link_libraries(GuidUtilsTests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(GuidUtilsTests ws2_32)
-endif()
 gtest_discover_tests(GuidUtilsTests)
 
 add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
