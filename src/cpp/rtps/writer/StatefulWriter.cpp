@@ -1451,6 +1451,8 @@ bool StatefulWriter::all_readers_updated()
 bool StatefulWriter::wait_for_all_acked(
         const Duration_t& max_wait)
 {
+    send_periodic_heartbeat();
+
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);
 
