@@ -100,3 +100,45 @@ TEST(Reliability, DisableHeartbeatPiggybackTrue)
 {
     reliability_disable_heartbeat_piggyback(true);
 }
+
+/**
+ * This test checks that waitForAllAcked() triggers a heartbeat if needed.
+ */
+TEST(Reliability, wait_for_all_acked_triggers_heartbeat)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    // Either ensure that the history will not become full, or disable piggyback heartbeats
+    static constexpr int32_t HISTORY_DEPTH = 10;
+    static constexpr int32_t NUM_SAMPLES = 1;
+    static_assert(NUM_SAMPLES < HISTORY_DEPTH, "NUM_SAMPLES must be less than HISTORY_DEPTH");
+
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(HISTORY_DEPTH)
+            .init();
+
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+            .history_depth(HISTORY_DEPTH)
+            .heartbeat_period_seconds(180000) // Large heartbeat period to avoid interference
+            .init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Wait for the initial heartbeat/acknack exchange to finish
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    auto data = default_helloworld_data_generator(NUM_SAMPLES);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // Wait until all data is acknowledged. This should trigger a heartbeat.
+    ASSERT_TRUE(writer.waitForAllAcked(std::chrono::seconds(1)));
+}
