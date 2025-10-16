@@ -55,7 +55,7 @@
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.h>
-#endif //FASTDDS_STATISTICS
+#endif // FASTDDS_STATISTICS
 
 using eprosima::fastrtps::RecursiveTimedMutex;
 using eprosima::fastrtps::c_TimeInfinite;
@@ -260,12 +260,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     reader_ = reader;
 
-    deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
-                    [&]() -> bool
-                    {
-                        return deadline_missed();
-                    },
-                    qos_.deadline().period.to_ns() * 1e-6);
+    configure_deadline_timer_();
 
     lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
                     [&]() -> bool
@@ -341,7 +336,7 @@ void DataReaderImpl::stop()
 
 DataReaderImpl::~DataReaderImpl()
 {
-    // assert there are no pending conditions
+    // Assert there are no pending conditions
     assert(read_conditions_.empty());
 
     // Disable the datareader to prevent receiving data in the middle of deleting it
@@ -868,6 +863,9 @@ ReturnCode_t DataReaderImpl::set_qos(
         return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
     }
 
+    // Take a snapshot of the current QoS before mutating it
+    const DataReaderQos old_qos = qos_;
+
     set_qos(qos_, qos_to_set, !enabled);
 
     if (enabled)
@@ -875,27 +873,25 @@ ReturnCode_t DataReaderImpl::set_qos(
         // NOTIFY THE BUILTIN PROTOCOLS THAT THE READER HAS CHANGED
         update_rtps_reader_qos();
 
-        // Deadline
-        if (qos_.deadline().period != c_TimeInfinite)
+        // If the deadline period actually changed, (re)configure the timer.
+        if (old_qos.deadline().period != qos_.deadline().period)
         {
-            deadline_duration_us_ = duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
-            deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
-        }
-        else
-        {
-            deadline_timer_->cancel_timer();
+            configure_deadline_timer_();
         }
 
         // Lifespan
-        if (qos_.lifespan().duration != c_TimeInfinite)
+        if (old_qos.lifespan().duration != qos_.lifespan().duration)
         {
-            lifespan_duration_us_ =
-                    std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
-            lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
-        }
-        else
-        {
-            lifespan_timer_->cancel_timer();
+            if (qos_.lifespan().duration != c_TimeInfinite)
+            {
+                lifespan_duration_us_ =
+                        std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
+                lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
+            }
+            else
+            {
+                lifespan_timer_->cancel_timer();
+            }
         }
     }
 
@@ -978,7 +974,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
 
 #ifdef FASTDDS_STATISTICS
     notify_status_observer(statistics::LIVELINESS_CHANGED);
-#endif //FASTDDS_STATISTICS
+#endif // FASTDDS_STATISTICS
 
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1001,7 +997,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
 
 #ifdef FASTDDS_STATISTICS
     notify_status_observer(statistics::INCOMPATIBLE_QOS);
-#endif //FASTDDS_STATISTICS
+#endif // FASTDDS_STATISTICS
 
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1024,7 +1020,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
 
 #ifdef FASTDDS_STATISTICS
     notify_status_observer(statistics::SAMPLE_LOST);
-#endif //FASTDDS_STATISTICS
+#endif // FASTDDS_STATISTICS
 
     data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1058,12 +1054,12 @@ void DataReaderImpl::InnerDataReaderListener::notify_status_observer(
     {
         if (!statistics_pp_impl->get_status_observer()->on_local_entity_status_change(data_reader_->guid(), status_id))
         {
-            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not set entity status");
+            EPROSIMA_LOG_ERROR(DATA_READER, "Could not set entity status");
         }
     }
 }
 
-#endif //FASTDDS_STATISTICS
+#endif // FASTDDS_STATISTICS
 
 bool DataReaderImpl::on_data_available(
         const GUID_t& writer_guid,
@@ -1102,13 +1098,14 @@ bool DataReaderImpl::on_new_cache_change_added(
         return false;
     }
 
-    if (qos_.deadline().period != c_TimeInfinite)
+    if (qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != c_TimeInfinite &&
+            deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max())
     {
         if (!history_.set_next_deadline(
                     change->instanceHandle,
                     steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_)))
         {
-            EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
+            EPROSIMA_LOG_ERROR(DATA_READER, "Could not set next deadline in the history");
         }
         else if (timer_owner_ == change->instanceHandle || timer_owner_ == InstanceHandle_t())
         {
@@ -1150,7 +1147,7 @@ bool DataReaderImpl::on_new_cache_change_added(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(SUBSCRIBER, "A change was added to history that could not be retrieved");
+        EPROSIMA_LOG_ERROR(DATA_READER, "A change was added to history that could not be retrieved");
     }
 
     // Update and restart the timer
@@ -1203,14 +1200,16 @@ ReturnCode_t DataReaderImpl::get_subscription_matched_status(
 
 bool DataReaderImpl::deadline_timer_reschedule()
 {
-    assert(qos_.deadline().period != c_TimeInfinite);
-
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+
+    assert(qos_.deadline().period != c_TimeInfinite);
+    assert(deadline_timer_ != nullptr);
+    assert(deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max());
 
     steady_clock::time_point next_deadline_us;
     if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
     {
-        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not get the next deadline from the history");
+        EPROSIMA_LOG_ERROR(DATA_READER, "Could not get the next deadline from the history");
         return false;
     }
     auto interval_ms = duration_cast<milliseconds>(next_deadline_us - steady_clock::now());
@@ -1219,15 +1218,55 @@ bool DataReaderImpl::deadline_timer_reschedule()
     return true;
 }
 
-bool DataReaderImpl::deadline_missed()
+void DataReaderImpl::configure_deadline_timer_()
 {
-    assert(qos_.deadline().period != c_TimeInfinite);
-
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
-    deadline_missed_status_.total_count++;
-    deadline_missed_status_.total_count_change++;
-    deadline_missed_status_.last_instance_handle = timer_owner_;
+    // Create the timer once
+    if (deadline_timer_ == nullptr)
+    {
+        deadline_timer_ = new TimedEvent(
+            subscriber_->rtps_participant()->get_resource_event(),
+            [this]() -> bool
+            {
+                return deadline_missed();
+            },
+            // Park timer with a huge interval (prevents spurious callbacks); we'll arm/cancel explicitly
+            std::numeric_limits<double>::max()
+            );
+    }
+
+    // Handle "infinite" and "zero" outside the callback
+    if (qos_.deadline().period == c_TimeInfinite)
+    {
+        deadline_duration_us_ = std::chrono::duration<double, std::micro>::max();
+        deadline_timer_->cancel_timer();
+        return;
+    }
+
+    deadline_duration_us_ =
+            std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
+
+    if (qos_.deadline().period.to_ns() == 0)
+    {
+        deadline_timer_->cancel_timer();
+
+        deadline_missed_status_.total_count = std::numeric_limits<uint32_t>::max();
+        deadline_missed_status_.total_count_change = std::numeric_limits<uint32_t>::max();
+        EPROSIMA_LOG_WARNING(
+            DATA_READER,
+            "Deadline period is 0, it will be ignored from now on.");
+
+        // Bump once and notify listener exactly once.
+        notify_deadline_missed_nts_();
+        return;
+    }
+
+    deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
+}
+
+void DataReaderImpl::notify_deadline_missed_nts_()
+{
     StatusMask notify_status = StatusMask::requested_deadline_missed();
     auto listener = get_listener_for(notify_status);
     if (nullptr != listener)
@@ -1238,15 +1277,37 @@ bool DataReaderImpl::deadline_missed()
 
 #ifdef FASTDDS_STATISTICS
     reader_listener_.notify_status_observer(statistics::DEADLINE_MISSED);
-#endif //FASTDDS_STATISTICS
+#endif // FASTDDS_STATISTICS
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+bool DataReaderImpl::deadline_missed()
+{
+    std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
+
+    assert(qos_.deadline().period != c_TimeInfinite);
+
+    deadline_missed_status_.total_count++;
+    deadline_missed_status_.total_count_change++;
+    deadline_missed_status_.last_instance_handle = timer_owner_;
+
+    notify_deadline_missed_nts_();
+
+    // If we just reached the max -> log ONCE, stop timer, and bail
+    if (deadline_missed_status_.total_count == std::numeric_limits<uint32_t>::max())
+    {
+        EPROSIMA_LOG_WARNING(DATA_READER,
+                "Maximum number of deadline missed messages reached. Stopping deadline timer.");
+        deadline_timer_->cancel_timer();
+        return false; // do not reschedule
+    }
 
     if (!history_.set_next_deadline(
                 timer_owner_,
                 steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_), true))
     {
-        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Could not set next deadline in the history");
+        EPROSIMA_LOG_ERROR(DATA_READER, "Could not set next deadline in the history");
         return false;
     }
     return deadline_timer_reschedule();
@@ -1913,7 +1974,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         default:
-            EPROSIMA_LOG_ERROR(DATA_WRITER, "Unknown data sharing kind.");
+            EPROSIMA_LOG_ERROR(DATA_READER, "Unknown data sharing kind.");
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
@@ -1945,14 +2006,14 @@ ReturnCode_t DataReaderImpl::delete_contained_entities()
     // Check pending ReadConditions
     for (detail::ReadConditionImpl* impl : read_conditions_)
     {
-        // should be alive
+        // Should be alive
         auto keep_alive = impl->shared_from_this();
         assert((bool)keep_alive);
-        // free ReadConditions
+        // Free ReadConditions
         impl->detach_all_conditions();
     }
 
-    // release the colection
+    // Release the collection
     read_conditions_.clear();
 
     return ReturnCode_t::RETCODE_OK;
@@ -2062,12 +2123,12 @@ ReadCondition* DataReaderImpl::create_readcondition(
 
     if (it != read_conditions_.end())
     {
-        // already there
+        // Already there
         impl = (*it)->shared_from_this();
     }
     else
     {
-        // create a new one
+        // Create a new one
         impl = std::make_shared<detail::ReadConditionImpl>(*this, key);
         impl->set_trigger_value(current_mask);
         // Add the implementation object to the collection
@@ -2078,7 +2139,7 @@ ReadCondition* DataReaderImpl::create_readcondition(
     ReadCondition* cond = new ReadCondition();
     auto ret_code = impl->attach_condition(cond);
 
-    // attach cannot fail in this scenario
+    // Attach cannot fail in this scenario
     assert(!!ret_code);
     (void)ret_code;
 
@@ -2114,7 +2175,7 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
 #   ifdef __cpp_lib_enable_shared_from_this
     std::weak_ptr<detail::ReadConditionImpl> wp = impl->weak_from_this();
 #   else
-    // remove when C++17 is enforced
+    // Remove when C++17 is enforced
     auto wp = std::weak_ptr<detail::ReadConditionImpl>(impl->shared_from_this());
 #   endif // ifdef __cpp_lib_enable_shared_from_this
 
@@ -2123,10 +2184,10 @@ ReturnCode_t DataReaderImpl::delete_readcondition(
 
     if (!!ret_code)
     {
-        // delete the condition
+        // Delete the condition
         delete a_condition;
 
-        // check if we must remove the implementation object
+        // Check if we must remove the implementation object
         if (wp.expired())
         {
             read_conditions_.erase(it);
@@ -2171,7 +2232,7 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
                 last_mask_state_.instance_states & ~old_mask.instance_states;
     }
 
-    // traverse the conditions notifying
+    // Traverse the conditions notifying
     std::lock_guard<std::recursive_mutex> _(get_conditions_mutex());
     for (detail::ReadConditionImpl* impl : read_conditions_)
     {
