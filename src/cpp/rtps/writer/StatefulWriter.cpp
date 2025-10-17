@@ -1387,6 +1387,8 @@ bool StatefulWriter::all_readers_updated()
 bool StatefulWriter::wait_for_all_acked(
         const dds::Duration_t& max_wait)
 {
+    send_periodic_heartbeat();
+
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     std::unique_lock<std::mutex> all_acked_lock(all_acked_mutex_);
 
@@ -1508,7 +1510,8 @@ void StatefulWriter::check_acked_status()
                     listener_->on_writer_change_received_by_all(this, change);
 
                     // Stop if we got to either next_all_acked_notify_sequence_ or the first change
-                } while (seq > end_seq);
+                }
+                while (seq > end_seq);
             }
 
             next_all_acked_notify_sequence_ = min_low_mark + 1;
@@ -2079,7 +2082,8 @@ bool StatefulWriter::ack_timer_expired()
         do
         {
             last_sequence_number_++;
-        } while (!history_->get_change(
+        }
+        while (!history_->get_change(
             last_sequence_number_,
             getGuid(),
             &change) && last_sequence_number_ < next_sequence_number());
