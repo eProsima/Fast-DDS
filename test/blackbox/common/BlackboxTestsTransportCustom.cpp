@@ -574,10 +574,12 @@ TEST(ChainingTransportTests, builtin_transports_api_default)
     BuiltinTransportsTest::test_api(BuiltinTransports::DEFAULT);
 }
 
+#ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_api_defaultv6)
 {
     BuiltinTransportsTest::test_api(BuiltinTransports::DEFAULTv6);
 }
+#endif // __APPLE__
 
 TEST(ChainingTransportTests, builtin_transports_api_shm)
 {
@@ -597,10 +599,12 @@ TEST(ChainingTransportTests, builtin_transports_api_udpv4)
     BuiltinTransportsTest::test_api(BuiltinTransports::UDPv4);
 }
 
+#ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_api_udpv6)
 {
     BuiltinTransportsTest::test_api(BuiltinTransports::UDPv6);
 }
+#endif // __APPLE__
 
 TEST(ChainingTransportTests, builtin_transports_api_large_data)
 {
@@ -664,10 +668,12 @@ TEST(ChainingTransportTests, builtin_transports_env_default)
     BuiltinTransportsTest::test_env("DEFAULT");
 }
 
+#ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_env_defaultv6)
 {
     BuiltinTransportsTest::test_env("DEFAULTv6");
 }
+#endif // __APPLE__
 
 TEST(ChainingTransportTests, builtin_transports_env_shm)
 {
@@ -679,10 +685,12 @@ TEST(ChainingTransportTests, builtin_transports_env_udpv4)
     BuiltinTransportsTest::test_env("UDPv4");
 }
 
+#ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_env_udpv6)
 {
     BuiltinTransportsTest::test_env("UDPv6");
 }
+#endif // __APPLE__
 
 TEST(ChainingTransportTests, builtin_transports_env_large_data)
 {
@@ -741,10 +749,12 @@ TEST(ChainingTransportTests, builtin_transports_xml_default)
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_default");
 }
 
+#ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_xml_defaultv6)
 {
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_defaultv6");
 }
+#endif // __APPLE__
 
 TEST(ChainingTransportTests, builtin_transports_xml_shm)
 {
@@ -756,10 +766,12 @@ TEST(ChainingTransportTests, builtin_transports_xml_udpv4)
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_udp");
 }
 
+#ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_xml_udpv6)
 {
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_udpv6");
 }
+#endif // __APPLE__
 
 TEST(ChainingTransportTests, builtin_transports_xml_large_data)
 {

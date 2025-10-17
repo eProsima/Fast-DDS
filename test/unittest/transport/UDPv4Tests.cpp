@@ -432,6 +432,7 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
         Locator_t locator;
         for (auto& tmpLocator : interfaces)
         {
+            std::cout << "Found interface: " << tmpLocator << std::endl;
             if (tmpLocator.kind == LOCATOR_KIND_UDPv4 && IPLocator::toIPv4string(tmpLocator) != "127.0.0.1")
             {
                 locator = tmpLocator;
