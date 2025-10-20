@@ -506,22 +506,18 @@ bool StatelessReader::begin_sample_access_nts(
 
 void StatelessReader::end_sample_access_nts(
         CacheChange_t* change,
-<<<<<<< HEAD
         WriterProxy*& wp,
-        bool mark_as_read)
+        bool mark_as_read,
+        bool should_send_ack)
 {
-    change_read_by_user(change, wp, mark_as_read);
+    change_read_by_user(change, wp, mark_as_read, should_send_ack);
 }
 
 void StatelessReader::change_read_by_user(
         CacheChange_t* change,
-        WriterProxy* /*writer*/,
-        bool mark_as_read)
-=======
-        WriterProxy*& /*writer*/,
+        WriterProxy* /*wp*/,
         bool mark_as_read,
         bool /*should_send_ack*/)
->>>>>>> 8421fb02 (Avoid sending duplicated ACKs in DataSharing (#5986))
 {
     // Mark change as read
     if (mark_as_read && !change->isRead)

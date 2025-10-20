@@ -308,16 +308,6 @@ public:
 
     /**
      * Called after the change has been deserialized.
-<<<<<<< HEAD:include/fastdds/rtps/reader/StatefulReader.h
-     * @param [in] change        Pointer to the change being accessed.
-     * @param [in] wp            Writer proxy the @c change belongs to.
-     * @param [in] mark_as_read  Whether the @c change should be marked as read or not.
-     */
-    void end_sample_access_nts(
-            CacheChange_t* change,
-            WriterProxy*& wp,
-            bool mark_as_read) override;
-=======
      * @param [in] change          Pointer to the change being accessed.
      * @param [in] writer          Writer proxy the @c change belongs to.
      * @param [in] mark_as_read    Whether the @c change should be marked as read or not.
@@ -328,18 +318,19 @@ public:
             WriterProxy*& writer,
             bool mark_as_read,
             bool should_send_ack = false) override;
->>>>>>> 8421fb02 (Avoid sending duplicated ACKs in DataSharing (#5986)):src/cpp/rtps/reader/StatefulReader.hpp
 
     /**
      * Called when the user has retrieved a change from the history.
      * @param change Pointer to the change to ACK
      * @param writer Writer proxy of the \c change.
      * @param mark_as_read Whether the \c change should be marked as read or not
+     * @param should_send_ack Whether an ACKNACK should be sent to the writer or not.
      */
     void change_read_by_user(
             CacheChange_t* change,
             WriterProxy* writer,
-            bool mark_as_read = true) override;
+            bool mark_as_read = true,
+            bool should_send_ack = false) override;
 
 #ifdef FASTDDS_STATISTICS
     bool get_connections(

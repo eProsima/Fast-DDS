@@ -219,14 +219,16 @@ public:
     virtual void end_sample_access_nts(
             CacheChange_t* /*change*/,
             WriterProxy*& /*wp*/,
-            bool /*mark_as_read*/)
+            bool /*mark_as_read*/,
+            bool /*send_ack*/ = false)
     {
     }
 
     virtual void change_read_by_user(
             CacheChange_t* /*change*/,
             const WriterProxy* /*writer*/,
-            bool mark_as_read = true)
+            bool mark_as_read = true,
+            bool /*send_ack*/ = false)
     {
         (void) mark_as_read;
     }

@@ -148,10 +148,6 @@ struct ReadTakeCommand
                     ReturnCode_t previous_return_value = return_value_;
                     bool added = add_sample(*it, remove_change);
                     history_.change_was_processed_nts(change, added);
-<<<<<<< HEAD
-                    reader_->end_sample_access_nts(change, wp, added);
-=======
->>>>>>> 8421fb02 (Avoid sending duplicated ACKs in DataSharing (#5986))
 
                     // Check if the payload is dirty
                     if (added && !check_datasharing_validity(change, data_values_.has_ownership()))
@@ -171,7 +167,7 @@ struct ReadTakeCommand
 
                     // Only send ACK if the change will not be removed to avoid sending the same ACK twice
                     bool should_remove = remove_change || (added && take_samples);
-                    rtps::BaseReader::downcast(reader_)->end_sample_access_nts(change, wp, added, !should_remove);
+                    reader_->end_sample_access_nts(change, wp, added, !should_remove);
 
                     if (should_remove)
                     {
