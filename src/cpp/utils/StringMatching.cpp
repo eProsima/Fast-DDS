@@ -104,9 +104,6 @@ static bool do_match_pattern(
 
 #endif // if defined(__cplusplus_winrt)
 
-<<<<<<< HEAD
-} // namespace rtps
-=======
 bool StringMatching::matchPattern(
         const char* pattern,
         const char* str)
@@ -121,6 +118,6 @@ bool StringMatching::matchString(
     return do_match_pattern(str1, str2) || do_match_pattern(str2, str1);
 }
 
->>>>>>> 27ce90d9 (Allow empty partition list to match against `"*"` (#5989))
 } /* namespace rtps */
+} /* namespace fastrtps */
 } /* namespace eprosima */
