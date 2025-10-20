@@ -5068,6 +5068,16 @@ static void security_datagram_injection_on_reader_test(
 }
 
 /**
+ * This test is a regression test for redmine issue #23835.
+ */
+TEST(Security, DatagramInjectionOnReader_23835)
+{
+    security_datagram_injection_on_reader_test(
+        "HelloWorldTopic_DatagramInjectionOnReader_23835",
+        "datagrams/23835.bin");
+}
+
+/**
  * This test is a regression test for redmine issue #23836.
  */
 TEST(Security, DatagramInjectionOnReader_23836)
