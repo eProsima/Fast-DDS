@@ -32,6 +32,7 @@ files_needing_output_dir=(
     './test/unittest/dds/xtypes/serializers/idl/types/extensibility_struct/extensibility_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/key_struct/key_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/map_struct/map_struct.idl|./gen'
+    './test/unittest/dds/xtypes/serializers/idl/types/module_struct/module_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/primitives_struct/primitives_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/sequence_struct/sequence_struct.idl|./gen'
     './test/unittest/dds/xtypes/serializers/idl/types/string_struct/string_struct.idl|./gen'
