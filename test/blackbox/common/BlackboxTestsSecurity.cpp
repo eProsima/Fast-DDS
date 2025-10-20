@@ -28,6 +28,7 @@
 #include "PubSubWriterReader.hpp"
 #include "PubSubParticipant.hpp"
 #include "UDPMessageSender.hpp"
+#include "DatagramInjectionTransport.hpp"
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
@@ -5025,6 +5026,57 @@ void blackbox_security_init()
         exit(-1);
     }
 }
+
+/**
+ * This test serves as a regression test for several security advisories related to malicious
+ * datagrams received by a participant with security enabled.
+ *
+ * We should have a different test for each datagram, since each one could make the participant
+ * crash, and if one of them does, the rest won't be executed.
+ */
+static void security_datagram_injection_on_reader_test(
+        const std::string& topic_name,
+        const char* datagram_file)
+{
+    PubSubReader<HelloWorldPubSubType> reader(topic_name);
+
+    // Configure security
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+    PropertyPolicy extra_policy;
+    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_policy);
+
+    // Prepare datagram injection transport
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+
+    // Initialize reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    auto receivers = transport->get_receivers();
+    ASSERT_FALSE(receivers.empty());
+
+    // Inject datagram
+    DatagramInjectionTransport::deliver_datagram_from_file(receivers, datagram_file);
+
+    // Allow some time for processing
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // Clean up
+    reader.destroy();
+}
+
+/**
+ * This test is a regression test for redmine issue #23836.
+ */
+TEST(Security, DatagramInjectionOnReader_23836)
+{
+    security_datagram_injection_on_reader_test(
+        "HelloWorldTopic_DatagramInjectionOnReader_23836",
+        "datagrams/23836.bin");
+}
+
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
