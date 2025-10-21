@@ -563,7 +563,7 @@ public:
     }
 
 #if HAVE_SECURITY
-    void waitAuthorized(
+    void wait_authorized(
             std::chrono::seconds timeout = std::chrono::seconds::zero(),
             unsigned int expected = 1)
     {
