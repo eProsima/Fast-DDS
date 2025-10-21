@@ -64,7 +64,7 @@ env:
   fastdds-python-branch: '2.2.x'
   fastdds-docs-branch: '3.2.x'
   shapes-demo-branch: '3.2.x'
-  discovery-server-branch: '2.1.x'
+  discovery-server-branch: '2.0.x'
   
 defaults:
   run:
