@@ -515,7 +515,7 @@ void StatelessReader::end_sample_access_nts(
 
 void StatelessReader::change_read_by_user(
         CacheChange_t* change,
-        WriterProxy* /*wp*/,
+        WriterProxy* /*writer*/,
         bool mark_as_read,
         bool /*should_send_ack*/)
 {
