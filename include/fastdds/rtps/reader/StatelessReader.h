@@ -240,7 +240,7 @@ public:
      */
     void end_sample_access_nts(
             CacheChange_t* change,
-            WriterProxy*& writer,
+            WriterProxy*& wp,
             bool mark_as_read,
             bool should_send_ack = false) override;
 
