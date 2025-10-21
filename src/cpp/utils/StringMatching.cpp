@@ -118,6 +118,6 @@ bool StringMatching::matchString(
     return do_match_pattern(str1, str2) || do_match_pattern(str2, str1);
 }
 
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
