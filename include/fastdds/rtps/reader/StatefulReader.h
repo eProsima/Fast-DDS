@@ -309,7 +309,7 @@ public:
     /**
      * Called after the change has been deserialized.
      * @param [in] change          Pointer to the change being accessed.
-     * @param [in] writer          Writer proxy the @c change belongs to.
+     * @param [in] wp              Writer proxy the @c change belongs to.
      * @param [in] mark_as_read    Whether the @c change should be marked as read or not.
      * @param [in] should_send_ack Whether an ACKNACK should be sent to the writer or not.
      */
