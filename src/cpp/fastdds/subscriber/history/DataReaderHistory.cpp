@@ -902,6 +902,8 @@ bool DataReaderHistory::update_instance_nts(
 bool DataReaderHistory::writer_not_alive(
         const GUID_t& writer_guid)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
+
     bool ret_val = false;
 
     for (auto& it : instances_)
