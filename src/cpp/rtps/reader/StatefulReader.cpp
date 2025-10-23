@@ -1471,15 +1471,17 @@ bool StatefulReader::begin_sample_access_nts(
 void StatefulReader::end_sample_access_nts(
         CacheChange_t* change,
         WriterProxy*& wp,
-        bool mark_as_read)
+        bool mark_as_read,
+        bool should_send_ack)
 {
-    change_read_by_user(change, wp, mark_as_read);
+    change_read_by_user(change, wp, mark_as_read, should_send_ack);
 }
 
 void StatefulReader::change_read_by_user(
         CacheChange_t* change,
         WriterProxy* writer,
-        bool mark_as_read)
+        bool mark_as_read,
+        bool should_send_ack)
 {
     assert(!writer || change->writerGUID == writer->guid());
 
@@ -1493,7 +1495,7 @@ void StatefulReader::change_read_by_user(
         }
     }
 
-    if (mark_as_read)
+    if (should_send_ack && mark_as_read)
     {
         send_ack_if_datasharing(this, mp_history, writer, change->sequenceNumber);
     }

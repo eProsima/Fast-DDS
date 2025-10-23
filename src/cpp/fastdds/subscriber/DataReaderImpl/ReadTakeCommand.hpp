@@ -148,7 +148,6 @@ struct ReadTakeCommand
                     ReturnCode_t previous_return_value = return_value_;
                     bool added = add_sample(*it, remove_change);
                     history_.change_was_processed_nts(change, added);
-                    reader_->end_sample_access_nts(change, wp, added);
 
                     // Check if the payload is dirty
                     if (added && !check_datasharing_validity(change, data_values_.has_ownership()))
@@ -166,7 +165,11 @@ struct ReadTakeCommand
                         added = false;
                     }
 
-                    if (remove_change || (added && take_samples))
+                    // Only send ACK if the change will not be removed to avoid sending the same ACK twice
+                    bool should_remove = remove_change || (added && take_samples);
+                    reader_->end_sample_access_nts(change, wp, added, !should_remove);
+
+                    if (should_remove)
                     {
                         // Remove from history
                         history_.remove_change_sub(change, it);
