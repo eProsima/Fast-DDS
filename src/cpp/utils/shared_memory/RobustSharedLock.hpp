@@ -398,7 +398,8 @@ private:
                 close(fd);
                 throw std::runtime_error(("failed to lock " + file_path).c_str());
             }
-        } while (fd == -1);
+        }
+        while (fd == -1);
 
         return fd;
     }
