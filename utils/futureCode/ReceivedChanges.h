@@ -24,24 +24,31 @@
 
 namespace eprosima {
 namespace fastrtps {
-namespace rtps{
+namespace rtps {
 
-class ReceivedChanges {
+class ReceivedChanges
+{
 public:
-	ReceivedChanges();
-	virtual ~ReceivedChanges();
 
-	bool add(SequenceNumber_t& s);
+    ReceivedChanges();
+    virtual ~ReceivedChanges();
+
+    bool add(
+            SequenceNumber_t& s);
+
 private:
-	bool insertMissingSequenceNumbers(SequenceNumber_t& s);
-	bool missingSequenceNumberReceived(SequenceNumber_t& s);
 
-	std::vector<SequenceNumber_t> m_missingChanges;
-	SequenceNumber_t m_largestSequenceNumberReceived;
+    bool insertMissingSequenceNumbers(
+            SequenceNumber_t& s);
+    bool missingSequenceNumberReceived(
+            SequenceNumber_t& s);
+
+    std::vector<SequenceNumber_t> m_missingChanges;
+    SequenceNumber_t m_largestSequenceNumberReceived;
 
 };
 
-}
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */
 

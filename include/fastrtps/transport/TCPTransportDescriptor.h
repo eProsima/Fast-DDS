@@ -19,9 +19,9 @@
 
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using TCPTransportDescriptor = fastdds::rtps::TCPTransportDescriptor;
 

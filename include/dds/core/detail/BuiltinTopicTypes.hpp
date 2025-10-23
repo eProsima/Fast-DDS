@@ -76,7 +76,7 @@ TBytesTopicType<DELEGATE>::TBytesTopicType(
 }
 
 template<typename DELEGATE>
-TBytesTopicType<DELEGATE>::operator std::vector<uint8_t>&() const
+TBytesTopicType<DELEGATE>::operator std::vector<uint8_t>& () const
 {
     return this->delegate().value();
 }

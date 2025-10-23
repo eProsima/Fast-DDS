@@ -34,7 +34,7 @@ int compare_values(
         T rvalue)
 {
     return lvalue < rvalue ? -1 :
-                   lvalue > rvalue ? 1 : 0;
+           lvalue > rvalue ? 1 : 0;
 }
 
 /**

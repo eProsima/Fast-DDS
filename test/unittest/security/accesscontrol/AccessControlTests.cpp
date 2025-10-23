@@ -497,7 +497,7 @@ TEST_F(AccessControlTest, validation_ok_on_chained_ca)
     permissions_ca = "chainedcacert.pem";
     permissions_file = "permissions_signed_by_chained_ca.smime";
     governance_file = "governance_signed_by_chained_ca.smime";
-    
+
     topic_name = "HelloWorldTopic_no_partitions";
 
     RTPSParticipantAttributes subscriber_participant_attr;

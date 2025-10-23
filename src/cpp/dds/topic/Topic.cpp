@@ -63,7 +63,6 @@ Topic::~Topic()
 {
 }
 
-
 } //namespace topic
 } //namespace dds
 

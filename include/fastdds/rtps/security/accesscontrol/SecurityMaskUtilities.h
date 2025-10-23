@@ -23,7 +23,9 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-inline bool security_mask_matches(const uint32_t lv, const uint32_t rv)
+inline bool security_mask_matches(
+        const uint32_t lv,
+        const uint32_t rv)
 {
     if (((lv & (1UL << 31)) == 0) || ((rv & (1UL << 31)) == 0))
     {
@@ -33,9 +35,9 @@ inline bool security_mask_matches(const uint32_t lv, const uint32_t rv)
     return lv == rv;
 }
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_SECURITYMASKUTILITIES_H_

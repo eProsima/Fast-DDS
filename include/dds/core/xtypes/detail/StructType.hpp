@@ -55,7 +55,7 @@ public:
     void members(
             std::vector<xtypes::MemberType>& v)
     {
-        members_.reserve( v.size() + members_.size() );
+        members_.reserve( v.size() + members_.size());
 
         for (auto it = v.begin(); v.end() != it; ++it)
         {
@@ -68,7 +68,7 @@ public:
             MemberIter& begin,
             MemberIter& end)
     {
-        members_.reserve( (end - begin) + members_.size() );
+        members_.reserve((end - begin) + members_.size());
 
         for (auto it = begin; end != it; ++it)
         {
@@ -85,7 +85,7 @@ public:
     void annotations(
             std::vector<xtypes::Annotation>& v)
     {
-        annotations_.reserve( v.size() + annotations_.size() );
+        annotations_.reserve( v.size() + annotations_.size());
 
         for (auto it = v.begin(); v.end() != it; ++it)
         {
@@ -98,7 +98,7 @@ public:
             AnnotationIter& begin,
             AnnotationIter& end)
     {
-        annotations_.reserve( (end - begin) + annotations_.size() );
+        annotations_.reserve((end - begin) + annotations_.size());
 
         for (auto it = begin; end != it; ++it)
         {
@@ -129,7 +129,7 @@ public:
             {
                 return m.name() == s;
             }
-        );
+            );
 
         COND_EXCEP_THROW(retval == members_.end(), "member" + s + "not found");
         return *retval;
@@ -150,7 +150,7 @@ public:
             {
                 return t.name() == m.name();
             }
-        );
+            );
 
         COND_EXCEP_THROW(rv == members_.end(), "could not find " + m.name() + " member");
         members_.erase(rv);
@@ -166,7 +166,7 @@ public:
             {
                 return aa.akind() == a.akind();
             }
-        );
+            );
 
         COND_EXCEP_THROW(rv == annotations_.end(), "could not find such annotation");
         annotations_.erase(rv);

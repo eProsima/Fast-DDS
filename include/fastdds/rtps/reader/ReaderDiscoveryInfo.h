@@ -36,6 +36,8 @@ struct ReaderDiscoveryInfo
 public:
 
     //!Enum DISCOVERY_STATUS, four different status for discovered readers.
+    // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+    //                at the end of the enum, which does not build.
     //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
     enum RTPS_DllAPI DISCOVERY_STATUS
@@ -48,6 +50,7 @@ public:
         REMOVED_READER,
         IGNORED_READER
     };
+    // *INDENT-ON*
 
     ReaderDiscoveryInfo(
             const ReaderProxyData& data)

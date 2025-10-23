@@ -69,7 +69,7 @@ public:
 
     template<typename Q,
             template <typename> class K>
-    operator  K<Q>&()
+    operator  K<Q>& ()
     {
         return reinterpret_cast<K<Q>&>(*this);
     }

@@ -28,44 +28,49 @@
 #define GET_PID _getpid
 #else
 #define GET_PID getpid
-#endif
+#endif // if defined(_WIN32)
 
 class ReqRepAsReliableHelloWorldRequester : public ReqRepHelloWorldRequester
 {
-    public:
-        void configSubscriber(const std::string& suffix)
-        {
-            sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+public:
 
-            std::ostringstream t;
+    void configSubscriber(
+            const std::string& suffix)
+    {
+        sattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
-            t << "ReqRepAsReliableHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+        std::ostringstream t;
 
-            sattr.topic.topicName = t.str();
-        };
+        t << "ReqRepAsReliableHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
-        void configPublisher(const std::string& suffix)
-        {
-            puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        sattr.topic.topicName = t.str();
+    }
 
-            // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
-            // big CPU overhead sometimes
-            puattr.qos.m_reliability.max_blocking_time.seconds = 1;
-            puattr.qos.m_reliability.max_blocking_time.nanosec = 0;
+    void configPublisher(
+            const std::string& suffix)
+    {
+        puattr.qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
 
-            std::ostringstream t;
+        // Increase default max_blocking_time to 1 second, as our CI infrastructure shows some
+        // big CPU overhead sometimes
+        puattr.qos.m_reliability.max_blocking_time.seconds = 1;
+        puattr.qos.m_reliability.max_blocking_time.nanosec = 0;
 
-            t << "ReqRepAsReliableHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
+        std::ostringstream t;
 
-            puattr.topic.topicName = t.str();
-        }
+        t << "ReqRepAsReliableHelloworld_" << asio::ip::host_name() << "_" << GET_PID() << "_" << suffix;
 
-        ReqRepAsReliableHelloWorldRequester& durability_kind(const eprosima::fastrtps::DurabilityQosPolicyKind kind)
-        {
-            puattr.qos.m_durability.kind = kind;
-            sattr.qos.m_durability.kind = kind;
-            return *this;
-        }
+        puattr.topic.topicName = t.str();
+    }
+
+    ReqRepAsReliableHelloWorldRequester& durability_kind(
+            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+    {
+        puattr.qos.m_durability.kind = kind;
+        sattr.qos.m_durability.kind = kind;
+        return *this;
+    }
+
 };
 
 #endif // _TEST_BLACKBOX_REQREPASRELIABLEHELLOWORLDREQUESTER_HPP_

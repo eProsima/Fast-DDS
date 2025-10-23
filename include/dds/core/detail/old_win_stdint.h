@@ -54,7 +54,7 @@
 #else
 #define __STDINT_LONGLONG long long
 #define __STDINT_LONGLONG_SUFFIX LL
-#endif
+#endif // if _MSC_VER && (_MSC_VER < 1300)
 
 #if !defined( PASTE)
 #define PASTE2( x, y) x ## y
@@ -196,12 +196,12 @@ typedef unsigned __STDINT_LONGLONG uintmax_t;
 /* we need to check for SIZE_MAX already defined because MS defines it in limits.h */
 #ifndef SIZE_MAX
 #define SIZE_MAX UINTPTR_MAX
-#endif
+#endif // ifndef SIZE_MAX
 
 #ifndef WCHAR_MIN /* also in wchar.h */
 #define WCHAR_MIN 0
 #define WCHAR_MAX ((wchar_t)-1) /* UINT16_MAX */
-#endif
+#endif // ifndef WCHAR_MIN
 
 /*
  * wint_t is unsigned short for compatibility with MS runtime
@@ -244,4 +244,4 @@ typedef unsigned __STDINT_LONGLONG uintmax_t;
 
 #endif /* !defined ( __cplusplus) || defined __STDC_CONSTANT_MACROS */
 
-#endif
+#endif // ifndef _STDINT_H

@@ -23,9 +23,9 @@ namespace types {
 DynamicType_ptr::DynamicType_ptr(
         DynamicType* pType)
     : Base(pType, [](DynamicType* pType)
-{
-    DynamicTypeBuilderFactory::get_instance()->delete_type(pType);
-})
+            {
+                DynamicTypeBuilderFactory::get_instance()->delete_type(pType);
+            })
 {
 }
 

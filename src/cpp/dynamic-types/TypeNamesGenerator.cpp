@@ -98,7 +98,6 @@ std::string TypeNamesGenerator::get_map_type_name(
     return auxType.str();
 }
 
-
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

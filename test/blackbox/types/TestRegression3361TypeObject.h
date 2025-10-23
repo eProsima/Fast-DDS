@@ -32,10 +32,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -46,7 +46,7 @@
 #endif // TestRegression3361_SOURCE
 #else
 #define TestRegression3361_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define TestRegression3361_DllAPI
 #endif // _WIN32
@@ -57,8 +57,10 @@ eProsima_user_DllExport void registerTestRegression3361Types();
 
 
 
-eProsima_user_DllExport const TypeIdentifier* GetTestRegression3361Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetTestRegression3361Object(bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetTestRegression3361Identifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetTestRegression3361Object(
+        bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalTestRegression3361Object();
 eProsima_user_DllExport const TypeObject* GetCompleteTestRegression3361Object();
 

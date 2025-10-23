@@ -69,8 +69,8 @@ bool RTPSGapBuilder::flush()
     if (is_gap_pending_)
     {
         bool ok = with_specific_destination_ ?
-            group_.add_gap(initial_sequence_, gap_bitmap_, reader_guid_) :
-            group_.add_gap(initial_sequence_, gap_bitmap_);
+                group_.add_gap(initial_sequence_, gap_bitmap_, reader_guid_) :
+                group_.add_gap(initial_sequence_, gap_bitmap_);
         if (!ok)
         {
             return false;

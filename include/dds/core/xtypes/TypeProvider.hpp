@@ -50,7 +50,7 @@ public:
      * Load a type from the specified URI. If multiple types are defined
      * only the first one is returned.
      */
-    static std::vector<TDynamicType<DELEGATE> > load_types(
+    static std::vector<TDynamicType<DELEGATE>> load_types(
             const std::string& uri)
     {
         throw "Not implemented";

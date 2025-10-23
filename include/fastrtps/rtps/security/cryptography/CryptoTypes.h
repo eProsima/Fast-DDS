@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file Authentication.h	
+ * @file Authentication.h
  */
 #ifndef _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_
 #define _RTPS_SECURITY_CRYPTOGRAPHY_CRYPTOTYPES_H_

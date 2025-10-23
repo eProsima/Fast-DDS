@@ -34,19 +34,19 @@ static inline ResourceLimitedContainerConfig resource_limits_from_history(
         size_t increment = 1u)
 {
     if (history_attributes.maximumReservedCaches > 0 &&
-        history_attributes.initialReservedCaches == history_attributes.maximumReservedCaches)
+            history_attributes.initialReservedCaches == history_attributes.maximumReservedCaches)
     {
         return ResourceLimitedContainerConfig::fixed_size_configuration(history_attributes.maximumReservedCaches);
     }
 
     return
-    {
-        history_attributes.initialReservedCaches > 0 ?
+        {
+            history_attributes.initialReservedCaches > 0 ?
             static_cast<size_t>(history_attributes.initialReservedCaches) : 0,
-        history_attributes.maximumReservedCaches > 0 ?
+            history_attributes.maximumReservedCaches > 0 ?
             static_cast<size_t>(history_attributes.maximumReservedCaches) : std::numeric_limits<size_t>::max(),
-        increment > 0 ? increment : 1u
-    };
+            increment > 0 ? increment : 1u
+        };
 }
 
 } // namespace rtps

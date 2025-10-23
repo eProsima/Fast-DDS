@@ -17,9 +17,9 @@
 
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using TransportInterface = fastdds::rtps::TransportInterface;
 using SocketTransportDescriptor = fastdds::rtps::SocketTransportDescriptor;

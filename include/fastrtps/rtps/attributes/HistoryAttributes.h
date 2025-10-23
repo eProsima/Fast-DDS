@@ -26,4 +26,4 @@
 
 #endif /* HISTORYATTRIBUTES_H_ */
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

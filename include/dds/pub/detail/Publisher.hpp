@@ -29,9 +29,9 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 class Publisher;
-}
-}
-}
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
 namespace dds {
 namespace pub {

@@ -124,7 +124,7 @@ public:
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
-public:
+    public:
 
         PartListener(
                 TestSubscriber* parent)
@@ -154,11 +154,12 @@ public:
         TestSubscriber* parent_;
         std::atomic<bool> discovered_;
 
-    } part_listener_;
+    }
+    part_listener_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
-public:
+    public:
 
         SubListener()
         {
@@ -181,7 +182,8 @@ public:
         TestSubscriber* mParent;
         int n_matched;
         uint32_t n_samples;
-    } m_subListener;
+    }
+    m_subListener;
 };
 
 #endif /* _TEST_SUBSCRIBER_H_ */

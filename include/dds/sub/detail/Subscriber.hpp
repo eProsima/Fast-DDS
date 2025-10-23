@@ -29,9 +29,9 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 class Subscriber;
-}
-}
-}
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
 
 namespace dds {
 namespace sub {

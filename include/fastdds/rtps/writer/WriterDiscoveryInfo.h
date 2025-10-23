@@ -34,6 +34,8 @@ struct WriterDiscoveryInfo
 public:
 
     //!Enum DISCOVERY_STATUS, four different status for discovered writers.
+    // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+    //                at the end of the enum, which does not build.
     //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
     enum RTPS_DllAPI DISCOVERY_STATUS
@@ -46,6 +48,7 @@ public:
         REMOVED_WRITER,
         IGNORED_WRITER
     };
+    // *INDENT-ON*
 
     WriterDiscoveryInfo(
             const WriterProxyData& data)
@@ -65,8 +68,8 @@ public:
     const WriterProxyData& info;
 };
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _RTPS_WRITER_WRITERDISCOVERYINFO_H_

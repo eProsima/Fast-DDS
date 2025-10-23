@@ -14,7 +14,7 @@
 
 /**
  * @file RTPSMessageCreator.h
-*/
+ */
 #ifndef CDRMESSAGECREATOR_H_
 #define CDRMESSAGECREATOR_H_
 

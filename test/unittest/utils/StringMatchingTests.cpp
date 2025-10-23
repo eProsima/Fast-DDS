@@ -19,24 +19,30 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-class StringMatchingTests: public ::testing::Test
+class StringMatchingTests : public ::testing::Test
 {
-    public:
-        StringMatchingTests(){}
-        ~StringMatchingTests(){}
+public:
 
-        char const *path = "foo/bar/baz";
-        char const *pattern0 = "foo/bar/baz";
-        char const *pattern1 = "foo*";
-        char const *pattern2 = "*baz";
-        char const *pattern3 = "foo/*/baz";
-        char const *pattern4 = "foo/bar/ba?";
-        char const *pattern5 = "*ba?*";
-        char const *pattern6 = "foo\\bar\\baz";
-        char const *pattern7 = "*bar";
-        char const *pattern8 = "*";
-        char const *pattern9 = "foo/bar/qux";
-        char const *pattern10 = "FOO/BAR/QUX";
+    StringMatchingTests()
+    {
+    }
+
+    ~StringMatchingTests()
+    {
+    }
+
+    char const* path = "foo/bar/baz";
+    char const* pattern0 = "foo/bar/baz";
+    char const* pattern1 = "foo*";
+    char const* pattern2 = "*baz";
+    char const* pattern3 = "foo/*/baz";
+    char const* pattern4 = "foo/bar/ba?";
+    char const* pattern5 = "*ba?*";
+    char const* pattern6 = "foo\\bar\\baz";
+    char const* pattern7 = "*bar";
+    char const* pattern8 = "*";
+    char const* pattern9 = "foo/bar/qux";
+    char const* pattern10 = "FOO/BAR/QUX";
 };
 
 
@@ -56,7 +62,9 @@ TEST_F(StringMatchingTests, patterns_with_wildcards)
 }
 
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
     testing::InitGoogleTest(&argc, argv);

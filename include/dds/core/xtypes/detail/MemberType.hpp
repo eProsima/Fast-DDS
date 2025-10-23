@@ -42,7 +42,7 @@ public:
         , dt_(dt.name(), dt.kind(), dt.annotations())
 #else
         , dt_(dt)
-#endif
+#endif // if (0)
         , ann_()
     {
     }
@@ -85,7 +85,7 @@ public:
             AnnoIter begin,
             AnnoIter end)
     {
-        ann_.reserve(ann_.size() + ( end - begin) );
+        ann_.reserve(ann_.size() + ( end - begin));
         for (auto it = begin; it != end; ++it)
         {
             ann_.emplace_back(*it);
@@ -123,8 +123,8 @@ public:
             {
                 return b.akind() == a.akind();
             }
-        );
-        if ( rem != ann_.end() )
+            );
+        if ( rem != ann_.end())
         {
             ann_.erase(rem);
         }
@@ -141,7 +141,7 @@ public:
             {
                 return (a.akind() == annotation_kind);
             }
-        );
+            );
 
         if (retVal == ann_.end())
         {
@@ -161,7 +161,7 @@ public:
             {
                 return (a.akind() == annotation_kind);
             }
-        );
+            );
     }
 
     bool is_optional()

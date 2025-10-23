@@ -51,22 +51,22 @@ public:
 template<
     typename T,
     template<typename> class DELEGATE>
-class TUnionType : public TDynamicType<DELEGATE<T> >
+class TUnionType : public TDynamicType<DELEGATE<T>>
 {
 public:
 
     TUnionType(
             const std::string& name,
-            const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
-            const std::vector<UnionCase<T> >& cases)
+            const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
+            const std::vector<UnionCase<T>>& cases)
     {
         throw "Not implemented";
     }
 
     TUnionType(
             const std::string& name,
-            const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
-            const std::vector<UnionCase<T> >& cases,
+            const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
+            const std::vector<UnionCase<T>>& cases,
             const Annotation& annotation)
     {
         throw "Not implemented";
@@ -74,14 +74,14 @@ public:
 
     TUnionType(
             const std::string& name,
-            const TPrimitiveType<T, DELEGATE<T> >& discriminator_type,
-            const std::vector<UnionCase<T> >& cases,
+            const TPrimitiveType<T, DELEGATE<T>>& discriminator_type,
+            const std::vector<UnionCase<T>>& cases,
             const std::vector<Annotation>& annotations)
     {
         throw "Not implemented";
     }
 
-    const std::vector<UnionCase<T> >& members() const
+    const std::vector<UnionCase<T>>& members() const
     {
         throw "Not implemented";
     }
