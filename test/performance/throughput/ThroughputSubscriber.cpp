@@ -804,7 +804,8 @@ void ThroughputSubscriber::run()
             std::cout << "-----------------------------------------------------------------------" << std::endl;
         }
 
-    } while (stop_count != 2);
+    }
+    while (stop_count != 2);
 
     return;
 }

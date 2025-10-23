@@ -42,7 +42,7 @@ class DynamicTypeBuilderFactoryImpl : public traits<DynamicTypeBuilderFactory>::
 public:
 
     //{{{ Utility functions
-    
+
     void set_preprocessor(
             const std::string& preprocessor) override;
 
