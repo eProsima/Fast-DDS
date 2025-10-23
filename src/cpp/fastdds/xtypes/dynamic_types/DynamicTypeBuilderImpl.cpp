@@ -546,7 +546,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
         // Member type and enum's literal type must be the same, if literal type is specified
         if (type_descriptor_.literal_type() &&
-            descriptor->type()->get_kind() != type_descriptor_.literal_type()->get_kind())
+                descriptor->type()->get_kind() != type_descriptor_.literal_type()->get_kind())
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor type kind differs from the literal type kind.");
             return RETCODE_BAD_PARAMETER;

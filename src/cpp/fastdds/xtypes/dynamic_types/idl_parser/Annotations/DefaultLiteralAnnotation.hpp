@@ -72,6 +72,7 @@ protected:
         descriptor->is_default_literal(true);
         return true;
     }
+
 };
 
 } // namespace idlparser

@@ -54,8 +54,8 @@ public:
         if (!initialized_)
         {
             initialized_ = add_primitive_or_string_member(
-                                IDL_VALUE_TAG,
-                                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16));
+                IDL_VALUE_TAG,
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16));
         }
 
         return initialized_;
@@ -85,7 +85,7 @@ protected:
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "Missing required parameter '" << IDL_VALUE_TAG
                                                    << "' for annotation '" << IDL_BUILTIN_ANN_POSITION_TAG <<
-                            "'.");
+                    "'.");
             return false;
         }
 
@@ -100,7 +100,7 @@ protected:
                     "Failed to convert value '" << parameters.at(
                         IDL_VALUE_TAG)
                                                 << "' for annotation '" << IDL_BUILTIN_ANN_POSITION_TAG << "': " <<
-                            e.what());
+                    e.what());
             return false;
         }
 

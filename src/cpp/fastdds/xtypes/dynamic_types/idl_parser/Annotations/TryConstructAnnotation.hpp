@@ -56,7 +56,8 @@ public:
             TypeDescriptor::_ref_type enum_type_descriptor = traits<TypeDescriptor>::make_shared();
             enum_type_descriptor->kind(TK_ENUM);
             enum_type_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG);
-            DynamicTypeBuilder::_ref_type enum_builder = DynamicTypeBuilderFactory::get_instance()->create_type(enum_type_descriptor);
+            DynamicTypeBuilder::_ref_type enum_builder = DynamicTypeBuilderFactory::get_instance()->create_type(
+                enum_type_descriptor);
             MemberDescriptor::_ref_type enum_member_descriptor = traits<MemberDescriptor>::make_shared();
             enum_member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
             enum_member_descriptor->name(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_DISCARD_TAG);
@@ -72,9 +73,9 @@ public:
 
             success &= add_declared_type(IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG, enum_builder->build());
             success &= add_declared_type_member(
-                            IDL_VALUE_TAG,
-                            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG,
-                            IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG);
+                IDL_VALUE_TAG,
+                IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_TAG,
+                IDL_BUILTIN_ANN_TRY_CONSTRUCT_FAIL_ACTION_USE_DEFAULT_TAG);
 
             initialized_ = success;
         }
@@ -106,7 +107,7 @@ protected:
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "Missing required parameter '" << IDL_VALUE_TAG
                                                    << "' for annotation '" << IDL_BUILTIN_ANN_TRY_CONSTRUCT_TAG <<
-                            "'.");
+                    "'.");
             return false;
         }
 

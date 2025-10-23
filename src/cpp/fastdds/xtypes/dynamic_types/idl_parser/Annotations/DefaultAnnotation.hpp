@@ -54,8 +54,8 @@ public:
             // Note: The member is processed as a string, so it can be used to set the default value of any type.
             // In the future, it should be processed as a "any" type member.
             initialized_ = add_primitive_or_string_member(IDL_VALUE_TAG,
-                                DynamicTypeBuilderFactory::get_instance()->create_string_type(
-                                    static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+                            DynamicTypeBuilderFactory::get_instance()->create_string_type(
+                                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
         }
 
         return initialized_;
@@ -85,7 +85,7 @@ protected:
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "Missing required parameter '" << IDL_VALUE_TAG
                                                    << "' for annotation '" << IDL_BUILTIN_ANN_DEFAULT_TAG <<
-                            "'.");
+                    "'.");
             return false;
         }
 

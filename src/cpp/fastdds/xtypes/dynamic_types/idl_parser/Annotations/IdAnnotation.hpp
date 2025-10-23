@@ -54,7 +54,7 @@ public:
         if (!initialized_)
         {
             initialized_ = add_primitive_or_string_member(IDL_VALUE_TAG,
-                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+                            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
         }
 
         return initialized_;
@@ -100,7 +100,7 @@ protected:
                 "Failed to convert value '" << parameters.at(
                     IDL_VALUE_TAG)
                                             << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "': " <<
-                            e.what());
+                    e.what());
             return false;
         }
 

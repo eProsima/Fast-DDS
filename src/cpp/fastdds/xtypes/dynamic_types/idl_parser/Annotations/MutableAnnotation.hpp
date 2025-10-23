@@ -73,6 +73,7 @@ protected:
         EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @mutable annotation to a MemberDescriptor.");
         return false;
     }
+
 };
 
 } // namespace idlparser
