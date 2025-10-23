@@ -145,7 +145,8 @@ bool PDPStatelessWriter::is_relevant(
 
 void PDPStatelessWriter::mark_all_readers_interested()
 {
-    std::lock_guard<std::mutex> guard(interested_readers_mutex_);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::lock_guard<std::mutex> _guard(interested_readers_mutex_);
     should_reach_all_destinations_ = true;
     interested_readers_.clear();
     fixed_locators_.clear();
@@ -156,7 +157,8 @@ void PDPStatelessWriter::mark_all_readers_interested()
 void PDPStatelessWriter::add_interested_reader(
         const GUID_t& reader_guid)
 {
-    std::lock_guard<std::mutex> guard(interested_readers_mutex_);
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    std::lock_guard<std::mutex> _guard(interested_readers_mutex_);
     if (!should_reach_all_destinations_)
     {
         auto it = std::find(interested_readers_.begin(), interested_readers_.end(), reader_guid);
