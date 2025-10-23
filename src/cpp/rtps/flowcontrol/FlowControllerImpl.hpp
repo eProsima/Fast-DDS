@@ -554,7 +554,8 @@ struct FlowControllerRoundRobinSchedule
             do
             {
                 ret_change = std::get<1>(*next_writer_).get_next_change();
-            } while (nullptr == ret_change && starting_it != set_next_writer());
+            }
+            while (nullptr == ret_change && starting_it != set_next_writer());
         }
 
         return ret_change;
