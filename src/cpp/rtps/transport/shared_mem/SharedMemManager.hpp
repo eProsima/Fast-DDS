@@ -549,7 +549,8 @@ public:
                 {
                     collisions_count--;
                 }
-            } while (collisions_count > 0 && nullptr == segment_name_lock_);
+            }
+            while (collisions_count > 0 && nullptr == segment_name_lock_);
 
             if (nullptr == segment_name_lock_)
             {
