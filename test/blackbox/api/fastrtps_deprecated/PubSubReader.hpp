@@ -608,7 +608,7 @@ public:
     }
 
 #if HAVE_SECURITY
-    void waitAuthorized(
+    void wait_authorized(
             std::chrono::seconds timeout = std::chrono::seconds::zero(),
             unsigned int expected = 1)
     {
@@ -634,7 +634,7 @@ public:
         std::cout << "Reader authorization finished..." << std::endl;
     }
 
-    void waitUnauthorized()
+    void wait_unauthorized()
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
 
