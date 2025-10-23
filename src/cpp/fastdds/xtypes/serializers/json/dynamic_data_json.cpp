@@ -1077,7 +1077,7 @@ ReturnCode_t json_serialize_bitmask_member(
         for (const auto& it : bitmask_members)
         {
             MemberDescriptorImpl& member_desc =
-                            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
+                    traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
 
             if (u64_value & (0x01ull << member_desc.position()))
             {

@@ -73,6 +73,7 @@ protected:
         EPROSIMA_LOG_ERROR(IDL_PARSER, "Trying to apply @final annotation to a MemberDescriptor.");
         return false;
     }
+
 };
 
 } // namespace idlparser
