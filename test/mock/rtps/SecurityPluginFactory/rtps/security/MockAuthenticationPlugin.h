@@ -41,35 +41,35 @@ public:
     using PKIIdentityHandle = HandleImpl<PKIIdentity, MockAuthenticationPlugin>;
     using SharedSecretHandle = HandleImpl<SharedSecret, MockAuthenticationPlugin>;
 
-    MOCK_METHOD(ValidationResult_t, validate_local_identity, (IdentityHandle** local_identity_handle,
+    MOCK_METHOD(ValidationResult_t, validate_local_identity, (IdentityHandle * *local_identity_handle,
             GUID_t & adjusted_participant_key,
             const uint32_t domain_id,
             const RTPSParticipantAttributes& participant_attr,
             const GUID_t& candidate_participant_key,
             SecurityException & exception), (override));
 
-    MOCK_METHOD5(validate_remote_identity_rvr, ValidationResult_t(IdentityHandle** remote_identity_handle,
+    MOCK_METHOD5(validate_remote_identity_rvr, ValidationResult_t(IdentityHandle * *remote_identity_handle,
             const IdentityHandle& local_identity_handle,
             IdentityToken remote_identity_token,
             const GUID_t& remote_participant_key,
             SecurityException & exception));
 
-    MOCK_METHOD(ValidationResult_t, begin_handshake_request, (HandshakeHandle** handshake_handle,
-            HandshakeMessageToken** handshake_message,
+    MOCK_METHOD(ValidationResult_t, begin_handshake_request, (HandshakeHandle * *handshake_handle,
+            HandshakeMessageToken * *handshake_message,
             const IdentityHandle& initiator_identity_handle,
             IdentityHandle & replier_identity_handle,
             const CDRMessage_t& cdr_participant_data,
             SecurityException & exception), (override));
 
-    MOCK_METHOD7(begin_handshake_reply_rvr, ValidationResult_t(HandshakeHandle** handshake_handle,
-            HandshakeMessageToken** handshake_message_out,
+    MOCK_METHOD7(begin_handshake_reply_rvr, ValidationResult_t(HandshakeHandle * *handshake_handle,
+            HandshakeMessageToken * *handshake_message_out,
             HandshakeMessageToken handshake_message_in,
             IdentityHandle & initiator_identity_handle,
             const IdentityHandle& replier_identity_handle,
             const CDRMessage_t& cdr_participant_data,
             SecurityException & exception));
 
-    MOCK_METHOD4(process_handshake_rvr, ValidationResult_t(HandshakeMessageToken** handshake_message_out,
+    MOCK_METHOD4(process_handshake_rvr, ValidationResult_t(HandshakeMessageToken * *handshake_message_out,
             HandshakeMessageToken handshake_message_in,
             HandshakeHandle & handshake_handle,
             SecurityException & exception));
@@ -77,7 +77,7 @@ public:
     MOCK_METHOD(bool, set_listener, (AuthenticationListener * listener,
             SecurityException & exception), (override));
 
-    MOCK_METHOD(bool, get_identity_token, (IdentityToken** identity_token,
+    MOCK_METHOD(bool, get_identity_token, (IdentityToken * *identity_token,
             const IdentityHandle& handle,
             SecurityException & exception), (override));
 
@@ -91,7 +91,7 @@ public:
             PermissionsCredentialToken & permissions_credential_token,
             SecurityException & ex), (override));
 
-    MOCK_METHOD(bool, get_authenticated_peer_credential_token, (PermissionsCredentialToken** token,
+    MOCK_METHOD(bool, get_authenticated_peer_credential_token, (PermissionsCredentialToken * *token,
             const IdentityHandle& identity_handle, SecurityException & exception), (override));
 
     MOCK_METHOD(bool, return_authenticated_peer_credential_token, (PermissionsCredentialToken * token,

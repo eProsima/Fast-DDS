@@ -45,7 +45,7 @@ public:
                 SecurityException & exception), (override));
 
     MOCK_METHOD(bool, get_permissions_token, (
-                PermissionsToken** permissions_token,
+                PermissionsToken * *permissions_token,
                 const PermissionsHandle& handle,
                 SecurityException & exception), (override));
 
@@ -54,7 +54,7 @@ public:
                 SecurityException & exception), (override));
 
     MOCK_METHOD(bool, get_permissions_credential_token, (
-                PermissionsCredentialToken** permissions_credential_token,
+                PermissionsCredentialToken * *permissions_credential_token,
                 const PermissionsHandle& handle,
                 SecurityException & exception), (override));
 

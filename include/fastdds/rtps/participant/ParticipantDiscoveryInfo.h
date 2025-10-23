@@ -34,6 +34,8 @@ namespace rtps {
 struct ParticipantDiscoveryInfo
 {
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
+    // *INDENT-OFF* : Does not understand the #if correctly and ends up removing the ;
+    //                at the end of the enum, which does not build.
     //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
     enum RTPS_DllAPI DISCOVERY_STATUS
@@ -46,7 +48,8 @@ struct ParticipantDiscoveryInfo
         REMOVED_PARTICIPANT,
         DROPPED_PARTICIPANT,
         IGNORED_PARTICIPANT
-    }
+    };
+    // *INDENT-ON*
 
     ParticipantDiscoveryInfo(
             const ParticipantProxyData& data)
