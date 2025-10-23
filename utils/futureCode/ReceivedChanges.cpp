@@ -23,61 +23,68 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-ReceivedChanges::ReceivedChanges() {
-	// TODO Auto-generated constructor stub
-m_missingChanges.reserve(1000);
-}
-
-ReceivedChanges::~ReceivedChanges() {
-	// TODO Auto-generated destructor stub
-}
-
-bool ReceivedChanges::add(SequenceNumber_t& s)
+ReceivedChanges::ReceivedChanges()
 {
-	if(s > this->m_largestSequenceNumberReceived)
-	{
-		return insertMissingSequenceNumbers(s);
-	}
-	else if(s == this->m_largestSequenceNumberReceived)
-	{
-		return false;
-	}
-	else if(s < this->m_largestSequenceNumberReceived)
-	{
-		return missingSequenceNumberReceived(s);
-	}
-	return false;
+    // TODO Auto-generated constructor stub
+    m_missingChanges.reserve(1000);
 }
 
-bool ReceivedChanges::insertMissingSequenceNumbers(SequenceNumber_t& s)
+ReceivedChanges::~ReceivedChanges()
 {
-	int i = 1;
-	while(m_largestSequenceNumberReceived+i < s)
-	{
-		m_missingChanges.push_back(m_largestSequenceNumberReceived+i);
-		++i;
-	}
-	m_largestSequenceNumberReceived = s;
-	return true;
+    // TODO Auto-generated destructor stub
 }
 
-bool ReceivedChanges::missingSequenceNumberReceived(SequenceNumber_t& s)
+bool ReceivedChanges::add(
+        SequenceNumber_t& s)
 {
-	std::vector<SequenceNumber_t>::iterator it = m_missingChanges.end();
-	while(it > m_missingChanges.begin())
-	{
-		--it;
-		if(*it == s)
-		{
-			m_missingChanges.erase(it);
-			return true;
-		}
-		if(*it< s)
-			return false;
-	}
-	return false;
+    if (s > this->m_largestSequenceNumberReceived)
+    {
+        return insertMissingSequenceNumbers(s);
+    }
+    else if (s == this->m_largestSequenceNumberReceived)
+    {
+        return false;
+    }
+    else if (s < this->m_largestSequenceNumberReceived)
+    {
+        return missingSequenceNumberReceived(s);
+    }
+    return false;
 }
 
+bool ReceivedChanges::insertMissingSequenceNumbers(
+        SequenceNumber_t& s)
+{
+    int i = 1;
+    while (m_largestSequenceNumberReceived + i < s)
+    {
+        m_missingChanges.push_back(m_largestSequenceNumberReceived + i);
+        ++i;
+    }
+    m_largestSequenceNumberReceived = s;
+    return true;
 }
+
+bool ReceivedChanges::missingSequenceNumberReceived(
+        SequenceNumber_t& s)
+{
+    std::vector<SequenceNumber_t>::iterator it = m_missingChanges.end();
+    while (it > m_missingChanges.begin())
+    {
+        --it;
+        if (*it == s)
+        {
+            m_missingChanges.erase(it);
+            return true;
+        }
+        if (*it < s)
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
+} // namespace rtps
 } /* namespace rtps */
 } /* namespace eprosima */

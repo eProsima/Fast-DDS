@@ -18,9 +18,9 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class MemberDescriptor;
 class DynamicType;
@@ -28,19 +28,25 @@ class DynamicType;
 class AnnotationDescriptor
 {
 protected:
+
     friend class DynamicTypeBuilderFactory;
 
     DynamicType_ptr type_;
-	std::map<std::string, std::string> value_;
+    std::map<std::string, std::string> value_;
 
 public:
+
     AnnotationDescriptor();
     ~AnnotationDescriptor();
-    AnnotationDescriptor(const AnnotationDescriptor* descriptor);
-    AnnotationDescriptor(DynamicType_ptr p_type);
+    AnnotationDescriptor(
+            const AnnotationDescriptor* descriptor);
+    AnnotationDescriptor(
+            DynamicType_ptr p_type);
 
-    ReturnCode_t copy_from(const AnnotationDescriptor* other);
-    bool equals(const AnnotationDescriptor*) const;
+    ReturnCode_t copy_from(
+            const AnnotationDescriptor* other);
+    bool equals(
+            const AnnotationDescriptor*) const;
     bool is_consistent() const;
     bool key_annotation() const;
 
@@ -48,20 +54,24 @@ public:
             std::string& value,
             const std::string& key);
 
-    ReturnCode_t get_value(std::string& value); // key = "value"
+    ReturnCode_t get_value(
+            std::string& value);                // key = "value"
 
-    ReturnCode_t get_all_value(std::map<std::string, std::string>& value) const;
+    ReturnCode_t get_all_value(
+            std::map<std::string, std::string>& value) const;
 
     ReturnCode_t set_value(
-        const std::string& key,
-        const std::string& value);
+            const std::string& key,
+            const std::string& value);
 
-    void set_type(DynamicType_ptr pType);
+    void set_type(
+            DynamicType_ptr pType);
 
     const DynamicType_ptr type() const
     {
         return type_;
     }
+
 };
 
 } // namespace types

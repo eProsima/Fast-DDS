@@ -92,7 +92,8 @@ public:
     {
         return TestDataType::data_size;
     }
-#endif
+
+#endif // if FASTCDR_VERSION_MAJOR == 1
 
 };
 

@@ -272,7 +272,8 @@ class PubSubWriterReader
                 do
                 {
                     wreader_.receive_one(datareader, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 

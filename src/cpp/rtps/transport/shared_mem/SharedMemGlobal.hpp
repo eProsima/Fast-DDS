@@ -609,7 +609,8 @@ public:
 
                         status.counter = status.last_verified_counter + 1;
                     }
-                } while (1);
+                }
+                while (1);
 
                 node_->waiting_count--;
                 status.is_waiting = 0;

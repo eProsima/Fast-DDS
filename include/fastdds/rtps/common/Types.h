@@ -103,8 +103,8 @@ struct RTPS_DllAPI ProtocolVersion_t
 
     ProtocolVersion_t():
 #if HAVE_SECURITY
-        // As imposed by DDSSEC11-93
-        ProtocolVersion_t(2, 3)
+    // As imposed by DDSSEC11-93
+    ProtocolVersion_t(2, 3)
 #else
         ProtocolVersion_t(2, 2)
 #endif // if HAVE_SECURITY

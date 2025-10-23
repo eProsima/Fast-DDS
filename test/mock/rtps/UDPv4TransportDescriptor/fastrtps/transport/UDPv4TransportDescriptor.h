@@ -17,9 +17,9 @@
 
 #include <fastrtps/transport/UDPTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using TransportInterface = fastdds::rtps::TransportInterface;
 
@@ -33,25 +33,29 @@ using TransportInterface = fastdds::rtps::TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPv4TransportDescriptor: public UDPTransportDescriptor
+typedef struct UDPv4TransportDescriptor : public UDPTransportDescriptor
 {
-   virtual ~UDPv4TransportDescriptor(){}
+    virtual ~UDPv4TransportDescriptor()
+    {
+    }
 
-   RTPS_DllAPI UDPv4TransportDescriptor()
-   : UDPTransportDescriptor()
-   {
+    RTPS_DllAPI UDPv4TransportDescriptor()
+        : UDPTransportDescriptor()
+    {
 
-   }
+    }
 
-   RTPS_DllAPI UDPv4TransportDescriptor(const UDPv4TransportDescriptor& /*t*/)
-   : UDPTransportDescriptor()
-   {
+    RTPS_DllAPI UDPv4TransportDescriptor(
+            const UDPv4TransportDescriptor& /*t*/)
+        : UDPTransportDescriptor()
+    {
 
-   }
+    }
+
 } UDPv4TransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef UDPV4_TRANSPORT_DESCRIPTOR

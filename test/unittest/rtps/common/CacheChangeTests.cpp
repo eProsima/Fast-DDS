@@ -28,12 +28,14 @@ struct FragmentTestStep
     {
         uint32_t initial_fragment;
         uint16_t num_fragments;
-    } input;
+    }
+    input;
 
     struct __Check
     {
         bool missing_fragments[10];
-    } check;
+    }
+    check;
 
     void do_test(
             CacheChange_t& uut) const
@@ -134,7 +136,7 @@ TEST(CacheChange, FragmentManagement)
 
 int main(
         int argc,
-        char **argv)
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

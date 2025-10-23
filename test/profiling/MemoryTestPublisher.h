@@ -36,8 +36,10 @@
 #include <condition_variable>
 #include <chrono>
 
-class MemoryTestPublisher {
+class MemoryTestPublisher
+{
 public:
+
     MemoryTestPublisher();
     virtual ~MemoryTestPublisher();
 
@@ -59,47 +61,95 @@ public:
     unsigned int n_received;
     bool n_export_csv;
     std::string m_exportPrefix;
-    bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname, bool export_csv,
-        const std::string& export_prefix,
-        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
-        const std::string& sXMLConfigFile, uint32_t data_size, bool dynamic_types);
-    void run(uint32_t test_time);
-    bool test(uint32_t test_time, uint32_t datasize);
+    bool init(
+            int n_sub,
+            int n_sam,
+            bool reliable,
+            uint32_t pid,
+            bool hostname,
+            bool export_csv,
+            const std::string& export_prefix,
+            const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+            const std::string& sXMLConfigFile,
+            uint32_t data_size,
+            bool dynamic_types);
+    void run(
+            uint32_t test_time);
+    bool test(
+            uint32_t test_time,
+            uint32_t datasize);
 
     class DataPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
-        DataPubListener(MemoryTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~DataPubListener() {}
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        DataPubListener(
+                MemoryTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~DataPubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         MemoryTestPublisher* mp_up;
         int n_matched;
-    } m_datapublistener;
+    }
+    m_datapublistener;
 
     class CommandPubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
-        CommandPubListener(MemoryTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~CommandPubListener() {}
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-            eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        CommandPubListener(
+                MemoryTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~CommandPubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
         MemoryTestPublisher* mp_up;
         int n_matched;
-    } m_commandpublistener;
+    }
+    m_commandpublistener;
 
     class CommandSubListener : public eprosima::fastrtps::SubscriberListener
     {
     public:
-        CommandSubListener(MemoryTestPublisher* up) :mp_up(up), n_matched(0) {}
-        ~CommandSubListener() {}
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-            eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+
+        CommandSubListener(
+                MemoryTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~CommandSubListener()
+        {
+        }
+
+        void onSubscriptionMatched(
+                eprosima::fastrtps::Subscriber* sub,
+                eprosima::fastrtps::rtps::MatchingInfo& into);
+        void onNewDataMessage(
+                eprosima::fastrtps::Subscriber* sub);
         MemoryTestPublisher* mp_up;
         int n_matched;
-    } m_commandsublistener;
+    }
+    m_commandsublistener;
 
     TestCommandDataType command_t;
     std::string m_sXMLConfigFile;

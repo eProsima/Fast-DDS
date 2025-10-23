@@ -62,20 +62,21 @@ public: \
     } \
     \
 public: \
-    TYPE(const DELEGATE_REF_T &ref) \
+    TYPE(const DELEGATE_REF_T& ref) \
         : dds::core::Reference< DELEGATE >(ref) \
     { }
 
 #define OMG_DDS_IMPLICIT_REF_BASE(TYPE)         \
 public: \
     template<typename H__> \
-    TYPE(const H__ &h)    \
+    TYPE(const H__& h)    \
     { \
         if (h.is_nil()){ \
             /* We got a null object and are not really able to do a typecheck here. */ \
             /* So, just set a null object. */ \
             *this = dds::core::null; \
-        } else { \
+        } \
+        else { \
             this->impl_ = h.delegate(); \
             if (h.delegate() != this->::dds::core::Reference< DELEGATE_T >::impl_){ \
                 throw dds::core::IllegalOperationError(std::string( \
@@ -93,7 +94,8 @@ public: \
                 /* We got a null object and are not really able to do a typecheck here. */ \
                 /* So, just set a null object. */ \
                 *this = dds::core::null; \
-            } else { \
+            } \
+            else { \
                 TYPE other(rhs); \
                 /* Dont have to copy when the delegate impl is the same. */ \
                 if (other.delegate() != this->::dds::core::Reference< DELEGATE_T >::impl_){ \
@@ -106,7 +108,7 @@ public: \
 
 #define OMG_DDS_EXPLICIT_REF_BASE_DECL(TYPE, FROM)         \
 public: \
-    TYPE(const FROM &h);    \
+    TYPE(const FROM& h);    \
     \
     TYPE& \
     operator =( \
@@ -119,15 +121,16 @@ public: \
     /* That non-const templated constructor is a closer match than TYPE(const FROM& h); when */ \
     /* creating the TYPE class from a non-const FROM object. */ \
     TYPE(FROM & h) { this->explicit_conversion(const_cast<const FROM&>(h)); }    \
-    TYPE(const FROM &h) { this->explicit_conversion(h); }    \
+    TYPE(const FROM& h) { this->explicit_conversion(h); }    \
 private: \
-    void explicit_conversion(const FROM &h) \
+    void explicit_conversion(const FROM& h) \
     { \
         if (h.is_nil()){ \
             /* We got a null object and are not really able to do a typecheck here. */ \
             /* So, just set a null object. */ \
             *this = dds::core::null; \
-        } else { \
+        } \
+        else { \
             this->impl_ = h.delegate(); \
             if (h.delegate() != this->::dds::core::Reference< DELEGATE_T >::impl_){ \
                 throw dds::core::IllegalOperationError(std::string( \
@@ -145,7 +148,8 @@ public: \
                 /* We got a null object and are not really able to do a typecheck here. */ \
                 /* So, just set a null object. */ \
                 *this = dds::core::null; \
-            } else { \
+            } \
+            else { \
                 TYPE other(rhs); \
                 /* Dont have to copy when the delegate is the same. */ \
                 if (other.delegate() != this->::dds::core::Reference< DELEGATE_T >::impl_){ \

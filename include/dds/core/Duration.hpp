@@ -73,7 +73,7 @@ public:
     explicit Duration(
             int64_t sec,
             uint32_t nanosec = 0);
-#endif
+#endif // if __cplusplus >= 199711L
 
     /**
      * Create a Duration from a number of microseconds

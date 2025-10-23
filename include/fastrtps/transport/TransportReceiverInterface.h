@@ -27,4 +27,4 @@ using TransportReceiverInterface = fastdds::rtps::TransportReceiverInterface;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef TRANSPORT_RECEIVER_INTERFACE_H

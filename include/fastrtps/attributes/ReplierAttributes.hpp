@@ -28,9 +28,11 @@ namespace fastrtps {
 class ReplierAttributes
 {
 public:
+
     ReplierAttributes() = default;
 
-    bool operator==(const ReplierAttributes& b) const
+    bool operator ==(
+            const ReplierAttributes& b) const
     {
         return (this->service_name == b.service_name) &&
                (this->request_topic_name == b.request_topic_name) &&

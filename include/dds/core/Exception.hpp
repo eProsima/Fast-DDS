@@ -28,7 +28,7 @@
 #if defined _MSC_VER
 #   pragma warning (push)
 #   pragma warning (disable:4275) // non dll-interface class 'std::foo_error' used as base for dll-interface class 'dds::core::BarError'
-#endif
+#endif // if defined _MSC_VER
 
 namespace dds {
 namespace core {
@@ -473,7 +473,7 @@ public:
 
 #if defined _MSC_VER
 #   pragma warning (pop)
-#endif
+#endif // if defined _MSC_VER
 
 #endif //OMG_DDS_CORE_EXCEPTION_HPP_
 

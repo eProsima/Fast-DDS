@@ -116,7 +116,7 @@ public:
         : impl_(ref.impl_)
     {
     }
-    
+
     /**
      * Assign a Reference from another.
      *

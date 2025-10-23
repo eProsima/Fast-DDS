@@ -29,8 +29,8 @@ public:
 
     typedef std::shared_ptr<DynamicData> Base;
 
-    using Base::operator->;
-    using Base::operator*;
+    using Base::operator ->;
+    using Base::operator *;
     using Base::operator bool;
 
     RTPS_DllAPI DynamicData_ptr()

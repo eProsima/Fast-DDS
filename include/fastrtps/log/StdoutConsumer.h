@@ -25,4 +25,4 @@ using StdoutConsumer = fastdds::dds::StdoutConsumer;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef STDOUT_CONSUMER_H

@@ -47,7 +47,7 @@ public:
         CHANGED_QOS_READER,
         REMOVED_READER,
         IGNORED_READER
-    };
+    }
 
     ReaderDiscoveryInfo(
             const ReaderProxyData& data)

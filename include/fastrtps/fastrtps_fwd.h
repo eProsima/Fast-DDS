@@ -20,15 +20,13 @@
 #ifndef FASTRTPS_FWD_H_
 #define FASTRTPS_FWD_H_
 
-namespace eprosima
-{
-namespace fastrtps
-{
-	class Participant;
-	class Publisher;
-	class Subscriber;
-}
-}
+namespace eprosima {
+namespace fastrtps {
+class Participant;
+class Publisher;
+class Subscriber;
+} // namespace fastrtps
+} // namespace eprosima
 
 
 

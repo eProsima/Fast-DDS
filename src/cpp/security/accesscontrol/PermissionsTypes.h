@@ -63,9 +63,9 @@ struct Grant
     bool is_default_allow;
 };
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // __SECURITY_ACCESSCONTROL_PERMISSIONSTYPES_H__

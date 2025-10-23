@@ -27,4 +27,4 @@ using Log = fastdds::dds::Log;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef _FASTRTPS_LOG_LOG_H_

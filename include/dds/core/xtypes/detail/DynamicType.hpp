@@ -74,7 +74,7 @@ public:
             AnnoIter begin,
             AnnoIter end)
     {
-        ann_.reserve(ann_.size() + ( end - begin) );
+        ann_.reserve(ann_.size() + ( end - begin));
         for (auto it = begin; it != end; ++it)
         {
             ann_.emplace_back(*it);

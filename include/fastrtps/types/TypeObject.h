@@ -7950,7 +7950,8 @@ public:
     }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastrtps::types::TypeIdentifierWithDependencies::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastrtps::types::TypeIdentifierWithDependencies::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const TypeIdentifierWithDependencies& data,

@@ -45,7 +45,7 @@ public:
         CHANGED_QOS_WRITER,
         REMOVED_WRITER,
         IGNORED_WRITER
-    };
+    }
 
     WriterDiscoveryInfo(
             const WriterProxyData& data)
@@ -65,8 +65,8 @@ public:
     const WriterProxyData& info;
 };
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _RTPS_WRITER_WRITERDISCOVERYINFO_H_

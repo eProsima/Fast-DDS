@@ -50,7 +50,7 @@ public:
 
     template<typename Q,
             template <typename> class K>
-    operator K<Q>&()
+    operator K<Q>& ()
     {
         return reinterpret_cast<K<Q>&>(*this);
     }
@@ -279,5 +279,5 @@ BitsetAnnotation bit_bound(
 } //namespace core
 } //namespace dds
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif //OMG_DDS_CORE_XTYPES_TANNOTATION_HPP_

@@ -32,7 +32,7 @@ namespace policy {
 
 #if defined (__SUNPRO_CC) && defined(SHARED)
 #undef SHARED
-#endif
+#endif // if defined (__SUNPRO_CC) && defined(SHARED)
 struct OwnershipKind_def
 {
     enum Type
@@ -230,8 +230,8 @@ struct LivelinessKind_def
 typedef dds::core::SafeEnum<LivelinessKind_def> LivelinessKind;
 
 /* This isn't standard!
-struct TypeConsistencyEnforcementKind_def
-{
+   struct TypeConsistencyEnforcementKind_def
+   {
     enum Type
     {
         EXACT_TYPE_TYPE_CONSISTENCY,
@@ -239,8 +239,8 @@ struct TypeConsistencyEnforcementKind_def
         DECLARED_TYPE_CONSISTENCY,
         ASSIGNABLE_TYPE_CONSISTENCY
     };
-};
-*/
+   };
+ */
 struct TypeConsistencyEnforcementKind_def
 {
     using Type = eprosima::fastdds::dds::TypeConsistencyKind;

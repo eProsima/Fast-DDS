@@ -17,9 +17,9 @@
 
 #include <fastrtps/transport/SocketTransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using TransportInterface = fastdds::rtps::TransportInterface;
 
@@ -33,31 +33,37 @@ using TransportInterface = fastdds::rtps::TransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct UDPTransportDescriptor: public SocketTransportDescriptor
+typedef struct UDPTransportDescriptor : public SocketTransportDescriptor
 {
-   virtual ~UDPTransportDescriptor(){}
+    virtual ~UDPTransportDescriptor()
+    {
+    }
 
-   virtual TransportInterface* create_transport() const override {	return nullptr;	}
+    virtual TransportInterface* create_transport() const override
+    {
+        return nullptr;
+    }
 
-   RTPS_DllAPI UDPTransportDescriptor()
-   : SocketTransportDescriptor(65550, 4)
-   {
+    RTPS_DllAPI UDPTransportDescriptor()
+        : SocketTransportDescriptor(65550, 4)
+    {
 
-   }
+    }
 
-   RTPS_DllAPI UDPTransportDescriptor(const UDPTransportDescriptor& /*t*/)
-   : SocketTransportDescriptor(65550, 4)
-   {
+    RTPS_DllAPI UDPTransportDescriptor(
+            const UDPTransportDescriptor& /*t*/)
+        : SocketTransportDescriptor(65550, 4)
+    {
 
-   }
+    }
 
-   uint16_t m_output_udp_socket;
-   
-   bool non_blocking_send = false;
+    uint16_t m_output_udp_socket;
+
+    bool non_blocking_send = false;
 } UDPTransportDescriptor;
 
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef UDP_TRANSPORT_DESCRIPTOR

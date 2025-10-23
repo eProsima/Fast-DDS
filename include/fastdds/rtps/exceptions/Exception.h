@@ -32,77 +32,87 @@ namespace rtps {
  */
 class Exception : public std::exception
 {
-    public:
+public:
 
-        RTPS_DllAPI Exception(){};
+    RTPS_DllAPI Exception()
+    {
+    }
 
-        /// @brief Default destructor.
-        virtual RTPS_DllAPI ~Exception() throw();
+    /// @brief Default destructor.
+    virtual RTPS_DllAPI ~Exception() throw();
 
-        /**
-         * @brief This function returns the number associated with the system exception.
-         * @return The number associated with the system exception.
-         */
-        RTPS_DllAPI const int32_t& minor() const;
+    /**
+     * @brief This function returns the number associated with the system exception.
+     * @return The number associated with the system exception.
+     */
+    RTPS_DllAPI const int32_t& minor() const;
 
-        /**
-         * @brief This function sets the number that will be associated with the system exception.
-         * @param minor The number that will be associated with the system exception.
-         */
-        RTPS_DllAPI void minor(const int32_t &minor);
+    /**
+     * @brief This function sets the number that will be associated with the system exception.
+     * @param minor The number that will be associated with the system exception.
+     */
+    RTPS_DllAPI void minor(
+            const int32_t& minor);
 
-        /// @brief This function throws the object as exception.
-        virtual RTPS_DllAPI void raise() const = 0;
+    /// @brief This function throws the object as exception.
+    virtual RTPS_DllAPI void raise() const = 0;
 
-        /**
-         * @brief This function returns the error message.
-         * @return The error message.
-         */
-        virtual RTPS_DllAPI const char* what() const throw();
+    /**
+     * @brief This function returns the error message.
+     * @return The error message.
+     */
+    virtual RTPS_DllAPI const char* what() const throw();
 
-    protected:
+protected:
 
-        /**
-         * @brief Default constructor.
-         */
-        RTPS_DllAPI explicit Exception(const char* const& message);
+    /**
+     * @brief Default constructor.
+     */
+    RTPS_DllAPI explicit Exception(
+            const char* const& message);
 
-        /**
-         * @brief Default copy constructor.
-         * @param ex Exception that will be copied.
-         */
-        RTPS_DllAPI Exception(const Exception &ex);
+    /**
+     * @brief Default copy constructor.
+     * @param ex Exception that will be copied.
+     */
+    RTPS_DllAPI Exception(
+            const Exception& ex);
 
-        /**
-         * @brief Default move constructor.
-         * @param ex Exception that will be moved.
-         */
-        RTPS_DllAPI Exception(Exception&& ex);
+    /**
+     * @brief Default move constructor.
+     * @param ex Exception that will be moved.
+     */
+    RTPS_DllAPI Exception(
+            Exception&& ex);
 
-        /**
-         * @brief Constructor.
-         * @param message An error message. This message is copied.
-         * @param minor The number that will be associated with the system exception.
-         */
-        RTPS_DllAPI explicit Exception(const char* const& message, const int32_t minor);
+    /**
+     * @brief Constructor.
+     * @param message An error message. This message is copied.
+     * @param minor The number that will be associated with the system exception.
+     */
+    RTPS_DllAPI explicit Exception(
+            const char* const& message,
+            const int32_t minor);
 
-        /**
-         * @brief Assigment operation.
-         * @param ex Exception that will be copied.
-         */
-        RTPS_DllAPI Exception& operator=(const Exception& ex);
+    /**
+     * @brief Assigment operation.
+     * @param ex Exception that will be copied.
+     */
+    RTPS_DllAPI Exception& operator =(
+            const Exception& ex);
 
-        /**
-         * @brief Assigment operation.
-         * @param ex Exception that will be moved.
-         */
-        RTPS_DllAPI Exception& operator=(Exception&& ex);
+    /**
+     * @brief Assigment operation.
+     * @param ex Exception that will be moved.
+     */
+    RTPS_DllAPI Exception& operator =(
+            Exception&& ex);
 
-    private:
+private:
 
-        std::string message_;
+    std::string message_;
 
-        int32_t minor_;
+    int32_t minor_;
 };
 
 } // namespace rtps

@@ -49,7 +49,7 @@ namespace fastrtps {
 
 using LivelinessLostStatus = fastdds::dds::BaseStatus;
 
-}
+} // namespace fastrtps
 
 } //namespace eprosima
 

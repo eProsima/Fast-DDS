@@ -30,39 +30,60 @@
 #include <mutex>
 #include "AllocTestType.h"
 
-class AllocTestPublisher {
+class AllocTestPublisher
+{
 public:
+
     AllocTestPublisher();
     virtual ~AllocTestPublisher();
     //!Initialize
-    bool init(const char* profile, int domainId, const std::string& outputFile);
+    bool init(
+            const char* profile,
+            int domainId,
+            const std::string& outputFile);
     //!Publish a sample
     bool publish();
     //!Run for number samples
-    void run(uint32_t number, bool wait_unmatch = false);
+    void run(
+            uint32_t number,
+            bool wait_unmatch = false);
+
 private:
+
     AllocTestTypePubSubType m_type;
     AllocTestType m_data;
     eprosima::fastrtps::Participant* mp_participant;
     eprosima::fastrtps::Publisher* mp_publisher;
     std::string m_profile;
     std::string m_outputFile;
-    class PubListener:public eprosima::fastrtps::PublisherListener
+    class PubListener : public eprosima::fastrtps::PublisherListener
     {
     public:
-        PubListener():n_matched(0){};
-        ~PubListener(){};
-        void onPublicationMatched(eprosima::fastrtps::Publisher* pub, eprosima::fastrtps::rtps::MatchingInfo& info);
+
+        PubListener()
+            : n_matched(0)
+        {
+        }
+
+        ~PubListener()
+        {
+        }
+
+        void onPublicationMatched(
+                eprosima::fastrtps::Publisher* pub,
+                eprosima::fastrtps::rtps::MatchingInfo& info);
 
         bool is_matched();
         void wait_match();
         void wait_unmatch();
 
     private:
+
         int n_matched;
         std::mutex mtx;
         std::condition_variable cv;
-    }m_listener;
+    }
+    m_listener;
 };
 
 

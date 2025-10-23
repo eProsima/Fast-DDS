@@ -54,7 +54,7 @@ public:
     /**
      * Conversion operator to a vector of bytes.
      */
-    operator std::vector<uint8_t>&() const;
+    operator std::vector<uint8_t>& () const;
 
     /**
      * Getter function for the internal vector of bytes.

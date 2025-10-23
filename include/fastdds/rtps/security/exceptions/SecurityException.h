@@ -31,45 +31,55 @@ namespace security {
  */
 class SecurityException : public Exception
 {
-    public:
+public:
 
-        RTPS_DllAPI SecurityException() {}
+    RTPS_DllAPI SecurityException()
+    {
+    }
 
-        /**
-         * @brief Default constructor.
-         * @param message An error message. This message is copied.
-         */
-        RTPS_DllAPI SecurityException(const std::string& message) : Exception(message.c_str(), 1) {}
+    /**
+     * @brief Default constructor.
+     * @param message An error message. This message is copied.
+     */
+    RTPS_DllAPI SecurityException(
+            const std::string& message)
+        : Exception(message.c_str(), 1)
+    {
+    }
 
-        /**
-         * @brief Default copy constructor.
-         * @param ex SecurityException that will be copied.
-         */
-        RTPS_DllAPI SecurityException(const SecurityException &ex);
+    /**
+     * @brief Default copy constructor.
+     * @param ex SecurityException that will be copied.
+     */
+    RTPS_DllAPI SecurityException(
+            const SecurityException& ex);
 
-        /**
-         * @brief Default move constructor.
-         * @param ex SecurityException that will be moved.
-         */
-        RTPS_DllAPI SecurityException(SecurityException&& ex);
+    /**
+     * @brief Default move constructor.
+     * @param ex SecurityException that will be moved.
+     */
+    RTPS_DllAPI SecurityException(
+            SecurityException&& ex);
 
-        /**
-         * @brief Assigment operation.
-         * @param ex SecurityException that will be copied.
-         */
-        RTPS_DllAPI SecurityException& operator=(const SecurityException &ex);
+    /**
+     * @brief Assigment operation.
+     * @param ex SecurityException that will be copied.
+     */
+    RTPS_DllAPI SecurityException& operator =(
+            const SecurityException& ex);
 
-        /**
-         * @brief Assigment operation.
-         * @param ex SecurityException that will be moved.
-         */
-        RTPS_DllAPI SecurityException& operator=(SecurityException&& ex);
+    /**
+     * @brief Assigment operation.
+     * @param ex SecurityException that will be moved.
+     */
+    RTPS_DllAPI SecurityException& operator =(
+            SecurityException&& ex);
 
-        /// \brief Default constructor
-        virtual RTPS_DllAPI ~SecurityException() throw();
+    /// \brief Default constructor
+    virtual RTPS_DllAPI ~SecurityException() throw();
 
-        /// \brief This function throws the object as an exception.
-        virtual RTPS_DllAPI void raise() const;
+    /// \brief This function throws the object as an exception.
+    virtual RTPS_DllAPI void raise() const;
 };
 } // namespace security
 } // namespace rtps

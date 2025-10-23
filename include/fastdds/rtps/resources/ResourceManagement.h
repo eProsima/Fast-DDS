@@ -21,15 +21,16 @@
 #define _FASTDDS_RTPS_RESOURCE_MANAGEMENT_H_
 
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 /**
  * Enum MemoryuManagementPolicy_t, indicated the way memory is managed in terms of dealing with CacheChanges
  */
 
-typedef enum MemoryManagementPolicy{
+typedef enum MemoryManagementPolicy
+{
     PREALLOCATED_MEMORY_MODE, //!< Preallocated memory. Size set to the data type maximum. Largest memory footprint but smallest allocation count.
     PREALLOCATED_WITH_REALLOC_MEMORY_MODE, //!< Default size preallocated, requires reallocation when a bigger message arrives. Smaller memory footprint at the cost of an increased allocation count.
     DYNAMIC_RESERVE_MEMORY_MODE, //< Dynamic allocation at the time of message arrival. Least memory footprint but highest allocation count.
@@ -38,7 +39,7 @@ typedef enum MemoryManagementPolicy{
 
 
 } // end namespaces
-}
-}
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_RESOURCE_MANAGEMENT_H_ */

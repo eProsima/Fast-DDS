@@ -33,8 +33,8 @@ DomainParticipant::DomainParticipant(
         uint32_t did)
     : dds::core::Reference<detail::DomainParticipant>(
         eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
-                did,
-                eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT))
+            did,
+            eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT))
 {
 }
 

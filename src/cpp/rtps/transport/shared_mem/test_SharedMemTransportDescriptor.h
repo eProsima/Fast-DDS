@@ -28,7 +28,9 @@ namespace rtps {
  */
 typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDescriptor
 {
-    virtual ~test_SharedMemTransportDescriptor() {}
+    virtual ~test_SharedMemTransportDescriptor()
+    {
+    }
 
     RTPS_DllAPI test_SharedMemTransportDescriptor();
     RTPS_DllAPI test_SharedMemTransportDescriptor(

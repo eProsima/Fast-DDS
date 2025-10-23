@@ -20,11 +20,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-DynamicTypeBuilder_ptr::DynamicTypeBuilder_ptr(DynamicTypeBuilder* pType)
+DynamicTypeBuilder_ptr::DynamicTypeBuilder_ptr(
+        DynamicTypeBuilder* pType)
     : Base(pType, [](DynamicTypeBuilder* pType)
-{
-    DynamicTypeBuilderFactory::get_instance()->delete_builder(pType);
-})
+            {
+                DynamicTypeBuilderFactory::get_instance()->delete_builder(pType);
+            })
 {
 }
 

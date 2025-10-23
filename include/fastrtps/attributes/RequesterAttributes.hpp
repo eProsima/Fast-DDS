@@ -28,9 +28,11 @@ namespace fastrtps {
 class RequesterAttributes
 {
 public:
+
     RequesterAttributes() = default;
 
-    bool operator==(const RequesterAttributes& b) const
+    bool operator ==(
+            const RequesterAttributes& b) const
     {
         return (this->service_name == b.service_name) &&
                (this->request_topic_name == b.request_topic_name) &&

@@ -14,15 +14,21 @@
 
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(): bytesPerPeriod(UINT32_MAX), periodMillisecs(0)
+ThroughputControllerDescriptor::ThroughputControllerDescriptor()
+    : bytesPerPeriod(UINT32_MAX)
+    , periodMillisecs(0)
 {
 }
 
-ThroughputControllerDescriptor::ThroughputControllerDescriptor(uint32_t size, uint32_t time): bytesPerPeriod(size), periodMillisecs(time)
+ThroughputControllerDescriptor::ThroughputControllerDescriptor(
+        uint32_t size,
+        uint32_t time)
+    : bytesPerPeriod(size)
+    , periodMillisecs(time)
 {
 }
 

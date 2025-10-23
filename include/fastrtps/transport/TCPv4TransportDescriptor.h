@@ -19,9 +19,9 @@
 
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using TCPv4TransportDescriptor = fastdds::rtps::TCPv4TransportDescriptor;
 
@@ -29,4 +29,4 @@ using TCPv4TransportDescriptor = fastdds::rtps::TCPv4TransportDescriptor;
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef TCPV4_TRANSPORT_DESCRIPTOR
