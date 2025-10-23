@@ -222,9 +222,11 @@ traits<DynamicTypeImpl>::ref_type DynamicTypeImpl::resolve_alias_enclosed_type()
 
     if (TK_ALIAS == ret_value->get_kind())
     {
-        do {
+        do
+        {
             ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_descriptor().base_type());
-        } while (TK_ALIAS == ret_value->get_kind());
+        }
+        while (TK_ALIAS == ret_value->get_kind());
     }
 
     return ret_value;

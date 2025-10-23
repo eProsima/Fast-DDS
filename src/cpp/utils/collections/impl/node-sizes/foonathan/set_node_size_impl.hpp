@@ -33,7 +33,7 @@
  */
 
 template <typename K>
-struct set_node_size : foonathan::memory::set_node_size<std::pair<size_t, typename std::set<K>::value_type> >
+struct set_node_size : foonathan::memory::set_node_size<std::pair<size_t, typename std::set<K>::value_type>>
 {
 };
 

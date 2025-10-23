@@ -519,7 +519,8 @@ TEST_F(SHMCondition, max_listeners)
     do
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    } while (waiting_threads.load() + wait_exception.load() < threads.size());
+    }
+    while (waiting_threads.load() + wait_exception.load() < threads.size());
 
     std::cout << waiting_threads.load() << " waiting. " << wait_exception.load() << " failed." << std::endl;
 

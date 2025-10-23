@@ -123,7 +123,8 @@ static void wait_statistics(
             total_samples += info_seq.length();
             reader->return_loan(data_seq, info_seq);
         }
-    } while (total_samples < num_samples);
+    }
+    while (total_samples < num_samples);
 
     std::cout << "Received " << total_samples << " samples on " << topic_name << std::endl;
 }
