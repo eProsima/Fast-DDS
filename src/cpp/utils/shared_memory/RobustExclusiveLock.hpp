@@ -247,7 +247,8 @@ private:
                 close(fd);
                 fd = -1;
             }
-        } while (fd == -1);
+        }
+        while (fd == -1);
         return fd;
     }
 

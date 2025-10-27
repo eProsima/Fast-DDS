@@ -84,7 +84,8 @@ void DataSharingListener::run()
 
             // If some writer added new data, there may be something to read.
             // If there were matching/unmatching, we may not have finished our last loop
-        } while (is_running_.load() &&
+        }
+        while (is_running_.load() &&
         (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
