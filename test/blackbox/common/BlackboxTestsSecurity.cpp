@@ -2962,6 +2962,7 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
         PubSubWriter<HelloWorldPubSubType>& writer,
         const std::string& governance_file)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
     reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
