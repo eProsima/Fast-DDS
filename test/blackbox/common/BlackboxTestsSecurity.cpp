@@ -37,6 +37,8 @@
 #include "PubSubParticipant.hpp"
 #include "UDPMessageSender.hpp"
 
+#include "../utils/filter_helpers.hpp"
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
@@ -4650,7 +4652,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     // Filter to drop participant stateless messages
-    test_transport->drop_data_messages_filter_ = [](eprosima::fastdds::rtps::CDRMessage_t& msg)
+    test_transport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)
             -> bool
             {
                 auto old_pos = msg.pos;
@@ -4664,7 +4666,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
                     (char*)&msg.buffer[msg.pos]);
                 msg.pos = old_pos;
 
-                if (writer_entity_id == eprosima::fastdds::rtps::participant_stateless_message_writer_entity_id)
+                if (writer_entity_id == eprosima::fastrtps::rtps::participant_stateless_message_writer_entity_id)
                 {
                     // Drop the message if the message comes from participant generic message
                     return true;
