@@ -597,7 +597,8 @@ public:
         std::cout << "Writer authorization finished..." << std::endl;
     }
 
-    void wait_unauthorized(std::chrono::seconds timeout = std::chrono::seconds::zero(),
+    void wait_unauthorized(
+            std::chrono::seconds timeout = std::chrono::seconds::zero(),
             unsigned int expected = 1)
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
