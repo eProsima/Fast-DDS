@@ -298,7 +298,7 @@ if(Python3_Interpreter_FOUND)
     endif()
 
     add_test(NAME TwoPublishersCommunicationReliable
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST TwoPublishersCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
