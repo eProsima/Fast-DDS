@@ -384,7 +384,8 @@ struct action<semicolon>
                 state["struct_member_names"] += state["current_struct_member_name"] + ";";
 
                 // Add the array dimensions for this member to `all_array_sizes`
-                std::string current_array_sizes = state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
+                std::string current_array_sizes =
+                        state["current_array_sizes"].empty() ? "0" : state["current_array_sizes"];
                 if (!state["all_array_sizes"].empty())
                 {
                     state["all_array_sizes"] += ";" + current_array_sizes;
@@ -481,7 +482,8 @@ struct action<semicolon>
             std::map<std::string, std::string>& state, \
             std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
-            std::string type{#id}; \
+            std::string type{#id \
+            }; \
             if (type == "sequence") \
             { \
                 state["type"] = type; \
@@ -842,6 +844,7 @@ struct action<kw_sequence>
             state.erase("arithmetic_expr");
         }
     }
+
 };
 
 template<>
