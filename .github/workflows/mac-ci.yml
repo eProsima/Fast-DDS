@@ -28,6 +28,11 @@ on:
         required: false
         type: boolean
         default: false
+      run-tests:
+        description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
 
   pull_request:
     types:
