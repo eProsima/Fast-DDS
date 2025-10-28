@@ -154,7 +154,6 @@ jobs:
 
   fastdds_test:
     needs: fastdds_build
-    if: ${{ inputs.run-tests == true }}
     name: fastdds_test (${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }}), ${{ matrix.vs-toolset }}
     runs-on: windows-2022
     strategy:
@@ -179,12 +178,14 @@ jobs:
 
     steps:
       - name: Download build artifacts
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
           name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
           path: ${{ github.workspace }}
 
       - name: Update known hosts file for DNS resolver testing
+        if: ${{ inputs.run-tests == true }}
         run: |
           $hostfile = "$Env:SystemRoot\system32\drivers" -replace "\\", "/"
           $hostfile += "/etc/hosts"
@@ -212,21 +213,25 @@ jobs:
           gc $hostfile
 
       - name: Install Fix Python version
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
       - name: Get minimum supported version of CMake
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install OpenSSL
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
         with:
           version: '3.1.1'
 
       - name: Update OpenSSL environment variables
+        if: ${{ inputs.run-tests == true }}
         run: |
           # Update the environment
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
@@ -248,16 +253,18 @@ jobs:
           }
 
       - name: Install colcon
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Install Python dependencies
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
           packages: vcstool xmlschema psutil
 
       #Build Windows examples testing docker image
       - name: Build with example testing
-        if: ${{ matrix.test_filter == 'examples' }}
+        if: ${{ inputs.run-tests == true && matrix.test_filter == 'examples' }}
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
@@ -270,6 +277,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Test
+        if: ${{ inputs.run-tests == true }}
         id: test
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
@@ -288,7 +296,7 @@ jobs:
 
       - name: Test summary
         uses: eProsima/eProsima-CI/windows/junit_summary@v0
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && inputs.run-tests == true}}
         with:
           junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
           print_summary: 'True'
