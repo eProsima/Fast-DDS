@@ -57,7 +57,7 @@ defaults:
 
 jobs:
   asan_fastdds_build:
-    if: ${{ inputs.run_asan_fastdds == true }}
+    if: ${{ inputs.run_asan_fastdds == true || inputs.run_asan_discovery_server == true }}
     runs-on: ubuntu-22.04
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -148,6 +148,7 @@ jobs:
           path: ${{ github.workspace }}
 
   asan_fastdds_test:
+    if: ${{ inputs.run_asan_fastdds == true }}
     needs: asan_fastdds_build
     runs-on: ubuntu-22.04
     steps:
@@ -216,7 +217,6 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -231,7 +231,6 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
 
       - name: Report sanitizer errors
-        if: ${{ inputs.run_asan_fastdds == true }}
         run: |
           bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
             "==ERROR:" \
@@ -316,7 +315,6 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -331,7 +329,6 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
 
       - name: Report sanitizer errors
-        if: ${{ inputs.run_asan_discovery_server == true }}
         run: |
           bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
             "==ERROR:" \
@@ -469,7 +466,6 @@ jobs:
           df -hT
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
