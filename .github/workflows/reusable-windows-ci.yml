@@ -146,6 +146,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Upload build artifacts
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
           name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}

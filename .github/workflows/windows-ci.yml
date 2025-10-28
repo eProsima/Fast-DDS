@@ -23,6 +23,11 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         type: string
         required: true
+      run-tests:
+        description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
 
   pull_request:
     types:
