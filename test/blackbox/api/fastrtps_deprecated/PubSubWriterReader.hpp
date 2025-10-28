@@ -534,7 +534,7 @@ public:
     }
 
 #if HAVE_SECURITY
-    void waitAuthorized(
+    void wait_authorized(
             unsigned int how_many = 1)
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);
@@ -550,7 +550,7 @@ public:
         std::cout << "WReader authorization finished..." << std::endl;
     }
 
-    void waitUnauthorized(
+    void wait_unauthorized(
             unsigned int how_many = 1)
     {
         std::unique_lock<std::mutex> lock(mutexAuthentication_);

@@ -61,6 +61,20 @@ inline uint32_t cdr_parse_u32(
     return u32;
 }
 
+inline fastrtps::rtps::EntityId_t cdr_parse_entity_id(
+        char* serialized_buffer)
+{
+    fastrtps::rtps::EntityId_t entity_id;
+    eprosima::fastcdr::FastBuffer buffer(serialized_buffer, 4);
+    eprosima::fastcdr::Cdr cdr(buffer,
+            eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::XCDRv1);
+    std::array<eprosima::fastrtps::rtps::octet, 4> array;
+    cdr >> array;
+    memcpy(entity_id.value, array.data(), 4);
+    return entity_id;
+}
+
 } // namespace helpers
 } // namespace fastdds
 } // namespace eprosima
