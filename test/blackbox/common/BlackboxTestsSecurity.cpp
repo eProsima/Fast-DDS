@@ -2963,11 +2963,16 @@ static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation
         const std::string& governance_file)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport);
     reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
+    writer.disable_builtin_transport().add_user_transport_to_pparams(udp_transport);
     writer.history_depth(10).init();
     ASSERT_TRUE(writer.isInitialized());
 
