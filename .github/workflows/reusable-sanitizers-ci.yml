@@ -354,7 +354,6 @@ jobs:
       - name: Free disk space
         run: |
           set -euxo pipefail
-          df -hT
           sudo rm -rf /usr/share/dotnet \
                        /usr/local/lib/android \
                        /opt/ghc \
@@ -366,7 +365,6 @@ jobs:
           # APT caches
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
-          df -hT
 
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -449,11 +447,6 @@ jobs:
         run: |
           cat ${{ github.workspace }}/src/fastdds/.github/workflows/config/tsan.meta
 
-      - name: Check disk space before build
-        run: |
-          set -euxo pipefail
-          df -hT
-
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
@@ -465,11 +458,6 @@ jobs:
           cmake_build_type: 'Debug'
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
-
-      - name: Check disk space after build
-        run: |
-          set -euxo pipefail
-          df -hT
 
       - name: Colcon test
         id: test
@@ -484,11 +472,6 @@ jobs:
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
-
-      - name: Check disk space after test (before report summary)
-        run: |
-          set -euxo pipefail
-          df -hT
 
       - name: Process sanitizer reports
         id: report_summary
