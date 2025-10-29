@@ -360,10 +360,7 @@ jobs:
                        /opt/ghc \
                        /usr/local/share/boost \
                        /usr/local/share/chromium \
-                       /usr/local/share/powershell \
                        /usr/local/.ghcup || true
-          # Toolcache (old SDKs)
-          sudo rm -rf /opt/hostedtoolcache || true
           # Docker images (if any)
           docker image prune -af || true
           # APT caches
