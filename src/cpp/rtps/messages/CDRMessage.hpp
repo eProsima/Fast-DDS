@@ -69,16 +69,6 @@ bool readData(
         octet* o,
         uint32_t length);
 
-bool read_array_with_max_size(
-        CDRMessage_t* msg,
-        octet* arr,
-        size_t max_size);
-
-bool readDataReversed(
-        CDRMessage_t* msg,
-        octet* o,
-        uint32_t length);
-
 bool readInt32(
         CDRMessage_t* msg,
         int32_t* lo);
@@ -113,7 +103,7 @@ bool read_locator(
 
 bool read_locator_list(
         CDRMessage_t* msg,
-        LocatorList_t* loc_list);
+        LocatorList* loc_list);
 
 bool read_external_locator(
         CDRMessage_t* msg,
@@ -162,18 +152,15 @@ bool readBinaryProperty(
 
 bool readPropertySeq(
         CDRMessage_t* msg,
-        PropertySeq& properties,
-        const uint32_t parameter_length);
+        PropertySeq& properties);
 
 bool readBinaryPropertySeq(
         CDRMessage_t* msg,
-        BinaryPropertySeq& binary_properties,
-        const uint32_t parameter_length);
+        BinaryPropertySeq& binary_properties);
 
 bool readDataHolder(
         CDRMessage_t* msg,
-        DataHolder& data_holder,
-        const uint32_t parameter_length);
+        DataHolder& data_holder);
 
 bool readDataHolderSeq(
         CDRMessage_t* msg,
