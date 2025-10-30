@@ -37,6 +37,7 @@
 #include "PubSubWriter.hpp"
 #include "PubSubWriterReader.hpp"
 #include "UDPMessageSender.hpp"
+#include "DatagramInjectionTransport.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
@@ -4730,6 +4731,140 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     eprosima::fastdds::dds::Log::Flush();
     EXPECT_EQ(0u, n_logs);
 }
+
+/**
+ * This test serves as a regression test for several security advisories related to malicious
+ * datagrams received by a participant with security enabled.
+ *
+ * We should have a different test for each datagram, since each one could make the participant
+ * crash, and if one of them does, the rest won't be executed.
+ */
+static void security_datagram_injection_on_reader_test(
+        const std::string& topic_name,
+        const char* datagram_file)
+{
+    PubSubReader<HelloWorldPubSubType> reader(topic_name);
+
+    // Configure security
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+    PropertyPolicy extra_policy;
+    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_policy);
+
+    // Prepare datagram injection transport
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+
+    // Initialize reader
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    auto receivers = transport->get_receivers();
+    ASSERT_FALSE(receivers.empty());
+
+    // Inject datagram
+    DatagramInjectionTransport::deliver_datagram_from_file(receivers, datagram_file);
+
+    // Allow some time for processing
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // Clean up
+    reader.destroy();
+}
+
+/**
+ * This test is a regression test for redmine issue #23831.
+ */
+TEST(Security, DatagramInjectionOnReader_23831)
+{
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_DatagramInjectionOnReader_23831");
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_DatagramInjectionOnReader_23831");
+
+    // Configure security
+    CommonPermissionsConfigure(reader, writer,
+            "governance_helloworld_all_enable.smime",
+            "permissions_helloworld.smime");
+
+    // Prepare datagram injection transport
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+
+    // Initialize entities and wait for discovery
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    auto receivers = transport->get_receivers();
+    ASSERT_FALSE(receivers.empty());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Read malicious datagram
+    std::vector<uint8_t> datagram = DatagramInjectionTransport::read_datagram_from_file("datagrams/23831.bin");
+    ASSERT_FALSE(datagram.empty());
+    // Update datagram with GUID prefixes of our entities
+    static constexpr size_t sender_prefix_offset = 8;
+    static constexpr size_t receiver_prefix_offset = 24;
+    auto writer_guid = writer.datawriter_guid();
+    auto reader_guid = reader.datareader_guid();
+    std::memcpy(&datagram[sender_prefix_offset], writer_guid.guidPrefix.value, GuidPrefix_t::size);
+    std::memcpy(&datagram[receiver_prefix_offset], reader_guid.guidPrefix.value, GuidPrefix_t::size);
+
+    // Inject datagram
+    DatagramInjectionTransport::deliver_datagram(receivers, datagram.data(), datagram.size());
+
+    // Allow some time for processing
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // Clean up
+    reader.destroy();
+    writer.destroy();
+}
+
+/**
+ * This test is a regression test for redmine issues #23832 and #23833.
+ */
+TEST(Security, DatagramInjectionOnReader_23832_23833)
+{
+    security_datagram_injection_on_reader_test(
+        "HelloWorldTopic_DatagramInjectionOnReader_23832_23833",
+        "datagrams/23833.bin");
+}
+
+/**
+ * This test is a regression test for redmine issue #23834.
+ */
+TEST(Security, DatagramInjectionOnReader_23834)
+{
+    security_datagram_injection_on_reader_test(
+        "HelloWorldTopic_DatagramInjectionOnReader_23834",
+        "datagrams/23834.bin");
+}
+
+/**
+ * This test is a regression test for redmine issue #23835.
+ */
+TEST(Security, DatagramInjectionOnReader_23835)
+{
+    security_datagram_injection_on_reader_test(
+        "HelloWorldTopic_DatagramInjectionOnReader_23835",
+        "datagrams/23835.bin");
+}
+
+/**
+ * This test is a regression test for redmine issue #23836.
+ */
+TEST(Security, DatagramInjectionOnReader_23836)
+{
+    security_datagram_injection_on_reader_test(
+        "HelloWorldTopic_DatagramInjectionOnReader_23836",
+        "datagrams/23836.bin");
+}
+
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)

@@ -175,20 +175,26 @@ bool ParameterList::read_guid_from_cdr_msg(
     while (msg.pos < msg.length)
     {
         valid = true;
-        valid &= rtps::CDRMessage::readUInt16(&msg, &pid);
-        valid &= rtps::CDRMessage::readUInt16(&msg, &plength);
+        valid = valid && rtps::CDRMessage::readUInt16(&msg, &pid);
+        valid = valid && rtps::CDRMessage::readUInt16(&msg, &plength);
         if (!valid || (pid == PID_SENTINEL))
         {
             break;
         }
         if (pid == search_pid)
         {
-            valid &= rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
+            valid = valid && rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
                             rtps::GuidPrefix_t::size);
-            valid &= rtps::CDRMessage::readData(&msg, guid.entityId.value, rtps::EntityId_t::size);
+            valid = valid && rtps::CDRMessage::readData(&msg, guid.entityId.value, rtps::EntityId_t::size);
             return valid;
         }
-        msg.pos += (plength + 3) & ~3;
+        uint64_t aligned_length = (static_cast<uint64_t>(plength) + 3u) & ~3u;
+        uint64_t new_pos = static_cast<uint64_t>(msg.pos) + aligned_length;
+        if (new_pos > static_cast<uint64_t>(msg.length))
+        {
+            new_pos = msg.length;
+        }
+        msg.pos = static_cast<uint32_t>(new_pos);
     }
     return false;
 }
@@ -211,7 +217,10 @@ bool ParameterList::readInstanceHandleFromCDRMsg(
     // Read encapsulation
     msg.pos += 1;
     rtps::octet encapsulation = 0;
-    rtps::CDRMessage::readOctet(&msg, &encapsulation);
+    if (!rtps::CDRMessage::readOctet(&msg, &encapsulation))
+    {
+        return false;
+    }
     if (encapsulation == PL_CDR_BE)
     {
         msg.msg_endian = rtps::Endianness_t::BIGEND;
@@ -225,34 +234,39 @@ bool ParameterList::readInstanceHandleFromCDRMsg(
         return false;
     }
 
-    change->serializedPayload.encapsulation = (uint16_t)encapsulation;
+    change->serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
 
     // Skip encapsulation options
     msg.pos += 2;
 
     bool valid = false;
-    uint16_t pid;
-    uint16_t plength;
+    uint16_t pid = 0;
+    uint16_t plength = 0;
     while (msg.pos < msg.length)
     {
-        valid = true;
-        valid &= rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-        valid &= rtps::CDRMessage::readUInt16(&msg, &plength);
+        valid = rtps::CDRMessage::readUInt16(&msg, &pid);
+        valid = valid && rtps::CDRMessage::readUInt16(&msg, &plength);
         if ((pid == PID_SENTINEL) || !valid)
         {
             break;
         }
         if (pid == PID_KEY_HASH)
         {
-            valid &= rtps::CDRMessage::readData(&msg, change->instanceHandle.value, 16);
+            valid = valid && rtps::CDRMessage::readData(&msg, change->instanceHandle.value, 16);
             return valid;
         }
         if (pid == search_pid)
         {
-            valid &= rtps::CDRMessage::readData(&msg, change->instanceHandle.value, 16);
+            valid = valid && rtps::CDRMessage::readData(&msg, change->instanceHandle.value, 16);
             return valid;
         }
-        msg.pos += (plength + 3) & ~3;
+        uint64_t aligned_length = (static_cast<uint64_t>(plength) + 3u) & ~3u;
+        uint64_t new_pos = static_cast<uint64_t>(msg.pos) + aligned_length;
+        if (new_pos > static_cast<uint64_t>(msg.length))
+        {
+            new_pos = msg.length;
+        }
+        msg.pos = static_cast<uint32_t>(new_pos);
     }
     return false;
 }

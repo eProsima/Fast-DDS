@@ -1478,7 +1478,11 @@ void SecurityManager::process_participant_stateless_message(
 
     aux_msg.pos += 2;
 
-    CDRMessage::readParticipantGenericMessage(&aux_msg, message);
+    if (false == CDRMessage::readParticipantGenericMessage(&aux_msg, message))
+    {
+        EPROSIMA_LOG_INFO(SECURITY, "Cannot deserialize ParticipantGenericMessage");
+        return;
+    }
 
     if (message.message_class_id().compare(AUTHENTICATION_PARTICIPANT_STATELESS_MESSAGE) == 0)
     {
@@ -1713,7 +1717,11 @@ void SecurityManager::process_participant_volatile_message_secure(
 
     aux_msg.pos += 2;
 
-    CDRMessage::readParticipantGenericMessage(&aux_msg, message);
+    if (false == CDRMessage::readParticipantGenericMessage(&aux_msg, message))
+    {
+        EPROSIMA_LOG_INFO(SECURITY, "Cannot deserialize ParticipantGenericMessage");
+        return;
+    }
 
     if (message.message_class_id().compare(GMCLASSID_SECURITY_PARTICIPANT_CRYPTO_TOKENS) == 0)
     {
