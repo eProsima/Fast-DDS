@@ -57,7 +57,7 @@ defaults:
 
 jobs:
   asan_fastdds_build:
-    if: ${{ inputs.run_asan_fastdds == true }}
+    if: ${{ inputs.run_asan_fastdds == true || inputs.run_asan_discovery_server == true }}
     runs-on: ubuntu-22.04
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -148,6 +148,7 @@ jobs:
           path: ${{ github.workspace }}
 
   asan_fastdds_test:
+    if: ${{ inputs.run_asan_fastdds == true }}
     needs: asan_fastdds_build
     runs-on: ubuntu-22.04
     steps:
@@ -216,7 +217,6 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -231,7 +231,6 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
 
       - name: Report sanitizer errors
-        if: ${{ inputs.run_asan_fastdds == true }}
         run: |
           bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
             "==ERROR:" \
@@ -316,7 +315,6 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -331,7 +329,6 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
 
       - name: Report sanitizer errors
-        if: ${{ inputs.run_asan_discovery_server == true }}
         run: |
           bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
             "==ERROR:" \
@@ -354,6 +351,21 @@ jobs:
       CC: gcc-12
       CXX: g++-12
     steps:
+      - name: Free disk space
+        run: |
+          set -euxo pipefail
+          sudo rm -rf /usr/share/dotnet \
+                       /usr/local/lib/android \
+                       /opt/ghc \
+                       /usr/local/share/boost \
+                       /usr/local/share/chromium \
+                       /usr/local/.ghcup || true
+          # Docker images (if any)
+          docker image prune -af || true
+          # APT caches
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
@@ -448,7 +460,6 @@ jobs:
           workspace_dependencies: ''
 
       - name: Colcon test
-        if: ${{ inputs.run_asan_fastdds == true }}
         id: test
         continue-on-error: true
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
@@ -471,6 +482,20 @@ jobs:
           $exports = New-Item -ItemType Directory -Path ./exports
           # Move to the reports dir
           pushd ./log/latest_test/fastdds
+          # Make sure the NuGet provider exists
+          if (-not (Get-PackageProvider -ListAvailable | Where-Object Name -eq 'NuGet')) {
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+          }
+          # (Re)register & trust PSGallery if needed
+          if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
+            Register-PSRepository -Name 'PSGallery' `
+              -SourceLocation 'https://www.powershellgallery.com/api/v2' `
+              -ScriptSourceLocation 'https://www.powershellgallery.com/api/v2' `
+              -PackageManagementProvider 'NuGet' `
+              -InstallationPolicy Trusted
+          } else {
+            Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+          }
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files
