@@ -325,7 +325,10 @@ inline bool ParameterSerializer<ParameterString_t>::read_content_from_cdr_messag
     parameter.length = parameter_length;
     fastcdr::string_255 aux;
     bool valid = rtps::CDRMessage::read_string(cdr_message, &aux);
-    parameter.setName(aux.c_str());
+    if (valid)
+    {
+        parameter.setName(aux.c_str());
+    }
     return valid;
 }
 
@@ -372,8 +375,8 @@ inline bool ParameterSerializer<ParameterGuid_t>::read_content_from_cdr_message(
         return false;
     }
     parameter.length = parameter_length;
-    bool valid =  rtps::CDRMessage::readData(cdr_message, parameter.guid.guidPrefix.value, 12);
-    valid &= rtps::CDRMessage::readData(cdr_message, parameter.guid.entityId.value, 4);
+    bool valid = rtps::CDRMessage::readData(cdr_message, parameter.guid.guidPrefix.value, 12);
+    valid = valid && rtps::CDRMessage::readData(cdr_message, parameter.guid.entityId.value, 4);
     return valid;
 }
 
@@ -400,7 +403,7 @@ inline bool ParameterSerializer<ParameterProtocolVersion_t>::read_content_from_c
     }
     parameter.length = parameter_length;
     bool valid = rtps::CDRMessage::readOctet(cdr_message, &parameter.protocolVersion.m_major);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.protocolVersion.m_minor);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &parameter.protocolVersion.m_minor);
     cdr_message->pos += 2; //padding
     return valid;
 }
@@ -428,7 +431,7 @@ inline bool ParameterSerializer<ParameterVendorId_t>::read_content_from_cdr_mess
     }
     parameter.length = parameter_length;
     bool valid = rtps::CDRMessage::readOctet(cdr_message, &parameter.vendorId[0]);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.vendorId[1]);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &parameter.vendorId[1]);
     cdr_message->pos += 2; //padding
     return valid;
 }
@@ -457,9 +460,9 @@ inline bool ParameterSerializer<ParameterProductVersion_t>::read_content_from_cd
     }
     parameter.length = parameter_length;
     bool valid = rtps::CDRMessage::readOctet(cdr_message, &parameter.version.major);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.minor);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.patch);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.version.tweak);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &parameter.version.minor);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &parameter.version.patch);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &parameter.version.tweak);
     return valid;
 }
 
@@ -531,7 +534,9 @@ inline bool ParameterSerializer<ParameterBool_t>::read_content_from_cdr_message(
     }
 
     parameter.length = parameter_length;
-    bool valid = rtps::CDRMessage::readOctet(cdr_message, (rtps::octet*)&parameter.value);
+    rtps::octet val = 0;
+    bool valid = rtps::CDRMessage::readOctet(cdr_message, &val);
+    parameter.value = (val != 0);
     cdr_message->pos += 3; //padding
     return valid;
 }
@@ -562,9 +567,9 @@ inline bool ParameterSerializer<ParameterStatusInfo_t>::read_content_from_cdr_me
     rtps::octet tmp;
     //Remove the front three octets, take the fourth
     bool valid = rtps::CDRMessage::readOctet(cdr_message, &tmp);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &tmp);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &tmp);
-    valid &= rtps::CDRMessage::readOctet(cdr_message, &parameter.status);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &tmp);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &tmp);
+    valid = valid && rtps::CDRMessage::readOctet(cdr_message, &parameter.status);
     return valid;
 }
 
@@ -633,13 +638,7 @@ inline bool ParameterSerializer<ParameterTime_t>::read_content_from_cdr_message(
         return false;
     }
     parameter.length = parameter_length;
-    int32_t sec(0);
-    bool valid = rtps::CDRMessage::readInt32(cdr_message, &sec);
-    parameter.time.seconds(sec);
-    uint32_t frac(0);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &frac);
-    parameter.time.fraction(frac);
-    return valid;
+    return rtps::CDRMessage::readTimestamp(cdr_message, &parameter.time);
 }
 
 template<>
@@ -766,7 +765,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
 
         // Read and validate size of property name
         remain = max_pos - cdr_message->pos;
-        valid &= (remain >= sizeof(uint32_t)) && rtps::CDRMessage::readUInt32(cdr_message, &property1_size);
+        valid = valid && (remain >= sizeof(uint32_t)) && rtps::CDRMessage::readUInt32(cdr_message, &property1_size);
         remain -= sizeof(uint32_t);
         valid = valid && (remain >= property1_size);
         if (!valid)
@@ -786,7 +785,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
         remain -= alignment1;
 
         // Read and validate size of property value
-        valid &= (remain >= sizeof(uint32_t)) && rtps::CDRMessage::readUInt32(cdr_message, &property2_size);
+        valid = valid && (remain >= sizeof(uint32_t)) && rtps::CDRMessage::readUInt32(cdr_message, &property2_size);
         remain -= sizeof(uint32_t);
         valid = valid && (remain >= property2_size);
         if (!valid)
@@ -811,7 +810,7 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
     }
 
     uint32_t length_diff = cdr_message->pos - pos_ref;
-    valid &= (parameter_length >= length_diff);
+    valid = valid && (parameter_length >= length_diff);
     return valid;
 }
 
@@ -842,10 +841,11 @@ inline bool ParameterSerializer<ParameterSampleIdentity_t>::read_content_from_cd
     parameter.length = parameter_length;
     bool valid = rtps::CDRMessage::readData(cdr_message,
                     parameter.sample_id.writer_guid().guidPrefix.value, rtps::GuidPrefix_t::size);
-    valid &= rtps::CDRMessage::readData(cdr_message,
+    valid = valid && rtps::CDRMessage::readData(cdr_message,
                     parameter.sample_id.writer_guid().entityId.value, rtps::EntityId_t::size);
-    valid &= rtps::CDRMessage::readInt32(cdr_message, &parameter.sample_id.sequence_number().high);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
+    valid = valid && rtps::CDRMessage::readInt32(cdr_message, &parameter.sample_id.sequence_number().high);
+    valid = valid && rtps::CDRMessage::readUInt32(cdr_message, &parameter.sample_id.sequence_number().low);
+
     return valid;
 }
 
@@ -941,7 +941,7 @@ public:
 
         // Validate minimum plength: 4 non-empty strings + number of expression parameters
         constexpr uint16_t min_plength = (4 * 8) + 4;
-        if (parameter_length >= min_plength && (cdr_message->length - cdr_message->pos) > parameter_length)
+        if (parameter_length >= min_plength && (cdr_message->length - cdr_message->pos) >= parameter_length)
         {
             bool valid = true;
             // Limit message length to parameter length, keeping old length to restore it later
@@ -949,16 +949,16 @@ public:
             cdr_message->length = cdr_message->pos + parameter_length;
 
             // Read four strings
-            valid = read_string(cdr_message, parameter.content_filtered_topic_name) &&
+            valid = rtps::CDRMessage::read_string(cdr_message, &parameter.content_filtered_topic_name) &&
                     (0 < parameter.content_filtered_topic_name.size());
             if (valid)
             {
-                valid = read_string(cdr_message, parameter.related_topic_name) &&
+                valid = rtps::CDRMessage::read_string(cdr_message, &parameter.related_topic_name) &&
                         (0 < parameter.related_topic_name.size());
             }
             if (valid)
             {
-                valid = read_string(cdr_message, parameter.filter_class_name) &&
+                valid = rtps::CDRMessage::read_string(cdr_message, &parameter.filter_class_name) &&
                         (0 < parameter.filter_class_name.size());
             }
             if (valid)
@@ -982,7 +982,7 @@ public:
                     {
                         fastcdr::string_255* p = parameter.expression_parameters.push_back({});
                         assert(nullptr != p);
-                        valid = read_string(cdr_message, *p);
+                        valid = rtps::CDRMessage::read_string(cdr_message, p);
                     }
                 }
             }
@@ -1020,32 +1020,6 @@ private:
         parameter.related_topic_name = "";
         parameter.filter_expression = "";
         parameter.expression_parameters.clear();
-    }
-
-    static inline bool read_string(
-            rtps::CDRMessage_t* cdr_message,
-            fastcdr::string_255& str)
-    {
-        uint32_t str_size = 0;
-        bool valid;
-        valid = rtps::CDRMessage::readUInt32(cdr_message, &str_size);
-        if (!valid ||
-                cdr_message->pos + str_size > cdr_message->length ||
-                str_size > str.max_size + 1)
-        {
-            return false;
-        }
-
-        str = "";
-        // str_size == 1 would be for an empty string, as the NUL char is always serialized
-        if (str_size > 1)
-        {
-            str = reinterpret_cast<const char*>(&(cdr_message->buffer[cdr_message->pos]));
-        }
-        cdr_message->pos += str_size;
-        cdr_message->pos = (cdr_message->pos + 3u) & ~3u;
-
-        return true;
     }
 
 };
@@ -1091,9 +1065,9 @@ inline bool ParameterSerializer<ParameterToken_t>::read_content_from_cdr_message
 
     parameter.length = parameter_length;
     uint32_t pos_ref = cdr_message->pos;
-    bool valid =  rtps::CDRMessage::readDataHolder(cdr_message, parameter.token, parameter_length);
+    bool valid = rtps::CDRMessage::readDataHolder(cdr_message, parameter.token);
     uint32_t length_diff = cdr_message->pos - pos_ref;
-    valid &= (parameter_length == length_diff);
+    valid = valid && (parameter_length == length_diff);
     return valid;
 }
 
@@ -1119,7 +1093,7 @@ inline bool ParameterSerializer<ParameterParticipantSecurityInfo_t>::read_conten
     }
     parameter.length = parameter_length;
     bool valid = rtps::CDRMessage::readUInt32(cdr_message, &parameter.security_attributes);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.plugin_security_attributes);
+    valid = valid && rtps::CDRMessage::readUInt32(cdr_message, &parameter.plugin_security_attributes);
     return valid;
 }
 
@@ -1145,7 +1119,7 @@ inline bool ParameterSerializer<ParameterEndpointSecurityInfo_t>::read_content_f
     }
     parameter.length = parameter_length;
     bool valid = rtps::CDRMessage::readUInt32(cdr_message, &parameter.security_attributes);
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &parameter.plugin_security_attributes);
+    valid = valid && rtps::CDRMessage::readUInt32(cdr_message, &parameter.plugin_security_attributes);
     return valid;
 }
 
