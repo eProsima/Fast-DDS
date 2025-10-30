@@ -482,6 +482,20 @@ jobs:
           $exports = New-Item -ItemType Directory -Path ./exports
           # Move to the reports dir
           pushd ./log/latest_test/fastdds
+          # Make sure the NuGet provider exists
+          if (-not (Get-PackageProvider -ListAvailable | Where-Object Name -eq 'NuGet')) {
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+          }
+          # (Re)register & trust PSGallery if needed
+          if (-not (Get-PSRepository -Name PSGallery -ErrorAction SilentlyContinue)) {
+            Register-PSRepository -Name 'PSGallery' `
+              -SourceLocation 'https://www.powershellgallery.com/api/v2' `
+              -ScriptSourceLocation 'https://www.powershellgallery.com/api/v2' `
+              -PackageManagementProvider 'NuGet' `
+              -InstallationPolicy Trusted
+          } else {
+            Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+          }
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files
