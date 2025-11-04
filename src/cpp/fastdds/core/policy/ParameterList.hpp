@@ -76,6 +76,8 @@ public:
             bool use_encapsulation,
             uint32_t& qos_size)
     {
+        using fastrtps::rtps::CDRMessage_t;
+
         qos_size = 0;
 
         if (use_encapsulation)
@@ -108,9 +110,8 @@ public:
 
             ParameterId_t pid{PID_SENTINEL};
             uint16_t plength = 0;
-            bool valid = true;
-            valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
-            valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+            bool valid = fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+            valid = valid && fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
 
             if (pid == PID_SENTINEL)
             {
@@ -119,10 +120,18 @@ public:
                 is_sentinel = true;
             }
 
-            qos_size += (4 + plength);
+            // Check for overflow in qos_size and pos using uint64_t
+            uint64_t new_qos_size = static_cast<uint64_t>(qos_size) + 4 + static_cast<uint64_t>(plength);
+            new_qos_size = (new_qos_size + 3) & ~3; // Align to 4 byte boundary
+            uint64_t new_pos = static_cast<uint64_t>(original_pos) + new_qos_size;
+            constexpr uint64_t max_uint32 = static_cast<uint64_t>(std::numeric_limits<uint32_t>::max());
+            if ((new_qos_size > max_uint32) || (new_pos > max_uint32))
+            {
+                return false;
+            }
 
-            // Align to 4 byte boundary and prepare for next iteration
-            qos_size = (qos_size + 3) & ~3;
+            // Safely cast back to uint32_t
+            qos_size = static_cast<uint32_t>(new_qos_size);
 
             if (!valid || ((msg.pos + plength) > msg.length))
             {
@@ -130,12 +139,15 @@ public:
             }
             else if (!is_sentinel)
             {
-                if (!processor(&msg, pid, plength))
+                // Prepare a submessage for the parameter
+                CDRMessage_t submsg = CDRMessage_t::wrap_from_other_message(msg, plength);
+                if (!processor(&submsg, pid, plength))
                 {
                     return false;
                 }
             }
         }
+        msg.pos = original_pos + qos_size;
         return true;
     }
 

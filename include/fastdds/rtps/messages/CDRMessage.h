@@ -61,16 +61,6 @@ inline bool readData(
         octet* o,
         uint32_t length);
 
-inline bool read_array_with_max_size(
-        CDRMessage_t* msg,
-        octet* arr,
-        size_t max_size);
-
-inline bool readDataReversed(
-        CDRMessage_t* msg,
-        octet* o,
-        uint32_t length);
-
 inline bool readInt32(
         CDRMessage_t* msg,
         int32_t* lo);
@@ -140,18 +130,15 @@ inline bool readBinaryProperty(
 
 inline bool readPropertySeq(
         CDRMessage_t* msg,
-        PropertySeq& properties,
-        const uint32_t parameter_length);
+        PropertySeq& properties);
 
 inline bool readBinaryPropertySeq(
         CDRMessage_t* msg,
-        BinaryPropertySeq& binary_properties,
-        const uint32_t parameter_length);
+        BinaryPropertySeq& binary_properties);
 
 inline bool readDataHolder(
         CDRMessage_t* msg,
-        DataHolder& data_holder,
-        const uint32_t parameter_length);
+        DataHolder& data_holder);
 
 inline bool readDataHolderSeq(
         CDRMessage_t* msg,

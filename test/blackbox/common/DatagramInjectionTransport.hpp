@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
 #include <mutex>
 #include <set>
 
@@ -110,6 +111,40 @@ public:
         bool ret_val = ChainingTransport::OpenOutputChannel(send_resource_list, loc);
         parent_->update_send_resource_list(send_resource_list);
         return ret_val;
+    }
+
+    static std::vector<uint8_t> read_datagram_from_file(
+            const char* filename)
+    {
+        std::basic_ifstream<char> file(filename, std::ios::binary | std::ios::in);
+
+        file.seekg(0, file.end);
+        size_t file_size = file.tellg();
+        file.seekg(0, file.beg);
+
+        std::vector<uint8_t> buf(file_size);
+        file.read(reinterpret_cast<char*>(buf.data()), file_size);
+        return buf;
+    }
+
+    static void deliver_datagram(
+            const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+            const uint8_t* data,
+            size_t size)
+    {
+        eprosima::fastdds::rtps::Locator loc;
+        for (const auto& rec : receivers)
+        {
+            rec->OnDataReceived(data, static_cast<uint32_t>(size), loc, loc);
+        }
+    }
+
+    static void deliver_datagram_from_file(
+            const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+            const char* filename)
+    {
+        std::vector<uint8_t> buf = read_datagram_from_file(filename);
+        deliver_datagram(receivers, buf.data(), buf.size());
     }
 
 private:
