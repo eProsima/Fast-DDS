@@ -773,9 +773,9 @@ IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
     return &dds_sql_filter_factory_;
 }
 
-const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
+InstanceHandle_t DomainParticipantImpl::get_instance_handle() const
 {
-    return static_cast<const InstanceHandle_t&>(guid_);
+    return guid_;
 }
 
 const fastdds::rtps::GUID_t& DomainParticipantImpl::guid() const
