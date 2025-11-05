@@ -190,13 +190,11 @@ void TCPTransportInterface::clean()
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
-        std::vector<eprosima::fastdds::rtps::Locator> delete_channels;
-
         {
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
             std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-            channels = unbound_channel_resources_;
+            channels = std::move(unbound_channel_resources_);
 
             for (auto& channel : channel_resources_)
             {
@@ -204,16 +202,10 @@ void TCPTransportInterface::clean()
                 {
                     channels.push_back(channel.second);
                 }
-                else
-                {
-                    delete_channels.push_back(channel.first);
-                }
-            }
-        }
 
-        for (auto& delete_channel : delete_channels)
-        {
-            channel_resources_.erase(delete_channel);
+            }
+
+            channel_resources_.clear();
         }
 
         for (auto& channel : channels)
@@ -1175,10 +1167,6 @@ void TCPTransportInterface::perform_listen_operation(
                 channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBind);
             }
         }
-
-        std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
-        rtcp_message_manager.reset();
-        rtcp_message_manager_cv_.notify_one();
     }
     else
     {
@@ -1219,6 +1207,47 @@ void TCPTransportInterface::perform_listen_operation(
             }
         }
     }
+
+    if (channel)
+    {
+        std::vector<eprosima::fastdds::rtps::Locator> delete_channels;
+        bool channel_found = false;
+
+        {
+            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+            std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+
+            for (auto& channel_resource : channel_resources_)
+            {
+                if (channel_resource.second == channel)
+                {
+                    delete_channels.push_back(channel_resource.first);
+                    channel_found = true;
+                }
+            }
+
+            for (auto& delete_channel : delete_channels)
+            {
+                channel_resources_.erase(delete_channel);
+            }
+
+            auto it_channel = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
+            if (it_channel != unbound_channel_resources_.end())
+            {
+                unbound_channel_resources_.erase(it_channel);
+                channel_found = true;
+            }
+        }
+
+        if (channel_found)
+        {
+            channel->clear();
+        }
+    }
+
+    std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
+    rtcp_message_manager.reset();
+    rtcp_message_manager_cv_.notify_one();
 
     EPROSIMA_LOG_INFO(RTCP, "End PerformListenOperation " << channel->locator());
 }
