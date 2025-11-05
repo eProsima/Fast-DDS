@@ -932,8 +932,10 @@ bool StatefulReader::process_gap_msg(
         // TODO (Miguel C): Refactor this inside WriterProxy
         SequenceNumber_t auxSN;
         SequenceNumber_t finalSN = gapList.base();
+        // Avoids iterating over sequence numbers already known irrelevant or processed
+        SequenceNumber_t startSN = std::max(gapStart, pWP->available_changes_max());
         History::const_iterator history_iterator = history_->changesBegin();
-        for (auxSN = gapStart; auxSN < finalSN; auxSN++)
+        for (auxSN = startSN; auxSN < finalSN; auxSN++)
         {
             if (pWP->irrelevant_change_set(auxSN))
             {
