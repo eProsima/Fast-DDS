@@ -687,7 +687,7 @@ rpc::ServiceTypeSupport DomainParticipant::find_service_type(
     return impl_->find_service_type(service_type_name);
 }
 
-const InstanceHandle_t& DomainParticipant::get_instance_handle() const
+InstanceHandle_t DomainParticipant::get_instance_handle() const
 {
     return impl_->get_instance_handle();
 }
