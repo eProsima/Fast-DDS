@@ -23,7 +23,6 @@
 
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/common/Token.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 

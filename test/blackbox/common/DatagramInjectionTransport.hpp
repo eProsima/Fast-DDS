@@ -114,8 +114,7 @@ public:
         return ret_val;
     }
 
-    static void deliver_datagram_from_file(
-            const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+    static std::vector<uint8_t> read_datagram_from_file(
             const char* filename)
     {
         std::basic_ifstream<char> file(filename, std::ios::binary | std::ios::in);
@@ -126,12 +125,27 @@ public:
 
         std::vector<uint8_t> buf(file_size);
         file.read(reinterpret_cast<char*>(buf.data()), file_size);
+        return buf;
+    }
 
+    static void deliver_datagram(
+            const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+            const uint8_t* data,
+            size_t size)
+    {
         eprosima::fastdds::rtps::Locator loc;
         for (const auto& rec : receivers)
         {
-            rec->OnDataReceived(buf.data(), static_cast<uint32_t>(file_size), loc, loc);
+            rec->OnDataReceived(data, static_cast<uint32_t>(size), loc, loc);
         }
+    }
+
+    static void deliver_datagram_from_file(
+            const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+            const char* filename)
+    {
+        std::vector<uint8_t> buf = read_datagram_from_file(filename);
+        deliver_datagram(receivers, buf.data(), buf.size());
     }
 
 private:
