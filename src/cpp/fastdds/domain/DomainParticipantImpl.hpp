@@ -723,6 +723,9 @@ protected:
     //!Pre-calculated guid
     fastdds::rtps::GUID_t guid_;
 
+    //!Translation into InstanceHandle_t of the guid
+    InstanceHandle_t handle_;
+
     //!For instance handle creation
     std::atomic<uint32_t> next_instance_id_;
 
