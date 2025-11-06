@@ -890,13 +890,8 @@ bool DataReaderHistory::update_instance_nts(
 void DataReaderHistory::writer_not_alive(
         const GUID_t& writer_guid)
 {
-<<<<<<< HEAD
-=======
     std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
 
-    bool ret_val = false;
-
->>>>>>> 19d6a2b0 (Protect DataReaderInstance alive_writers attribute (#6123))
     for (auto& it : instances_)
     {
         it.second->writer_removed(counters_, writer_guid);
