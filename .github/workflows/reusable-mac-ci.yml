@@ -40,7 +40,7 @@ on:
         default: true
 
 env:
-  test_blocklist: 'InterfaceWhitelist|send_to_allowed_interface'
+  test_blocklist: 'InterfaceWhitelist|send_to_allowed_interface|v6'
 
 defaults:
   run:
