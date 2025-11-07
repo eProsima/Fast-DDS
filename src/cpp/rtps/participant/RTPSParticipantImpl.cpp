@@ -1659,7 +1659,7 @@ void RTPSParticipantImpl::update_attributes(
     // Update the attributes data member
     {
         std::lock_guard<std::mutex> _(mutex_);
-        m_att = temp_atts;
+        update_mutable_attributes(temp_atts);
     }
 
     if (update_pdp)
@@ -1667,6 +1667,17 @@ void RTPSParticipantImpl::update_attributes(
         // Send DATA(P)
         pdp->announceParticipantState(true);
     }
+}
+
+void RTPSParticipantImpl::update_mutable_attributes(
+        const RTPSParticipantAttributes& patt)
+{
+    // NTS
+    m_att.userData = patt.userData;
+    m_att.builtin.metatrafficUnicastLocatorList = patt.builtin.metatrafficUnicastLocatorList;
+    m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
+    m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
+    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
 }
 
 bool RTPSParticipantImpl::update_writer(
