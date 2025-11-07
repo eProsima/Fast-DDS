@@ -3428,7 +3428,7 @@ dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
     return dds::utils::to_type_propagation(m_att.properties);
 }
 
-const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
+RTPSParticipantAttributes RTPSParticipantImpl::get_attributes() const
 {
     std::lock_guard<std::mutex> _(mutex_);
     return m_att;
