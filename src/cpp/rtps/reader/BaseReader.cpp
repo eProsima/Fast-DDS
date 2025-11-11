@@ -18,6 +18,7 @@
 
 #include <rtps/reader/BaseReader.hpp>
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <mutex>
@@ -279,11 +280,36 @@ std::shared_ptr<LocalReaderPointer> BaseReader::get_local_pointer()
 
 bool BaseReader::reserve_cache(
         uint32_t cdr_payload_size,
+        uint16_t fragment_size,
         fastdds::rtps::CacheChange_t*& change)
 {
     std::lock_guard<decltype(mp_mutex)> guard(mp_mutex);
 
     change = nullptr;
+
+    // Calculate and validate required payload size
+    uint32_t reserve_size = fixed_payload_size_ > 0 ? fixed_payload_size_ : cdr_payload_size;
+    uint32_t payload_size = std::min(reserve_size, cdr_payload_size);
+    uint32_t min_required_size = 0;
+    if (!CacheChange_t::calculate_required_fragmented_payload_size(payload_size, fragment_size, min_required_size))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_READER,
+                "Required payload size calculation overflows for payload size '" << payload_size <<
+                "' and fragment size '" << fragment_size << "'");
+        return false;
+    }
+
+    if (min_required_size > reserve_size)
+    {
+        if (fixed_payload_size_ > 0)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_READER,
+                    "Fixed payload size '" << fixed_payload_size_ <<
+                    "' is insufficient for fragmentation with fragment size '" << fragment_size << "'");
+            return false;
+        }
+        reserve_size = min_required_size;
+    }
 
     fastdds::rtps::CacheChange_t* reserved_change = nullptr;
     if (!change_pool_->reserve_cache(reserved_change))
@@ -292,8 +318,7 @@ bool BaseReader::reserve_cache(
         return false;
     }
 
-    uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : cdr_payload_size;
-    if (!payload_pool_->get_payload(payload_size, reserved_change->serializedPayload))
+    if (!payload_pool_->get_payload(reserve_size, reserved_change->serializedPayload))
     {
         change_pool_->release_cache(reserved_change);
         EPROSIMA_LOG_WARNING(RTPS_READER, "Problem reserving payload from pool");
