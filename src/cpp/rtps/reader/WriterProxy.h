@@ -20,6 +20,7 @@
 #define FASTDDS_RTPS_READER_WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <algorithm>
 #include <set>
 #include <vector>
 
@@ -142,6 +143,74 @@ public:
      */
     bool irrelevant_change_set(
             const SequenceNumber_t& seq_num);
+
+    /**
+     * Process a gap received from the writer.
+     *
+     * @param gap_start  Sequence number as received in the GAP message.
+     * @param gap_list   Sequence number set as received in the GAP message.
+     * @param remove_fn  Function to be called for each irrelevant change found.
+     */
+    template<typename Func>
+    inline void process_gap(
+            const SequenceNumber_t& gap_start,
+            const SequenceNumberSet_t& gap_list,
+            Func&& remove_fn)
+    {
+        // First sequence number that can be considered for GAP processing
+        SequenceNumber_t first_allowed_gap = changes_from_writer_low_mark_ + 1u;
+
+        // Cap start sequence number
+        SequenceNumber_t initial_seq = std::max(gap_start, first_allowed_gap);
+
+        // Default maximum allowed GAP is low mark + 256
+        SequenceNumber_t max_allowed_gap = changes_from_writer_low_mark_ + 256u;
+
+        // Special case when initial_seq is exactly the first allowed GAP
+        if (initial_seq == first_allowed_gap)
+        {
+            max_allowed_gap = gap_list.base() + 256u;
+
+            // Do not exceed max sequence number when known from a heartbeat
+            if (max_sequence_number_ > changes_from_writer_low_mark_)
+            {
+                max_allowed_gap = max_sequence_number_ + 1;
+            }
+        }
+
+        // Early exit if gap_start is beyond allowed range
+        if (gap_start > max_allowed_gap)
+        {
+            return;
+        }
+
+        // Iterate through all sequence numbers in [initial_seq, final_seq)
+        SequenceNumber_t auxSN;
+        SequenceNumber_t finalSN = std::min(gap_list.base(), max_allowed_gap);
+        for (auxSN = initial_seq; auxSN < finalSN; auxSN++)
+        {
+            if (irrelevant_change_set(auxSN))
+            {
+                remove_fn(auxSN);
+            }
+        }
+
+        // Early exit if the entire gap_list is beyond allowed range
+        if (gap_list.base() > max_allowed_gap)
+        {
+            return;
+        }
+
+        // Iterate through all sequence numbers in the gap_list
+        gap_list.for_each(
+            [&](SequenceNumber_t it)
+            {
+                if ((it < max_allowed_gap) && irrelevant_change_set(it))
+                {
+                    remove_fn(it);
+                }
+            });
+    }
 
     /**
      * Check if this proxy has any missing change.
