@@ -132,6 +132,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     {
         EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Error generating GUID for participant");
     }
+    handle_ = guid_;
 
     /* Fill physical data properties if they are found and empty */
     std::string* property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
@@ -304,6 +305,7 @@ ReturnCode_t DomainParticipantImpl::enable()
     }
 
     guid_ = part->getGuid();
+    handle_ = guid_;
 
     {
         std::lock_guard<std::mutex> _(mtx_gs_);
@@ -775,7 +777,7 @@ IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
 
 const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
 {
-    return static_cast<const InstanceHandle_t&>(guid_);
+    return handle_;
 }
 
 const fastdds::rtps::GUID_t& DomainParticipantImpl::guid() const
