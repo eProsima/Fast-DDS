@@ -919,47 +919,23 @@ bool StatefulReader::processGapMsg(
 
     if (acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
-        // TODO (Miguel C): Refactor this inside WriterProxy
-        SequenceNumber_t auxSN;
-        SequenceNumber_t finalSN = gapList.base();
         History::const_iterator history_iterator = mp_history->changesBegin();
-        for (auxSN = gapStart; auxSN < finalSN; auxSN++)
-        {
-            if (pWP->irrelevant_change_set(auxSN))
-            {
-                CacheChange_t* to_remove = nullptr;
-                auto ret_iterator = findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
-                if (to_remove != nullptr)
-                {
-                    // we called the History version to avoid callbacks
-                    history_iterator = mp_history->History::remove_change_nts(ret_iterator);
-                }
-                else if (ret_iterator != mp_history->changesEnd())
-                {
-                    history_iterator = ret_iterator;
-                }
-            }
-        }
-
-        gapList.for_each(
-            [&](SequenceNumber_t it)
-            {
-                if (pWP->irrelevant_change_set(it))
+        auto remove_fn = [this, &writerGUID, &history_iterator](const SequenceNumber_t& seq)
                 {
                     CacheChange_t* to_remove = nullptr;
-                    auto ret_iterator =
-                    findCacheInFragmentedProcess(auxSN, pWP->guid(), &to_remove, history_iterator);
+                    auto ret_iterator = findCacheInFragmentedProcess(seq, writerGUID, &to_remove, history_iterator);
                     if (to_remove != nullptr)
                     {
-                        // we called the History version to avoid callbacks
+                        // we call the History version to avoid callbacks
                         history_iterator = mp_history->History::remove_change_nts(ret_iterator);
                     }
                     else if (ret_iterator != mp_history->changesEnd())
                     {
                         history_iterator = ret_iterator;
                     }
-                }
-            });
+                };
+
+        pWP->process_gap(gapStart, gapList, remove_fn);
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
