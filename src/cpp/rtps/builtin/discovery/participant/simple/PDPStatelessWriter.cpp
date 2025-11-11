@@ -48,12 +48,8 @@ PDPStatelessWriter::PDPStatelessWriter(
 bool PDPStatelessWriter::matched_reader_add(
         const ReaderProxyData& data)
 {
-<<<<<<< HEAD
-    bool ret = StatelessWriter::matched_reader_add(data);
-=======
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-    bool ret = StatelessWriter::matched_reader_add_edp(data);
->>>>>>> 6ca678b4 (Protect PDPStatelessWriter attributes (#6100))
+    bool ret = StatelessWriter::matched_reader_add(data);
     if (ret)
     {
         // Mark new reader as interested
