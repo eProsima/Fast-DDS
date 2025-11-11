@@ -658,7 +658,7 @@ bool StatelessReader::processDataFragMsg(
                 // Check if a new change should be reserved
                 if (work_change == nullptr)
                 {
-                    if (reserveCache(&work_change, sampleSize))
+                    if (reserve_cache(sampleSize, change_to_add->getFragmentSize(), work_change))
                     {
                         if (work_change->serializedPayload.max_size < sampleSize)
                         {

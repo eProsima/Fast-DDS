@@ -1039,7 +1039,7 @@ bool PDPServer::remove_remote_participant(
 
         // TODO check in standard if DROP payload is always 0
         // We create the drop from Reader to make release simplier
-        endpoints->reader.reader_->reserveCache(&pC, mp_builtin->m_att.writerPayloadSize);
+        endpoints->reader.reader_->reserve_cache(mp_builtin->m_att.writerPayloadSize, 0, pC);
 
         // We must create the corresponding DATA(p[UD])
         if (nullptr != pC)
@@ -1748,7 +1748,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             std::istringstream(it.value()["change"]["sample_identity"].get<std::string>()) >> sample_identity_aux;
 
             // Reserve memory for new change. There will not be changes from own server
-            if (!endpoints->reader.reader_->reserveCache(&change_aux, length))
+            if (!endpoints->reader.reader_->reserve_cache(length, 0, change_aux))
             {
                 logError(RTPS_PDP_SERVER, "Error creating CacheChange");
                 // TODO release changes and exit
@@ -1787,7 +1787,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             else
             {
                 // Reserve memory for new change. There will not be changes from own server
-                if (!edp->publications_reader_.first->reserveCache(&change_aux, length))
+                if (!edp->publications_reader_.first->reserve_cache(length, 0, change_aux))
                 {
                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
                     // TODO release changes and exit
@@ -1826,7 +1826,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             else
             {
                 // Reserve memory for new change. There will not be changes from own server
-                if (!edp->subscriptions_reader_.first->reserveCache(&change_aux, length))
+                if (!edp->subscriptions_reader_.first->reserve_cache(length, 0, change_aux))
                 {
                     logError(RTPS_PDP_SERVER, "Error creating CacheChange");
                     // TODO release changes and exit

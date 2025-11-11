@@ -263,7 +263,7 @@ void EDPSimple::processPersistentData(
 
                 CacheChange_t* change_to_add = nullptr;
 
-                if (!reader.first->reserveCache(&change_to_add, change->serializedPayload.length)) //Reserve a new cache from the corresponding cache pool
+                if (!reader.first->reserve_cache(change->serializedPayload.length, 0, change_to_add)) //Reserve a new cache from the corresponding cache pool
                 {
                     logError(RTPS_EDP, "Problem reserving CacheChange in EDPServer reader");
                     return;

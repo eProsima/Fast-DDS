@@ -47,6 +47,8 @@ public:
 
     virtual ~StatefulReader();
 
+    using RTPSReader::reserve_cache;
+
 protected:
 
     StatefulReader(

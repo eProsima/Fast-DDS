@@ -132,6 +132,85 @@ TEST(CacheChange, FragmentManagement)
     }
 }
 
+TEST(CacheChange, calculate_required_fragmented_payload_size)
+{
+    struct TestCase
+    {
+        uint32_t payload_size;
+        uint16_t fragment_size;
+        bool expected_result;
+        uint32_t expected_min_required_size;
+    };
+
+    const std::vector<TestCase> test_cases =
+    {
+        // No fragmentation
+        {100u, 0u, true, 100u},
+        {50u, 100u, true, 50u},
+        // Minimum fragment size
+        {100u, 1u, false, 0u},
+        {100u, 2u, false, 0u},
+        {100u, 3u, false, 0u},
+        // Fragmentation cases
+        {100u, 20u, true, 100u},
+        {101u, 20u, true, 104u},
+        {102u, 20u, true, 104u},
+        {103u, 20u, true, 104u},
+        {50004u, 50003u, true, 50008u},
+        {50003u, 50002u, true, 50008u},
+        {50002u, 50001u, true, 50008u},
+        {50001u, 50000u, true, 50004u},
+        // Typical UDP max fragment size
+        {1234567u, 64000u, true, 1234567u},
+        {1234568u, 64000u, true, 1234568u},
+        {1234569u, 64000u, true, 1234569u},
+        {1234570u, 64000u, true, 1234570u},
+        // Edge cases
+        {5u, 4u, true, 8u},
+        {6u, 4u, true, 8u},
+        {7u, 4u, true, 8u},
+        {8u, 4u, true, 8u},
+        {
+            std::numeric_limits<uint32_t>::max() - 4u - 3u,
+            std::numeric_limits<uint16_t>::max(),
+            true,
+            std::numeric_limits<uint32_t>::max() - 4u - 3u
+        },
+        {
+            std::numeric_limits<uint32_t>::max() - 4u - 3u,
+            4u,
+            true,
+            std::numeric_limits<uint32_t>::max() - 4u - 3u
+        }
+    };
+
+    for (const auto& test_case : test_cases)
+    {
+        uint32_t min_required_size = 0;
+        bool result = CacheChange_t::calculate_required_fragmented_payload_size(
+            test_case.payload_size,
+            test_case.fragment_size,
+            min_required_size);
+        EXPECT_EQ(result, test_case.expected_result)
+            << "Failed for payload_size=" << test_case.payload_size
+            << ", fragment_size=" << test_case.fragment_size;
+        if (result)
+        {
+            EXPECT_EQ(min_required_size, test_case.expected_min_required_size)
+                << "Failed for payload_size=" << test_case.payload_size
+                << ", fragment_size=" << test_case.fragment_size;
+        }
+    }
+
+    // Oversized payload
+    constexpr uint32_t MAX_PAYLOAD_SIZE = std::numeric_limits<uint32_t>::max() - 4u - 3u;
+    for (uint32_t payload_size = std::numeric_limits<uint32_t>::max(); payload_size > MAX_PAYLOAD_SIZE; --payload_size)
+    {
+        uint32_t min_required_size = 0;
+        EXPECT_FALSE(CacheChange_t::calculate_required_fragmented_payload_size(payload_size, 20, min_required_size));
+    }
+}
+
 int main(
         int argc,
         char **argv)
