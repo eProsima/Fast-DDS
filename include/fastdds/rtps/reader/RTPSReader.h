@@ -496,6 +496,20 @@ protected:
             const WriterProxyData& wdata);
 
     /**
+     * @brief Reserve a CacheChange_t.
+     *
+     * @param [in]  cdr_payload_size  Size of the received payload.
+     * @param [in]  fragment_size     Size of each fragment (0 if not fragmented).
+     * @param [out] change            Pointer to the reserved change.
+     *
+     * @return True if correctly reserved.
+     */
+    bool reserve_cache(
+            uint32_t cdr_payload_size,
+            uint16_t fragment_size,
+            CacheChange_t*& change);
+
+    /**
      * @brief Retrieves the local pointer to this reader
      * to be used by other local entities.
      *
