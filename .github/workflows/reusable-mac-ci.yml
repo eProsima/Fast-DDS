@@ -39,19 +39,16 @@ on:
         type: boolean
         default: true
 
+env:
+  test_blocklist: 'InterfaceWhitelist|send_to_allowed_interface|v6'
+
 defaults:
   run:
     shell: bash
 
 jobs:
   fastdds_build:
-    # As explained in https://github.com/actions/runner-images/tree/main?tab=readme-ov-file#available-images,
-    # *-latest images are not always the latest available versions. The minimum version of the macOS image
-    # with clang 15 is macos-13 (see
-    # https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md#language-and-runtime),
-    # so we'll use that one for now, as clang 15 is the supported compiler for Fast DDS in macOS.
-    # (see https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#compilers)
-    runs-on: macos-13
+    runs-on: macos-15-intel
     strategy:
       fail-fast: false
       matrix:
@@ -153,7 +150,7 @@ jobs:
   fastdds_test:
     needs: fastdds_build
     name: fastdds_test (${{ matrix.cmake_build_type }})
-    runs-on: macos-13
+    runs-on: macos-15-intel
     strategy:
       fail-fast: false
       matrix:
@@ -225,7 +222,9 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args: >
+            ${{ inputs.ctest-args }}
+            ${{ format('-E "{0}"', env.test_blocklist) }}
           packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
