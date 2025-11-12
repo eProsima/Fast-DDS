@@ -783,10 +783,17 @@ TEST(DataWriterTests, Write)
 
     FooType data;
     data.message("HelloWorld");
+<<<<<<< HEAD
     ASSERT_FALSE(datawriter->write(nullptr, HANDLE_NIL) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(datawriter->write(&data, participant->get_instance_handle()) ==
             ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
+=======
+    ASSERT_FALSE(datawriter->write(nullptr, HANDLE_NIL) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write(&data, datawriter->get_instance_handle()) ==
+            RETCODE_PRECONDITION_NOT_MET);
+>>>>>>> 9ecbd27a (Upgrade to macOS Sequoia (#6070))
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
@@ -825,8 +832,13 @@ TEST(DataWriterTests, WriteWithTimestamp)
     EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
             datawriter->write_w_timestamp(&data, HANDLE_NIL, fastrtps::c_TimeInvalid));
     // 3. Calling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
+<<<<<<< HEAD
     ASSERT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
             datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts));
+=======
+    ASSERT_EQ(RETCODE_PRECONDITION_NOT_MET,
+            datawriter->write_w_timestamp(&data, datawriter->get_instance_handle(), ts));
+>>>>>>> 9ecbd27a (Upgrade to macOS Sequoia (#6070))
     // 4. Correct case
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
 
