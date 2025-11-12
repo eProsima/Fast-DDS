@@ -731,7 +731,7 @@ TEST(DataWriterTests, Write)
     data.message("HelloWorld");
     ASSERT_TRUE(datawriter->write(&data, fastrtps::rtps::c_InstanceHandle_Unknown) ==
             ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(datawriter->write(&data, participant->get_instance_handle()) ==
+    ASSERT_TRUE(datawriter->write(&data, datawriter->get_instance_handle()) ==
             ReturnCode_t::RETCODE_PRECONDITION_NOT_MET);
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
