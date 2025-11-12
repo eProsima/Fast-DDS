@@ -236,7 +236,7 @@ bool WLP::initWL(
 
 bool WLP::createEndpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_participant->get_attributes();
+    RTPSParticipantAttributes pattr = mp_participant->get_attributes();
     const ResourceLimitedContainerConfig& participants_allocation = pattr.allocation.participants;
 
     // Built-in writer history
@@ -320,7 +320,7 @@ bool WLP::createEndpoints()
 
 bool WLP::createSecureEndpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_participant->get_attributes();
+    RTPSParticipantAttributes pattr = mp_participant->get_attributes();
     const ResourceLimitedContainerConfig& participants_allocation = pattr.allocation.participants;
 
     //CREATE WRITER

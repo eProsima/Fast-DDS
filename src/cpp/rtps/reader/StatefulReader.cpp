@@ -190,7 +190,7 @@ void StatefulReader::init(
         RTPSParticipantImpl* pimpl,
         const ReaderAttributes& att)
 {
-    const RTPSParticipantAttributes& part_att = pimpl->get_attributes();
+    RTPSParticipantAttributes part_att = pimpl->get_attributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
         matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_));
@@ -264,7 +264,7 @@ bool StatefulReader::matched_writer_add_edp(
             size_t max_readers = matched_writers_pool_.max_size();
             if (getMatchedWritersSize() + matched_writers_pool_.size() < max_readers)
             {
-                const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->get_attributes();
+                RTPSParticipantAttributes part_att = mp_RTPSParticipant->get_attributes();
                 wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
             }
             else

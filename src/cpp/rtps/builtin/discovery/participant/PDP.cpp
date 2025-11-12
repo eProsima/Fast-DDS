@@ -1588,7 +1588,7 @@ static void set_builtin_endpoint_locators(
         const PDP* pdp,
         const BuiltinProtocols* builtin)
 {
-    const RTPSParticipantAttributes& pattr = pdp->getRTPSParticipant()->get_attributes();
+    RTPSParticipantAttributes pattr = pdp->getRTPSParticipant()->get_attributes();
 
     auto part_data = pdp->getLocalParticipantProxyData();
     if (nullptr == part_data)
@@ -1622,7 +1622,7 @@ ReaderAttributes PDP::create_builtin_reader_attributes()
 {
     ReaderAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
+    RTPSParticipantAttributes pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
@@ -1646,7 +1646,7 @@ WriterAttributes PDP::create_builtin_writer_attributes()
 {
     WriterAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_attributes();
+    RTPSParticipantAttributes pattr = getRTPSParticipant()->get_attributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
