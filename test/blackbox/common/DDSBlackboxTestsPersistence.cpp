@@ -386,10 +386,6 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
             .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.1")
             .static_discovery("file://PubSubWriterPersistence_static_disc.xml")
             .unicastLocatorList(WriterUnicastLocators)
-<<<<<<< HEAD
-            .multicastLocatorList(WriterMulticastLocators)
-=======
->>>>>>> 9ecbd27a (Upgrade to macOS Sequoia (#6070))
             .setPublisherIDs(1, 2)
             .setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
             .userData({'V', 'G', 'W', 0x78, 0x73, 0x69, 0x74, 0x65, 0x72, 0x5f, 0x70, 0x65, 0x72, 0x73, 0x5f, 0x67,
@@ -412,10 +408,6 @@ TEST_P(PersistenceLargeData, PubSubAsReliablePubPersistentWithStaticDiscovery)
             .make_persistent(db_file_name(), "78.73.69.74.65.72.5f.70.65.72.73.5f|67.75.69.3")
             .static_discovery("file://PubSubReaderPersistence_static_disc.xml")
             .unicastLocatorList(ReaderUnicastLocators)
-<<<<<<< HEAD
-            .multicastLocatorList(ReaderMulticastLocators)
-=======
->>>>>>> 9ecbd27a (Upgrade to macOS Sequoia (#6070))
             .setSubscriberIDs(3, 4)
             .setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
             .init();

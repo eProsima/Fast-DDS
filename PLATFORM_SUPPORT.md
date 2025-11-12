@@ -31,14 +31,6 @@ Community members may provide assistance with these platforms.
 
 ## Platforms
 
-<<<<<<< HEAD
-|Architecture|Ubuntu Jammy (22.04)|Ubuntu Focal (20.04)|MacOS Mojave (10.14)|Windows 10 (VS2019)|Windows 11 (VS2022)|Debian Buster (10)|Android 12 |Android 13 | QNX 7.1   |
-|------------|--------------------|--------------------|--------------------|-------------------|-------------------|------------------|-----------|-----------|-----------|
-|amd64       |Tier 1 [^a][^s]     |Tier 3 [^a][^s]     |Tier 1 [^s]         |Tier 1 [^a][^s]    |Tier 3 [^a][^s]    |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
-|amd32       |                    |                    |                    |Tier 2 [^a][^s]    |Tier 3 [^a][^s]    |                  |           |           |           |
-|arm64       |Tier 1 [^a][^s]     |Tier 3 [^a][^s]     |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
-|arm32       |Tier 3 [^s]         |Tier 3 [^s]         |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|           |
-=======
 |Architecture|Ubuntu Noble (24.04)|Ubuntu Jammy (22.04)|MacOS Sequoia (15)|Windows 10 (VS2019)|Windows 11 (VS2022)|Debian Buster (10)|Android 12 |Android 13 | QNX 7.1   |
 |------------|--------------------|--------------------|------------------|-------------------|-------------------|------------------|-----------|-----------|-----------|
 |amd64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |Tier 1 [^s]       |Tier 1 [^a][^s]    |Tier 1 [^a][^s]    |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
@@ -47,7 +39,6 @@ Community members may provide assistance with these platforms.
 |arm32       |                    |Tier 3 [^s]         |                  |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|           |
 
 More information about Platforms support and eProsima products compatibility can be found on [Fast DDS Documentation](https://fast-dds.docs.eprosima.com/en/latest/notes/versions.html#dependencies-and-compatibilities).
->>>>>>> 9ecbd27a (Upgrade to macOS Sequoia (#6070))
 
 [^a]: Binary releases are provided as a single archive per platform.
 [^s]: Compilation from source.
