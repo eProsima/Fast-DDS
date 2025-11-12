@@ -155,7 +155,7 @@ void PDPServerListener::on_new_cache_change_added(
             EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type_str);
             bool is_client = ret.second;
 
-            const auto& pattr = pdp_server()->getRTPSParticipant()->get_attributes();
+            auto pattr = pdp_server()->getRTPSParticipant()->get_attributes();
             fastdds::rtps::network::external_locators::filter_remote_locators(participant_data,
                     pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
                     pattr.ignore_non_matching_locators);

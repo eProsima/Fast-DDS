@@ -245,7 +245,7 @@ bool PDPClient::create_secure_ds_pdp_endpoints()
 bool PDPClient::create_ds_pdp_best_effort_reader(
         DiscoveryServerPDPEndpointsSecure& endpoints)
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
+    RTPSParticipantAttributes pattr = mp_RTPSParticipant->get_attributes();
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
