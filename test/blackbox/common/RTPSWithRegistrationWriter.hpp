@@ -605,7 +605,7 @@ private:
     std::mutex mutex_;
     std::condition_variable cv_;
     std::atomic<uint32_t> matched_;
-    eprosima::fastdds::rtps::EntityId_t custom_entity_id_ = eprosima::fastdds::rtps::c_EntityId_Unknown;
+    eprosima::fastrtps::rtps::EntityId_t custom_entity_id_ = eprosima::fastrtps::rtps::c_EntityId_Unknown;
     type_support type_;
     std::shared_ptr<eprosima::fastrtps::rtps::IPayloadPool> payload_pool_;
     bool has_payload_pool_ = false;
