@@ -31,12 +31,12 @@ Community members may provide assistance with these platforms.
 
 ## Platforms
 
-|Architecture|Ubuntu Noble (24.04)|Ubuntu Jammy (22.04)|MacOS Mojave (10.14)|Windows 10 (VS2019)|Windows 11 (VS2022)|Debian Buster (10)|Android 12 |Android 13 | QNX 7.1   |
-|------------|--------------------|--------------------|--------------------|-------------------|-------------------|------------------|-----------|-----------|-----------|
-|amd64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |Tier 1 [^s]         |Tier 3 [^a][^s]    |Tier 1 [^a][^s]    |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
-|amd32       |                    |                    |Tier 3 [^a][^s]    |Tier 3 [^a][^s]    |                  |           |           |           |
-|arm64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
-|arm32       |                    |Tier 3 [^s]         |                    |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|           |
+|Architecture|Ubuntu Noble (24.04)|Ubuntu Jammy (22.04)|MacOS Sequoia (15)|Windows 10 (VS2019)|Windows 11 (VS2022)|Debian Buster (10)|Android 12 |Android 13 | QNX 7.1   |
+|------------|--------------------|--------------------|------------------|-------------------|-------------------|------------------|-----------|-----------|-----------|
+|amd64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |Tier 1 [^s]       |Tier 1 [^a][^s]    |Tier 1 [^a][^s]    |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
+|amd32       |                    |                    |                  |Tier 3 [^a][^s]    |Tier 3 [^a][^s]    |                  |           |           |           |
+|arm64       |Tier 3 [^a][^s]     |Tier 1 [^a][^s]     |                  |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|Tier 3 [^s]|
+|arm32       |                    |Tier 3 [^s]         |                  |                   |                   |Tier 3 [^s]       |Tier 3 [^s]|Tier 3 [^s]|           |
 
 More information about Platforms support and eProsima products compatibility can be found on [Fast DDS Documentation](https://fast-dds.docs.eprosima.com/en/latest/notes/versions.html#dependencies-and-compatibilities).
 
@@ -48,7 +48,7 @@ More information about Platforms support and eProsima products compatibility can
 Tier 1 compilers and minimum supported versions:
 
 * GCC 11.4 [^d]
-* Clang 15
+* Clang 16
 * MSVC v142 (Visual Studio 2019)
 
 [^d]: Using GCC's Thread Sanitizer flags in conjunction with GCC 11 to analyze Fast DDS threaded behavior produces
