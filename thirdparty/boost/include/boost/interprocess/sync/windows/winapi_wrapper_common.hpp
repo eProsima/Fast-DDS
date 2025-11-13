@@ -22,41 +22,18 @@
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/detail/win32_api.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/errors.hpp>
 #include <boost/interprocess/exceptions.hpp>
+#include <boost/interprocess/detail/timed_utils.hpp>
 #include <limits>
 
 namespace boost {
 namespace interprocess {
 namespace ipcdetail {
 
-inline bool winapi_wrapper_timed_wait_for_single_object(void *handle, const boost::posix_time::ptime &abs_time);
- 
-inline void winapi_wrapper_wait_for_single_object(void *handle)
+inline bool do_winapi_wait(void *handle, unsigned long dwMilliseconds)
 {
-   winapi_wrapper_timed_wait_for_single_object(handle, boost::posix_time::pos_infin);
-}
-
-inline bool winapi_wrapper_try_wait_for_single_object(void *handle)
-{
-   return winapi_wrapper_timed_wait_for_single_object(handle, boost::posix_time::min_date_time);
-}
-
-inline bool winapi_wrapper_timed_wait_for_single_object(void *handle, const boost::posix_time::ptime &abs_time)
-{
-   const boost::posix_time::ptime cur_time = microsec_clock::universal_time();
-   //Windows uses relative wait times so check for negative waits
-   //and implement as 0 wait to allow try-semantics as POSIX mandates.
-   unsigned long time = 0u;
-   if (abs_time == boost::posix_time::pos_infin){
-      time = winapi::infinite_time;
-   }
-   else if(abs_time > cur_time){
-      time = (abs_time - cur_time).total_milliseconds();
-   }
-
-   unsigned long ret = winapi::wait_for_single_object(handle, time);
+   unsigned long ret = winapi::wait_for_single_object(handle, dwMilliseconds);
    if(ret == winapi::wait_object_0){
       return true;
    }
@@ -71,6 +48,34 @@ inline bool winapi_wrapper_timed_wait_for_single_object(void *handle, const boos
       error_info err = system_error_code();
       throw interprocess_exception(err);
    }
+}
+
+template<class TimePoint>
+inline bool winapi_wrapper_timed_wait_for_single_object(void *handle, const TimePoint &abs_time)
+{
+   //Windows uses relative wait times so check for negative waits
+   //and implement as 0 wait to allow try-semantics as POSIX mandates.
+   unsigned long time_ms = 0u;
+   if (ipcdetail::is_pos_infinity(abs_time)){
+      time_ms = winapi::infinite_time;
+   }
+   else {
+      const TimePoint cur_time = microsec_clock<TimePoint>::universal_time();
+      if(abs_time > cur_time){
+         time_ms = static_cast<unsigned long>(duration_to_milliseconds(abs_time - cur_time));
+      }
+   }
+   return do_winapi_wait(handle, time_ms);
+}
+
+inline void winapi_wrapper_wait_for_single_object(void *handle)
+{
+   (void)do_winapi_wait(handle, winapi::infinite_time);
+}
+
+inline bool winapi_wrapper_try_wait_for_single_object(void *handle)
+{
+   return do_winapi_wait(handle, 0u);
 }
 
 }  //namespace ipcdetail {
