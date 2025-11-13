@@ -784,7 +784,7 @@ TEST(DataWriterTests, Write)
     data.message("HelloWorld");
     ASSERT_FALSE(datawriter->write(nullptr, HANDLE_NIL) == RETCODE_OK);
     ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == RETCODE_OK);
-    ASSERT_TRUE(datawriter->write(&data, participant->get_instance_handle()) ==
+    ASSERT_TRUE(datawriter->write(&data, datawriter->get_instance_handle()) ==
             RETCODE_PRECONDITION_NOT_MET);
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
@@ -825,7 +825,7 @@ TEST(DataWriterTests, WriteWithTimestamp)
             datawriter->write_w_timestamp(&data, HANDLE_NIL, fastdds::dds::c_TimeInvalid));
     // 3. Calling write with a wrong instance handle returns RETCODE_PRECONDITION_NOT_MET
     ASSERT_EQ(RETCODE_PRECONDITION_NOT_MET,
-            datawriter->write_w_timestamp(&data, participant->get_instance_handle(), ts));
+            datawriter->write_w_timestamp(&data, datawriter->get_instance_handle(), ts));
     // 4. Correct case
     ASSERT_EQ(RETCODE_OK, datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
 
