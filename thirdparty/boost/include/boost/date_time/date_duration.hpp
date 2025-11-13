@@ -42,12 +42,6 @@ namespace date_time {
             days_(duration_rep::from_special(sv))
     {}
 
-    // copy constructor required for addable<> & subtractable<>
-    //! Construct from another date_duration (Copy Constructor)
-    BOOST_CXX14_CONSTEXPR date_duration(const date_duration<duration_rep_traits>& other) :
-            days_(other.days_)
-    {}
-
     //! returns days_ as it's instantiated type - used for streaming
     BOOST_CXX14_CONSTEXPR duration_rep get_rep()const
     {
