@@ -88,6 +88,7 @@ static CacheChange_t* create_change_for_message(
 
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
+        const RTPSParticipantAttributes& pattr,
         ISecurityPluginFactory& plugin_factory)
     : participant_stateless_message_listener_(*this)
     , participant_volatile_message_secure_listener_(*this)
@@ -97,14 +98,14 @@ SecurityManager::SecurityManager(
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({
-                participant->get_attributes().allocation.locators.max_unicast_locators,
-                participant->get_attributes().allocation.locators.max_multicast_locators,
-                participant->get_attributes().allocation.data_limits,
-                participant->get_attributes().allocation.content_filter})
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits,
+                pattr.allocation.content_filter})
     , temp_writer_proxies_({
-                participant->get_attributes().allocation.locators.max_unicast_locators,
-                participant->get_attributes().allocation.locators.max_multicast_locators,
-                participant->get_attributes().allocation.data_limits})
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits})
 {
     assert(participant != nullptr);
 }
@@ -1123,7 +1124,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
         participant_stateless_message_writer_hattr_,
         participant_stateless_message_pool_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->get_attributes();
 
     WriterAttributes watt;
     watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
@@ -1172,7 +1173,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
 {
     participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->get_attributes();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
@@ -1271,7 +1272,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     participant_volatile_message_secure_writer_history_ =
             new WriterHistory(participant_volatile_message_secure_hattr_, participant_volatile_message_secure_pool_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->get_attributes();
 
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -1324,7 +1325,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     participant_volatile_message_secure_reader_history_ =
             new ReaderHistory(participant_volatile_message_secure_hattr_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->get_attributes();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
