@@ -35,12 +35,6 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
-#if FASTDDS_IS_BIG_ENDIAN_TARGET
-const Endianness_t DEFAULT_ENDIAN = BIGEND;
-#else
-const Endianness_t DEFAULT_ENDIAN = LITTLEEND;
-#endif // if FASTDDS_IS_BIG_ENDIAN_TARGET
-
 #if defined(_WIN32)
 #define COPYSTR strcpy_s
 #else
