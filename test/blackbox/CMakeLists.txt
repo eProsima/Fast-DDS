@@ -218,12 +218,8 @@ if(FASTDDS_PIM_API_TESTS)
         )
     target_include_directories(BlackboxTests_DDS_PIM PRIVATE
         ${Asio_INCLUDE_DIR}
-<<<<<<< HEAD
-        api/dds-pim)
-=======
-        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim
+        api/dds-pim
         ${PROJECT_SOURCE_DIR}/test/utils)
->>>>>>> 3230d1d7 (Handle maximum deadline misses case (#6016))
     target_link_libraries(BlackboxTests_DDS_PIM
         fastdds
         fastcdr
