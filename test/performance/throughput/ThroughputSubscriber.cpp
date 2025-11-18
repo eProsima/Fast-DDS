@@ -781,7 +781,7 @@ void ThroughputSubscriber::run()
             {
                 command_sample.m_totaltime = std::numeric_limits<uint64_t>::min();
             }
-            else if (total_time_count > std::numeric_limits<uint64_t>::max())
+            else if (total_time_count > std::numeric_limits<double>::max())
             {
                 command_sample.m_totaltime = std::numeric_limits<uint64_t>::max();
             }
