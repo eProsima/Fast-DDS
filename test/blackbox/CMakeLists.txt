@@ -218,7 +218,8 @@ if(FASTDDS_PIM_API_TESTS)
         )
     target_include_directories(BlackboxTests_DDS_PIM PRIVATE
         ${Asio_INCLUDE_DIR}
-        api/dds-pim)
+        api/dds-pim
+        ${PROJECT_SOURCE_DIR}/test/utils)
     target_link_libraries(BlackboxTests_DDS_PIM
         fastdds
         fastcdr
