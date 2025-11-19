@@ -120,7 +120,7 @@ bool PDPServer::init(
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
-    const RTPSParticipantAttributes& part_attr = getRTPSParticipant()->get_attributes();
+    RTPSParticipantAttributes part_attr = getRTPSParticipant()->get_attributes();
     uint32_t id_for_thread = static_cast<uint32_t>(part_attr.participantID);
     const fastdds::rtps::ThreadSettings& thr_config = part_attr.discovery_server_thread;
     resource_event_thread_.init_thread(thr_config, "dds.ds_ev.%u", id_for_thread);
@@ -252,7 +252,7 @@ bool PDPServer::create_secure_ds_pdp_endpoints()
 bool PDPServer::create_ds_pdp_best_effort_reader(
         DiscoveryServerPDPEndpointsSecure& endpoints)
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
+    RTPSParticipantAttributes pattr = mp_RTPSParticipant->get_attributes();
 
     HistoryAttributes hatt;
     hatt.payloadMaxSize = mp_builtin->m_att.readerPayloadSize;
