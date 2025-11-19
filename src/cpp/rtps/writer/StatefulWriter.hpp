@@ -385,7 +385,8 @@ private:
      */
     bool ack_timer_expired();
 
-    void send_heartbeat_to_all_readers();
+    void send_heartbeat_to_all_readers(
+            bool force_separating);
 
     void deliver_sample_to_intraprocesses(
             CacheChange_t* change);
@@ -401,6 +402,10 @@ private:
 
     void prepare_datasharing_delivery(
             CacheChange_t* change);
+
+    void add_gaps_for_removed_irrelevants(
+            ReaderProxy& remoteReaderProxy,
+            RTPSMessageGroup& group);
 
     /**
      * Check the StatefulWriter's sequence numbers and add the required GAP messages to the provided message group.

@@ -520,11 +520,12 @@ bool StatefulWriter::change_removed_by_history(
     return ret_value;
 }
 
-void StatefulWriter::send_heartbeat_to_all_readers()
+void StatefulWriter::send_heartbeat_to_all_readers(
+        bool force_separating)
 {
     // This method is only called from send_periodic_heartbeat
 
-    if (separate_sending_enabled_)
+    if (separate_sending_enabled_ || force_separating)
     {
         for (ReaderProxy* reader : matched_remote_readers_)
         {
@@ -663,6 +664,14 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 locator_selector.locator_selector.enable((*remote_reader)->guid());
                 should_be_sent = true;
                 inline_qos |= (*remote_reader)->expects_inline_qos();
+
+                if (SequenceNumber_t::unknown() != (*remote_reader)->first_irrelevant_removed())
+                {
+                    // Send GAP with irrelevant changes that are not in history.
+                    group.sender(this, (*remote_reader)->message_sender());
+                    add_gaps_for_removed_irrelevants(**remote_reader, group);
+                    group.sender(this, &locator_selector);         // This makes the flush_and_reset().
+                }
 
                 // If there is a hole (removed from history or not relevants) between previous sample and this one,
                 // send it a personal GAP.
@@ -1686,7 +1695,8 @@ bool StatefulWriter::send_periodic_heartbeat(
     std::lock_guard<RecursiveTimedMutex> guardW(mp_mutex);
     std::lock_guard<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
 
-    bool unacked_changes = false;
+    bool unacked_changes {false};
+    bool irrelevants_removed {false};
     if (!liveliness)
     {
         SequenceNumber_t first_seq_to_check_acknowledge = get_seq_num_min();
@@ -1695,20 +1705,30 @@ bool StatefulWriter::send_periodic_heartbeat(
             first_seq_to_check_acknowledge = history_->next_sequence_number() - 1;
         }
 
-        unacked_changes = for_matched_readers(matched_local_readers_, matched_datasharing_readers_,
-                        matched_remote_readers_,
-                        [first_seq_to_check_acknowledge](ReaderProxy* reader)
-                        {
-                            return reader->has_unacknowledged(first_seq_to_check_acknowledge);
-                        }
-                        );
+        for_matched_readers(matched_local_readers_, matched_datasharing_readers_,
+                matched_remote_readers_,
+                [first_seq_to_check_acknowledge, &unacked_changes, &irrelevants_removed](ReaderProxy* reader)
+                {
+                    if (!unacked_changes)
+                    {
+                        unacked_changes = reader->has_unacknowledged(first_seq_to_check_acknowledge);
+                    }
+
+                    if (!irrelevants_removed)
+                    {
+                        irrelevants_removed = SequenceNumber_t::unknown() != reader->first_irrelevant_removed();
+                    }
+
+                    return unacked_changes && irrelevants_removed;
+                }
+                );
 
         if (unacked_changes)
         {
             try
             {
                 //TODO if separating, here sends periodic for all readers, instead of ones needed it.
-                send_heartbeat_to_all_readers();
+                send_heartbeat_to_all_readers(irrelevants_removed);
             }
             catch (const RTPSMessageGroup::timeout&)
             {
@@ -1798,6 +1818,7 @@ void StatefulWriter::send_heartbeat_to_nts(
                     assert(firstSeq <= lastSeq);
                     if (!liveliness)
                     {
+                        add_gaps_for_removed_irrelevants(remoteReaderProxy, group);
                         add_gaps_for_holes_in_history(group);
                     }
                 }
@@ -2246,6 +2267,19 @@ bool StatefulWriter::get_connections(
 }
 
 #endif // ifdef FASTDDS_STATISTICS
+
+void StatefulWriter::add_gaps_for_removed_irrelevants(
+        ReaderProxy& remoteReaderProxy,
+        RTPSMessageGroup& group)
+{
+    if (SequenceNumber_t::unknown() != remoteReaderProxy.first_irrelevant_removed())
+    {
+        group.add_gap(remoteReaderProxy.first_irrelevant_removed(),
+                SequenceNumberSet_t(remoteReaderProxy.last_irrelevant_removed() + 1),
+                remoteReaderProxy.guid());
+        remoteReaderProxy.reset_irrelevant_removed();
+    }
+}
 
 void StatefulWriter::add_gaps_for_holes_in_history(
         RTPSMessageGroup& group)
