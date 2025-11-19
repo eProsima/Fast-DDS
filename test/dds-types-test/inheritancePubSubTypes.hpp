@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__INHERITANCE_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__INHERITANCE_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -115,9 +117,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -196,9 +195,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -279,9 +275,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -360,9 +353,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -443,9 +433,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -524,9 +511,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -607,9 +591,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -688,9 +669,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 

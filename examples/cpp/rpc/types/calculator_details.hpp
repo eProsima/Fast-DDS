@@ -29,91 +29,91 @@
 #include "calculator.hpp"
 
 namespace calculator_example {
-    namespace detail {
+namespace detail {
 
-    //{ Calculator interface
+//{ Calculator interface
 
-    //{ representation_limits
-    struct Calculator_representation_limits_In
-    {
-    };
+//{ representation_limits
+struct Calculator_representation_limits_In
+{
+};
 
 
 
-    struct Calculator_representation_limits_Result
-    {
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_representation_limits_Out> result;
-    };
+struct Calculator_representation_limits_Result
+{
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_representation_limits_Out> result;
+};
 
-    //}  // representation_limits
-     
-    //{ addition
-    struct Calculator_addition_In
-    {
-        int32_t value1; 
-        int32_t value2; 
-    };
+//}  // representation_limits
+ 
+//{ addition
+struct Calculator_addition_In
+{
+    int32_t value1; 
+    int32_t value2; 
+};
 
-      
+  
 
-    struct Calculator_addition_Out
-    {
-        int32_t return_;
-    };
+struct Calculator_addition_Out
+{
+    int32_t return_;
+};
 
-    struct Calculator_addition_Result
-    {
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_addition_Out> result;
-        eprosima::fastcdr::optional<calculator_example::OverflowException> calculator_example_OverflowException_ex;
-    };
+struct Calculator_addition_Result
+{
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_addition_Out> result;
+    eprosima::fastcdr::optional<calculator_example::OverflowException> calculator_example_OverflowException_ex;
+};
 
-    //}  // addition
-     
-    //{ subtraction
-    struct Calculator_subtraction_In
-    {
-        int32_t value1; 
-        int32_t value2; 
-    };
+//}  // addition
+ 
+//{ subtraction
+struct Calculator_subtraction_In
+{
+    int32_t value1; 
+    int32_t value2; 
+};
 
-      
+  
 
-    struct Calculator_subtraction_Out
-    {
-        int32_t return_;
-    };
+struct Calculator_subtraction_Out
+{
+    int32_t return_;
+};
 
-    struct Calculator_subtraction_Result
-    {
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_subtraction_Out> result;
-        eprosima::fastcdr::optional<calculator_example::OverflowException> calculator_example_OverflowException_ex;
-    };
+struct Calculator_subtraction_Result
+{
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_subtraction_Out> result;
+    eprosima::fastcdr::optional<calculator_example::OverflowException> calculator_example_OverflowException_ex;
+};
 
-    //}  // subtraction
-     
+//}  // subtraction
+ 
 
-    //{ top level
+//{ top level
 
-    struct Calculator_Request
-    {
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_representation_limits_In> representation_limits; 
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_addition_In> addition;   
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_subtraction_In> subtraction;   
-    };
+struct Calculator_Request
+{
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_representation_limits_In> representation_limits; 
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_addition_In> addition;   
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_subtraction_In> subtraction;   
+};
 
-    struct Calculator_Reply
-    {
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_representation_limits_Result> representation_limits; 
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_addition_Result> addition; 
-        eprosima::fastcdr::optional<calculator_example::detail::Calculator_subtraction_Result> subtraction; 
-        eprosima::fastcdr::optional<eprosima::fastdds::dds::rpc::RemoteExceptionCode_t> remoteEx;
-    };
+struct Calculator_Reply
+{
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_representation_limits_Result> representation_limits; 
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_addition_Result> addition; 
+    eprosima::fastcdr::optional<calculator_example::detail::Calculator_subtraction_Result> subtraction; 
+    eprosima::fastcdr::optional<eprosima::fastdds::dds::rpc::RemoteExceptionCode_t> remoteEx;
+};
 
-    //}  // top level
+//}  // top level
 
-    //}  // Calculator interface
+//}  // Calculator interface
 
-    } // namespace detail
+} // namespace detail
 }  // namespace calculator_example
 
 #endif //FAST_DDS_GENERATED__CALCULATOR_DETAILS_HPP

@@ -21,6 +21,9 @@
 
 #include "extra_unionsPubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -33,7 +36,6 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace MyModule {
 } // namespace MyModule
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "extra_unionsCdrAux.ipp"
