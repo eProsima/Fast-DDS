@@ -1472,7 +1472,7 @@ void SecurityManager::process_participant_stateless_message(
 
     if (false == CDRMessage::readParticipantGenericMessage(&aux_msg, message))
     {
-        logInfo(SECURITY, "Cannot deserialize ParticipantGenericMessage");
+        EPROSIMA_LOG_INFO(SECURITY, "Cannot deserialize ParticipantGenericMessage");
         return;
     }
 
@@ -1711,7 +1711,7 @@ void SecurityManager::process_participant_volatile_message_secure(
 
     if (false == CDRMessage::readParticipantGenericMessage(&aux_msg, message))
     {
-        logInfo(SECURITY, "Cannot deserialize ParticipantGenericMessage");
+        EPROSIMA_LOG_INFO(SECURITY, "Cannot deserialize ParticipantGenericMessage");
         return;
     }
 
