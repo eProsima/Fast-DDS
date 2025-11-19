@@ -234,8 +234,22 @@ void ReaderProxy::add_change(
     // Irrelevant changes are not added to the collection
     if (!is_relevant)
     {
-        if ( !is_reliable_ &&
-                changes_low_mark_ + 1 == change.getSequenceNumber())
+        if (is_reliable_)
+        {
+            if (!is_local_reader())
+            {
+                if (SequenceNumber_t::unknown() == first_irrelevant_removed_)
+                {
+                    first_irrelevant_removed_ = change.getSequenceNumber();
+                    last_irrelevant_removed_ = change.getSequenceNumber();
+                }
+                else if  (change.getSequenceNumber() == last_irrelevant_removed_ + 1)
+                {
+                    last_irrelevant_removed_ = change.getSequenceNumber();
+                }
+            }
+        }
+        else if (changes_low_mark_ + 1 == change.getSequenceNumber())
         {
             changes_low_mark_ = change.getSequenceNumber();
         }
@@ -281,7 +295,7 @@ bool ReaderProxy::change_is_unsent(
         FragmentNumber_t& next_unsent_frag,
         SequenceNumber_t& gap_seq,
         const SequenceNumber_t& min_seq,
-        bool& need_reactivate_periodic_heartbeat) const
+        bool& need_reactivate_periodic_heartbeat)
 {
     if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
     {
@@ -326,6 +340,21 @@ bool ReaderProxy::change_is_unsent(
                     else
                     {
                         gap_seq = SequenceNumber_t::unknown();
+                    }
+                }
+
+                if (SequenceNumber_t::unknown() != first_irrelevant_removed_ &&
+                        SequenceNumber_t::unknown() != gap_seq)
+                {
+                    // Check if the hole is due to irrelevant changes removed without informing the reader
+                    if (gap_seq == first_irrelevant_removed_)
+                    {
+                        first_irrelevant_removed_ = SequenceNumber_t::unknown();
+                        last_irrelevant_removed_ = SequenceNumber_t::unknown();
+                    }
+                    else if (gap_seq < last_irrelevant_removed_)
+                    {
+                        last_irrelevant_removed_ = gap_seq - 1;
                     }
                 }
             }
@@ -436,6 +465,20 @@ bool ReaderProxy::requested_changes_set(
                     else if ((sit >= min_seq_in_history) && (sit > changes_low_mark_))
                     {
                         gap_builder.add(sit);
+
+                        if (SequenceNumber_t::unknown() != first_irrelevant_removed_)
+                        {
+                            // Check if the hole is due to irrelevant changes removed without informing the reader
+                            if (sit == first_irrelevant_removed_)
+                            {
+                                first_irrelevant_removed_ = SequenceNumber_t::unknown();
+                                last_irrelevant_removed_ = SequenceNumber_t::unknown();
+                            }
+                            else if (sit < last_irrelevant_removed_)
+                            {
+                                last_irrelevant_removed_ = sit - 1;
+                            }
+                        }
                     }
                 });
     }

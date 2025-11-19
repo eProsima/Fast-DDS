@@ -139,7 +139,7 @@ public:
             FragmentNumber_t& next_unsent_frag,
             SequenceNumber_t& gap_seq,
             const SequenceNumber_t& min_seq,
-            bool& need_reactivate_periodic_heartbeat) const;
+            bool& need_reactivate_periodic_heartbeat);
 
     /**
      * Mark all changes up to the one indicated by seq_num as Acknowledged.
@@ -346,6 +346,22 @@ public:
         return changes_low_mark_;
     }
 
+    SequenceNumber_t first_irrelevant_removed() const
+    {
+        return first_irrelevant_removed_;
+    }
+
+    SequenceNumber_t last_irrelevant_removed() const
+    {
+        return last_irrelevant_removed_;
+    }
+
+    void reset_irrelevant_removed()
+    {
+        first_irrelevant_removed_ = SequenceNumber_t::unknown();
+        last_irrelevant_removed_ = SequenceNumber_t::unknown();
+    }
+
     /**
      * Change the interval of nack-supression event.
      * @param interval Time from data sending to acknack processing.
@@ -447,6 +463,11 @@ private:
     uint32_t last_nackfrag_count_;
 
     SequenceNumber_t changes_low_mark_;
+
+    //! First sequence number not relevant that was removed without reader being informed.
+    SequenceNumber_t first_irrelevant_removed_ {SequenceNumber_t::unknown()};
+    //! Last sequence number not relevant that was removed without reader being informed.
+    SequenceNumber_t last_irrelevant_removed_ {SequenceNumber_t::unknown()};
 
     bool active_ = false;
 
