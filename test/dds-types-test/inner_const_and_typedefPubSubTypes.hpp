@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__INNER_CONST_AND_TYPEDEF_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__INNER_CONST_AND_TYPEDEF_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>

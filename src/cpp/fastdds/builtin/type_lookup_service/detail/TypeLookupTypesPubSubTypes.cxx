@@ -21,6 +21,9 @@
 
 #include "TypeLookupTypesPubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -37,1103 +40,869 @@ namespace dds {
 
 
 namespace builtin {
-    TypeLookup_getTypes_InPubSubType::TypeLookup_getTypes_InPubSubType()
-    {
-        set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In");
-        uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_cdr_typesize;
-        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-        max_serialized_type_size = type_size + 4; /*encapsulation*/
-        is_compute_key_provided = false;
-        uint32_t key_length = eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize : 16;
-        key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-        memset(key_buffer_, 0, key_length);
-    }
+TypeLookup_getTypes_InPubSubType::TypeLookup_getTypes_InPubSubType()
+{
+    set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In");
+    uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+}
 
-    TypeLookup_getTypes_InPubSubType::~TypeLookup_getTypes_InPubSubType()
-    {
-        if (key_buffer_ != nullptr)
-        {
-            free(key_buffer_);
-        }
-    }
+TypeLookup_getTypes_InPubSubType::~TypeLookup_getTypes_InPubSubType()
+{
+}
 
-    bool TypeLookup_getTypes_InPubSubType::serialize(
-            const void* const data,
-            SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation)
-    {
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
+bool TypeLookup_getTypes_InPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type =
+            static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
 
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        ser.set_encoding_flag(
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 
-        try
-        {
-            // Serialize encapsulation
-            ser.serialize_encapsulation();
-            // Serialize the object.
-            ser << *p_type;
-            ser.set_dds_cdr_options({0,0});
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        // Get the serialized length
-        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-        return true;
-    }
-
-    bool TypeLookup_getTypes_InPubSubType::deserialize(
-            SerializedPayload_t& payload,
-            void* data)
+    try
     {
-        try
-        {
-            // Convert DATA to pointer of your type
-            ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-            // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-            // Deserialize encapsulation.
-            deser.read_encapsulation();
-            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-            // Deserialize the object.
-            deser >> *p_type;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        return true;
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0, 0});
     }
-
-    uint32_t TypeLookup_getTypes_InPubSubType::calculate_serialized_size(
-            const void* const data,
-            DataRepresentationId_t data_representation)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        try
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                        *static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data), current_alignment)) +
-                    4u /*encapsulation*/;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return 0;
-        }
-    }
-
-    void* TypeLookup_getTypes_InPubSubType::create_data()
-    {
-        return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In());
-    }
-
-    void TypeLookup_getTypes_InPubSubType::delete_data(
-            void* data)
-    {
-        delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data));
-    }
-
-    bool TypeLookup_getTypes_InPubSubType::compute_key(
-            SerializedPayload_t& payload,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In data;
-        if (deserialize(payload, static_cast<void*>(&data)))
-        {
-            return compute_key(static_cast<void*>(&data), handle, force_md5);
-        }
-
         return false;
     }
 
-    bool TypeLookup_getTypes_InPubSubType::compute_key(
-            const void* const data,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
 
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
+bool TypeLookup_getTypes_InPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type =
+                static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-        eprosima::fastcdr::serialize_key(ser, *p_type);
-        if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypes_In_max_key_cdr_typesize > 16)
-        {
-            md5_.init();
-            md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            md5_.finalize();
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = md5_.digest[i];
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = key_buffer_[i];
-            }
-        }
-        return true;
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
     }
-
-    void TypeLookup_getTypes_InPubSubType::register_type_object_representation()
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-            "TypeObject type representation support disabled in generated code");
-    }
-
-    TypeLookup_getTypes_OutPubSubType::TypeLookup_getTypes_OutPubSubType()
-    {
-        set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out");
-        uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_cdr_typesize;
-        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-        max_serialized_type_size = type_size + 4; /*encapsulation*/
-        is_compute_key_provided = false;
-        uint32_t key_length = eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize : 16;
-        key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-        memset(key_buffer_, 0, key_length);
-    }
-
-    TypeLookup_getTypes_OutPubSubType::~TypeLookup_getTypes_OutPubSubType()
-    {
-        if (key_buffer_ != nullptr)
-        {
-            free(key_buffer_);
-        }
-    }
-
-    bool TypeLookup_getTypes_OutPubSubType::serialize(
-            const void* const data,
-            SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation)
-    {
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        ser.set_encoding_flag(
-            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
-
-        try
-        {
-            // Serialize encapsulation
-            ser.serialize_encapsulation();
-            // Serialize the object.
-            ser << *p_type;
-            ser.set_dds_cdr_options({0,0});
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        // Get the serialized length
-        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-        return true;
-    }
-
-    bool TypeLookup_getTypes_OutPubSubType::deserialize(
-            SerializedPayload_t& payload,
-            void* data)
-    {
-        try
-        {
-            // Convert DATA to pointer of your type
-            ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-            // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-            // Deserialize encapsulation.
-            deser.read_encapsulation();
-            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-            // Deserialize the object.
-            deser >> *p_type;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    uint32_t TypeLookup_getTypes_OutPubSubType::calculate_serialized_size(
-            const void* const data,
-            DataRepresentationId_t data_representation)
-    {
-        try
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                        *static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data), current_alignment)) +
-                    4u /*encapsulation*/;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return 0;
-        }
-    }
-
-    void* TypeLookup_getTypes_OutPubSubType::create_data()
-    {
-        return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out());
-    }
-
-    void TypeLookup_getTypes_OutPubSubType::delete_data(
-            void* data)
-    {
-        delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data));
-    }
-
-    bool TypeLookup_getTypes_OutPubSubType::compute_key(
-            SerializedPayload_t& payload,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out data;
-        if (deserialize(payload, static_cast<void*>(&data)))
-        {
-            return compute_key(static_cast<void*>(&data), handle, force_md5);
-        }
-
         return false;
     }
 
-    bool TypeLookup_getTypes_OutPubSubType::compute_key(
-            const void* const data,
-            InstanceHandle_t& handle,
-            bool force_md5)
+    return true;
+}
+
+uint32_t TypeLookup_getTypes_InPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
     {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize);
-
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-        eprosima::fastcdr::serialize_key(ser, *p_type);
-        if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_key_cdr_typesize > 16)
-        {
-            md5_.init();
-            md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            md5_.finalize();
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = md5_.digest[i];
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = key_buffer_[i];
-            }
-        }
-        return true;
-    }
-
-    void TypeLookup_getTypes_OutPubSubType::register_type_object_representation()
-    {
-        EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-            "TypeObject type representation support disabled in generated code");
-    }
-
-    TypeLookup_getTypeDependencies_InPubSubType::TypeLookup_getTypeDependencies_InPubSubType()
-    {
-        set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In");
-        uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_cdr_typesize;
-        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-        max_serialized_type_size = type_size + 4; /*encapsulation*/
-        is_compute_key_provided = false;
-        uint32_t key_length = eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_key_cdr_typesize : 16;
-        key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-        memset(key_buffer_, 0, key_length);
-    }
-
-    TypeLookup_getTypeDependencies_InPubSubType::~TypeLookup_getTypeDependencies_InPubSubType()
-    {
-        if (key_buffer_ != nullptr)
-        {
-            free(key_buffer_);
-        }
-    }
-
-    bool TypeLookup_getTypeDependencies_InPubSubType::serialize(
-            const void* const data,
-            SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation)
-    {
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        ser.set_encoding_flag(
+        eprosima::fastcdr::CdrSizeCalculator calculator(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
-
-        try
-        {
-            // Serialize encapsulation
-            ser.serialize_encapsulation();
-            // Serialize the object.
-            ser << *p_type;
-            ser.set_dds_cdr_options({0,0});
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        // Get the serialized length
-        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-        return true;
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In* p_type =
+                static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
-
-    bool TypeLookup_getTypeDependencies_InPubSubType::deserialize(
-            SerializedPayload_t& payload,
-            void* data)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        try
-        {
-            // Convert DATA to pointer of your type
-            ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-            // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-            // Deserialize encapsulation.
-            deser.read_encapsulation();
-            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-            // Deserialize the object.
-            deser >> *p_type;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        return true;
+        return 0;
     }
+}
 
-    uint32_t TypeLookup_getTypeDependencies_InPubSubType::calculate_serialized_size(
-            const void* const data,
-            DataRepresentationId_t data_representation)
+void* TypeLookup_getTypes_InPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In());
+}
+
+void TypeLookup_getTypes_InPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In*>(data));
+}
+
+bool TypeLookup_getTypes_InPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+bool TypeLookup_getTypes_InPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+void TypeLookup_getTypes_InPubSubType::register_type_object_representation()
+{
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+            "TypeObject type representation support disabled in generated code");
+}
+
+TypeLookup_getTypes_OutPubSubType::TypeLookup_getTypes_OutPubSubType()
+{
+    set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out");
+    uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypes_Out_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+}
+
+TypeLookup_getTypes_OutPubSubType::~TypeLookup_getTypes_OutPubSubType()
+{
+}
+
+bool TypeLookup_getTypes_OutPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type =
+            static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+
+    try
     {
-        try
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                        *static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data), current_alignment)) +
-                    4u /*encapsulation*/;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return 0;
-        }
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0, 0});
     }
-
-    void* TypeLookup_getTypeDependencies_InPubSubType::create_data()
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In());
-    }
-
-    void TypeLookup_getTypeDependencies_InPubSubType::delete_data(
-            void* data)
-    {
-        delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data));
-    }
-
-    bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
-            SerializedPayload_t& payload,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In data;
-        if (deserialize(payload, static_cast<void*>(&data)))
-        {
-            return compute_key(static_cast<void*>(&data), handle, force_md5);
-        }
-
         return false;
     }
 
-    bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
-            const void* const data,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
 
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
+bool TypeLookup_getTypes_OutPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type =
+                static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_key_cdr_typesize);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-        eprosima::fastcdr::serialize_key(ser, *p_type);
-        if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_key_cdr_typesize > 16)
-        {
-            md5_.init();
-            md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            md5_.finalize();
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = md5_.digest[i];
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = key_buffer_[i];
-            }
-        }
-        return true;
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
     }
-
-    void TypeLookup_getTypeDependencies_InPubSubType::register_type_object_representation()
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-            "TypeObject type representation support disabled in generated code");
-    }
-
-    TypeLookup_getTypeDependencies_OutPubSubType::TypeLookup_getTypeDependencies_OutPubSubType()
-    {
-        set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out");
-        uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_cdr_typesize;
-        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-        max_serialized_type_size = type_size + 4; /*encapsulation*/
-        is_compute_key_provided = false;
-        uint32_t key_length = eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize : 16;
-        key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-        memset(key_buffer_, 0, key_length);
-    }
-
-    TypeLookup_getTypeDependencies_OutPubSubType::~TypeLookup_getTypeDependencies_OutPubSubType()
-    {
-        if (key_buffer_ != nullptr)
-        {
-            free(key_buffer_);
-        }
-    }
-
-    bool TypeLookup_getTypeDependencies_OutPubSubType::serialize(
-            const void* const data,
-            SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation)
-    {
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        ser.set_encoding_flag(
-            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
-
-        try
-        {
-            // Serialize encapsulation
-            ser.serialize_encapsulation();
-            // Serialize the object.
-            ser << *p_type;
-            ser.set_dds_cdr_options({0,0});
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        // Get the serialized length
-        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-        return true;
-    }
-
-    bool TypeLookup_getTypeDependencies_OutPubSubType::deserialize(
-            SerializedPayload_t& payload,
-            void* data)
-    {
-        try
-        {
-            // Convert DATA to pointer of your type
-            ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-            // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-            // Deserialize encapsulation.
-            deser.read_encapsulation();
-            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-            // Deserialize the object.
-            deser >> *p_type;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    uint32_t TypeLookup_getTypeDependencies_OutPubSubType::calculate_serialized_size(
-            const void* const data,
-            DataRepresentationId_t data_representation)
-    {
-        try
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                        *static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data), current_alignment)) +
-                    4u /*encapsulation*/;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return 0;
-        }
-    }
-
-    void* TypeLookup_getTypeDependencies_OutPubSubType::create_data()
-    {
-        return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out());
-    }
-
-    void TypeLookup_getTypeDependencies_OutPubSubType::delete_data(
-            void* data)
-    {
-        delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data));
-    }
-
-    bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
-            SerializedPayload_t& payload,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out data;
-        if (deserialize(payload, static_cast<void*>(&data)))
-        {
-            return compute_key(static_cast<void*>(&data), handle, force_md5);
-        }
-
         return false;
     }
 
-    bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
-            const void* const data,
-            InstanceHandle_t& handle,
-            bool force_md5)
+    return true;
+}
+
+uint32_t TypeLookup_getTypes_OutPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
     {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize);
-
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-        eprosima::fastcdr::serialize_key(ser, *p_type);
-        if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_key_cdr_typesize > 16)
-        {
-            md5_.init();
-            md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            md5_.finalize();
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = md5_.digest[i];
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = key_buffer_[i];
-            }
-        }
-        return true;
-    }
-
-    void TypeLookup_getTypeDependencies_OutPubSubType::register_type_object_representation()
-    {
-        EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-            "TypeObject type representation support disabled in generated code");
-    }
-
-    TypeLookup_RequestPubSubType::TypeLookup_RequestPubSubType()
-    {
-        set_name("eprosima::fastdds::dds::builtin::TypeLookup_Request");
-        uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize;
-        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-        max_serialized_type_size = type_size + 4; /*encapsulation*/
-        is_compute_key_provided = false;
-        uint32_t key_length = eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize : 16;
-        key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-        memset(key_buffer_, 0, key_length);
-    }
-
-    TypeLookup_RequestPubSubType::~TypeLookup_RequestPubSubType()
-    {
-        if (key_buffer_ != nullptr)
-        {
-            free(key_buffer_);
-        }
-    }
-
-    bool TypeLookup_RequestPubSubType::serialize(
-            const void* const data,
-            SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation)
-    {
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        ser.set_encoding_flag(
+        eprosima::fastcdr::CdrSizeCalculator calculator(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-
-        try
-        {
-            // Serialize encapsulation
-            ser.serialize_encapsulation();
-            // Serialize the object.
-            ser << *p_type;
-            ser.set_dds_cdr_options({0,0});
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        // Get the serialized length
-        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-        return true;
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out* p_type =
+                static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
-
-    bool TypeLookup_RequestPubSubType::deserialize(
-            SerializedPayload_t& payload,
-            void* data)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        try
-        {
-            // Convert DATA to pointer of your type
-            ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-            // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-            // Deserialize encapsulation.
-            deser.read_encapsulation();
-            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-            // Deserialize the object.
-            deser >> *p_type;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        return true;
+        return 0;
     }
+}
 
-    uint32_t TypeLookup_RequestPubSubType::calculate_serialized_size(
-            const void* const data,
-            DataRepresentationId_t data_representation)
+void* TypeLookup_getTypes_OutPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out());
+}
+
+void TypeLookup_getTypes_OutPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out*>(data));
+}
+
+bool TypeLookup_getTypes_OutPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+bool TypeLookup_getTypes_OutPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+void TypeLookup_getTypes_OutPubSubType::register_type_object_representation()
+{
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+            "TypeObject type representation support disabled in generated code");
+}
+
+TypeLookup_getTypeDependencies_InPubSubType::TypeLookup_getTypeDependencies_InPubSubType()
+{
+    set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In");
+    uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_In_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+}
+
+TypeLookup_getTypeDependencies_InPubSubType::~TypeLookup_getTypeDependencies_InPubSubType()
+{
+}
+
+bool TypeLookup_getTypeDependencies_InPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type =
+            static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+
+    try
     {
-        try
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                        *static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data), current_alignment)) +
-                    4u /*encapsulation*/;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return 0;
-        }
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0, 0});
     }
-
-    void* TypeLookup_RequestPubSubType::create_data()
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_Request());
-    }
-
-    void TypeLookup_RequestPubSubType::delete_data(
-            void* data)
-    {
-        delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data));
-    }
-
-    bool TypeLookup_RequestPubSubType::compute_key(
-            SerializedPayload_t& payload,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        ::eprosima::fastdds::dds::builtin::TypeLookup_Request data;
-        if (deserialize(payload, static_cast<void*>(&data)))
-        {
-            return compute_key(static_cast<void*>(&data), handle, force_md5);
-        }
-
         return false;
     }
 
-    bool TypeLookup_RequestPubSubType::compute_key(
-            const void* const data,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
 
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
+bool TypeLookup_getTypeDependencies_InPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type =
+                static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-        eprosima::fastcdr::serialize_key(ser, *p_type);
-        if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_Request_max_key_cdr_typesize > 16)
-        {
-            md5_.init();
-            md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            md5_.finalize();
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = md5_.digest[i];
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = key_buffer_[i];
-            }
-        }
-        return true;
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
     }
-
-    void TypeLookup_RequestPubSubType::register_type_object_representation()
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-            "TypeObject type representation support disabled in generated code");
-    }
-
-    TypeLookup_ReplyPubSubType::TypeLookup_ReplyPubSubType()
-    {
-        set_name("eprosima::fastdds::dds::builtin::TypeLookup_Reply");
-        uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize;
-        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-        max_serialized_type_size = type_size + 4; /*encapsulation*/
-        is_compute_key_provided = false;
-        uint32_t key_length = eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize : 16;
-        key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-        memset(key_buffer_, 0, key_length);
-    }
-
-    TypeLookup_ReplyPubSubType::~TypeLookup_ReplyPubSubType()
-    {
-        if (key_buffer_ != nullptr)
-        {
-            free(key_buffer_);
-        }
-    }
-
-    bool TypeLookup_ReplyPubSubType::serialize(
-            const void* const data,
-            SerializedPayload_t& payload,
-            DataRepresentationId_t data_representation)
-    {
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
-
-        // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-        ser.set_encoding_flag(
-            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-
-        try
-        {
-            // Serialize encapsulation
-            ser.serialize_encapsulation();
-            // Serialize the object.
-            ser << *p_type;
-            ser.set_dds_cdr_options({0,0});
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        // Get the serialized length
-        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-        return true;
-    }
-
-    bool TypeLookup_ReplyPubSubType::deserialize(
-            SerializedPayload_t& payload,
-            void* data)
-    {
-        try
-        {
-            // Convert DATA to pointer of your type
-            ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type = static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-            // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-            // Deserialize encapsulation.
-            deser.read_encapsulation();
-            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-            // Deserialize the object.
-            deser >> *p_type;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    uint32_t TypeLookup_ReplyPubSubType::calculate_serialized_size(
-            const void* const data,
-            DataRepresentationId_t data_representation)
-    {
-        try
-        {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-            size_t current_alignment {0};
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                        *static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data), current_alignment)) +
-                    4u /*encapsulation*/;
-        }
-        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-        {
-            return 0;
-        }
-    }
-
-    void* TypeLookup_ReplyPubSubType::create_data()
-    {
-        return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_Reply());
-    }
-
-    void TypeLookup_ReplyPubSubType::delete_data(
-            void* data)
-    {
-        delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data));
-    }
-
-    bool TypeLookup_ReplyPubSubType::compute_key(
-            SerializedPayload_t& payload,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
-
-        ::eprosima::fastdds::dds::builtin::TypeLookup_Reply data;
-        if (deserialize(payload, static_cast<void*>(&data)))
-        {
-            return compute_key(static_cast<void*>(&data), handle, force_md5);
-        }
-
         return false;
     }
 
-    bool TypeLookup_ReplyPubSubType::compute_key(
-            const void* const data,
-            InstanceHandle_t& handle,
-            bool force_md5)
-    {
-        if (!is_compute_key_provided)
-        {
-            return false;
-        }
+    return true;
+}
 
-        const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type = static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
+uint32_t TypeLookup_getTypeDependencies_InPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In* p_type =
+                static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
+}
+
+void* TypeLookup_getTypeDependencies_InPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In());
+}
+
+void TypeLookup_getTypeDependencies_InPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In*>(data));
+}
+
+bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+bool TypeLookup_getTypeDependencies_InPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+void TypeLookup_getTypeDependencies_InPubSubType::register_type_object_representation()
+{
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+            "TypeObject type representation support disabled in generated code");
+}
+
+TypeLookup_getTypeDependencies_OutPubSubType::TypeLookup_getTypeDependencies_OutPubSubType()
+{
+    set_name("eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out");
+    uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_getTypeDependencies_Out_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+}
+
+TypeLookup_getTypeDependencies_OutPubSubType::~TypeLookup_getTypeDependencies_OutPubSubType()
+{
+}
+
+bool TypeLookup_getTypeDependencies_OutPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type =
+            static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+
+    try
+    {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0, 0});
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
+
+bool TypeLookup_getTypeDependencies_OutPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type =
+                static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
 
         // Object that manages the raw buffer.
-        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-                eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize);
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
-        // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-        ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-        eprosima::fastcdr::serialize_key(ser, *p_type);
-        if (force_md5 || eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_key_cdr_typesize > 16)
-        {
-            md5_.init();
-            md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            md5_.finalize();
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = md5_.digest[i];
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle.value[i] = key_buffer_[i];
-            }
-        }
-        return true;
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
     }
-
-    void TypeLookup_ReplyPubSubType::register_type_object_representation()
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
-        EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-            "TypeObject type representation support disabled in generated code");
+        return false;
     }
+
+    return true;
+}
+
+uint32_t TypeLookup_getTypeDependencies_OutPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out* p_type =
+                static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
+}
+
+void* TypeLookup_getTypeDependencies_OutPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out());
+}
+
+void TypeLookup_getTypeDependencies_OutPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out*>(data));
+}
+
+bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+bool TypeLookup_getTypeDependencies_OutPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+void TypeLookup_getTypeDependencies_OutPubSubType::register_type_object_representation()
+{
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+            "TypeObject type representation support disabled in generated code");
+}
+
+TypeLookup_RequestPubSubType::TypeLookup_RequestPubSubType()
+{
+    set_name("eprosima::fastdds::dds::builtin::TypeLookup_Request");
+    uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_Request_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+}
+
+TypeLookup_RequestPubSubType::~TypeLookup_RequestPubSubType()
+{
+}
+
+bool TypeLookup_RequestPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type =
+            static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+
+    try
+    {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0, 0});
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
+
+bool TypeLookup_RequestPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type =
+                static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+uint32_t TypeLookup_RequestPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        const ::eprosima::fastdds::dds::builtin::TypeLookup_Request* p_type =
+                static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
+}
+
+void* TypeLookup_RequestPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_Request());
+}
+
+void TypeLookup_RequestPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Request*>(data));
+}
+
+bool TypeLookup_RequestPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+bool TypeLookup_RequestPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+void TypeLookup_RequestPubSubType::register_type_object_representation()
+{
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+            "TypeObject type representation support disabled in generated code");
+}
+
+TypeLookup_ReplyPubSubType::TypeLookup_ReplyPubSubType()
+{
+    set_name("eprosima::fastdds::dds::builtin::TypeLookup_Reply");
+    uint32_t type_size = eprosima_fastdds_dds_builtin_TypeLookup_Reply_max_cdr_typesize;
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+    max_serialized_type_size = type_size + 4; /*encapsulation*/
+    is_compute_key_provided = false;
+}
+
+TypeLookup_ReplyPubSubType::~TypeLookup_ReplyPubSubType()
+{
+}
+
+bool TypeLookup_ReplyPubSubType::serialize(
+        const void* const data,
+        SerializedPayload_t& payload,
+        DataRepresentationId_t data_representation)
+{
+    const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type =
+            static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
+
+    // Object that manages the raw buffer.
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+    // Object that serializes the data.
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+
+    try
+    {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object.
+        ser << *p_type;
+        ser.set_dds_cdr_options({0, 0});
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    // Get the serialized length
+    payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+    return true;
+}
+
+bool TypeLookup_ReplyPubSubType::deserialize(
+        SerializedPayload_t& payload,
+        void* data)
+{
+    try
+    {
+        // Convert DATA to pointer of your type
+        ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type =
+                static_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
+
+        // Object that deserializes the data.
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+        // Deserialize the object.
+        deser >> *p_type;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+uint32_t TypeLookup_ReplyPubSubType::calculate_serialized_size(
+        const void* const data,
+        DataRepresentationId_t data_representation)
+{
+    try
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
+        const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply* p_type =
+                static_cast<const ::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
+    }
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+    {
+        return 0;
+    }
+}
+
+void* TypeLookup_ReplyPubSubType::create_data()
+{
+    return reinterpret_cast<void*>(new ::eprosima::fastdds::dds::builtin::TypeLookup_Reply());
+}
+
+void TypeLookup_ReplyPubSubType::delete_data(
+        void* data)
+{
+    delete(reinterpret_cast<::eprosima::fastdds::dds::builtin::TypeLookup_Reply*>(data));
+}
+
+bool TypeLookup_ReplyPubSubType::compute_key(
+        SerializedPayload_t& payload,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+bool TypeLookup_ReplyPubSubType::compute_key(
+        const void* const data,
+        InstanceHandle_t& handle,
+        bool force_md5)
+{
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
+
+    return false;
+}
+
+void TypeLookup_ReplyPubSubType::register_type_object_representation()
+{
+    EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
+            "TypeObject type representation support disabled in generated code");
+}
 
 } // namespace builtin
 
@@ -1143,7 +912,6 @@ namespace builtin {
 } // namespace fastdds
 
 } // namespace eprosima
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "TypeLookupTypesCdrAux.ipp"

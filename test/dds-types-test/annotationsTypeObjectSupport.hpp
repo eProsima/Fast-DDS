@@ -40,18 +40,19 @@
 
 
 namespace AnnotationTest {
-    /**
-     * @brief Register InnerEnumHelper related TypeIdentifier.
-     *        Fully-descriptive TypeIdentifiers are directly registered.
-     *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
-     *        indirectly registered as well.
-     *
-     * @param[out] type_ids TypeIdentifier of the registered type.
-     *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
-     *             Invalid TypeIdentifier is returned in case of error.
-     */
-    eProsima_user_DllExport void register_InnerEnumHelper_type_identifier(
-            eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
+
+/**
+ * @brief Register InnerEnumHelper related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ *
+ * @param[out] type_ids TypeIdentifier of the registered type.
+ *             The returned TypeIdentifier corresponds to the complete TypeIdentifier in case of hashed TypeIdentifiers.
+ *             Invalid TypeIdentifier is returned in case of error.
+ */
+eProsima_user_DllExport void register_InnerEnumHelper_type_identifier(
+        eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 
 
@@ -72,6 +73,7 @@ eProsima_user_DllExport void register_AnnotationTest_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 namespace EmptyAnnotationTest {
+
 
 
 
@@ -115,6 +117,7 @@ eProsima_user_DllExport void register_EmptyAnnotatedStruct_type_identifier(
         eprosima::fastdds::dds::xtypes::TypeIdentifierPair& type_ids);
 
 namespace BasicAnnotationsTest {
+
 
 
 

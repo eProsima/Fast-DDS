@@ -54,10 +54,11 @@
 
 namespace AnnotationTest {
 
-    typedef eprosima::fastcdr::fixed_string<inner_const_helper> Inner_alias_bounded_string_helper;
+
+typedef eprosima::fastcdr::fixed_string<inner_const_helper> Inner_alias_bounded_string_helper;
 
 
-    const int16_t inner_const_helper = 10;
+const int16_t inner_const_helper = 10;
 
 } // namespace AnnotationTest
 
