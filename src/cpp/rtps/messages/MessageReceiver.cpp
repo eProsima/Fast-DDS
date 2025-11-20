@@ -779,8 +779,8 @@ bool MessageReceiver::proc_Submsg_Data(
     msg->pos += 2;
 
     bool valid = true;
-    int16_t octetsToInlineQos = 0;
-    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    uint16_t octetsToInlineQos = 0;
+    valid &= CDRMessage::readUInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     BaseReader* first_reader = nullptr;
@@ -942,8 +942,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     msg->pos += 2;
 
     bool valid = true;
-    int16_t octetsToInlineQos = 0;
-    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    uint16_t octetsToInlineQos = 0;
+    valid &= CDRMessage::readUInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     BaseReader* first_reader = nullptr;
@@ -976,11 +976,11 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     ch.vendor_id = source_vendor_id_;
 
     // READ FRAGMENT NUMBER
-    uint32_t fragmentStartingNum;
+    uint32_t fragmentStartingNum = 0;
     valid &= CDRMessage::readUInt32(msg, &fragmentStartingNum);
 
     // READ FRAGMENTSINSUBMESSAGE
-    uint16_t fragmentsInSubmessage;
+    uint16_t fragmentsInSubmessage = 0;
     valid &= CDRMessage::readUInt16(msg, &fragmentsInSubmessage);
 
     // READ FRAGMENTSIZE
@@ -988,7 +988,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     valid &= CDRMessage::readUInt16(msg, &fragmentSize);
 
     // READ SAMPLESIZE
-    uint32_t sampleSize;
+    uint32_t sampleSize = 0;
     valid &= CDRMessage::readUInt32(msg, &sampleSize);
 
     if (!valid)
@@ -1110,7 +1110,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
                 lastSN << "), ignoring");
         return false;
     }
-    uint32_t HBCount;
+    uint32_t HBCount = 0;
     if (!CDRMessage::readUInt32(msg, &HBCount))
     {
         EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Unable to read heartbeat count from heartbeat message");
@@ -1165,7 +1165,7 @@ bool MessageReceiver::proc_Submsg_Acknack(
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
 
     SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
-    uint32_t Ackcount;
+    uint32_t Ackcount = 0;
     if (!CDRMessage::readUInt32(msg, &Ackcount))
     {
         EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
@@ -1365,7 +1365,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     FragmentNumberSet_t fnState;
     CDRMessage::readFragmentNumberSet(msg, &fnState);
 
-    uint32_t Ackcount;
+    uint32_t Ackcount = 0;
     if (!CDRMessage::readUInt32(msg, &Ackcount))
     {
         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
