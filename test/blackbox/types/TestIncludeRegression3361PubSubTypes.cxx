@@ -21,6 +21,9 @@
 
 #include "TestIncludeRegression3361PubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -33,5 +36,4 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace TestModule {
 } // namespace TestModule
-
 

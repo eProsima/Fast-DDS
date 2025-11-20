@@ -40,54 +40,55 @@ using namespace eprosima::fastdds::dds::xtypes;
 
 
 namespace AnnotationTest {
-    void register_InnerEnumHelper_type_identifier(
-            TypeIdentifierPair& type_ids_InnerEnumHelper)
+
+void register_InnerEnumHelper_type_identifier(
+        TypeIdentifierPair& type_ids_InnerEnumHelper)
+{
+    ReturnCode_t return_code_InnerEnumHelper {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_InnerEnumHelper =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "AnnotationTest::InnerEnumHelper", type_ids_InnerEnumHelper);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerEnumHelper)
     {
-        ReturnCode_t return_code_InnerEnumHelper {eprosima::fastdds::dds::RETCODE_OK};
-        return_code_InnerEnumHelper =
-            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AnnotationTest::InnerEnumHelper", type_ids_InnerEnumHelper);
-        if (eprosima::fastdds::dds::RETCODE_OK != return_code_InnerEnumHelper)
+        EnumTypeFlag enum_flags_InnerEnumHelper = 0;
+        BitBound bit_bound_InnerEnumHelper = 32;
+        CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
+        QualifiedTypeName type_name_InnerEnumHelper = "AnnotationTest::InnerEnumHelper";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
+        CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
+        CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
+        CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
         {
-            EnumTypeFlag enum_flags_InnerEnumHelper = 0;
-            BitBound bit_bound_InnerEnumHelper = 32;
-            CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
-            QualifiedTypeName type_name_InnerEnumHelper = "AnnotationTest::InnerEnumHelper";
-            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
-            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
-            CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
-            CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
-            CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
-            {
-                EnumeratedLiteralFlag flags_ONE = TypeObjectUtils::build_enumerated_literal_flag(false);
-                CommonEnumeratedLiteral common_ONE = TypeObjectUtils::build_common_enumerated_literal(0, flags_ONE);
-                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ONE;
-                ann_custom_InnerEnumHelper.reset();
-                MemberName name_ONE = "ONE";
-                CompleteMemberDetail detail_ONE = TypeObjectUtils::build_complete_member_detail(name_ONE, member_ann_builtin_ONE, ann_custom_InnerEnumHelper);
-                CompleteEnumeratedLiteral literal_ONE = TypeObjectUtils::build_complete_enumerated_literal(common_ONE, detail_ONE);
-                TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ONE);
-            }
-            {
-                EnumeratedLiteralFlag flags_TWO = TypeObjectUtils::build_enumerated_literal_flag(false);
-                CommonEnumeratedLiteral common_TWO = TypeObjectUtils::build_common_enumerated_literal(1, flags_TWO);
-                eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_TWO;
-                ann_custom_InnerEnumHelper.reset();
-                MemberName name_TWO = "TWO";
-                CompleteMemberDetail detail_TWO = TypeObjectUtils::build_complete_member_detail(name_TWO, member_ann_builtin_TWO, ann_custom_InnerEnumHelper);
-                CompleteEnumeratedLiteral literal_TWO = TypeObjectUtils::build_complete_enumerated_literal(common_TWO, detail_TWO);
-                TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_TWO);
-            }
-            CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
-                    literal_seq_InnerEnumHelper);
-            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                    TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string(), type_ids_InnerEnumHelper))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "AnnotationTest::InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
-            }
+            EnumeratedLiteralFlag flags_ONE = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_ONE = TypeObjectUtils::build_common_enumerated_literal(0, flags_ONE);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ONE;
+            ann_custom_InnerEnumHelper.reset();
+            MemberName name_ONE = "ONE";
+            CompleteMemberDetail detail_ONE = TypeObjectUtils::build_complete_member_detail(name_ONE, member_ann_builtin_ONE, ann_custom_InnerEnumHelper);
+            CompleteEnumeratedLiteral literal_ONE = TypeObjectUtils::build_complete_enumerated_literal(common_ONE, detail_ONE);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ONE);
+        }
+        {
+            EnumeratedLiteralFlag flags_TWO = TypeObjectUtils::build_enumerated_literal_flag(false);
+            CommonEnumeratedLiteral common_TWO = TypeObjectUtils::build_common_enumerated_literal(1, flags_TWO);
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_TWO;
+            ann_custom_InnerEnumHelper.reset();
+            MemberName name_TWO = "TWO";
+            CompleteMemberDetail detail_TWO = TypeObjectUtils::build_complete_member_detail(name_TWO, member_ann_builtin_TWO, ann_custom_InnerEnumHelper);
+            CompleteEnumeratedLiteral literal_TWO = TypeObjectUtils::build_complete_enumerated_literal(common_TWO, detail_TWO);
+            TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_TWO);
+        }
+        CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
+                literal_seq_InnerEnumHelper);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string(), type_ids_InnerEnumHelper))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "AnnotationTest::InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
         }
     }
+}
 
 
 
@@ -796,6 +797,7 @@ namespace EmptyAnnotationTest {
 
 
 
+
 } // namespace EmptyAnnotationTest
 
 void register_EmptyAnnotationTest_type_identifier(
@@ -1144,6 +1146,7 @@ void register_EmptyAnnotatedStruct_type_identifier(
     }
 }
 namespace BasicAnnotationsTest {
+
 
 
 
