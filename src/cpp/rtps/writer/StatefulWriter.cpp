@@ -649,6 +649,15 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         {
             SequenceNumber_t gap_seq;
             FragmentNumber_t next_unsent_frag = 0;
+
+            if (SequenceNumber_t::unknown() != (*remote_reader)->first_irrelevant_removed())
+            {
+                // Send GAP with irrelevant changes that are not in history.
+                group.sender(this, (*remote_reader)->message_sender());
+                add_gaps_for_removed_irrelevants(**remote_reader, group);
+                group.sender(this, &locator_selector);             // This makes the flush_and_reset().
+            }
+
             if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq, get_seq_num_min(),
                     need_reactivate_periodic_heartbeat) &&
                     (0 == n_fragments || min_unsent_fragment >= next_unsent_frag))
@@ -664,14 +673,6 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 locator_selector.locator_selector.enable((*remote_reader)->guid());
                 should_be_sent = true;
                 inline_qos |= (*remote_reader)->expects_inline_qos();
-
-                if (SequenceNumber_t::unknown() != (*remote_reader)->first_irrelevant_removed())
-                {
-                    // Send GAP with irrelevant changes that are not in history.
-                    group.sender(this, (*remote_reader)->message_sender());
-                    add_gaps_for_removed_irrelevants(**remote_reader, group);
-                    group.sender(this, &locator_selector);         // This makes the flush_and_reset().
-                }
 
                 // If there is a hole (removed from history or not relevants) between previous sample and this one,
                 // send it a personal GAP.
