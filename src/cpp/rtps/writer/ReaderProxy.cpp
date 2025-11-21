@@ -227,9 +227,10 @@ void ReaderProxy::add_change(
         const ChangeForReader_t& change,
         bool is_relevant)
 {
-    assert(change.getSequenceNumber() > changes_low_mark_);
+    SequenceNumber_t seq_num {change.getSequenceNumber()};
+    assert(seq_num > changes_low_mark_);
     assert(changes_for_reader_.empty() ? true :
-            change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
+            seq_num > changes_for_reader_.back().getSequenceNumber());
 
     // Irrelevant changes are not added to the collection
     if (!is_relevant)
@@ -240,18 +241,18 @@ void ReaderProxy::add_change(
             {
                 if (SequenceNumber_t::unknown() == first_irrelevant_removed_)
                 {
-                    first_irrelevant_removed_ = change.getSequenceNumber();
-                    last_irrelevant_removed_ = change.getSequenceNumber();
+                    first_irrelevant_removed_ = seq_num;
+                    last_irrelevant_removed_ = seq_num;
                 }
-                else if  (change.getSequenceNumber() == last_irrelevant_removed_ + 1)
+                else if  (seq_num == last_irrelevant_removed_ + 1)
                 {
-                    last_irrelevant_removed_ = change.getSequenceNumber();
+                    last_irrelevant_removed_ = seq_num;
                 }
             }
         }
-        else if (changes_low_mark_ + 1 == change.getSequenceNumber())
+        else if (changes_low_mark_ + 1 == seq_num)
         {
-            changes_low_mark_ = change.getSequenceNumber();
+            changes_low_mark_ = seq_num;
         }
         return;
     }
@@ -259,7 +260,7 @@ void ReaderProxy::add_change(
     if (changes_for_reader_.push_back(change) == nullptr)
     {
         // This should never happen
-        EPROSIMA_LOG_ERROR(RTPS_READER_PROXY, "Error adding change " << change.getSequenceNumber()
+        EPROSIMA_LOG_ERROR(RTPS_READER_PROXY, "Error adding change " << seq_num
                                                                      << " to reader proxy " << guid());
         eprosima::fastdds::dds::Log::Flush();
         assert(false);

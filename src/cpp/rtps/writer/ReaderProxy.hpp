@@ -341,22 +341,22 @@ public:
      * Get the highest fully acknowledged sequence number.
      * @return the highest fully acknowledged sequence number.
      */
-    SequenceNumber_t changes_low_mark() const
+    inline SequenceNumber_t changes_low_mark() const
     {
         return changes_low_mark_;
     }
 
-    SequenceNumber_t first_irrelevant_removed() const
+    inline SequenceNumber_t first_irrelevant_removed() const
     {
         return first_irrelevant_removed_;
     }
 
-    SequenceNumber_t last_irrelevant_removed() const
+    inline SequenceNumber_t last_irrelevant_removed() const
     {
         return last_irrelevant_removed_;
     }
 
-    void reset_irrelevant_removed()
+    inline void reset_irrelevant_removed()
     {
         first_irrelevant_removed_ = SequenceNumber_t::unknown();
         last_irrelevant_removed_ = SequenceNumber_t::unknown();
