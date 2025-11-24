@@ -222,9 +222,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
-          ctest_args: >
-            ${{ inputs.ctest-args }}
-            ${{ format('-E "{0}"', env.test_blocklist) }}
+          ctest_args: ${{ inputs.ctest-args }} ${{ format('-E "{0}"', env.test_blocklist) }}
           packages_names: fastrtps
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
