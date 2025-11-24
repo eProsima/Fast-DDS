@@ -4,6 +4,7 @@ names:
             - "-DBUILD_DOCUMENTATION=OFF"
             - "-DCOMPILE_EXAMPLES=ON"
             - "-DFASTDDS_ENFORCE_LOG_INFO=ON"
+            - "-DENABLE_OLD_LOG_MACROS=OFF"
             - "-DINSTALL_EXAMPLES=ON"
             - "-DINTERNAL_DEBUG=ON"
             - "-DNO_TLS=OFF"
