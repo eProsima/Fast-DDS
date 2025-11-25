@@ -149,13 +149,13 @@ struct DataMsgUtils
 
         if (WITH_KEY == topicKind && (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
         {
+            if(change->instanceHandle.isDefined())
+            {
             fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                     change->instanceHandle);
-
-            if (ALIVE != change->kind)
-            {
-                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
             }
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
+
         }
 
         if (inlineQos != nullptr)
@@ -292,11 +292,14 @@ bool RTPSMessageCreator::addSubmessageData(
         }
 
         added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
+        if(change->instanceHandle.isDefined())
+        {
         added_no_error &=
                 fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                         change->instanceHandle);
-        added_no_error &=
-                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg,
+        }
+
+        added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg,
                         status);
         added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sentinel(msg);
     }
