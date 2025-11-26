@@ -709,6 +709,120 @@ TEST(DDSContentFilter, OnlyFilterAliveChanges)
     ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
+/*!
+ * @test Regression test for https://eprosima.easyredmine.com/issues/23919
+ * This test checks GAP messages are sent correctly when there is one reader with a content filter.
+ * The idea is, in the middle of a GAP sequence, a heartbet period message is sent.
+ */
+TEST_P(DDSContentFilter, CorrectGAPSendingOneReader)
+{
+    int32_t total_count {0};
+    // Set up the reader with a content filter for index 1, 2, and 6
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index = 1 OR index = 2 OR index = 6", {}, true, false,
+            false);
+    reader
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .sample_lost_status_functor([&total_count](const SampleLostStatus& status)
+            {
+                total_count = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Set up the writer
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(100000000)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Send 10 samples
+    auto data = default_helloworld_data_generator();
+
+    decltype(data) expected_data;
+    expected_data.push_back(*data.begin()); // index 1
+    expected_data.push_back(*std::next(data.begin())); // index 2
+    expected_data.push_back(*std::next(data.begin(), 5)); // index 6
+
+    reader.startReception(expected_data);
+
+    writer.send(data, 50);
+
+    // Wait for reception and check
+    reader.block_for_all();
+    ASSERT_EQ(0, total_count);
+}
+
+/*!
+ * @test Regression test for https://eprosima.easyredmine.com/issues/23919
+ * This test checks GAP messages are sent correctly when there is two readers with a content filter.
+ */
+TEST_P(DDSContentFilter, CorrectGAPSendingTwoReader)
+{
+    int32_t total_count {0};
+    int32_t total_count_2 {0};
+    // Set up the reader with a content filter for index 1, 2, and 6
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index = 1 OR index = 2 OR index = 6", {}, true, false,
+            false);
+    reader
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .sample_lost_status_functor([&total_count](const SampleLostStatus& status)
+            {
+                total_count = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    PubSubReader<HelloWorldPubSubType> reader_2(TEST_TOPIC_NAME, "index = 3 OR index = 10", {}, true, false,
+            false);
+    reader_2
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .sample_lost_status_functor([&total_count_2](const SampleLostStatus& status)
+            {
+                total_count_2 = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Set up the writer
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(100000000)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    reader.wait_discovery();
+    reader_2.wait_discovery();
+    writer.wait_discovery(2);
+
+    // Send 10 samples
+    auto data = default_helloworld_data_generator();
+
+    decltype(data) expected_data;
+    expected_data.push_back(*data.begin()); // index 1
+    expected_data.push_back(*std::next(data.begin())); // index 2
+    expected_data.push_back(*std::next(data.begin(), 5)); // index 6
+
+    decltype(data) expected_data_2;
+    expected_data_2.push_back(*std::next(data.begin(), 2)); // index 3
+    expected_data_2.push_back(*std::next(data.begin(), 9)); // index 9
+
+    reader.startReception(expected_data);
+    reader_2.startReception(expected_data_2);
+
+    writer.send(data, 50);
+
+    // Wait for reception and check
+    reader.block_for_all();
+    reader_2.block_for_all();
+    ASSERT_EQ(0, total_count);
+    ASSERT_EQ(0, total_count_2);
+}
+
 /*
  * Regression test for https://eprosima.easyredmine.com/issues/23265
  *
