@@ -385,6 +385,11 @@ private:
      */
     bool ack_timer_expired();
 
+    /*!
+     * Send heartbeat to all the remote readers.
+     * @param force_separating True to send the heartbeat separately for each reader.
+     * False to send a unique heartbeat to all the readers.
+     */
     void send_heartbeat_to_all_readers(
             bool force_separating);
 
