@@ -773,6 +773,7 @@ void ReaderProxy::notify_acknowledged(
             guid(),
             chit.getSequenceNumber(),
             payload_length,
+            chit.time_since_creation(),
             locator_info_.general_locator_selector_entry());
     }
 }
