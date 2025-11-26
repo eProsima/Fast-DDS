@@ -209,7 +209,7 @@ void StatefulWriter::init(
         RTPSParticipantImpl* pimpl,
         const WriterAttributes& att)
 {
-    const RTPSParticipantAttributes& part_att = pimpl->get_attributes();
+    RTPSParticipantAttributes part_att = pimpl->get_attributes();
 
     auto push_mode = PropertyPolicyHelper::find_property(att.endpoint.properties, "fastdds.push_mode");
     push_mode_ = !((nullptr != push_mode) && ("false" == *push_mode));
@@ -1035,7 +1035,7 @@ bool StatefulWriter::matched_reader_add_edp(
         size_t max_readers = matched_readers_pool_.max_size();
         if (get_matched_readers_size() + matched_readers_pool_.size() < max_readers)
         {
-            const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->get_attributes();
+            RTPSParticipantAttributes part_att = mp_RTPSParticipant->get_attributes();
             rp = new ReaderProxy(times_, part_att.allocation.locators, this);
         }
         else
