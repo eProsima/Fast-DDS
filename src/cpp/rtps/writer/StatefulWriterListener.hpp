@@ -19,6 +19,7 @@
 #ifndef FASTDDS_RTPS_WRITER__STATEFULWRITERLISTENER_HPP
 #define FASTDDS_RTPS_WRITER__STATEFULWRITERLISTENER_HPP
 
+#include <chrono>
 #include <cstdint>
 
 namespace eprosima {
@@ -44,7 +45,7 @@ public:
      * @brief Method called when a writer resends data to a reader.
      *
      * @param writer_guid      GUID of the writer resending the data.
-     * @param reader_guid      GUID of the reader receiving the resent data.ç
+     * @param reader_guid      GUID of the reader receiving the resent data.
      * @param sequence_number  Sequence number of the data being resent.
      * @param resent_bytes     Number of bytes being resent.
      * @param locators         LocatorSelectorEntry containing the locators where the reader can be reached.
@@ -63,6 +64,7 @@ public:
      * @param reader_guid      GUID of the reader that acknowledged the data.
      * @param sequence_number  Sequence number of the data that has been acknowledged.
      * @param payload_length   Length of the payload that has been acknowledged.
+     * @param ack_duration     Duration taken by the reader to acknowledge the data.
      * @param locators         LocatorSelectorEntry containing the locators where the reader can be reached.
      */
     virtual void on_writer_data_acknowledged(
@@ -70,6 +72,7 @@ public:
             const GUID_t& reader_guid,
             const SequenceNumber_t& sequence_number,
             uint32_t payload_length,
+            const std::chrono::steady_clock::duration& ack_duration,
             const LocatorSelectorEntry& locators) = 0;
 
 };
