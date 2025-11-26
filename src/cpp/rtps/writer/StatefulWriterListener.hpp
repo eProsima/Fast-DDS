@@ -55,6 +55,23 @@ public:
             const SequenceNumber_t& sequence_number,
             uint32_t resent_bytes,
             const LocatorSelectorEntry& locators) = 0;
+
+    /**
+     * @brief Method called when a writer receives an acknowledgment for data sent to a reader.
+     *
+     * @param writer_guid      GUID of the writer whose data has been acknowledged.
+     * @param reader_guid      GUID of the reader that acknowledged the data.
+     * @param sequence_number  Sequence number of the data that has been acknowledged.
+     * @param payload_length   Length of the payload that has been acknowledged.
+     * @param locators         LocatorSelectorEntry containing the locators where the reader can be reached.
+     */
+    virtual void on_writer_data_acknowledged(
+            const GUID_t& writer_guid,
+            const GUID_t& reader_guid,
+            const SequenceNumber_t& sequence_number,
+            uint32_t payload_length,
+            const LocatorSelectorEntry& locators) = 0;
+
 };
 
 }  // namespace rtps
