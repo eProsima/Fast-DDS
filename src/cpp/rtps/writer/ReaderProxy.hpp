@@ -42,6 +42,7 @@ namespace rtps {
 
 class BaseReader;
 class StatefulWriter;
+class StatefulWriterListener;
 class TimedEvent;
 class RTPSReader;
 class IDataSharingNotifier;
@@ -537,6 +538,10 @@ private:
      */
     ChangeConstIterator find_change(
             const SequenceNumber_t& seq_num) const;
+
+    void notify_acknowledged(
+            StatefulWriterListener* listener,
+            ChangeForReader_t& chit) const;
 };
 
 } /* namespace rtps */

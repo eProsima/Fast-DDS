@@ -19,9 +19,10 @@
 
 #include <rtps/writer/ReaderProxy.hpp>
 
-#include <mutex>
-#include <cassert>
 #include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -33,6 +34,7 @@
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/writer/StatefulWriter.hpp>
+#include <rtps/writer/StatefulWriterListener.hpp>
 #include <utils/TimeConversion.hpp>
 
 
@@ -369,6 +371,7 @@ void ReaderProxy::acked_changes_set(
         const SequenceNumber_t& seq_num)
 {
     SequenceNumber_t future_low_mark = seq_num;
+    StatefulWriterListener* listener = writer_->get_stateful_writer_listener();
 
     if (seq_num > changes_low_mark_)
     {
@@ -378,6 +381,7 @@ void ReaderProxy::acked_changes_set(
                 && chit->getSequenceNumber() == future_low_mark
                 && chit->getStatus() == ACKNOWLEDGED)
         {
+            notify_acknowledged(listener, *chit);
             ++chit;
             ++future_low_mark;
         }
@@ -529,6 +533,7 @@ void ReaderProxy::from_unsent_to_status(
     if (ACKNOWLEDGED == status && seq_num == changes_low_mark_ + 1)
     {
         assert(changes_for_reader_.begin() == it);
+        notify_acknowledged(writer_->get_stateful_writer_listener(), *it);
         changes_for_reader_.erase(it);
         acked_changes_set(seq_num + 1);
         return;
@@ -753,6 +758,23 @@ bool ReaderProxy::has_been_delivered(
     }
 
     return false;
+}
+
+void ReaderProxy::notify_acknowledged(
+        StatefulWriterListener* listener,
+        ChangeForReader_t& chit) const
+{
+    if (listener)
+    {
+        CacheChange_t* change = chit.getChange();
+        uint32_t payload_length = change ? change->serializedPayload.length : 0;
+        listener->on_writer_data_acknowledged(
+            writer_->getGuid(),
+            guid(),
+            chit.getSequenceNumber(),
+            payload_length,
+            locator_info_.general_locator_selector_entry());
+    }
 }
 
 }   // namespace rtps
