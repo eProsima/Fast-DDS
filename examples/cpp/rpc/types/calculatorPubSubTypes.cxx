@@ -21,6 +21,9 @@
 
 #include "calculatorPubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -32,318 +35,317 @@ using InstanceHandle_t = eprosima::fastdds::rtps::InstanceHandle_t;
 using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace calculator_example {
-    // { Calculator interface
+// { Calculator interface
 
-    class Calculator_RequestPubSubType : public eprosima::fastdds::dds::TopicDataType
+class Calculator_RequestPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+    // Alias for the type to be serialized.
+    typedef detail::Calculator_Request type;
+
+    // Constructor
+    Calculator_RequestPubSubType()
     {
-    public:
-        // Alias for the type to be serialized.
-        typedef detail::Calculator_Request type;
-
-        // Constructor
-        Calculator_RequestPubSubType()
-        {
-            set_name("calculator_example::Calculator_Request");
-            uint32_t type_size = 56UL;
-            type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-            max_serialized_type_size = type_size + 4; /*encapsulation*/
-            is_compute_key_provided = false;
-        }
-
-        // Destructor
-        ~Calculator_RequestPubSubType() override = default;
-
-        // This function serializes the data.
-        eProsima_user_DllExport bool serialize(
-                const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
-        {
-            const type* p_type = static_cast<const type*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-            // Object that serializes the data.
-            eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                    eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-            payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-            ser.set_encoding_flag(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
-
-            try
-            {
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
-                // Serialize the object.
-                ser << *p_type;
-                ser.set_dds_cdr_options({0,0});
-            }
-            catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-            {
-                return false;
-            }
-
-            // Get the serialized length
-            payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-            return true;
-        }
-
-        eProsima_user_DllExport bool deserialize(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                void* data) override
-        {
-            try
-            {
-                // Convert DATA to pointer of your type
-                type* p_type = static_cast<type*>(data);
-
-                // Object that manages the raw buffer.
-                eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-                // Object that deserializes the data.
-                eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-                // Deserialize encapsulation.
-                deser.read_encapsulation();
-                payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-                // Deserialize the object.
-                deser >> *p_type;
-            }
-            catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        eProsima_user_DllExport uint32_t calculate_serialized_size(
-                const void* const data,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
-        {
-            try
-            {
-                eprosima::fastcdr::CdrSizeCalculator calculator(
-                    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                    eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-                size_t current_alignment {0};
-                return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                            *static_cast<const type*>(data), current_alignment)) +
-                        4u /*encapsulation*/;
-            }
-            catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-            {
-                return 0;
-            }
-        }
-
-        eProsima_user_DllExport bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override
-        {
-            static_cast<void>(payload);
-            static_cast<void>(ihandle);
-            static_cast<void>(force_md5);
-            return false;
-        }
-
-        eProsima_user_DllExport bool compute_key(
-                const void* const data,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override
-        {
-            static_cast<void>(data);
-            static_cast<void>(ihandle);
-            static_cast<void>(force_md5);
-            return false;
-        }
-
-        eProsima_user_DllExport void* create_data() override
-        {
-            return new type();
-        }
-
-        eProsima_user_DllExport void delete_data(
-                void* data) override
-        {
-            type* pData = static_cast<type*>(data);
-            delete pData;
-        }
-
-        eProsima_user_DllExport void register_type_object_representation() override
-        {
-            register_Calculator_Request_type_identifier(type_identifiers_);
-        }
-
-    };
-
-    class Calculator_ReplyPubSubType : public eprosima::fastdds::dds::TopicDataType
-    {
-    public:
-        // Alias for the type to be serialized.
-        typedef detail::Calculator_Reply type;
-
-        // Constructor
-        Calculator_ReplyPubSubType()
-        {
-            set_name("calculator_example::Calculator_Reply");
-            uint32_t type_size = 56UL;
-            type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
-            max_serialized_type_size = type_size + 4; /*encapsulation*/
-            is_compute_key_provided = false;
-        }
-
-        // Destructor
-        ~Calculator_ReplyPubSubType() override = default;
-
-        // This function serializes the data.
-        eProsima_user_DllExport bool serialize(
-                const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
-        {
-            const type* p_type = static_cast<const type*>(data);
-
-            // Object that manages the raw buffer.
-            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
-            // Object that serializes the data.
-            eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                    eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-            payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-            ser.set_encoding_flag(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-                eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
-
-            try
-            {
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
-                // Serialize the object.
-                ser << *p_type;
-                ser.set_dds_cdr_options({0,0});
-            }
-            catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-            {
-                return false;
-            }
-
-            // Get the serialized length
-            payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
-            return true;
-        }
-
-        eProsima_user_DllExport bool deserialize(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                void* data) override
-        {
-            try
-            {
-                // Convert DATA to pointer of your type
-                type* p_type = static_cast<type*>(data);
-
-                // Object that manages the raw buffer.
-                eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-
-                // Object that deserializes the data.
-                eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
-
-                // Deserialize encapsulation.
-                deser.read_encapsulation();
-                payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-                // Deserialize the object.
-                deser >> *p_type;
-            }
-            catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        eProsima_user_DllExport uint32_t calculate_serialized_size(
-                const void* const data,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
-        {
-            try
-            {
-                eprosima::fastcdr::CdrSizeCalculator calculator(
-                    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                    eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
-                size_t current_alignment {0};
-                return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                            *static_cast<const type*>(data), current_alignment)) +
-                        4u /*encapsulation*/;
-            }
-            catch (eprosima::fastcdr::exception::Exception& /*exception*/)
-            {
-                return 0;
-            }
-        }
-
-        eProsima_user_DllExport bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override
-        {
-            static_cast<void>(payload);
-            static_cast<void>(ihandle);
-            static_cast<void>(force_md5);
-            return false;
-        }
-
-        eProsima_user_DllExport bool compute_key(
-                const void* const data,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override
-        {
-            static_cast<void>(data);
-            static_cast<void>(ihandle);
-            static_cast<void>(force_md5);
-            return false;
-        }
-
-        eProsima_user_DllExport void* create_data() override
-        {
-            return new type();
-        }
-
-        eProsima_user_DllExport void delete_data(
-                void* data) override
-        {
-            type* pData = static_cast<type*>(data);
-            delete pData;
-        }
-
-        eProsima_user_DllExport void register_type_object_representation() override
-        {
-            register_Calculator_Reply_type_identifier(type_identifiers_);
-        }
-
-    };
-
-    eprosima::fastdds::dds::rpc::ServiceTypeSupport create_Calculator_service_type_support()
-    {
-        eprosima::fastdds::dds::TypeSupport request_type(
-            new Calculator_RequestPubSubType());
-        eprosima::fastdds::dds::TypeSupport reply_type(
-            new Calculator_ReplyPubSubType());
-        return eprosima::fastdds::dds::rpc::ServiceTypeSupport(
-            request_type, reply_type);
+        set_name("calculator_example::Calculator_Request");
+        uint32_t type_size = 56UL;
+        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+        max_serialized_type_size = type_size + 4; /*encapsulation*/
+        is_compute_key_provided = false;
     }
 
-    // }  // Calculator interface
+    // Destructor
+    ~Calculator_RequestPubSubType() override = default;
+
+    // This function serializes the data.
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
+    {
+        const type* p_type = static_cast<const type*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+        // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        ser.set_encoding_flag(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+
+        try
+        {
+            // Serialize encapsulation
+            ser.serialize_encapsulation();
+            // Serialize the object.
+            ser << *p_type;
+            ser.set_dds_cdr_options({0, 0});
+        }
+        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+        {
+            return false;
+        }
+
+        // Get the serialized length
+        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+        return true;
+    }
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            void* data) override
+    {
+        try
+        {
+            // Convert DATA to pointer of your type
+            type* p_type = static_cast<type*>(data);
+
+            // Object that manages the raw buffer.
+            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
+
+            // Object that deserializes the data.
+            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+            // Deserialize encapsulation.
+            deser.read_encapsulation();
+            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+            // Deserialize the object.
+            deser >> *p_type;
+        }
+        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
+    {
+        try
+        {
+            eprosima::fastcdr::CdrSizeCalculator calculator(
+                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+            size_t current_alignment {0};
+            const type* p_type = static_cast<const type*>(data);
+            auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+            return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
+        }
+        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+        {
+            return 0;
+        }
+    }
+
+    eProsima_user_DllExport bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override
+    {
+        static_cast<void>(payload);
+        static_cast<void>(ihandle);
+        static_cast<void>(force_md5);
+        return false;
+    }
+
+    eProsima_user_DllExport bool compute_key(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override
+    {
+        static_cast<void>(data);
+        static_cast<void>(ihandle);
+        static_cast<void>(force_md5);
+        return false;
+    }
+
+    eProsima_user_DllExport void* create_data() override
+    {
+        return new type();
+    }
+
+    eProsima_user_DllExport void delete_data(
+            void* data) override
+    {
+        type* pData = static_cast<type*>(data);
+        delete pData;
+    }
+
+    eProsima_user_DllExport void register_type_object_representation() override
+    {
+        register_Calculator_Request_type_identifier(type_identifiers_);
+    }
+
+};
+
+class Calculator_ReplyPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+    // Alias for the type to be serialized.
+    typedef detail::Calculator_Reply type;
+
+    // Constructor
+    Calculator_ReplyPubSubType()
+    {
+        set_name("calculator_example::Calculator_Reply");
+        uint32_t type_size = 56UL;
+        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
+        max_serialized_type_size = type_size + 4; /*encapsulation*/
+        is_compute_key_provided = false;
+    }
+
+    // Destructor
+    ~Calculator_ReplyPubSubType() override = default;
+
+    // This function serializes the data.
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
+    {
+        const type* p_type = static_cast<const type*>(data);
+
+        // Object that manages the raw buffer.
+        eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
+        // Object that serializes the data.
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+        payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        ser.set_encoding_flag(
+            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+
+        try
+        {
+            // Serialize encapsulation
+            ser.serialize_encapsulation();
+            // Serialize the object.
+            ser << *p_type;
+            ser.set_dds_cdr_options({0, 0});
+        }
+        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+        {
+            return false;
+        }
+
+        // Get the serialized length
+        payload.length = static_cast<uint32_t>(ser.get_serialized_data_length());
+        return true;
+    }
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            void* data) override
+    {
+        try
+        {
+            // Convert DATA to pointer of your type
+            type* p_type = static_cast<type*>(data);
+
+            // Object that manages the raw buffer.
+            eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
+
+            // Object that deserializes the data.
+            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+
+            // Deserialize encapsulation.
+            deser.read_encapsulation();
+            payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+
+            // Deserialize the object.
+            deser >> *p_type;
+        }
+        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
+    {
+        try
+        {
+            eprosima::fastcdr::CdrSizeCalculator calculator(
+                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+            size_t current_alignment {0};
+            const type* p_type = static_cast<const type*>(data);
+            auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+            return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
+        }
+        catch (eprosima::fastcdr::exception::Exception& /*exception*/)
+        {
+            return 0;
+        }
+    }
+
+    eProsima_user_DllExport bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override
+    {
+        static_cast<void>(payload);
+        static_cast<void>(ihandle);
+        static_cast<void>(force_md5);
+        return false;
+    }
+
+    eProsima_user_DllExport bool compute_key(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override
+    {
+        static_cast<void>(data);
+        static_cast<void>(ihandle);
+        static_cast<void>(force_md5);
+        return false;
+    }
+
+    eProsima_user_DllExport void* create_data() override
+    {
+        return new type();
+    }
+
+    eProsima_user_DllExport void delete_data(
+            void* data) override
+    {
+        type* pData = static_cast<type*>(data);
+        delete pData;
+    }
+
+    eProsima_user_DllExport void register_type_object_representation() override
+    {
+        register_Calculator_Reply_type_identifier(type_identifiers_);
+    }
+
+};
+
+eprosima::fastdds::dds::rpc::ServiceTypeSupport create_Calculator_service_type_support()
+{
+    eprosima::fastdds::dds::TypeSupport request_type(
+        new Calculator_RequestPubSubType());
+    eprosima::fastdds::dds::TypeSupport reply_type(
+        new Calculator_ReplyPubSubType());
+    return eprosima::fastdds::dds::rpc::ServiceTypeSupport(
+        request_type, reply_type);
+}
+
+// }  // Calculator interface
 
 } // namespace calculator_example
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "calculatorCdrAux.ipp"

@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__RPC_TYPES_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__RPC_TYPES_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -185,48 +187,47 @@ inline size_t constexpr SampleIdentity_offset_of()
 
 
 
-namespace rpc
+namespace rpc {
+typedef uint8_t UnknownOperation;
+typedef uint8_t UnknownException;
+typedef uint8_t UnusedMember;
+typedef eprosima::fastcdr::fixed_string<255> InstanceName;
+
+#ifndef SWIG
+namespace detail {
+
+template<typename Tag, typename Tag::type M>
+struct ReplyHeader_rob
 {
-    typedef uint8_t UnknownOperation;
-    typedef uint8_t UnknownException;
-    typedef uint8_t UnusedMember;
-    typedef eprosima::fastcdr::fixed_string<255> InstanceName;
-
-    #ifndef SWIG
-    namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct ReplyHeader_rob
+    friend constexpr typename Tag::type get(
+            Tag)
     {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-
-    };
-
-    struct ReplyHeader_f
-    {
-        typedef eprosima::fastdds::dds::rpc::RemoteExceptionCode_t ReplyHeader::* type;
-        friend constexpr type get(
-                ReplyHeader_f);
-    };
-
-    template struct ReplyHeader_rob<ReplyHeader_f, &ReplyHeader::m_remoteEx>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr ReplyHeader_offset_of()
-    {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        return M;
     }
 
-    } // namespace detail
-    #endif // ifndef SWIG
+};
+
+struct ReplyHeader_f
+{
+    typedef eprosima::fastdds::dds::rpc::RemoteExceptionCode_t ReplyHeader::* type;
+    friend constexpr type get(
+            ReplyHeader_f);
+};
+
+template struct ReplyHeader_rob<ReplyHeader_f, &ReplyHeader::m_remoteEx>;
+
+template <typename T, typename Tag>
+inline size_t constexpr ReplyHeader_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
+
+} // namespace detail
+#endif // ifndef SWIG
 
 
 
-} // namespace rpc
+}  // namespace rpc
 
 } // namespace dds
 

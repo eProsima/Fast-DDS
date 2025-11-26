@@ -41,63 +41,64 @@ using namespace eprosima::fastdds::dds::xtypes;
 
 namespace AnnotationTest {
 
-    void register_Inner_alias_bounded_string_helper_type_identifier(
-            TypeIdentifierPair& type_ids_Inner_alias_bounded_string_helper)
+
+void register_Inner_alias_bounded_string_helper_type_identifier(
+        TypeIdentifierPair& type_ids_Inner_alias_bounded_string_helper)
+{
+    ReturnCode_t return_code_Inner_alias_bounded_string_helper {eprosima::fastdds::dds::RETCODE_OK};
+    return_code_Inner_alias_bounded_string_helper =
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+        "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_Inner_alias_bounded_string_helper);
+    if (eprosima::fastdds::dds::RETCODE_OK != return_code_Inner_alias_bounded_string_helper)
     {
-        ReturnCode_t return_code_Inner_alias_bounded_string_helper {eprosima::fastdds::dds::RETCODE_OK};
+        AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
+        QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "AnnotationTest::Inner_alias_bounded_string_helper";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
+        CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
+        CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
+        AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
         return_code_Inner_alias_bounded_string_helper =
             eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-            "AnnotationTest::Inner_alias_bounded_string_helper", type_ids_Inner_alias_bounded_string_helper);
+            "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper);
+
         if (eprosima::fastdds::dds::RETCODE_OK != return_code_Inner_alias_bounded_string_helper)
         {
-            AliasTypeFlag alias_flags_Inner_alias_bounded_string_helper = 0;
-            QualifiedTypeName type_name_Inner_alias_bounded_string_helper = "AnnotationTest::Inner_alias_bounded_string_helper";
-            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_Inner_alias_bounded_string_helper;
-            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_Inner_alias_bounded_string_helper;
-            CompleteTypeDetail detail_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper, type_name_Inner_alias_bounded_string_helper.to_string());
-            CompleteAliasHeader header_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_header(detail_Inner_alias_bounded_string_helper);
-            AliasMemberFlag related_flags_Inner_alias_bounded_string_helper = 0;
-            return_code_Inner_alias_bounded_string_helper =
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper);
-
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_Inner_alias_bounded_string_helper)
             {
+                SBound bound = static_cast<SBound>(1);
+                StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                        TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                        "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper))
                 {
-                    SBound bound = static_cast<SBound>(1);
-                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
-                            "anonymous_string_1", type_ids_Inner_alias_bounded_string_helper))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "anonymous_string_1 already registered in TypeObjectRegistry for a different type.");
-                    }
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "anonymous_string_1 already registered in TypeObjectRegistry for a different type.");
                 }
             }
-            bool common_Inner_alias_bounded_string_helper_ec {false};
-            CommonAliasBody common_Inner_alias_bounded_string_helper {TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper,
-                    TypeObjectUtils::retrieve_complete_type_identifier(type_ids_Inner_alias_bounded_string_helper, common_Inner_alias_bounded_string_helper_ec))};
-            if (!common_Inner_alias_bounded_string_helper_ec)
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "AnnotationTest::Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
-                return;
-            }
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
-            ann_custom_Inner_alias_bounded_string_helper.reset();
-            CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper,
-                    member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
-            CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper,
-                    header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
-            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper,
-                        type_name_Inner_alias_bounded_string_helper.to_string(), type_ids_Inner_alias_bounded_string_helper))
-            {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "AnnotationTest::Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
-            }
+        }
+        bool common_Inner_alias_bounded_string_helper_ec {false};
+        CommonAliasBody common_Inner_alias_bounded_string_helper {TypeObjectUtils::build_common_alias_body(related_flags_Inner_alias_bounded_string_helper,
+                TypeObjectUtils::retrieve_complete_type_identifier(type_ids_Inner_alias_bounded_string_helper, common_Inner_alias_bounded_string_helper_ec))};
+        if (!common_Inner_alias_bounded_string_helper_ec)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "AnnotationTest::Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+            return;
+        }
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
+        ann_custom_Inner_alias_bounded_string_helper.reset();
+        CompleteAliasBody body_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_body(common_Inner_alias_bounded_string_helper,
+                member_ann_builtin_Inner_alias_bounded_string_helper, ann_custom_Inner_alias_bounded_string_helper);
+        CompleteAliasType alias_type_Inner_alias_bounded_string_helper = TypeObjectUtils::build_complete_alias_type(alias_flags_Inner_alias_bounded_string_helper,
+                header_Inner_alias_bounded_string_helper, body_Inner_alias_bounded_string_helper);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_alias_type_object(alias_type_Inner_alias_bounded_string_helper,
+                    type_name_Inner_alias_bounded_string_helper.to_string(), type_ids_Inner_alias_bounded_string_helper))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                "AnnotationTest::Inner_alias_bounded_string_helper already registered in TypeObjectRegistry for a different type.");
         }
     }
+}
 
 
 
