@@ -390,6 +390,11 @@ public:
         return locator_info_.async_locator_selector_entry();
     }
 
+    const ReaderLocator& locator_info() const
+    {
+        return locator_info_;
+    }
+
     RTPSMessageSenderInterface* message_sender()
     {
         return &locator_info_;
