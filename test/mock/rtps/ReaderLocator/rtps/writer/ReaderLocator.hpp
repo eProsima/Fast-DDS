@@ -63,6 +63,12 @@ public:
     {
     }
 
+    const LocatorSelectorEntry& general_locator_selector_entry() const
+    {
+        static LocatorSelectorEntry dummy_entry(0, 0);
+        return dummy_entry;
+    }
+
     LocatorSelectorEntry* general_locator_selector_entry()
     {
         return nullptr;
