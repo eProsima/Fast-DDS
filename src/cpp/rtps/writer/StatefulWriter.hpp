@@ -37,6 +37,7 @@ namespace rtps {
 
 class ChangeForReader_t;
 class ReaderProxy;
+class StatefulWriterListener;
 class TimedEvent;
 
 /**
@@ -339,6 +340,29 @@ public:
     void perform_nack_supression(
             const GUID_t& reader_guid);
 
+    /**
+     * @brief Set the stateful writer listener
+     *
+     * @param listener Pointer to the listener
+     */
+    void set_stateful_writer_listener(
+            StatefulWriterListener* listener)
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        stateful_writer_listener_ = listener;
+    }
+
+    /**
+     * @brief Get the stateful writer listener
+     *
+     * @return Pointer to the listener
+     */
+    StatefulWriterListener* get_stateful_writer_listener() const
+    {
+        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+        return stateful_writer_listener_;
+    }
+
 protected:
 
     void rebuild_status_after_load();
@@ -498,6 +522,8 @@ private:
     LocatorSelectorSender locator_selector_general_;
 
     LocatorSelectorSender locator_selector_async_;
+
+    StatefulWriterListener* stateful_writer_listener_ = nullptr;
 };
 
 } // namespace rtps
