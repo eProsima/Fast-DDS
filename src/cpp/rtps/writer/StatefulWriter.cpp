@@ -1915,6 +1915,7 @@ void StatefulWriter::perform_nack_response()
                         {
                             // This labmda is called if the ChangeForReader_t pass from REQUESTED to UNSENT.
                             assert(nullptr != change.getChange());
+                            notify_resend_nts(*reader, change);
                             flow_controller_->add_old_sample(this, change.getChange());
                         }
                         );
@@ -2308,6 +2309,12 @@ void StatefulWriter::add_gaps_for_holes_in_history(
         }
         gaps.flush();
     }
+}
+
+void StatefulWriter::notify_resend_nts(
+        const ReaderProxy& reader,
+        const ChangeForReader_t& change)
+{
 }
 
 }  // namespace rtps

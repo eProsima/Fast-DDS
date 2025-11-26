@@ -35,6 +35,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class ChangeForReader_t;
 class ReaderProxy;
 class TimedEvent;
 
@@ -423,6 +424,16 @@ private:
     void init(
             RTPSParticipantImpl* pimpl,
             const WriterAttributes& att);
+
+    /**
+     * @brief Notifies that a change has been resent to a ReaderProxy.
+     *
+     * @param reader  Reference to the ReaderProxy.
+     * @param change  Reference to the ChangeForReader_t that has been resent.
+     */
+    void notify_resend_nts(
+            const ReaderProxy& reader,
+            const ChangeForReader_t& change);
 
     /// Timed Event to manage the periodic HB to the Reader.
     TimedEvent* periodic_hb_event_;
