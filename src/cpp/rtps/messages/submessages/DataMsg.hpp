@@ -154,7 +154,11 @@ struct DataMsgUtils
             fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                     change->instanceHandle);
             }
+
+            if (ALIVE != change->kind)
+            {
             fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
+            }
 
         }
 
