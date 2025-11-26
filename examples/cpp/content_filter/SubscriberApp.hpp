@@ -64,6 +64,13 @@ public:
             DataReader* reader,
             const SubscriptionMatchedStatus& info) override;
 
+    void on_sample_lost(
+            DataReader*,
+            const SampleLostStatus& status) override
+    {
+        std::cout << "Sample lost: " << status.total_count << std::endl;
+    }
+
     //! Run subscriber
     void run() override;
 
