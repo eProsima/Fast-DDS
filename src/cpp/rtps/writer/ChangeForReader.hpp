@@ -19,6 +19,8 @@
 #ifndef RTPS_WRITER__CHANGEFORREADER_HPP
 #define RTPS_WRITER__CHANGEFORREADER_HPP
 
+#include <chrono>
+
 #include <fastdds/rtps/common/CacheChange.hpp>
 #include <fastdds/rtps/common/FragmentNumber.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
@@ -57,6 +59,7 @@ public:
         : status_(UNSENT)
         , seq_num_(change->sequenceNumber)
         , change_(change)
+        , creation_time_(std::chrono::steady_clock::now())
     {
         if (change->getFragmentSize() != 0)
         {
@@ -178,6 +181,11 @@ public:
         delivered_ = true;
     }
 
+    std::chrono::steady_clock::duration time_since_creation() const
+    {
+        return std::chrono::steady_clock::now() - creation_time_;
+    }
+
 private:
 
     //!Status
@@ -192,6 +200,8 @@ private:
 
     //! Indicates if was delivered at least once.
     bool delivered_ = false;
+
+    std::chrono::steady_clock::time_point creation_time_;
 };
 
 struct ChangeForReaderCmp
