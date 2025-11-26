@@ -53,6 +53,7 @@
 #include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
+#include <rtps/writer/StatefulWriterListener.hpp>
 #include <utils/TimeConversion.hpp>
 
 #ifdef FASTDDS_STATISTICS
@@ -2315,6 +2316,58 @@ void StatefulWriter::notify_resend_nts(
         const ReaderProxy& reader,
         const ChangeForReader_t& change)
 {
+    // Avoid calculations if they are not going to be used
+    if (stateful_writer_listener_ == nullptr)
+    {
+        return;
+    }
+
+    const CacheChange_t* sample = change.getChange();
+    assert(sample != nullptr);
+
+    // Calc number of bytes to resend
+    uint64_t resent_bytes = 0;
+    const FragmentNumberSet_t& fragments = change.getUnsentFragments();
+    if (fragments.empty())
+    {
+        resent_bytes = sample->serializedPayload.length;
+    }
+    else
+    {
+        // Calculate number of bytes to resend
+        uint64_t num_fragments = fragments.count();
+        uint32_t fragment_size = sample->getFragmentSize();
+        if (fragments.max() < sample->getFragmentCount())
+        {
+            resent_bytes = num_fragments * fragment_size;
+        }
+        else
+        {
+            // Last fragment may be smaller
+            resent_bytes = (num_fragments - 1) * fragment_size;
+            uint32_t last_fragment_size = sample->serializedPayload.length % fragment_size;
+            if (last_fragment_size > 0)
+            {
+                resent_bytes += last_fragment_size;
+            }
+            else
+            {
+                resent_bytes += fragment_size;
+            }
+        }
+    }
+
+    // Get locator entry
+    const LocatorSelectorEntry& locator_entry = reader.locator_info().general_locator_selector_entry();
+
+    // Notify to participant
+    assert(resent_bytes <= sample->serializedPayload.length);
+    stateful_writer_listener_->on_writer_resend_data(
+        getGuid(),
+        reader.guid(),
+        sample->sequenceNumber,
+        static_cast<uint32_t>(resent_bytes),
+        locator_entry);
 }
 
 }  // namespace rtps
