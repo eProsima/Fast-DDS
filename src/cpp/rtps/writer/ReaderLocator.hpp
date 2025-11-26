@@ -82,6 +82,11 @@ public:
         return general_locator_info_.remote_guid;
     }
 
+    const LocatorSelectorEntry& general_locator_selector_entry() const
+    {
+        return general_locator_info_;
+    }
+
     LocatorSelectorEntry* general_locator_selector_entry()
     {
         return &general_locator_info_;
