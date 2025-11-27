@@ -382,9 +382,15 @@ void ReaderProxy::acked_changes_set(
                 && chit->getSequenceNumber() == future_low_mark
                 && chit->getStatus() == ACKNOWLEDGED)
         {
-            notify_acknowledged(*chit);
             ++chit;
             ++future_low_mark;
+        }
+        if (stateful_writer_listener_ != nullptr)
+        {
+            for (auto it = changes_for_reader_.begin(); it != chit; ++it)
+            {
+                notify_acknowledged(*it);
+            }
         }
         changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
