@@ -201,6 +201,7 @@ private:
     //! Indicates if was delivered at least once.
     bool delivered_ = false;
 
+    //! Creation time
     std::chrono::steady_clock::time_point creation_time_;
 };
 
