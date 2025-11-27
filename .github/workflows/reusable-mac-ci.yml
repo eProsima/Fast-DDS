@@ -136,7 +136,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion"
+          cmake_args_default: -DCMAKE_CXX_FLAGS_INIT="-Werror -Wall -Wno-enum-constexpr-conversion"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
