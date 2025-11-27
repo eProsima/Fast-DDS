@@ -61,6 +61,7 @@ ReaderProxy::ReaderProxy(
     , timers_enabled_(false)
     , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
+    , stateful_writer_listener_(writer->get_stateful_writer_listener())
 {
     auto participant = writer_->get_participant_impl();
     if (nullptr != participant)
@@ -371,7 +372,6 @@ void ReaderProxy::acked_changes_set(
         const SequenceNumber_t& seq_num)
 {
     SequenceNumber_t future_low_mark = seq_num;
-    StatefulWriterListener* listener = writer_->get_stateful_writer_listener();
 
     if (seq_num > changes_low_mark_)
     {
@@ -381,7 +381,7 @@ void ReaderProxy::acked_changes_set(
                 && chit->getSequenceNumber() == future_low_mark
                 && chit->getStatus() == ACKNOWLEDGED)
         {
-            notify_acknowledged(listener, *chit);
+            notify_acknowledged(*chit);
             ++chit;
             ++future_low_mark;
         }
@@ -533,7 +533,7 @@ void ReaderProxy::from_unsent_to_status(
     if (ACKNOWLEDGED == status && seq_num == changes_low_mark_ + 1)
     {
         assert(changes_for_reader_.begin() == it);
-        notify_acknowledged(writer_->get_stateful_writer_listener(), *it);
+        notify_acknowledged(*it);
         changes_for_reader_.erase(it);
         acked_changes_set(seq_num + 1);
         return;
@@ -761,14 +761,13 @@ bool ReaderProxy::has_been_delivered(
 }
 
 void ReaderProxy::notify_acknowledged(
-        StatefulWriterListener* listener,
-        ChangeForReader_t& chit) const
+        const ChangeForReader_t& chit) const
 {
-    if (listener)
+    if (stateful_writer_listener_ != nullptr)
     {
         CacheChange_t* change = chit.getChange();
         uint32_t payload_length = change ? change->serializedPayload.length : 0;
-        listener->on_writer_data_acknowledged(
+        stateful_writer_listener_->on_writer_data_acknowledged(
             writer_->getGuid(),
             guid(),
             chit.getSequenceNumber(),
