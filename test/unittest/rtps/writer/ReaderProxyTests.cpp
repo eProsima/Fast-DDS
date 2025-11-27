@@ -101,7 +101,7 @@ TEST(ReaderProxyTests, find_change_test)
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 7)));
 
     EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, SequenceNumber_t{0, 3}, _, _, _));
-    rproxy.acked_changes_set(SequenceNumber_t(0, 5)); // AGAIN SAME ACK
+    rproxy.acked_changes_set(SequenceNumber_t(0, 5));
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 1)));
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 2)));
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 3)));
@@ -109,6 +109,17 @@ TEST(ReaderProxyTests, find_change_test)
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 5)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 6)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 7)));
+
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, SequenceNumber_t{ 0, 6 }, _, _, _));
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, SequenceNumber_t{ 0, 7 }, _, _, _));
+    rproxy.acked_changes_set(SequenceNumber_t(0, 8));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 1)));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 2)));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 3)));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 4)));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 5)));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 6)));
+    ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 7)));
 }
 
 TEST(ReaderProxyTests, find_change_removed_test)
