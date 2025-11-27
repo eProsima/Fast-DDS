@@ -55,7 +55,8 @@ public:
             const WriterAttributes& att,
             fastdds::rtps::FlowController* flow_controller,
             WriterHistory* hist,
-            WriterListener* listen = nullptr);
+            WriterListener* listen,
+            StatefulWriterListener* stateful_listener);
 
     virtual ~StatefulWriter();
 
@@ -341,25 +342,12 @@ public:
             const GUID_t& reader_guid);
 
     /**
-     * @brief Set the stateful writer listener
-     *
-     * @param listener Pointer to the listener
-     */
-    void set_stateful_writer_listener(
-            StatefulWriterListener* listener)
-    {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
-        stateful_writer_listener_ = listener;
-    }
-
-    /**
      * @brief Get the stateful writer listener
      *
      * @return Pointer to the listener
      */
     StatefulWriterListener* get_stateful_writer_listener() const
     {
-        std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return stateful_writer_listener_;
     }
 
@@ -523,7 +511,7 @@ private:
 
     LocatorSelectorSender locator_selector_async_;
 
-    StatefulWriterListener* stateful_writer_listener_ = nullptr;
+    StatefulWriterListener* const stateful_writer_listener_ = nullptr;
 };
 
 } // namespace rtps

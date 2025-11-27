@@ -178,7 +178,8 @@ StatefulWriter::StatefulWriter(
         const WriterAttributes& att,
         FlowController* flow_controller,
         WriterHistory* history,
-        WriterListener* listener)
+        WriterListener* listener,
+        StatefulWriterListener* stateful_listener)
     : BaseWriter(pimpl, guid, att, flow_controller, history, listener)
     , periodic_hb_event_(nullptr)
     , nack_response_event_(nullptr)
@@ -202,6 +203,7 @@ StatefulWriter::StatefulWriter(
     , matched_datasharing_readers_(att.matched_readers_allocation)
     , locator_selector_general_(*this, att.matched_readers_allocation)
     , locator_selector_async_(*this, att.matched_readers_allocation)
+    , stateful_writer_listener_(stateful_listener)
 {
     init(pimpl, att);
 }
