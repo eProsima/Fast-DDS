@@ -27,6 +27,7 @@
 #include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/sync/detail/locks.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/limits.hpp>
 #include <boost/assert.hpp>

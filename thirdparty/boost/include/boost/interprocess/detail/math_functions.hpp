@@ -25,7 +25,7 @@
 #endif
 
 #include <climits>
-#include <boost/static_assert.hpp>
+#include <boost/interprocess/detail/workaround.hpp>
 
 namespace boost {
 namespace interprocess {
@@ -97,7 +97,7 @@ inline std::size_t floor_log2 (std::size_t x)
 {
    const std::size_t Bits = sizeof(std::size_t)*CHAR_BIT;
    const bool Size_t_Bits_Power_2= !(Bits & (Bits-1));
-   BOOST_STATIC_ASSERT(((Size_t_Bits_Power_2)== true));
+   BOOST_INTERPROCESS_STATIC_ASSERT(((Size_t_Bits_Power_2)== true));
 
    std::size_t n = x;
    std::size_t log2 = 0;

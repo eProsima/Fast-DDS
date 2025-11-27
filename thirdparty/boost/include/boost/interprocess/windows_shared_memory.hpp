@@ -162,7 +162,7 @@ class windows_shared_memory
 #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
 inline windows_shared_memory::windows_shared_memory() BOOST_NOEXCEPT
-   :  m_handle(0)
+   :  m_handle(0), m_mode(), m_name()
 {}
 
 inline windows_shared_memory::~windows_shared_memory()

@@ -23,7 +23,7 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 #include <boost/interprocess/sync/spin/wait.hpp>
-#include <boost/interprocess/detail/timed_utils.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 
 namespace boost {
 namespace interprocess {
@@ -78,7 +78,7 @@ void timeout_when_locking_aware_lock(MutexType &m)
 {
    #ifdef BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
       if (!m.timed_lock(microsec_clock<ustime>::universal_time()
-           + usduration_milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS)))
+           + usduration_from_milliseconds(BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS)))
       {
          throw interprocess_exception(timeout_when_locking_error
                                      , "Interprocess mutex timeout when locking. Possible deadlock: "

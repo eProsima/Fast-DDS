@@ -26,7 +26,7 @@
 
 #include <boost/interprocess/interprocess_fwd.hpp>
 #include <boost/interprocess/detail/utilities.hpp> //to_raw_pointer
-#include <boost/utility/addressof.hpp> //boost::addressof
+#include <boost/container/detail/addressof.hpp> //boost::container::dtl:addressof
 #include <boost/assert.hpp>   //BOOST_ASSERT
 #include <boost/interprocess/exceptions.hpp> //bad_alloc
 #include <boost/interprocess/sync/scoped_lock.hpp> //scoped_lock
@@ -205,7 +205,7 @@ class cache_impl
    void cached_allocation(size_type n, multiallocation_chain &chain)
    {
       size_type count = n, allocated(0);
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          //If don't have any cached node, we have to get a new list of free nodes from the pool
          while(!m_cached_nodes.empty() && count--){
             void *ret = ipcdetail::to_raw_pointer(m_cached_nodes.pop_front());
@@ -217,10 +217,10 @@ class cache_impl
             mp_node_pool->allocate_nodes(n - allocated, chain);
          }
       }
-      BOOST_CATCH(...){
+      BOOST_INTERPROCESS_CATCH(...){
          this->cached_deallocation(chain);
-         BOOST_RETHROW
-      } BOOST_CATCH_END
+         BOOST_INTERPROCESS_RETHROW
+      } BOOST_INTERPROCESS_CATCH_END
    }
 
    void cached_deallocation(void *ptr)
@@ -389,12 +389,12 @@ class array_allocation_impl
    //!Returns address of mutable object.
    //!Never throws
    pointer address(reference value) const
-   {  return pointer(boost::addressof(value));  }
+   {  return pointer(boost::container::dtl::addressof(value));  }
 
    //!Returns address of non mutable object.
    //!Never throws
    const_pointer address(const_reference value) const
-   {  return const_pointer(boost::addressof(value));  }
+   {  return const_pointer(boost::container::dtl::addressof(value));  }
 
    //!Constructs an object
    //!Throws if T's constructor throws

@@ -253,8 +253,8 @@ class scoped_lock
    //!Notes: The destructor behavior ensures that the mutex lock is not leaked.*/
    ~scoped_lock()
    {
-      BOOST_TRY{  if(m_locked && mp_mutex)   mp_mutex->unlock();  }
-      BOOST_CATCH(...){} BOOST_CATCH_END
+      BOOST_INTERPROCESS_TRY{  if(m_locked && mp_mutex)   mp_mutex->unlock();  }
+      BOOST_INTERPROCESS_CATCH(...){} BOOST_INTERPROCESS_CATCH_END
    }
 
    //!Effects: If owns() before the call, then unlock() is called on mutex().

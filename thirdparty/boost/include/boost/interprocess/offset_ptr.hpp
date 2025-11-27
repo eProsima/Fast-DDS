@@ -21,26 +21,22 @@
 
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
-
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/is_constructible.hpp>
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/type_traits/is_unsigned.hpp>
+#include <boost/move/detail/type_traits.hpp>
 
 #include <boost/interprocess/interprocess_fwd.hpp>
+#include <boost/interprocess/interprocess_printers.hpp>
 #include <boost/interprocess/detail/utilities.hpp>
 #include <boost/interprocess/detail/cast_tags.hpp>
 #include <boost/interprocess/detail/mpl.hpp>
 #include <boost/container/detail/type_traits.hpp>  //alignment_of, aligned_storage
 #include <boost/assert.hpp>
-#include <boost/static_assert.hpp>
 #include <iosfwd>
+#include <cstddef>
 
-#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40700)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
-
 
 //!\file
 //!Describes a smart pointer that stores the offset between this pointer and
@@ -59,15 +55,62 @@ struct has_trivial_destructor;
 namespace interprocess {
 
 #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
+
+#if !defined( BOOST_NO_CXX11_NULLPTR )
+   typedef decltype(nullptr) op_nullptr_t;
+#else
+struct op_nullptr_t
+{
+   void* lx;  //to achieve pointer alignment
+
+   struct nat {int bool_conversion;};
+
+   BOOST_INTERPROCESS_FORCEINLINE op_nullptr_t() {}
+
+   BOOST_INTERPROCESS_FORCEINLINE op_nullptr_t(int nat::*)  {}
+
+   BOOST_INTERPROCESS_FORCEINLINE operator int nat::*() const {  return 0;   }
+
+   template <class T>
+   BOOST_INTERPROCESS_FORCEINLINE operator T*() const {  return 0;   }
+
+   template <class T, class U>
+   BOOST_INTERPROCESS_FORCEINLINE operator T U::* () const {  return 0;   }
+
+   friend BOOST_INTERPROCESS_FORCEINLINE bool operator==(op_nullptr_t, op_nullptr_t) {   return true;   }
+   friend BOOST_INTERPROCESS_FORCEINLINE bool operator!=(op_nullptr_t, op_nullptr_t) {   return false;  }
+};
+
+#endif
+
 namespace ipcdetail {
+
+   //workarounds for void offset_ptrs
+   struct op_nat{};
+
+   template <class T> struct op_reference
+      : add_reference<T>
+   {};
+
+   template <> struct op_reference<void>
+   {  typedef op_nat type;   };
+
+   template <> struct op_reference<void const>
+   {  typedef op_nat type;   };
+
+   template <> struct op_reference<void volatile>
+   {  typedef op_nat type;   };
+
+   template <> struct op_reference<void const volatile>
+   {  typedef op_nat type;   };
 
    template<class OffsetType, std::size_t OffsetAlignment>
    union offset_ptr_internal
    {
-      BOOST_STATIC_ASSERT(sizeof(OffsetType) >= sizeof(uintptr_t));
-      BOOST_STATIC_ASSERT(boost::is_integral<OffsetType>::value && boost::is_unsigned<OffsetType>::value);
+      BOOST_INTERPROCESS_STATIC_ASSERT(sizeof(OffsetType) >= sizeof(uintptr_t));
+      BOOST_INTERPROCESS_STATIC_ASSERT(boost::move_detail::is_integral<OffsetType>::value && boost::move_detail::is_unsigned<OffsetType>::value);
 
-      explicit offset_ptr_internal(OffsetType off)
+      BOOST_INTERPROCESS_FORCEINLINE explicit offset_ptr_internal(OffsetType off)
          : m_offset(off)
       {}
 
@@ -196,14 +239,14 @@ namespace ipcdetail {
 
    template<class From, class To, class Ret = void>
    struct enable_if_convertible_equal_address
-      : enable_if_c< ::boost::is_convertible<From*, To*>::value
+      : enable_if_c< ::boost::move_detail::is_convertible<From*, To*>::value
                      && offset_ptr_maintains_address<From, To>::value
                   , Ret>
    {};
 
    template<class From, class To, class Ret = void>
    struct enable_if_convertible_unequal_address
-      : enable_if_c< ::boost::is_convertible<From*, To*>::value
+      : enable_if_c< ::boost::move_detail::is_convertible<From*, To*>::value
                      && !offset_ptr_maintains_address<From, To>::value
                    , Ret>
    {};
@@ -211,12 +254,12 @@ namespace ipcdetail {
 }  //namespace ipcdetail {
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
-//!A smart pointer that stores the offset between between the pointer and the
-//!the object it points. This allows offset allows special properties, since
+//!A smart pointer that stores the offset between the pointer and the
+//!object it points to. This allows special properties, since
 //!the pointer is independent from the address of the pointee, if the
 //!pointer and the pointee are still separated by the same offset. This feature
 //!converts offset_ptr in a smart pointer that can be placed in shared memory and
-//!memory mapped files mapped in different addresses in every process.
+//!memory mapped files mapped at different addresses in every process.
 //!
 //! \tparam PointedType The type of the pointee.
 //! \tparam DifferenceType A signed integer type that can represent the arithmetic operations on the pointer
@@ -245,7 +288,8 @@ class offset_ptr
    typedef PointedType                       element_type;
    typedef PointedType *                     pointer;
    typedef typename ipcdetail::
-      add_reference<PointedType>::type       reference;
+      op_reference<PointedType>::type        reference;
+
    typedef typename ipcdetail::
       remove_volatile<typename ipcdetail::
          remove_const<PointedType>::type
@@ -262,21 +306,32 @@ class offset_ptr
       : internal(1)
    {}
 
-   //!Constructor from raw pointer (allows "0" pointer conversion).
+   //!Constructor from nullptr.
    //!Never throws.
-   BOOST_INTERPROCESS_FORCEINLINE offset_ptr(pointer ptr) BOOST_NOEXCEPT
-      : internal(ipcdetail::offset_ptr_to_offset<OffsetType>(ptr, this))
+   BOOST_INTERPROCESS_FORCEINLINE offset_ptr(op_nullptr_t) BOOST_NOEXCEPT
+      : internal(1)
    {}
 
-   //!Constructor from other pointer.
+   #if defined( BOOST_NO_CXX11_NULLPTR )
+   //!Constructor from nullptr. Some compilers (e.g. g++14) in C++03 mode have problems with op_nullptr_t
+   //!so a helper overload is needed. Never throws.
+   BOOST_INTERPROCESS_FORCEINLINE offset_ptr(int ipcdetail::op_nat::*) BOOST_NOEXCEPT
+      : internal(1)
+   {}
+   #endif   //BOOST_NO_CXX11_NULLPTR
+
+   //!Constructor from raw pointer. Only takes part in overload resolution if T* is convertible to PointedType*
    //!Never throws.
    template <class T>
    BOOST_INTERPROCESS_FORCEINLINE offset_ptr( T *ptr
-             , typename ipcdetail::enable_if< ::boost::is_convertible<T*, PointedType*> >::type * = 0) BOOST_NOEXCEPT
+      #ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
+             , typename ipcdetail::enable_if< ::boost::move_detail::is_convertible<T*, PointedType*> >::type * = 0
+      #endif
+      ) BOOST_NOEXCEPT
       : internal(ipcdetail::offset_ptr_to_offset<OffsetType>(static_cast<PointedType*>(ptr), this))
    {}
 
-   //!Constructor from other offset_ptr
+   //!Constructor from other offset_ptr.
    //!Never throws.
    BOOST_INTERPROCESS_FORCEINLINE offset_ptr(const offset_ptr& ptr) BOOST_NOEXCEPT
       : internal(ipcdetail::offset_ptr_to_offset_from_other(this, &ptr, ptr.internal.m_offset))
@@ -302,19 +357,6 @@ class offset_ptr
    {}
 
    #endif
-
-   //!Constructor from other offset_ptr. Only takes part in overload resolution
-   //!if PointedType* is constructible from T2* other than via a conversion (e.g. cast to a derived class). Never throws.
-   template<class T2>
-   BOOST_INTERPROCESS_FORCEINLINE explicit offset_ptr(const offset_ptr<T2, DifferenceType, OffsetType, OffsetAlignment> &ptr
-             #ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
-             , typename ipcdetail::enable_if_c<
-                !::boost::is_convertible<T2*, PointedType*>::value && ::boost::is_constructible<T2*, PointedType*>::value
-             >::type * = 0
-             #endif
-             ) BOOST_NOEXCEPT
-      : internal(ipcdetail::offset_ptr_to_offset<OffsetType>(static_cast<PointedType*>(ptr.get()), this))
-   {}
 
    //!Emulates static_cast operator.
    //!Never throws.
@@ -359,7 +401,7 @@ class offset_ptr
 
    //!Dereferencing operator, if it is a null offset_ptr behavior
    //!   is undefined. Never throws.
-   BOOST_INTERPROCESS_FORCEINLINE reference operator* () const BOOST_NOEXCEPT
+   BOOST_INTERPROCESS_FORCEINLINE reference operator*() const BOOST_NOEXCEPT
    {
       pointer p = this->get();
       reference r = *p;
@@ -371,11 +413,19 @@ class offset_ptr
    BOOST_INTERPROCESS_FORCEINLINE reference operator[](difference_type idx) const BOOST_NOEXCEPT
    {  return this->get()[idx];  }
 
-   //!Assignment from pointer (saves extra conversion).
+   //!Assignment from raw pointer. Only takes part in overload resolution if T* is convertible to PointedType*
    //!Never throws.
-   BOOST_INTERPROCESS_FORCEINLINE offset_ptr& operator= (pointer from) BOOST_NOEXCEPT
+
+   template<class T> BOOST_INTERPROCESS_FORCEINLINE 
+   #ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
+   typename ipcdetail::enable_if_c
+      < ::boost::move_detail::is_convertible<T*, PointedType*>::value, offset_ptr&>::type
+   #else
+   offset_ptr&
+   #endif
+      operator= (T *ptr) BOOST_NOEXCEPT
    {
-      this->internal.m_offset = ipcdetail::offset_ptr_to_offset<OffsetType>(from, this);
+      this->internal.m_offset = ipcdetail::offset_ptr_to_offset<OffsetType>(static_cast<PointedType*>(ptr), this);
       return *this;
    }
 
@@ -387,12 +437,31 @@ class offset_ptr
       return *this;
    }
 
-   //!Assignment from related offset_ptr. If pointers of pointee types
-   //!   are assignable, offset_ptrs will be assignable. Never throws.
+   //!Assignment from nullptr.
+   //!Never throws.
+   BOOST_INTERPROCESS_FORCEINLINE offset_ptr& operator= (op_nullptr_t) BOOST_NOEXCEPT
+   {
+      this->internal.m_offset = 1;
+      return *this;
+   }
+
+   #if defined( BOOST_NO_CXX11_NULLPTR )
+   //!Assignment from nullptr. Some compilers (e.g. g++14) in C++03 mode have problems with op_nullptr_t
+   //!so a helper overload is needed. Never throws.
+   BOOST_INTERPROCESS_FORCEINLINE offset_ptr& operator= (int ipcdetail::op_nat::*) BOOST_NOEXCEPT
+   {
+      this->internal.m_offset = 1;
+      return *this;
+   }
+   #endif   //BOOST_NO_CXX11_NULLPTR
+
+   //!Assignment from related offset_ptr.
+   //!Only takes part in overload resolution if T2* is convertible to PointedType*
+   //!Never throws.
    template<class T2> BOOST_INTERPROCESS_FORCEINLINE 
    #ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
    typename ipcdetail::enable_if_c
-      < ::boost::is_convertible<T2*, PointedType*>::value, offset_ptr&>::type
+      < ::boost::move_detail::is_convertible<T2*, PointedType*>::value, offset_ptr&>::type
    #else
    offset_ptr&
    #endif
@@ -473,7 +542,7 @@ class offset_ptr
 
    //!Compatibility with pointer_traits
    //!
-   BOOST_INTERPROCESS_FORCEINLINE static offset_ptr pointer_to(reference r) BOOST_NOEXCEPT
+   BOOST_INTERPROCESS_FORCEINLINE static offset_ptr pointer_to(typename ipcdetail::op_reference<PointedType>::type r) BOOST_NOEXCEPT
    { return offset_ptr(&r); }
 
    //!difference_type + offset_ptr
@@ -714,7 +783,7 @@ struct pointer_plus_bits<boost::interprocess::offset_ptr<T, P, O, A>, NumBits>
    //Bits are stored in the lower bits of the pointer except the LSB,
    //because this bit is used to represent the null pointer.
    static const O Mask = ((static_cast<O>(1) << NumBits) - static_cast<O>(1)) << 1;
-   BOOST_STATIC_ASSERT(0 ==(Mask&1));
+   BOOST_INTERPROCESS_STATIC_ASSERT(0 ==(Mask&1));
 
    //We must ALWAYS take argument "n" by reference as a copy of a null pointer
    //with a bit (e.g. offset == 3) would be incorrectly copied and interpreted as non-null.
@@ -769,7 +838,7 @@ struct pointer_to_other
 
 #include <boost/interprocess/detail/config_end.hpp>
 
-#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40700)
 #pragma GCC diagnostic pop
 #endif
 

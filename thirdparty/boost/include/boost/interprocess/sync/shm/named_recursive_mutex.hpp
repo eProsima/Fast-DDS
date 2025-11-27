@@ -28,6 +28,7 @@
 #include <boost/interprocess/sync/interprocess_recursive_mutex.hpp>
 #include <boost/interprocess/sync/shm/named_creation_functor.hpp>
 #include <boost/interprocess/permissions.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 
 //!\file
 //!Describes a named shm_named_recursive_mutex class for inter-process synchronization

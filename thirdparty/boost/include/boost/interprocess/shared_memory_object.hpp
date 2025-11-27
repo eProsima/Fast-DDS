@@ -186,6 +186,11 @@ class shared_memory_object
    file_handle_t     m_handle;
    mode_t            m_mode;
    char_wchar_holder m_filename;
+
+   #ifdef BOOST_INTERPROCESS_POSIX_SHARED_MEMORY_OBJECTS
+   static int eintr_aware_shm_open(const char* name, int oflag, ::mode_t mode);
+   #endif
+
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 };
 
@@ -269,30 +274,30 @@ inline bool shared_memory_object::priv_open_or_create
 
 inline bool shared_memory_object::remove(const wchar_t *filename)
 {
-   BOOST_TRY{
+   BOOST_INTERPROCESS_TRY{
       //Make sure a temporary path is created for shared memory
       std::wstring shmfile;
       ipcdetail::shared_filepath(filename, shmfile);
       return ipcdetail::delete_file(shmfile.c_str());
    }
-   BOOST_CATCH(...){
+   BOOST_INTERPROCESS_CATCH(...){
       return false;
-   } BOOST_CATCH_END
+   } BOOST_INTERPROCESS_CATCH_END
 }
 
 #endif
 
 inline bool shared_memory_object::remove(const char *filename)
 {
-   BOOST_TRY{
+   BOOST_INTERPROCESS_TRY{
       //Make sure a temporary path is created for shared memory
       std::string shmfile;
       ipcdetail::shared_filepath(filename, shmfile);
       return ipcdetail::delete_file(shmfile.c_str());
    }
-   BOOST_CATCH(...){
+   BOOST_INTERPROCESS_CATCH(...){
       return false;
-   } BOOST_CATCH_END
+   } BOOST_INTERPROCESS_CATCH_END
 }
 
 inline void shared_memory_object::truncate(offset_t length)
@@ -374,13 +379,13 @@ inline bool shared_memory_object::priv_open_or_create
       case ipcdetail::DoOpen:
       {
          //No oflag addition
-         m_handle = shm_open(fname.c_str(), oflag, unix_perm);
+         m_handle = eintr_aware_shm_open(fname.c_str(), oflag, unix_perm);
       }
       break;
       case ipcdetail::DoCreate:
       {
          oflag |= (O_CREAT | O_EXCL);
-         m_handle = shm_open(fname.c_str(), oflag, unix_perm);
+         m_handle = eintr_aware_shm_open(fname.c_str(), oflag, unix_perm);
          if(m_handle >= 0){
             ::fchmod(m_handle, unix_perm);
          }
@@ -392,14 +397,14 @@ inline bool shared_memory_object::priv_open_or_create
          //with "O_CREAT" only we don't know if we've created or opened the shm.
          while(true){
             //Try to create shared memory
-            m_handle = shm_open(fname.c_str(), oflag | (O_CREAT | O_EXCL), unix_perm);
+            m_handle = eintr_aware_shm_open(fname.c_str(), oflag | (O_CREAT | O_EXCL), unix_perm);
             //If successful change real permissions
             if(m_handle >= 0){
                ::fchmod(m_handle, unix_perm);
             }
             //If already exists, try to open
             else if(errno == EEXIST){
-               m_handle = shm_open(fname.c_str(), oflag, unix_perm);
+               m_handle = eintr_aware_shm_open(fname.c_str(), oflag, unix_perm);
                //If open fails and errno tells the file does not exist
                //(shm was removed between creation and opening tries), just retry
                if(m_handle < 0 && errno == ENOENT){
@@ -432,7 +437,7 @@ inline bool shared_memory_object::priv_open_or_create
 
 inline bool shared_memory_object::remove(const char *filename)
 {
-   BOOST_TRY{
+   BOOST_INTERPROCESS_TRY{
       std::string filepath;
       #if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)
       const bool add_leading_slash = false;
@@ -449,9 +454,9 @@ inline bool shared_memory_object::remove(const char *filename)
       }
       return 0 == shm_unlink(filepath.c_str());
    }
-   BOOST_CATCH(...){
+   BOOST_INTERPROCESS_CATCH(...){
       return false;
-   } BOOST_CATCH_END
+   } BOOST_INTERPROCESS_CATCH_END
 }
 
 inline void shared_memory_object::truncate(offset_t length)
@@ -484,6 +489,15 @@ inline void shared_memory_object::priv_close()
       ::close(m_handle);
       m_handle = -1;
    }
+}
+
+inline int shared_memory_object::eintr_aware_shm_open(const char* name, int oflag, ::mode_t mode)
+{
+   int shm_open_ret;
+   do {
+      shm_open_ret = shm_open(name, oflag, mode);
+   } while (shm_open_ret == -1 && errno == EINTR);
+   return shm_open_ret;
 }
 
 #endif

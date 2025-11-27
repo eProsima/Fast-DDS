@@ -28,6 +28,7 @@
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/sync/windows/semaphore.hpp>
 #include <boost/interprocess/sync/windows/mutex.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/sync/detail/condition_algorithm_8a.hpp>
 
 

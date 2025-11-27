@@ -28,6 +28,7 @@
 #include <boost/interprocess/detail/config_begin.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/detail/workaround.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/assert.hpp>
 #include <boost/interprocess/sync/detail/common_algorithms.hpp>
 

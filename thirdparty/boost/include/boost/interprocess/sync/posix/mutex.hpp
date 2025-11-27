@@ -44,7 +44,7 @@
 #include <boost/interprocess/sync/posix/timepoint_to_timespec.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/sync/posix/pthread_helpers.hpp>
-#include <boost/interprocess/detail/timed_utils.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 
 
 #ifndef BOOST_INTERPROCESS_POSIX_TIMEOUTS

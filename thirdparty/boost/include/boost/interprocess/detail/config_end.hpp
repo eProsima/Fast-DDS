@@ -11,6 +11,6 @@
    #pragma warning (pop)
 #endif
 
-#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#if (defined(BOOST_GCC) && (BOOST_GCC >= 40600)) || (defined(BOOST_CLANG) && defined(_MSC_VER))
 #pragma GCC diagnostic pop
 #endif

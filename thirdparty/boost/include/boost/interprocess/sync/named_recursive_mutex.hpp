@@ -23,6 +23,7 @@
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/permissions.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 
 #if !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) && defined (BOOST_INTERPROCESS_WINDOWS)
    #include <boost/interprocess/sync/windows/named_recursive_mutex.hpp>

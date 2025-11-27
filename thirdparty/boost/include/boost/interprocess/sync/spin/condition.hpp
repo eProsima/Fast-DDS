@@ -28,7 +28,7 @@
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/interprocess/detail/timed_utils.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/sync/spin/wait.hpp>
 #include <boost/move/utility_core.hpp>
 #include <boost/cstdint.hpp>
@@ -70,7 +70,7 @@ class spin_condition
    {
       if (!lock)
          throw lock_exception();
-      this->do_timed_wait_impl<false>(0, *lock.mutex());
+      this->do_timed_wait_impl<false>(ustime(0u), *lock.mutex());
    }
 
    template <typename L, typename Pr>
@@ -80,7 +80,7 @@ class spin_condition
          throw lock_exception();
 
       while (!pred())
-         this->do_timed_wait_impl<false>(0, *lock.mutex());
+         this->do_timed_wait_impl<false>(ustime(0u), *lock.mutex());
    }
 
    template <typename L, typename TimePoint>
@@ -168,7 +168,8 @@ class spin_condition
 
             //Check for timeout
             if(TimeoutEnabled){
-               TimePoint now = get_now<TimePoint>(bool_<TimeoutEnabled>());
+               typedef typename microsec_clock<TimePoint>::time_point time_point;
+               time_point now = get_now<TimePoint>(bool_<TimeoutEnabled>());
 
                if(now >= abs_time){
                   //If we can lock the mutex it means that no notification
@@ -239,12 +240,12 @@ class spin_condition
    }
 
    template <class TimePoint>
-   static TimePoint get_now(bool_<true>)
+   static typename microsec_clock<TimePoint>::time_point get_now(bool_<true>)
    {  return microsec_clock<TimePoint>::universal_time();  }
 
    template <class TimePoint>
-   static TimePoint get_now(bool_<false>)
-   {  return TimePoint();  }
+   static typename microsec_clock<TimePoint>::time_point get_now(bool_<false>)
+   {  return typename microsec_clock<TimePoint>::time_point();  }
 
    template <class Mutex, class Lock, class TimePoint>
    static void  get_lock(bool_<true>, Mutex &m, Lock &lck, const TimePoint &abs_time)

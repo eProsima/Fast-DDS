@@ -25,6 +25,7 @@
 #include <boost/interprocess/sync/cv_status.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/exceptions.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/detail/interprocess_tester.hpp>
 #include <boost/interprocess/permissions.hpp>
 #include <boost/interprocess/sync/detail/locks.hpp>

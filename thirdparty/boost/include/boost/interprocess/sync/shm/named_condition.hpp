@@ -23,7 +23,6 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 #include <boost/interprocess/sync/cv_status.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/exceptions.hpp>
@@ -33,6 +32,7 @@
 #include <boost/interprocess/sync/shm/named_creation_functor.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/interprocess/permissions.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #if defined (BOOST_INTERPROCESS_NAMED_MUTEX_USES_POSIX_SEMAPHORES)
    #include <boost/interprocess/sync/interprocess_mutex.hpp>
    #include <boost/interprocess/sync/scoped_lock.hpp>

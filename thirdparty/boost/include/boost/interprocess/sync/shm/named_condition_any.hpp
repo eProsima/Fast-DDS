@@ -23,7 +23,6 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 #include <boost/interprocess/sync/cv_status.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/exceptions.hpp>
@@ -35,6 +34,7 @@
 #include <boost/interprocess/permissions.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/sync/detail/condition_any_algorithm.hpp>
 
 //!\file

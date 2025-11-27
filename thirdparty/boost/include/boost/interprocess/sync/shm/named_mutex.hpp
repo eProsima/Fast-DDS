@@ -30,6 +30,7 @@
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/detail/managed_open_or_create_impl.hpp>
 #include <boost/interprocess/sync/shm/named_creation_functor.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 
 //!\file
 //!Describes a named mutex class for inter-process synchronization

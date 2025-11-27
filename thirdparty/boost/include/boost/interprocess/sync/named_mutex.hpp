@@ -23,6 +23,7 @@
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/exceptions.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/detail/interprocess_tester.hpp>
 #include <boost/interprocess/permissions.hpp>
 

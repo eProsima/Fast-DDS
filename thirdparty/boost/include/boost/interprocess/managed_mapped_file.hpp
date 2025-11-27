@@ -273,6 +273,9 @@ class basic_managed_mapped_file
    //!
    //!This function is not synchronized so no other thread or process should
    //!be reading or writing the file
+   //!
+   //!Since the memory will be remapped after the underlying file
+   //!is grown, it can't work with segments using raw pointers.
    static bool grow(const char *filename, size_type extra_bytes)
    {
       return base_t::template grow
