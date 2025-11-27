@@ -30,7 +30,7 @@ TEST(ReaderProxyTests, find_change_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock);
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
     CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
     CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
     CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
@@ -87,7 +87,7 @@ TEST(ReaderProxyTests, find_change_removed_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock);
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
     CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
     CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
     CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
@@ -119,7 +119,7 @@ TEST(ReaderProxyTests, requested_changes_set_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock);
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
     CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
     CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
     CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
@@ -178,7 +178,7 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock);
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
     CacheChange_t seq;
     seq.sequenceNumber = {0, 1};
     seq.serializedPayload.length = TOTAL_NUMBER_OF_FRAGMENTS * FRAGMENT_SIZE;
@@ -247,7 +247,7 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock);
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
     CacheChange_t seq;
     seq.sequenceNumber = {0, 1};
     seq.serializedPayload.length = TOTAL_NUMBER_OF_FRAGMENTS * FRAGMENT_SIZE;
@@ -338,7 +338,7 @@ TEST(ReaderProxyTests, has_been_delivered_test)
     StatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(w_times, alloc, &writer_mock);
+    ReaderProxy rproxy(w_times, alloc, &writer_mock, nullptr);
 
     CacheChange_t seq1;
     CacheChange_t seq2;
@@ -389,7 +389,7 @@ TEST(ReaderProxyTests, acknack_count)
     StatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(w_times, alloc, &writer_mock);
+    ReaderProxy rproxy(w_times, alloc, &writer_mock, nullptr);
 
     ReaderProxyData reader_attributes(0, 0);
     reader_attributes.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
