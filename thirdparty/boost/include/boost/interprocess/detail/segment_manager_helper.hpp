@@ -27,10 +27,10 @@
 // interprocess/detail
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/detail/utilities.hpp>
-#include <boost/interprocess/detail/in_place_interface.hpp>
 // container/detail
 #include <boost/container/detail/type_traits.hpp> //alignment_of
 #include <boost/container/detail/minimal_char_traits_header.hpp>
+#include <boost/container/detail/placement_new.hpp>
 // intrusive
 #include <boost/intrusive/pointer_traits.hpp>
 // move/detail
@@ -38,13 +38,9 @@
 #include <boost/move/detail/force_ptr.hpp>
 // other boost
 #include <boost/assert.hpp>   //BOOST_ASSERT
-#include <boost/core/no_exceptions_support.hpp>
 // std
 #include <cstddef>   //std::size_t
 
-//!\file
-//!Describes the object placed in a memory segment that provides
-//!named object allocation capabilities.
 
 namespace boost{
 namespace interprocess{
@@ -76,13 +72,23 @@ class mem_algo_deallocator
    {  if(m_ptr) m_algo.deallocate(m_ptr);  }
 };
 
+#if !defined(BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI)
+#define BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI 2
+#endif   //#if !defined(BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI)
+
+#if (BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI == 1)
+
 template<class size_type>
 struct block_header
 {
-   size_type      m_value_bytes;
-   unsigned short m_num_char;
-   unsigned char  m_value_alignment;
-   unsigned char  m_alloc_type_sizeof_char;
+   private:
+   const size_type      m_value_bytes;
+   const unsigned short m_num_char;
+   const unsigned char  m_value_alignment;
+   const unsigned char  m_alloc_type_sizeof_char;
+
+   public:
+   typedef std::size_t name_len_t;
 
    block_header(size_type val_bytes
                ,size_type val_alignment
@@ -95,32 +101,33 @@ struct block_header
       ,  m_value_alignment((unsigned char)val_alignment)
       ,  m_alloc_type_sizeof_char( (unsigned char)((al_type << 5u) | ((unsigned char)szof_char & 0x1F)) )
    {};
-
-   template<class T>
-   block_header &operator= (const T& )
-   {  return *this;  }
-
-   size_type total_size() const
+   
+   template<std::size_t>
+   size_type total_anonymous_size() const
    {
-      if(alloc_type() != anonymous_type){
-         return name_offset() + (m_num_char+1u)*sizeof_char();
-      }
-      else{
-         return this->value_offset() + m_value_bytes;
-      }
+      return this->value_offset() + m_value_bytes;
+   }
+
+   template<std::size_t, class>
+   size_type total_named_size(std::size_t namelen) const
+   {
+      (void)namelen;
+      BOOST_ASSERT(namelen == m_num_char);
+      return name_offset() + (m_num_char+1u)*sizeof_char();
+   }
+
+   template<std::size_t, class, class Header>
+   size_type total_named_size_with_header(std::size_t namelen) const
+   {
+      BOOST_ASSERT(namelen == m_num_char);
+      return get_rounded_size
+               ( size_type(sizeof(Header))
+            , size_type(::boost::container::dtl::alignment_of<block_header<size_type> >::value))
+           + this->template total_named_size<0, char>(namelen);
    }
 
    size_type value_bytes() const
    {  return m_value_bytes;   }
-
-   template<class Header>
-   size_type total_size_with_header() const
-   {
-      return get_rounded_size
-               ( size_type(sizeof(Header))
-            , size_type(::boost::container::dtl::alignment_of<block_header<size_type> >::value))
-           + total_size();
-   }
 
    unsigned char alloc_type() const
    {  return (m_alloc_type_sizeof_char >> 5u)&(unsigned char)0x7;  }
@@ -138,101 +145,284 @@ struct block_header
    unsigned short name_length() const
    {  return m_num_char;   }
 
-   size_type name_offset() const
-   {
-      return this->value_offset() + get_rounded_size(size_type(m_value_bytes), size_type(sizeof_char()));
-   }
-
    void *value() const
    {
       return const_cast<char*>((reinterpret_cast<const char*>(this) + this->value_offset()));
    }
 
-   size_type value_offset() const
-   {
-      return get_rounded_size(size_type(sizeof(block_header<size_type>)), size_type(m_value_alignment));
-   }
-
-   template<class CharType>
-   bool less_comp(const block_header<size_type> &b) const
-   {
-      return m_num_char < b.m_num_char ||
-             (m_num_char < b.m_num_char &&
-              std::char_traits<CharType>::compare(name<CharType>(), b.name<CharType>(), m_num_char) < 0);
-   }
-
-   template<class CharType>
-   bool equal_comp(const block_header<size_type> &b) const
-   {
-      return m_num_char == b.m_num_char &&
-             std::char_traits<CharType>::compare(name<CharType>(), b.name<CharType>(), m_num_char) == 0;
-   }
-
    template<class T>
-   static block_header<size_type> *block_header_from_value(T *value)
-   {  return block_header_from_value(value, sizeof(T), ::boost::container::dtl::alignment_of<T>::value);  }
-
-   static block_header<size_type> *block_header_from_value(const void *value, std::size_t sz, std::size_t algn)
+   static block_header *block_header_from_value(T *value)
    {
-      block_header * hdr =
+      //      BOOST_ASSERT(is_ptr_aligned(value, algn));
+      const std::size_t algn = ::boost::container::dtl::alignment_of<T>::value;
+      block_header* hdr =
          const_cast<block_header*>
-            (move_detail::force_ptr<const block_header*>(reinterpret_cast<const char*>(value) -
-               get_rounded_size(sizeof(block_header), algn)));
-      (void)sz;
+         (move_detail::force_ptr<const block_header*>(reinterpret_cast<const char*>(value) -
+            get_rounded_size(sizeof(block_header), algn)));
+
       //Some sanity checks
       BOOST_ASSERT(hdr->m_value_alignment == algn);
-      BOOST_ASSERT(hdr->m_value_bytes % sz == 0);
+      BOOST_ASSERT(hdr->m_value_bytes % sizeof(T) == 0);
       return hdr;
    }
 
    template<class Header>
-   static block_header<size_type> *from_first_header(Header *header)
+   static block_header *from_first_header(Header *header)
    {
-      block_header<size_type> * hdr =
-         move_detail::force_ptr<block_header<size_type>*>(reinterpret_cast<char*>(header) +
+      block_header * hdr =
+         move_detail::force_ptr<block_header*>(reinterpret_cast<char*>(header) +
        get_rounded_size( size_type(sizeof(Header))
-                       , size_type(::boost::container::dtl::alignment_of<block_header<size_type> >::value)));
+                       , size_type(::boost::container::dtl::alignment_of<block_header >::value)));
       //Some sanity checks
       return hdr;
    }
 
    template<class Header>
-   static Header *to_first_header(block_header<size_type> *bheader)
+   static const block_header *from_first_header(const Header *header)
+   {  return from_first_header(const_cast<Header*>(header));   }
+
+   template<class Header>
+   static Header *to_first_header(block_header *bheader)
    {
       Header * hdr =
          move_detail::force_ptr<Header*>(reinterpret_cast<char*>(bheader) -
        get_rounded_size( size_type(sizeof(Header))
-                       , size_type(::boost::container::dtl::alignment_of<block_header<size_type> >::value)));
+                       , size_type(::boost::container::dtl::alignment_of<block_header >::value)));
       //Some sanity checks
       return hdr;
    }
+
+   template<std::size_t>
+   static size_type front_space_without_header()
+   {  return 0u;  }
+
+   template<std::size_t, class>
+   static size_type front_space_with_header()
+   {  return 0u;  }
+
+   void store_name_length(std::size_t)
+   {}
+
+   private:
+   size_type value_offset() const
+   {
+      return get_rounded_size(size_type(sizeof(block_header)), size_type(m_value_alignment));
+   }
+
+   size_type name_offset() const
+   {
+      return this->value_offset() + get_rounded_size(size_type(m_value_bytes), size_type(sizeof_char()));
+   }
 };
 
-inline void array_construct(void *mem, std::size_t num, in_place_interface &table)
+#elif (BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI == 2)
+
+template <class BlockHeader, class Header>
+struct sm_between_headers
 {
-   //Try constructors
-   std::size_t constructed = 0;
-   BOOST_TRY{
-      table.construct_n(mem, num, constructed);
+   BOOST_STATIC_CONSTEXPR std::size_t value
+      = sizeof(Header)
+      + ct_rounded_size< sizeof(BlockHeader), boost::move_detail::alignment_of<Header>::value>::value
+      - sizeof(BlockHeader);
+};
+
+template <std::size_t TypeAlignment, class BlockHeader, class Header>
+struct sg_offsets_with_header
+{
+   private:
+   BOOST_STATIC_CONSTEXPR std::size_t between_headers = sm_between_headers<BlockHeader, Header>::value;
+   BOOST_STATIC_CONSTEXPR std::size_t both_headers = between_headers + sizeof(BlockHeader);
+   BOOST_STATIC_CONSTEXPR std::size_t total_prefix = ct_rounded_size<both_headers, TypeAlignment>::value;
+
+   public:
+   BOOST_STATIC_CONSTEXPR std::size_t block_header_prefix = total_prefix - sizeof(BlockHeader);
+   BOOST_STATIC_CONSTEXPR std::size_t front_space = total_prefix - both_headers;
+
+   BOOST_INTERPROCESS_STATIC_ASSERT((total_prefix % TypeAlignment) == 0);
+   BOOST_INTERPROCESS_STATIC_ASSERT((front_space % boost::move_detail::alignment_of<Header>::value) == 0);
+   BOOST_INTERPROCESS_STATIC_ASSERT((block_header_prefix % boost::move_detail::alignment_of<BlockHeader>::value) == 0);
+   BOOST_INTERPROCESS_STATIC_ASSERT(total_prefix == (sizeof(BlockHeader) + sizeof(Header) + front_space + (between_headers - sizeof(Header))));
+};
+
+template <std::size_t TypeAlignment, class BlockHeader>
+struct sg_offsets_without_header
+{
+   BOOST_STATIC_CONSTEXPR std::size_t total_prefix = ct_rounded_size<sizeof(BlockHeader), TypeAlignment>::value;
+
+   public:
+   BOOST_STATIC_CONSTEXPR std::size_t block_header_prefix = total_prefix - sizeof(BlockHeader);
+   BOOST_STATIC_CONSTEXPR std::size_t front_space = block_header_prefix;
+};
+
+template<class size_type>
+struct block_header
+{
+   private:
+   const size_type  m_alloc_type  : 2;
+   const size_type  m_value_bytes : sizeof(size_type)*CHAR_BIT - 2u;
+
+   public:
+   typedef unsigned short name_len_t;
+
+   block_header(size_type val_bytes
+               ,size_type 
+               ,unsigned char al_type
+               ,std::size_t
+               ,std::size_t
+               )
+      : m_alloc_type(al_type & 3u)
+      , m_value_bytes(val_bytes & (~size_type(0) >> 2u))
+   {};
+
+   template<std::size_t TypeAlignment>
+   size_type total_anonymous_size() const
+   {
+      BOOST_CONSTEXPR_OR_CONST std::size_t block_header_prefix =
+         sg_offsets_without_header<TypeAlignment, block_header>::block_header_prefix;
+      return block_header_prefix + this->value_offset() + m_value_bytes;
    }
-   //If there is an exception call destructors and erase index node
-   BOOST_CATCH(...){
-      std::size_t destroyed = 0;
-      table.destroy_n(mem, constructed, destroyed);
-      BOOST_RETHROW
-   } BOOST_CATCH_END
-}
+
+   template<std::size_t TypeAlignment, class CharType>
+   size_type total_named_size(std::size_t namelen) const
+   {
+      BOOST_CONSTEXPR_OR_CONST std::size_t block_header_prefix =
+         sg_offsets_without_header<TypeAlignment, block_header>::block_header_prefix;
+      return block_header_prefix
+         + name_offset< ::boost::move_detail::alignment_of<CharType>::value>()
+         + (namelen + 1u) * sizeof(CharType);
+   }
+
+   template<std::size_t TypeAlignment, class CharType, class Header>
+   size_type total_named_size_with_header(std::size_t namelen) const
+   {
+      typedef sg_offsets_with_header<TypeAlignment, block_header, Header> offsets_t;
+      return offsets_t::block_header_prefix
+         + name_offset< ::boost::move_detail::alignment_of<CharType>::value>()
+         + (namelen + 1u) * sizeof(CharType);
+   }
+
+   size_type value_bytes() const
+   {  return m_value_bytes;   }
+
+   unsigned char alloc_type() const
+   {  return m_alloc_type;  }
+
+   template<class CharType>
+   CharType *name() const
+   {
+      return const_cast<CharType*>(move_detail::force_ptr<const CharType*>
+         (reinterpret_cast<const char*>(this) +
+          this->template name_offset< ::boost::move_detail::alignment_of<CharType>::value>()));
+   }
+
+   name_len_t name_length() const
+   {
+      if(m_alloc_type == anonymous_type)
+         return 0;
+      return *(move_detail::force_ptr<const name_len_t*>
+         (reinterpret_cast<const char*>(this) + this->name_length_offset()));
+   }
+
+   void *value() const
+   {  return const_cast<char*>((reinterpret_cast<const char*>(this) + this->value_offset()));  }
+
+   template<class T>
+   static block_header *block_header_from_value(T *value)
+   {
+      BOOST_ASSERT(is_ptr_aligned(value, ::boost::container::dtl::alignment_of<T>::value));
+      block_header* hdr =
+         const_cast<block_header*>
+            (move_detail::force_ptr<const block_header*>
+               (reinterpret_cast<const char*>(value) - value_offset()));
+
+      //Some sanity checks
+      BOOST_ASSERT(hdr->m_value_bytes % sizeof(T) == 0);
+      return hdr;
+   }
+
+   template<class Header>
+   static block_header *from_first_header(Header *header)
+   {
+      BOOST_ASSERT(is_ptr_aligned(header));
+      block_header * const hdr = move_detail::force_ptr<block_header*>(
+            reinterpret_cast<char*>(header) + sm_between_headers<block_header, Header>::value);
+      //Some sanity checks
+      BOOST_ASSERT(is_ptr_aligned(hdr));
+      return hdr;
+   }
+
+   template<class Header>
+   static const block_header *from_first_header(const Header *header)
+   {  return from_first_header(const_cast<Header*>(header));   }
+
+   template<class Header>
+   static Header *to_first_header(block_header *bheader)
+   {
+      BOOST_ASSERT(is_ptr_aligned(bheader));
+      Header * hdr = move_detail::force_ptr<Header*>(
+         reinterpret_cast<char*>(bheader) - sm_between_headers<block_header, Header>::value);
+      //Some sanity checks
+      BOOST_ASSERT(is_ptr_aligned(hdr));
+      return hdr;
+   }
+
+   template<std::size_t TypeAlignment, class Header>
+   static size_type front_space_with_header()
+   {  return sg_offsets_with_header<TypeAlignment, block_header, Header>::front_space; }
+
+   template<std::size_t TypeAlignment>
+   static size_type front_space_without_header()
+   {  return sg_offsets_without_header<TypeAlignment, block_header>::front_space; }
+
+   void store_name_length(name_len_t namelen)
+   {
+      ::new( reinterpret_cast<char*>(this) + this->name_length_offset()
+           , boost_container_new_t()
+           ) name_len_t(namelen);
+   }
+
+   private:
+
+   static size_type value_offset()
+   {  return size_type(sizeof(block_header));   }
+
+   template<std::size_t CharAlign>
+   size_type name_offset() const
+   {  return get_rounded_size(this->name_length_offset()+sizeof(name_len_t), CharAlign);  }
+
+   size_type name_length_offset() const
+   {
+      return this->value_offset() + get_rounded_size(m_value_bytes, ::boost::move_detail::alignment_of<name_len_t>::value);
+   }
+};
+
+
+#else //(BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI == )
+
+#error "Incorrect BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI value!"
+
+#endif
 
 template<class CharT>
 struct intrusive_compare_key
 {
    typedef CharT char_type;
 
-   intrusive_compare_key(const CharT *str, std::size_t len)
-      :  mp_str(str), m_len(len)
+   intrusive_compare_key(const CharT* str_, std::size_t len_)
+      : mp_str(str_), m_len(len_)
    {}
 
-   const CharT *  mp_str;
+   const CharT* str() const
+   {
+      return mp_str;
+   }
+
+   std::size_t len() const
+   {
+      return m_len;
+   }
+
+   const CharT* mp_str;
    std::size_t    m_len;
 };
 
@@ -272,29 +462,9 @@ struct intrusive_value_type_impl
    public:
    typedef CharType char_type;
    typedef SizeType size_type;
+   typedef block_header<size_type> block_header_t;
 
    intrusive_value_type_impl(){}
-
-   enum  {  BlockHdrAlignment = ::boost::container::dtl::alignment_of<block_header<size_type> >::value  };
-
-   block_header<size_type> *get_block_header() const
-   {
-      return const_cast<block_header<size_type>*>
-         (move_detail::force_ptr<const block_header<size_type> *>(reinterpret_cast<const char*>(this) +
-            get_rounded_size(size_type(sizeof(*this)), size_type(BlockHdrAlignment))));
-   }
-
-   bool operator <(const intrusive_value_type_impl<Hook, CharType, SizeType> & other) const
-   {  return (this->get_block_header())->template less_comp<CharType>(*other.get_block_header());  }
-
-   bool operator ==(const intrusive_value_type_impl<Hook, CharType, SizeType> & other) const
-   {  return (this->get_block_header())->template equal_comp<CharType>(*other.get_block_header());  }
-
-   static intrusive_value_type_impl *get_intrusive_value_type(block_header<size_type> *hdr)
-   {
-      return move_detail::force_ptr<intrusive_value_type_impl*>(reinterpret_cast<char*>(hdr) -
-         get_rounded_size(size_type(sizeof(intrusive_value_type_impl)), size_type(BlockHdrAlignment)));
-   }
 
    CharType *name() const
    {  return get_block_header()->template name<CharType>(); }
@@ -304,6 +474,10 @@ struct intrusive_value_type_impl
 
    void *value() const
    {  return get_block_header()->value(); }
+
+   private:
+   const block_header_t *get_block_header() const
+   {  return block_header_t::from_first_header(this); }
 };
 
 template<class CharType>
@@ -414,16 +588,22 @@ struct index_config
 {
    typedef typename MemoryAlgorithm::void_pointer        void_pointer;
    typedef CharT                                         char_type;
-   typedef index_key<CharT, void_pointer>        key_type;
-   typedef index_data<void_pointer>              mapped_type;
+   typedef index_key<CharT, void_pointer>                key_type;
+   typedef index_data<void_pointer>                      mapped_type;
    typedef typename segment_manager_base_type
       <MemoryAlgorithm>::type                            segment_manager_base;
 
    template<class HeaderBase>
    struct intrusive_value_type
-   {  typedef intrusive_value_type_impl<HeaderBase, CharT, typename segment_manager_base::size_type>  type; };
+   {
+      typedef intrusive_value_type_impl
+         < HeaderBase
+         , CharT
+         , typename segment_manager_base::size_type
+         >  type;
+   };
 
-   typedef intrusive_compare_key<CharT>            intrusive_compare_key_type;
+   typedef intrusive_compare_key<CharT>                  compare_key_type;
 };
 
 template<class Iterator, bool intrusive>
@@ -487,6 +667,23 @@ struct segment_manager_iterator_transform
    template <class T> result_type operator()(const T &arg) const
    {  return result_type(arg); }
 };
+
+
+template<class T>
+inline T* null_or_bad_alloc(bool dothrow)
+{
+   if (dothrow)
+      throw bad_alloc();
+   return 0;
+}
+
+template<class T>
+inline T* null_or_already_exists(bool dothrow)
+{
+   if (dothrow)
+      throw interprocess_exception(already_exists_error);
+   return 0;
+}
 
 }  //namespace ipcdetail {
 

@@ -28,6 +28,7 @@
 #include <boost/interprocess/sync/windows/winapi_mutex_wrapper.hpp>
 #include <boost/interprocess/errors.hpp>
 #include <boost/interprocess/exceptions.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <limits>
 
 namespace boost {

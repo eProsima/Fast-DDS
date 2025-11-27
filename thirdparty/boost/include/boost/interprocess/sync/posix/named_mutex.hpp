@@ -25,7 +25,7 @@
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/interprocess/detail/interprocess_tester.hpp>
 #include <boost/interprocess/permissions.hpp>
-
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/sync/posix/named_semaphore.hpp>
 
 namespace boost {

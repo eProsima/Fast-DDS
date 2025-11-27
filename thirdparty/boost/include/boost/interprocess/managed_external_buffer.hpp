@@ -105,6 +105,8 @@ class basic_managed_external_buffer
       return *this;
    }
 
+   //!Tries to resize internal heap memory so that
+   //!we have room for more objects.
    void grow(size_type extra_bytes)
    {  base_t::grow(extra_bytes);   }
 

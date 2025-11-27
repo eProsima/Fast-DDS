@@ -32,7 +32,7 @@
 #include <boost/interprocess/containers/version_type.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <boost/assert.hpp>
-#include <boost/utility/addressof.hpp>
+#include <boost/container/detail/addressof.hpp>
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/container/detail/placement_new.hpp>
 
@@ -249,25 +249,12 @@ class allocator
    //!Returns address of mutable object.
    //!Never throws
    pointer address(reference value) const
-   {  return pointer(boost::addressof(value));  }
+   {  return pointer(boost::container::dtl::addressof(value));  }
 
    //!Returns address of non mutable object.
    //!Never throws
    const_pointer address(const_reference value) const
-   {  return const_pointer(boost::addressof(value));  }
-
-   //!Constructs an object
-   //!Throws if T's constructor throws
-   //!For backwards compatibility with libraries using C++03 allocators
-   template<class P>
-   void construct(const pointer &ptr, BOOST_FWD_REF(P) p)
-   {  ::new((void*)ipcdetail::to_raw_pointer(ptr), boost_container_new_t()) value_type(::boost::forward<P>(p));  }
-
-   //!Destroys object. Throws if object's
-   //!destructor throws
-   void destroy(const pointer &ptr)
-   {  BOOST_ASSERT(ptr != 0); (*ptr).~value_type();  }
-
+   {  return const_pointer(boost::container::dtl::addressof(value));  }
 };
 
 //!Equality test for same type
