@@ -63,11 +63,13 @@ public:
      * @param times WriterTimes to use in the ReaderProxy.
      * @param loc_alloc Maximum number of remote locators to keep in the ReaderProxy.
      * @param writer Pointer to the StatefulWriter creating the reader proxy.
+     * @param stateful_listener Pointer to the StatefulWriterListener associated to the writer.
      */
     ReaderProxy(
             const WriterTimes& times,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
-            StatefulWriter* writer);
+            StatefulWriter* writer,
+            StatefulWriterListener* stateful_listener);
 
     /**
      * Activate this proxy associating it to a remote reader.
@@ -389,11 +391,6 @@ public:
     LocatorSelectorEntry* async_locator_selector_entry()
     {
         return locator_info_.async_locator_selector_entry();
-    }
-
-    const ReaderLocator& locator_info() const
-    {
-        return locator_info_;
     }
 
     RTPSMessageSenderInterface* message_sender()

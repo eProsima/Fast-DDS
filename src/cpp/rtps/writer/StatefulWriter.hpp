@@ -341,16 +341,6 @@ public:
     void perform_nack_supression(
             const GUID_t& reader_guid);
 
-    /**
-     * @brief Get the stateful writer listener
-     *
-     * @return Pointer to the listener
-     */
-    StatefulWriterListener* get_stateful_writer_listener() const
-    {
-        return stateful_writer_listener_;
-    }
-
 protected:
 
     void rebuild_status_after_load();
