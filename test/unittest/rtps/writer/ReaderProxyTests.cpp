@@ -19,10 +19,34 @@
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
+#include <rtps/writer/StatefulWriterListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+class Listener : public StatefulWriterListener
+{
+public:
+
+    MOCK_METHOD(void, on_writer_resend_data, (
+                const GUID_t&,
+                const GUID_t&,
+                const SequenceNumber_t&,
+                uint32_t,
+                const LocatorSelectorEntry&), (override));
+
+    MOCK_METHOD(void, on_writer_data_acknowledged, (
+                const GUID_t& writer_guid,
+                const GUID_t& reader_guid,
+                const SequenceNumber_t& sequence_number,
+                uint32_t payload_length,
+                const std::chrono::steady_clock::duration& ack_duration,
+                const LocatorSelectorEntry& locators), (override));
+};
+
+using ListenerMock = ::testing::StrictMock<Listener>;
+using testing::_;
 
 TEST(ReaderProxyTests, find_change_test)
 {
@@ -30,7 +54,8 @@ TEST(ReaderProxyTests, find_change_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, &listener);
     CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
     CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
     CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
@@ -53,7 +78,11 @@ TEST(ReaderProxyTests, find_change_test)
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 6)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 7)));
 
+    // This would notify changes 1 and 2
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, SequenceNumber_t{0, 1}, _, _, _));
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, SequenceNumber_t{0, 2}, _, _, _));
     rproxy.acked_changes_set(SequenceNumber_t(0, 3));
+
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 1)));
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 2)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 3)));
@@ -71,6 +100,7 @@ TEST(ReaderProxyTests, find_change_test)
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 6)));
     ASSERT_FALSE(rproxy.change_is_acked(SequenceNumber_t(0, 7)));
 
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, SequenceNumber_t{0, 3}, _, _, _));
     rproxy.acked_changes_set(SequenceNumber_t(0, 5)); // AGAIN SAME ACK
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 1)));
     ASSERT_TRUE(rproxy.change_is_acked(SequenceNumber_t(0, 2)));
@@ -87,7 +117,8 @@ TEST(ReaderProxyTests, find_change_removed_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, &listener);
     CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
     CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
     CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
@@ -119,7 +150,8 @@ TEST(ReaderProxyTests, requested_changes_set_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, &listener);
     CacheChange_t seq1; seq1.sequenceNumber = {0, 1};
     CacheChange_t seq2; seq2.sequenceNumber = {0, 2};
     CacheChange_t seq3; seq3.sequenceNumber = {0, 3};
@@ -178,7 +210,8 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, &listener);
     CacheChange_t seq;
     seq.sequenceNumber = {0, 1};
     seq.serializedPayload.length = TOTAL_NUMBER_OF_FRAGMENTS * FRAGMENT_SIZE;
@@ -208,6 +241,9 @@ TEST(ReaderProxyTests, process_nack_frag_single_fragment_different_windows_test)
     }
 
     // Set the change status to UNSENT.
+    constexpr uint32_t EXPECTED_RESENT_BYTES =
+            FRAGMENT_SIZE * (TOTAL_NUMBER_OF_FRAGMENTS - NUMBER_OF_SENT_FRAGMENTS);
+    EXPECT_CALL(listener, on_writer_resend_data(_, _, seq.sequenceNumber, EXPECTED_RESENT_BYTES, _));
     rproxy.perform_acknack_response(nullptr);
 
     // The difference between the latest sent fragment and an undelivered fragment should also be higher than
@@ -247,7 +283,8 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
     StatefulWriter writerMock;
     WriterTimes wTimes;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(wTimes, alloc, &writerMock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(wTimes, alloc, &writerMock, &listener);
     CacheChange_t seq;
     seq.sequenceNumber = {0, 1};
     seq.serializedPayload.length = TOTAL_NUMBER_OF_FRAGMENTS * FRAGMENT_SIZE;
@@ -277,6 +314,9 @@ TEST(ReaderProxyTests, process_nack_frag_multiple_fragments_different_windows_te
     }
 
     // Set the change status to UNSENT.
+    constexpr uint32_t EXPECTED_RESENT_BYTES =
+            FRAGMENT_SIZE * (TOTAL_NUMBER_OF_FRAGMENTS - NUMBER_OF_SENT_FRAGMENTS);
+    EXPECT_CALL(listener, on_writer_resend_data(_, _, seq.sequenceNumber, EXPECTED_RESENT_BYTES, _));
     rproxy.perform_acknack_response(nullptr);
 
     // Handle the first portion of undelivered fragments.
@@ -338,7 +378,8 @@ TEST(ReaderProxyTests, has_been_delivered_test)
     StatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(w_times, alloc, &writer_mock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(w_times, alloc, &writer_mock, &listener);
 
     CacheChange_t seq1;
     CacheChange_t seq2;
@@ -372,6 +413,7 @@ TEST(ReaderProxyTests, has_been_delivered_test)
     expect_result(seq2.sequenceNumber, false, true);
 
     // Change 1 is acknowledged
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, seq1.sequenceNumber, _, _, _));
     rproxy.acked_changes_set(seq1.sequenceNumber + 1);
 
     // Only change 1 has been delivered. Only change 2 is found
@@ -389,7 +431,8 @@ TEST(ReaderProxyTests, acknack_count)
     StatefulWriter writer_mock;
     WriterTimes w_times;
     RemoteLocatorsAllocationAttributes alloc;
-    ReaderProxy rproxy(w_times, alloc, &writer_mock, nullptr);
+    ListenerMock listener;
+    ReaderProxy rproxy(w_times, alloc, &writer_mock, &listener);
 
     ReaderProxyData reader_attributes(0, 0);
     reader_attributes.reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
