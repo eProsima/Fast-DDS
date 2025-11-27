@@ -35,8 +35,9 @@ StatefulPersistentWriter::StatefulPersistentWriter(
         fastdds::rtps::FlowController* flow_controller,
         WriterHistory* hist,
         WriterListener* listen,
+        StatefulWriterListener* stateful_listener,
         IPersistenceService* persistence)
-    : StatefulWriter(pimpl, guid, att, flow_controller, hist, listen)
+    : StatefulWriter(pimpl, guid, att, flow_controller, hist, listen, stateful_listener)
     , PersistentWriter(guid, att, hist, persistence)
 {
     rebuild_status_after_load();

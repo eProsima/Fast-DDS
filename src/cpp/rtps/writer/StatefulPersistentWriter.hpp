@@ -50,8 +50,9 @@ public:
             const WriterAttributes& att,
             fastdds::rtps::FlowController* flow_controller,
             WriterHistory* hist,
-            WriterListener* listen = nullptr,
-            IPersistenceService* persistence = nullptr);
+            WriterListener* listen,
+            StatefulWriterListener* stateful_listener,
+            IPersistenceService* persistence);
 
     virtual ~StatefulPersistentWriter();
 
