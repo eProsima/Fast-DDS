@@ -23,7 +23,7 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 #include <boost/intrusive/detail/minimal_pair_header.hpp>
-#include <boost/interprocess/containers/map.hpp>
+#include <boost/container/map.hpp>
 #include <boost/interprocess/allocators/private_adaptive_pool.hpp>
 #include <boost/intrusive/detail/minimal_pair_header.hpp>         //std::pair
 #include <boost/intrusive/detail/minimal_less_equal_header.hpp>   //std::less
@@ -50,7 +50,7 @@ struct map_index_aux
                typename MapConfig::
          segment_manager_base>                     allocator_type;
 
-   typedef boost::interprocess::map
+   typedef boost::container::map
       <key_type,  mapped_type,
        key_less, allocator_type>                   index_t;
 };
@@ -62,16 +62,30 @@ struct map_index_aux
 template <class MapConfig>
 class map_index
    //Derive class from map specialization
-   : public ipcdetail::map_index_aux<MapConfig>::index_t
+   : private ipcdetail::map_index_aux<MapConfig>::index_t
 {
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
-   typedef ipcdetail::map_index_aux<MapConfig>  index_aux;
-   typedef typename index_aux::index_t       base_type;
+   typedef ipcdetail::map_index_aux<MapConfig>     index_aux;
+   typedef typename index_aux::index_t             base_type;
    typedef typename MapConfig::
-      segment_manager_base          segment_manager_base;
+      segment_manager_base                         segment_manager_base;
+   typedef typename base_type::key_type            key_type;
+   typedef typename base_type::mapped_type         mapped_type;
+
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
    public:
+   using base_type::begin;
+   using base_type::end;
+   using base_type::size;
+   using base_type::erase;
+   typedef typename base_type::iterator         iterator;
+   typedef typename base_type::const_iterator   const_iterator;
+   typedef typename base_type::value_type       value_type;
+   typedef typename MapConfig::compare_key_type compare_key_type;
+   typedef iterator                             insert_commit_data;
+   typedef iterator                             index_data_t;
+
    //!Constructor. Takes a pointer to the
    //!segment manager. Can throw
    map_index(segment_manager_base *segment_mngr)
@@ -87,6 +101,26 @@ class map_index
    //!unused memory.
    void shrink_to_fit()
    {  base_type::get_stored_allocator().deallocate_free_blocks(); }
+
+   std::pair<iterator, bool> insert_check
+      (const compare_key_type& key, insert_commit_data& )
+   {
+      std::pair<iterator, bool> r;
+      r.first = this->base_type::find(key_type(key.str(), key.len()));
+      r.second = r.first == this->base_type::end();
+      return r;
+   }
+
+   iterator insert_commit
+      (const compare_key_type &k, void *context, index_data_t &index_data, insert_commit_data& )
+   {
+      //Now commit the insertion using previous context data
+      iterator it = this->base_type::insert(value_type(key_type(k.str(), k.len()), mapped_type(context))).first;
+      return (index_data = it);
+   }
+
+   iterator find(const compare_key_type& k)
+   {  return this->base_type::find(key_type(k.str(), k.len()));   }
 };
 
 #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)

@@ -42,6 +42,10 @@
 
 namespace boost {
 namespace interprocess {
+
+class ustime;
+class usduration;
+
 namespace ipcdetail {
 
 BOOST_INTRUSIVE_INSTANTIATE_DEFAULT_TYPE_TMPLT(time_duration_type)
@@ -72,6 +76,16 @@ struct enable_if_time_point
 template<class T>
 struct enable_if_duration
    : enable_if_c< BOOST_INTRUSIVE_HAS_TYPE(boost::interprocess::ipcdetail::, T, rep) >
+{};
+
+template<class T>
+struct enable_if_ustime
+   : enable_if_c< is_same<T, ustime>::value >
+{};
+
+template<class T>
+struct enable_if_usduration
+   : enable_if_c< is_same<T, usduration>::value >
 {};
 
 #if defined(BOOST_INTERPROCESS_HAS_REENTRANT_STD_FUNCTIONS)
@@ -135,82 +149,24 @@ inline boost::uint64_t file_time_to_microseconds(const boost::winapi::FILETIME_ 
 }
 #endif
 
-class ustime;
-
-class usduration
+inline boost::uint64_t universal_time_u64_us()
 {
-   public:
-   friend class ustime;
+   #ifdef BOOST_HAS_GETTIMEOFDAY
+      timeval tv;
+      gettimeofday(&tv, 0); //gettimeofday does not support TZ adjust on Linux.
+      boost::uint64_t micros = boost::uint64_t(tv.tv_sec)*1000000u;
+      micros += (boost::uint64_t)tv.tv_usec;
+   #elif defined(BOOST_HAS_FTIME)
+      boost::winapi::FILETIME_ ft;
+      boost::winapi::GetSystemTimeAsFileTime(&ft);
+      boost::uint64_t micros = file_time_to_microseconds(ft); // it will not wrap, since ft is the current time
+                                                               // and cannot be before 1970-Jan-01
+   #else
+      #error "Unsupported date-time error: neither gettimeofday nor FILETIME support is detected"
+   #endif
+   return micros;
+}
 
-   explicit usduration(boost::uint64_t microsecs)
-      : m_microsecs(microsecs)
-   {}
-
-   boost::uint64_t get_microsecs() const
-   {  return m_microsecs;  }
-
-   bool operator < (const usduration &other) const
-   {  return m_microsecs < other.m_microsecs; }
-
-   bool operator > (const usduration &other) const
-   {  return m_microsecs > other.m_microsecs; }
-
-   bool operator <= (const usduration &other) const
-   {  return m_microsecs <= other.m_microsecs; }
-
-   bool operator >= (const usduration &other) const
-   {  return m_microsecs >= other.m_microsecs; }
-
-   private:
-   boost::uint64_t m_microsecs;
-};
-
-class ustime
-{
-   public:
-   explicit ustime(boost::uint64_t microsecs)
-      : m_microsecs(microsecs)
-   {}
-
-   ustime &operator += (const usduration &other)
-   {  m_microsecs += other.m_microsecs; return *this; }
-
-   ustime operator + (const usduration &other)
-   {  ustime r(*this); r += other; return r; }
-
-   ustime &operator -= (const usduration &other)
-   {  m_microsecs -= other.m_microsecs; return *this; }
-
-   ustime operator - (const usduration &other)
-   {  ustime r(*this); r -= other; return r; }
-
-   friend usduration operator - (const ustime &l, const ustime &r)
-   {  return usduration(l.m_microsecs - r.m_microsecs); }
-
-   bool operator < (const ustime &other) const
-   {  return m_microsecs < other.m_microsecs; }
-
-   bool operator > (const ustime &other) const
-   {  return m_microsecs > other.m_microsecs; }
-
-   bool operator <= (const ustime &other) const
-   {  return m_microsecs <= other.m_microsecs; }
-
-   bool operator >= (const ustime &other) const
-   {  return m_microsecs >= other.m_microsecs; }
-
-   boost::uint64_t get_microsecs() const
-   {  return m_microsecs;  }
-
-   private:
-   boost::uint64_t m_microsecs;
-};
-
-inline usduration usduration_milliseconds(boost::uint64_t millisec)
-{  return usduration(millisec*1000u);   }
-
-inline usduration usduration_seconds(boost::uint64_t sec)
-{  return usduration(sec*uint64_t(1000000u));   }
 
 template<class TimeType, class Enable = void>
 class microsec_clock;
@@ -222,9 +178,11 @@ class microsec_clock<TimeType, typename enable_if_ptime<TimeType>::type>
    typedef typename TimeType::date_type date_type;
    typedef typename TimeType::time_duration_type time_duration_type;
    typedef typename time_duration_type::rep_type resolution_traits_type;
-   public:
 
-   static TimeType universal_time()
+   public:
+   typedef TimeType time_point;
+
+   static time_point universal_time()
    {
       #ifdef BOOST_HAS_GETTIMEOFDAY
          timeval tv;
@@ -260,30 +218,7 @@ class microsec_clock<TimeType, typename enable_if_ptime<TimeType>::type>
                               static_cast< typename time_duration_type::sec_type >(curr_ptr->tm_sec),
                               static_cast< typename time_duration_type::fractional_seconds_type >(sub_sec * adjust)
                            );
-      return TimeType(d,td);
-   }
-};
-
-template<>
-class microsec_clock<ustime>
-{
-   public:
-   static ustime universal_time()
-   {
-      #ifdef BOOST_HAS_GETTIMEOFDAY
-         timeval tv;
-         gettimeofday(&tv, 0); //gettimeofday does not support TZ adjust on Linux.
-         boost::uint64_t micros = boost::uint64_t(tv.tv_sec)*1000000;
-         micros += (boost::uint64_t)tv.tv_usec;
-      #elif defined(BOOST_HAS_FTIME)
-         boost::winapi::FILETIME_ ft;
-         boost::winapi::GetSystemTimeAsFileTime(&ft);
-         boost::uint64_t micros = file_time_to_microseconds(ft); // it will not wrap, since ft is the current time
-                                                                  // and cannot be before 1970-Jan-01
-      #else
-         #error "Unsupported date-time error: neither gettimeofday nor FILETIME support is detected"
-      #endif
-      return ustime(micros);
+      return time_point(d,td);
    }
 };
 
@@ -291,22 +226,12 @@ template<class TimePoint>
 class microsec_clock<TimePoint, typename enable_if_time_point<TimePoint>::type>
 {
    public:
-   static TimePoint universal_time()
+   typedef typename TimePoint::clock::time_point time_point;
+
+   static time_point universal_time()
    {  return TimePoint::clock::now();  }
 };
 
-
-template<class TimePoint>
-inline TimePoint delay_ms(unsigned msecs, typename enable_if_ptime<TimePoint>::type* = 0)
-{
-   typedef typename TimePoint::time_duration_type time_duration_type;
-   typedef typename time_duration_type::rep_type resolution_traits_type;
-
-   time_duration_type td(msecs*1000*resolution_traits_type::res_adjust());
-
-   TimePoint tp(microsec_clock<TimePoint>::universal_time());
-   return (tp += td);
-}
 
 template<class TimePoint>
 inline bool is_pos_infinity(const TimePoint &abs_time, typename enable_if_ptime<TimePoint>::type* = 0)
@@ -319,20 +244,6 @@ inline bool is_pos_infinity(const TimePoint &, typename disable_if_ptime<TimePoi
 {
    return false;
 }
-
-/*
-template<class Duration>
-inline ustime duration_to_timepoint(const Duration &dur, typename enable_if_ptime<Duration>::type* = 0)
-{
-   return dur.is_pos_infinity();
-}
-
-template<class Duration>
-inline bool duration_to_timepoint(const Duration &, typename disable_if_ptime<Duration>::type* = 0)
-{
-   return false;
-}
-*/
 
 // duration_to_milliseconds
 
@@ -349,34 +260,11 @@ inline boost::uint64_t duration_to_milliseconds(const Duration &d, typename enab
    return static_cast<boost::uint64_t>(double(d.count())*factor);
 }
 
-inline boost::uint64_t duration_to_milliseconds(const usduration &d)
-{
-   return d.get_microsecs()/1000;
-}
-
-// duration_to_usduration
-
 template<class Duration>
-inline usduration duration_to_usduration(const Duration &d, typename enable_if_ptime_duration<Duration>::type* = 0)
+inline boost::uint64_t duration_to_milliseconds(const Duration&d, typename enable_if_usduration<Duration>::type* = 0)
 {
-   return usduration(static_cast<boost::uint64_t>(d.total_microseconds()));
+   return d.get_microsecs()/1000u;
 }
-
-template<class Duration>
-inline usduration duration_to_usduration(const Duration &d, typename enable_if_duration<Duration>::type* = 0)
-{
-   const double factor = double(Duration::period::num)*1000000.0/double(Duration::period::den);
-   return usduration(static_cast<boost::uint64_t>(double(d.count())*factor));
-}
-
-// duration_to_ustime
-
-template<class Duration>
-inline ustime duration_to_ustime(const Duration &d)
-{
-   return microsec_clock<ustime>::universal_time() + (duration_to_usduration)(d);
-}
-
 
 }  //namespace ipcdetail {
 }  //namespace interprocess {

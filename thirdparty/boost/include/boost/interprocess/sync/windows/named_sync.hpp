@@ -81,7 +81,7 @@ inline windows_named_sync::windows_named_sync()
 
 inline void windows_named_sync::close(windows_named_sync_interface &sync_interface)
 {
-   const std::size_t buflen = sync_interface.get_data_size();
+   const unsigned long buflen = static_cast<unsigned long>(sync_interface.get_data_size());
    winapi::interprocess_overlapped overlapped;
    if(winapi::lock_file_ex
       (m_file_hnd, winapi::lockfile_exclusive_lock, 0, 1, 0, &overlapped)){
@@ -129,7 +129,7 @@ inline void windows_named_sync::open_or_create
       bool success = false;
       if(m_file_hnd != winapi::invalid_handle_value){
          //Now lock the file
-         const std::size_t buflen = sync_interface.get_data_size();
+         const unsigned long buflen = static_cast<unsigned long>(sync_interface.get_data_size());
          typedef __int64 unique_id_type;
          const std::size_t sizeof_file_info = sizeof(unique_id_type) + buflen;
          winapi::interprocess_overlapped overlapped;
@@ -204,28 +204,28 @@ inline void windows_named_sync::open_or_create
 
 inline bool windows_named_sync::remove(const char *name)
 {
-   BOOST_TRY{
+   BOOST_INTERPROCESS_TRY{
       //Make sure a temporary path is created for shared memory
       std::string semfile;
       ipcdetail::shared_filepath(name, semfile);
       return winapi::unlink_file(semfile.c_str());
    }
-   BOOST_CATCH(...){
+   BOOST_INTERPROCESS_CATCH(...){
       return false;
-   } BOOST_CATCH_END
+   } BOOST_INTERPROCESS_CATCH_END
 }
 
 inline bool windows_named_sync::remove(const wchar_t *name)
 {
-   BOOST_TRY{
+   BOOST_INTERPROCESS_TRY{
       //Make sure a temporary path is created for shared memory
       std::wstring semfile;
       ipcdetail::shared_filepath(name, semfile);
       return winapi::unlink_file(semfile.c_str());
    }
-   BOOST_CATCH(...){
+   BOOST_INTERPROCESS_CATCH(...){
       return false;
-   } BOOST_CATCH_END
+   } BOOST_INTERPROCESS_CATCH_END
 }
 
 }  //namespace ipcdetail {

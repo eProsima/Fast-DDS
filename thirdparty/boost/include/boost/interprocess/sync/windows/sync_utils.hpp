@@ -30,7 +30,7 @@
 
 //Shield against external warnings
 #include <boost/interprocess/detail/config_external_begin.hpp>
-#include <boost/unordered/unordered_map.hpp>
+#include <boost/container/map.hpp>
 #include <boost/interprocess/detail/config_external_end.hpp>
 #include <boost/container/flat_map.hpp>
 
@@ -101,10 +101,13 @@ class sync_id
    {  return rand_;  }
 
    friend std::size_t hash_value(const sync_id &m)
-   {  return boost::hash_value(m.rand_);  }
+   {  return static_cast<std::size_t>(m.rand_);  }
 
    friend bool operator==(const sync_id &l, const sync_id &r)
    {  return l.rand_ == r.rand_;  }
+
+   friend bool operator<(const sync_id &l, const sync_id &r)
+   {  return l.rand_ < r.rand_;  }
 
    private:
    internal_type rand_;
@@ -118,9 +121,10 @@ class sync_handles
    private:
 
    //key: id -> mapped: HANDLE. Hash map to allow efficient sync operations
-   typedef boost::unordered_map<sync_id, void*> umap_type;
-   //key: ordered address of the sync type -> iterator from umap_type. Ordered map to allow closing handles when unmapping
-   typedef boost::container::flat_map<const void*, umap_type::iterator> map_type;
+   typedef boost::container::flat_map<sync_id, void*> id_map_type;
+   //key: ordered address of the sync type -> key from id_map_type. Ordered map to allow closing handles when unmapping
+   // Can't store iterators into id_map_type because they would get invalidated.
+   typedef boost::container::flat_map<const void*, sync_id> addr_map_type;
    static const std::size_t LengthOfGlobal = sizeof("Global\\boost.ipc")-1;
    static const std::size_t StrSize        = LengthOfGlobal + (sizeof(sync_id)*2+1);
    typedef char NameBuf[StrSize];
@@ -183,13 +187,13 @@ class sync_handles
 
    void *obtain_mutex(const sync_id &id, const void *mapping_address, bool *popen_created = 0)
    {
-      umap_type::value_type v(id, (void*)0);
+      id_map_type::value_type v(id, (void*)0);
       scoped_lock<spin_mutex> lock(mtx_);
-      umap_type::iterator it = umap_.insert(v).first;
+      id_map_type::iterator it = umap_.insert(v).first;
       void *&hnd_val = it->second;
       if(!hnd_val){
          BOOST_ASSERT(map_.find(mapping_address) == map_.end());
-         map_[mapping_address] = it;
+         map_[mapping_address] = id;
          hnd_val = open_or_create_mutex(id);
          if(popen_created) *popen_created = true;
          ++num_handles_;
@@ -204,13 +208,13 @@ class sync_handles
 
    void *obtain_semaphore(const sync_id &id, const void *mapping_address, unsigned int initial_count, bool *popen_created = 0)
    {
-      umap_type::value_type v(id, (void*)0);
+      id_map_type::value_type v(id, (void*)0);
       scoped_lock<spin_mutex> lock(mtx_);
-      umap_type::iterator it = umap_.insert(v).first;
+      id_map_type::iterator it = umap_.insert(v).first;
       void *&hnd_val = it->second;
       if(!hnd_val){
          BOOST_ASSERT(map_.find(mapping_address) == map_.end());
-         map_[mapping_address] = it;
+         map_[mapping_address] = id;
          hnd_val = open_or_create_semaphore(id, initial_count);
          if(popen_created) *popen_created = true;
          ++num_handles_;
@@ -225,8 +229,8 @@ class sync_handles
    void destroy_handle(const sync_id &id, const void *mapping_address)
    {
       scoped_lock<spin_mutex> lock(mtx_);
-      umap_type::iterator it = umap_.find(id);
-      umap_type::iterator itend = umap_.end();
+      id_map_type::iterator it = umap_.find(id);
+      id_map_type::iterator itend = umap_.end();
 
       if(it != itend){
          winapi::close_handle(it->second);
@@ -243,13 +247,15 @@ class sync_handles
       const void *low_id(addr);
       const void *hig_id(static_cast<const char*>(addr)+size);
       scoped_lock<spin_mutex> lock(mtx_);
-      map_type::iterator itlow(map_.lower_bound(low_id)),
+      addr_map_type::iterator itlow(map_.lower_bound(low_id)),
                          ithig(map_.lower_bound(hig_id)),
                          it(itlow);
       for (; it != ithig; ++it){
-         umap_type::iterator uit = it->second; 
+         sync_id ukey = it->second;
+         id_map_type::iterator uit = umap_.find(ukey);
+         BOOST_ASSERT(uit != umap_.end());
          void * const hnd = uit->second;
-         umap_.erase(uit);
+         umap_.erase(ukey);
          int ret = winapi::close_handle(hnd);
          --num_handles_;
          BOOST_ASSERT(ret != 0); (void)ret;  //Sanity check that handle was ok
@@ -260,8 +266,8 @@ class sync_handles
 
    private:
    spin_mutex mtx_;
-   umap_type umap_;
-   map_type map_;
+   id_map_type umap_;
+   addr_map_type map_;
    std::size_t num_handles_;
 };
 
