@@ -511,6 +511,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
