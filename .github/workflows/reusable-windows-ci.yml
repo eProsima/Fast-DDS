@@ -119,14 +119,14 @@ jobs:
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/windows/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}\src\fastdds\fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/windows/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.repos
           destination_workspace: src
