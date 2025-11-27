@@ -35,7 +35,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class ChangeForReader_t;
 class ReaderProxy;
+class StatefulWriterListener;
 class TimedEvent;
 
 /**
@@ -53,7 +55,8 @@ public:
             const WriterAttributes& att,
             fastdds::rtps::FlowController* flow_controller,
             WriterHistory* hist,
-            WriterListener* listen = nullptr);
+            WriterListener* listen,
+            StatefulWriterListener* stateful_listener);
 
     virtual ~StatefulWriter();
 
@@ -487,6 +490,8 @@ private:
     LocatorSelectorSender locator_selector_general_;
 
     LocatorSelectorSender locator_selector_async_;
+
+    StatefulWriterListener* const stateful_writer_listener_ = nullptr;
 };
 
 } // namespace rtps

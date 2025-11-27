@@ -53,6 +53,7 @@
 #include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/ReaderProxy.hpp>
+#include <rtps/writer/StatefulWriterListener.hpp>
 #include <utils/TimeConversion.hpp>
 
 #ifdef FASTDDS_STATISTICS
@@ -177,7 +178,8 @@ StatefulWriter::StatefulWriter(
         const WriterAttributes& att,
         FlowController* flow_controller,
         WriterHistory* history,
-        WriterListener* listener)
+        WriterListener* listener,
+        StatefulWriterListener* stateful_listener)
     : BaseWriter(pimpl, guid, att, flow_controller, history, listener)
     , periodic_hb_event_(nullptr)
     , nack_response_event_(nullptr)
@@ -201,6 +203,7 @@ StatefulWriter::StatefulWriter(
     , matched_datasharing_readers_(att.matched_readers_allocation)
     , locator_selector_general_(*this, att.matched_readers_allocation)
     , locator_selector_async_(*this, att.matched_readers_allocation)
+    , stateful_writer_listener_(stateful_listener)
 {
     init(pimpl, att);
 }
@@ -244,7 +247,9 @@ void StatefulWriter::init(
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
     {
-        matched_readers_pool_.push_back(new ReaderProxy(times_, part_att.allocation.locators, this));
+        ReaderProxy* new_proxy = new ReaderProxy(
+            times_, part_att.allocation.locators, this, stateful_writer_listener_);
+        matched_readers_pool_.push_back(new_proxy);
     }
 }
 
@@ -1036,7 +1041,7 @@ bool StatefulWriter::matched_reader_add_edp(
         if (get_matched_readers_size() + matched_readers_pool_.size() < max_readers)
         {
             const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->get_attributes();
-            rp = new ReaderProxy(times_, part_att.allocation.locators, this);
+            rp = new ReaderProxy(times_, part_att.allocation.locators, this, stateful_writer_listener_);
         }
         else
         {
