@@ -507,6 +507,7 @@ private:
     uint32_t convert_status_on_all_changes(
             ChangeForReaderStatus_t previous,
             ChangeForReaderStatus_t next,
+            bool notify_resend,
             const std::function<void(ChangeForReader_t& change)>& func = {});
 
     /*!
@@ -549,6 +550,14 @@ private:
      */
     void notify_acknowledged(
             const ChangeForReader_t& chit) const;
+
+    /**
+     * @brief Notifies that a change has been resent to this ReaderProxy.
+     *
+     * @param change  Reference to the ChangeForReader_t that has been resent.
+     */
+    void notify_resent(
+            const ChangeForReader_t& change) const;
 
 };
 

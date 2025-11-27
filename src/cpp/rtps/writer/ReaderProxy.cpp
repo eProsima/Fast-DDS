@@ -501,7 +501,7 @@ bool ReaderProxy::process_initial_acknack(
 {
     if (is_local_reader())
     {
-        return 0 != convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT, func);
+        return 0 != convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT, false, func);
     }
 
     return true;
@@ -574,18 +574,19 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
 
 bool ReaderProxy::perform_nack_supression()
 {
-    return 0 != convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
+    return 0 != convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED, false);
 }
 
 uint32_t ReaderProxy::perform_acknack_response(
         const std::function<void(ChangeForReader_t& change)>& func)
 {
-    return convert_status_on_all_changes(REQUESTED, UNSENT, func);
+    return convert_status_on_all_changes(REQUESTED, UNSENT, nullptr != stateful_writer_listener_, func);
 }
 
 uint32_t ReaderProxy::convert_status_on_all_changes(
         ChangeForReaderStatus_t previous,
         ChangeForReaderStatus_t next,
+        bool notify_resend,
         const std::function<void(ChangeForReader_t& change)>& func)
 {
     assert(previous > next);
@@ -600,6 +601,11 @@ uint32_t ReaderProxy::convert_status_on_all_changes(
         {
             ++changed;
             change.setStatus(next);
+
+            if (notify_resend)
+            {
+                notify_resent(change);
+            }
 
             if (func)
             {
@@ -775,6 +781,56 @@ void ReaderProxy::notify_acknowledged(
             chit.time_since_creation(),
             locator_info_.general_locator_selector_entry());
     }
+}
+
+void ReaderProxy::notify_resent(
+        const ChangeForReader_t& change) const
+{
+    assert (stateful_writer_listener_ != nullptr);
+
+    const CacheChange_t* sample = change.getChange();
+    assert(sample != nullptr);
+
+    // Calc number of bytes to resend
+    uint64_t resent_bytes = 0;
+    const FragmentNumberSet_t& fragments = change.getUnsentFragments();
+    if (fragments.empty())
+    {
+        resent_bytes = sample->serializedPayload.length;
+    }
+    else
+    {
+        // Calculate number of bytes to resend
+        uint64_t num_fragments = fragments.count();
+        uint32_t fragment_size = sample->getFragmentSize();
+        if (fragments.max() < sample->getFragmentCount())
+        {
+            resent_bytes = num_fragments * fragment_size;
+        }
+        else
+        {
+            // Last fragment may be smaller
+            resent_bytes = (num_fragments - 1) * fragment_size;
+            uint32_t last_fragment_size = sample->serializedPayload.length % fragment_size;
+            if (last_fragment_size > 0)
+            {
+                resent_bytes += last_fragment_size;
+            }
+            else
+            {
+                resent_bytes += fragment_size;
+            }
+        }
+    }
+
+    // Notify to participant
+    assert(resent_bytes <= sample->serializedPayload.length);
+    stateful_writer_listener_->on_writer_resend_data(
+        writer_->getGuid(),
+        guid(),
+        sample->sequenceNumber,
+        static_cast<uint32_t>(resent_bytes),
+        locator_info_.general_locator_selector_entry());
 }
 
 }   // namespace rtps
