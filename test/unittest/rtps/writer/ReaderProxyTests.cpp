@@ -193,7 +193,7 @@ TEST(ReaderProxyTests, requested_changes_set_test)
 }
 #endif // __QNXNTO__
 
-FragmentNumber_t mark_next_fragment_sent(
+static FragmentNumber_t mark_next_fragment_sent(
         ReaderProxy& rproxy,
         SequenceNumber_t sequence_number,
         FragmentNumber_t expected_fragment)
@@ -466,6 +466,154 @@ TEST(ReaderProxyTests, acknack_count)
     {
         EXPECT_FALSE(rproxy.check_and_set_acknack_count(i));
     }
+}
+
+static void check_fragments_resend_notification(
+        ListenerMock& listener,
+        ReaderProxy& rproxy,
+        uint32_t& nackfrag_count,
+        uint32_t fragment_size,
+        const SequenceNumber_t& sequence_number,
+        const std::vector<FragmentNumber_t>& fragments_to_request)
+{
+    if (fragments_to_request.empty())
+    {
+        return;
+    }
+    FragmentNumberSet_t fset(fragments_to_request.front());
+    uint32_t n_fragments = 0;
+    for (auto fragment: fragments_to_request)
+    {
+        n_fragments++;
+        fset.add(fragment);
+    }
+    rproxy.process_nack_frag({}, nackfrag_count++, sequence_number, fset);
+    EXPECT_CALL(listener, on_writer_resend_data(_, _, sequence_number, n_fragments * fragment_size, _));
+    rproxy.perform_acknack_response(nullptr);
+    bool was_last_fragment = false;
+    for (auto fragment : fragments_to_request)
+    {
+        rproxy.mark_fragment_as_sent_for_change(sequence_number, fragment, was_last_fragment);
+    }
+    rproxy.from_unsent_to_status(sequence_number, UNACKNOWLEDGED, false, true);
+}
+
+TEST(ReaderProxyTests, listener_notification)
+{
+    RTPSMessageGroup message_group(nullptr, false);
+    RTPSGapBuilder gap_builder(message_group);
+
+    StatefulWriter writer_mock;
+    WriterTimes w_times;
+    RemoteLocatorsAllocationAttributes alloc;
+    ListenerMock listener;
+    ReaderProxy rproxy(w_times, alloc, &writer_mock, &listener);
+    CacheChange_t seq1;
+    seq1.sequenceNumber = {0, 1};
+    seq1.serializedPayload.length = 100;
+
+    ReaderProxyData reader_attributes(0, 0);
+    reader_attributes.reliability.kind = fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    rproxy.start(reader_attributes);
+    // Add change 1
+    rproxy.add_change(ChangeForReader_t(&seq1), true, false);
+    // Change 1 is sent
+    rproxy.from_unsent_to_status(seq1.sequenceNumber, UNACKNOWLEDGED, false, true);
+
+    // Change 1 is lost and requested for resend
+    EXPECT_CALL(listener, on_writer_resend_data(_, _, seq1.sequenceNumber, 100, _));
+    SequenceNumberSet_t set({ 0, 1 });
+    set.add({ 0, 1 });
+    rproxy.requested_changes_set(set, gap_builder, seq1.sequenceNumber);
+    rproxy.perform_acknack_response(nullptr);
+
+    // Change 1 is acknowledged
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, seq1.sequenceNumber, 100, _, _));
+    rproxy.acked_changes_set(seq1.sequenceNumber + 1);
+
+    // Add change 2
+    seq1.sequenceNumber = {0, 2};
+    rproxy.add_change(ChangeForReader_t(&seq1), true, false);
+    // Change 2 is sent and automatically acknowledged
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, seq1.sequenceNumber, 100, _, _));
+    rproxy.from_unsent_to_status(seq1.sequenceNumber, ACKNOWLEDGED, false, true);
+
+    // Change 2 is removed
+    rproxy.change_has_been_removed(seq1.sequenceNumber);
+
+    // Add change 3 with big fragmented payload
+    constexpr uint32_t LARGE_PAYLOAD_SIZE = 100000;
+    constexpr uint16_t FRAGMENT_SIZE = 100;
+    constexpr uint32_t MAX_FRAGMENTS_REQUESTED = 256;
+    constexpr uint32_t TOTAL_NUMBER_OF_FRAGMENTS = LARGE_PAYLOAD_SIZE / FRAGMENT_SIZE;
+    seq1.sequenceNumber = { 0, 3 };
+    seq1.serializedPayload.length = LARGE_PAYLOAD_SIZE;
+    seq1.setFragmentSize(FRAGMENT_SIZE);
+    rproxy.add_change(ChangeForReader_t(&seq1), true, false);
+
+    // Change 3 is sent
+    for (auto i = 1u; i <= TOTAL_NUMBER_OF_FRAGMENTS; ++i)
+    {
+        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq1.sequenceNumber, i), i);
+    }
+    rproxy.from_unsent_to_status(seq1.sequenceNumber, UNACKNOWLEDGED, false, true);
+
+    // Change 3 is lost and requested for resend
+    EXPECT_CALL(listener, on_writer_resend_data(_, _, seq1.sequenceNumber, MAX_FRAGMENTS_REQUESTED * FRAGMENT_SIZE, _));
+    SequenceNumberSet_t set3({ 0, 3 });
+    set3.add({ 0, 3 });
+    rproxy.requested_changes_set(set3, gap_builder, seq1.sequenceNumber);
+    rproxy.perform_acknack_response(nullptr);
+
+    // Change 3 is sent
+    for (auto i = 1u; i <= MAX_FRAGMENTS_REQUESTED; ++i)
+    {
+        ASSERT_EQ(mark_next_fragment_sent(rproxy, seq1.sequenceNumber, i), i);
+    }
+    rproxy.from_unsent_to_status(seq1.sequenceNumber, UNACKNOWLEDGED, false, true);
+
+    // Resend all fragments individually
+    uint32_t nackfrag_count = 1;
+    for (FragmentNumber_t fn = 1; fn <= TOTAL_NUMBER_OF_FRAGMENTS; ++fn)
+    {
+        check_fragments_resend_notification(
+            listener,
+            rproxy,
+            nackfrag_count,
+            FRAGMENT_SIZE,
+            seq1.sequenceNumber,
+            { fn });
+    }
+
+    // Request 1 out of 33 fragments
+    check_fragments_resend_notification(
+        listener,
+        rproxy,
+        nackfrag_count,
+        FRAGMENT_SIZE,
+        seq1.sequenceNumber,
+        { 1, 34, 67, 100, 133, 166, 199, 232 });
+
+    // Increasing number of fragments from 1 to 32
+    for (FragmentNumber_t i = 2; i <= 32; ++i)
+    {
+        std::vector<FragmentNumber_t> fragments;
+        for (FragmentNumber_t j = 1; j <= i; ++j)
+        {
+            fragments.push_back(j);
+        }
+        check_fragments_resend_notification(
+            listener,
+            rproxy,
+            nackfrag_count,
+            FRAGMENT_SIZE,
+            seq1.sequenceNumber,
+            fragments);
+    }
+
+    // Change 3 is acknowledged
+    EXPECT_CALL(listener, on_writer_data_acknowledged(_, _, seq1.sequenceNumber, LARGE_PAYLOAD_SIZE, _, _));
+    rproxy.acked_changes_set(seq1.sequenceNumber + 1);
 }
 
 } // namespace rtps
