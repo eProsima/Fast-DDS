@@ -45,7 +45,8 @@ namespace rtps {
 ReaderProxy::ReaderProxy(
         const WriterTimes& times,
         const RemoteLocatorsAllocationAttributes& loc_alloc,
-        StatefulWriter* writer)
+        StatefulWriter* writer,
+        StatefulWriterListener* stateful_listener)
     : is_active_(false)
     , locator_info_(
         writer, loc_alloc.max_unicast_locators,
@@ -61,7 +62,7 @@ ReaderProxy::ReaderProxy(
     , timers_enabled_(false)
     , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
-    , stateful_writer_listener_(writer->get_stateful_writer_listener())
+    , stateful_writer_listener_(stateful_listener)
 {
     auto participant = writer_->get_participant_impl();
     if (nullptr != participant)

@@ -31,7 +31,6 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class ReaderProxy;
-class StatefulWriterListener;
 
 class StatefulWriter : public BaseWriter
 {
@@ -120,11 +119,6 @@ public:
             const SequenceNumber_t& /*seq_num*/) const override
     {
         return false;
-    }
-
-    StatefulWriterListener* get_stateful_writer_listener()
-    {
-        return nullptr;
     }
 
 private:
