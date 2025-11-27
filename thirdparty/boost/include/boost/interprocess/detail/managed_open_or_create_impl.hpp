@@ -28,12 +28,13 @@
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/interprocess/detail/interprocess_tester.hpp>
+#include <boost/interprocess/anonymous_shared_memory.hpp>
 #include <boost/interprocess/creation_tags.hpp>
 #include <boost/interprocess/detail/mpl.hpp>
 #include <boost/interprocess/permissions.hpp>
 #include <boost/container/detail/type_traits.hpp>  //alignment_of, aligned_storage
 #include <boost/interprocess/sync/spin/wait.hpp>
-#include <boost/interprocess/detail/timed_utils.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/move/move.hpp>
 #include <boost/cstdint.hpp>
 
@@ -205,6 +206,15 @@ class managed_open_or_create_impl
          , construct_func);
    }
 
+   template <class ConstructFunc>
+   managed_open_or_create_impl(std::size_t size, void *addr, const ConstructFunc &construct_func)
+   {
+      priv_map_anonymous
+         ( size
+         , addr
+         , construct_func);
+   }
+
    managed_open_or_create_impl(BOOST_RV_REF(managed_open_or_create_impl) moved)
    {  this->swap(moved);   }
 
@@ -297,14 +307,14 @@ class managed_open_or_create_impl
       spin_wait swait;
       unsigned tries = 0;
       while(1){
-         BOOST_TRY{
+         BOOST_INTERPROCESS_TRY{
             create_device<FileBased>(dev, id, size, perm, file_like_t());
             return true;
          }
-         BOOST_CATCH(interprocess_exception &ex){
+         BOOST_INTERPROCESS_CATCH(interprocess_exception &ex){
             #ifndef BOOST_NO_EXCEPTIONS
             if(ex.get_error_code() != already_exists_error){
-               BOOST_RETHROW
+               BOOST_INTERPROCESS_RETHROW
             }
             else if (++tries == MaxCreateOrOpenTries) {
                //File existing when trying to create, but non-existing when
@@ -313,25 +323,25 @@ class managed_open_or_create_impl
                throw interprocess_exception(error_info(corrupted_error));
             }
             else{
-               BOOST_TRY{
+               BOOST_INTERPROCESS_TRY{
                   DeviceAbstraction tmp(open_only, id, read_write);
                   dev.swap(tmp);
                   return false;
                }
-               BOOST_CATCH(interprocess_exception &e){
+               BOOST_INTERPROCESS_CATCH(interprocess_exception &e){
                   if(e.get_error_code() != not_found_error){
-                     BOOST_RETHROW
+                     BOOST_INTERPROCESS_RETHROW
                   }
                }
-               BOOST_CATCH(...){
-                  BOOST_RETHROW
-               } BOOST_CATCH_END
+               BOOST_INTERPROCESS_CATCH(...){
+                  BOOST_INTERPROCESS_RETHROW
+               } BOOST_INTERPROCESS_CATCH_END
             }
             #endif   //#ifndef BOOST_NO_EXCEPTIONS
          }
-         BOOST_CATCH(...){
-            BOOST_RETHROW
-         } BOOST_CATCH_END
+         BOOST_INTERPROCESS_CATCH(...){
+            BOOST_INTERPROCESS_RETHROW
+         } BOOST_INTERPROCESS_CATCH_END
          swait.yield();
       }
       return false;
@@ -342,7 +352,7 @@ class managed_open_or_create_impl
       (DeviceAbstraction &dev, mapped_region &final_region,
        std::size_t size, const void *addr, ConstructFunc construct_func)
    {
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          //If this throws, we are lost
          truncate_device<FileBased>(dev, static_cast<offset_t>(size), file_like_t());
 
@@ -353,16 +363,16 @@ class managed_open_or_create_impl
          boost::uint32_t previous = atomic_cas32(patomic_word, InitializingSegment, UninitializedSegment);
 
          if(previous == UninitializedSegment){
-            BOOST_TRY{
+            BOOST_INTERPROCESS_TRY{
                construct_func( static_cast<char*>(region.get_address()) + ManagedOpenOrCreateUserOffset
                               , size - ManagedOpenOrCreateUserOffset, true);
                //All ok, just move resources to the external mapped region
                final_region.swap(region);
             }
-            BOOST_CATCH(...){
+            BOOST_INTERPROCESS_CATCH(...){
                atomic_write32(patomic_word, CorruptedSegment);
-               BOOST_RETHROW
-            } BOOST_CATCH_END
+               BOOST_INTERPROCESS_RETHROW
+            } BOOST_INTERPROCESS_CATCH_END
             atomic_write32(patomic_word, InitializedSegment);
          }
          else{
@@ -370,16 +380,16 @@ class managed_open_or_create_impl
             throw interprocess_exception(error_info(corrupted_error));
          }
       }
-      BOOST_CATCH(...){
-         BOOST_TRY{
+      BOOST_INTERPROCESS_CATCH(...){
+         BOOST_INTERPROCESS_TRY{
             truncate_device<FileBased>(dev, 1u, file_like_t());
          }
-         BOOST_CATCH(...){
+         BOOST_INTERPROCESS_CATCH(...){
          }
-         BOOST_CATCH_END
-         BOOST_RETHROW
+         BOOST_INTERPROCESS_CATCH_END
+         BOOST_INTERPROCESS_RETHROW
       }
-      BOOST_CATCH_END
+      BOOST_INTERPROCESS_CATCH_END
    }
 
    template <class ConstructFunc>
@@ -388,7 +398,7 @@ class managed_open_or_create_impl
       , const void *addr, ConstructFunc construct_func
       , bool ronly, bool cow)
    {
-      const usduration TimeoutSec(usduration_seconds(MaxInitializeTimeSec));
+      const usduration TimeoutSec(usduration_from_seconds(MaxInitializeTimeSec));
 
       if(FileBased){
          offset_t filesize = 0;
@@ -507,6 +517,37 @@ class managed_open_or_create_impl
 
       if(StoreDevice){
          this->DevHolder::get_device() = boost::move(dev);
+      }
+   }
+
+   template <class ConstructFunc> inline
+   void priv_map_anonymous
+      (std::size_t size,
+       void *addr,
+       ConstructFunc construct_func)
+   {
+      mapped_region region = anonymous_shared_memory(size, addr);
+
+      boost::uint32_t *patomic_word = 0;  //avoid gcc warning
+      patomic_word = static_cast<boost::uint32_t*>(region.get_address());
+      boost::uint32_t previous = atomic_cas32(patomic_word, InitializingSegment, UninitializedSegment);
+
+      if(previous == UninitializedSegment){
+         BOOST_INTERPROCESS_TRY{
+            construct_func( static_cast<char*>(region.get_address()) + ManagedOpenOrCreateUserOffset
+                           , size - ManagedOpenOrCreateUserOffset, true);
+            //All ok, just move resources to the external mapped region
+            m_mapped_region.swap(region);
+         }
+         BOOST_INTERPROCESS_CATCH(...){
+            atomic_write32(patomic_word, CorruptedSegment);
+            BOOST_INTERPROCESS_RETHROW
+         } BOOST_INTERPROCESS_CATCH_END
+         atomic_write32(patomic_word, InitializedSegment);
+      }
+      else{
+         atomic_write32(patomic_word, CorruptedSegment);
+         throw interprocess_exception(error_info(corrupted_error));
       }
    }
 

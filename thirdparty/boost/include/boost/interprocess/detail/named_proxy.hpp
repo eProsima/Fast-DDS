@@ -23,7 +23,6 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 // interprocess/detail
-#include <boost/interprocess/detail/in_place_interface.hpp>
 #include <boost/interprocess/detail/mpl.hpp>
 #include <boost/move/utility_core.hpp>
 #ifndef BOOST_INTERPROCESS_PERFECT_FORWARDING
@@ -43,11 +42,21 @@ namespace boost {
 namespace interprocess {
 namespace ipcdetail {
 
+template<class T>
+inline void named_construct_placement_destroy(void *mem, std::size_t num)
+{
+   T* memory = static_cast<T*>(mem); \
+   for(std::size_t destroyed = 0; destroyed < num; ++destroyed)
+      (memory++)->~T();
+}
+
+
 #ifdef BOOST_INTERPROCESS_PERFECT_FORWARDING
 
 template<class T, bool is_iterator, class ...Args>
-struct CtorArgN : public placement_destroy<T>
+struct CtorArgN
 {
+   typedef T object_type;
    typedef bool_<is_iterator> IsIterator;
    typedef CtorArgN<T, is_iterator, Args...> self_t;
    typedef typename build_number_seq<sizeof...(Args)>::type index_tuple_t;
@@ -64,30 +73,35 @@ struct CtorArgN : public placement_destroy<T>
       :  args_(args...)
    {}
 
-   virtual void construct_n(void *mem
-                     , std::size_t num
-                     , std::size_t &constructed) BOOST_OVERRIDE
+   virtual void construct_n(void *mem, std::size_t num)
    {
-      T* memory      = static_cast<T*>(mem);
-      for(constructed = 0; constructed < num; ++constructed){
-         this->construct(memory++, IsIterator(), index_tuple_t());
-         this->do_increment(IsIterator(), index_tuple_t());
+      std::size_t constructed = 0;
+      BOOST_INTERPROCESS_TRY{
+         T* memory      = static_cast<T*>(mem);
+         for(constructed = 0; constructed < num; ++constructed){
+            this->construct(memory++, IsIterator(), index_tuple_t());
+            this->do_increment(IsIterator(), index_tuple_t());
+         }
       }
+      BOOST_INTERPROCESS_CATCH(...) {
+         named_construct_placement_destroy<T>(mem, constructed);
+         BOOST_INTERPROCESS_RETHROW
+      } BOOST_INTERPROCESS_CATCH_END
    }
 
    private:
    template<std::size_t ...IdxPack>
    void construct(void *mem, true_, const index_tuple<IdxPack...>&)
-   {  ::new((void*)mem, boost_container_new_t())T(*boost::forward<Args>(get<IdxPack>(args_))...); }
+   {  ::new((void*)mem, boost_container_new_t())T(*boost::forward<Args>((get<IdxPack>)(args_))...); }
 
    template<std::size_t ...IdxPack>
    void construct(void *mem, false_, const index_tuple<IdxPack...>&)
-   {  ::new((void*)mem, boost_container_new_t())T(boost::forward<Args>(get<IdxPack>(args_))...); }
+   {  ::new((void*)mem, boost_container_new_t())T(boost::forward<Args>((get<IdxPack>)(args_))...); }
 
    template<std::size_t ...IdxPack>
    void do_increment(true_, const index_tuple<IdxPack...>&)
    {
-      this->expansion_helper(++get<IdxPack>(args_)...);
+      this->expansion_helper(++(get<IdxPack>)(args_)...);
    }
 
    template<class ...ExpansionArgs>
@@ -128,8 +142,7 @@ class named_proxy
    {
       CtorArgN<T, is_iterator, Args...> &&ctor_obj = CtorArgN<T, is_iterator, Args...>
          (boost::forward<Args>(args)...);
-      return mp_mngr->template
-         generic_construct<T>(mp_name, m_num, m_find, m_dothrow, ctor_obj);
+      return mp_mngr->generic_construct(ctor_obj, mp_name, m_num, m_find, m_dothrow);
    }
 
    //This operator allows --> named_new("Name")[3]; <-- syntax
@@ -139,73 +152,30 @@ class named_proxy
 
 #else //#ifdef BOOST_INTERPROCESS_PERFECT_FORWARDING
 
-////////////////////////////////////////////////////////////////
-//    What the macro should generate (n == 2):
-//
-//    template<class T, bool is_iterator, class P1, class P2>
-//    struct Ctor2Arg
-//      :  public placement_destroy<T>
-//    {
-//       typedef bool_<is_iterator> IsIterator;
-//       typedef Ctor2Arg self_t;
-//
-//       void do_increment(false_)
-//       { ++m_p1; ++m_p2;  }
-//
-//       void do_increment(true_){}
-//
-//       self_t& operator++()
-//       {
-//          this->do_increment(IsIterator());
-//          return *this;
-//       }
-//
-//       self_t  operator++(int) {  return ++*this;   *this;  }
-//
-//       Ctor2Arg(const P1 &p1, const P2 &p2)
-//          : p1((P1 &)p_1), p2((P2 &)p_2) {}
-//
-//       void construct(void *mem)
-//       {  new((void*)object)T(m_p1, m_p2); }
-//
-//       virtual void construct_n(void *mem
-//                                , std::size_t num
-//                                , std::size_t &constructed)
-//       {
-//          T* memory      = static_cast<T*>(mem);
-//          for(constructed = 0; constructed < num; ++constructed){
-//             this->construct(memory++, IsIterator());
-//             this->do_increment(IsIterator());
-//          }
-//       }
-//
-//       private:
-//       void construct(void *mem, true_)
-//       {  new((void*)mem)T(*m_p1, *m_p2); }
-//
-//       void construct(void *mem, false_)
-//       {  new((void*)mem)T(m_p1, m_p2); }
-//
-//       P1 &m_p1; P2 &m_p2;
-//    };
-////////////////////////////////////////////////////////////////
-
 #define BOOST_INTERPROCESS_NAMED_PROXY_CTORARGN(N)\
 \
 template<class T BOOST_MOVE_I##N BOOST_MOVE_CLASS##N >  \
-struct CtorArg##N : placement_destroy<T>\
+struct CtorArg##N\
 {\
+   typedef T object_type;\
    typedef CtorArg##N self_t;\
    \
    CtorArg##N ( BOOST_MOVE_UREF##N  )\
       BOOST_MOVE_COLON##N BOOST_MOVE_FWD_INIT##N{}\
    \
-   virtual void construct_n(void *mem, std::size_t num, std::size_t &constructed) BOOST_OVERRIDE\
+   virtual void construct_n(void *mem, std::size_t num)\
    {\
-      T* memory      = static_cast<T*>(mem);\
-      for(constructed = 0; constructed < num; ++constructed){\
-         ::new((void*)memory++) T ( BOOST_MOVE_MFWD##N );\
+      std::size_t constructed = 0;\
+      BOOST_INTERPROCESS_TRY{\
+         T* memory = static_cast<T*>(mem);\
+         for (constructed = 0; constructed < num; ++constructed) {\
+            ::new((void*)memory++) T ( BOOST_MOVE_MFWD##N );\
+         }\
       }\
+      BOOST_INTERPROCESS_CATCH(...) {\
+         named_construct_placement_destroy<T>(mem, constructed);\
+         BOOST_INTERPROCESS_RETHROW\
+      } BOOST_INTERPROCESS_CATCH_END\
    }\
    \
    private:\
@@ -218,8 +188,9 @@ BOOST_MOVE_ITERATE_0TO9(BOOST_INTERPROCESS_NAMED_PROXY_CTORARGN)
 #define BOOST_INTERPROCESS_NAMED_PROXY_CTORITN(N)\
 \
 template<class T BOOST_MOVE_I##N BOOST_MOVE_CLASS##N > \
-struct CtorIt##N : public placement_destroy<T>\
+struct CtorIt##N\
 {\
+   typedef T object_type;\
    typedef CtorIt##N self_t;\
    \
    self_t& operator++()\
@@ -230,13 +201,20 @@ struct CtorIt##N : public placement_destroy<T>\
    CtorIt##N ( BOOST_MOVE_VAL##N  )\
       BOOST_MOVE_COLON##N BOOST_MOVE_VAL_INIT##N{}\
    \
-   virtual void construct_n(void *mem, std::size_t num, std::size_t &constructed) BOOST_OVERRIDE\
+   virtual void construct_n(void *mem, std::size_t num)\
    {\
-      T* memory      = static_cast<T*>(mem);\
-      for(constructed = 0; constructed < num; ++constructed){\
-         ::new((void*)memory++) T( BOOST_MOVE_MITFWD##N );\
-         ++(*this);\
+      std::size_t constructed = 0;\
+      BOOST_INTERPROCESS_TRY{\
+         T* memory      = static_cast<T*>(mem);\
+         for(constructed = 0; constructed < num; ++constructed){\
+            ::new((void*)memory++) T( BOOST_MOVE_MITFWD##N );\
+            ++(*this);\
+         }\
       }\
+      BOOST_INTERPROCESS_CATCH(...) {\
+         named_construct_placement_destroy<T>(mem, constructed);\
+         BOOST_INTERPROCESS_RETHROW\
+      } BOOST_INTERPROCESS_CATCH_END\
    }\
    \
    private:\
@@ -255,6 +233,7 @@ template
    >
 class named_proxy
 {
+   typedef T         object_type;
    typedef typename SegmentManager::char_type char_type;
    const char_type *    mp_name;
    SegmentManager *     mp_mngr;
@@ -278,7 +257,7 @@ class named_proxy
          , CtorArg##N<T BOOST_MOVE_I##N BOOST_MOVE_TARG##N> \
          >::type ctor_obj_t;\
       ctor_obj_t ctor_obj = ctor_obj_t( BOOST_MOVE_FWD##N );\
-      return mp_mngr->template generic_construct<T>(mp_name, m_num, m_find, m_dothrow, ctor_obj);\
+      return mp_mngr->generic_construct(ctor_obj, mp_name, m_num, m_find, m_dothrow);\
    }\
    //
    BOOST_MOVE_ITERATE_0TO9(BOOST_INTERPROCESS_NAMED_PROXY_CALL_OPERATOR)
@@ -296,8 +275,7 @@ class named_proxy
    //       ctor_obj_t;
    //    ctor_obj_t ctor_obj(p1, p2);
    //
-   //    return mp_mngr->template generic_construct<T>
-   //       (mp_name, m_num, m_find, m_dothrow, ctor_obj);
+   //    return mp_mngr->(ctor_obj, mp_name, m_num, m_find, m_dothrow);
    // }
    //
    //////////////////////////////////////////////////////////////////////////

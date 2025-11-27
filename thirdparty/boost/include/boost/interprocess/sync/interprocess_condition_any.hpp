@@ -25,6 +25,7 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 #include <boost/interprocess/sync/cv_status.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/interprocess/sync/interprocess_condition.hpp>
 #include <boost/interprocess/exceptions.hpp>

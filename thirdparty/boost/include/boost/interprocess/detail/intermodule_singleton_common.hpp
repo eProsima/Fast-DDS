@@ -47,8 +47,10 @@ inline void get_pid_creation_time_str(std::string &s)
 {
    std::stringstream stream;
    stream << get_current_process_id() << '_';
-   stream.precision(6);
-   stream << std::fixed << get_current_process_creation_time();
+   const unsigned long long total_microsecs = get_current_process_creation_time();
+   const unsigned long secs  = static_cast<unsigned long>(total_microsecs/1000000ul);
+   const unsigned long usecs = static_cast<unsigned long>(total_microsecs%1000000ul);
+   stream << secs << '.' << usecs;
    s = stream.str();
 }
 
@@ -121,7 +123,7 @@ class intermodule_singleton_common
             }
          }
          if(previous_module_singleton_initialized == Uninitialized){
-            BOOST_TRY{
+            BOOST_INTERPROCESS_TRY{
                //Now initialize the global map, this function must solve concurrency
                //issues between threads of several modules
                initialize_global_map_handle();
@@ -143,11 +145,11 @@ class intermodule_singleton_common
                //before this one. Now marked as initialized
                atomic_write32(&this_module_singleton_initialized, Initialized);
             }
-            BOOST_CATCH(...){
+            BOOST_INTERPROCESS_CATCH(...){
                //Mark singleton failed to initialize
                atomic_write32(&this_module_singleton_initialized, Broken);
-               BOOST_RETHROW
-            } BOOST_CATCH_END
+               BOOST_INTERPROCESS_RETHROW
+            } BOOST_INTERPROCESS_CATCH_END
          }
          //If previous state was initializing, this means that another winner thread is
          //trying to initialize the singleton. Just wait until completes its work.
@@ -232,7 +234,7 @@ class intermodule_singleton_common
          }
          else{ //(tmp == Uninitialized)
             //If not initialized try it again?
-            BOOST_TRY{
+            BOOST_INTERPROCESS_TRY{
                //Remove old global map from the system
                intermodule_singleton_helpers::thread_safe_global_map_dependant<ThreadSafeGlobalMap>::remove_old_gmem();
                //in-place construction of the global map class
@@ -255,10 +257,10 @@ class intermodule_singleton_common
                   break;
                }
             }
-            BOOST_CATCH(...){
+            BOOST_INTERPROCESS_CATCH(...){
                //
-               BOOST_RETHROW
-            } BOOST_CATCH_END
+               BOOST_INTERPROCESS_RETHROW
+            } BOOST_INTERPROCESS_CATCH_END
          }
       }
    }
@@ -406,24 +408,20 @@ class intermodule_singleton_impl
             <ThreadSafeGlobalMap>::find(m_map, typeid(C).name());
          if(!rcount){
             C *p = new C;
-            BOOST_TRY{
+            BOOST_INTERPROCESS_TRY{
                ref_count_ptr val(p, 0u);
                rcount = intermodule_singleton_helpers::thread_safe_global_map_dependant
                            <ThreadSafeGlobalMap>::insert(m_map, typeid(C).name(), val);
             }
-            BOOST_CATCH(...){
+            BOOST_INTERPROCESS_CATCH(...){
                intermodule_singleton_helpers::thread_safe_global_map_dependant
                            <ThreadSafeGlobalMap>::erase(m_map, typeid(C).name());
                delete p;
-               BOOST_RETHROW
-            } BOOST_CATCH_END
+               BOOST_INTERPROCESS_RETHROW
+            } BOOST_INTERPROCESS_CATCH_END
          }
          //if(Phoenix){
-            #if defined(BOOST_FASTDDS_PATCHES)
-            BOOST_INTERPROCESS_ATEXIT(&atexit_work);
-            #else
             std::atexit(&atexit_work);
-            #endif
          //}
          atomic_inc32(&rcount->singleton_ref_count);
          ret_ptr = rcount->ptr;

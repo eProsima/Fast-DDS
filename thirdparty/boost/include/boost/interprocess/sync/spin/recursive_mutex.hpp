@@ -44,6 +44,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/interprocess/detail/os_thread_functions.hpp>
 #include <boost/interprocess/sync/spin/mutex.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {

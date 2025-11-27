@@ -51,13 +51,48 @@ struct iset_index_aux
       < bi::void_pointer<void_pointer>
       , bi::optimize_size<true>
       >::type                                                  derivation_hook;
-
+   typedef typename MapConfig::char_type                       char_type;
    typedef typename MapConfig::template
       intrusive_value_type<derivation_hook>::type              value_type;
+
+   typedef typename MapConfig::compare_key_type                compare_key_type;
+
+   struct less_function
+   {
+      bool operator()(const compare_key_type&i, const value_type &b) const
+      {
+         std::size_t blen = b.name_length();
+         return (i.m_len < blen) ||
+                  (i.m_len == blen &&
+                  std::char_traits<char_type>::compare
+                     (i.mp_str, b.name(), i.m_len) < 0);
+      }
+
+      bool operator()(const value_type &b, const compare_key_type&i) const
+      {
+         std::size_t blen = b.name_length();
+         return (blen < i.m_len) ||
+                  (blen == i.m_len &&
+                  std::char_traits<char_type>::compare
+                     (b.name(), i.mp_str, i.m_len) < 0);
+      }
+
+      bool operator()(const value_type& a, const value_type& b) const
+      {
+         std::size_t alen = a.name_length();
+         std::size_t blen = b.name_length();
+         return (alen < blen) ||
+            (alen == blen &&
+               std::char_traits<char_type>::compare
+               (a.name(), b.name(), alen) < 0);
+      }
+   };
+
    typedef std::less<value_type>                               value_compare;
    typedef typename bi::make_set
       < value_type
       , bi::base_hook<derivation_hook>
+      , bi::compare<less_function>
       >::type                                                  index_t;
 };
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
@@ -68,14 +103,13 @@ struct iset_index_aux
 template <class MapConfig>
 class iset_index
    //Derive class from map specialization
-   :  public iset_index_aux<MapConfig>::index_t
+   :  private iset_index_aux<MapConfig>::index_t
 {
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    typedef iset_index_aux<MapConfig>                     index_aux;
    typedef typename index_aux::index_t                   index_type;
-   typedef typename MapConfig::
-      intrusive_compare_key_type                         intrusive_compare_key_type;
    typedef typename MapConfig::char_type                 char_type;
+   typedef typename index_aux::less_function             less_function;
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
    public:
@@ -83,34 +117,15 @@ class iset_index
    typedef typename index_type::const_iterator           const_iterator;
    typedef typename index_type::insert_commit_data       insert_commit_data;
    typedef typename index_type::value_type               value_type;
-
-   #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
-   private:
-
-   struct intrusive_key_value_less
-   {
-      bool operator()(const intrusive_compare_key_type &i, const value_type &b) const
-      {
-         std::size_t blen = b.name_length();
-         return (i.m_len < blen) ||
-                  (i.m_len == blen &&
-                  std::char_traits<char_type>::compare
-                     (i.mp_str, b.name(), i.m_len) < 0);
-      }
-
-      bool operator()(const value_type &b, const intrusive_compare_key_type &i) const
-      {
-         std::size_t blen = b.name_length();
-         return (blen < i.m_len) ||
-                  (blen == i.m_len &&
-                  std::char_traits<char_type>::compare
-                     (b.name(), i.mp_str, i.m_len) < 0);
-      }
-   };
-
-   #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
+   typedef typename MapConfig::compare_key_type          compare_key_type;
+   typedef value_type                                    index_data_t;
 
    public:
+
+   using index_type::begin;
+   using index_type::end;
+   using index_type::size;
+   using index_type::erase;
 
    //!Constructor. Takes a pointer to the
    //!segment manager. Can throw
@@ -127,15 +142,19 @@ class iset_index
    void shrink_to_fit()
    {  /*Does nothing, this intrusive index does not allocate memory;*/   }
 
-   iterator find(const intrusive_compare_key_type &key)
-   {  return index_type::find(key, intrusive_key_value_less());  }
+   iterator find(const compare_key_type&key)
+   {  return index_type::find(key, less_function());  }
 
-   const_iterator find(const intrusive_compare_key_type &key) const
-   {  return index_type::find(key, intrusive_key_value_less());  }
+   const_iterator find(const compare_key_type&key) const
+   {  return index_type::find(key, less_function());  }
 
    std::pair<iterator, bool>insert_check
-      (const intrusive_compare_key_type &key, insert_commit_data &commit_data)
-   {  return index_type::insert_check(key, intrusive_key_value_less(), commit_data); }
+      (const compare_key_type &key, insert_commit_data &commit_data)
+   {  return index_type::insert_check(key, less_function(), commit_data); }
+
+   iterator insert_commit
+      (const compare_key_type &, void*, index_data_t&v, insert_commit_data& commit_data)
+   {  return index_type::insert_commit(v, commit_data);  }
 };
 
 #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)

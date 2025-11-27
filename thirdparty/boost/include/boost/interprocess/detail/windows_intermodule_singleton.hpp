@@ -115,7 +115,7 @@ class windows_semaphore_based_map
          caster.addr = m;
          BOOST_ASSERT((caster.addr_uint64 & boost::uint64_t(3)) == 0);
          max_count = boost::uint32_t(caster.addr_uint64 >> 32);
-         initial_count = boost::uint32_t(caster.addr_uint64);
+         initial_count = boost::uint32_t(caster.addr_uint64 & boost::uint64_t(0x00000000FFFFFFFF));
          initial_count = initial_count/4;
          //Make sure top two bits are zero
          BOOST_ASSERT((max_count & boost::uint32_t(0xC0000000)) == 0);

@@ -276,6 +276,9 @@ class basic_managed_shared_memory
    //!
    //!This function is not synchronized so no other thread or process should
    //!be reading or writing the file
+   //!
+   //!Since the memory will be remapped after the underlying shared memory
+   //!is grown, it can't work with segments using raw pointers.
    static bool grow(const char *shmname, size_type extra_bytes)
    {
       return base_t::template grow

@@ -30,7 +30,6 @@
 #include <boost/interprocess/detail/utilities.hpp>
 #include <boost/interprocess/detail/cast_tags.hpp>
 #include <boost/assert.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/interprocess/smart_ptr/detail/shared_count.hpp>
 #include <boost/interprocess/detail/mpl.hpp>
 #include <boost/interprocess/detail/nothrow.hpp>
@@ -140,7 +139,7 @@ class shared_ptr
          pointer_traits<pointer>::template
             rebind_pointer<T>::type                         ParameterPointer;
 
-      BOOST_STATIC_ASSERT((ipcdetail::is_same<pointer, ParameterPointer>::value) ||
+      BOOST_INTERPROCESS_STATIC_ASSERT((ipcdetail::is_same<pointer, ParameterPointer>::value) ||
                           (ipcdetail::is_pointer<pointer>::value));
       ipcdetail::sp_enable_shared_from_this<T, VoidAllocator, Deleter>( m_pn, ipcdetail::to_raw_pointer(p), ipcdetail::to_raw_pointer(p) );
    }
@@ -245,7 +244,7 @@ class shared_ptr
       typedef typename boost::intrusive::
          pointer_traits<Pointer>::template
             rebind_pointer<T>::type                         ParameterPointer;
-      BOOST_STATIC_ASSERT((ipcdetail::is_same<pointer, ParameterPointer>::value) ||
+      BOOST_INTERPROCESS_STATIC_ASSERT((ipcdetail::is_same<pointer, ParameterPointer>::value) ||
                           (ipcdetail::is_pointer<Pointer>::value));
       this_type(p, a, d).swap(*this);
    }
@@ -397,16 +396,16 @@ template<class T, class ManagedMemory>
 inline typename managed_shared_ptr<T, ManagedMemory>::type
    make_managed_shared_ptr(T *constructed_object, ManagedMemory &managed_memory, const std::nothrow_t &)
 {
-   BOOST_TRY{
+   BOOST_INTERPROCESS_TRY{
       return typename managed_shared_ptr<T, ManagedMemory>::type
       ( constructed_object
       , managed_memory.template get_allocator<void>()
       , managed_memory.template get_deleter<T>()
       );
    }
-   BOOST_CATCH(...){
+   BOOST_INTERPROCESS_CATCH(...){
       return typename managed_shared_ptr<T, ManagedMemory>::type();
-   } BOOST_CATCH_END
+   } BOOST_INTERPROCESS_CATCH_END
 }
 
 

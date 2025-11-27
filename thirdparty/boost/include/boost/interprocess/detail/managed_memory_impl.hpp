@@ -32,7 +32,6 @@
 #include <boost/interprocess/detail/nothrow.hpp>
 #include <boost/interprocess/detail/simple_swap.hpp>
 //
-#include <boost/core/no_exceptions_support.hpp>
 //
 #include <boost/intrusive/detail/minimal_pair_header.hpp>
 #include <boost/assert.hpp>
@@ -115,7 +114,7 @@ class basic_managed_memory_impl
    {
       typedef typename ManagedMemory::device_type device_type;
       //Increase file size
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          offset_t old_size;
          {
             device_type f(open_or_create, filename, read_write);
@@ -127,9 +126,9 @@ class basic_managed_memory_impl
          //Grow always works
          managed_memory.self_t::grow(extra_bytes);
       }
-      BOOST_CATCH(...){
+      BOOST_INTERPROCESS_CATCH(...){
          return false;
-      } BOOST_CATCH_END
+      } BOOST_INTERPROCESS_CATCH_END
       return true;
    }
 
@@ -138,15 +137,15 @@ class basic_managed_memory_impl
    {
       typedef typename ManagedMemory::device_type device_type;
       size_type new_size;
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          ManagedMemory managed_memory(open_only, filename);
          managed_memory.get_size();
          managed_memory.self_t::shrink_to_fit();
          new_size = managed_memory.get_size();
       }
-      BOOST_CATCH(...){
+      BOOST_INTERPROCESS_CATCH(...){
          return false;
-      } BOOST_CATCH_END
+      } BOOST_INTERPROCESS_CATCH_END
 
       //Decrease file size
       {
@@ -175,14 +174,14 @@ class basic_managed_memory_impl
 
       //This function should not throw. The index construction can
       //throw if constructor allocates memory. So we must catch it.
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          //Let's construct the allocator in memory
          BOOST_ASSERT((0 == (std::size_t)addr % boost::move_detail::alignment_of<segment_manager>::value));
          mp_header       = ::new(addr, boost_container_new_t()) segment_manager(size);
       }
-      BOOST_CATCH(...){
+      BOOST_INTERPROCESS_CATCH(...){
          return false;
-      } BOOST_CATCH_END
+      } BOOST_INTERPROCESS_CATCH_END
       return true;
    }
 

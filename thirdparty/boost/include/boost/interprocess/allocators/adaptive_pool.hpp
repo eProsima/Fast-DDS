@@ -26,8 +26,7 @@
 
 #include <boost/interprocess/interprocess_fwd.hpp>
 #include <boost/assert.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/utility/addressof.hpp>
+#include <boost/container/detail/addressof.hpp>
 #include <boost/interprocess/detail/utilities.hpp>
 #include <boost/interprocess/detail/type_traits.hpp>
 #include <boost/interprocess/allocators/detail/adaptive_node_pool.hpp>
@@ -84,7 +83,7 @@ class adaptive_pool_base
    };
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
-   BOOST_STATIC_ASSERT((Version <=2));
+   BOOST_INTERPROCESS_STATIC_ASSERT((Version <=2));
 
    public:
    //-------
