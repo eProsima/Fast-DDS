@@ -30,7 +30,6 @@
 #include <boost/interprocess/smart_ptr/detail/sp_counted_impl.hpp>
 #include <boost/interprocess/detail/utilities.hpp>
 #include <boost/container/allocator_traits.hpp>
-#include <boost/core/no_exceptions_support.hpp>
 #include <boost/move/adl_move_swap.hpp>
 #include <boost/intrusive/detail/minimal_less_equal_header.hpp>   //std::less
 #include <boost/container/detail/placement_new.hpp>
@@ -100,7 +99,7 @@ class shared_count
    shared_count(const Ptr &p, const VoidAllocator &a, Deleter d)
       :  m_px(p), m_pi(0)
    {
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          if(p){
             counted_impl_allocator alloc(a);
             m_pi = alloc.allocate(1);
@@ -114,11 +113,11 @@ class shared_count
             deallocator.release();
          }
       }
-      BOOST_CATCH (...){
+      BOOST_INTERPROCESS_CATCH (...){
          d(p); // delete p
-         BOOST_RETHROW
+         BOOST_INTERPROCESS_RETHROW
       }
-      BOOST_CATCH_END
+      BOOST_INTERPROCESS_CATCH_END
    }
 
    ~shared_count() // nothrow

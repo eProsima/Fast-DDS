@@ -29,6 +29,7 @@
 #include <boost/interprocess/sync/windows/named_sync.hpp>
 #include <boost/interprocess/sync/windows/winapi_semaphore_wrapper.hpp>
 #include <boost/interprocess/sync/detail/condition_algorithm_8a.hpp>
+#include <boost/interprocess/timed_utils.hpp>
 
 namespace boost {
 namespace interprocess {

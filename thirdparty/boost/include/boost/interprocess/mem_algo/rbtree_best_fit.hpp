@@ -46,7 +46,6 @@
 #include <boost/intrusive/set.hpp>
 // other boost
 #include <boost/assert.hpp>
-#include <boost/static_assert.hpp>
 // std
 #include <climits>
 #include <cstring>
@@ -109,9 +108,12 @@ class rbtree_best_fit
    struct SizeHolder
    {
       static const size_type size_mask = size_type(-1) >> 2;
+      //!Previous block's memory size (including block_ctrl
+      //!header) in Alignment units. This field (UsableByPreviousChunk bytes)
+      //!is OVERWRITTEN by the previous block if allocated (m_prev_allocated)
+      size_type m_prev_size;
       //!This block's memory size (including block_ctrl
       //!header) in Alignment units
-      size_type m_prev_size;
       size_type m_size      :  sizeof(size_type)*CHAR_BIT - 2;
       size_type m_prev_allocated :  1;
       size_type m_allocated :  1;
@@ -119,15 +121,22 @@ class rbtree_best_fit
 
    //!Block control structure
    struct block_ctrl
-      :  public SizeHolder, public TreeHook
+      :  public SizeHolder
+      //This tree hook is overwritten when this block is used
+      , public TreeHook
    {
       block_ctrl()
-      {  this->m_size = 0; this->m_allocated = 0, this->m_prev_allocated = 0;  }
+      {
+         this->SizeHolder::m_size = 0;
+         this->SizeHolder::m_allocated = 0;
+         this->SizeHolder::m_prev_allocated = 0;
+      }
 
       friend bool operator<(const block_ctrl &a, const block_ctrl &b)
-      {  return a.m_size < b.m_size;  }
+      {  return a.SizeHolder::m_size < b.SizeHolder::m_size;  }
+
       friend bool operator==(const block_ctrl &a, const block_ctrl &b)
-      {  return a.m_size == b.m_size;  }
+      {  return a.SizeHolder::m_size == b.SizeHolder::m_size;  }
    };
 
    struct size_block_ctrl_compare
@@ -181,14 +190,19 @@ class rbtree_best_fit
 
    //Functions for single segment management
 
-   //!Allocates bytes, returns 0 if there is not more memory
+   //!Allocates bytes, returns 0 if there is not more memory.
+   //!Returned memory is aligned to Alignment bytes.
    void* allocate             (size_type nbytes);
+
+   //!Deallocates previously allocated bytes
+   void   deallocate(void* addr);
 
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
 
    //Experimental. Dont' use
 
    //!Multiple element allocation, same size
+   //!Experimental. Dont' use
    void allocate_many(size_type elem_bytes, size_type num_elements, multiallocation_chain &chain)
    {
       //-----------------------
@@ -198,6 +212,7 @@ class rbtree_best_fit
    }
 
    //!Multiple element allocation, different size
+   //!Experimental. Dont' use
    void allocate_many(const size_type *elem_sizes, size_type n_elements, size_type sizeof_element, multiallocation_chain &chain)
    {
       //-----------------------
@@ -207,12 +222,18 @@ class rbtree_best_fit
    }
 
    //!Multiple element allocation, different size
+   //!Experimental. Dont' use
    void deallocate_many(multiallocation_chain &chain);
 
-   #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
+   template<class T>
+   T* allocation_command(boost::interprocess::allocation_type command, size_type limit_size,
+      size_type& prefer_in_recvd_out_size, T*& reuse);
 
-   //!Deallocates previously allocated bytes
-   void   deallocate          (void *addr);
+   void* raw_allocation_command(boost::interprocess::allocation_type command, size_type limit_object,
+      size_type& prefer_in_recvd_out_size,
+      void*& reuse_ptr, size_type sizeof_object = 1);
+
+   #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
    //!Returns the size of the memory segment
    size_type get_size()  const;
@@ -237,14 +258,6 @@ class rbtree_best_fit
    //!Makes an internal sanity check
    //!and returns true if success
    bool check_sanity();
-
-   template<class T>
-   T * allocation_command  (boost::interprocess::allocation_type command, size_type limit_size,
-                           size_type &prefer_in_recvd_out_size, T *&reuse);
-
-   void * raw_allocation_command (boost::interprocess::allocation_type command,   size_type limit_object,
-                              size_type &prefer_in_recvd_out_size,
-                              void *&reuse_ptr, size_type sizeof_object = 1);
 
    //!Returns the size of the buffer previously allocated pointed by ptr
    size_type size(const void *ptr) const;
@@ -340,9 +353,9 @@ class rbtree_best_fit
 
    private:
    //Due to embedded bits in size, Alignment must be at least 4
-   BOOST_STATIC_ASSERT((Alignment >= 4));
+   BOOST_INTERPROCESS_STATIC_ASSERT((Alignment >= 4));
    //Due to rbtree size optimizations, Alignment must have at least pointer alignment
-   BOOST_STATIC_ASSERT((Alignment >= ::boost::container::dtl::alignment_of<void_pointer>::value));
+   BOOST_INTERPROCESS_STATIC_ASSERT((Alignment >= ::boost::container::dtl::alignment_of<void_pointer>::value));
    static const size_type AlignmentMask = (Alignment - 1);
    static const size_type BlockCtrlBytes = ipcdetail::ct_rounded_size<sizeof(block_ctrl), Alignment>::value;
    static const size_type BlockCtrlUnits = BlockCtrlBytes/Alignment;
@@ -350,11 +363,10 @@ class rbtree_best_fit
    static const size_type AllocatedCtrlUnits  = AllocatedCtrlBytes/Alignment;
    static const size_type EndCtrlBlockBytes   = ipcdetail::ct_rounded_size<sizeof(SizeHolder), Alignment>::value;
    static const size_type EndCtrlBlockUnits   = EndCtrlBlockBytes/Alignment;
-   static const size_type MinBlockUnits       = BlockCtrlUnits;
    static const size_type UsableByPreviousChunk   = sizeof(size_type);
 
    //Make sure the maximum alignment is power of two
-   BOOST_STATIC_ASSERT((0 == (Alignment & (Alignment - size_type(1u)))));
+   BOOST_INTERPROCESS_STATIC_ASSERT((0 == (Alignment & (Alignment - size_type(1u)))));
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
    public:
    static const size_type PayloadPerAllocation = AllocatedCtrlBytes - UsableByPreviousChunk;
@@ -398,7 +410,7 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
    priv_mark_as_free_block (first_big_block);
    #ifdef BOOST_INTERPROCESS_RBTREE_BEST_FIT_ABI_V1_HPP
    first_big_block->m_prev_size = end_block->m_size =
-      size_type(reinterpret_cast<char*>(first_big_block) - reinterpret_cast<char*>(end_block))/Alignmen) & block_ctrl::size_mask;
+      size_type(reinterpret_cast<char*>(first_big_block) - reinterpret_cast<char*>(end_block))/Alignment) & block_ctrl::size_mask;
    #else
    first_big_block->m_prev_size = end_block->m_size =
       size_type(reinterpret_cast<char*>(end_block) - reinterpret_cast<char*>(first_big_block))/Alignment & block_ctrl::size_mask;
@@ -478,8 +490,8 @@ void rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::grow(size_type ext
    //Update managed buffer's size
    m_header.m_size += extra_size;
 
-   //We need at least MinBlockUnits blocks to create a new block
-   if((m_header.m_size - old_border_offset) < MinBlockUnits){
+   //We need at least BlockCtrlBytes blocks to create a new block
+   if((m_header.m_size - old_border_offset) < BlockCtrlBytes){
       return;
    }
 
@@ -611,7 +623,7 @@ rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
 {
    return (algo_impl_t::ceil_units(sizeof(rbtree_best_fit)) +
            algo_impl_t::ceil_units(extra_hdr_bytes) +
-           MinBlockUnits + EndCtrlBlockUnits)*Alignment;
+           BlockCtrlUnits + EndCtrlBlockUnits)*Alignment;
 }
 
 template<class MutexFamily, class VoidPointer, std::size_t MemAlignment>

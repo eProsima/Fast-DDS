@@ -69,7 +69,7 @@ namespace ipcdetail{
 //!The function returns a mapped_region holding that segment or throws
 //!interprocess_exception if the function fails.
 //static mapped_region
-static mapped_region
+inline mapped_region
 anonymous_shared_memory(std::size_t size, void *address = 0)
 #if (!defined(BOOST_INTERPROCESS_WINDOWS))
 {

@@ -22,7 +22,7 @@
 #include <boost/interprocess/detail/workaround.hpp>
 
 // interprocess
-#include <boost/interprocess/containers/flat_map.hpp>
+#include <boost/container/flat_map.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
 // intrusive/detail
 #include <boost/intrusive/detail/minimal_pair_header.hpp>         //std::pair
@@ -50,8 +50,8 @@ struct flat_map_index_aux
    typedef std::pair<key_type, mapped_type>        value_type;
    typedef allocator<value_type
                     ,segment_manager_base>   allocator_type;
-   typedef flat_map<key_type,  mapped_type,
-                    key_less, allocator_type>      index_t;
+   typedef boost::container::flat_map<key_type,  mapped_type,
+                                      key_less, allocator_type>      index_t;
 };
 
 #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
@@ -61,29 +61,55 @@ struct flat_map_index_aux
 template <class MapConfig>
 class flat_map_index
    //Derive class from flat_map specialization
-   : public flat_map_index_aux<MapConfig>::index_t
+   : private flat_map_index_aux<MapConfig>::index_t
 {
    #if !defined(BOOST_INTERPROCESS_DOXYGEN_INVOKED)
    typedef flat_map_index_aux<MapConfig>  index_aux;
    typedef typename index_aux::index_t    base_type;
    typedef typename index_aux::
-      segment_manager_base          segment_manager_base;
+      segment_manager_base                   segment_manager_base;
+   typedef typename base_type::key_type      key_type;
+   typedef typename base_type::mapped_type   mapped_type;
    #endif   //#ifndef BOOST_INTERPROCESS_DOXYGEN_INVOKED
 
    public:
+   using base_type::begin;
+   using base_type::end;
+   using base_type::size;
+   using base_type::erase;
+   using base_type::shrink_to_fit;
+   using base_type::reserve;
+   typedef typename base_type::iterator         iterator;
+   typedef typename base_type::const_iterator   const_iterator;
+   typedef typename base_type::value_type       value_type;
+   typedef typename MapConfig::compare_key_type compare_key_type;
+   typedef iterator                             insert_commit_data;
+   typedef iterator                             index_data_t;
+
    //!Constructor. Takes a pointer to the segment manager. Can throw
    flat_map_index(segment_manager_base *segment_mngr)
       : base_type(typename index_aux::key_less(),
                   typename index_aux::allocator_type(segment_mngr))
    {}
 
-   //!This reserves memory to optimize the insertion of n elements in the index
-   void reserve(typename segment_manager_base::size_type n)
-   {  base_type::reserve(n);  }
+   std::pair<iterator, bool> insert_check
+      (const compare_key_type& key, insert_commit_data&)
+   {
+      std::pair<iterator, bool> r;
+      r.first = this->base_type::find(key_type(key.str(), key.len()));
+      r.second = r.first == this->base_type::end();
+      return r;
+   }
 
-   //!This frees all unnecessary memory
-   void shrink_to_fit()
-   {  base_type::shrink_to_fit();   }
+   iterator insert_commit
+      (const compare_key_type &k, void *context, index_data_t&, insert_commit_data& )
+   {
+      //Now commit the insertion using previous context data
+      return this->base_type::insert(value_type(key_type(k.str(), k.len()), mapped_type(context))).first;
+   }
+
+   iterator find(const compare_key_type& k)
+   {  return this->base_type::find(key_type(k.str(), k.len()));   }
 };
 
 }}   //namespace boost { namespace interprocess
