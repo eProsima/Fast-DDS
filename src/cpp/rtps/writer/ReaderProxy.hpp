@@ -489,6 +489,9 @@ private:
 
     bool active_ = false;
 
+    //! Listener to notify about data acknowledgements and resends.
+    StatefulWriterListener* const stateful_writer_listener_ = nullptr;
+
     using ChangeIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::iterator;
     using ChangeConstIterator = ResourceLimitedVector<ChangeForReader_t, std::true_type>::const_iterator;
 
@@ -539,9 +542,14 @@ private:
     ChangeConstIterator find_change(
             const SequenceNumber_t& seq_num) const;
 
+    /**
+     * @brief Notifies that a change has been acknowledged by this ReaderProxy.
+     *
+     * @param chit  Reference to the ChangeForReader_t that has been acknowledged.
+     */
     void notify_acknowledged(
-            StatefulWriterListener* listener,
-            ChangeForReader_t& chit) const;
+            const ChangeForReader_t& chit) const;
+
 };
 
 } /* namespace rtps */
