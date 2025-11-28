@@ -221,8 +221,7 @@ bool DataReaderHistory::received_change_keep_all(
             return add_to_reader_history_if_not_full(a_change, rejection_reason);
         }
 
-        // TODO (ecuesta): Add a new rejection reason for the DDS case, SAMPLE_REJECTED_UNKNOWN_KEY
-        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+        rejection_reason = REJECTED_BY_UNKNOWN_INSTANCE;
         return false;
     }
 
@@ -264,7 +263,7 @@ bool DataReaderHistory::received_change_keep_last(
             return add_to_reader_history_if_not_full(a_change, rejection_reason);
         }
 
-        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+        rejection_reason = REJECTED_BY_UNKNOWN_INSTANCE;
         return false;
     }
 
