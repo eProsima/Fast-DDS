@@ -819,6 +819,15 @@ bool StatefulReader::process_data_frag_msg(
                             pWP->irrelevant_change_set(work_change->sequenceNumber);
                             has_to_notify = true;
                         }
+
+                        /* Special case: rejected by REJECTED_BY_UNKNOWN_INSTANCE should never be received again.
+                         * Because the instance will still be unknown
+                         */
+                        if (fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE == rejection_reason)
+                        {
+                            pWP->irrelevant_change_set(work_change->sequenceNumber);
+                            has_to_notify = true;
+                        }
                     }
 
                     History::const_iterator chit = history_->find_change_nts(work_change);
@@ -1180,6 +1189,15 @@ bool StatefulReader::change_received(
             /* Special case: rejected by REJECTED_BY_INSTANCES_LIMIT should never be received again.
              */
             if (fastdds::dds::REJECTED_BY_INSTANCES_LIMIT == rejection_reason)
+            {
+                prox->irrelevant_change_set(a_change->sequenceNumber);
+                NotifyChanges(prox);
+            }
+
+            /* Special case: rejected by REJECTED_BY_UNKNOWN_INSTANCE should never be received again.
+             * Because the instance will still be unknown
+             */
+            if (fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE == rejection_reason)
             {
                 prox->irrelevant_change_set(a_change->sequenceNumber);
                 NotifyChanges(prox);
