@@ -768,7 +768,11 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_->compute_key(data, instance_handle, is_key_protected);
+        if(!type_->compute_key(data, instance_handle, is_key_protected) || !instance_handle.isDefined())
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
     }
 
 #if !defined(NDEBUG)
@@ -1122,7 +1126,11 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        type_->compute_key(data, handle, is_key_protected);
+        if(!type_->compute_key(data, handle, is_key_protected) || !handle.isDefined())
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);
