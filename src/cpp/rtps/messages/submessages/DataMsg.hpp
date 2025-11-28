@@ -151,15 +151,20 @@ struct DataMsgUtils
         {
             if(change->instanceHandle.isDefined())
             {
-            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
+                /**
+                 * If instanceHandle is not defined, this means the key hash is not populated. It makes no sense
+                 * to serialize a parameter with an undefined or empty value because it could be interpreted as
+                 * a 'valid' key hash on the reader side
+                **/
+                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                     change->instanceHandle);
-            }
 
-            if (ALIVE != change->kind)
-            {
-            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
+                /** Changes like UNREGISTER or DISPOSE must include the key, they can't be sent without key */
+                if (ALIVE != change->kind)
+                {
+                    fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
+                }
             }
-
         }
 
         if (inlineQos != nullptr)
@@ -296,9 +301,11 @@ bool RTPSMessageCreator::addSubmessageData(
         }
 
         added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
+
         if(change->instanceHandle.isDefined())
         {
-        added_no_error &=
+            // Even if requested in the serializedPayload, it makes no sense an undefined key hash
+            added_no_error &=
                 fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                         change->instanceHandle);
         }
