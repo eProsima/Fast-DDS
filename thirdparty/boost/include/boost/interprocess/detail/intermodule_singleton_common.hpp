@@ -421,7 +421,11 @@ class intermodule_singleton_impl
             } BOOST_INTERPROCESS_CATCH_END
          }
          //if(Phoenix){
+            #if defined(BOOST_FASTDDS_PATCHES)
+            BOOST_INTERPROCESS_ATEXIT(&atexit_work);
+            #else
             std::atexit(&atexit_work);
+            #endif
          //}
          atomic_inc32(&rcount->singleton_ref_count);
          ret_ptr = rcount->ptr;
