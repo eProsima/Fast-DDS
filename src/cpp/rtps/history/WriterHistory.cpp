@@ -63,7 +63,8 @@ static CacheChange_t* initialize_change(
     reserved_change->kind = change_kind;
     if ((WITH_KEY == writer->getAttributes().topicKind) && !handle.isDefined())
     {
-        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
+        EPROSIMA_LOG_WARNING(RTPS_WRITER,
+                "Changes in KEYED Writers need a valid instanceHandle. The data will be handled as if it came from an unkeyed topic.");
     }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = writer->getGuid();
@@ -485,6 +486,8 @@ void WriterHistory::set_fragments(
     }
     if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
     {
+        // TODO (Review): KEY_HASH inlineQoS could be added even if the change is ALIVE. It could always be sent.
+        // The only restriction is that it MUST be present if the change is not ALIVE (DIPOSE or UNREGISTER).
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
     }
