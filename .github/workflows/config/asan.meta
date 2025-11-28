@@ -5,7 +5,7 @@ names:
             - "-DSECURITY=ON"
             - "-DFASTDDS_STATISTICS=ON"
             - "-DSANITIZER=Address"
-            - "-DCMAKE_CXX_FLAGS='-Werror'"
+            - "-DCMAKE_CXX_FLAGS_INIT='-Werror'"
     discovery-server:
         cmake-args:
             - "-DSANITIZER=Address"
