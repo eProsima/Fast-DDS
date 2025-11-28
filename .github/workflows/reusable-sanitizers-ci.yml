@@ -457,7 +457,7 @@ jobs:
           colcon_build_args: ${{ inputs.colcon_build_args }}
           cmake_args: ${{ inputs.cmake_args }}
           cmake_args_default: ''
-          cmake_build_type: 'Debug'
+          cmake_build_type: 'RelWithDebInfo'
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
 
