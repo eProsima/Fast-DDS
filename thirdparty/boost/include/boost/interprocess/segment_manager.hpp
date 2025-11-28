@@ -1052,7 +1052,7 @@ class segment_manager
             return ipcdetail::null_or_bad_alloc<object_type>(dothrow);
 
          front_space = block_header_t::template front_space_with_header<t_alignment, index_data_t>();
-         hdr = block_header_t::template from_first_header(reinterpret_cast<index_data_t*>((void*)((char*)buffer_ptr + front_space)));
+         hdr = block_header_t::template from_first_header<>(reinterpret_cast<index_data_t*>((void*)((char*)buffer_ptr + front_space)));
       }
       else{
          const size_type total_size = block_info.template total_named_size<t_alignment, CharT>(namelen);
