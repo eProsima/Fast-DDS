@@ -114,7 +114,11 @@
    #if ( defined(_POSIX_SEMAPHORES) && ((_POSIX_SEMAPHORES + 0) > 0) ) ||\
        ( defined(__FreeBSD__) && (__FreeBSD__ >= 4)) || \
          defined(__APPLE__)
-      #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
+      #if !defined(BOOST_FASTDDS_PATCHES)
+          #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
+      #elif !defined(__ANDROID__)
+          #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
+      #endif // if !defined(BOOST_FASTDDS_PATCHES)
       //MacOsX declares _POSIX_SEMAPHORES but sem_init returns ENOSYS
       #if !defined(__APPLE__)
          #define BOOST_INTERPROCESS_POSIX_UNNAMED_SEMAPHORES
@@ -372,7 +376,10 @@ namespace boost {
 #else    //!defined(DISABLE_BOOST_INTERPROCESS_EINTR_RETRY) && defined(__GNUC__)
 
 #define BOOST_INTERPROCESS_EINTR_RETRY(RESULTTYPE, FAILUREVALUE, EXPRESSION) ((RESULTTYPE)(EXPRESSION))
-
 #endif   //!defined(DISABLE_BOOST_INTERPROCESS_EINTR_RETRY) && defined(__GNUC__)
+
+#if defined(BOOST_FASTDDS_PATCHES) && !defined(BOOST_INTERPROCESS_ATEXIT)
+   #define BOOST_INTERPROCESS_ATEXIT(f) std::atexit((f))
+#endif // if defined(BOOST_FASTDDS_PATCHES) && !defined(BOOST_INTERPROCESS_ATEXIT)
 
 #endif   //#ifndef BOOST_INTERPROCESS_DETAIL_WORKAROUND_HPP
