@@ -61,11 +61,6 @@ static CacheChange_t* initialize_change(
         RTPSWriter* writer)
 {
     reserved_change->kind = change_kind;
-    if ((WITH_KEY == writer->getAttributes().topicKind) && !handle.isDefined())
-    {
-        EPROSIMA_LOG_WARNING(RTPS_WRITER,
-                "Changes in KEYED Writers need a valid instanceHandle. The data will be handled as if it came from an unkeyed topic.");
-    }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = writer->getGuid();
     reserved_change->writer_info.previous = nullptr;
