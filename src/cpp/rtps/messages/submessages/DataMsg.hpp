@@ -170,12 +170,12 @@ struct DataMsgUtils
                 if (ALIVE != change->kind || expectsInlineQos)
                 {
                     EPROSIMA_LOG_ERROR(RTPS_WRITER,
-                    "Changes in KEYED Writers need a valid instanceHandle. The behavior is undefined");
+                            "Changes in KEYED Writers need a valid instanceHandle. The behavior is undefined");
                 }
                 else
                 {
                     EPROSIMA_LOG_WARNING(RTPS_WRITER,
-                    "Changes in KEYED Writers need a valid instanceHandle. The data will be handled as if it came from an unkeyed topic.");
+                            "Changes in KEYED Writers need a valid instanceHandle. The data will be handled as if it came from an unkeyed topic.");
                 }
             }
         }
@@ -187,6 +187,7 @@ struct DataMsgUtils
 
         fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sentinel(msg);
     }
+
 };
 
 }  // empty namespace
