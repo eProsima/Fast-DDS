@@ -221,6 +221,7 @@ jobs:
         continue-on-error: true
         uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
+          colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
           ctest_args: ${{ inputs.ctest_args }}
@@ -319,6 +320,7 @@ jobs:
         continue-on-error: true
         uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
+          colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
           ctest_args: ${{ inputs.ctest_args }}
@@ -464,6 +466,7 @@ jobs:
         continue-on-error: true
         uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
+          colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
           ctest_args: ${{ inputs.ctest_args }}
