@@ -336,7 +336,7 @@ bool PDPSimple::createPDPEndpoints()
 
 bool PDPSimple::create_dcps_participant_endpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
+    RTPSParticipantAttributes pattr = mp_RTPSParticipant->get_attributes();
     const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
     const BuiltinAttributes& builtin_att = mp_builtin->m_att;
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
@@ -466,7 +466,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
 #if HAVE_SECURITY
 bool PDPSimple::create_dcps_participant_secure_endpoints()
 {
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->get_attributes();
+    RTPSParticipantAttributes pattr = mp_RTPSParticipant->get_attributes();
     const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
     const BuiltinAttributes& builtin_att = mp_builtin->m_att;
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());

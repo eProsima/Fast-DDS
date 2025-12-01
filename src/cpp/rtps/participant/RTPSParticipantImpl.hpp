@@ -830,7 +830,7 @@ private:
 
 public:
 
-    const RTPSParticipantAttributes& get_attributes() const;
+    RTPSParticipantAttributes get_attributes() const;
 
     /**
      * Create a Writer in this RTPSParticipant.
@@ -989,6 +989,9 @@ public:
      */
     void update_attributes(
             const RTPSParticipantAttributes& patt);
+
+    void update_mutable_attributes(
+        const RTPSParticipantAttributes& patt);
 
     /**
      * Update local writer QoS

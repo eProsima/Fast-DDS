@@ -135,7 +135,7 @@ std::vector<std::string> RTPSParticipant::getParticipantNames() const
     return mp_impl->getParticipantNames();
 }
 
-const RTPSParticipantAttributes& RTPSParticipant::get_attributes() const
+RTPSParticipantAttributes RTPSParticipant::get_attributes() const
 {
     return mp_impl->get_attributes();
 }

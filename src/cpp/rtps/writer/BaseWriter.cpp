@@ -117,7 +117,7 @@ BaseWriter::~BaseWriter()
 bool BaseWriter::matched_reader_add(
         const SubscriptionBuiltinTopicData& rqos)
 {
-    const auto& alloc = mp_RTPSParticipant->get_attributes().allocation;
+    auto alloc = mp_RTPSParticipant->get_attributes().allocation;
     ReaderProxyData rdata(alloc.data_limits, rqos);
 
     return matched_reader_add_edp(rdata);
