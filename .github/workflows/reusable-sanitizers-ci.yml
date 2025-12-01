@@ -111,14 +111,14 @@ jobs:
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.repos
           destination_workspace: src
@@ -131,7 +131,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -206,7 +206,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -219,7 +219,7 @@ jobs:
       - name: Colcon test
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
@@ -305,7 +305,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -318,7 +318,7 @@ jobs:
       - name: Colcon test
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
@@ -419,7 +419,7 @@ jobs:
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
@@ -438,7 +438,7 @@ jobs:
           sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
@@ -451,20 +451,20 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/tsan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
           cmake_args: ${{ inputs.cmake_args }}
           cmake_args_default: ''
-          cmake_build_type: 'Debug'
+          cmake_build_type: 'RelWithDebInfo'
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
 
       - name: Colcon test
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
