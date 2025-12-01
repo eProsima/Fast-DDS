@@ -60,19 +60,11 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
-<<<<<<< HEAD
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
+  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
   fastdds-python-branch: '2.2.x'
   fastdds-docs-branch: '3.2.x'
   shapes-demo-branch: '3.2.x'
   discovery-server-branch: '2.0.x'
-=======
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
-  fastdds-python-branch: 'main'
-  fastdds-docs-branch: 'master'
-  shapes-demo-branch: 'master'
-  discovery-server-branch: 'master'
->>>>>>> 183eae35 (Improvements in message receiver (#6184))
   
 defaults:
   run:
