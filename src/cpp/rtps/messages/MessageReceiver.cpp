@@ -1046,14 +1046,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     // Validations??? XXX TODO
 
-<<<<<<< HEAD
     if (!keyFlag)
-=======
-    uint32_t next_pos {msg->pos + payload_size};
-    if (msg->length >= next_pos && payload_size > 0)
->>>>>>> 183eae35 (Improvements in message receiver (#6184))
     {
-        uint32_t next_pos = msg->pos + payload_size;
+        uint32_t next_pos {msg->pos + payload_size};
         if (msg->length >= next_pos && payload_size > 0)
         {
             ch.kind = ALIVE;
