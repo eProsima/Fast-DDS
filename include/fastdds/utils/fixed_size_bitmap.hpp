@@ -429,7 +429,8 @@ public:
             // to count number of bits set in a 32-bit integer
             bits = bits - ((bits >> 1) & 0x55555555);
             bits = (bits & 0x33333333) + ((bits >> 2) & 0x33333333);
-            total += ((bits + (bits >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+            bits = (bits + (bits >> 4)) & 0x0F0F0F0F;
+            total += (bits * 0x1010101) >> 24;
         }
 
         return total;
