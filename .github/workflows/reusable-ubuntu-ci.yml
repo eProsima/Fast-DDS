@@ -60,11 +60,19 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
+<<<<<<< HEAD
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
   fastdds-python-branch: '2.2.x'
   fastdds-docs-branch: '3.2.x'
   shapes-demo-branch: '3.2.x'
   discovery-server-branch: '2.0.x'
+=======
+  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
+  fastdds-python-branch: 'main'
+  fastdds-docs-branch: 'master'
+  shapes-demo-branch: 'master'
+  discovery-server-branch: 'master'
+>>>>>>> 183eae35 (Improvements in message receiver (#6184))
   
 defaults:
   run:
@@ -116,7 +124,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
           packages: vcstool xmlschema
           upgrade: false
@@ -142,7 +150,7 @@ jobs:
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
@@ -153,7 +161,7 @@ jobs:
       # we disable the compilation of the tools here and enable it in the Fast DDS test job.
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -229,7 +237,7 @@ jobs:
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
@@ -237,7 +245,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -248,7 +256,7 @@ jobs:
 
       - name: Colcon test
         id: test
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -259,7 +267,7 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
       - name: Fast DDS test summary
-        uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
+        uses: eProsima/eProsima-CI/ubuntu/junit_summary@v0
         if: ${{ !cancelled() }}
         with:
           junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
@@ -329,7 +337,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select fastdds_python
@@ -385,7 +393,7 @@ jobs:
           packages: vcstool xmlschema
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
@@ -399,7 +407,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -410,7 +418,7 @@ jobs:
 
       - name: Colcon test
         id: python_test
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -422,7 +430,7 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
       - name: Fast DDS Python test summary
-        uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
+        uses: eProsima/eProsima-CI/ubuntu/junit_summary@v0
         if: ${{ !cancelled() }}
         with:
           junit_reports_dir: "${{ steps.python_test.outputs.ctest_results_path }}"
@@ -492,7 +500,7 @@ jobs:
 
       - name: Fetch Fast DDS CI dependencies
         if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
@@ -506,18 +514,19 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: docs_test
         if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -529,7 +538,7 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
       - name: Fast DDS Docs test summary
-        uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
+        uses: eProsima/eProsima-CI/ubuntu/junit_summary@v0
         if: ${{ !cancelled() && inputs.run-tests == true }}
         with:
           junit_reports_dir: "${{ steps.docs_test.outputs.ctest_results_path }}"
@@ -610,7 +619,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -678,7 +687,7 @@ jobs:
           ref: ${{ steps.get_discovery_server_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
@@ -686,7 +695,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -698,7 +707,7 @@ jobs:
       - name: Colcon test
         id: discovery_server_test
         if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -710,7 +719,7 @@ jobs:
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
       - name: Discovery server test summary
-        uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
+        uses: eProsima/eProsima-CI/ubuntu/junit_summary@v0
         if: ${{ !cancelled() && inputs.run-tests == true }}
         with:
           junit_reports_dir: "${{ steps.discovery_server_test.outputs.ctest_results_path }}"
@@ -755,7 +764,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
           packages: vcstool xmlschema msparser
           upgrade: false
@@ -774,7 +783,7 @@ jobs:
           ref: 1.4.0
 
       - name: OSRF testing tools build
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select osrf_testing_tools_cpp
@@ -784,7 +793,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Profilling tests build
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-up-to fastdds
@@ -801,7 +810,7 @@ jobs:
 
       - name: No security colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -816,7 +825,7 @@ jobs:
           rm -rf build install log
 
       - name: No statistics colcon build
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -832,7 +841,7 @@ jobs:
 
       # No .metas file, so FASTDDS_ENFORCE_LOG_INFO is set OFF by default. Missed important args are manually included
       - name: No enforcing log info colcon build
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -847,7 +856,7 @@ jobs:
           rm -rf build install log
 
       - name: No shared libs colcon build
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -861,8 +870,27 @@ jobs:
           cd ${{ github.workspace }}
           rm -rf build install log
 
+<<<<<<< HEAD
+=======
+      - name: Null dereference colcon build
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
+          colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds'
+          cmake_args: '-DEPROSIMA_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS_INIT="-Wnull-dereference" -DSECURITY=ON -DFASTDDS_STATISTICS=ON ${{ inputs.cmake-args }}'
+          cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
+          # Force to build with maximum compiler optimization to catch all 'null-dereference' errors
+          cmake_build_type: Release
+          workspace: ${{ github.workspace }}
+
+      - name: Clean workspace - No shared libs
+        run: |
+          cd ${{ github.workspace }}
+          rm -rf build install log
+
+>>>>>>> 183eae35 (Improvements in message receiver (#6184))
       - name: Vanilla colcon build
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
