@@ -543,10 +543,10 @@ private:
     /**
      * @brief Notifies that a change has been acknowledged by this ReaderProxy.
      *
-     * @param chit  Reference to the ChangeForReader_t that has been acknowledged.
+     * @param chiange  Reference to the ChangeForReader_t that has been acknowledged.
      */
     void notify_acknowledged(
-            const ChangeForReader_t& chit) const;
+            const ChangeForReader_t& change) const;
 
     /**
      * @brief Notifies that a change has been resent to this ReaderProxy.

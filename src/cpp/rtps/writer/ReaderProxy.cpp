@@ -774,18 +774,18 @@ bool ReaderProxy::has_been_delivered(
 }
 
 void ReaderProxy::notify_acknowledged(
-        const ChangeForReader_t& chit) const
+        const ChangeForReader_t& change) const
 {
     if (stateful_writer_listener_ != nullptr)
     {
-        CacheChange_t* change = chit.getChange();
-        uint32_t payload_length = change ? change->serializedPayload.length : 0;
+        CacheChange_t* sample = change.getChange();
+        uint32_t payload_length = sample ? sample->serializedPayload.length : 0;
         stateful_writer_listener_->on_writer_data_acknowledged(
             writer_->getGuid(),
             guid(),
-            chit.getSequenceNumber(),
+            change.getSequenceNumber(),
             payload_length,
-            chit.time_since_creation(),
+            change.time_since_first_send(),
             locator_info_.general_locator_selector_entry());
     }
 }
