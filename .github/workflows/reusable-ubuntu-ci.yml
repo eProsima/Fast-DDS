@@ -60,19 +60,11 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
-<<<<<<< HEAD
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
+  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
   fastdds-python-branch: '1.4.x'
   fastdds-docs-branch: '2.14.x'
   shapes-demo-branch: '2.14.x'
   discovery-server-branch: '1.2.x'
-=======
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
-  fastdds-python-branch: 'main'
-  fastdds-docs-branch: 'master'
-  shapes-demo-branch: 'master'
-  discovery-server-branch: 'master'
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
   
 defaults:
   run:
@@ -809,13 +801,8 @@ jobs:
           rm -rf build install log src/osrf_testing_tools_cpp
 
       - name: No security colcon build
-<<<<<<< HEAD
         continue-on-error: true
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
-=======
-        continue-on-error: false
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -831,13 +818,9 @@ jobs:
           rm -rf build install log
 
       - name: No statistics colcon build
-<<<<<<< HEAD
         continue-on-error: true
         if: ${{ always() }}
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
-=======
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -854,13 +837,9 @@ jobs:
 
       # No .metas file, so FASTDDS_ENFORCE_LOG_INFO is set OFF by default. Missed important args are manually included
       - name: No enforcing log info colcon build
-<<<<<<< HEAD
         continue-on-error: true
         if: ${{ always() }}
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
-=======
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
         with:
           colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -876,13 +855,9 @@ jobs:
           rm -rf build install log
 
       - name: No shared libs colcon build
-<<<<<<< HEAD
         continue-on-error: true
         if: ${{ always() }}
-        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
-=======
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -895,27 +870,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           rm -rf build install log
-<<<<<<< HEAD
           
-=======
-
-      - name: Null dereference colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
-        with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds'
-          cmake_args: '-DEPROSIMA_BUILD_TESTS=OFF -DCMAKE_CXX_FLAGS_INIT="-Wnull-dereference" -DSECURITY=ON -DFASTDDS_STATISTICS=ON ${{ inputs.cmake-args }}'
-          cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
-          # Force to build with maximum compiler optimization to catch all 'null-dereference' errors
-          cmake_build_type: Release
-          workspace: ${{ github.workspace }}
-
-      - name: Clean workspace - No shared libs
-        run: |
-          cd ${{ github.workspace }}
-          rm -rf build install log
-
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
       - name: Vanilla colcon build
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:

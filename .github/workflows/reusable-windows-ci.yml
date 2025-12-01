@@ -99,91 +99,7 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
-<<<<<<< HEAD
-          packages: vcstool xmlschema
-=======
           packages: vcstool xmlschema psutil
-
-      - name: Get Fast CDR branch
-        id: get_fastcdr_branch
-        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
-        with:
-          remote_repository: eProsima/Fast-CDR
-          fallback_branch: ${{ inputs.fastcdr_branch }}
-
-      - name: Download Fast CDR
-        uses: eProsima/eProsima-CI/external/checkout@v0
-        with:
-          repository: eProsima/Fast-CDR
-          path: ${{ github.workspace }}/src/fastcdr
-          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
-
-      - name: Fetch Fast DDS dependencies
-        uses: eProsima/eProsima-CI/windows/vcs_import@v0
-        with:
-          vcs_repos_file: ${{ github.workspace }}\src\fastdds\fastdds.repos
-          destination_workspace: src
-          skip_existing: 'true'
-
-      - name: Fetch Fast DDS CI dependencies
-        uses: eProsima/eProsima-CI/windows/vcs_import@v0
-        with:
-          vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.repos
-          destination_workspace: src
-          skip_existing: 'true'
-
-      - name: Build
-        id: build
-        continue-on-error: false
-        uses: eProsima/eProsima-CI/windows/colcon_build@v0
-        with:
-          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          # The following Fast DDS CMake options need to be specified here instead of in the meta files
-          # because they vary from platform to platform
-          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DCOMPILE_EXAMPLES=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
-          cmake_build_type: ${{ inputs.cmake-config }}
-          workspace: ${{ github.workspace }}
-
-      - name: Upload build artifacts
-        if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/external/upload-artifact@v0
-        with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
-          path: ${{ github.workspace }}
-
-  fastdds_test:
-    needs: fastdds_build
-    name: fastdds_test (${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }}), ${{ matrix.vs-toolset }}
-    runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        vs-toolset:
-          - 'v142'
-          - 'v143'
-        cmake_build_type:
-          - ${{ inputs.cmake-config }}
-        test_filter:
-          - 'blackbox'
-          - 'unittest-I'
-          - 'unittest-II'
-          - 'examples'
-        filter_expression_blackbox:
-          - 'BlackboxTests|ParticipantTests|SecureDiscoverServer|SimpleCommunication|system.'
-        filter_expression_examples:
-          - 'example_tests'
-        filter_expression_unittests_I:
-          - 'DDSSQLFilterValue'
-
-    steps:
-      - name: Download build artifacts
-        if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/external/download-artifact@v0
-        with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
-          path: ${{ github.workspace }}
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
 
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -250,13 +166,8 @@ jobs:
           colcon_build_args: ${{ inputs.colcon-args }}
           # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
-<<<<<<< HEAD
-          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS="/MP /WX"
+          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS_INIT="/MP /WX"
           cmake_build_type: ${{ matrix.cmake-config }}
-=======
-          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DFASTDDS_EXAMPLE_TESTS=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
-          cmake_build_type: ${{ inputs.cmake-config }}
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
           workspace: ${{ github.workspace }}
 
       - name: Test

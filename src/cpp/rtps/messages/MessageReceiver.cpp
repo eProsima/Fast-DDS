@@ -155,16 +155,9 @@ void MessageReceiver::process_data_message_with_security(
                 std::swap(change.serializedPayload.data, crypto_payload_.data);
                 std::swap(change.serializedPayload.length, crypto_payload_.length);
 
-<<<<<<< HEAD
                 SerializedPayload_t original_payload = change.serializedPayload;
                 reader->processDataMsg(&change);
                 IPayloadPool* payload_pool = change.payload_owner();
-=======
-                octet* original_payload_data = change.serializedPayload.data;
-                uint32_t original_payload_length {change.serializedPayload.length};
-                reader->process_data_msg(&change);
-                IPayloadPool* payload_pool = change.serializedPayload.payload_owner;
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
                 if (payload_pool)
                 {
                     payload_pool->release_payload(change);
@@ -1055,14 +1048,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     // Validations??? XXX TODO
 
-<<<<<<< HEAD
     if (!keyFlag)
-=======
-    uint32_t next_pos {msg->pos + payload_size};
-    if (msg->length >= next_pos && payload_size > 0)
->>>>>>> 183eae35d (Improvements in message receiver (#6184))
     {
-        uint32_t next_pos = msg->pos + payload_size;
+        uint32_t next_pos {msg->pos + payload_size};
         if (msg->length >= next_pos && payload_size > 0)
         {
             ch.kind = ALIVE;
