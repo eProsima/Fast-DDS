@@ -485,6 +485,18 @@ SequenceNumber_t WriterProxy::next_cache_change_to_be_notified()
     return SequenceNumber_t::unknown();
 }
 
+void WriterProxy::consider_all_notified()
+{
+#ifdef SHOULD_DEBUG_LINUX
+    assert(get_mutex_owner() == get_thread_id());
+#endif // SHOULD_DEBUG_LINUX
+
+    if (last_notified_ < changes_from_writer_low_mark_)
+    {
+        last_notified_ = changes_from_writer_low_mark_;
+    }
+}
+
 bool WriterProxy::perform_initial_ack_nack()
 {
     bool ret_value = false;
