@@ -53,15 +53,16 @@
 #endif // _WIN32
 
 namespace AnnotationTest {
-    /*!
-     * @brief This class represents the enumeration InnerEnumHelper defined by the user in the IDL file.
-     * @ingroup annotations
-     */
-    enum class InnerEnumHelper : int32_t
-    {
-        ONE,
-        TWO
-    };
+
+/*!
+ * @brief This class represents the enumeration InnerEnumHelper defined by the user in the IDL file.
+ * @ingroup annotations
+ */
+enum class InnerEnumHelper : int32_t
+{
+    ONE,
+    TWO
+};
 
 
 

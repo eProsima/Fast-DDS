@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__EXTRA_UNIONS_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__EXTRA_UNIONS_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -37,9 +39,8 @@
     Generated extra_unions is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // FASTDDS_GEN_API_VER
 
-namespace MyModule
-{
-} // namespace MyModule
+namespace MyModule {
+}  // namespace MyModule
 
 #endif // FAST_DDS_GENERATED__EXTRA_UNIONS_PUBSUBTYPES_HPP
 

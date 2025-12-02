@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__UNIONS_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__UNIONS_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -38,10 +40,9 @@
     Generated unions is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // FASTDDS_GEN_API_VER
 
-namespace Fixed_String_Module
-{
-    typedef eprosima::fastcdr::fixed_string<20> fixed_string_in_module;
-} // namespace Fixed_String_Module
+namespace Fixed_String_Module {
+typedef eprosima::fastcdr::fixed_string<20> fixed_string_in_module;
+}  // namespace Fixed_String_Module
 
 /*!
  * @brief This class represents the TopicDataType of the type UnionShort defined by the user in the IDL file.
@@ -118,9 +119,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -201,9 +199,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -282,9 +277,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -365,9 +357,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -446,9 +435,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -529,9 +515,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -610,9 +593,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -693,9 +673,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -774,9 +751,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -857,9 +831,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -938,9 +909,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1021,9 +989,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -1102,9 +1067,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1185,9 +1147,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -1266,9 +1225,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1349,9 +1305,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -1430,9 +1383,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1513,9 +1463,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -1594,9 +1541,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1677,9 +1621,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -1758,9 +1699,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1841,9 +1779,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -1922,9 +1857,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2005,9 +1937,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -2086,9 +2015,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2169,9 +2095,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -2250,9 +2173,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2333,9 +2253,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -2414,9 +2331,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2497,9 +2411,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -2578,9 +2489,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2661,9 +2569,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -2742,9 +2647,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2825,9 +2727,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -2906,9 +2805,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2989,9 +2885,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -3070,9 +2963,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3153,9 +3043,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -3234,9 +3121,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3317,9 +3201,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -3398,9 +3279,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3481,9 +3359,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 
@@ -3562,9 +3437,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
