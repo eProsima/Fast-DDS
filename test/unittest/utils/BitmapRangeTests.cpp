@@ -42,12 +42,18 @@ struct TestResult
     uint32_t num_bits;
     uint32_t num_longs;
     TestType::bitmap_type bitmap;
+    uint32_t bit_count;
 
     bool Check(
             bool ret_val,
             TestType& uut) const
     {
         if (result != ret_val)
+        {
+            return false;
+        }
+
+        if (bit_count != uut.count())
         {
             return false;
         }
@@ -161,7 +167,7 @@ public:
     {
         // initialization
         {
-            true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+            true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0
         },
         // steps
         {
@@ -169,63 +175,63 @@ public:
             {
                 {0},
                 {
-                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Adding base again
             {
                 {0},
                 {
-                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Adding out of range
             {
                 {256},
                 {
-                    false, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    false, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Middle of first word
             {
                 {16},
                 {
-                    true, 0, 16, 17, 1, {0x80008000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 16, 17, 1, {0x80008000UL, 0, 0, 0, 0, 0, 0, 0}, 2
                 }
             },
             // Before previous one
             {
                 {15},
                 {
-                    true, 0, 16, 17, 1, {0x80018000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 16, 17, 1, {0x80018000UL, 0, 0, 0, 0, 0, 0, 0}, 3
                 }
             },
             // On third word
             {
                 {67},
                 {
-                    true, 0, 67, 68, 3, {0x80018000UL, 0, 0x10000000UL, 0, 0, 0, 0, 0}
+                    true, 0, 67, 68, 3, {0x80018000UL, 0, 0x10000000UL, 0, 0, 0, 0, 0}, 4
                 }
             },
             // Before last on third word
             {
                 {94},
                 {
-                    true, 0, 94, 95, 3, {0x80018000UL, 0, 0x10000002UL, 0, 0, 0, 0, 0}
+                    true, 0, 94, 95, 3, {0x80018000UL, 0, 0x10000002UL, 0, 0, 0, 0, 0}, 5
                 }
             },
             // Last on third word
             {
                 {95},
                 {
-                    true, 0, 95, 96, 3, {0x80018000UL, 0, 0x10000003UL, 0, 0, 0, 0, 0}
+                    true, 0, 95, 96, 3, {0x80018000UL, 0, 0x10000003UL, 0, 0, 0, 0, 0}, 6
                 }
             },
             // Last possible item
             {
                 {255},
                 {
-                    true, 0, 255, 256, 8, {0x80018000UL, 0, 0x10000003UL, 0, 0, 0, 0, 0x00000001UL}
+                    true, 0, 255, 256, 8, {0x80018000UL, 0, 0x10000003UL, 0, 0, 0, 0, 0x00000001UL}, 7
                 }
             }
         }
@@ -239,14 +245,15 @@ public:
         256UL,
         8UL,
         { 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL, 0xFFFFFFFFUL,
-          0xFFFFFFFFUL }
+          0xFFFFFFFFUL },
+        256UL
     };
 
     const TestCase<TestInputAddRange> test_range0 =
     {
         // initialization
         {
-            true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+            true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0
         },
         // steps
         {
@@ -254,56 +261,56 @@ public:
             {
                 {0, 0},
                 {
-                    true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0
                 }
             },
             // Adding base
             {
                 {0, 1},
                 {
-                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Wrong order params
             {
                 {10, 1},
                 {
-                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Adding out of range
             {
                 {256, 257},
                 {
-                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 1, 1, {0x80000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Middle of first word
             {
                 {15, 17},
                 {
-                    true, 0, 16, 17, 1, {0x80018000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 16, 17, 1, {0x80018000UL, 0, 0, 0, 0, 0, 0, 0}, 3
                 }
             },
             // On second and third word
             {
                 {35, 68},
                 {
-                    true, 0, 67, 68, 3, {0x80018000UL, 0x1FFFFFFF, 0xF0000000, 0, 0, 0, 0, 0}
+                    true, 0, 67, 68, 3, {0x80018000UL, 0x1FFFFFFF, 0xF0000000, 0, 0, 0, 0, 0}, 36
                 }
             },
             // Crossing more than one word
             {
                 {94, 133},
                 {
-                    true, 0, 132, 133, 5, {0x80018000UL, 0x1FFFFFFF, 0xF0000003, 0xFFFFFFFF, 0xF8000000, 0, 0, 0}
+                    true, 0, 132, 133, 5, {0x80018000UL, 0x1FFFFFFF, 0xF0000003, 0xFFFFFFFF, 0xF8000000, 0, 0, 0}, 75
                 }
             },
             // Exactly one word
             {
                 {64, 96},
                 {
-                    true, 0, 132, 133, 5, {0x80018000UL, 0x1FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xF8000000, 0, 0, 0}
+                    true, 0, 132, 133, 5, {0x80018000UL, 0x1FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xF8000000, 0, 0, 0}, 101
                 }
             },
             // Exactly two words
@@ -311,7 +318,7 @@ public:
                 {128, 192},
                 {
                     true, 0, 191, 192, 6,
-                    {0x80018000UL, 0x1FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0, 0}
+                    {0x80018000UL, 0x1FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0, 0}, 160
                 }
             },
             // Full range
@@ -326,7 +333,7 @@ public:
     {
         // initialization (starts from full word)
         {
-            true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+            true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}, 32
         },
         // steps
         {
@@ -334,56 +341,56 @@ public:
             {
                 {32, 33},
                 {
-                    true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 31, 32, 1, {0xFFFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}, 32
                 }
             },
             // Removing single in the middle
             {
                 {5, 6},
                 {
-                    true, 0, 31, 32, 1, {0xFBFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 31, 32, 1, {0xFBFFFFFFUL, 0, 0, 0, 0, 0, 0, 0}, 31
                 }
             },
             // Removing several in the middle
             {
                 {6, 31},
                 {
-                    true, 0, 31, 32, 1, {0xF8000001UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 31, 32, 1, {0xF8000001UL, 0, 0, 0, 0, 0, 0, 0}, 6
                 }
             },
             // Removing last
             {
                 {31, 32},
                 {
-                    true, 0, 4, 5, 1, {0xF8000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 4, 5, 1, {0xF8000000UL, 0, 0, 0, 0, 0, 0, 0}, 5
                 }
             },
             // Removing first
             {
                 {0, 1},
                 {
-                    true, 1, 4, 5, 1, {0x78000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 1, 4, 5, 1, {0x78000000UL, 0, 0, 0, 0, 0, 0, 0}, 4
                 }
             },
             // Removing all except first and last
             {
                 {2, 4},
                 {
-                    true, 1, 4, 5, 1, {0x48000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 1, 4, 5, 1, {0x48000000UL, 0, 0, 0, 0, 0, 0, 0}, 2
                 }
             },
             // Removing last
             {
                 {4, 5},
                 {
-                    true, 1, 1, 2, 1, {0x40000000UL, 0, 0, 0, 0, 0, 0, 0}
+                    true, 1, 1, 2, 1, {0x40000000UL, 0, 0, 0, 0, 0, 0, 0}, 1
                 }
             },
             // Removing first
             {
                 {1, 2},
                 {
-                    true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}
+                    true, 0, 0, 0, 0, {0, 0, 0, 0, 0, 0, 0, 0}, 0
                 }
             }
         }

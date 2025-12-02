@@ -19,9 +19,10 @@
 
 #include <rtps/writer/ReaderProxy.hpp>
 
-#include <mutex>
-#include <cassert>
 #include <algorithm>
+#include <cassert>
+#include <cstdint>
+#include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -33,6 +34,7 @@
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/writer/StatefulWriter.hpp>
+#include <rtps/writer/StatefulWriterListener.hpp>
 #include <utils/TimeConversion.hpp>
 
 
@@ -43,7 +45,8 @@ namespace rtps {
 ReaderProxy::ReaderProxy(
         const WriterTimes& times,
         const RemoteLocatorsAllocationAttributes& loc_alloc,
-        StatefulWriter* writer)
+        StatefulWriter* writer,
+        StatefulWriterListener* stateful_listener)
     : is_active_(false)
     , locator_info_(
         writer, loc_alloc.max_unicast_locators,
@@ -59,6 +62,7 @@ ReaderProxy::ReaderProxy(
     , timers_enabled_(false)
     , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
+    , stateful_writer_listener_(stateful_listener)
 {
     auto participant = writer_->get_participant_impl();
     if (nullptr != participant)
@@ -381,6 +385,13 @@ void ReaderProxy::acked_changes_set(
             ++chit;
             ++future_low_mark;
         }
+        if (stateful_writer_listener_ != nullptr)
+        {
+            for (auto it = changes_for_reader_.begin(); it != chit; ++it)
+            {
+                notify_acknowledged(*it);
+            }
+        }
         changes_for_reader_.erase(changes_for_reader_.begin(), chit);
     }
     else
@@ -497,7 +508,7 @@ bool ReaderProxy::process_initial_acknack(
 {
     if (is_local_reader())
     {
-        return 0 != convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT, func);
+        return 0 != convert_status_on_all_changes(UNACKNOWLEDGED, UNSENT, false, func);
     }
 
     return true;
@@ -529,6 +540,7 @@ void ReaderProxy::from_unsent_to_status(
     if (ACKNOWLEDGED == status && seq_num == changes_low_mark_ + 1)
     {
         assert(changes_for_reader_.begin() == it);
+        notify_acknowledged(*it);
         changes_for_reader_.erase(it);
         acked_changes_set(seq_num + 1);
         return;
@@ -569,18 +581,19 @@ bool ReaderProxy::mark_fragment_as_sent_for_change(
 
 bool ReaderProxy::perform_nack_supression()
 {
-    return 0 != convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED);
+    return 0 != convert_status_on_all_changes(UNDERWAY, UNACKNOWLEDGED, false);
 }
 
 uint32_t ReaderProxy::perform_acknack_response(
         const std::function<void(ChangeForReader_t& change)>& func)
 {
-    return convert_status_on_all_changes(REQUESTED, UNSENT, func);
+    return convert_status_on_all_changes(REQUESTED, UNSENT, nullptr != stateful_writer_listener_, func);
 }
 
 uint32_t ReaderProxy::convert_status_on_all_changes(
         ChangeForReaderStatus_t previous,
         ChangeForReaderStatus_t next,
+        bool notify_resend,
         const std::function<void(ChangeForReader_t& change)>& func)
 {
     assert(previous > next);
@@ -595,6 +608,11 @@ uint32_t ReaderProxy::convert_status_on_all_changes(
         {
             ++changed;
             change.setStatus(next);
+
+            if (notify_resend)
+            {
+                notify_resent(change);
+            }
 
             if (func)
             {
@@ -753,6 +771,73 @@ bool ReaderProxy::has_been_delivered(
     }
 
     return false;
+}
+
+void ReaderProxy::notify_acknowledged(
+        const ChangeForReader_t& change) const
+{
+    if (stateful_writer_listener_ != nullptr)
+    {
+        CacheChange_t* sample = change.getChange();
+        uint32_t payload_length = sample ? sample->serializedPayload.length : 0;
+        stateful_writer_listener_->on_writer_data_acknowledged(
+            writer_->getGuid(),
+            guid(),
+            change.getSequenceNumber(),
+            payload_length,
+            change.time_since_first_send(),
+            locator_info_.general_locator_selector_entry());
+    }
+}
+
+void ReaderProxy::notify_resent(
+        const ChangeForReader_t& change) const
+{
+    assert (stateful_writer_listener_ != nullptr);
+
+    const CacheChange_t* sample = change.getChange();
+    assert(sample != nullptr);
+
+    // Calc number of bytes to resend
+    uint64_t resent_bytes = 0;
+    const FragmentNumberSet_t& fragments = change.getUnsentFragments();
+    if (fragments.empty())
+    {
+        resent_bytes = sample->serializedPayload.length;
+    }
+    else
+    {
+        // Calculate number of bytes to resend
+        uint64_t num_fragments = fragments.count();
+        uint32_t fragment_size = sample->getFragmentSize();
+        if (fragments.max() < sample->getFragmentCount())
+        {
+            resent_bytes = num_fragments * fragment_size;
+        }
+        else
+        {
+            // Last fragment may be smaller
+            resent_bytes = (num_fragments - 1) * fragment_size;
+            uint32_t last_fragment_size = sample->serializedPayload.length % fragment_size;
+            if (last_fragment_size > 0)
+            {
+                resent_bytes += last_fragment_size;
+            }
+            else
+            {
+                resent_bytes += fragment_size;
+            }
+        }
+    }
+
+    // Notify to participant
+    assert(resent_bytes <= sample->serializedPayload.length);
+    stateful_writer_listener_->on_writer_resend_data(
+        writer_->getGuid(),
+        guid(),
+        sample->sequenceNumber,
+        static_cast<uint32_t>(resent_bytes),
+        locator_info_.general_locator_selector_entry());
 }
 
 }   // namespace rtps

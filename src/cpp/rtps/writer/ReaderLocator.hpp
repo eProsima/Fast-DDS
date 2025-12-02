@@ -59,34 +59,79 @@ public:
             size_t max_unicast_locators,
             size_t max_multicast_locators);
 
+    /**
+     * Check if the remote reader expects to receive inline QoS.
+     *
+     * @return true if the remote reader expects to receive inline QoS, false otherwise.
+     */
     bool expects_inline_qos() const
     {
         return expects_inline_qos_;
     }
 
+    /**
+     * Check if the remote reader is local.
+     *
+     * @return true if the remote reader is local, false otherwise.
+     */
     bool is_local_reader() const
     {
         return is_local_reader_;
     }
 
+    /**
+     * Get a shared pointer to the local reader if the remote reader is local.
+     *
+     * @return shared pointer to the local reader, nullptr otherwise.
+     */
     LocalReaderPointer::Instance local_reader();
 
+    /**
+     * Set the local reader pointer.
+     *
+     * @param local_reader  Shared pointer to the local reader.
+     */
     void local_reader(
             std::shared_ptr<LocalReaderPointer> local_reader)
     {
         local_reader_ = local_reader;
     }
 
+    /**
+     * Get a const reference to the remote GUID.
+     *
+     * @return const reference to the remote GUID.
+     */
     const GUID_t& remote_guid() const
     {
         return general_locator_info_.remote_guid;
     }
 
+    /**
+     * Get a const reference to the general locator selector entry.
+     *
+     * @return const reference to the general locator selector entry.
+     */
+    const LocatorSelectorEntry& general_locator_selector_entry() const
+    {
+        return general_locator_info_;
+    }
+
+    /**
+     * Get a pointer to the general locator selector entry.
+     *
+     * @return pointer to the general locator selector entry.
+     */
     LocatorSelectorEntry* general_locator_selector_entry()
     {
         return &general_locator_info_;
     }
 
+    /**
+     * Get a const reference to the async locator selector entry.
+     *
+     * @return const reference to the async locator selector entry.
+     */
     LocatorSelectorEntry* async_locator_selector_entry()
     {
         return &async_locator_info_;
@@ -220,6 +265,11 @@ public:
      */
     void datasharing_notify();
 
+    /**
+     * Get the number of locators.
+     *
+     * @return Number of locators.
+     */
     size_t locators_size() const
     {
         if (general_locator_info_.remote_guid != c_Guid_Unknown && !is_local_reader_)
