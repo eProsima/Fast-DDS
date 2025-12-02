@@ -167,16 +167,8 @@ struct DataMsgUtils
             }
             else
             {
-                if (ALIVE != change->kind || expectsInlineQos)
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_WRITER,
-                            "Changes in KEYED Writers need a valid instanceHandle. The behavior is undefined");
-                }
-                else
-                {
-                    EPROSIMA_LOG_WARNING(RTPS_WRITER,
-                            "Changes in KEYED Writers need a valid instanceHandle. The data will be handled as if it came from an unkeyed topic.");
-                }
+                EPROSIMA_LOG_WARNING(RTPS_WRITER,
+                        "Change does not have a valid instanceHandle. KEY_HASH will not be serialized.");
             }
         }
 
@@ -279,6 +271,15 @@ bool RTPSMessageCreator::addSubmessageData(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
+        if(WITH_KEY == topicKind &&
+           change->instanceHandle.isDefined() == false &&
+           (expectsInlineQos || change->kind != ALIVE))
+        {
+            // Instance handle is required but not defined
+            EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                    "Changes in KEYED Writers need a valid instanceHandle. Message won't be serialized");
+            return false;
+        }
         DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
@@ -469,6 +470,15 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
+        if(WITH_KEY == topicKind &&
+           change->instanceHandle.isDefined() == false &&
+           (expectsInlineQos || change->kind != ALIVE))
+        {
+            // Instance handle is required but not defined
+            EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                    "Changes in KEYED Writers need a valid instanceHandle. Message won't be serialized");
+            return false;
+        }
         DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 

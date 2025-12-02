@@ -778,7 +778,7 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 #if !defined(NDEBUG)
     if (handle.isDefined() && instance_handle != handle)
     {
-        EPROSIMA_LOG_ERROR(DATA_WRITER, "handle differs from data's key.");
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Handle differs from data's key.");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 #endif // if !defined(NDEBUG)
