@@ -1227,9 +1227,7 @@ void StatefulReader::NotifyChanges(
         while (next_seq != c_SequenceNumber_Unknown && next_seq <= aux_ch->sequenceNumber);
     }
     // Ensure correct state of proxy when max_seq is not present in history
-    while (c_SequenceNumber_Unknown != prox->next_cache_change_to_be_notified())
-    {
-    }
+    prox->consider_all_notified();
 
     // Notify listener if new data is available
     auto listener = get_listener();

@@ -295,6 +295,14 @@ public:
     SequenceNumber_t next_cache_change_to_be_notified();
 
     /**
+     * @brief Marks all available sequence numbers as notified.
+     *
+     * Calling this function is the equivalent to calling next_cache_change_to_be_notified
+     * in a loop until it returns an invalid SequenceNumber_t.
+     */
+    void consider_all_notified();
+
+    /**
      * Checks whether a cache change was already received from this proxy.
      * @param [in] seq_num Sequence number of the cache change to check.
      * @return true if the cache change was received, false otherwise.
