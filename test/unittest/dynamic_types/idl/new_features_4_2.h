@@ -811,6 +811,8 @@ public:
     eProsima_user_DllExport void bitset(
             const std::bitset<17>&);
 
+
+
 private:
 
     std::bitset<17> m_bitset;
@@ -964,6 +966,8 @@ public:
 
     eProsima_user_DllExport void bitset(
             const std::bitset<50>&);
+
+
 
 private:
 

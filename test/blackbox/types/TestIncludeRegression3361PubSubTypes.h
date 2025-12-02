@@ -23,6 +23,8 @@
 #ifndef _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_PUBSUBTYPES_H_
 #define _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_PUBSUBTYPES_H_
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -37,10 +39,9 @@
     Generated TestIncludeRegression3361 is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-namespace TestModule
-{
-    typedef std::string MACHINEID;
-}
+namespace TestModule {
+typedef std::string MACHINEID;
+}  // namespace TestModule
 
 #endif // _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_PUBSUBTYPES_H_
 
