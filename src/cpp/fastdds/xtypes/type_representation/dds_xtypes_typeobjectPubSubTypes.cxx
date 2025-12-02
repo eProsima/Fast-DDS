@@ -21,6 +21,9 @@
 
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp>
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -48,7 +51,6 @@ namespace xtypes {
 } // namespace fastdds
 
 } // namespace eprosima
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "dds_xtypes_typeobjectCdrAux.ipp"

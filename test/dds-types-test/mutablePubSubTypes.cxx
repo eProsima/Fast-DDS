@@ -21,6 +21,9 @@
 
 #include "mutablePubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -38,17 +41,10 @@ MutableShortStructPubSubType::MutableShortStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableShortStruct_max_key_cdr_typesize > 16 ? MutableShortStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableShortStructPubSubType::~MutableShortStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableShortStructPubSubType::serialize(
@@ -56,7 +52,8 @@ bool MutableShortStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableShortStruct* p_type = static_cast<const ::MutableShortStruct*>(data);
+    const ::MutableShortStruct* p_type =
+            static_cast<const ::MutableShortStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -76,7 +73,7 @@ bool MutableShortStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -95,7 +92,8 @@ bool MutableShortStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableShortStruct* p_type = static_cast<::MutableShortStruct*>(data);
+        ::MutableShortStruct* p_type =
+                static_cast<::MutableShortStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -128,9 +126,10 @@ uint32_t MutableShortStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableShortStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableShortStruct* p_type =
+                static_cast<const ::MutableShortStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -154,16 +153,9 @@ bool MutableShortStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableShortStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -173,39 +165,11 @@ bool MutableShortStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableShortStruct* p_type = static_cast<const ::MutableShortStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableShortStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableShortStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableShortStructPubSubType::register_type_object_representation()
@@ -220,17 +184,10 @@ MutableUShortStructPubSubType::MutableUShortStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableUShortStruct_max_key_cdr_typesize > 16 ? MutableUShortStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableUShortStructPubSubType::~MutableUShortStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableUShortStructPubSubType::serialize(
@@ -238,7 +195,8 @@ bool MutableUShortStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableUShortStruct* p_type = static_cast<const ::MutableUShortStruct*>(data);
+    const ::MutableUShortStruct* p_type =
+            static_cast<const ::MutableUShortStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -258,7 +216,7 @@ bool MutableUShortStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -277,7 +235,8 @@ bool MutableUShortStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableUShortStruct* p_type = static_cast<::MutableUShortStruct*>(data);
+        ::MutableUShortStruct* p_type =
+                static_cast<::MutableUShortStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -310,9 +269,10 @@ uint32_t MutableUShortStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableUShortStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableUShortStruct* p_type =
+                static_cast<const ::MutableUShortStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -336,16 +296,9 @@ bool MutableUShortStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableUShortStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -355,39 +308,11 @@ bool MutableUShortStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableUShortStruct* p_type = static_cast<const ::MutableUShortStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableUShortStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableUShortStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableUShortStructPubSubType::register_type_object_representation()
@@ -402,17 +327,10 @@ MutableLongStructPubSubType::MutableLongStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableLongStruct_max_key_cdr_typesize > 16 ? MutableLongStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableLongStructPubSubType::~MutableLongStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableLongStructPubSubType::serialize(
@@ -420,7 +338,8 @@ bool MutableLongStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableLongStruct* p_type = static_cast<const ::MutableLongStruct*>(data);
+    const ::MutableLongStruct* p_type =
+            static_cast<const ::MutableLongStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -440,7 +359,7 @@ bool MutableLongStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -459,7 +378,8 @@ bool MutableLongStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableLongStruct* p_type = static_cast<::MutableLongStruct*>(data);
+        ::MutableLongStruct* p_type =
+                static_cast<::MutableLongStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -492,9 +412,10 @@ uint32_t MutableLongStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableLongStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableLongStruct* p_type =
+                static_cast<const ::MutableLongStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -518,16 +439,9 @@ bool MutableLongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableLongStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -537,39 +451,11 @@ bool MutableLongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableLongStruct* p_type = static_cast<const ::MutableLongStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableLongStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableLongStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableLongStructPubSubType::register_type_object_representation()
@@ -584,17 +470,10 @@ MutableULongStructPubSubType::MutableULongStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableULongStruct_max_key_cdr_typesize > 16 ? MutableULongStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableULongStructPubSubType::~MutableULongStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableULongStructPubSubType::serialize(
@@ -602,7 +481,8 @@ bool MutableULongStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableULongStruct* p_type = static_cast<const ::MutableULongStruct*>(data);
+    const ::MutableULongStruct* p_type =
+            static_cast<const ::MutableULongStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -622,7 +502,7 @@ bool MutableULongStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -641,7 +521,8 @@ bool MutableULongStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableULongStruct* p_type = static_cast<::MutableULongStruct*>(data);
+        ::MutableULongStruct* p_type =
+                static_cast<::MutableULongStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -674,9 +555,10 @@ uint32_t MutableULongStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableULongStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableULongStruct* p_type =
+                static_cast<const ::MutableULongStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -700,16 +582,9 @@ bool MutableULongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableULongStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -719,39 +594,11 @@ bool MutableULongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableULongStruct* p_type = static_cast<const ::MutableULongStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableULongStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableULongStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableULongStructPubSubType::register_type_object_representation()
@@ -766,17 +613,10 @@ MutableLongLongStructPubSubType::MutableLongLongStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableLongLongStruct_max_key_cdr_typesize > 16 ? MutableLongLongStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableLongLongStructPubSubType::~MutableLongLongStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableLongLongStructPubSubType::serialize(
@@ -784,7 +624,8 @@ bool MutableLongLongStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableLongLongStruct* p_type = static_cast<const ::MutableLongLongStruct*>(data);
+    const ::MutableLongLongStruct* p_type =
+            static_cast<const ::MutableLongLongStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -804,7 +645,7 @@ bool MutableLongLongStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -823,7 +664,8 @@ bool MutableLongLongStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableLongLongStruct* p_type = static_cast<::MutableLongLongStruct*>(data);
+        ::MutableLongLongStruct* p_type =
+                static_cast<::MutableLongLongStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -856,9 +698,10 @@ uint32_t MutableLongLongStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableLongLongStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableLongLongStruct* p_type =
+                static_cast<const ::MutableLongLongStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -882,16 +725,9 @@ bool MutableLongLongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableLongLongStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -901,39 +737,11 @@ bool MutableLongLongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableLongLongStruct* p_type = static_cast<const ::MutableLongLongStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableLongLongStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableLongLongStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableLongLongStructPubSubType::register_type_object_representation()
@@ -948,17 +756,10 @@ MutableULongLongStructPubSubType::MutableULongLongStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableULongLongStruct_max_key_cdr_typesize > 16 ? MutableULongLongStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableULongLongStructPubSubType::~MutableULongLongStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableULongLongStructPubSubType::serialize(
@@ -966,7 +767,8 @@ bool MutableULongLongStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableULongLongStruct* p_type = static_cast<const ::MutableULongLongStruct*>(data);
+    const ::MutableULongLongStruct* p_type =
+            static_cast<const ::MutableULongLongStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -986,7 +788,7 @@ bool MutableULongLongStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1005,7 +807,8 @@ bool MutableULongLongStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableULongLongStruct* p_type = static_cast<::MutableULongLongStruct*>(data);
+        ::MutableULongLongStruct* p_type =
+                static_cast<::MutableULongLongStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1038,9 +841,10 @@ uint32_t MutableULongLongStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableULongLongStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableULongLongStruct* p_type =
+                static_cast<const ::MutableULongLongStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1064,16 +868,9 @@ bool MutableULongLongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableULongLongStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1083,39 +880,11 @@ bool MutableULongLongStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableULongLongStruct* p_type = static_cast<const ::MutableULongLongStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableULongLongStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableULongLongStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableULongLongStructPubSubType::register_type_object_representation()
@@ -1130,17 +899,10 @@ MutableFloatStructPubSubType::MutableFloatStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableFloatStruct_max_key_cdr_typesize > 16 ? MutableFloatStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableFloatStructPubSubType::~MutableFloatStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableFloatStructPubSubType::serialize(
@@ -1148,7 +910,8 @@ bool MutableFloatStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableFloatStruct* p_type = static_cast<const ::MutableFloatStruct*>(data);
+    const ::MutableFloatStruct* p_type =
+            static_cast<const ::MutableFloatStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1168,7 +931,7 @@ bool MutableFloatStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1187,7 +950,8 @@ bool MutableFloatStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableFloatStruct* p_type = static_cast<::MutableFloatStruct*>(data);
+        ::MutableFloatStruct* p_type =
+                static_cast<::MutableFloatStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1220,9 +984,10 @@ uint32_t MutableFloatStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableFloatStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableFloatStruct* p_type =
+                static_cast<const ::MutableFloatStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1246,16 +1011,9 @@ bool MutableFloatStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableFloatStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1265,39 +1023,11 @@ bool MutableFloatStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableFloatStruct* p_type = static_cast<const ::MutableFloatStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableFloatStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableFloatStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableFloatStructPubSubType::register_type_object_representation()
@@ -1312,17 +1042,10 @@ MutableDoubleStructPubSubType::MutableDoubleStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableDoubleStruct_max_key_cdr_typesize > 16 ? MutableDoubleStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableDoubleStructPubSubType::~MutableDoubleStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableDoubleStructPubSubType::serialize(
@@ -1330,7 +1053,8 @@ bool MutableDoubleStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableDoubleStruct* p_type = static_cast<const ::MutableDoubleStruct*>(data);
+    const ::MutableDoubleStruct* p_type =
+            static_cast<const ::MutableDoubleStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1350,7 +1074,7 @@ bool MutableDoubleStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1369,7 +1093,8 @@ bool MutableDoubleStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableDoubleStruct* p_type = static_cast<::MutableDoubleStruct*>(data);
+        ::MutableDoubleStruct* p_type =
+                static_cast<::MutableDoubleStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1402,9 +1127,10 @@ uint32_t MutableDoubleStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableDoubleStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableDoubleStruct* p_type =
+                static_cast<const ::MutableDoubleStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1428,16 +1154,9 @@ bool MutableDoubleStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableDoubleStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1447,39 +1166,11 @@ bool MutableDoubleStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableDoubleStruct* p_type = static_cast<const ::MutableDoubleStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableDoubleStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableDoubleStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableDoubleStructPubSubType::register_type_object_representation()
@@ -1494,17 +1185,10 @@ MutableLongDoubleStructPubSubType::MutableLongDoubleStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableLongDoubleStruct_max_key_cdr_typesize > 16 ? MutableLongDoubleStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableLongDoubleStructPubSubType::~MutableLongDoubleStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableLongDoubleStructPubSubType::serialize(
@@ -1512,7 +1196,8 @@ bool MutableLongDoubleStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableLongDoubleStruct* p_type = static_cast<const ::MutableLongDoubleStruct*>(data);
+    const ::MutableLongDoubleStruct* p_type =
+            static_cast<const ::MutableLongDoubleStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1532,7 +1217,7 @@ bool MutableLongDoubleStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1551,7 +1236,8 @@ bool MutableLongDoubleStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableLongDoubleStruct* p_type = static_cast<::MutableLongDoubleStruct*>(data);
+        ::MutableLongDoubleStruct* p_type =
+                static_cast<::MutableLongDoubleStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1584,9 +1270,10 @@ uint32_t MutableLongDoubleStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableLongDoubleStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableLongDoubleStruct* p_type =
+                static_cast<const ::MutableLongDoubleStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1610,16 +1297,9 @@ bool MutableLongDoubleStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableLongDoubleStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1629,39 +1309,11 @@ bool MutableLongDoubleStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableLongDoubleStruct* p_type = static_cast<const ::MutableLongDoubleStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableLongDoubleStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableLongDoubleStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableLongDoubleStructPubSubType::register_type_object_representation()
@@ -1676,17 +1328,10 @@ MutableBooleanStructPubSubType::MutableBooleanStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableBooleanStruct_max_key_cdr_typesize > 16 ? MutableBooleanStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableBooleanStructPubSubType::~MutableBooleanStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableBooleanStructPubSubType::serialize(
@@ -1694,7 +1339,8 @@ bool MutableBooleanStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableBooleanStruct* p_type = static_cast<const ::MutableBooleanStruct*>(data);
+    const ::MutableBooleanStruct* p_type =
+            static_cast<const ::MutableBooleanStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1714,7 +1360,7 @@ bool MutableBooleanStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1733,7 +1379,8 @@ bool MutableBooleanStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableBooleanStruct* p_type = static_cast<::MutableBooleanStruct*>(data);
+        ::MutableBooleanStruct* p_type =
+                static_cast<::MutableBooleanStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1766,9 +1413,10 @@ uint32_t MutableBooleanStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableBooleanStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableBooleanStruct* p_type =
+                static_cast<const ::MutableBooleanStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1792,16 +1440,9 @@ bool MutableBooleanStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableBooleanStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1811,39 +1452,11 @@ bool MutableBooleanStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableBooleanStruct* p_type = static_cast<const ::MutableBooleanStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableBooleanStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableBooleanStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableBooleanStructPubSubType::register_type_object_representation()
@@ -1858,17 +1471,10 @@ MutableOctetStructPubSubType::MutableOctetStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableOctetStruct_max_key_cdr_typesize > 16 ? MutableOctetStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableOctetStructPubSubType::~MutableOctetStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableOctetStructPubSubType::serialize(
@@ -1876,7 +1482,8 @@ bool MutableOctetStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableOctetStruct* p_type = static_cast<const ::MutableOctetStruct*>(data);
+    const ::MutableOctetStruct* p_type =
+            static_cast<const ::MutableOctetStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1896,7 +1503,7 @@ bool MutableOctetStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1915,7 +1522,8 @@ bool MutableOctetStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableOctetStruct* p_type = static_cast<::MutableOctetStruct*>(data);
+        ::MutableOctetStruct* p_type =
+                static_cast<::MutableOctetStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1948,9 +1556,10 @@ uint32_t MutableOctetStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableOctetStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableOctetStruct* p_type =
+                static_cast<const ::MutableOctetStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1974,16 +1583,9 @@ bool MutableOctetStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableOctetStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1993,39 +1595,11 @@ bool MutableOctetStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableOctetStruct* p_type = static_cast<const ::MutableOctetStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableOctetStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableOctetStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableOctetStructPubSubType::register_type_object_representation()
@@ -2040,17 +1614,10 @@ MutableCharStructPubSubType::MutableCharStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableCharStruct_max_key_cdr_typesize > 16 ? MutableCharStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableCharStructPubSubType::~MutableCharStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableCharStructPubSubType::serialize(
@@ -2058,7 +1625,8 @@ bool MutableCharStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableCharStruct* p_type = static_cast<const ::MutableCharStruct*>(data);
+    const ::MutableCharStruct* p_type =
+            static_cast<const ::MutableCharStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2078,7 +1646,7 @@ bool MutableCharStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2097,7 +1665,8 @@ bool MutableCharStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableCharStruct* p_type = static_cast<::MutableCharStruct*>(data);
+        ::MutableCharStruct* p_type =
+                static_cast<::MutableCharStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2130,9 +1699,10 @@ uint32_t MutableCharStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableCharStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableCharStruct* p_type =
+                static_cast<const ::MutableCharStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2156,16 +1726,9 @@ bool MutableCharStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableCharStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2175,39 +1738,11 @@ bool MutableCharStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableCharStruct* p_type = static_cast<const ::MutableCharStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableCharStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableCharStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableCharStructPubSubType::register_type_object_representation()
@@ -2222,17 +1757,10 @@ MutableWCharStructPubSubType::MutableWCharStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableWCharStruct_max_key_cdr_typesize > 16 ? MutableWCharStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableWCharStructPubSubType::~MutableWCharStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableWCharStructPubSubType::serialize(
@@ -2240,7 +1768,8 @@ bool MutableWCharStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableWCharStruct* p_type = static_cast<const ::MutableWCharStruct*>(data);
+    const ::MutableWCharStruct* p_type =
+            static_cast<const ::MutableWCharStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2260,7 +1789,7 @@ bool MutableWCharStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2279,7 +1808,8 @@ bool MutableWCharStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableWCharStruct* p_type = static_cast<::MutableWCharStruct*>(data);
+        ::MutableWCharStruct* p_type =
+                static_cast<::MutableWCharStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2312,9 +1842,10 @@ uint32_t MutableWCharStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableWCharStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableWCharStruct* p_type =
+                static_cast<const ::MutableWCharStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2338,16 +1869,9 @@ bool MutableWCharStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableWCharStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2357,39 +1881,11 @@ bool MutableWCharStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableWCharStruct* p_type = static_cast<const ::MutableWCharStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableWCharStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableWCharStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableWCharStructPubSubType::register_type_object_representation()
@@ -2404,17 +1900,10 @@ MutableUnionStructPubSubType::MutableUnionStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableUnionStruct_max_key_cdr_typesize > 16 ? MutableUnionStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableUnionStructPubSubType::~MutableUnionStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableUnionStructPubSubType::serialize(
@@ -2422,7 +1911,8 @@ bool MutableUnionStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableUnionStruct* p_type = static_cast<const ::MutableUnionStruct*>(data);
+    const ::MutableUnionStruct* p_type =
+            static_cast<const ::MutableUnionStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2442,7 +1932,7 @@ bool MutableUnionStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2461,7 +1951,8 @@ bool MutableUnionStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableUnionStruct* p_type = static_cast<::MutableUnionStruct*>(data);
+        ::MutableUnionStruct* p_type =
+                static_cast<::MutableUnionStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2494,9 +1985,10 @@ uint32_t MutableUnionStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableUnionStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableUnionStruct* p_type =
+                static_cast<const ::MutableUnionStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2520,16 +2012,9 @@ bool MutableUnionStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableUnionStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2539,39 +2024,11 @@ bool MutableUnionStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableUnionStruct* p_type = static_cast<const ::MutableUnionStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableUnionStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableUnionStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableUnionStructPubSubType::register_type_object_representation()
@@ -2586,17 +2043,10 @@ MutableEmptyStructPubSubType::MutableEmptyStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableEmptyStruct_max_key_cdr_typesize > 16 ? MutableEmptyStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableEmptyStructPubSubType::~MutableEmptyStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableEmptyStructPubSubType::serialize(
@@ -2604,7 +2054,8 @@ bool MutableEmptyStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableEmptyStruct* p_type = static_cast<const ::MutableEmptyStruct*>(data);
+    const ::MutableEmptyStruct* p_type =
+            static_cast<const ::MutableEmptyStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2624,7 +2075,7 @@ bool MutableEmptyStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2643,7 +2094,8 @@ bool MutableEmptyStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableEmptyStruct* p_type = static_cast<::MutableEmptyStruct*>(data);
+        ::MutableEmptyStruct* p_type =
+                static_cast<::MutableEmptyStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2676,9 +2128,10 @@ uint32_t MutableEmptyStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableEmptyStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableEmptyStruct* p_type =
+                static_cast<const ::MutableEmptyStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2702,16 +2155,9 @@ bool MutableEmptyStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableEmptyStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2721,39 +2167,11 @@ bool MutableEmptyStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableEmptyStruct* p_type = static_cast<const ::MutableEmptyStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableEmptyStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableEmptyStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableEmptyStructPubSubType::register_type_object_representation()
@@ -2768,17 +2186,10 @@ MutableEmptyInheritanceStructPubSubType::MutableEmptyInheritanceStructPubSubType
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableEmptyInheritanceStruct_max_key_cdr_typesize > 16 ? MutableEmptyInheritanceStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableEmptyInheritanceStructPubSubType::~MutableEmptyInheritanceStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableEmptyInheritanceStructPubSubType::serialize(
@@ -2786,7 +2197,8 @@ bool MutableEmptyInheritanceStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableEmptyInheritanceStruct* p_type = static_cast<const ::MutableEmptyInheritanceStruct*>(data);
+    const ::MutableEmptyInheritanceStruct* p_type =
+            static_cast<const ::MutableEmptyInheritanceStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2806,7 +2218,7 @@ bool MutableEmptyInheritanceStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2825,7 +2237,8 @@ bool MutableEmptyInheritanceStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableEmptyInheritanceStruct* p_type = static_cast<::MutableEmptyInheritanceStruct*>(data);
+        ::MutableEmptyInheritanceStruct* p_type =
+                static_cast<::MutableEmptyInheritanceStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2858,9 +2271,10 @@ uint32_t MutableEmptyInheritanceStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableEmptyInheritanceStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableEmptyInheritanceStruct* p_type =
+                static_cast<const ::MutableEmptyInheritanceStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2884,16 +2298,9 @@ bool MutableEmptyInheritanceStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableEmptyInheritanceStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2903,39 +2310,11 @@ bool MutableEmptyInheritanceStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableEmptyInheritanceStruct* p_type = static_cast<const ::MutableEmptyInheritanceStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableEmptyInheritanceStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableEmptyInheritanceStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableEmptyInheritanceStructPubSubType::register_type_object_representation()
@@ -2950,17 +2329,10 @@ MutableInheritanceStructPubSubType::MutableInheritanceStructPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableInheritanceStruct_max_key_cdr_typesize > 16 ? MutableInheritanceStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableInheritanceStructPubSubType::~MutableInheritanceStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableInheritanceStructPubSubType::serialize(
@@ -2968,7 +2340,8 @@ bool MutableInheritanceStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableInheritanceStruct* p_type = static_cast<const ::MutableInheritanceStruct*>(data);
+    const ::MutableInheritanceStruct* p_type =
+            static_cast<const ::MutableInheritanceStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2988,7 +2361,7 @@ bool MutableInheritanceStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3007,7 +2380,8 @@ bool MutableInheritanceStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableInheritanceStruct* p_type = static_cast<::MutableInheritanceStruct*>(data);
+        ::MutableInheritanceStruct* p_type =
+                static_cast<::MutableInheritanceStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3040,9 +2414,10 @@ uint32_t MutableInheritanceStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableInheritanceStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableInheritanceStruct* p_type =
+                static_cast<const ::MutableInheritanceStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3066,16 +2441,9 @@ bool MutableInheritanceStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableInheritanceStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3085,39 +2453,11 @@ bool MutableInheritanceStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableInheritanceStruct* p_type = static_cast<const ::MutableInheritanceStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableInheritanceStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableInheritanceStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableInheritanceStructPubSubType::register_type_object_representation()
@@ -3132,17 +2472,10 @@ MutableInheritanceEmptyStructPubSubType::MutableInheritanceEmptyStructPubSubType
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableInheritanceEmptyStruct_max_key_cdr_typesize > 16 ? MutableInheritanceEmptyStruct_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableInheritanceEmptyStructPubSubType::~MutableInheritanceEmptyStructPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableInheritanceEmptyStructPubSubType::serialize(
@@ -3150,7 +2483,8 @@ bool MutableInheritanceEmptyStructPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableInheritanceEmptyStruct* p_type = static_cast<const ::MutableInheritanceEmptyStruct*>(data);
+    const ::MutableInheritanceEmptyStruct* p_type =
+            static_cast<const ::MutableInheritanceEmptyStruct*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3170,7 +2504,7 @@ bool MutableInheritanceEmptyStructPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3189,7 +2523,8 @@ bool MutableInheritanceEmptyStructPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableInheritanceEmptyStruct* p_type = static_cast<::MutableInheritanceEmptyStruct*>(data);
+        ::MutableInheritanceEmptyStruct* p_type =
+                static_cast<::MutableInheritanceEmptyStruct*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3222,9 +2557,10 @@ uint32_t MutableInheritanceEmptyStructPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableInheritanceEmptyStruct*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableInheritanceEmptyStruct* p_type =
+                static_cast<const ::MutableInheritanceEmptyStruct*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3248,16 +2584,9 @@ bool MutableInheritanceEmptyStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableInheritanceEmptyStruct data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3267,39 +2596,11 @@ bool MutableInheritanceEmptyStructPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableInheritanceEmptyStruct* p_type = static_cast<const ::MutableInheritanceEmptyStruct*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableInheritanceEmptyStruct_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableInheritanceEmptyStruct_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableInheritanceEmptyStructPubSubType::register_type_object_representation()
@@ -3314,17 +2615,10 @@ MutableExtensibilityInheritancePubSubType::MutableExtensibilityInheritancePubSub
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = MutableExtensibilityInheritance_max_key_cdr_typesize > 16 ? MutableExtensibilityInheritance_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MutableExtensibilityInheritancePubSubType::~MutableExtensibilityInheritancePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MutableExtensibilityInheritancePubSubType::serialize(
@@ -3332,7 +2626,8 @@ bool MutableExtensibilityInheritancePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::MutableExtensibilityInheritance* p_type = static_cast<const ::MutableExtensibilityInheritance*>(data);
+    const ::MutableExtensibilityInheritance* p_type =
+            static_cast<const ::MutableExtensibilityInheritance*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3352,7 +2647,7 @@ bool MutableExtensibilityInheritancePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3371,7 +2666,8 @@ bool MutableExtensibilityInheritancePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::MutableExtensibilityInheritance* p_type = static_cast<::MutableExtensibilityInheritance*>(data);
+        ::MutableExtensibilityInheritance* p_type =
+                static_cast<::MutableExtensibilityInheritance*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3404,9 +2700,10 @@ uint32_t MutableExtensibilityInheritancePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::MutableExtensibilityInheritance*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::MutableExtensibilityInheritance* p_type =
+                static_cast<const ::MutableExtensibilityInheritance*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3430,16 +2727,9 @@ bool MutableExtensibilityInheritancePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::MutableExtensibilityInheritance data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3449,46 +2739,17 @@ bool MutableExtensibilityInheritancePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::MutableExtensibilityInheritance* p_type = static_cast<const ::MutableExtensibilityInheritance*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            MutableExtensibilityInheritance_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || MutableExtensibilityInheritance_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MutableExtensibilityInheritancePubSubType::register_type_object_representation()
 {
     register_MutableExtensibilityInheritance_type_identifier(type_identifiers_);
 }
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "mutableCdrAux.ipp"
