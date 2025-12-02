@@ -343,13 +343,13 @@ void MessageReceiver::processCDRMsg(
 #ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
     GuidPrefix_t participantGuidPrefix;
 #else
-    GuidPrefix_t participantGuidPrefix = participant_->getGuid().guidPrefix;
+    GuidPrefix_t participantGuidPrefix {participant_->getGuid().guidPrefix};
 #endif // ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 
 #if HAVE_SECURITY
     security::SecurityManager& security = participant_->security_manager();
     CDRMessage_t* auxiliary_buffer = &crypto_msg_;
-    int decode_ret = 0;
+    int decode_ret {0};
 #endif // if HAVE_SECURITY
 
     {
@@ -397,7 +397,7 @@ void MessageReceiver::processCDRMsg(
     {
         CDRMessage_t* submessage = msg;
 
-        bool current_message_was_decoded = false;
+        bool current_message_was_decoded {false};
 
 #if HAVE_SECURITY
         decode_ret = security.decode_rtps_submessage(*msg, *auxiliary_buffer, source_guid_prefix_);
@@ -421,7 +421,7 @@ void MessageReceiver::processCDRMsg(
         }
 
         valid = true;
-        uint32_t next_msg_pos = submessage->pos;
+        uint32_t next_msg_pos {submessage->pos};
         next_msg_pos += (submsgh.submessageLength + 3u) & ~3u;
         switch (submsgh.submessageId)
         {
@@ -607,7 +607,7 @@ bool MessageReceiver::readSubmessageHeader(
 
     //Set endianness of message
     msg->msg_endian = (smh->flags & BIT(0)) != 0 ? LITTLEEND : BIGEND;
-    uint16_t length = 0;
+    uint16_t length {0};
     CDRMessage::readUInt16(msg, &length);
     if (msg->pos + length > msg->length)
     {
@@ -715,10 +715,10 @@ bool MessageReceiver::proc_Submsg_Data(
         return false;
     }
     //Fill flags bool values
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
-    bool inlineQosFlag = (smh->flags & BIT(1)) != 0;
-    bool dataFlag = (smh->flags & BIT(2)) != 0;
-    bool keyFlag = (smh->flags & BIT(3)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
+    bool inlineQosFlag {(smh->flags & BIT(1)) != 0};
+    bool dataFlag {(smh->flags & BIT(2)) != 0};
+    bool keyFlag {(smh->flags & BIT(3)) != 0};
     if (keyFlag && dataFlag)
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Message received with Data and Key Flag set, ignoring");
@@ -738,9 +738,9 @@ bool MessageReceiver::proc_Submsg_Data(
     //Extra flags don't matter now. Avoid those bytes
     msg->pos += 2;
 
-    bool valid = true;
-    int16_t octetsToInlineQos = 0;
-    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    bool valid {true};
+    uint16_t octetsToInlineQos {0};
+    valid &= CDRMessage::readUInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     RTPSReader* first_reader = nullptr;
@@ -786,7 +786,7 @@ bool MessageReceiver::proc_Submsg_Data(
         }
     }
 
-    uint32_t inlineQosSize = 0;
+    uint32_t inlineQosSize {0};
 
     if (inlineQosFlag)
     {
@@ -819,7 +819,7 @@ bool MessageReceiver::proc_Submsg_Data(
         }
 
         payload_size = smh->submessageLength - submsg_no_payload_size;
-        uint32_t next_pos = msg->pos + payload_size;
+        uint32_t next_pos {msg->pos + payload_size};
         if (msg->length >= next_pos && payload_size > 0)
         {
             if (dataFlag)
@@ -896,9 +896,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     }
 
     //Fill flags bool values
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
-    bool inlineQosFlag = (smh->flags & BIT(1)) != 0;
-    bool keyFlag = (smh->flags & BIT(2)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
+    bool inlineQosFlag {(smh->flags & BIT(1)) != 0};
+    bool keyFlag {(smh->flags & BIT(2)) != 0};
 
     //Assign message endianness
     if (endiannessFlag)
@@ -913,9 +913,9 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     //Extra flags don't matter now. Avoid those bytes
     msg->pos += 2;
 
-    bool valid = true;
-    int16_t octetsToInlineQos = 0;
-    valid &= CDRMessage::readInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
+    bool valid {true};
+    uint16_t octetsToInlineQos {0};
+    valid &= CDRMessage::readUInt16(msg, &octetsToInlineQos); //it should be 16 in this implementation
 
     //reader and writer ID
     RTPSReader* first_reader = nullptr;
@@ -944,19 +944,19 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     }
 
     // READ FRAGMENT NUMBER
-    uint32_t fragmentStartingNum;
+    uint32_t fragmentStartingNum {0};
     valid &= CDRMessage::readUInt32(msg, &fragmentStartingNum);
 
     // READ FRAGMENTSINSUBMESSAGE
-    uint16_t fragmentsInSubmessage;
+    uint16_t fragmentsInSubmessage {0};
     valid &= CDRMessage::readUInt16(msg, &fragmentsInSubmessage);
 
     // READ FRAGMENTSIZE
-    uint16_t fragmentSize = 0;
+    uint16_t fragmentSize {0};
     valid &= CDRMessage::readUInt16(msg, &fragmentSize);
 
     // READ SAMPLESIZE
-    uint32_t sampleSize;
+    uint32_t sampleSize {0};
     valid &= CDRMessage::readUInt32(msg, &sampleSize);
 
     if (!valid)
@@ -976,7 +976,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         }
     }
 
-    uint32_t inlineQosSize = 0;
+    uint32_t inlineQosSize {0};
 
     if (inlineQosFlag)
     {
@@ -999,7 +999,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     if (!keyFlag)
     {
-        uint32_t next_pos = msg->pos + payload_size;
+        uint32_t next_pos {msg->pos + payload_size};
         if (msg->length >= next_pos && payload_size > 0)
         {
             ch.kind = ALIVE;
@@ -1067,9 +1067,9 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
-    bool finalFlag = (smh->flags & BIT(1)) != 0;
-    bool livelinessFlag = (smh->flags & BIT(2)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
+    bool finalFlag {(smh->flags & BIT(1)) != 0};
+    bool livelinessFlag {(smh->flags & BIT(2)) != 0};
     //Assign message endianness
     if (endiannessFlag)
     {
@@ -1103,7 +1103,7 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
                 lastSN << "), ignoring");
         return false;
     }
-    uint32_t HBCount;
+    uint32_t HBCount {0};
     if (!CDRMessage::readUInt32(msg, &HBCount))
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Unable to read heartbeat count from heartbeat message");
@@ -1137,8 +1137,8 @@ bool MessageReceiver::proc_Submsg_Acknack(
 
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
-    bool finalFlag = (smh->flags & BIT(1)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
+    bool finalFlag {(smh->flags & BIT(1)) != 0};
     //Assign message endianness
     if (endiannessFlag)
     {
@@ -1156,7 +1156,7 @@ bool MessageReceiver::proc_Submsg_Acknack(
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
 
     SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
-    uint32_t Ackcount;
+    uint32_t Ackcount {0};
     if (!CDRMessage::readUInt32(msg, &Ackcount))
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
@@ -1193,7 +1193,7 @@ bool MessageReceiver::proc_Submsg_Gap(
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
     //Assign message endianness
     if (endiannessFlag)
     {
@@ -1240,8 +1240,8 @@ bool MessageReceiver::proc_Submsg_InfoTS(
 {
     std::lock_guard<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
-    bool timeFlag = (smh->flags & BIT(1)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
+    bool timeFlag {(smh->flags & BIT(1)) != 0};
     //Assign message endianness
     if (endiannessFlag)
     {
@@ -1270,7 +1270,7 @@ bool MessageReceiver::proc_Submsg_InfoDST(
 {
     std::lock_guard<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0u;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0u};
     //bool timeFlag = smh->flags & BIT(1) ? true : false;
     //Assign message endianness
     if (endiannessFlag)
@@ -1297,7 +1297,7 @@ bool MessageReceiver::proc_Submsg_InfoSRC(
 {
     std::lock_guard<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
     //bool timeFlag = smh->flags & BIT(1) ? true : false;
     //Assign message endianness
     if (endiannessFlag)
@@ -1332,7 +1332,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(
 
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
-    bool endiannessFlag = (smh->flags & BIT(0)) != 0;
+    bool endiannessFlag {(smh->flags & BIT(0)) != 0};
     //Assign message endianness
     if (endiannessFlag)
     {
@@ -1356,7 +1356,7 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     FragmentNumberSet_t fnState;
     CDRMessage::readFragmentNumberSet(msg, &fnState);
 
-    uint32_t Ackcount;
+    uint32_t Ackcount {0};
     if (!CDRMessage::readUInt32(msg, &Ackcount))
     {
         logInfo(RTPS_MSG_IN, IDSTRING "Unable to read ackcount from message");
@@ -1457,8 +1457,8 @@ void MessageReceiver::notify_network_statistics(
     }
 
     // Keep track of current position, so we can restore it later.
-    auto initial_pos = msg->pos;
-    auto msg_length = msg->length;
+    uint32_t initial_pos {msg->pos};
+    uint32_t msg_length {msg->length};
     while (msg->pos < msg_length)
     {
         SubmessageHeader_t header;

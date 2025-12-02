@@ -1,8 +1,8 @@
 names:
     fastcdr:
         cmake-args:
-            - "-DCMAKE_C_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
-            - "-DCMAKE_CXX_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
+            - "-DCMAKE_C_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
+            - "-DCMAKE_CXX_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
     fastrtps:
         cmake-args:
             - "-DCOMPILE_EXAMPLES=OFF"
@@ -15,8 +15,8 @@ names:
             - "-DNO_TLS=OFF"
             - "-DSECURITY=ON"
             - "-DFASTDDS_STATISTICS=ON"
-            - "-DCMAKE_C_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
-            - "-DCMAKE_CXX_FLAGS='-fsanitize=thread -O2 -g -fno-omit-frame-pointer'"
+            - "-DCMAKE_C_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
+            - "-DCMAKE_CXX_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
     googletest-distribution:
         cmake-args:
             - "-Dgtest_force_shared_crt=ON"
