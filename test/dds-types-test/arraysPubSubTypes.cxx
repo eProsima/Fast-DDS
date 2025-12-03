@@ -21,6 +21,9 @@
 
 #include "arraysPubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -38,17 +41,10 @@ ArrayShortPubSubType::ArrayShortPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayShort_max_key_cdr_typesize > 16 ? ArrayShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayShortPubSubType::~ArrayShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayShortPubSubType::serialize(
@@ -56,7 +52,8 @@ bool ArrayShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayShort* p_type = static_cast<const ::ArrayShort*>(data);
+    const ::ArrayShort* p_type =
+            static_cast<const ::ArrayShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -76,7 +73,7 @@ bool ArrayShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -95,7 +92,8 @@ bool ArrayShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayShort* p_type = static_cast<::ArrayShort*>(data);
+        ::ArrayShort* p_type =
+                static_cast<::ArrayShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -128,9 +126,10 @@ uint32_t ArrayShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayShort* p_type =
+                static_cast<const ::ArrayShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -154,16 +153,9 @@ bool ArrayShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -173,39 +165,11 @@ bool ArrayShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayShort* p_type = static_cast<const ::ArrayShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayShortPubSubType::register_type_object_representation()
@@ -220,17 +184,10 @@ ArrayUShortPubSubType::ArrayUShortPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayUShort_max_key_cdr_typesize > 16 ? ArrayUShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayUShortPubSubType::~ArrayUShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayUShortPubSubType::serialize(
@@ -238,7 +195,8 @@ bool ArrayUShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayUShort* p_type = static_cast<const ::ArrayUShort*>(data);
+    const ::ArrayUShort* p_type =
+            static_cast<const ::ArrayUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -258,7 +216,7 @@ bool ArrayUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -277,7 +235,8 @@ bool ArrayUShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayUShort* p_type = static_cast<::ArrayUShort*>(data);
+        ::ArrayUShort* p_type =
+                static_cast<::ArrayUShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -310,9 +269,10 @@ uint32_t ArrayUShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayUShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayUShort* p_type =
+                static_cast<const ::ArrayUShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -336,16 +296,9 @@ bool ArrayUShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayUShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -355,39 +308,11 @@ bool ArrayUShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayUShort* p_type = static_cast<const ::ArrayUShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayUShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayUShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayUShortPubSubType::register_type_object_representation()
@@ -402,17 +327,10 @@ ArrayLongPubSubType::ArrayLongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayLong_max_key_cdr_typesize > 16 ? ArrayLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayLongPubSubType::~ArrayLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayLongPubSubType::serialize(
@@ -420,7 +338,8 @@ bool ArrayLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayLong* p_type = static_cast<const ::ArrayLong*>(data);
+    const ::ArrayLong* p_type =
+            static_cast<const ::ArrayLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -440,7 +359,7 @@ bool ArrayLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -459,7 +378,8 @@ bool ArrayLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayLong* p_type = static_cast<::ArrayLong*>(data);
+        ::ArrayLong* p_type =
+                static_cast<::ArrayLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -492,9 +412,10 @@ uint32_t ArrayLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayLong* p_type =
+                static_cast<const ::ArrayLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -518,16 +439,9 @@ bool ArrayLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -537,39 +451,11 @@ bool ArrayLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayLong* p_type = static_cast<const ::ArrayLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayLongPubSubType::register_type_object_representation()
@@ -584,17 +470,10 @@ ArrayULongPubSubType::ArrayULongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayULong_max_key_cdr_typesize > 16 ? ArrayULong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayULongPubSubType::~ArrayULongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayULongPubSubType::serialize(
@@ -602,7 +481,8 @@ bool ArrayULongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayULong* p_type = static_cast<const ::ArrayULong*>(data);
+    const ::ArrayULong* p_type =
+            static_cast<const ::ArrayULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -622,7 +502,7 @@ bool ArrayULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -641,7 +521,8 @@ bool ArrayULongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayULong* p_type = static_cast<::ArrayULong*>(data);
+        ::ArrayULong* p_type =
+                static_cast<::ArrayULong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -674,9 +555,10 @@ uint32_t ArrayULongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayULong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayULong* p_type =
+                static_cast<const ::ArrayULong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -700,16 +582,9 @@ bool ArrayULongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayULong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -719,39 +594,11 @@ bool ArrayULongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayULong* p_type = static_cast<const ::ArrayULong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayULong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayULong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayULongPubSubType::register_type_object_representation()
@@ -766,17 +613,10 @@ ArrayLongLongPubSubType::ArrayLongLongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayLongLong_max_key_cdr_typesize > 16 ? ArrayLongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayLongLongPubSubType::~ArrayLongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayLongLongPubSubType::serialize(
@@ -784,7 +624,8 @@ bool ArrayLongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayLongLong* p_type = static_cast<const ::ArrayLongLong*>(data);
+    const ::ArrayLongLong* p_type =
+            static_cast<const ::ArrayLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -804,7 +645,7 @@ bool ArrayLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -823,7 +664,8 @@ bool ArrayLongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayLongLong* p_type = static_cast<::ArrayLongLong*>(data);
+        ::ArrayLongLong* p_type =
+                static_cast<::ArrayLongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -856,9 +698,10 @@ uint32_t ArrayLongLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayLongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayLongLong* p_type =
+                static_cast<const ::ArrayLongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -882,16 +725,9 @@ bool ArrayLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayLongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -901,39 +737,11 @@ bool ArrayLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayLongLong* p_type = static_cast<const ::ArrayLongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayLongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayLongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayLongLongPubSubType::register_type_object_representation()
@@ -948,17 +756,10 @@ ArrayULongLongPubSubType::ArrayULongLongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayULongLong_max_key_cdr_typesize > 16 ? ArrayULongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayULongLongPubSubType::~ArrayULongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayULongLongPubSubType::serialize(
@@ -966,7 +767,8 @@ bool ArrayULongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayULongLong* p_type = static_cast<const ::ArrayULongLong*>(data);
+    const ::ArrayULongLong* p_type =
+            static_cast<const ::ArrayULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -986,7 +788,7 @@ bool ArrayULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1005,7 +807,8 @@ bool ArrayULongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayULongLong* p_type = static_cast<::ArrayULongLong*>(data);
+        ::ArrayULongLong* p_type =
+                static_cast<::ArrayULongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1038,9 +841,10 @@ uint32_t ArrayULongLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayULongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayULongLong* p_type =
+                static_cast<const ::ArrayULongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1064,16 +868,9 @@ bool ArrayULongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayULongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1083,39 +880,11 @@ bool ArrayULongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayULongLong* p_type = static_cast<const ::ArrayULongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayULongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayULongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayULongLongPubSubType::register_type_object_representation()
@@ -1130,17 +899,10 @@ ArrayFloatPubSubType::ArrayFloatPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayFloat_max_key_cdr_typesize > 16 ? ArrayFloat_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayFloatPubSubType::~ArrayFloatPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayFloatPubSubType::serialize(
@@ -1148,7 +910,8 @@ bool ArrayFloatPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayFloat* p_type = static_cast<const ::ArrayFloat*>(data);
+    const ::ArrayFloat* p_type =
+            static_cast<const ::ArrayFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1168,7 +931,7 @@ bool ArrayFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1187,7 +950,8 @@ bool ArrayFloatPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayFloat* p_type = static_cast<::ArrayFloat*>(data);
+        ::ArrayFloat* p_type =
+                static_cast<::ArrayFloat*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1220,9 +984,10 @@ uint32_t ArrayFloatPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayFloat*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayFloat* p_type =
+                static_cast<const ::ArrayFloat*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1246,16 +1011,9 @@ bool ArrayFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayFloat data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1265,39 +1023,11 @@ bool ArrayFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayFloat* p_type = static_cast<const ::ArrayFloat*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayFloat_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayFloat_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayFloatPubSubType::register_type_object_representation()
@@ -1312,17 +1042,10 @@ ArrayDoublePubSubType::ArrayDoublePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayDouble_max_key_cdr_typesize > 16 ? ArrayDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayDoublePubSubType::~ArrayDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayDoublePubSubType::serialize(
@@ -1330,7 +1053,8 @@ bool ArrayDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayDouble* p_type = static_cast<const ::ArrayDouble*>(data);
+    const ::ArrayDouble* p_type =
+            static_cast<const ::ArrayDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1350,7 +1074,7 @@ bool ArrayDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1369,7 +1093,8 @@ bool ArrayDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayDouble* p_type = static_cast<::ArrayDouble*>(data);
+        ::ArrayDouble* p_type =
+                static_cast<::ArrayDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1402,9 +1127,10 @@ uint32_t ArrayDoublePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayDouble* p_type =
+                static_cast<const ::ArrayDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1428,16 +1154,9 @@ bool ArrayDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1447,39 +1166,11 @@ bool ArrayDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayDouble* p_type = static_cast<const ::ArrayDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayDoublePubSubType::register_type_object_representation()
@@ -1494,17 +1185,10 @@ ArrayLongDoublePubSubType::ArrayLongDoublePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayLongDouble_max_key_cdr_typesize > 16 ? ArrayLongDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayLongDoublePubSubType::~ArrayLongDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayLongDoublePubSubType::serialize(
@@ -1512,7 +1196,8 @@ bool ArrayLongDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayLongDouble* p_type = static_cast<const ::ArrayLongDouble*>(data);
+    const ::ArrayLongDouble* p_type =
+            static_cast<const ::ArrayLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1532,7 +1217,7 @@ bool ArrayLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1551,7 +1236,8 @@ bool ArrayLongDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayLongDouble* p_type = static_cast<::ArrayLongDouble*>(data);
+        ::ArrayLongDouble* p_type =
+                static_cast<::ArrayLongDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1584,9 +1270,10 @@ uint32_t ArrayLongDoublePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayLongDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayLongDouble* p_type =
+                static_cast<const ::ArrayLongDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1610,16 +1297,9 @@ bool ArrayLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayLongDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1629,39 +1309,11 @@ bool ArrayLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayLongDouble* p_type = static_cast<const ::ArrayLongDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayLongDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayLongDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayLongDoublePubSubType::register_type_object_representation()
@@ -1676,17 +1328,10 @@ ArrayBooleanPubSubType::ArrayBooleanPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayBoolean_max_key_cdr_typesize > 16 ? ArrayBoolean_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayBooleanPubSubType::~ArrayBooleanPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayBooleanPubSubType::serialize(
@@ -1694,7 +1339,8 @@ bool ArrayBooleanPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayBoolean* p_type = static_cast<const ::ArrayBoolean*>(data);
+    const ::ArrayBoolean* p_type =
+            static_cast<const ::ArrayBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1714,7 +1360,7 @@ bool ArrayBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1733,7 +1379,8 @@ bool ArrayBooleanPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayBoolean* p_type = static_cast<::ArrayBoolean*>(data);
+        ::ArrayBoolean* p_type =
+                static_cast<::ArrayBoolean*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1766,9 +1413,10 @@ uint32_t ArrayBooleanPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayBoolean*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayBoolean* p_type =
+                static_cast<const ::ArrayBoolean*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1792,16 +1440,9 @@ bool ArrayBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayBoolean data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1811,39 +1452,11 @@ bool ArrayBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayBoolean* p_type = static_cast<const ::ArrayBoolean*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayBoolean_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayBoolean_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayBooleanPubSubType::register_type_object_representation()
@@ -1858,17 +1471,10 @@ ArrayOctetPubSubType::ArrayOctetPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayOctet_max_key_cdr_typesize > 16 ? ArrayOctet_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayOctetPubSubType::~ArrayOctetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayOctetPubSubType::serialize(
@@ -1876,7 +1482,8 @@ bool ArrayOctetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayOctet* p_type = static_cast<const ::ArrayOctet*>(data);
+    const ::ArrayOctet* p_type =
+            static_cast<const ::ArrayOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1896,7 +1503,7 @@ bool ArrayOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1915,7 +1522,8 @@ bool ArrayOctetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayOctet* p_type = static_cast<::ArrayOctet*>(data);
+        ::ArrayOctet* p_type =
+                static_cast<::ArrayOctet*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1948,9 +1556,10 @@ uint32_t ArrayOctetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayOctet*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayOctet* p_type =
+                static_cast<const ::ArrayOctet*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1974,16 +1583,9 @@ bool ArrayOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayOctet data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1993,39 +1595,11 @@ bool ArrayOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayOctet* p_type = static_cast<const ::ArrayOctet*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayOctet_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayOctet_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayOctetPubSubType::register_type_object_representation()
@@ -2040,17 +1614,10 @@ ArrayUInt8PubSubType::ArrayUInt8PubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayUInt8_max_key_cdr_typesize > 16 ? ArrayUInt8_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayUInt8PubSubType::~ArrayUInt8PubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayUInt8PubSubType::serialize(
@@ -2058,7 +1625,8 @@ bool ArrayUInt8PubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayUInt8* p_type = static_cast<const ::ArrayUInt8*>(data);
+    const ::ArrayUInt8* p_type =
+            static_cast<const ::ArrayUInt8*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2078,7 +1646,7 @@ bool ArrayUInt8PubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2097,7 +1665,8 @@ bool ArrayUInt8PubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayUInt8* p_type = static_cast<::ArrayUInt8*>(data);
+        ::ArrayUInt8* p_type =
+                static_cast<::ArrayUInt8*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2130,9 +1699,10 @@ uint32_t ArrayUInt8PubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayUInt8*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayUInt8* p_type =
+                static_cast<const ::ArrayUInt8*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2156,16 +1726,9 @@ bool ArrayUInt8PubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayUInt8 data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2175,39 +1738,11 @@ bool ArrayUInt8PubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayUInt8* p_type = static_cast<const ::ArrayUInt8*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayUInt8_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayUInt8_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayUInt8PubSubType::register_type_object_representation()
@@ -2222,17 +1757,10 @@ ArrayCharPubSubType::ArrayCharPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayChar_max_key_cdr_typesize > 16 ? ArrayChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayCharPubSubType::~ArrayCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayCharPubSubType::serialize(
@@ -2240,7 +1768,8 @@ bool ArrayCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayChar* p_type = static_cast<const ::ArrayChar*>(data);
+    const ::ArrayChar* p_type =
+            static_cast<const ::ArrayChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2260,7 +1789,7 @@ bool ArrayCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2279,7 +1808,8 @@ bool ArrayCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayChar* p_type = static_cast<::ArrayChar*>(data);
+        ::ArrayChar* p_type =
+                static_cast<::ArrayChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2312,9 +1842,10 @@ uint32_t ArrayCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayChar* p_type =
+                static_cast<const ::ArrayChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2338,16 +1869,9 @@ bool ArrayCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2357,39 +1881,11 @@ bool ArrayCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayChar* p_type = static_cast<const ::ArrayChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayCharPubSubType::register_type_object_representation()
@@ -2404,17 +1900,10 @@ ArrayWCharPubSubType::ArrayWCharPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayWChar_max_key_cdr_typesize > 16 ? ArrayWChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayWCharPubSubType::~ArrayWCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayWCharPubSubType::serialize(
@@ -2422,7 +1911,8 @@ bool ArrayWCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayWChar* p_type = static_cast<const ::ArrayWChar*>(data);
+    const ::ArrayWChar* p_type =
+            static_cast<const ::ArrayWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2442,7 +1932,7 @@ bool ArrayWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2461,7 +1951,8 @@ bool ArrayWCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayWChar* p_type = static_cast<::ArrayWChar*>(data);
+        ::ArrayWChar* p_type =
+                static_cast<::ArrayWChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2494,9 +1985,10 @@ uint32_t ArrayWCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayWChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayWChar* p_type =
+                static_cast<const ::ArrayWChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2520,16 +2012,9 @@ bool ArrayWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayWChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2539,39 +2024,11 @@ bool ArrayWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayWChar* p_type = static_cast<const ::ArrayWChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayWChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayWChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayWCharPubSubType::register_type_object_representation()
@@ -2586,17 +2043,10 @@ ArrayStringPubSubType::ArrayStringPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayString_max_key_cdr_typesize > 16 ? ArrayString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayStringPubSubType::~ArrayStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayStringPubSubType::serialize(
@@ -2604,7 +2054,8 @@ bool ArrayStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayString* p_type = static_cast<const ::ArrayString*>(data);
+    const ::ArrayString* p_type =
+            static_cast<const ::ArrayString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2624,7 +2075,7 @@ bool ArrayStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2643,7 +2094,8 @@ bool ArrayStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayString* p_type = static_cast<::ArrayString*>(data);
+        ::ArrayString* p_type =
+                static_cast<::ArrayString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2676,9 +2128,10 @@ uint32_t ArrayStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayString* p_type =
+                static_cast<const ::ArrayString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2702,16 +2155,9 @@ bool ArrayStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2721,39 +2167,11 @@ bool ArrayStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayString* p_type = static_cast<const ::ArrayString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayStringPubSubType::register_type_object_representation()
@@ -2768,17 +2186,10 @@ ArrayWStringPubSubType::ArrayWStringPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayWString_max_key_cdr_typesize > 16 ? ArrayWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayWStringPubSubType::~ArrayWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayWStringPubSubType::serialize(
@@ -2786,7 +2197,8 @@ bool ArrayWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayWString* p_type = static_cast<const ::ArrayWString*>(data);
+    const ::ArrayWString* p_type =
+            static_cast<const ::ArrayWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2806,7 +2218,7 @@ bool ArrayWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2825,7 +2237,8 @@ bool ArrayWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayWString* p_type = static_cast<::ArrayWString*>(data);
+        ::ArrayWString* p_type =
+                static_cast<::ArrayWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2858,9 +2271,10 @@ uint32_t ArrayWStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayWString* p_type =
+                static_cast<const ::ArrayWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2884,16 +2298,9 @@ bool ArrayWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2903,39 +2310,11 @@ bool ArrayWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayWString* p_type = static_cast<const ::ArrayWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayWStringPubSubType::register_type_object_representation()
@@ -2950,17 +2329,10 @@ ArrayBoundedStringPubSubType::ArrayBoundedStringPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayBoundedString_max_key_cdr_typesize > 16 ? ArrayBoundedString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayBoundedStringPubSubType::~ArrayBoundedStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayBoundedStringPubSubType::serialize(
@@ -2968,7 +2340,8 @@ bool ArrayBoundedStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayBoundedString* p_type = static_cast<const ::ArrayBoundedString*>(data);
+    const ::ArrayBoundedString* p_type =
+            static_cast<const ::ArrayBoundedString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2988,7 +2361,7 @@ bool ArrayBoundedStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3007,7 +2380,8 @@ bool ArrayBoundedStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayBoundedString* p_type = static_cast<::ArrayBoundedString*>(data);
+        ::ArrayBoundedString* p_type =
+                static_cast<::ArrayBoundedString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3040,9 +2414,10 @@ uint32_t ArrayBoundedStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayBoundedString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayBoundedString* p_type =
+                static_cast<const ::ArrayBoundedString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3066,16 +2441,9 @@ bool ArrayBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayBoundedString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3085,39 +2453,11 @@ bool ArrayBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayBoundedString* p_type = static_cast<const ::ArrayBoundedString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayBoundedString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayBoundedString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayBoundedStringPubSubType::register_type_object_representation()
@@ -3132,17 +2472,10 @@ ArrayBoundedWStringPubSubType::ArrayBoundedWStringPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayBoundedWString_max_key_cdr_typesize > 16 ? ArrayBoundedWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayBoundedWStringPubSubType::~ArrayBoundedWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayBoundedWStringPubSubType::serialize(
@@ -3150,7 +2483,8 @@ bool ArrayBoundedWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayBoundedWString* p_type = static_cast<const ::ArrayBoundedWString*>(data);
+    const ::ArrayBoundedWString* p_type =
+            static_cast<const ::ArrayBoundedWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3170,7 +2504,7 @@ bool ArrayBoundedWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3189,7 +2523,8 @@ bool ArrayBoundedWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayBoundedWString* p_type = static_cast<::ArrayBoundedWString*>(data);
+        ::ArrayBoundedWString* p_type =
+                static_cast<::ArrayBoundedWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3222,9 +2557,10 @@ uint32_t ArrayBoundedWStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayBoundedWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayBoundedWString* p_type =
+                static_cast<const ::ArrayBoundedWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3248,16 +2584,9 @@ bool ArrayBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayBoundedWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3267,39 +2596,11 @@ bool ArrayBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayBoundedWString* p_type = static_cast<const ::ArrayBoundedWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayBoundedWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayBoundedWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayBoundedWStringPubSubType::register_type_object_representation()
@@ -3314,17 +2615,10 @@ ArrayEnumPubSubType::ArrayEnumPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayEnum_max_key_cdr_typesize > 16 ? ArrayEnum_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayEnumPubSubType::~ArrayEnumPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayEnumPubSubType::serialize(
@@ -3332,7 +2626,8 @@ bool ArrayEnumPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayEnum* p_type = static_cast<const ::ArrayEnum*>(data);
+    const ::ArrayEnum* p_type =
+            static_cast<const ::ArrayEnum*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3352,7 +2647,7 @@ bool ArrayEnumPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3371,7 +2666,8 @@ bool ArrayEnumPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayEnum* p_type = static_cast<::ArrayEnum*>(data);
+        ::ArrayEnum* p_type =
+                static_cast<::ArrayEnum*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3404,9 +2700,10 @@ uint32_t ArrayEnumPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayEnum*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayEnum* p_type =
+                static_cast<const ::ArrayEnum*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3430,16 +2727,9 @@ bool ArrayEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayEnum data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3449,39 +2739,11 @@ bool ArrayEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayEnum* p_type = static_cast<const ::ArrayEnum*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayEnum_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayEnum_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayEnumPubSubType::register_type_object_representation()
@@ -3496,17 +2758,10 @@ ArrayBitMaskPubSubType::ArrayBitMaskPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayBitMask_max_key_cdr_typesize > 16 ? ArrayBitMask_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayBitMaskPubSubType::~ArrayBitMaskPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayBitMaskPubSubType::serialize(
@@ -3514,7 +2769,8 @@ bool ArrayBitMaskPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayBitMask* p_type = static_cast<const ::ArrayBitMask*>(data);
+    const ::ArrayBitMask* p_type =
+            static_cast<const ::ArrayBitMask*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3534,7 +2790,7 @@ bool ArrayBitMaskPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3553,7 +2809,8 @@ bool ArrayBitMaskPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayBitMask* p_type = static_cast<::ArrayBitMask*>(data);
+        ::ArrayBitMask* p_type =
+                static_cast<::ArrayBitMask*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3586,9 +2843,10 @@ uint32_t ArrayBitMaskPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayBitMask*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayBitMask* p_type =
+                static_cast<const ::ArrayBitMask*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3612,16 +2870,9 @@ bool ArrayBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayBitMask data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3631,39 +2882,11 @@ bool ArrayBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayBitMask* p_type = static_cast<const ::ArrayBitMask*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayBitMask_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayBitMask_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayBitMaskPubSubType::register_type_object_representation()
@@ -3678,17 +2901,10 @@ ArrayAliasPubSubType::ArrayAliasPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayAlias_max_key_cdr_typesize > 16 ? ArrayAlias_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayAliasPubSubType::~ArrayAliasPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayAliasPubSubType::serialize(
@@ -3696,7 +2912,8 @@ bool ArrayAliasPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayAlias* p_type = static_cast<const ::ArrayAlias*>(data);
+    const ::ArrayAlias* p_type =
+            static_cast<const ::ArrayAlias*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3716,7 +2933,7 @@ bool ArrayAliasPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3735,7 +2952,8 @@ bool ArrayAliasPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayAlias* p_type = static_cast<::ArrayAlias*>(data);
+        ::ArrayAlias* p_type =
+                static_cast<::ArrayAlias*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3768,9 +2986,10 @@ uint32_t ArrayAliasPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayAlias*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayAlias* p_type =
+                static_cast<const ::ArrayAlias*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3794,16 +3013,9 @@ bool ArrayAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayAlias data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3813,39 +3025,11 @@ bool ArrayAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayAlias* p_type = static_cast<const ::ArrayAlias*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayAlias_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayAlias_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayAliasPubSubType::register_type_object_representation()
@@ -3860,17 +3044,10 @@ ArrayShortArrayPubSubType::ArrayShortArrayPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayShortArray_max_key_cdr_typesize > 16 ? ArrayShortArray_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayShortArrayPubSubType::~ArrayShortArrayPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayShortArrayPubSubType::serialize(
@@ -3878,7 +3055,8 @@ bool ArrayShortArrayPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayShortArray* p_type = static_cast<const ::ArrayShortArray*>(data);
+    const ::ArrayShortArray* p_type =
+            static_cast<const ::ArrayShortArray*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3898,7 +3076,7 @@ bool ArrayShortArrayPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3917,7 +3095,8 @@ bool ArrayShortArrayPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayShortArray* p_type = static_cast<::ArrayShortArray*>(data);
+        ::ArrayShortArray* p_type =
+                static_cast<::ArrayShortArray*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3950,9 +3129,10 @@ uint32_t ArrayShortArrayPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayShortArray*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayShortArray* p_type =
+                static_cast<const ::ArrayShortArray*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3976,16 +3156,9 @@ bool ArrayShortArrayPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayShortArray data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3995,39 +3168,11 @@ bool ArrayShortArrayPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayShortArray* p_type = static_cast<const ::ArrayShortArray*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayShortArray_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayShortArray_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayShortArrayPubSubType::register_type_object_representation()
@@ -4042,17 +3187,10 @@ ArraySequencePubSubType::ArraySequencePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySequence_max_key_cdr_typesize > 16 ? ArraySequence_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySequencePubSubType::~ArraySequencePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySequencePubSubType::serialize(
@@ -4060,7 +3198,8 @@ bool ArraySequencePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySequence* p_type = static_cast<const ::ArraySequence*>(data);
+    const ::ArraySequence* p_type =
+            static_cast<const ::ArraySequence*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4080,7 +3219,7 @@ bool ArraySequencePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4099,7 +3238,8 @@ bool ArraySequencePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySequence* p_type = static_cast<::ArraySequence*>(data);
+        ::ArraySequence* p_type =
+                static_cast<::ArraySequence*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4132,9 +3272,10 @@ uint32_t ArraySequencePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySequence*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySequence* p_type =
+                static_cast<const ::ArraySequence*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4158,16 +3299,9 @@ bool ArraySequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySequence data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4177,39 +3311,11 @@ bool ArraySequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySequence* p_type = static_cast<const ::ArraySequence*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySequence_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySequence_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySequencePubSubType::register_type_object_representation()
@@ -4224,17 +3330,10 @@ ArrayMapPubSubType::ArrayMapPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMap_max_key_cdr_typesize > 16 ? ArrayMap_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMapPubSubType::~ArrayMapPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMapPubSubType::serialize(
@@ -4242,7 +3341,8 @@ bool ArrayMapPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMap* p_type = static_cast<const ::ArrayMap*>(data);
+    const ::ArrayMap* p_type =
+            static_cast<const ::ArrayMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4262,7 +3362,7 @@ bool ArrayMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4281,7 +3381,8 @@ bool ArrayMapPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMap* p_type = static_cast<::ArrayMap*>(data);
+        ::ArrayMap* p_type =
+                static_cast<::ArrayMap*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4314,9 +3415,10 @@ uint32_t ArrayMapPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMap*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMap* p_type =
+                static_cast<const ::ArrayMap*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4340,16 +3442,9 @@ bool ArrayMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMap data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4359,39 +3454,11 @@ bool ArrayMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMap* p_type = static_cast<const ::ArrayMap*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMap_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMap_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMapPubSubType::register_type_object_representation()
@@ -4406,17 +3473,10 @@ ArrayUnionPubSubType::ArrayUnionPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayUnion_max_key_cdr_typesize > 16 ? ArrayUnion_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayUnionPubSubType::~ArrayUnionPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayUnionPubSubType::serialize(
@@ -4424,7 +3484,8 @@ bool ArrayUnionPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayUnion* p_type = static_cast<const ::ArrayUnion*>(data);
+    const ::ArrayUnion* p_type =
+            static_cast<const ::ArrayUnion*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4444,7 +3505,7 @@ bool ArrayUnionPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4463,7 +3524,8 @@ bool ArrayUnionPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayUnion* p_type = static_cast<::ArrayUnion*>(data);
+        ::ArrayUnion* p_type =
+                static_cast<::ArrayUnion*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4496,9 +3558,10 @@ uint32_t ArrayUnionPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayUnion*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayUnion* p_type =
+                static_cast<const ::ArrayUnion*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4522,16 +3585,9 @@ bool ArrayUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayUnion data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4541,39 +3597,11 @@ bool ArrayUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayUnion* p_type = static_cast<const ::ArrayUnion*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayUnion_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayUnion_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayUnionPubSubType::register_type_object_representation()
@@ -4588,17 +3616,10 @@ ArrayStructurePubSubType::ArrayStructurePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayStructure_max_key_cdr_typesize > 16 ? ArrayStructure_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayStructurePubSubType::~ArrayStructurePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayStructurePubSubType::serialize(
@@ -4606,7 +3627,8 @@ bool ArrayStructurePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayStructure* p_type = static_cast<const ::ArrayStructure*>(data);
+    const ::ArrayStructure* p_type =
+            static_cast<const ::ArrayStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4626,7 +3648,7 @@ bool ArrayStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4645,7 +3667,8 @@ bool ArrayStructurePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayStructure* p_type = static_cast<::ArrayStructure*>(data);
+        ::ArrayStructure* p_type =
+                static_cast<::ArrayStructure*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4678,9 +3701,10 @@ uint32_t ArrayStructurePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayStructure*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayStructure* p_type =
+                static_cast<const ::ArrayStructure*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4704,16 +3728,9 @@ bool ArrayStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayStructure data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4723,39 +3740,11 @@ bool ArrayStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayStructure* p_type = static_cast<const ::ArrayStructure*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayStructure_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayStructure_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayStructurePubSubType::register_type_object_representation()
@@ -4770,17 +3759,10 @@ ArrayBitsetPubSubType::ArrayBitsetPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayBitset_max_key_cdr_typesize > 16 ? ArrayBitset_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayBitsetPubSubType::~ArrayBitsetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayBitsetPubSubType::serialize(
@@ -4788,7 +3770,8 @@ bool ArrayBitsetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayBitset* p_type = static_cast<const ::ArrayBitset*>(data);
+    const ::ArrayBitset* p_type =
+            static_cast<const ::ArrayBitset*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4808,7 +3791,7 @@ bool ArrayBitsetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4827,7 +3810,8 @@ bool ArrayBitsetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayBitset* p_type = static_cast<::ArrayBitset*>(data);
+        ::ArrayBitset* p_type =
+                static_cast<::ArrayBitset*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4860,9 +3844,10 @@ uint32_t ArrayBitsetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayBitset*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayBitset* p_type =
+                static_cast<const ::ArrayBitset*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4886,16 +3871,9 @@ bool ArrayBitsetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayBitset data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4905,39 +3883,11 @@ bool ArrayBitsetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayBitset* p_type = static_cast<const ::ArrayBitset*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayBitset_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayBitset_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayBitsetPubSubType::register_type_object_representation()
@@ -4952,17 +3902,10 @@ ArrayMultiDimensionShortPubSubType::ArrayMultiDimensionShortPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionShort_max_key_cdr_typesize > 16 ? ArrayMultiDimensionShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionShortPubSubType::~ArrayMultiDimensionShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionShortPubSubType::serialize(
@@ -4970,7 +3913,8 @@ bool ArrayMultiDimensionShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionShort* p_type = static_cast<const ::ArrayMultiDimensionShort*>(data);
+    const ::ArrayMultiDimensionShort* p_type =
+            static_cast<const ::ArrayMultiDimensionShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4990,7 +3934,7 @@ bool ArrayMultiDimensionShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5009,7 +3953,8 @@ bool ArrayMultiDimensionShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionShort* p_type = static_cast<::ArrayMultiDimensionShort*>(data);
+        ::ArrayMultiDimensionShort* p_type =
+                static_cast<::ArrayMultiDimensionShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5042,9 +3987,10 @@ uint32_t ArrayMultiDimensionShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionShort* p_type =
+                static_cast<const ::ArrayMultiDimensionShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5068,16 +4014,9 @@ bool ArrayMultiDimensionShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5087,39 +4026,11 @@ bool ArrayMultiDimensionShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionShort* p_type = static_cast<const ::ArrayMultiDimensionShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionShortPubSubType::register_type_object_representation()
@@ -5134,17 +4045,10 @@ ArrayMultiDimensionUShortPubSubType::ArrayMultiDimensionUShortPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionUShort_max_key_cdr_typesize > 16 ? ArrayMultiDimensionUShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionUShortPubSubType::~ArrayMultiDimensionUShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionUShortPubSubType::serialize(
@@ -5152,7 +4056,8 @@ bool ArrayMultiDimensionUShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionUShort* p_type = static_cast<const ::ArrayMultiDimensionUShort*>(data);
+    const ::ArrayMultiDimensionUShort* p_type =
+            static_cast<const ::ArrayMultiDimensionUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5172,7 +4077,7 @@ bool ArrayMultiDimensionUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5191,7 +4096,8 @@ bool ArrayMultiDimensionUShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionUShort* p_type = static_cast<::ArrayMultiDimensionUShort*>(data);
+        ::ArrayMultiDimensionUShort* p_type =
+                static_cast<::ArrayMultiDimensionUShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5224,9 +4130,10 @@ uint32_t ArrayMultiDimensionUShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionUShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionUShort* p_type =
+                static_cast<const ::ArrayMultiDimensionUShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5250,16 +4157,9 @@ bool ArrayMultiDimensionUShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionUShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5269,39 +4169,11 @@ bool ArrayMultiDimensionUShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionUShort* p_type = static_cast<const ::ArrayMultiDimensionUShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionUShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionUShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionUShortPubSubType::register_type_object_representation()
@@ -5316,17 +4188,10 @@ ArrayMultiDimensionLongPubSubType::ArrayMultiDimensionLongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLongPubSubType::~ArrayMultiDimensionLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLongPubSubType::serialize(
@@ -5334,7 +4199,8 @@ bool ArrayMultiDimensionLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLong* p_type = static_cast<const ::ArrayMultiDimensionLong*>(data);
+    const ::ArrayMultiDimensionLong* p_type =
+            static_cast<const ::ArrayMultiDimensionLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5354,7 +4220,7 @@ bool ArrayMultiDimensionLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5373,7 +4239,8 @@ bool ArrayMultiDimensionLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLong* p_type = static_cast<::ArrayMultiDimensionLong*>(data);
+        ::ArrayMultiDimensionLong* p_type =
+                static_cast<::ArrayMultiDimensionLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5406,9 +4273,10 @@ uint32_t ArrayMultiDimensionLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLong* p_type =
+                static_cast<const ::ArrayMultiDimensionLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5432,16 +4300,9 @@ bool ArrayMultiDimensionLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5451,39 +4312,11 @@ bool ArrayMultiDimensionLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLong* p_type = static_cast<const ::ArrayMultiDimensionLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLongPubSubType::register_type_object_representation()
@@ -5498,17 +4331,10 @@ ArrayMultiDimensionULongPubSubType::ArrayMultiDimensionULongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionULong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionULong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionULongPubSubType::~ArrayMultiDimensionULongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionULongPubSubType::serialize(
@@ -5516,7 +4342,8 @@ bool ArrayMultiDimensionULongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionULong* p_type = static_cast<const ::ArrayMultiDimensionULong*>(data);
+    const ::ArrayMultiDimensionULong* p_type =
+            static_cast<const ::ArrayMultiDimensionULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5536,7 +4363,7 @@ bool ArrayMultiDimensionULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5555,7 +4382,8 @@ bool ArrayMultiDimensionULongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionULong* p_type = static_cast<::ArrayMultiDimensionULong*>(data);
+        ::ArrayMultiDimensionULong* p_type =
+                static_cast<::ArrayMultiDimensionULong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5588,9 +4416,10 @@ uint32_t ArrayMultiDimensionULongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionULong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionULong* p_type =
+                static_cast<const ::ArrayMultiDimensionULong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5614,16 +4443,9 @@ bool ArrayMultiDimensionULongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionULong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5633,39 +4455,11 @@ bool ArrayMultiDimensionULongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionULong* p_type = static_cast<const ::ArrayMultiDimensionULong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionULong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionULong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionULongPubSubType::register_type_object_representation()
@@ -5680,17 +4474,10 @@ ArrayMultiDimensionLongLongPubSubType::ArrayMultiDimensionLongLongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLongLong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLongLongPubSubType::~ArrayMultiDimensionLongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLongLongPubSubType::serialize(
@@ -5698,7 +4485,8 @@ bool ArrayMultiDimensionLongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLongLong* p_type = static_cast<const ::ArrayMultiDimensionLongLong*>(data);
+    const ::ArrayMultiDimensionLongLong* p_type =
+            static_cast<const ::ArrayMultiDimensionLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5718,7 +4506,7 @@ bool ArrayMultiDimensionLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5737,7 +4525,8 @@ bool ArrayMultiDimensionLongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLongLong* p_type = static_cast<::ArrayMultiDimensionLongLong*>(data);
+        ::ArrayMultiDimensionLongLong* p_type =
+                static_cast<::ArrayMultiDimensionLongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5770,9 +4559,10 @@ uint32_t ArrayMultiDimensionLongLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLongLong* p_type =
+                static_cast<const ::ArrayMultiDimensionLongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5796,16 +4586,9 @@ bool ArrayMultiDimensionLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5815,39 +4598,11 @@ bool ArrayMultiDimensionLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLongLong* p_type = static_cast<const ::ArrayMultiDimensionLongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLongLongPubSubType::register_type_object_representation()
@@ -5862,17 +4617,10 @@ ArrayMultiDimensionULongLongPubSubType::ArrayMultiDimensionULongLongPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionULongLong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionULongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionULongLongPubSubType::~ArrayMultiDimensionULongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionULongLongPubSubType::serialize(
@@ -5880,7 +4628,8 @@ bool ArrayMultiDimensionULongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionULongLong* p_type = static_cast<const ::ArrayMultiDimensionULongLong*>(data);
+    const ::ArrayMultiDimensionULongLong* p_type =
+            static_cast<const ::ArrayMultiDimensionULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5900,7 +4649,7 @@ bool ArrayMultiDimensionULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5919,7 +4668,8 @@ bool ArrayMultiDimensionULongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionULongLong* p_type = static_cast<::ArrayMultiDimensionULongLong*>(data);
+        ::ArrayMultiDimensionULongLong* p_type =
+                static_cast<::ArrayMultiDimensionULongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5952,9 +4702,10 @@ uint32_t ArrayMultiDimensionULongLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionULongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionULongLong* p_type =
+                static_cast<const ::ArrayMultiDimensionULongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5978,16 +4729,9 @@ bool ArrayMultiDimensionULongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionULongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5997,39 +4741,11 @@ bool ArrayMultiDimensionULongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionULongLong* p_type = static_cast<const ::ArrayMultiDimensionULongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionULongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionULongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionULongLongPubSubType::register_type_object_representation()
@@ -6044,17 +4760,10 @@ ArrayMultiDimensionFloatPubSubType::ArrayMultiDimensionFloatPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionFloat_max_key_cdr_typesize > 16 ? ArrayMultiDimensionFloat_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionFloatPubSubType::~ArrayMultiDimensionFloatPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionFloatPubSubType::serialize(
@@ -6062,7 +4771,8 @@ bool ArrayMultiDimensionFloatPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionFloat* p_type = static_cast<const ::ArrayMultiDimensionFloat*>(data);
+    const ::ArrayMultiDimensionFloat* p_type =
+            static_cast<const ::ArrayMultiDimensionFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6082,7 +4792,7 @@ bool ArrayMultiDimensionFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6101,7 +4811,8 @@ bool ArrayMultiDimensionFloatPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionFloat* p_type = static_cast<::ArrayMultiDimensionFloat*>(data);
+        ::ArrayMultiDimensionFloat* p_type =
+                static_cast<::ArrayMultiDimensionFloat*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6134,9 +4845,10 @@ uint32_t ArrayMultiDimensionFloatPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionFloat*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionFloat* p_type =
+                static_cast<const ::ArrayMultiDimensionFloat*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6160,16 +4872,9 @@ bool ArrayMultiDimensionFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionFloat data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6179,39 +4884,11 @@ bool ArrayMultiDimensionFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionFloat* p_type = static_cast<const ::ArrayMultiDimensionFloat*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionFloat_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionFloat_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionFloatPubSubType::register_type_object_representation()
@@ -6226,17 +4903,10 @@ ArrayMultiDimensionDoublePubSubType::ArrayMultiDimensionDoublePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionDouble_max_key_cdr_typesize > 16 ? ArrayMultiDimensionDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionDoublePubSubType::~ArrayMultiDimensionDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionDoublePubSubType::serialize(
@@ -6244,7 +4914,8 @@ bool ArrayMultiDimensionDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionDouble* p_type = static_cast<const ::ArrayMultiDimensionDouble*>(data);
+    const ::ArrayMultiDimensionDouble* p_type =
+            static_cast<const ::ArrayMultiDimensionDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6264,7 +4935,7 @@ bool ArrayMultiDimensionDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6283,7 +4954,8 @@ bool ArrayMultiDimensionDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionDouble* p_type = static_cast<::ArrayMultiDimensionDouble*>(data);
+        ::ArrayMultiDimensionDouble* p_type =
+                static_cast<::ArrayMultiDimensionDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6316,9 +4988,10 @@ uint32_t ArrayMultiDimensionDoublePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionDouble* p_type =
+                static_cast<const ::ArrayMultiDimensionDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6342,16 +5015,9 @@ bool ArrayMultiDimensionDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6361,39 +5027,11 @@ bool ArrayMultiDimensionDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionDouble* p_type = static_cast<const ::ArrayMultiDimensionDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionDoublePubSubType::register_type_object_representation()
@@ -6408,17 +5046,10 @@ ArrayMultiDimensionLongDoublePubSubType::ArrayMultiDimensionLongDoublePubSubType
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLongDouble_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLongDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLongDoublePubSubType::~ArrayMultiDimensionLongDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLongDoublePubSubType::serialize(
@@ -6426,7 +5057,8 @@ bool ArrayMultiDimensionLongDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLongDouble* p_type = static_cast<const ::ArrayMultiDimensionLongDouble*>(data);
+    const ::ArrayMultiDimensionLongDouble* p_type =
+            static_cast<const ::ArrayMultiDimensionLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6446,7 +5078,7 @@ bool ArrayMultiDimensionLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6465,7 +5097,8 @@ bool ArrayMultiDimensionLongDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLongDouble* p_type = static_cast<::ArrayMultiDimensionLongDouble*>(data);
+        ::ArrayMultiDimensionLongDouble* p_type =
+                static_cast<::ArrayMultiDimensionLongDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6498,9 +5131,10 @@ uint32_t ArrayMultiDimensionLongDoublePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLongDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLongDouble* p_type =
+                static_cast<const ::ArrayMultiDimensionLongDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6524,16 +5158,9 @@ bool ArrayMultiDimensionLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLongDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6543,39 +5170,11 @@ bool ArrayMultiDimensionLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLongDouble* p_type = static_cast<const ::ArrayMultiDimensionLongDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLongDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLongDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLongDoublePubSubType::register_type_object_representation()
@@ -6590,17 +5189,10 @@ ArrayMultiDimensionBooleanPubSubType::ArrayMultiDimensionBooleanPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionBoolean_max_key_cdr_typesize > 16 ? ArrayMultiDimensionBoolean_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionBooleanPubSubType::~ArrayMultiDimensionBooleanPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionBooleanPubSubType::serialize(
@@ -6608,7 +5200,8 @@ bool ArrayMultiDimensionBooleanPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionBoolean* p_type = static_cast<const ::ArrayMultiDimensionBoolean*>(data);
+    const ::ArrayMultiDimensionBoolean* p_type =
+            static_cast<const ::ArrayMultiDimensionBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6628,7 +5221,7 @@ bool ArrayMultiDimensionBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6647,7 +5240,8 @@ bool ArrayMultiDimensionBooleanPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionBoolean* p_type = static_cast<::ArrayMultiDimensionBoolean*>(data);
+        ::ArrayMultiDimensionBoolean* p_type =
+                static_cast<::ArrayMultiDimensionBoolean*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6680,9 +5274,10 @@ uint32_t ArrayMultiDimensionBooleanPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionBoolean*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionBoolean* p_type =
+                static_cast<const ::ArrayMultiDimensionBoolean*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6706,16 +5301,9 @@ bool ArrayMultiDimensionBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionBoolean data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6725,39 +5313,11 @@ bool ArrayMultiDimensionBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionBoolean* p_type = static_cast<const ::ArrayMultiDimensionBoolean*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionBoolean_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionBoolean_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionBooleanPubSubType::register_type_object_representation()
@@ -6772,17 +5332,10 @@ ArrayMultiDimensionOctetPubSubType::ArrayMultiDimensionOctetPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionOctet_max_key_cdr_typesize > 16 ? ArrayMultiDimensionOctet_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionOctetPubSubType::~ArrayMultiDimensionOctetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionOctetPubSubType::serialize(
@@ -6790,7 +5343,8 @@ bool ArrayMultiDimensionOctetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionOctet* p_type = static_cast<const ::ArrayMultiDimensionOctet*>(data);
+    const ::ArrayMultiDimensionOctet* p_type =
+            static_cast<const ::ArrayMultiDimensionOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6810,7 +5364,7 @@ bool ArrayMultiDimensionOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6829,7 +5383,8 @@ bool ArrayMultiDimensionOctetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionOctet* p_type = static_cast<::ArrayMultiDimensionOctet*>(data);
+        ::ArrayMultiDimensionOctet* p_type =
+                static_cast<::ArrayMultiDimensionOctet*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6862,9 +5417,10 @@ uint32_t ArrayMultiDimensionOctetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionOctet*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionOctet* p_type =
+                static_cast<const ::ArrayMultiDimensionOctet*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6888,16 +5444,9 @@ bool ArrayMultiDimensionOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionOctet data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6907,39 +5456,11 @@ bool ArrayMultiDimensionOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionOctet* p_type = static_cast<const ::ArrayMultiDimensionOctet*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionOctet_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionOctet_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionOctetPubSubType::register_type_object_representation()
@@ -6954,17 +5475,10 @@ ArrayMultiDimensionCharPubSubType::ArrayMultiDimensionCharPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionChar_max_key_cdr_typesize > 16 ? ArrayMultiDimensionChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionCharPubSubType::~ArrayMultiDimensionCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionCharPubSubType::serialize(
@@ -6972,7 +5486,8 @@ bool ArrayMultiDimensionCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionChar* p_type = static_cast<const ::ArrayMultiDimensionChar*>(data);
+    const ::ArrayMultiDimensionChar* p_type =
+            static_cast<const ::ArrayMultiDimensionChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6992,7 +5507,7 @@ bool ArrayMultiDimensionCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7011,7 +5526,8 @@ bool ArrayMultiDimensionCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionChar* p_type = static_cast<::ArrayMultiDimensionChar*>(data);
+        ::ArrayMultiDimensionChar* p_type =
+                static_cast<::ArrayMultiDimensionChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7044,9 +5560,10 @@ uint32_t ArrayMultiDimensionCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionChar* p_type =
+                static_cast<const ::ArrayMultiDimensionChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7070,16 +5587,9 @@ bool ArrayMultiDimensionCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7089,39 +5599,11 @@ bool ArrayMultiDimensionCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionChar* p_type = static_cast<const ::ArrayMultiDimensionChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionCharPubSubType::register_type_object_representation()
@@ -7136,17 +5618,10 @@ ArrayMultiDimensionWCharPubSubType::ArrayMultiDimensionWCharPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionWChar_max_key_cdr_typesize > 16 ? ArrayMultiDimensionWChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionWCharPubSubType::~ArrayMultiDimensionWCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionWCharPubSubType::serialize(
@@ -7154,7 +5629,8 @@ bool ArrayMultiDimensionWCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionWChar* p_type = static_cast<const ::ArrayMultiDimensionWChar*>(data);
+    const ::ArrayMultiDimensionWChar* p_type =
+            static_cast<const ::ArrayMultiDimensionWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7174,7 +5650,7 @@ bool ArrayMultiDimensionWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7193,7 +5669,8 @@ bool ArrayMultiDimensionWCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionWChar* p_type = static_cast<::ArrayMultiDimensionWChar*>(data);
+        ::ArrayMultiDimensionWChar* p_type =
+                static_cast<::ArrayMultiDimensionWChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7226,9 +5703,10 @@ uint32_t ArrayMultiDimensionWCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionWChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionWChar* p_type =
+                static_cast<const ::ArrayMultiDimensionWChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7252,16 +5730,9 @@ bool ArrayMultiDimensionWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionWChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7271,39 +5742,11 @@ bool ArrayMultiDimensionWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionWChar* p_type = static_cast<const ::ArrayMultiDimensionWChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionWChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionWChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionWCharPubSubType::register_type_object_representation()
@@ -7318,17 +5761,10 @@ ArrayMultiDimensionStringPubSubType::ArrayMultiDimensionStringPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionStringPubSubType::~ArrayMultiDimensionStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionStringPubSubType::serialize(
@@ -7336,7 +5772,8 @@ bool ArrayMultiDimensionStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionString* p_type = static_cast<const ::ArrayMultiDimensionString*>(data);
+    const ::ArrayMultiDimensionString* p_type =
+            static_cast<const ::ArrayMultiDimensionString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7356,7 +5793,7 @@ bool ArrayMultiDimensionStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7375,7 +5812,8 @@ bool ArrayMultiDimensionStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionString* p_type = static_cast<::ArrayMultiDimensionString*>(data);
+        ::ArrayMultiDimensionString* p_type =
+                static_cast<::ArrayMultiDimensionString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7408,9 +5846,10 @@ uint32_t ArrayMultiDimensionStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionString* p_type =
+                static_cast<const ::ArrayMultiDimensionString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7434,16 +5873,9 @@ bool ArrayMultiDimensionStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7453,39 +5885,11 @@ bool ArrayMultiDimensionStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionString* p_type = static_cast<const ::ArrayMultiDimensionString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionStringPubSubType::register_type_object_representation()
@@ -7500,17 +5904,10 @@ ArrayMultiDimensionWStringPubSubType::ArrayMultiDimensionWStringPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionWString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionWStringPubSubType::~ArrayMultiDimensionWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionWStringPubSubType::serialize(
@@ -7518,7 +5915,8 @@ bool ArrayMultiDimensionWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionWString* p_type = static_cast<const ::ArrayMultiDimensionWString*>(data);
+    const ::ArrayMultiDimensionWString* p_type =
+            static_cast<const ::ArrayMultiDimensionWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7538,7 +5936,7 @@ bool ArrayMultiDimensionWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7557,7 +5955,8 @@ bool ArrayMultiDimensionWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionWString* p_type = static_cast<::ArrayMultiDimensionWString*>(data);
+        ::ArrayMultiDimensionWString* p_type =
+                static_cast<::ArrayMultiDimensionWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7590,9 +5989,10 @@ uint32_t ArrayMultiDimensionWStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionWString* p_type =
+                static_cast<const ::ArrayMultiDimensionWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7616,16 +6016,9 @@ bool ArrayMultiDimensionWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7635,39 +6028,11 @@ bool ArrayMultiDimensionWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionWString* p_type = static_cast<const ::ArrayMultiDimensionWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionWStringPubSubType::register_type_object_representation()
@@ -7682,17 +6047,10 @@ ArrayMultiDimensionBoundedStringPubSubType::ArrayMultiDimensionBoundedStringPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionBoundedString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionBoundedString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionBoundedStringPubSubType::~ArrayMultiDimensionBoundedStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionBoundedStringPubSubType::serialize(
@@ -7700,7 +6058,8 @@ bool ArrayMultiDimensionBoundedStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionBoundedString* p_type = static_cast<const ::ArrayMultiDimensionBoundedString*>(data);
+    const ::ArrayMultiDimensionBoundedString* p_type =
+            static_cast<const ::ArrayMultiDimensionBoundedString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7720,7 +6079,7 @@ bool ArrayMultiDimensionBoundedStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7739,7 +6098,8 @@ bool ArrayMultiDimensionBoundedStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionBoundedString* p_type = static_cast<::ArrayMultiDimensionBoundedString*>(data);
+        ::ArrayMultiDimensionBoundedString* p_type =
+                static_cast<::ArrayMultiDimensionBoundedString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7772,9 +6132,10 @@ uint32_t ArrayMultiDimensionBoundedStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionBoundedString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionBoundedString* p_type =
+                static_cast<const ::ArrayMultiDimensionBoundedString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7798,16 +6159,9 @@ bool ArrayMultiDimensionBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionBoundedString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7817,39 +6171,11 @@ bool ArrayMultiDimensionBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionBoundedString* p_type = static_cast<const ::ArrayMultiDimensionBoundedString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionBoundedString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionBoundedString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionBoundedStringPubSubType::register_type_object_representation()
@@ -7864,17 +6190,10 @@ ArrayMultiDimensionBoundedWStringPubSubType::ArrayMultiDimensionBoundedWStringPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionBoundedWString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionBoundedWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionBoundedWStringPubSubType::~ArrayMultiDimensionBoundedWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionBoundedWStringPubSubType::serialize(
@@ -7882,7 +6201,8 @@ bool ArrayMultiDimensionBoundedWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionBoundedWString* p_type = static_cast<const ::ArrayMultiDimensionBoundedWString*>(data);
+    const ::ArrayMultiDimensionBoundedWString* p_type =
+            static_cast<const ::ArrayMultiDimensionBoundedWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7902,7 +6222,7 @@ bool ArrayMultiDimensionBoundedWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7921,7 +6241,8 @@ bool ArrayMultiDimensionBoundedWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionBoundedWString* p_type = static_cast<::ArrayMultiDimensionBoundedWString*>(data);
+        ::ArrayMultiDimensionBoundedWString* p_type =
+                static_cast<::ArrayMultiDimensionBoundedWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7954,9 +6275,10 @@ uint32_t ArrayMultiDimensionBoundedWStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionBoundedWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionBoundedWString* p_type =
+                static_cast<const ::ArrayMultiDimensionBoundedWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7980,16 +6302,9 @@ bool ArrayMultiDimensionBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionBoundedWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7999,39 +6314,11 @@ bool ArrayMultiDimensionBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionBoundedWString* p_type = static_cast<const ::ArrayMultiDimensionBoundedWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionBoundedWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionBoundedWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionBoundedWStringPubSubType::register_type_object_representation()
@@ -8046,17 +6333,10 @@ ArrayMultiDimensionEnumPubSubType::ArrayMultiDimensionEnumPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionEnum_max_key_cdr_typesize > 16 ? ArrayMultiDimensionEnum_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionEnumPubSubType::~ArrayMultiDimensionEnumPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionEnumPubSubType::serialize(
@@ -8064,7 +6344,8 @@ bool ArrayMultiDimensionEnumPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionEnum* p_type = static_cast<const ::ArrayMultiDimensionEnum*>(data);
+    const ::ArrayMultiDimensionEnum* p_type =
+            static_cast<const ::ArrayMultiDimensionEnum*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8084,7 +6365,7 @@ bool ArrayMultiDimensionEnumPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8103,7 +6384,8 @@ bool ArrayMultiDimensionEnumPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionEnum* p_type = static_cast<::ArrayMultiDimensionEnum*>(data);
+        ::ArrayMultiDimensionEnum* p_type =
+                static_cast<::ArrayMultiDimensionEnum*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8136,9 +6418,10 @@ uint32_t ArrayMultiDimensionEnumPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionEnum*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionEnum* p_type =
+                static_cast<const ::ArrayMultiDimensionEnum*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8162,16 +6445,9 @@ bool ArrayMultiDimensionEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionEnum data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8181,39 +6457,11 @@ bool ArrayMultiDimensionEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionEnum* p_type = static_cast<const ::ArrayMultiDimensionEnum*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionEnum_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionEnum_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionEnumPubSubType::register_type_object_representation()
@@ -8228,17 +6476,10 @@ ArrayMultiDimensionBitMaskPubSubType::ArrayMultiDimensionBitMaskPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionBitMask_max_key_cdr_typesize > 16 ? ArrayMultiDimensionBitMask_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionBitMaskPubSubType::~ArrayMultiDimensionBitMaskPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionBitMaskPubSubType::serialize(
@@ -8246,7 +6487,8 @@ bool ArrayMultiDimensionBitMaskPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionBitMask* p_type = static_cast<const ::ArrayMultiDimensionBitMask*>(data);
+    const ::ArrayMultiDimensionBitMask* p_type =
+            static_cast<const ::ArrayMultiDimensionBitMask*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8266,7 +6508,7 @@ bool ArrayMultiDimensionBitMaskPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8285,7 +6527,8 @@ bool ArrayMultiDimensionBitMaskPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionBitMask* p_type = static_cast<::ArrayMultiDimensionBitMask*>(data);
+        ::ArrayMultiDimensionBitMask* p_type =
+                static_cast<::ArrayMultiDimensionBitMask*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8318,9 +6561,10 @@ uint32_t ArrayMultiDimensionBitMaskPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionBitMask*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionBitMask* p_type =
+                static_cast<const ::ArrayMultiDimensionBitMask*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8344,16 +6588,9 @@ bool ArrayMultiDimensionBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionBitMask data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8363,39 +6600,11 @@ bool ArrayMultiDimensionBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionBitMask* p_type = static_cast<const ::ArrayMultiDimensionBitMask*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionBitMask_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionBitMask_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionBitMaskPubSubType::register_type_object_representation()
@@ -8410,17 +6619,10 @@ ArrayMultiDimensionAliasPubSubType::ArrayMultiDimensionAliasPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionAlias_max_key_cdr_typesize > 16 ? ArrayMultiDimensionAlias_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionAliasPubSubType::~ArrayMultiDimensionAliasPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionAliasPubSubType::serialize(
@@ -8428,7 +6630,8 @@ bool ArrayMultiDimensionAliasPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionAlias* p_type = static_cast<const ::ArrayMultiDimensionAlias*>(data);
+    const ::ArrayMultiDimensionAlias* p_type =
+            static_cast<const ::ArrayMultiDimensionAlias*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8448,7 +6651,7 @@ bool ArrayMultiDimensionAliasPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8467,7 +6670,8 @@ bool ArrayMultiDimensionAliasPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionAlias* p_type = static_cast<::ArrayMultiDimensionAlias*>(data);
+        ::ArrayMultiDimensionAlias* p_type =
+                static_cast<::ArrayMultiDimensionAlias*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8500,9 +6704,10 @@ uint32_t ArrayMultiDimensionAliasPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionAlias*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionAlias* p_type =
+                static_cast<const ::ArrayMultiDimensionAlias*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8526,16 +6731,9 @@ bool ArrayMultiDimensionAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionAlias data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8545,39 +6743,11 @@ bool ArrayMultiDimensionAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionAlias* p_type = static_cast<const ::ArrayMultiDimensionAlias*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionAlias_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionAlias_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionAliasPubSubType::register_type_object_representation()
@@ -8592,17 +6762,10 @@ ArrayMultiDimensionSequencePubSubType::ArrayMultiDimensionSequencePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionSequence_max_key_cdr_typesize > 16 ? ArrayMultiDimensionSequence_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionSequencePubSubType::~ArrayMultiDimensionSequencePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionSequencePubSubType::serialize(
@@ -8610,7 +6773,8 @@ bool ArrayMultiDimensionSequencePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionSequence* p_type = static_cast<const ::ArrayMultiDimensionSequence*>(data);
+    const ::ArrayMultiDimensionSequence* p_type =
+            static_cast<const ::ArrayMultiDimensionSequence*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8630,7 +6794,7 @@ bool ArrayMultiDimensionSequencePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8649,7 +6813,8 @@ bool ArrayMultiDimensionSequencePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionSequence* p_type = static_cast<::ArrayMultiDimensionSequence*>(data);
+        ::ArrayMultiDimensionSequence* p_type =
+                static_cast<::ArrayMultiDimensionSequence*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8682,9 +6847,10 @@ uint32_t ArrayMultiDimensionSequencePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionSequence*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionSequence* p_type =
+                static_cast<const ::ArrayMultiDimensionSequence*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8708,16 +6874,9 @@ bool ArrayMultiDimensionSequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionSequence data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8727,39 +6886,11 @@ bool ArrayMultiDimensionSequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionSequence* p_type = static_cast<const ::ArrayMultiDimensionSequence*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionSequence_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionSequence_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionSequencePubSubType::register_type_object_representation()
@@ -8774,17 +6905,10 @@ ArrayMultiDimensionMapPubSubType::ArrayMultiDimensionMapPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionMap_max_key_cdr_typesize > 16 ? ArrayMultiDimensionMap_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionMapPubSubType::~ArrayMultiDimensionMapPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionMapPubSubType::serialize(
@@ -8792,7 +6916,8 @@ bool ArrayMultiDimensionMapPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionMap* p_type = static_cast<const ::ArrayMultiDimensionMap*>(data);
+    const ::ArrayMultiDimensionMap* p_type =
+            static_cast<const ::ArrayMultiDimensionMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8812,7 +6937,7 @@ bool ArrayMultiDimensionMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8831,7 +6956,8 @@ bool ArrayMultiDimensionMapPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionMap* p_type = static_cast<::ArrayMultiDimensionMap*>(data);
+        ::ArrayMultiDimensionMap* p_type =
+                static_cast<::ArrayMultiDimensionMap*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8864,9 +6990,10 @@ uint32_t ArrayMultiDimensionMapPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionMap*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionMap* p_type =
+                static_cast<const ::ArrayMultiDimensionMap*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8890,16 +7017,9 @@ bool ArrayMultiDimensionMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionMap data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8909,39 +7029,11 @@ bool ArrayMultiDimensionMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionMap* p_type = static_cast<const ::ArrayMultiDimensionMap*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionMap_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionMap_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionMapPubSubType::register_type_object_representation()
@@ -8956,17 +7048,10 @@ ArrayMultiDimensionUnionPubSubType::ArrayMultiDimensionUnionPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionUnion_max_key_cdr_typesize > 16 ? ArrayMultiDimensionUnion_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionUnionPubSubType::~ArrayMultiDimensionUnionPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionUnionPubSubType::serialize(
@@ -8974,7 +7059,8 @@ bool ArrayMultiDimensionUnionPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionUnion* p_type = static_cast<const ::ArrayMultiDimensionUnion*>(data);
+    const ::ArrayMultiDimensionUnion* p_type =
+            static_cast<const ::ArrayMultiDimensionUnion*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8994,7 +7080,7 @@ bool ArrayMultiDimensionUnionPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9013,7 +7099,8 @@ bool ArrayMultiDimensionUnionPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionUnion* p_type = static_cast<::ArrayMultiDimensionUnion*>(data);
+        ::ArrayMultiDimensionUnion* p_type =
+                static_cast<::ArrayMultiDimensionUnion*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9046,9 +7133,10 @@ uint32_t ArrayMultiDimensionUnionPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionUnion*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionUnion* p_type =
+                static_cast<const ::ArrayMultiDimensionUnion*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9072,16 +7160,9 @@ bool ArrayMultiDimensionUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionUnion data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9091,39 +7172,11 @@ bool ArrayMultiDimensionUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionUnion* p_type = static_cast<const ::ArrayMultiDimensionUnion*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionUnion_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionUnion_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionUnionPubSubType::register_type_object_representation()
@@ -9138,17 +7191,10 @@ ArrayMultiDimensionStructurePubSubType::ArrayMultiDimensionStructurePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionStructure_max_key_cdr_typesize > 16 ? ArrayMultiDimensionStructure_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionStructurePubSubType::~ArrayMultiDimensionStructurePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionStructurePubSubType::serialize(
@@ -9156,7 +7202,8 @@ bool ArrayMultiDimensionStructurePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionStructure* p_type = static_cast<const ::ArrayMultiDimensionStructure*>(data);
+    const ::ArrayMultiDimensionStructure* p_type =
+            static_cast<const ::ArrayMultiDimensionStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9176,7 +7223,7 @@ bool ArrayMultiDimensionStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9195,7 +7242,8 @@ bool ArrayMultiDimensionStructurePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionStructure* p_type = static_cast<::ArrayMultiDimensionStructure*>(data);
+        ::ArrayMultiDimensionStructure* p_type =
+                static_cast<::ArrayMultiDimensionStructure*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9228,9 +7276,10 @@ uint32_t ArrayMultiDimensionStructurePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionStructure*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionStructure* p_type =
+                static_cast<const ::ArrayMultiDimensionStructure*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9254,16 +7303,9 @@ bool ArrayMultiDimensionStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionStructure data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9273,39 +7315,11 @@ bool ArrayMultiDimensionStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionStructure* p_type = static_cast<const ::ArrayMultiDimensionStructure*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionStructure_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionStructure_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionStructurePubSubType::register_type_object_representation()
@@ -9320,17 +7334,10 @@ ArrayMultiDimensionBitsetPubSubType::ArrayMultiDimensionBitsetPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionBitset_max_key_cdr_typesize > 16 ? ArrayMultiDimensionBitset_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionBitsetPubSubType::~ArrayMultiDimensionBitsetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionBitsetPubSubType::serialize(
@@ -9338,7 +7345,8 @@ bool ArrayMultiDimensionBitsetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionBitset* p_type = static_cast<const ::ArrayMultiDimensionBitset*>(data);
+    const ::ArrayMultiDimensionBitset* p_type =
+            static_cast<const ::ArrayMultiDimensionBitset*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9358,7 +7366,7 @@ bool ArrayMultiDimensionBitsetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9377,7 +7385,8 @@ bool ArrayMultiDimensionBitsetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionBitset* p_type = static_cast<::ArrayMultiDimensionBitset*>(data);
+        ::ArrayMultiDimensionBitset* p_type =
+                static_cast<::ArrayMultiDimensionBitset*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9410,9 +7419,10 @@ uint32_t ArrayMultiDimensionBitsetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionBitset*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionBitset* p_type =
+                static_cast<const ::ArrayMultiDimensionBitset*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9436,16 +7446,9 @@ bool ArrayMultiDimensionBitsetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionBitset data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9455,39 +7458,11 @@ bool ArrayMultiDimensionBitsetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionBitset* p_type = static_cast<const ::ArrayMultiDimensionBitset*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionBitset_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionBitset_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionBitsetPubSubType::register_type_object_representation()
@@ -9502,17 +7477,10 @@ ArraySingleDimensionLiteralsShortPubSubType::ArraySingleDimensionLiteralsShortPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsShort_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsShortPubSubType::~ArraySingleDimensionLiteralsShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsShortPubSubType::serialize(
@@ -9520,7 +7488,8 @@ bool ArraySingleDimensionLiteralsShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsShort* p_type = static_cast<const ::ArraySingleDimensionLiteralsShort*>(data);
+    const ::ArraySingleDimensionLiteralsShort* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9540,7 +7509,7 @@ bool ArraySingleDimensionLiteralsShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9559,7 +7528,8 @@ bool ArraySingleDimensionLiteralsShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsShort* p_type = static_cast<::ArraySingleDimensionLiteralsShort*>(data);
+        ::ArraySingleDimensionLiteralsShort* p_type =
+                static_cast<::ArraySingleDimensionLiteralsShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9592,9 +7562,10 @@ uint32_t ArraySingleDimensionLiteralsShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsShort* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9618,16 +7589,9 @@ bool ArraySingleDimensionLiteralsShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9637,39 +7601,11 @@ bool ArraySingleDimensionLiteralsShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsShort* p_type = static_cast<const ::ArraySingleDimensionLiteralsShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsShortPubSubType::register_type_object_representation()
@@ -9684,17 +7620,10 @@ ArraySingleDimensionLiteralsUnsignedShortPubSubType::ArraySingleDimensionLiteral
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsUnsignedShort_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsUnsignedShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsUnsignedShortPubSubType::~ArraySingleDimensionLiteralsUnsignedShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::serialize(
@@ -9702,7 +7631,8 @@ bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsUnsignedShort* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnsignedShort*>(data);
+    const ::ArraySingleDimensionLiteralsUnsignedShort* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsUnsignedShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9722,7 +7652,7 @@ bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9741,7 +7671,8 @@ bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsUnsignedShort* p_type = static_cast<::ArraySingleDimensionLiteralsUnsignedShort*>(data);
+        ::ArraySingleDimensionLiteralsUnsignedShort* p_type =
+                static_cast<::ArraySingleDimensionLiteralsUnsignedShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9774,9 +7705,10 @@ uint32_t ArraySingleDimensionLiteralsUnsignedShortPubSubType::calculate_serializ
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsUnsignedShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsUnsignedShort* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsUnsignedShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9800,16 +7732,9 @@ bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsUnsignedShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9819,39 +7744,11 @@ bool ArraySingleDimensionLiteralsUnsignedShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsUnsignedShort* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnsignedShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsUnsignedShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsUnsignedShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsUnsignedShortPubSubType::register_type_object_representation()
@@ -9866,17 +7763,10 @@ ArraySingleDimensionLiteralsLongPubSubType::ArraySingleDimensionLiteralsLongPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsLong_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsLongPubSubType::~ArraySingleDimensionLiteralsLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsLongPubSubType::serialize(
@@ -9884,7 +7774,8 @@ bool ArraySingleDimensionLiteralsLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsLong*>(data);
+    const ::ArraySingleDimensionLiteralsLong* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9904,7 +7795,7 @@ bool ArraySingleDimensionLiteralsLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9923,7 +7814,8 @@ bool ArraySingleDimensionLiteralsLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsLong* p_type = static_cast<::ArraySingleDimensionLiteralsLong*>(data);
+        ::ArraySingleDimensionLiteralsLong* p_type =
+                static_cast<::ArraySingleDimensionLiteralsLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9956,9 +7848,10 @@ uint32_t ArraySingleDimensionLiteralsLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsLong* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9982,16 +7875,9 @@ bool ArraySingleDimensionLiteralsLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10001,39 +7887,11 @@ bool ArraySingleDimensionLiteralsLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsLongPubSubType::register_type_object_representation()
@@ -10048,17 +7906,10 @@ ArraySingleDimensionLiteralsUnsignedLongPubSubType::ArraySingleDimensionLiterals
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsUnsignedLong_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsUnsignedLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsUnsignedLongPubSubType::~ArraySingleDimensionLiteralsUnsignedLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::serialize(
@@ -10066,7 +7917,8 @@ bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsUnsignedLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnsignedLong*>(data);
+    const ::ArraySingleDimensionLiteralsUnsignedLong* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsUnsignedLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10086,7 +7938,7 @@ bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10105,7 +7957,8 @@ bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsUnsignedLong* p_type = static_cast<::ArraySingleDimensionLiteralsUnsignedLong*>(data);
+        ::ArraySingleDimensionLiteralsUnsignedLong* p_type =
+                static_cast<::ArraySingleDimensionLiteralsUnsignedLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10138,9 +7991,10 @@ uint32_t ArraySingleDimensionLiteralsUnsignedLongPubSubType::calculate_serialize
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsUnsignedLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsUnsignedLong* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsUnsignedLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10164,16 +8018,9 @@ bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsUnsignedLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10183,39 +8030,11 @@ bool ArraySingleDimensionLiteralsUnsignedLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsUnsignedLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnsignedLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsUnsignedLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsUnsignedLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsUnsignedLongPubSubType::register_type_object_representation()
@@ -10230,17 +8049,10 @@ ArraySingleDimensionLiteralsLongLongPubSubType::ArraySingleDimensionLiteralsLong
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsLongLong_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsLongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsLongLongPubSubType::~ArraySingleDimensionLiteralsLongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsLongLongPubSubType::serialize(
@@ -10248,7 +8060,8 @@ bool ArraySingleDimensionLiteralsLongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsLongLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsLongLong*>(data);
+    const ::ArraySingleDimensionLiteralsLongLong* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10268,7 +8081,7 @@ bool ArraySingleDimensionLiteralsLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10287,7 +8100,8 @@ bool ArraySingleDimensionLiteralsLongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsLongLong* p_type = static_cast<::ArraySingleDimensionLiteralsLongLong*>(data);
+        ::ArraySingleDimensionLiteralsLongLong* p_type =
+                static_cast<::ArraySingleDimensionLiteralsLongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10320,9 +8134,10 @@ uint32_t ArraySingleDimensionLiteralsLongLongPubSubType::calculate_serialized_si
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsLongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsLongLong* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsLongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10346,16 +8161,9 @@ bool ArraySingleDimensionLiteralsLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsLongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10365,39 +8173,11 @@ bool ArraySingleDimensionLiteralsLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsLongLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsLongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsLongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsLongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsLongLongPubSubType::register_type_object_representation()
@@ -10412,17 +8192,10 @@ ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::ArraySingleDimensionLite
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsUnsignedLongLong_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsUnsignedLongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::~ArraySingleDimensionLiteralsUnsignedLongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::serialize(
@@ -10430,7 +8203,8 @@ bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsUnsignedLongLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnsignedLongLong*>(data);
+    const ::ArraySingleDimensionLiteralsUnsignedLongLong* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsUnsignedLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10450,7 +8224,7 @@ bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10469,7 +8243,8 @@ bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsUnsignedLongLong* p_type = static_cast<::ArraySingleDimensionLiteralsUnsignedLongLong*>(data);
+        ::ArraySingleDimensionLiteralsUnsignedLongLong* p_type =
+                static_cast<::ArraySingleDimensionLiteralsUnsignedLongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10502,9 +8277,10 @@ uint32_t ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::calculate_seria
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsUnsignedLongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsUnsignedLongLong* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsUnsignedLongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10528,16 +8304,9 @@ bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsUnsignedLongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10547,39 +8316,11 @@ bool ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsUnsignedLongLong* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnsignedLongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsUnsignedLongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsUnsignedLongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsUnsignedLongLongPubSubType::register_type_object_representation()
@@ -10594,17 +8335,10 @@ ArraySingleDimensionLiteralsFloatPubSubType::ArraySingleDimensionLiteralsFloatPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsFloat_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsFloat_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsFloatPubSubType::~ArraySingleDimensionLiteralsFloatPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsFloatPubSubType::serialize(
@@ -10612,7 +8346,8 @@ bool ArraySingleDimensionLiteralsFloatPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsFloat* p_type = static_cast<const ::ArraySingleDimensionLiteralsFloat*>(data);
+    const ::ArraySingleDimensionLiteralsFloat* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10632,7 +8367,7 @@ bool ArraySingleDimensionLiteralsFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10651,7 +8386,8 @@ bool ArraySingleDimensionLiteralsFloatPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsFloat* p_type = static_cast<::ArraySingleDimensionLiteralsFloat*>(data);
+        ::ArraySingleDimensionLiteralsFloat* p_type =
+                static_cast<::ArraySingleDimensionLiteralsFloat*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10684,9 +8420,10 @@ uint32_t ArraySingleDimensionLiteralsFloatPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsFloat*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsFloat* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsFloat*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10710,16 +8447,9 @@ bool ArraySingleDimensionLiteralsFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsFloat data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10729,39 +8459,11 @@ bool ArraySingleDimensionLiteralsFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsFloat* p_type = static_cast<const ::ArraySingleDimensionLiteralsFloat*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsFloat_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsFloat_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsFloatPubSubType::register_type_object_representation()
@@ -10776,17 +8478,10 @@ ArraySingleDimensionLiteralsDoublePubSubType::ArraySingleDimensionLiteralsDouble
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsDouble_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsDoublePubSubType::~ArraySingleDimensionLiteralsDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsDoublePubSubType::serialize(
@@ -10794,7 +8489,8 @@ bool ArraySingleDimensionLiteralsDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsDouble* p_type = static_cast<const ::ArraySingleDimensionLiteralsDouble*>(data);
+    const ::ArraySingleDimensionLiteralsDouble* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10814,7 +8510,7 @@ bool ArraySingleDimensionLiteralsDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10833,7 +8529,8 @@ bool ArraySingleDimensionLiteralsDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsDouble* p_type = static_cast<::ArraySingleDimensionLiteralsDouble*>(data);
+        ::ArraySingleDimensionLiteralsDouble* p_type =
+                static_cast<::ArraySingleDimensionLiteralsDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10866,9 +8563,10 @@ uint32_t ArraySingleDimensionLiteralsDoublePubSubType::calculate_serialized_size
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsDouble* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10892,16 +8590,9 @@ bool ArraySingleDimensionLiteralsDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10911,39 +8602,11 @@ bool ArraySingleDimensionLiteralsDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsDouble* p_type = static_cast<const ::ArraySingleDimensionLiteralsDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsDoublePubSubType::register_type_object_representation()
@@ -10958,17 +8621,10 @@ ArraySingleDimensionLiteralsLongDoublePubSubType::ArraySingleDimensionLiteralsLo
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsLongDouble_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsLongDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsLongDoublePubSubType::~ArraySingleDimensionLiteralsLongDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsLongDoublePubSubType::serialize(
@@ -10976,7 +8632,8 @@ bool ArraySingleDimensionLiteralsLongDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsLongDouble* p_type = static_cast<const ::ArraySingleDimensionLiteralsLongDouble*>(data);
+    const ::ArraySingleDimensionLiteralsLongDouble* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10996,7 +8653,7 @@ bool ArraySingleDimensionLiteralsLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11015,7 +8672,8 @@ bool ArraySingleDimensionLiteralsLongDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsLongDouble* p_type = static_cast<::ArraySingleDimensionLiteralsLongDouble*>(data);
+        ::ArraySingleDimensionLiteralsLongDouble* p_type =
+                static_cast<::ArraySingleDimensionLiteralsLongDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11048,9 +8706,10 @@ uint32_t ArraySingleDimensionLiteralsLongDoublePubSubType::calculate_serialized_
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsLongDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsLongDouble* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsLongDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11074,16 +8733,9 @@ bool ArraySingleDimensionLiteralsLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsLongDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11093,39 +8745,11 @@ bool ArraySingleDimensionLiteralsLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsLongDouble* p_type = static_cast<const ::ArraySingleDimensionLiteralsLongDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsLongDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsLongDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsLongDoublePubSubType::register_type_object_representation()
@@ -11140,17 +8764,10 @@ ArraySingleDimensionLiteralsBooleanPubSubType::ArraySingleDimensionLiteralsBoole
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsBoolean_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsBoolean_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsBooleanPubSubType::~ArraySingleDimensionLiteralsBooleanPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsBooleanPubSubType::serialize(
@@ -11158,7 +8775,8 @@ bool ArraySingleDimensionLiteralsBooleanPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsBoolean* p_type = static_cast<const ::ArraySingleDimensionLiteralsBoolean*>(data);
+    const ::ArraySingleDimensionLiteralsBoolean* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11178,7 +8796,7 @@ bool ArraySingleDimensionLiteralsBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11197,7 +8815,8 @@ bool ArraySingleDimensionLiteralsBooleanPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsBoolean* p_type = static_cast<::ArraySingleDimensionLiteralsBoolean*>(data);
+        ::ArraySingleDimensionLiteralsBoolean* p_type =
+                static_cast<::ArraySingleDimensionLiteralsBoolean*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11230,9 +8849,10 @@ uint32_t ArraySingleDimensionLiteralsBooleanPubSubType::calculate_serialized_siz
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsBoolean*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsBoolean* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsBoolean*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11256,16 +8876,9 @@ bool ArraySingleDimensionLiteralsBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsBoolean data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11275,39 +8888,11 @@ bool ArraySingleDimensionLiteralsBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsBoolean* p_type = static_cast<const ::ArraySingleDimensionLiteralsBoolean*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsBoolean_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsBoolean_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsBooleanPubSubType::register_type_object_representation()
@@ -11322,17 +8907,10 @@ ArraySingleDimensionLiteralsOctetPubSubType::ArraySingleDimensionLiteralsOctetPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsOctet_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsOctet_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsOctetPubSubType::~ArraySingleDimensionLiteralsOctetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsOctetPubSubType::serialize(
@@ -11340,7 +8918,8 @@ bool ArraySingleDimensionLiteralsOctetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsOctet* p_type = static_cast<const ::ArraySingleDimensionLiteralsOctet*>(data);
+    const ::ArraySingleDimensionLiteralsOctet* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11360,7 +8939,7 @@ bool ArraySingleDimensionLiteralsOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11379,7 +8958,8 @@ bool ArraySingleDimensionLiteralsOctetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsOctet* p_type = static_cast<::ArraySingleDimensionLiteralsOctet*>(data);
+        ::ArraySingleDimensionLiteralsOctet* p_type =
+                static_cast<::ArraySingleDimensionLiteralsOctet*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11412,9 +8992,10 @@ uint32_t ArraySingleDimensionLiteralsOctetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsOctet*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsOctet* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsOctet*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11438,16 +9019,9 @@ bool ArraySingleDimensionLiteralsOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsOctet data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11457,39 +9031,11 @@ bool ArraySingleDimensionLiteralsOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsOctet* p_type = static_cast<const ::ArraySingleDimensionLiteralsOctet*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsOctet_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsOctet_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsOctetPubSubType::register_type_object_representation()
@@ -11504,17 +9050,10 @@ ArraySingleDimensionLiteralsCharPubSubType::ArraySingleDimensionLiteralsCharPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsChar_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsCharPubSubType::~ArraySingleDimensionLiteralsCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsCharPubSubType::serialize(
@@ -11522,7 +9061,8 @@ bool ArraySingleDimensionLiteralsCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsChar* p_type = static_cast<const ::ArraySingleDimensionLiteralsChar*>(data);
+    const ::ArraySingleDimensionLiteralsChar* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11542,7 +9082,7 @@ bool ArraySingleDimensionLiteralsCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11561,7 +9101,8 @@ bool ArraySingleDimensionLiteralsCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsChar* p_type = static_cast<::ArraySingleDimensionLiteralsChar*>(data);
+        ::ArraySingleDimensionLiteralsChar* p_type =
+                static_cast<::ArraySingleDimensionLiteralsChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11594,9 +9135,10 @@ uint32_t ArraySingleDimensionLiteralsCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsChar* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11620,16 +9162,9 @@ bool ArraySingleDimensionLiteralsCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11639,39 +9174,11 @@ bool ArraySingleDimensionLiteralsCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsChar* p_type = static_cast<const ::ArraySingleDimensionLiteralsChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsCharPubSubType::register_type_object_representation()
@@ -11686,17 +9193,10 @@ ArraySingleDimensionLiteralsWCharPubSubType::ArraySingleDimensionLiteralsWCharPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsWChar_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsWChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsWCharPubSubType::~ArraySingleDimensionLiteralsWCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsWCharPubSubType::serialize(
@@ -11704,7 +9204,8 @@ bool ArraySingleDimensionLiteralsWCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsWChar* p_type = static_cast<const ::ArraySingleDimensionLiteralsWChar*>(data);
+    const ::ArraySingleDimensionLiteralsWChar* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11724,7 +9225,7 @@ bool ArraySingleDimensionLiteralsWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11743,7 +9244,8 @@ bool ArraySingleDimensionLiteralsWCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsWChar* p_type = static_cast<::ArraySingleDimensionLiteralsWChar*>(data);
+        ::ArraySingleDimensionLiteralsWChar* p_type =
+                static_cast<::ArraySingleDimensionLiteralsWChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11776,9 +9278,10 @@ uint32_t ArraySingleDimensionLiteralsWCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsWChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsWChar* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsWChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11802,16 +9305,9 @@ bool ArraySingleDimensionLiteralsWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsWChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11821,39 +9317,11 @@ bool ArraySingleDimensionLiteralsWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsWChar* p_type = static_cast<const ::ArraySingleDimensionLiteralsWChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsWChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsWChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsWCharPubSubType::register_type_object_representation()
@@ -11868,17 +9336,10 @@ ArraySingleDimensionLiteralsStringPubSubType::ArraySingleDimensionLiteralsString
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsString_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsStringPubSubType::~ArraySingleDimensionLiteralsStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsStringPubSubType::serialize(
@@ -11886,7 +9347,8 @@ bool ArraySingleDimensionLiteralsStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsString* p_type = static_cast<const ::ArraySingleDimensionLiteralsString*>(data);
+    const ::ArraySingleDimensionLiteralsString* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11906,7 +9368,7 @@ bool ArraySingleDimensionLiteralsStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11925,7 +9387,8 @@ bool ArraySingleDimensionLiteralsStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsString* p_type = static_cast<::ArraySingleDimensionLiteralsString*>(data);
+        ::ArraySingleDimensionLiteralsString* p_type =
+                static_cast<::ArraySingleDimensionLiteralsString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11958,9 +9421,10 @@ uint32_t ArraySingleDimensionLiteralsStringPubSubType::calculate_serialized_size
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsString* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11984,16 +9448,9 @@ bool ArraySingleDimensionLiteralsStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12003,39 +9460,11 @@ bool ArraySingleDimensionLiteralsStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsString* p_type = static_cast<const ::ArraySingleDimensionLiteralsString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsStringPubSubType::register_type_object_representation()
@@ -12050,17 +9479,10 @@ ArraySingleDimensionLiteralsWStringPubSubType::ArraySingleDimensionLiteralsWStri
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsWString_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsWStringPubSubType::~ArraySingleDimensionLiteralsWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsWStringPubSubType::serialize(
@@ -12068,7 +9490,8 @@ bool ArraySingleDimensionLiteralsWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsWString* p_type = static_cast<const ::ArraySingleDimensionLiteralsWString*>(data);
+    const ::ArraySingleDimensionLiteralsWString* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12088,7 +9511,7 @@ bool ArraySingleDimensionLiteralsWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12107,7 +9530,8 @@ bool ArraySingleDimensionLiteralsWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsWString* p_type = static_cast<::ArraySingleDimensionLiteralsWString*>(data);
+        ::ArraySingleDimensionLiteralsWString* p_type =
+                static_cast<::ArraySingleDimensionLiteralsWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12140,9 +9564,10 @@ uint32_t ArraySingleDimensionLiteralsWStringPubSubType::calculate_serialized_siz
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsWString* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12166,16 +9591,9 @@ bool ArraySingleDimensionLiteralsWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12185,39 +9603,11 @@ bool ArraySingleDimensionLiteralsWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsWString* p_type = static_cast<const ::ArraySingleDimensionLiteralsWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsWStringPubSubType::register_type_object_representation()
@@ -12232,17 +9622,10 @@ ArraySingleDimensionLiteralsBoundedStringPubSubType::ArraySingleDimensionLiteral
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsBoundedString_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsBoundedString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsBoundedStringPubSubType::~ArraySingleDimensionLiteralsBoundedStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsBoundedStringPubSubType::serialize(
@@ -12250,7 +9633,8 @@ bool ArraySingleDimensionLiteralsBoundedStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsBoundedString* p_type = static_cast<const ::ArraySingleDimensionLiteralsBoundedString*>(data);
+    const ::ArraySingleDimensionLiteralsBoundedString* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsBoundedString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12270,7 +9654,7 @@ bool ArraySingleDimensionLiteralsBoundedStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12289,7 +9673,8 @@ bool ArraySingleDimensionLiteralsBoundedStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsBoundedString* p_type = static_cast<::ArraySingleDimensionLiteralsBoundedString*>(data);
+        ::ArraySingleDimensionLiteralsBoundedString* p_type =
+                static_cast<::ArraySingleDimensionLiteralsBoundedString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12322,9 +9707,10 @@ uint32_t ArraySingleDimensionLiteralsBoundedStringPubSubType::calculate_serializ
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsBoundedString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsBoundedString* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsBoundedString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12348,16 +9734,9 @@ bool ArraySingleDimensionLiteralsBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsBoundedString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12367,39 +9746,11 @@ bool ArraySingleDimensionLiteralsBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsBoundedString* p_type = static_cast<const ::ArraySingleDimensionLiteralsBoundedString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsBoundedString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsBoundedString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsBoundedStringPubSubType::register_type_object_representation()
@@ -12414,17 +9765,10 @@ ArraySingleDimensionLiteralsBoundedWStringPubSubType::ArraySingleDimensionLitera
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsBoundedWString_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsBoundedWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsBoundedWStringPubSubType::~ArraySingleDimensionLiteralsBoundedWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::serialize(
@@ -12432,7 +9776,8 @@ bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsBoundedWString* p_type = static_cast<const ::ArraySingleDimensionLiteralsBoundedWString*>(data);
+    const ::ArraySingleDimensionLiteralsBoundedWString* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsBoundedWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12452,7 +9797,7 @@ bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12471,7 +9816,8 @@ bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsBoundedWString* p_type = static_cast<::ArraySingleDimensionLiteralsBoundedWString*>(data);
+        ::ArraySingleDimensionLiteralsBoundedWString* p_type =
+                static_cast<::ArraySingleDimensionLiteralsBoundedWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12504,9 +9850,10 @@ uint32_t ArraySingleDimensionLiteralsBoundedWStringPubSubType::calculate_seriali
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsBoundedWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsBoundedWString* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsBoundedWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12530,16 +9877,9 @@ bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsBoundedWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12549,39 +9889,11 @@ bool ArraySingleDimensionLiteralsBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsBoundedWString* p_type = static_cast<const ::ArraySingleDimensionLiteralsBoundedWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsBoundedWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsBoundedWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsBoundedWStringPubSubType::register_type_object_representation()
@@ -12596,17 +9908,10 @@ ArraySingleDimensionLiteralsEnumPubSubType::ArraySingleDimensionLiteralsEnumPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsEnum_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsEnum_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsEnumPubSubType::~ArraySingleDimensionLiteralsEnumPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsEnumPubSubType::serialize(
@@ -12614,7 +9919,8 @@ bool ArraySingleDimensionLiteralsEnumPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsEnum* p_type = static_cast<const ::ArraySingleDimensionLiteralsEnum*>(data);
+    const ::ArraySingleDimensionLiteralsEnum* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsEnum*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12634,7 +9940,7 @@ bool ArraySingleDimensionLiteralsEnumPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12653,7 +9959,8 @@ bool ArraySingleDimensionLiteralsEnumPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsEnum* p_type = static_cast<::ArraySingleDimensionLiteralsEnum*>(data);
+        ::ArraySingleDimensionLiteralsEnum* p_type =
+                static_cast<::ArraySingleDimensionLiteralsEnum*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12686,9 +9993,10 @@ uint32_t ArraySingleDimensionLiteralsEnumPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsEnum*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsEnum* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsEnum*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12712,16 +10020,9 @@ bool ArraySingleDimensionLiteralsEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsEnum data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12731,39 +10032,11 @@ bool ArraySingleDimensionLiteralsEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsEnum* p_type = static_cast<const ::ArraySingleDimensionLiteralsEnum*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsEnum_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsEnum_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsEnumPubSubType::register_type_object_representation()
@@ -12778,17 +10051,10 @@ ArraySingleDimensionLiteralsBitMaskPubSubType::ArraySingleDimensionLiteralsBitMa
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsBitMask_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsBitMask_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsBitMaskPubSubType::~ArraySingleDimensionLiteralsBitMaskPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsBitMaskPubSubType::serialize(
@@ -12796,7 +10062,8 @@ bool ArraySingleDimensionLiteralsBitMaskPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsBitMask* p_type = static_cast<const ::ArraySingleDimensionLiteralsBitMask*>(data);
+    const ::ArraySingleDimensionLiteralsBitMask* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsBitMask*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12816,7 +10083,7 @@ bool ArraySingleDimensionLiteralsBitMaskPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12835,7 +10102,8 @@ bool ArraySingleDimensionLiteralsBitMaskPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsBitMask* p_type = static_cast<::ArraySingleDimensionLiteralsBitMask*>(data);
+        ::ArraySingleDimensionLiteralsBitMask* p_type =
+                static_cast<::ArraySingleDimensionLiteralsBitMask*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12868,9 +10136,10 @@ uint32_t ArraySingleDimensionLiteralsBitMaskPubSubType::calculate_serialized_siz
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsBitMask*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsBitMask* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsBitMask*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12894,16 +10163,9 @@ bool ArraySingleDimensionLiteralsBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsBitMask data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12913,39 +10175,11 @@ bool ArraySingleDimensionLiteralsBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsBitMask* p_type = static_cast<const ::ArraySingleDimensionLiteralsBitMask*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsBitMask_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsBitMask_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsBitMaskPubSubType::register_type_object_representation()
@@ -12960,17 +10194,10 @@ ArraySingleDimensionLiteralsAliasPubSubType::ArraySingleDimensionLiteralsAliasPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsAlias_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsAlias_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsAliasPubSubType::~ArraySingleDimensionLiteralsAliasPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsAliasPubSubType::serialize(
@@ -12978,7 +10205,8 @@ bool ArraySingleDimensionLiteralsAliasPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsAlias* p_type = static_cast<const ::ArraySingleDimensionLiteralsAlias*>(data);
+    const ::ArraySingleDimensionLiteralsAlias* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsAlias*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12998,7 +10226,7 @@ bool ArraySingleDimensionLiteralsAliasPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13017,7 +10245,8 @@ bool ArraySingleDimensionLiteralsAliasPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsAlias* p_type = static_cast<::ArraySingleDimensionLiteralsAlias*>(data);
+        ::ArraySingleDimensionLiteralsAlias* p_type =
+                static_cast<::ArraySingleDimensionLiteralsAlias*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13050,9 +10279,10 @@ uint32_t ArraySingleDimensionLiteralsAliasPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsAlias*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsAlias* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsAlias*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13076,16 +10306,9 @@ bool ArraySingleDimensionLiteralsAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsAlias data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13095,39 +10318,11 @@ bool ArraySingleDimensionLiteralsAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsAlias* p_type = static_cast<const ::ArraySingleDimensionLiteralsAlias*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsAlias_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsAlias_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsAliasPubSubType::register_type_object_representation()
@@ -13142,17 +10337,10 @@ ArraySingleDimensionLiteralsShortArrayPubSubType::ArraySingleDimensionLiteralsSh
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsShortArray_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsShortArray_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsShortArrayPubSubType::~ArraySingleDimensionLiteralsShortArrayPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsShortArrayPubSubType::serialize(
@@ -13160,7 +10348,8 @@ bool ArraySingleDimensionLiteralsShortArrayPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsShortArray* p_type = static_cast<const ::ArraySingleDimensionLiteralsShortArray*>(data);
+    const ::ArraySingleDimensionLiteralsShortArray* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsShortArray*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13180,7 +10369,7 @@ bool ArraySingleDimensionLiteralsShortArrayPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13199,7 +10388,8 @@ bool ArraySingleDimensionLiteralsShortArrayPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsShortArray* p_type = static_cast<::ArraySingleDimensionLiteralsShortArray*>(data);
+        ::ArraySingleDimensionLiteralsShortArray* p_type =
+                static_cast<::ArraySingleDimensionLiteralsShortArray*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13232,9 +10422,10 @@ uint32_t ArraySingleDimensionLiteralsShortArrayPubSubType::calculate_serialized_
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsShortArray*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsShortArray* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsShortArray*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13258,16 +10449,9 @@ bool ArraySingleDimensionLiteralsShortArrayPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsShortArray data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13277,39 +10461,11 @@ bool ArraySingleDimensionLiteralsShortArrayPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsShortArray* p_type = static_cast<const ::ArraySingleDimensionLiteralsShortArray*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsShortArray_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsShortArray_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsShortArrayPubSubType::register_type_object_representation()
@@ -13324,17 +10480,10 @@ ArraySingleDimensionLiteralsSequencePubSubType::ArraySingleDimensionLiteralsSequ
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsSequence_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsSequence_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsSequencePubSubType::~ArraySingleDimensionLiteralsSequencePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsSequencePubSubType::serialize(
@@ -13342,7 +10491,8 @@ bool ArraySingleDimensionLiteralsSequencePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsSequence* p_type = static_cast<const ::ArraySingleDimensionLiteralsSequence*>(data);
+    const ::ArraySingleDimensionLiteralsSequence* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsSequence*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13362,7 +10512,7 @@ bool ArraySingleDimensionLiteralsSequencePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13381,7 +10531,8 @@ bool ArraySingleDimensionLiteralsSequencePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsSequence* p_type = static_cast<::ArraySingleDimensionLiteralsSequence*>(data);
+        ::ArraySingleDimensionLiteralsSequence* p_type =
+                static_cast<::ArraySingleDimensionLiteralsSequence*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13414,9 +10565,10 @@ uint32_t ArraySingleDimensionLiteralsSequencePubSubType::calculate_serialized_si
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsSequence*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsSequence* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsSequence*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13440,16 +10592,9 @@ bool ArraySingleDimensionLiteralsSequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsSequence data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13459,39 +10604,11 @@ bool ArraySingleDimensionLiteralsSequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsSequence* p_type = static_cast<const ::ArraySingleDimensionLiteralsSequence*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsSequence_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsSequence_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsSequencePubSubType::register_type_object_representation()
@@ -13506,17 +10623,10 @@ ArraySingleDimensionLiteralsMapPubSubType::ArraySingleDimensionLiteralsMapPubSub
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsMap_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsMap_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsMapPubSubType::~ArraySingleDimensionLiteralsMapPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsMapPubSubType::serialize(
@@ -13524,7 +10634,8 @@ bool ArraySingleDimensionLiteralsMapPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsMap* p_type = static_cast<const ::ArraySingleDimensionLiteralsMap*>(data);
+    const ::ArraySingleDimensionLiteralsMap* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13544,7 +10655,7 @@ bool ArraySingleDimensionLiteralsMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13563,7 +10674,8 @@ bool ArraySingleDimensionLiteralsMapPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsMap* p_type = static_cast<::ArraySingleDimensionLiteralsMap*>(data);
+        ::ArraySingleDimensionLiteralsMap* p_type =
+                static_cast<::ArraySingleDimensionLiteralsMap*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13596,9 +10708,10 @@ uint32_t ArraySingleDimensionLiteralsMapPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsMap*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsMap* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsMap*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13622,16 +10735,9 @@ bool ArraySingleDimensionLiteralsMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsMap data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13641,39 +10747,11 @@ bool ArraySingleDimensionLiteralsMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsMap* p_type = static_cast<const ::ArraySingleDimensionLiteralsMap*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsMap_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsMap_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsMapPubSubType::register_type_object_representation()
@@ -13688,17 +10766,10 @@ ArraySingleDimensionLiteralsUnionPubSubType::ArraySingleDimensionLiteralsUnionPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsUnion_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsUnion_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsUnionPubSubType::~ArraySingleDimensionLiteralsUnionPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsUnionPubSubType::serialize(
@@ -13706,7 +10777,8 @@ bool ArraySingleDimensionLiteralsUnionPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsUnion* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnion*>(data);
+    const ::ArraySingleDimensionLiteralsUnion* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsUnion*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13726,7 +10798,7 @@ bool ArraySingleDimensionLiteralsUnionPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13745,7 +10817,8 @@ bool ArraySingleDimensionLiteralsUnionPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsUnion* p_type = static_cast<::ArraySingleDimensionLiteralsUnion*>(data);
+        ::ArraySingleDimensionLiteralsUnion* p_type =
+                static_cast<::ArraySingleDimensionLiteralsUnion*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13778,9 +10851,10 @@ uint32_t ArraySingleDimensionLiteralsUnionPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsUnion*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsUnion* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsUnion*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13804,16 +10878,9 @@ bool ArraySingleDimensionLiteralsUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsUnion data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13823,39 +10890,11 @@ bool ArraySingleDimensionLiteralsUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsUnion* p_type = static_cast<const ::ArraySingleDimensionLiteralsUnion*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsUnion_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsUnion_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsUnionPubSubType::register_type_object_representation()
@@ -13870,17 +10909,10 @@ ArraySingleDimensionLiteralsStructurePubSubType::ArraySingleDimensionLiteralsStr
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsStructure_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsStructure_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsStructurePubSubType::~ArraySingleDimensionLiteralsStructurePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsStructurePubSubType::serialize(
@@ -13888,7 +10920,8 @@ bool ArraySingleDimensionLiteralsStructurePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsStructure* p_type = static_cast<const ::ArraySingleDimensionLiteralsStructure*>(data);
+    const ::ArraySingleDimensionLiteralsStructure* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13908,7 +10941,7 @@ bool ArraySingleDimensionLiteralsStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13927,7 +10960,8 @@ bool ArraySingleDimensionLiteralsStructurePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsStructure* p_type = static_cast<::ArraySingleDimensionLiteralsStructure*>(data);
+        ::ArraySingleDimensionLiteralsStructure* p_type =
+                static_cast<::ArraySingleDimensionLiteralsStructure*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13960,9 +10994,10 @@ uint32_t ArraySingleDimensionLiteralsStructurePubSubType::calculate_serialized_s
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsStructure*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsStructure* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsStructure*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13986,16 +11021,9 @@ bool ArraySingleDimensionLiteralsStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsStructure data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14005,39 +11033,11 @@ bool ArraySingleDimensionLiteralsStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsStructure* p_type = static_cast<const ::ArraySingleDimensionLiteralsStructure*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsStructure_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsStructure_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsStructurePubSubType::register_type_object_representation()
@@ -14052,17 +11052,10 @@ ArraySingleDimensionLiteralsBitsetPubSubType::ArraySingleDimensionLiteralsBitset
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArraySingleDimensionLiteralsBitset_max_key_cdr_typesize > 16 ? ArraySingleDimensionLiteralsBitset_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArraySingleDimensionLiteralsBitsetPubSubType::~ArraySingleDimensionLiteralsBitsetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArraySingleDimensionLiteralsBitsetPubSubType::serialize(
@@ -14070,7 +11063,8 @@ bool ArraySingleDimensionLiteralsBitsetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArraySingleDimensionLiteralsBitset* p_type = static_cast<const ::ArraySingleDimensionLiteralsBitset*>(data);
+    const ::ArraySingleDimensionLiteralsBitset* p_type =
+            static_cast<const ::ArraySingleDimensionLiteralsBitset*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14090,7 +11084,7 @@ bool ArraySingleDimensionLiteralsBitsetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14109,7 +11103,8 @@ bool ArraySingleDimensionLiteralsBitsetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArraySingleDimensionLiteralsBitset* p_type = static_cast<::ArraySingleDimensionLiteralsBitset*>(data);
+        ::ArraySingleDimensionLiteralsBitset* p_type =
+                static_cast<::ArraySingleDimensionLiteralsBitset*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14142,9 +11137,10 @@ uint32_t ArraySingleDimensionLiteralsBitsetPubSubType::calculate_serialized_size
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArraySingleDimensionLiteralsBitset*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArraySingleDimensionLiteralsBitset* p_type =
+                static_cast<const ::ArraySingleDimensionLiteralsBitset*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14168,16 +11164,9 @@ bool ArraySingleDimensionLiteralsBitsetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArraySingleDimensionLiteralsBitset data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14187,39 +11176,11 @@ bool ArraySingleDimensionLiteralsBitsetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArraySingleDimensionLiteralsBitset* p_type = static_cast<const ::ArraySingleDimensionLiteralsBitset*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArraySingleDimensionLiteralsBitset_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArraySingleDimensionLiteralsBitset_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArraySingleDimensionLiteralsBitsetPubSubType::register_type_object_representation()
@@ -14234,17 +11195,10 @@ ArrayMultiDimensionLiteralsShortPubSubType::ArrayMultiDimensionLiteralsShortPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsShort_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsShortPubSubType::~ArrayMultiDimensionLiteralsShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsShortPubSubType::serialize(
@@ -14252,7 +11206,8 @@ bool ArrayMultiDimensionLiteralsShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsShort* p_type = static_cast<const ::ArrayMultiDimensionLiteralsShort*>(data);
+    const ::ArrayMultiDimensionLiteralsShort* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14272,7 +11227,7 @@ bool ArrayMultiDimensionLiteralsShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14291,7 +11246,8 @@ bool ArrayMultiDimensionLiteralsShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsShort* p_type = static_cast<::ArrayMultiDimensionLiteralsShort*>(data);
+        ::ArrayMultiDimensionLiteralsShort* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14324,9 +11280,10 @@ uint32_t ArrayMultiDimensionLiteralsShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsShort* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14350,16 +11307,9 @@ bool ArrayMultiDimensionLiteralsShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14369,39 +11319,11 @@ bool ArrayMultiDimensionLiteralsShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsShort* p_type = static_cast<const ::ArrayMultiDimensionLiteralsShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsShortPubSubType::register_type_object_representation()
@@ -14416,17 +11338,10 @@ ArrayMultiDimensionLiteralsUShortPubSubType::ArrayMultiDimensionLiteralsUShortPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsUShort_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsUShort_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsUShortPubSubType::~ArrayMultiDimensionLiteralsUShortPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsUShortPubSubType::serialize(
@@ -14434,7 +11349,8 @@ bool ArrayMultiDimensionLiteralsUShortPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsUShort* p_type = static_cast<const ::ArrayMultiDimensionLiteralsUShort*>(data);
+    const ::ArrayMultiDimensionLiteralsUShort* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsUShort*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14454,7 +11370,7 @@ bool ArrayMultiDimensionLiteralsUShortPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14473,7 +11389,8 @@ bool ArrayMultiDimensionLiteralsUShortPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsUShort* p_type = static_cast<::ArrayMultiDimensionLiteralsUShort*>(data);
+        ::ArrayMultiDimensionLiteralsUShort* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsUShort*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14506,9 +11423,10 @@ uint32_t ArrayMultiDimensionLiteralsUShortPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsUShort*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsUShort* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsUShort*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14532,16 +11450,9 @@ bool ArrayMultiDimensionLiteralsUShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsUShort data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14551,39 +11462,11 @@ bool ArrayMultiDimensionLiteralsUShortPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsUShort* p_type = static_cast<const ::ArrayMultiDimensionLiteralsUShort*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsUShort_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsUShort_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsUShortPubSubType::register_type_object_representation()
@@ -14598,17 +11481,10 @@ ArrayMultiDimensionLiteralsLongPubSubType::ArrayMultiDimensionLiteralsLongPubSub
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsLong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsLongPubSubType::~ArrayMultiDimensionLiteralsLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsLongPubSubType::serialize(
@@ -14616,7 +11492,8 @@ bool ArrayMultiDimensionLiteralsLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsLong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsLong*>(data);
+    const ::ArrayMultiDimensionLiteralsLong* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14636,7 +11513,7 @@ bool ArrayMultiDimensionLiteralsLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14655,7 +11532,8 @@ bool ArrayMultiDimensionLiteralsLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsLong* p_type = static_cast<::ArrayMultiDimensionLiteralsLong*>(data);
+        ::ArrayMultiDimensionLiteralsLong* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14688,9 +11566,10 @@ uint32_t ArrayMultiDimensionLiteralsLongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsLong* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14714,16 +11593,9 @@ bool ArrayMultiDimensionLiteralsLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14733,39 +11605,11 @@ bool ArrayMultiDimensionLiteralsLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsLong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsLongPubSubType::register_type_object_representation()
@@ -14780,17 +11624,10 @@ ArrayMultiDimensionLiteralsULongPubSubType::ArrayMultiDimensionLiteralsULongPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsULong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsULong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsULongPubSubType::~ArrayMultiDimensionLiteralsULongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsULongPubSubType::serialize(
@@ -14798,7 +11635,8 @@ bool ArrayMultiDimensionLiteralsULongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsULong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsULong*>(data);
+    const ::ArrayMultiDimensionLiteralsULong* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsULong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14818,7 +11656,7 @@ bool ArrayMultiDimensionLiteralsULongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14837,7 +11675,8 @@ bool ArrayMultiDimensionLiteralsULongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsULong* p_type = static_cast<::ArrayMultiDimensionLiteralsULong*>(data);
+        ::ArrayMultiDimensionLiteralsULong* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsULong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14870,9 +11709,10 @@ uint32_t ArrayMultiDimensionLiteralsULongPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsULong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsULong* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsULong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14896,16 +11736,9 @@ bool ArrayMultiDimensionLiteralsULongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsULong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14915,39 +11748,11 @@ bool ArrayMultiDimensionLiteralsULongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsULong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsULong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsULong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsULong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsULongPubSubType::register_type_object_representation()
@@ -14962,17 +11767,10 @@ ArrayMultiDimensionLiteralsLongLongPubSubType::ArrayMultiDimensionLiteralsLongLo
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsLongLong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsLongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsLongLongPubSubType::~ArrayMultiDimensionLiteralsLongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsLongLongPubSubType::serialize(
@@ -14980,7 +11778,8 @@ bool ArrayMultiDimensionLiteralsLongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsLongLong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsLongLong*>(data);
+    const ::ArrayMultiDimensionLiteralsLongLong* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsLongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15000,7 +11799,7 @@ bool ArrayMultiDimensionLiteralsLongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15019,7 +11818,8 @@ bool ArrayMultiDimensionLiteralsLongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsLongLong* p_type = static_cast<::ArrayMultiDimensionLiteralsLongLong*>(data);
+        ::ArrayMultiDimensionLiteralsLongLong* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsLongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15052,9 +11852,10 @@ uint32_t ArrayMultiDimensionLiteralsLongLongPubSubType::calculate_serialized_siz
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsLongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsLongLong* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsLongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15078,16 +11879,9 @@ bool ArrayMultiDimensionLiteralsLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsLongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15097,39 +11891,11 @@ bool ArrayMultiDimensionLiteralsLongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsLongLong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsLongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsLongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsLongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsLongLongPubSubType::register_type_object_representation()
@@ -15144,17 +11910,10 @@ ArrayMultiDimensionLiteralsULongLongPubSubType::ArrayMultiDimensionLiteralsULong
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsULongLong_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsULongLong_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsULongLongPubSubType::~ArrayMultiDimensionLiteralsULongLongPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsULongLongPubSubType::serialize(
@@ -15162,7 +11921,8 @@ bool ArrayMultiDimensionLiteralsULongLongPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsULongLong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsULongLong*>(data);
+    const ::ArrayMultiDimensionLiteralsULongLong* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsULongLong*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15182,7 +11942,7 @@ bool ArrayMultiDimensionLiteralsULongLongPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15201,7 +11961,8 @@ bool ArrayMultiDimensionLiteralsULongLongPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsULongLong* p_type = static_cast<::ArrayMultiDimensionLiteralsULongLong*>(data);
+        ::ArrayMultiDimensionLiteralsULongLong* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsULongLong*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15234,9 +11995,10 @@ uint32_t ArrayMultiDimensionLiteralsULongLongPubSubType::calculate_serialized_si
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsULongLong*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsULongLong* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsULongLong*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15260,16 +12022,9 @@ bool ArrayMultiDimensionLiteralsULongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsULongLong data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15279,39 +12034,11 @@ bool ArrayMultiDimensionLiteralsULongLongPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsULongLong* p_type = static_cast<const ::ArrayMultiDimensionLiteralsULongLong*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsULongLong_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsULongLong_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsULongLongPubSubType::register_type_object_representation()
@@ -15326,17 +12053,10 @@ ArrayMultiDimensionLiteralsFloatPubSubType::ArrayMultiDimensionLiteralsFloatPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsFloat_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsFloat_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsFloatPubSubType::~ArrayMultiDimensionLiteralsFloatPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsFloatPubSubType::serialize(
@@ -15344,7 +12064,8 @@ bool ArrayMultiDimensionLiteralsFloatPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsFloat* p_type = static_cast<const ::ArrayMultiDimensionLiteralsFloat*>(data);
+    const ::ArrayMultiDimensionLiteralsFloat* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsFloat*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15364,7 +12085,7 @@ bool ArrayMultiDimensionLiteralsFloatPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15383,7 +12104,8 @@ bool ArrayMultiDimensionLiteralsFloatPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsFloat* p_type = static_cast<::ArrayMultiDimensionLiteralsFloat*>(data);
+        ::ArrayMultiDimensionLiteralsFloat* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsFloat*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15416,9 +12138,10 @@ uint32_t ArrayMultiDimensionLiteralsFloatPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsFloat*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsFloat* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsFloat*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15442,16 +12165,9 @@ bool ArrayMultiDimensionLiteralsFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsFloat data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15461,39 +12177,11 @@ bool ArrayMultiDimensionLiteralsFloatPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsFloat* p_type = static_cast<const ::ArrayMultiDimensionLiteralsFloat*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsFloat_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsFloat_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsFloatPubSubType::register_type_object_representation()
@@ -15508,17 +12196,10 @@ ArrayMultiDimensionLiteralsDoublePubSubType::ArrayMultiDimensionLiteralsDoublePu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsDouble_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsDoublePubSubType::~ArrayMultiDimensionLiteralsDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsDoublePubSubType::serialize(
@@ -15526,7 +12207,8 @@ bool ArrayMultiDimensionLiteralsDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsDouble* p_type = static_cast<const ::ArrayMultiDimensionLiteralsDouble*>(data);
+    const ::ArrayMultiDimensionLiteralsDouble* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15546,7 +12228,7 @@ bool ArrayMultiDimensionLiteralsDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15565,7 +12247,8 @@ bool ArrayMultiDimensionLiteralsDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsDouble* p_type = static_cast<::ArrayMultiDimensionLiteralsDouble*>(data);
+        ::ArrayMultiDimensionLiteralsDouble* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15598,9 +12281,10 @@ uint32_t ArrayMultiDimensionLiteralsDoublePubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsDouble* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15624,16 +12308,9 @@ bool ArrayMultiDimensionLiteralsDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15643,39 +12320,11 @@ bool ArrayMultiDimensionLiteralsDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsDouble* p_type = static_cast<const ::ArrayMultiDimensionLiteralsDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsDoublePubSubType::register_type_object_representation()
@@ -15690,17 +12339,10 @@ ArrayMultiDimensionLiteralsLongDoublePubSubType::ArrayMultiDimensionLiteralsLong
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsLongDouble_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsLongDouble_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsLongDoublePubSubType::~ArrayMultiDimensionLiteralsLongDoublePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsLongDoublePubSubType::serialize(
@@ -15708,7 +12350,8 @@ bool ArrayMultiDimensionLiteralsLongDoublePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsLongDouble* p_type = static_cast<const ::ArrayMultiDimensionLiteralsLongDouble*>(data);
+    const ::ArrayMultiDimensionLiteralsLongDouble* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsLongDouble*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15728,7 +12371,7 @@ bool ArrayMultiDimensionLiteralsLongDoublePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15747,7 +12390,8 @@ bool ArrayMultiDimensionLiteralsLongDoublePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsLongDouble* p_type = static_cast<::ArrayMultiDimensionLiteralsLongDouble*>(data);
+        ::ArrayMultiDimensionLiteralsLongDouble* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsLongDouble*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15780,9 +12424,10 @@ uint32_t ArrayMultiDimensionLiteralsLongDoublePubSubType::calculate_serialized_s
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsLongDouble*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsLongDouble* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsLongDouble*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15806,16 +12451,9 @@ bool ArrayMultiDimensionLiteralsLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsLongDouble data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15825,39 +12463,11 @@ bool ArrayMultiDimensionLiteralsLongDoublePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsLongDouble* p_type = static_cast<const ::ArrayMultiDimensionLiteralsLongDouble*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsLongDouble_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsLongDouble_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsLongDoublePubSubType::register_type_object_representation()
@@ -15872,17 +12482,10 @@ ArrayMultiDimensionLiteralsBooleanPubSubType::ArrayMultiDimensionLiteralsBoolean
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsBoolean_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsBoolean_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsBooleanPubSubType::~ArrayMultiDimensionLiteralsBooleanPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsBooleanPubSubType::serialize(
@@ -15890,7 +12493,8 @@ bool ArrayMultiDimensionLiteralsBooleanPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsBoolean* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBoolean*>(data);
+    const ::ArrayMultiDimensionLiteralsBoolean* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsBoolean*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15910,7 +12514,7 @@ bool ArrayMultiDimensionLiteralsBooleanPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15929,7 +12533,8 @@ bool ArrayMultiDimensionLiteralsBooleanPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsBoolean* p_type = static_cast<::ArrayMultiDimensionLiteralsBoolean*>(data);
+        ::ArrayMultiDimensionLiteralsBoolean* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsBoolean*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15962,9 +12567,10 @@ uint32_t ArrayMultiDimensionLiteralsBooleanPubSubType::calculate_serialized_size
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsBoolean*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsBoolean* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsBoolean*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15988,16 +12594,9 @@ bool ArrayMultiDimensionLiteralsBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsBoolean data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16007,39 +12606,11 @@ bool ArrayMultiDimensionLiteralsBooleanPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsBoolean* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBoolean*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsBoolean_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsBoolean_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsBooleanPubSubType::register_type_object_representation()
@@ -16054,17 +12625,10 @@ ArrayMultiDimensionLiteralsOctetPubSubType::ArrayMultiDimensionLiteralsOctetPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsOctet_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsOctet_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsOctetPubSubType::~ArrayMultiDimensionLiteralsOctetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsOctetPubSubType::serialize(
@@ -16072,7 +12636,8 @@ bool ArrayMultiDimensionLiteralsOctetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsOctet* p_type = static_cast<const ::ArrayMultiDimensionLiteralsOctet*>(data);
+    const ::ArrayMultiDimensionLiteralsOctet* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsOctet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16092,7 +12657,7 @@ bool ArrayMultiDimensionLiteralsOctetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16111,7 +12676,8 @@ bool ArrayMultiDimensionLiteralsOctetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsOctet* p_type = static_cast<::ArrayMultiDimensionLiteralsOctet*>(data);
+        ::ArrayMultiDimensionLiteralsOctet* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsOctet*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16144,9 +12710,10 @@ uint32_t ArrayMultiDimensionLiteralsOctetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsOctet*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsOctet* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsOctet*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16170,16 +12737,9 @@ bool ArrayMultiDimensionLiteralsOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsOctet data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16189,39 +12749,11 @@ bool ArrayMultiDimensionLiteralsOctetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsOctet* p_type = static_cast<const ::ArrayMultiDimensionLiteralsOctet*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsOctet_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsOctet_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsOctetPubSubType::register_type_object_representation()
@@ -16236,17 +12768,10 @@ ArrayMultiDimensionLiteralsCharPubSubType::ArrayMultiDimensionLiteralsCharPubSub
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsChar_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsCharPubSubType::~ArrayMultiDimensionLiteralsCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsCharPubSubType::serialize(
@@ -16254,7 +12779,8 @@ bool ArrayMultiDimensionLiteralsCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsChar* p_type = static_cast<const ::ArrayMultiDimensionLiteralsChar*>(data);
+    const ::ArrayMultiDimensionLiteralsChar* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16274,7 +12800,7 @@ bool ArrayMultiDimensionLiteralsCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16293,7 +12819,8 @@ bool ArrayMultiDimensionLiteralsCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsChar* p_type = static_cast<::ArrayMultiDimensionLiteralsChar*>(data);
+        ::ArrayMultiDimensionLiteralsChar* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16326,9 +12853,10 @@ uint32_t ArrayMultiDimensionLiteralsCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsChar* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16352,16 +12880,9 @@ bool ArrayMultiDimensionLiteralsCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16371,39 +12892,11 @@ bool ArrayMultiDimensionLiteralsCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsChar* p_type = static_cast<const ::ArrayMultiDimensionLiteralsChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsCharPubSubType::register_type_object_representation()
@@ -16418,17 +12911,10 @@ ArrayMultiDimensionLiteralsWCharPubSubType::ArrayMultiDimensionLiteralsWCharPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsWChar_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsWChar_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsWCharPubSubType::~ArrayMultiDimensionLiteralsWCharPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsWCharPubSubType::serialize(
@@ -16436,7 +12922,8 @@ bool ArrayMultiDimensionLiteralsWCharPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsWChar* p_type = static_cast<const ::ArrayMultiDimensionLiteralsWChar*>(data);
+    const ::ArrayMultiDimensionLiteralsWChar* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsWChar*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16456,7 +12943,7 @@ bool ArrayMultiDimensionLiteralsWCharPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16475,7 +12962,8 @@ bool ArrayMultiDimensionLiteralsWCharPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsWChar* p_type = static_cast<::ArrayMultiDimensionLiteralsWChar*>(data);
+        ::ArrayMultiDimensionLiteralsWChar* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsWChar*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16508,9 +12996,10 @@ uint32_t ArrayMultiDimensionLiteralsWCharPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsWChar*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsWChar* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsWChar*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16534,16 +13023,9 @@ bool ArrayMultiDimensionLiteralsWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsWChar data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16553,39 +13035,11 @@ bool ArrayMultiDimensionLiteralsWCharPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsWChar* p_type = static_cast<const ::ArrayMultiDimensionLiteralsWChar*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsWChar_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsWChar_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsWCharPubSubType::register_type_object_representation()
@@ -16600,17 +13054,10 @@ ArrayMultiDimensionLiteralsStringPubSubType::ArrayMultiDimensionLiteralsStringPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsStringPubSubType::~ArrayMultiDimensionLiteralsStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsStringPubSubType::serialize(
@@ -16618,7 +13065,8 @@ bool ArrayMultiDimensionLiteralsStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsString*>(data);
+    const ::ArrayMultiDimensionLiteralsString* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16638,7 +13086,7 @@ bool ArrayMultiDimensionLiteralsStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16657,7 +13105,8 @@ bool ArrayMultiDimensionLiteralsStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsString* p_type = static_cast<::ArrayMultiDimensionLiteralsString*>(data);
+        ::ArrayMultiDimensionLiteralsString* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16690,9 +13139,10 @@ uint32_t ArrayMultiDimensionLiteralsStringPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsString* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16716,16 +13166,9 @@ bool ArrayMultiDimensionLiteralsStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16735,39 +13178,11 @@ bool ArrayMultiDimensionLiteralsStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsStringPubSubType::register_type_object_representation()
@@ -16782,17 +13197,10 @@ ArrayMultiDimensionLiteralsWStringPubSubType::ArrayMultiDimensionLiteralsWString
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsWString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsWStringPubSubType::~ArrayMultiDimensionLiteralsWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsWStringPubSubType::serialize(
@@ -16800,7 +13208,8 @@ bool ArrayMultiDimensionLiteralsWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsWString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsWString*>(data);
+    const ::ArrayMultiDimensionLiteralsWString* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16820,7 +13229,7 @@ bool ArrayMultiDimensionLiteralsWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16839,7 +13248,8 @@ bool ArrayMultiDimensionLiteralsWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsWString* p_type = static_cast<::ArrayMultiDimensionLiteralsWString*>(data);
+        ::ArrayMultiDimensionLiteralsWString* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16872,9 +13282,10 @@ uint32_t ArrayMultiDimensionLiteralsWStringPubSubType::calculate_serialized_size
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsWString* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16898,16 +13309,9 @@ bool ArrayMultiDimensionLiteralsWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16917,39 +13321,11 @@ bool ArrayMultiDimensionLiteralsWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsWString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsWStringPubSubType::register_type_object_representation()
@@ -16964,17 +13340,10 @@ ArrayMultiDimensionLiteralsBoundedStringPubSubType::ArrayMultiDimensionLiteralsB
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsBoundedString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsBoundedString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsBoundedStringPubSubType::~ArrayMultiDimensionLiteralsBoundedStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::serialize(
@@ -16982,7 +13351,8 @@ bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsBoundedString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBoundedString*>(data);
+    const ::ArrayMultiDimensionLiteralsBoundedString* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsBoundedString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17002,7 +13372,7 @@ bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17021,7 +13391,8 @@ bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsBoundedString* p_type = static_cast<::ArrayMultiDimensionLiteralsBoundedString*>(data);
+        ::ArrayMultiDimensionLiteralsBoundedString* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsBoundedString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17054,9 +13425,10 @@ uint32_t ArrayMultiDimensionLiteralsBoundedStringPubSubType::calculate_serialize
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsBoundedString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsBoundedString* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsBoundedString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17080,16 +13452,9 @@ bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsBoundedString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17099,39 +13464,11 @@ bool ArrayMultiDimensionLiteralsBoundedStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsBoundedString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBoundedString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsBoundedString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsBoundedString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsBoundedStringPubSubType::register_type_object_representation()
@@ -17146,17 +13483,10 @@ ArrayMultiDimensionLiteralsBoundedWStringPubSubType::ArrayMultiDimensionLiterals
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsBoundedWString_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsBoundedWString_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsBoundedWStringPubSubType::~ArrayMultiDimensionLiteralsBoundedWStringPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::serialize(
@@ -17164,7 +13494,8 @@ bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsBoundedWString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBoundedWString*>(data);
+    const ::ArrayMultiDimensionLiteralsBoundedWString* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsBoundedWString*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17184,7 +13515,7 @@ bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17203,7 +13534,8 @@ bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsBoundedWString* p_type = static_cast<::ArrayMultiDimensionLiteralsBoundedWString*>(data);
+        ::ArrayMultiDimensionLiteralsBoundedWString* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsBoundedWString*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17236,9 +13568,10 @@ uint32_t ArrayMultiDimensionLiteralsBoundedWStringPubSubType::calculate_serializ
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsBoundedWString*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsBoundedWString* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsBoundedWString*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17262,16 +13595,9 @@ bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsBoundedWString data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17281,39 +13607,11 @@ bool ArrayMultiDimensionLiteralsBoundedWStringPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsBoundedWString* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBoundedWString*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsBoundedWString_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsBoundedWString_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsBoundedWStringPubSubType::register_type_object_representation()
@@ -17328,17 +13626,10 @@ ArrayMultiDimensionLiteralsEnumPubSubType::ArrayMultiDimensionLiteralsEnumPubSub
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsEnum_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsEnum_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsEnumPubSubType::~ArrayMultiDimensionLiteralsEnumPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsEnumPubSubType::serialize(
@@ -17346,7 +13637,8 @@ bool ArrayMultiDimensionLiteralsEnumPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsEnum* p_type = static_cast<const ::ArrayMultiDimensionLiteralsEnum*>(data);
+    const ::ArrayMultiDimensionLiteralsEnum* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsEnum*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17366,7 +13658,7 @@ bool ArrayMultiDimensionLiteralsEnumPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17385,7 +13677,8 @@ bool ArrayMultiDimensionLiteralsEnumPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsEnum* p_type = static_cast<::ArrayMultiDimensionLiteralsEnum*>(data);
+        ::ArrayMultiDimensionLiteralsEnum* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsEnum*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17418,9 +13711,10 @@ uint32_t ArrayMultiDimensionLiteralsEnumPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsEnum*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsEnum* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsEnum*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17444,16 +13738,9 @@ bool ArrayMultiDimensionLiteralsEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsEnum data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17463,39 +13750,11 @@ bool ArrayMultiDimensionLiteralsEnumPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsEnum* p_type = static_cast<const ::ArrayMultiDimensionLiteralsEnum*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsEnum_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsEnum_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsEnumPubSubType::register_type_object_representation()
@@ -17510,17 +13769,10 @@ ArrayMultiDimensionLiteralsBitMaskPubSubType::ArrayMultiDimensionLiteralsBitMask
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsBitMask_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsBitMask_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsBitMaskPubSubType::~ArrayMultiDimensionLiteralsBitMaskPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsBitMaskPubSubType::serialize(
@@ -17528,7 +13780,8 @@ bool ArrayMultiDimensionLiteralsBitMaskPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsBitMask* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBitMask*>(data);
+    const ::ArrayMultiDimensionLiteralsBitMask* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsBitMask*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17548,7 +13801,7 @@ bool ArrayMultiDimensionLiteralsBitMaskPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17567,7 +13820,8 @@ bool ArrayMultiDimensionLiteralsBitMaskPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsBitMask* p_type = static_cast<::ArrayMultiDimensionLiteralsBitMask*>(data);
+        ::ArrayMultiDimensionLiteralsBitMask* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsBitMask*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17600,9 +13854,10 @@ uint32_t ArrayMultiDimensionLiteralsBitMaskPubSubType::calculate_serialized_size
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsBitMask*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsBitMask* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsBitMask*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17626,16 +13881,9 @@ bool ArrayMultiDimensionLiteralsBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsBitMask data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17645,39 +13893,11 @@ bool ArrayMultiDimensionLiteralsBitMaskPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsBitMask* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBitMask*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsBitMask_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsBitMask_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsBitMaskPubSubType::register_type_object_representation()
@@ -17692,17 +13912,10 @@ ArrayMultiDimensionLiteralsAliasPubSubType::ArrayMultiDimensionLiteralsAliasPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsAlias_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsAlias_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsAliasPubSubType::~ArrayMultiDimensionLiteralsAliasPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsAliasPubSubType::serialize(
@@ -17710,7 +13923,8 @@ bool ArrayMultiDimensionLiteralsAliasPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsAlias* p_type = static_cast<const ::ArrayMultiDimensionLiteralsAlias*>(data);
+    const ::ArrayMultiDimensionLiteralsAlias* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsAlias*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17730,7 +13944,7 @@ bool ArrayMultiDimensionLiteralsAliasPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17749,7 +13963,8 @@ bool ArrayMultiDimensionLiteralsAliasPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsAlias* p_type = static_cast<::ArrayMultiDimensionLiteralsAlias*>(data);
+        ::ArrayMultiDimensionLiteralsAlias* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsAlias*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17782,9 +13997,10 @@ uint32_t ArrayMultiDimensionLiteralsAliasPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsAlias*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsAlias* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsAlias*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17808,16 +14024,9 @@ bool ArrayMultiDimensionLiteralsAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsAlias data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17827,39 +14036,11 @@ bool ArrayMultiDimensionLiteralsAliasPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsAlias* p_type = static_cast<const ::ArrayMultiDimensionLiteralsAlias*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsAlias_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsAlias_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsAliasPubSubType::register_type_object_representation()
@@ -17874,17 +14055,10 @@ ArrayMultiDimensionLiteralsSequencePubSubType::ArrayMultiDimensionLiteralsSequen
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsSequence_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsSequence_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsSequencePubSubType::~ArrayMultiDimensionLiteralsSequencePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsSequencePubSubType::serialize(
@@ -17892,7 +14066,8 @@ bool ArrayMultiDimensionLiteralsSequencePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsSequence* p_type = static_cast<const ::ArrayMultiDimensionLiteralsSequence*>(data);
+    const ::ArrayMultiDimensionLiteralsSequence* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsSequence*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17912,7 +14087,7 @@ bool ArrayMultiDimensionLiteralsSequencePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17931,7 +14106,8 @@ bool ArrayMultiDimensionLiteralsSequencePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsSequence* p_type = static_cast<::ArrayMultiDimensionLiteralsSequence*>(data);
+        ::ArrayMultiDimensionLiteralsSequence* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsSequence*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17964,9 +14140,10 @@ uint32_t ArrayMultiDimensionLiteralsSequencePubSubType::calculate_serialized_siz
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsSequence*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsSequence* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsSequence*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17990,16 +14167,9 @@ bool ArrayMultiDimensionLiteralsSequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsSequence data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -18009,39 +14179,11 @@ bool ArrayMultiDimensionLiteralsSequencePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsSequence* p_type = static_cast<const ::ArrayMultiDimensionLiteralsSequence*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsSequence_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsSequence_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsSequencePubSubType::register_type_object_representation()
@@ -18056,17 +14198,10 @@ ArrayMultiDimensionLiteralsMapPubSubType::ArrayMultiDimensionLiteralsMapPubSubTy
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsMap_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsMap_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsMapPubSubType::~ArrayMultiDimensionLiteralsMapPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsMapPubSubType::serialize(
@@ -18074,7 +14209,8 @@ bool ArrayMultiDimensionLiteralsMapPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsMap* p_type = static_cast<const ::ArrayMultiDimensionLiteralsMap*>(data);
+    const ::ArrayMultiDimensionLiteralsMap* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsMap*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -18094,7 +14230,7 @@ bool ArrayMultiDimensionLiteralsMapPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18113,7 +14249,8 @@ bool ArrayMultiDimensionLiteralsMapPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsMap* p_type = static_cast<::ArrayMultiDimensionLiteralsMap*>(data);
+        ::ArrayMultiDimensionLiteralsMap* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsMap*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18146,9 +14283,10 @@ uint32_t ArrayMultiDimensionLiteralsMapPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsMap*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsMap* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsMap*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18172,16 +14310,9 @@ bool ArrayMultiDimensionLiteralsMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsMap data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -18191,39 +14322,11 @@ bool ArrayMultiDimensionLiteralsMapPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsMap* p_type = static_cast<const ::ArrayMultiDimensionLiteralsMap*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsMap_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsMap_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsMapPubSubType::register_type_object_representation()
@@ -18238,17 +14341,10 @@ ArrayMultiDimensionLiteralsUnionPubSubType::ArrayMultiDimensionLiteralsUnionPubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsUnion_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsUnion_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsUnionPubSubType::~ArrayMultiDimensionLiteralsUnionPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsUnionPubSubType::serialize(
@@ -18256,7 +14352,8 @@ bool ArrayMultiDimensionLiteralsUnionPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsUnion* p_type = static_cast<const ::ArrayMultiDimensionLiteralsUnion*>(data);
+    const ::ArrayMultiDimensionLiteralsUnion* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsUnion*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -18276,7 +14373,7 @@ bool ArrayMultiDimensionLiteralsUnionPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18295,7 +14392,8 @@ bool ArrayMultiDimensionLiteralsUnionPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsUnion* p_type = static_cast<::ArrayMultiDimensionLiteralsUnion*>(data);
+        ::ArrayMultiDimensionLiteralsUnion* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsUnion*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18328,9 +14426,10 @@ uint32_t ArrayMultiDimensionLiteralsUnionPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsUnion*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsUnion* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsUnion*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18354,16 +14453,9 @@ bool ArrayMultiDimensionLiteralsUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsUnion data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -18373,39 +14465,11 @@ bool ArrayMultiDimensionLiteralsUnionPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsUnion* p_type = static_cast<const ::ArrayMultiDimensionLiteralsUnion*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsUnion_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsUnion_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsUnionPubSubType::register_type_object_representation()
@@ -18420,17 +14484,10 @@ ArrayMultiDimensionLiteralsStructurePubSubType::ArrayMultiDimensionLiteralsStruc
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsStructure_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsStructure_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsStructurePubSubType::~ArrayMultiDimensionLiteralsStructurePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsStructurePubSubType::serialize(
@@ -18438,7 +14495,8 @@ bool ArrayMultiDimensionLiteralsStructurePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsStructure* p_type = static_cast<const ::ArrayMultiDimensionLiteralsStructure*>(data);
+    const ::ArrayMultiDimensionLiteralsStructure* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsStructure*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -18458,7 +14516,7 @@ bool ArrayMultiDimensionLiteralsStructurePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18477,7 +14535,8 @@ bool ArrayMultiDimensionLiteralsStructurePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsStructure* p_type = static_cast<::ArrayMultiDimensionLiteralsStructure*>(data);
+        ::ArrayMultiDimensionLiteralsStructure* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsStructure*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18510,9 +14569,10 @@ uint32_t ArrayMultiDimensionLiteralsStructurePubSubType::calculate_serialized_si
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsStructure*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsStructure* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsStructure*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18536,16 +14596,9 @@ bool ArrayMultiDimensionLiteralsStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsStructure data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -18555,39 +14608,11 @@ bool ArrayMultiDimensionLiteralsStructurePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsStructure* p_type = static_cast<const ::ArrayMultiDimensionLiteralsStructure*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsStructure_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsStructure_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsStructurePubSubType::register_type_object_representation()
@@ -18602,17 +14627,10 @@ ArrayMultiDimensionLiteralsBitSetPubSubType::ArrayMultiDimensionLiteralsBitSetPu
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = ArrayMultiDimensionLiteralsBitSet_max_key_cdr_typesize > 16 ? ArrayMultiDimensionLiteralsBitSet_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ArrayMultiDimensionLiteralsBitSetPubSubType::~ArrayMultiDimensionLiteralsBitSetPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ArrayMultiDimensionLiteralsBitSetPubSubType::serialize(
@@ -18620,7 +14638,8 @@ bool ArrayMultiDimensionLiteralsBitSetPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::ArrayMultiDimensionLiteralsBitSet* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBitSet*>(data);
+    const ::ArrayMultiDimensionLiteralsBitSet* p_type =
+            static_cast<const ::ArrayMultiDimensionLiteralsBitSet*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -18640,7 +14659,7 @@ bool ArrayMultiDimensionLiteralsBitSetPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18659,7 +14678,8 @@ bool ArrayMultiDimensionLiteralsBitSetPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::ArrayMultiDimensionLiteralsBitSet* p_type = static_cast<::ArrayMultiDimensionLiteralsBitSet*>(data);
+        ::ArrayMultiDimensionLiteralsBitSet* p_type =
+                static_cast<::ArrayMultiDimensionLiteralsBitSet*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18692,9 +14712,10 @@ uint32_t ArrayMultiDimensionLiteralsBitSetPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::ArrayMultiDimensionLiteralsBitSet*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::ArrayMultiDimensionLiteralsBitSet* p_type =
+                static_cast<const ::ArrayMultiDimensionLiteralsBitSet*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18718,16 +14739,9 @@ bool ArrayMultiDimensionLiteralsBitSetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::ArrayMultiDimensionLiteralsBitSet data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -18737,39 +14751,11 @@ bool ArrayMultiDimensionLiteralsBitSetPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::ArrayMultiDimensionLiteralsBitSet* p_type = static_cast<const ::ArrayMultiDimensionLiteralsBitSet*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            ArrayMultiDimensionLiteralsBitSet_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || ArrayMultiDimensionLiteralsBitSet_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ArrayMultiDimensionLiteralsBitSetPubSubType::register_type_object_representation()
@@ -18784,17 +14770,10 @@ BoundedSmallArraysPubSubType::BoundedSmallArraysPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = BoundedSmallArrays_max_key_cdr_typesize > 16 ? BoundedSmallArrays_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 BoundedSmallArraysPubSubType::~BoundedSmallArraysPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool BoundedSmallArraysPubSubType::serialize(
@@ -18802,7 +14781,8 @@ bool BoundedSmallArraysPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::BoundedSmallArrays* p_type = static_cast<const ::BoundedSmallArrays*>(data);
+    const ::BoundedSmallArrays* p_type =
+            static_cast<const ::BoundedSmallArrays*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -18822,7 +14802,7 @@ bool BoundedSmallArraysPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18841,7 +14821,8 @@ bool BoundedSmallArraysPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::BoundedSmallArrays* p_type = static_cast<::BoundedSmallArrays*>(data);
+        ::BoundedSmallArrays* p_type =
+                static_cast<::BoundedSmallArrays*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -18874,9 +14855,10 @@ uint32_t BoundedSmallArraysPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::BoundedSmallArrays*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::BoundedSmallArrays* p_type =
+                static_cast<const ::BoundedSmallArrays*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -18900,16 +14882,9 @@ bool BoundedSmallArraysPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::BoundedSmallArrays data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -18919,39 +14894,11 @@ bool BoundedSmallArraysPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::BoundedSmallArrays* p_type = static_cast<const ::BoundedSmallArrays*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            BoundedSmallArrays_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || BoundedSmallArrays_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void BoundedSmallArraysPubSubType::register_type_object_representation()
@@ -18966,17 +14913,10 @@ BoundedBigArraysPubSubType::BoundedBigArraysPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = BoundedBigArrays_max_key_cdr_typesize > 16 ? BoundedBigArrays_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 BoundedBigArraysPubSubType::~BoundedBigArraysPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool BoundedBigArraysPubSubType::serialize(
@@ -18984,7 +14924,8 @@ bool BoundedBigArraysPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::BoundedBigArrays* p_type = static_cast<const ::BoundedBigArrays*>(data);
+    const ::BoundedBigArrays* p_type =
+            static_cast<const ::BoundedBigArrays*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -19004,7 +14945,7 @@ bool BoundedBigArraysPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19023,7 +14964,8 @@ bool BoundedBigArraysPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::BoundedBigArrays* p_type = static_cast<::BoundedBigArrays*>(data);
+        ::BoundedBigArrays* p_type =
+                static_cast<::BoundedBigArrays*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -19056,9 +14998,10 @@ uint32_t BoundedBigArraysPubSubType::calculate_serialized_size(
             data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
             eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        return static_cast<uint32_t>(calculator.calculate_serialized_size(
-                    *static_cast<const ::BoundedBigArrays*>(data), current_alignment)) +
-                4u /*encapsulation*/;
+        const ::BoundedBigArrays* p_type =
+                static_cast<const ::BoundedBigArrays*>(data);
+        auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
+        return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -19082,16 +15025,9 @@ bool BoundedBigArraysPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ::BoundedBigArrays data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -19101,46 +15037,17 @@ bool BoundedBigArraysPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ::BoundedBigArrays* p_type = static_cast<const ::BoundedBigArrays*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            BoundedBigArrays_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || BoundedBigArrays_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void BoundedBigArraysPubSubType::register_type_object_representation()
 {
     register_BoundedBigArrays_type_identifier(type_identifiers_);
 }
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "arraysCdrAux.ipp"

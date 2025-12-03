@@ -53,20 +53,21 @@
 #endif // _WIN32
 
 namespace AnnotationTest {
-    /*!
-     * @brief This class represents the enumeration InnerEnumHelper defined by the user in the IDL file.
-     * @ingroup annotations
-     */
-    enum class InnerEnumHelper : int32_t
-    {
-        ONE,
-        TWO
-    };
 
-    typedef eprosima::fastcdr::fixed_string<inner_const_helper> Inner_alias_bounded_string_helper;
+/*!
+ * @brief This class represents the enumeration InnerEnumHelper defined by the user in the IDL file.
+ * @ingroup annotations
+ */
+enum class InnerEnumHelper : int32_t
+{
+    ONE,
+    TWO
+};
+
+typedef eprosima::fastcdr::fixed_string<inner_const_helper> Inner_alias_bounded_string_helper;
 
 
-    const int16_t inner_const_helper = 10;
+const int16_t inner_const_helper = 10;
 
 } // namespace AnnotationTest
 

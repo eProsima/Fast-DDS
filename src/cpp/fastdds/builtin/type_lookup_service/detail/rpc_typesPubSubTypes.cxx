@@ -21,6 +21,9 @@
 
 #include "rpc_typesPubSubTypes.hpp"
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -45,7 +48,6 @@ namespace rpc {
 } // namespace fastdds
 
 } // namespace eprosima
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "rpc_typesCdrAux.ipp"
