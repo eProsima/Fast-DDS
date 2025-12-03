@@ -373,16 +373,16 @@ TEST(KeyedTopic, DataWriterDoesNotSendTheSerializedKeyWhenComputeKeyFails)
         typedef KeyedHelloWorldPubSubType::type type;
 
         bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& ,
-                eprosima::fastdds::rtps::InstanceHandle_t& ,
+                eprosima::fastdds::rtps::SerializedPayload_t&,
+                eprosima::fastdds::rtps::InstanceHandle_t&,
                 bool ) override
         {
            return false;
         }
 
         bool compute_key(
-                const void* const ,
-                eprosima::fastdds::rtps::InstanceHandle_t& ,
+                const void* const,
+                eprosima::fastdds::rtps::InstanceHandle_t&,
                 bool ) override
         {
             // Returning false to simulate failure to compute key
@@ -501,7 +501,7 @@ TEST(KeyedTopic, DataWriterDoesNotSendTheSerializedKeyWhenInstanceUndefined)
         typedef KeyedHelloWorldPubSubType::type type;
 
         bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& ,
+                eprosima::fastdds::rtps::SerializedPayload_t&,
                 eprosima::fastdds::rtps::InstanceHandle_t& handle,
                 bool ) override
         {
@@ -510,7 +510,7 @@ TEST(KeyedTopic, DataWriterDoesNotSendTheSerializedKeyWhenInstanceUndefined)
         }
 
         bool compute_key(
-                const void* const ,
+                const void* const,
                 eprosima::fastdds::rtps::InstanceHandle_t& handle,
                 bool ) override
         {
