@@ -60,6 +60,9 @@ jobs:
     if: ${{ inputs.run_asan_fastdds == true || inputs.run_asan_discovery_server == true }}
     runs-on: ubuntu-22.04
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
@@ -152,6 +155,9 @@ jobs:
     needs: asan_fastdds_build
     runs-on: ubuntu-22.04
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -249,6 +255,9 @@ jobs:
     needs: asan_fastdds_build
     runs-on: ubuntu-22.04
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -354,19 +363,7 @@ jobs:
       CXX: g++-12
     steps:
       - name: Free disk space
-        run: |
-          set -euxo pipefail
-          sudo rm -rf /usr/share/dotnet \
-                       /usr/local/lib/android \
-                       /opt/ghc \
-                       /usr/local/share/boost \
-                       /usr/local/share/chromium \
-                       /usr/local/.ghcup || true
-          # Docker images (if any)
-          docker image prune -af || true
-          # APT caches
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
 
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
