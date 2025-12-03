@@ -60,21 +60,12 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
-<<<<<<< HEAD
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"'
   fastdds-python-branch: '1.4.x'
   fastdds-docs-branch: '2.14.x'
   shapes-demo-branch: '2.14.x'
   discovery-server-branch: '1.2.x'
   
-=======
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
-  fastdds-python-branch: 'main'
-  fastdds-docs-branch: 'master'
-  shapes-demo-branch: 'master'
-  discovery-server-branch: 'master'
-
->>>>>>> 8b08b32cc (Free disk space in Ubuntu runners (#6192))
 defaults:
   run:
     shell: bash
