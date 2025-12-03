@@ -21,6 +21,9 @@
 
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp>
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
@@ -46,17 +49,10 @@ StringSTypeDefnPubSubType::StringSTypeDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_StringSTypeDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_StringSTypeDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 StringSTypeDefnPubSubType::~StringSTypeDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool StringSTypeDefnPubSubType::serialize(
@@ -64,7 +60,8 @@ bool StringSTypeDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const StringSTypeDefn* p_type = static_cast<const StringSTypeDefn*>(data);
+    const StringSTypeDefn* p_type =
+	        static_cast<const StringSTypeDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -84,7 +81,7 @@ bool StringSTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -103,7 +100,8 @@ bool StringSTypeDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        StringSTypeDefn* p_type = static_cast<StringSTypeDefn*>(data);
+        StringSTypeDefn* p_type =
+		        static_cast<StringSTypeDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -162,16 +160,9 @@ bool StringSTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    StringSTypeDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -181,45 +172,17 @@ bool StringSTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const StringSTypeDefn* p_type = static_cast<const StringSTypeDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_StringSTypeDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_StringSTypeDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void StringSTypeDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 StringLTypeDefnPubSubType::StringLTypeDefnPubSubType()
@@ -229,17 +192,10 @@ StringLTypeDefnPubSubType::StringLTypeDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_StringLTypeDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_StringLTypeDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 StringLTypeDefnPubSubType::~StringLTypeDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool StringLTypeDefnPubSubType::serialize(
@@ -247,7 +203,8 @@ bool StringLTypeDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const StringLTypeDefn* p_type = static_cast<const StringLTypeDefn*>(data);
+    const StringLTypeDefn* p_type =
+	        static_cast<const StringLTypeDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -267,7 +224,7 @@ bool StringLTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -286,7 +243,8 @@ bool StringLTypeDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        StringLTypeDefn* p_type = static_cast<StringLTypeDefn*>(data);
+        StringLTypeDefn* p_type =
+		        static_cast<StringLTypeDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -345,16 +303,9 @@ bool StringLTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    StringLTypeDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -364,45 +315,17 @@ bool StringLTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const StringLTypeDefn* p_type = static_cast<const StringLTypeDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_StringLTypeDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_StringLTypeDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void StringLTypeDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainCollectionHeaderPubSubType::PlainCollectionHeaderPubSubType()
@@ -412,17 +335,10 @@ PlainCollectionHeaderPubSubType::PlainCollectionHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainCollectionHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainCollectionHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainCollectionHeaderPubSubType::~PlainCollectionHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainCollectionHeaderPubSubType::serialize(
@@ -430,7 +346,8 @@ bool PlainCollectionHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainCollectionHeader* p_type = static_cast<const PlainCollectionHeader*>(data);
+    const PlainCollectionHeader* p_type =
+	        static_cast<const PlainCollectionHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -450,7 +367,7 @@ bool PlainCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -469,7 +386,8 @@ bool PlainCollectionHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainCollectionHeader* p_type = static_cast<PlainCollectionHeader*>(data);
+        PlainCollectionHeader* p_type =
+		        static_cast<PlainCollectionHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -528,16 +446,9 @@ bool PlainCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainCollectionHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -547,45 +458,17 @@ bool PlainCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainCollectionHeader* p_type = static_cast<const PlainCollectionHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainCollectionHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainCollectionHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainCollectionHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainSequenceSElemDefnPubSubType::PlainSequenceSElemDefnPubSubType()
@@ -595,17 +478,10 @@ PlainSequenceSElemDefnPubSubType::PlainSequenceSElemDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainSequenceSElemDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainSequenceSElemDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainSequenceSElemDefnPubSubType::~PlainSequenceSElemDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainSequenceSElemDefnPubSubType::serialize(
@@ -613,7 +489,8 @@ bool PlainSequenceSElemDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainSequenceSElemDefn* p_type = static_cast<const PlainSequenceSElemDefn*>(data);
+    const PlainSequenceSElemDefn* p_type =
+	        static_cast<const PlainSequenceSElemDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -633,7 +510,7 @@ bool PlainSequenceSElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -652,7 +529,8 @@ bool PlainSequenceSElemDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainSequenceSElemDefn* p_type = static_cast<PlainSequenceSElemDefn*>(data);
+        PlainSequenceSElemDefn* p_type =
+		        static_cast<PlainSequenceSElemDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -711,16 +589,9 @@ bool PlainSequenceSElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainSequenceSElemDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -730,45 +601,17 @@ bool PlainSequenceSElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainSequenceSElemDefn* p_type = static_cast<const PlainSequenceSElemDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainSequenceSElemDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainSequenceSElemDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainSequenceSElemDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainSequenceLElemDefnPubSubType::PlainSequenceLElemDefnPubSubType()
@@ -778,17 +621,10 @@ PlainSequenceLElemDefnPubSubType::PlainSequenceLElemDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainSequenceLElemDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainSequenceLElemDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainSequenceLElemDefnPubSubType::~PlainSequenceLElemDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainSequenceLElemDefnPubSubType::serialize(
@@ -796,7 +632,8 @@ bool PlainSequenceLElemDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainSequenceLElemDefn* p_type = static_cast<const PlainSequenceLElemDefn*>(data);
+    const PlainSequenceLElemDefn* p_type =
+	        static_cast<const PlainSequenceLElemDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -816,7 +653,7 @@ bool PlainSequenceLElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -835,7 +672,8 @@ bool PlainSequenceLElemDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainSequenceLElemDefn* p_type = static_cast<PlainSequenceLElemDefn*>(data);
+        PlainSequenceLElemDefn* p_type =
+		        static_cast<PlainSequenceLElemDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -894,16 +732,9 @@ bool PlainSequenceLElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainSequenceLElemDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -913,45 +744,17 @@ bool PlainSequenceLElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainSequenceLElemDefn* p_type = static_cast<const PlainSequenceLElemDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainSequenceLElemDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainSequenceLElemDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainSequenceLElemDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainArraySElemDefnPubSubType::PlainArraySElemDefnPubSubType()
@@ -961,17 +764,10 @@ PlainArraySElemDefnPubSubType::PlainArraySElemDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainArraySElemDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainArraySElemDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainArraySElemDefnPubSubType::~PlainArraySElemDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainArraySElemDefnPubSubType::serialize(
@@ -979,7 +775,8 @@ bool PlainArraySElemDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainArraySElemDefn* p_type = static_cast<const PlainArraySElemDefn*>(data);
+    const PlainArraySElemDefn* p_type =
+	        static_cast<const PlainArraySElemDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -999,7 +796,7 @@ bool PlainArraySElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1018,7 +815,8 @@ bool PlainArraySElemDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainArraySElemDefn* p_type = static_cast<PlainArraySElemDefn*>(data);
+        PlainArraySElemDefn* p_type =
+		        static_cast<PlainArraySElemDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1077,16 +875,9 @@ bool PlainArraySElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainArraySElemDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1096,45 +887,17 @@ bool PlainArraySElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainArraySElemDefn* p_type = static_cast<const PlainArraySElemDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainArraySElemDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainArraySElemDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainArraySElemDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainArrayLElemDefnPubSubType::PlainArrayLElemDefnPubSubType()
@@ -1144,17 +907,10 @@ PlainArrayLElemDefnPubSubType::PlainArrayLElemDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainArrayLElemDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainArrayLElemDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainArrayLElemDefnPubSubType::~PlainArrayLElemDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainArrayLElemDefnPubSubType::serialize(
@@ -1162,7 +918,8 @@ bool PlainArrayLElemDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainArrayLElemDefn* p_type = static_cast<const PlainArrayLElemDefn*>(data);
+    const PlainArrayLElemDefn* p_type =
+	        static_cast<const PlainArrayLElemDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1182,7 +939,7 @@ bool PlainArrayLElemDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1201,7 +958,8 @@ bool PlainArrayLElemDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainArrayLElemDefn* p_type = static_cast<PlainArrayLElemDefn*>(data);
+        PlainArrayLElemDefn* p_type =
+		        static_cast<PlainArrayLElemDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1260,16 +1018,9 @@ bool PlainArrayLElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainArrayLElemDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1279,45 +1030,17 @@ bool PlainArrayLElemDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainArrayLElemDefn* p_type = static_cast<const PlainArrayLElemDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainArrayLElemDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainArrayLElemDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainArrayLElemDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainMapSTypeDefnPubSubType::PlainMapSTypeDefnPubSubType()
@@ -1327,17 +1050,10 @@ PlainMapSTypeDefnPubSubType::PlainMapSTypeDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainMapSTypeDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainMapSTypeDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainMapSTypeDefnPubSubType::~PlainMapSTypeDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainMapSTypeDefnPubSubType::serialize(
@@ -1345,7 +1061,8 @@ bool PlainMapSTypeDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainMapSTypeDefn* p_type = static_cast<const PlainMapSTypeDefn*>(data);
+    const PlainMapSTypeDefn* p_type =
+	        static_cast<const PlainMapSTypeDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1365,7 +1082,7 @@ bool PlainMapSTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1384,7 +1101,8 @@ bool PlainMapSTypeDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainMapSTypeDefn* p_type = static_cast<PlainMapSTypeDefn*>(data);
+        PlainMapSTypeDefn* p_type =
+		        static_cast<PlainMapSTypeDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1443,16 +1161,9 @@ bool PlainMapSTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainMapSTypeDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1462,45 +1173,17 @@ bool PlainMapSTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainMapSTypeDefn* p_type = static_cast<const PlainMapSTypeDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainMapSTypeDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainMapSTypeDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainMapSTypeDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 PlainMapLTypeDefnPubSubType::PlainMapLTypeDefnPubSubType()
@@ -1510,17 +1193,10 @@ PlainMapLTypeDefnPubSubType::PlainMapLTypeDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_PlainMapLTypeDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_PlainMapLTypeDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 PlainMapLTypeDefnPubSubType::~PlainMapLTypeDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool PlainMapLTypeDefnPubSubType::serialize(
@@ -1528,7 +1204,8 @@ bool PlainMapLTypeDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const PlainMapLTypeDefn* p_type = static_cast<const PlainMapLTypeDefn*>(data);
+    const PlainMapLTypeDefn* p_type =
+	        static_cast<const PlainMapLTypeDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1548,7 +1225,7 @@ bool PlainMapLTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1567,7 +1244,8 @@ bool PlainMapLTypeDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        PlainMapLTypeDefn* p_type = static_cast<PlainMapLTypeDefn*>(data);
+        PlainMapLTypeDefn* p_type =
+		        static_cast<PlainMapLTypeDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1626,16 +1304,9 @@ bool PlainMapLTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    PlainMapLTypeDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1645,45 +1316,17 @@ bool PlainMapLTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const PlainMapLTypeDefn* p_type = static_cast<const PlainMapLTypeDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_PlainMapLTypeDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_PlainMapLTypeDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void PlainMapLTypeDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 StronglyConnectedComponentIdPubSubType::StronglyConnectedComponentIdPubSubType()
@@ -1693,17 +1336,10 @@ StronglyConnectedComponentIdPubSubType::StronglyConnectedComponentIdPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_StronglyConnectedComponentId_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_StronglyConnectedComponentId_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 StronglyConnectedComponentIdPubSubType::~StronglyConnectedComponentIdPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool StronglyConnectedComponentIdPubSubType::serialize(
@@ -1711,7 +1347,8 @@ bool StronglyConnectedComponentIdPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const StronglyConnectedComponentId* p_type = static_cast<const StronglyConnectedComponentId*>(data);
+    const StronglyConnectedComponentId* p_type =
+	        static_cast<const StronglyConnectedComponentId*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1731,7 +1368,7 @@ bool StronglyConnectedComponentIdPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1750,7 +1387,8 @@ bool StronglyConnectedComponentIdPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        StronglyConnectedComponentId* p_type = static_cast<StronglyConnectedComponentId*>(data);
+        StronglyConnectedComponentId* p_type =
+		        static_cast<StronglyConnectedComponentId*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1809,16 +1447,9 @@ bool StronglyConnectedComponentIdPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    StronglyConnectedComponentId data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -1828,45 +1459,17 @@ bool StronglyConnectedComponentIdPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const StronglyConnectedComponentId* p_type = static_cast<const StronglyConnectedComponentId*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_StronglyConnectedComponentId_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_StronglyConnectedComponentId_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void StronglyConnectedComponentIdPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 ExtendedTypeDefnPubSubType::ExtendedTypeDefnPubSubType()
@@ -1876,17 +1479,10 @@ ExtendedTypeDefnPubSubType::ExtendedTypeDefnPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_ExtendedTypeDefn_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_ExtendedTypeDefn_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ExtendedTypeDefnPubSubType::~ExtendedTypeDefnPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ExtendedTypeDefnPubSubType::serialize(
@@ -1894,7 +1490,8 @@ bool ExtendedTypeDefnPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ExtendedTypeDefn* p_type = static_cast<const ExtendedTypeDefn*>(data);
+    const ExtendedTypeDefn* p_type =
+	        static_cast<const ExtendedTypeDefn*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -1914,7 +1511,7 @@ bool ExtendedTypeDefnPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1933,7 +1530,8 @@ bool ExtendedTypeDefnPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ExtendedTypeDefn* p_type = static_cast<ExtendedTypeDefn*>(data);
+        ExtendedTypeDefn* p_type =
+		        static_cast<ExtendedTypeDefn*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -1992,16 +1590,9 @@ bool ExtendedTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ExtendedTypeDefn data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2011,45 +1602,17 @@ bool ExtendedTypeDefnPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ExtendedTypeDefn* p_type = static_cast<const ExtendedTypeDefn*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_ExtendedTypeDefn_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_ExtendedTypeDefn_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ExtendedTypeDefnPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 DummyPubSubType::DummyPubSubType()
@@ -2059,17 +1622,10 @@ DummyPubSubType::DummyPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_Dummy_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_Dummy_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 DummyPubSubType::~DummyPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool DummyPubSubType::serialize(
@@ -2077,7 +1633,8 @@ bool DummyPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const Dummy* p_type = static_cast<const Dummy*>(data);
+    const Dummy* p_type =
+	        static_cast<const Dummy*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2097,7 +1654,7 @@ bool DummyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2116,7 +1673,8 @@ bool DummyPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        Dummy* p_type = static_cast<Dummy*>(data);
+        Dummy* p_type =
+		        static_cast<Dummy*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2175,16 +1733,9 @@ bool DummyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    Dummy data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2194,45 +1745,17 @@ bool DummyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const Dummy* p_type = static_cast<const Dummy*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_Dummy_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_Dummy_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void DummyPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 ExtendedAnnotationParameterValuePubSubType::ExtendedAnnotationParameterValuePubSubType()
@@ -2242,17 +1765,10 @@ ExtendedAnnotationParameterValuePubSubType::ExtendedAnnotationParameterValuePubS
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_ExtendedAnnotationParameterValue_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_ExtendedAnnotationParameterValue_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 ExtendedAnnotationParameterValuePubSubType::~ExtendedAnnotationParameterValuePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool ExtendedAnnotationParameterValuePubSubType::serialize(
@@ -2260,7 +1776,8 @@ bool ExtendedAnnotationParameterValuePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ExtendedAnnotationParameterValue* p_type = static_cast<const ExtendedAnnotationParameterValue*>(data);
+    const ExtendedAnnotationParameterValue* p_type =
+	        static_cast<const ExtendedAnnotationParameterValue*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2280,7 +1797,7 @@ bool ExtendedAnnotationParameterValuePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2299,7 +1816,8 @@ bool ExtendedAnnotationParameterValuePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ExtendedAnnotationParameterValue* p_type = static_cast<ExtendedAnnotationParameterValue*>(data);
+        ExtendedAnnotationParameterValue* p_type =
+		        static_cast<ExtendedAnnotationParameterValue*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2358,16 +1876,9 @@ bool ExtendedAnnotationParameterValuePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    ExtendedAnnotationParameterValue data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2377,45 +1888,17 @@ bool ExtendedAnnotationParameterValuePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const ExtendedAnnotationParameterValue* p_type = static_cast<const ExtendedAnnotationParameterValue*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_ExtendedAnnotationParameterValue_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_ExtendedAnnotationParameterValue_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void ExtendedAnnotationParameterValuePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 AppliedAnnotationParameterPubSubType::AppliedAnnotationParameterPubSubType()
@@ -2425,17 +1908,10 @@ AppliedAnnotationParameterPubSubType::AppliedAnnotationParameterPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_AppliedAnnotationParameter_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_AppliedAnnotationParameter_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 AppliedAnnotationParameterPubSubType::~AppliedAnnotationParameterPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool AppliedAnnotationParameterPubSubType::serialize(
@@ -2443,7 +1919,8 @@ bool AppliedAnnotationParameterPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const AppliedAnnotationParameter* p_type = static_cast<const AppliedAnnotationParameter*>(data);
+    const AppliedAnnotationParameter* p_type =
+	        static_cast<const AppliedAnnotationParameter*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2463,7 +1940,7 @@ bool AppliedAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2482,7 +1959,8 @@ bool AppliedAnnotationParameterPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        AppliedAnnotationParameter* p_type = static_cast<AppliedAnnotationParameter*>(data);
+        AppliedAnnotationParameter* p_type =
+		        static_cast<AppliedAnnotationParameter*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2541,16 +2019,9 @@ bool AppliedAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    AppliedAnnotationParameter data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2560,45 +2031,17 @@ bool AppliedAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const AppliedAnnotationParameter* p_type = static_cast<const AppliedAnnotationParameter*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_AppliedAnnotationParameter_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_AppliedAnnotationParameter_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void AppliedAnnotationParameterPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 AppliedAnnotationPubSubType::AppliedAnnotationPubSubType()
@@ -2608,17 +2051,10 @@ AppliedAnnotationPubSubType::AppliedAnnotationPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_AppliedAnnotation_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_AppliedAnnotation_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 AppliedAnnotationPubSubType::~AppliedAnnotationPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool AppliedAnnotationPubSubType::serialize(
@@ -2626,7 +2062,8 @@ bool AppliedAnnotationPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const AppliedAnnotation* p_type = static_cast<const AppliedAnnotation*>(data);
+    const AppliedAnnotation* p_type =
+	        static_cast<const AppliedAnnotation*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2646,7 +2083,7 @@ bool AppliedAnnotationPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2665,7 +2102,8 @@ bool AppliedAnnotationPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        AppliedAnnotation* p_type = static_cast<AppliedAnnotation*>(data);
+        AppliedAnnotation* p_type =
+		        static_cast<AppliedAnnotation*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2724,16 +2162,9 @@ bool AppliedAnnotationPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    AppliedAnnotation data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2743,45 +2174,17 @@ bool AppliedAnnotationPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const AppliedAnnotation* p_type = static_cast<const AppliedAnnotation*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_AppliedAnnotation_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_AppliedAnnotation_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void AppliedAnnotationPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 AppliedVerbatimAnnotationPubSubType::AppliedVerbatimAnnotationPubSubType()
@@ -2791,17 +2194,10 @@ AppliedVerbatimAnnotationPubSubType::AppliedVerbatimAnnotationPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_AppliedVerbatimAnnotation_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_AppliedVerbatimAnnotation_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 AppliedVerbatimAnnotationPubSubType::~AppliedVerbatimAnnotationPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool AppliedVerbatimAnnotationPubSubType::serialize(
@@ -2809,7 +2205,8 @@ bool AppliedVerbatimAnnotationPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const AppliedVerbatimAnnotation* p_type = static_cast<const AppliedVerbatimAnnotation*>(data);
+    const AppliedVerbatimAnnotation* p_type =
+	        static_cast<const AppliedVerbatimAnnotation*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -2829,7 +2226,7 @@ bool AppliedVerbatimAnnotationPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2848,7 +2245,8 @@ bool AppliedVerbatimAnnotationPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        AppliedVerbatimAnnotation* p_type = static_cast<AppliedVerbatimAnnotation*>(data);
+        AppliedVerbatimAnnotation* p_type =
+		        static_cast<AppliedVerbatimAnnotation*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -2907,16 +2305,9 @@ bool AppliedVerbatimAnnotationPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    AppliedVerbatimAnnotation data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -2926,45 +2317,17 @@ bool AppliedVerbatimAnnotationPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const AppliedVerbatimAnnotation* p_type = static_cast<const AppliedVerbatimAnnotation*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_AppliedVerbatimAnnotation_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_AppliedVerbatimAnnotation_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void AppliedVerbatimAnnotationPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 AppliedBuiltinMemberAnnotationsPubSubType::AppliedBuiltinMemberAnnotationsPubSubType()
@@ -2974,17 +2337,10 @@ AppliedBuiltinMemberAnnotationsPubSubType::AppliedBuiltinMemberAnnotationsPubSub
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_AppliedBuiltinMemberAnnotations_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_AppliedBuiltinMemberAnnotations_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 AppliedBuiltinMemberAnnotationsPubSubType::~AppliedBuiltinMemberAnnotationsPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool AppliedBuiltinMemberAnnotationsPubSubType::serialize(
@@ -2992,7 +2348,8 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const AppliedBuiltinMemberAnnotations* p_type = static_cast<const AppliedBuiltinMemberAnnotations*>(data);
+    const AppliedBuiltinMemberAnnotations* p_type =
+	        static_cast<const AppliedBuiltinMemberAnnotations*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3012,7 +2369,7 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3031,7 +2388,8 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        AppliedBuiltinMemberAnnotations* p_type = static_cast<AppliedBuiltinMemberAnnotations*>(data);
+        AppliedBuiltinMemberAnnotations* p_type =
+		        static_cast<AppliedBuiltinMemberAnnotations*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3090,16 +2448,9 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    AppliedBuiltinMemberAnnotations data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3109,45 +2460,17 @@ bool AppliedBuiltinMemberAnnotationsPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const AppliedBuiltinMemberAnnotations* p_type = static_cast<const AppliedBuiltinMemberAnnotations*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_AppliedBuiltinMemberAnnotations_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_AppliedBuiltinMemberAnnotations_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void AppliedBuiltinMemberAnnotationsPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonStructMemberPubSubType::CommonStructMemberPubSubType()
@@ -3157,17 +2480,10 @@ CommonStructMemberPubSubType::CommonStructMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonStructMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonStructMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonStructMemberPubSubType::~CommonStructMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonStructMemberPubSubType::serialize(
@@ -3175,7 +2491,8 @@ bool CommonStructMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonStructMember* p_type = static_cast<const CommonStructMember*>(data);
+    const CommonStructMember* p_type =
+	        static_cast<const CommonStructMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3195,7 +2512,7 @@ bool CommonStructMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3214,7 +2531,8 @@ bool CommonStructMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonStructMember* p_type = static_cast<CommonStructMember*>(data);
+        CommonStructMember* p_type =
+		        static_cast<CommonStructMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3273,16 +2591,9 @@ bool CommonStructMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonStructMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3292,45 +2603,17 @@ bool CommonStructMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonStructMember* p_type = static_cast<const CommonStructMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonStructMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonStructMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonStructMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteMemberDetailPubSubType::CompleteMemberDetailPubSubType()
@@ -3340,17 +2623,10 @@ CompleteMemberDetailPubSubType::CompleteMemberDetailPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteMemberDetail_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteMemberDetail_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteMemberDetailPubSubType::~CompleteMemberDetailPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteMemberDetailPubSubType::serialize(
@@ -3358,7 +2634,8 @@ bool CompleteMemberDetailPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteMemberDetail* p_type = static_cast<const CompleteMemberDetail*>(data);
+    const CompleteMemberDetail* p_type =
+	        static_cast<const CompleteMemberDetail*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3378,7 +2655,7 @@ bool CompleteMemberDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3397,7 +2674,8 @@ bool CompleteMemberDetailPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteMemberDetail* p_type = static_cast<CompleteMemberDetail*>(data);
+        CompleteMemberDetail* p_type =
+		        static_cast<CompleteMemberDetail*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3456,16 +2734,9 @@ bool CompleteMemberDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteMemberDetail data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3475,45 +2746,17 @@ bool CompleteMemberDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteMemberDetail* p_type = static_cast<const CompleteMemberDetail*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteMemberDetail_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteMemberDetail_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteMemberDetailPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalMemberDetailPubSubType::MinimalMemberDetailPubSubType()
@@ -3523,17 +2766,10 @@ MinimalMemberDetailPubSubType::MinimalMemberDetailPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalMemberDetail_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalMemberDetail_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalMemberDetailPubSubType::~MinimalMemberDetailPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalMemberDetailPubSubType::serialize(
@@ -3541,7 +2777,8 @@ bool MinimalMemberDetailPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalMemberDetail* p_type = static_cast<const MinimalMemberDetail*>(data);
+    const MinimalMemberDetail* p_type =
+	        static_cast<const MinimalMemberDetail*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3561,7 +2798,7 @@ bool MinimalMemberDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3580,7 +2817,8 @@ bool MinimalMemberDetailPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalMemberDetail* p_type = static_cast<MinimalMemberDetail*>(data);
+        MinimalMemberDetail* p_type =
+		        static_cast<MinimalMemberDetail*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3639,16 +2877,9 @@ bool MinimalMemberDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalMemberDetail data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3658,45 +2889,17 @@ bool MinimalMemberDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalMemberDetail* p_type = static_cast<const MinimalMemberDetail*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalMemberDetail_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalMemberDetail_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalMemberDetailPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteStructMemberPubSubType::CompleteStructMemberPubSubType()
@@ -3706,17 +2909,10 @@ CompleteStructMemberPubSubType::CompleteStructMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteStructMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteStructMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteStructMemberPubSubType::~CompleteStructMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteStructMemberPubSubType::serialize(
@@ -3724,7 +2920,8 @@ bool CompleteStructMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteStructMember* p_type = static_cast<const CompleteStructMember*>(data);
+    const CompleteStructMember* p_type =
+	        static_cast<const CompleteStructMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3744,7 +2941,7 @@ bool CompleteStructMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3763,7 +2960,8 @@ bool CompleteStructMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteStructMember* p_type = static_cast<CompleteStructMember*>(data);
+        CompleteStructMember* p_type =
+		        static_cast<CompleteStructMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -3822,16 +3020,9 @@ bool CompleteStructMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteStructMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -3841,45 +3032,17 @@ bool CompleteStructMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteStructMember* p_type = static_cast<const CompleteStructMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteStructMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteStructMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteStructMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalStructMemberPubSubType::MinimalStructMemberPubSubType()
@@ -3889,17 +3052,10 @@ MinimalStructMemberPubSubType::MinimalStructMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalStructMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalStructMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalStructMemberPubSubType::~MinimalStructMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalStructMemberPubSubType::serialize(
@@ -3907,7 +3063,8 @@ bool MinimalStructMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalStructMember* p_type = static_cast<const MinimalStructMember*>(data);
+    const MinimalStructMember* p_type =
+	        static_cast<const MinimalStructMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -3927,7 +3084,7 @@ bool MinimalStructMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3946,7 +3103,8 @@ bool MinimalStructMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalStructMember* p_type = static_cast<MinimalStructMember*>(data);
+        MinimalStructMember* p_type =
+		        static_cast<MinimalStructMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4005,16 +3163,9 @@ bool MinimalStructMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalStructMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4024,45 +3175,17 @@ bool MinimalStructMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalStructMember* p_type = static_cast<const MinimalStructMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalStructMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalStructMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalStructMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 AppliedBuiltinTypeAnnotationsPubSubType::AppliedBuiltinTypeAnnotationsPubSubType()
@@ -4072,17 +3195,10 @@ AppliedBuiltinTypeAnnotationsPubSubType::AppliedBuiltinTypeAnnotationsPubSubType
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_AppliedBuiltinTypeAnnotations_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_AppliedBuiltinTypeAnnotations_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 AppliedBuiltinTypeAnnotationsPubSubType::~AppliedBuiltinTypeAnnotationsPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool AppliedBuiltinTypeAnnotationsPubSubType::serialize(
@@ -4090,7 +3206,8 @@ bool AppliedBuiltinTypeAnnotationsPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const AppliedBuiltinTypeAnnotations* p_type = static_cast<const AppliedBuiltinTypeAnnotations*>(data);
+    const AppliedBuiltinTypeAnnotations* p_type =
+	        static_cast<const AppliedBuiltinTypeAnnotations*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4110,7 +3227,7 @@ bool AppliedBuiltinTypeAnnotationsPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4129,7 +3246,8 @@ bool AppliedBuiltinTypeAnnotationsPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        AppliedBuiltinTypeAnnotations* p_type = static_cast<AppliedBuiltinTypeAnnotations*>(data);
+        AppliedBuiltinTypeAnnotations* p_type =
+		        static_cast<AppliedBuiltinTypeAnnotations*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4188,16 +3306,9 @@ bool AppliedBuiltinTypeAnnotationsPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    AppliedBuiltinTypeAnnotations data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4207,45 +3318,17 @@ bool AppliedBuiltinTypeAnnotationsPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const AppliedBuiltinTypeAnnotations* p_type = static_cast<const AppliedBuiltinTypeAnnotations*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_AppliedBuiltinTypeAnnotations_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_AppliedBuiltinTypeAnnotations_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void AppliedBuiltinTypeAnnotationsPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalTypeDetailPubSubType::MinimalTypeDetailPubSubType()
@@ -4255,17 +3338,10 @@ MinimalTypeDetailPubSubType::MinimalTypeDetailPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalTypeDetail_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalTypeDetail_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalTypeDetailPubSubType::~MinimalTypeDetailPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalTypeDetailPubSubType::serialize(
@@ -4273,7 +3349,8 @@ bool MinimalTypeDetailPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalTypeDetail* p_type = static_cast<const MinimalTypeDetail*>(data);
+    const MinimalTypeDetail* p_type =
+	        static_cast<const MinimalTypeDetail*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4293,7 +3370,7 @@ bool MinimalTypeDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4312,7 +3389,8 @@ bool MinimalTypeDetailPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalTypeDetail* p_type = static_cast<MinimalTypeDetail*>(data);
+        MinimalTypeDetail* p_type =
+		        static_cast<MinimalTypeDetail*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4371,16 +3449,9 @@ bool MinimalTypeDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalTypeDetail data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4390,45 +3461,17 @@ bool MinimalTypeDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalTypeDetail* p_type = static_cast<const MinimalTypeDetail*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalTypeDetail_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalTypeDetail_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalTypeDetailPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteTypeDetailPubSubType::CompleteTypeDetailPubSubType()
@@ -4438,17 +3481,10 @@ CompleteTypeDetailPubSubType::CompleteTypeDetailPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteTypeDetail_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteTypeDetail_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteTypeDetailPubSubType::~CompleteTypeDetailPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteTypeDetailPubSubType::serialize(
@@ -4456,7 +3492,8 @@ bool CompleteTypeDetailPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteTypeDetail* p_type = static_cast<const CompleteTypeDetail*>(data);
+    const CompleteTypeDetail* p_type =
+	        static_cast<const CompleteTypeDetail*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4476,7 +3513,7 @@ bool CompleteTypeDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4495,7 +3532,8 @@ bool CompleteTypeDetailPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteTypeDetail* p_type = static_cast<CompleteTypeDetail*>(data);
+        CompleteTypeDetail* p_type =
+		        static_cast<CompleteTypeDetail*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4554,16 +3592,9 @@ bool CompleteTypeDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteTypeDetail data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4573,45 +3604,17 @@ bool CompleteTypeDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteTypeDetail* p_type = static_cast<const CompleteTypeDetail*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteTypeDetail_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteTypeDetail_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteTypeDetailPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteStructHeaderPubSubType::CompleteStructHeaderPubSubType()
@@ -4621,17 +3624,10 @@ CompleteStructHeaderPubSubType::CompleteStructHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteStructHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteStructHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteStructHeaderPubSubType::~CompleteStructHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteStructHeaderPubSubType::serialize(
@@ -4639,7 +3635,8 @@ bool CompleteStructHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteStructHeader* p_type = static_cast<const CompleteStructHeader*>(data);
+    const CompleteStructHeader* p_type =
+	        static_cast<const CompleteStructHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4659,7 +3656,7 @@ bool CompleteStructHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4678,7 +3675,8 @@ bool CompleteStructHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteStructHeader* p_type = static_cast<CompleteStructHeader*>(data);
+        CompleteStructHeader* p_type =
+		        static_cast<CompleteStructHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4737,16 +3735,9 @@ bool CompleteStructHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteStructHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4756,45 +3747,17 @@ bool CompleteStructHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteStructHeader* p_type = static_cast<const CompleteStructHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteStructHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteStructHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteStructHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalStructHeaderPubSubType::MinimalStructHeaderPubSubType()
@@ -4804,17 +3767,10 @@ MinimalStructHeaderPubSubType::MinimalStructHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalStructHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalStructHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalStructHeaderPubSubType::~MinimalStructHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalStructHeaderPubSubType::serialize(
@@ -4822,7 +3778,8 @@ bool MinimalStructHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalStructHeader* p_type = static_cast<const MinimalStructHeader*>(data);
+    const MinimalStructHeader* p_type =
+	        static_cast<const MinimalStructHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -4842,7 +3799,7 @@ bool MinimalStructHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4861,7 +3818,8 @@ bool MinimalStructHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalStructHeader* p_type = static_cast<MinimalStructHeader*>(data);
+        MinimalStructHeader* p_type =
+		        static_cast<MinimalStructHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -4920,16 +3878,9 @@ bool MinimalStructHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalStructHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -4939,45 +3890,17 @@ bool MinimalStructHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalStructHeader* p_type = static_cast<const MinimalStructHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalStructHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalStructHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalStructHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteStructTypePubSubType::CompleteStructTypePubSubType()
@@ -4987,17 +3910,10 @@ CompleteStructTypePubSubType::CompleteStructTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteStructType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteStructType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteStructTypePubSubType::~CompleteStructTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteStructTypePubSubType::serialize(
@@ -5005,7 +3921,8 @@ bool CompleteStructTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteStructType* p_type = static_cast<const CompleteStructType*>(data);
+    const CompleteStructType* p_type =
+	        static_cast<const CompleteStructType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5025,7 +3942,7 @@ bool CompleteStructTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5044,7 +3961,8 @@ bool CompleteStructTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteStructType* p_type = static_cast<CompleteStructType*>(data);
+        CompleteStructType* p_type =
+		        static_cast<CompleteStructType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5103,16 +4021,9 @@ bool CompleteStructTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteStructType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5122,45 +4033,17 @@ bool CompleteStructTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteStructType* p_type = static_cast<const CompleteStructType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteStructType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteStructType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteStructTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalStructTypePubSubType::MinimalStructTypePubSubType()
@@ -5170,17 +4053,10 @@ MinimalStructTypePubSubType::MinimalStructTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalStructType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalStructType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalStructTypePubSubType::~MinimalStructTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalStructTypePubSubType::serialize(
@@ -5188,7 +4064,8 @@ bool MinimalStructTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalStructType* p_type = static_cast<const MinimalStructType*>(data);
+    const MinimalStructType* p_type =
+	        static_cast<const MinimalStructType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5208,7 +4085,7 @@ bool MinimalStructTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5227,7 +4104,8 @@ bool MinimalStructTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalStructType* p_type = static_cast<MinimalStructType*>(data);
+        MinimalStructType* p_type =
+		        static_cast<MinimalStructType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5286,16 +4164,9 @@ bool MinimalStructTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalStructType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5305,45 +4176,17 @@ bool MinimalStructTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalStructType* p_type = static_cast<const MinimalStructType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalStructType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalStructType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalStructTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonUnionMemberPubSubType::CommonUnionMemberPubSubType()
@@ -5353,17 +4196,10 @@ CommonUnionMemberPubSubType::CommonUnionMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonUnionMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonUnionMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonUnionMemberPubSubType::~CommonUnionMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonUnionMemberPubSubType::serialize(
@@ -5371,7 +4207,8 @@ bool CommonUnionMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonUnionMember* p_type = static_cast<const CommonUnionMember*>(data);
+    const CommonUnionMember* p_type =
+	        static_cast<const CommonUnionMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5391,7 +4228,7 @@ bool CommonUnionMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5410,7 +4247,8 @@ bool CommonUnionMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonUnionMember* p_type = static_cast<CommonUnionMember*>(data);
+        CommonUnionMember* p_type =
+		        static_cast<CommonUnionMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5469,16 +4307,9 @@ bool CommonUnionMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonUnionMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5488,45 +4319,17 @@ bool CommonUnionMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonUnionMember* p_type = static_cast<const CommonUnionMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonUnionMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonUnionMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonUnionMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteUnionMemberPubSubType::CompleteUnionMemberPubSubType()
@@ -5536,17 +4339,10 @@ CompleteUnionMemberPubSubType::CompleteUnionMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteUnionMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteUnionMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteUnionMemberPubSubType::~CompleteUnionMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteUnionMemberPubSubType::serialize(
@@ -5554,7 +4350,8 @@ bool CompleteUnionMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteUnionMember* p_type = static_cast<const CompleteUnionMember*>(data);
+    const CompleteUnionMember* p_type =
+	        static_cast<const CompleteUnionMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5574,7 +4371,7 @@ bool CompleteUnionMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5593,7 +4390,8 @@ bool CompleteUnionMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteUnionMember* p_type = static_cast<CompleteUnionMember*>(data);
+        CompleteUnionMember* p_type =
+		        static_cast<CompleteUnionMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5652,16 +4450,9 @@ bool CompleteUnionMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteUnionMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5671,45 +4462,17 @@ bool CompleteUnionMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteUnionMember* p_type = static_cast<const CompleteUnionMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteUnionMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteUnionMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteUnionMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalUnionMemberPubSubType::MinimalUnionMemberPubSubType()
@@ -5719,17 +4482,10 @@ MinimalUnionMemberPubSubType::MinimalUnionMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalUnionMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalUnionMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalUnionMemberPubSubType::~MinimalUnionMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalUnionMemberPubSubType::serialize(
@@ -5737,7 +4493,8 @@ bool MinimalUnionMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalUnionMember* p_type = static_cast<const MinimalUnionMember*>(data);
+    const MinimalUnionMember* p_type =
+	        static_cast<const MinimalUnionMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5757,7 +4514,7 @@ bool MinimalUnionMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5776,7 +4533,8 @@ bool MinimalUnionMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalUnionMember* p_type = static_cast<MinimalUnionMember*>(data);
+        MinimalUnionMember* p_type =
+		        static_cast<MinimalUnionMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -5835,16 +4593,9 @@ bool MinimalUnionMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalUnionMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -5854,45 +4605,17 @@ bool MinimalUnionMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalUnionMember* p_type = static_cast<const MinimalUnionMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalUnionMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalUnionMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalUnionMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonDiscriminatorMemberPubSubType::CommonDiscriminatorMemberPubSubType()
@@ -5902,17 +4625,10 @@ CommonDiscriminatorMemberPubSubType::CommonDiscriminatorMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonDiscriminatorMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonDiscriminatorMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonDiscriminatorMemberPubSubType::~CommonDiscriminatorMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonDiscriminatorMemberPubSubType::serialize(
@@ -5920,7 +4636,8 @@ bool CommonDiscriminatorMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonDiscriminatorMember* p_type = static_cast<const CommonDiscriminatorMember*>(data);
+    const CommonDiscriminatorMember* p_type =
+	        static_cast<const CommonDiscriminatorMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -5940,7 +4657,7 @@ bool CommonDiscriminatorMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5959,7 +4676,8 @@ bool CommonDiscriminatorMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonDiscriminatorMember* p_type = static_cast<CommonDiscriminatorMember*>(data);
+        CommonDiscriminatorMember* p_type =
+		        static_cast<CommonDiscriminatorMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6018,16 +4736,9 @@ bool CommonDiscriminatorMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonDiscriminatorMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6037,45 +4748,17 @@ bool CommonDiscriminatorMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonDiscriminatorMember* p_type = static_cast<const CommonDiscriminatorMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonDiscriminatorMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonDiscriminatorMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonDiscriminatorMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteDiscriminatorMemberPubSubType::CompleteDiscriminatorMemberPubSubType()
@@ -6085,17 +4768,10 @@ CompleteDiscriminatorMemberPubSubType::CompleteDiscriminatorMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteDiscriminatorMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteDiscriminatorMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteDiscriminatorMemberPubSubType::~CompleteDiscriminatorMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteDiscriminatorMemberPubSubType::serialize(
@@ -6103,7 +4779,8 @@ bool CompleteDiscriminatorMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteDiscriminatorMember* p_type = static_cast<const CompleteDiscriminatorMember*>(data);
+    const CompleteDiscriminatorMember* p_type =
+	        static_cast<const CompleteDiscriminatorMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6123,7 +4800,7 @@ bool CompleteDiscriminatorMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6142,7 +4819,8 @@ bool CompleteDiscriminatorMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteDiscriminatorMember* p_type = static_cast<CompleteDiscriminatorMember*>(data);
+        CompleteDiscriminatorMember* p_type =
+		        static_cast<CompleteDiscriminatorMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6201,16 +4879,9 @@ bool CompleteDiscriminatorMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteDiscriminatorMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6220,45 +4891,17 @@ bool CompleteDiscriminatorMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteDiscriminatorMember* p_type = static_cast<const CompleteDiscriminatorMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteDiscriminatorMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteDiscriminatorMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteDiscriminatorMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalDiscriminatorMemberPubSubType::MinimalDiscriminatorMemberPubSubType()
@@ -6268,17 +4911,10 @@ MinimalDiscriminatorMemberPubSubType::MinimalDiscriminatorMemberPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalDiscriminatorMember_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalDiscriminatorMember_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalDiscriminatorMemberPubSubType::~MinimalDiscriminatorMemberPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalDiscriminatorMemberPubSubType::serialize(
@@ -6286,7 +4922,8 @@ bool MinimalDiscriminatorMemberPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalDiscriminatorMember* p_type = static_cast<const MinimalDiscriminatorMember*>(data);
+    const MinimalDiscriminatorMember* p_type =
+	        static_cast<const MinimalDiscriminatorMember*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6306,7 +4943,7 @@ bool MinimalDiscriminatorMemberPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6325,7 +4962,8 @@ bool MinimalDiscriminatorMemberPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalDiscriminatorMember* p_type = static_cast<MinimalDiscriminatorMember*>(data);
+        MinimalDiscriminatorMember* p_type =
+		        static_cast<MinimalDiscriminatorMember*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6384,16 +5022,9 @@ bool MinimalDiscriminatorMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalDiscriminatorMember data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6403,45 +5034,17 @@ bool MinimalDiscriminatorMemberPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalDiscriminatorMember* p_type = static_cast<const MinimalDiscriminatorMember*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalDiscriminatorMember_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalDiscriminatorMember_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalDiscriminatorMemberPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteUnionHeaderPubSubType::CompleteUnionHeaderPubSubType()
@@ -6451,17 +5054,10 @@ CompleteUnionHeaderPubSubType::CompleteUnionHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteUnionHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteUnionHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteUnionHeaderPubSubType::~CompleteUnionHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteUnionHeaderPubSubType::serialize(
@@ -6469,7 +5065,8 @@ bool CompleteUnionHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteUnionHeader* p_type = static_cast<const CompleteUnionHeader*>(data);
+    const CompleteUnionHeader* p_type =
+	        static_cast<const CompleteUnionHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6489,7 +5086,7 @@ bool CompleteUnionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6508,7 +5105,8 @@ bool CompleteUnionHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteUnionHeader* p_type = static_cast<CompleteUnionHeader*>(data);
+        CompleteUnionHeader* p_type =
+		        static_cast<CompleteUnionHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6567,16 +5165,9 @@ bool CompleteUnionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteUnionHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6586,45 +5177,17 @@ bool CompleteUnionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteUnionHeader* p_type = static_cast<const CompleteUnionHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteUnionHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteUnionHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteUnionHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalUnionHeaderPubSubType::MinimalUnionHeaderPubSubType()
@@ -6634,17 +5197,10 @@ MinimalUnionHeaderPubSubType::MinimalUnionHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalUnionHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalUnionHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalUnionHeaderPubSubType::~MinimalUnionHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalUnionHeaderPubSubType::serialize(
@@ -6652,7 +5208,8 @@ bool MinimalUnionHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalUnionHeader* p_type = static_cast<const MinimalUnionHeader*>(data);
+    const MinimalUnionHeader* p_type =
+	        static_cast<const MinimalUnionHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6672,7 +5229,7 @@ bool MinimalUnionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6691,7 +5248,8 @@ bool MinimalUnionHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalUnionHeader* p_type = static_cast<MinimalUnionHeader*>(data);
+        MinimalUnionHeader* p_type =
+		        static_cast<MinimalUnionHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6750,16 +5308,9 @@ bool MinimalUnionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalUnionHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6769,45 +5320,17 @@ bool MinimalUnionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalUnionHeader* p_type = static_cast<const MinimalUnionHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalUnionHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalUnionHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalUnionHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteUnionTypePubSubType::CompleteUnionTypePubSubType()
@@ -6817,17 +5340,10 @@ CompleteUnionTypePubSubType::CompleteUnionTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteUnionType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteUnionType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteUnionTypePubSubType::~CompleteUnionTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteUnionTypePubSubType::serialize(
@@ -6835,7 +5351,8 @@ bool CompleteUnionTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteUnionType* p_type = static_cast<const CompleteUnionType*>(data);
+    const CompleteUnionType* p_type =
+	        static_cast<const CompleteUnionType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -6855,7 +5372,7 @@ bool CompleteUnionTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -6874,7 +5391,8 @@ bool CompleteUnionTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteUnionType* p_type = static_cast<CompleteUnionType*>(data);
+        CompleteUnionType* p_type =
+		        static_cast<CompleteUnionType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -6933,16 +5451,9 @@ bool CompleteUnionTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteUnionType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -6952,45 +5463,17 @@ bool CompleteUnionTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteUnionType* p_type = static_cast<const CompleteUnionType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteUnionType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteUnionType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteUnionTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalUnionTypePubSubType::MinimalUnionTypePubSubType()
@@ -7000,17 +5483,10 @@ MinimalUnionTypePubSubType::MinimalUnionTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalUnionType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalUnionType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalUnionTypePubSubType::~MinimalUnionTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalUnionTypePubSubType::serialize(
@@ -7018,7 +5494,8 @@ bool MinimalUnionTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalUnionType* p_type = static_cast<const MinimalUnionType*>(data);
+    const MinimalUnionType* p_type =
+	        static_cast<const MinimalUnionType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7038,7 +5515,7 @@ bool MinimalUnionTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7057,7 +5534,8 @@ bool MinimalUnionTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalUnionType* p_type = static_cast<MinimalUnionType*>(data);
+        MinimalUnionType* p_type =
+		        static_cast<MinimalUnionType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7116,16 +5594,9 @@ bool MinimalUnionTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalUnionType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7135,45 +5606,17 @@ bool MinimalUnionTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalUnionType* p_type = static_cast<const MinimalUnionType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalUnionType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalUnionType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalUnionTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonAnnotationParameterPubSubType::CommonAnnotationParameterPubSubType()
@@ -7183,17 +5626,10 @@ CommonAnnotationParameterPubSubType::CommonAnnotationParameterPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonAnnotationParameter_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonAnnotationParameter_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonAnnotationParameterPubSubType::~CommonAnnotationParameterPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonAnnotationParameterPubSubType::serialize(
@@ -7201,7 +5637,8 @@ bool CommonAnnotationParameterPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonAnnotationParameter* p_type = static_cast<const CommonAnnotationParameter*>(data);
+    const CommonAnnotationParameter* p_type =
+	        static_cast<const CommonAnnotationParameter*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7221,7 +5658,7 @@ bool CommonAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7240,7 +5677,8 @@ bool CommonAnnotationParameterPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonAnnotationParameter* p_type = static_cast<CommonAnnotationParameter*>(data);
+        CommonAnnotationParameter* p_type =
+		        static_cast<CommonAnnotationParameter*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7299,16 +5737,9 @@ bool CommonAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonAnnotationParameter data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7318,45 +5749,17 @@ bool CommonAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonAnnotationParameter* p_type = static_cast<const CommonAnnotationParameter*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonAnnotationParameter_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonAnnotationParameter_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonAnnotationParameterPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteAnnotationParameterPubSubType::CompleteAnnotationParameterPubSubType()
@@ -7366,17 +5769,10 @@ CompleteAnnotationParameterPubSubType::CompleteAnnotationParameterPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteAnnotationParameter_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteAnnotationParameter_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteAnnotationParameterPubSubType::~CompleteAnnotationParameterPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteAnnotationParameterPubSubType::serialize(
@@ -7384,7 +5780,8 @@ bool CompleteAnnotationParameterPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteAnnotationParameter* p_type = static_cast<const CompleteAnnotationParameter*>(data);
+    const CompleteAnnotationParameter* p_type =
+	        static_cast<const CompleteAnnotationParameter*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7404,7 +5801,7 @@ bool CompleteAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7423,7 +5820,8 @@ bool CompleteAnnotationParameterPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteAnnotationParameter* p_type = static_cast<CompleteAnnotationParameter*>(data);
+        CompleteAnnotationParameter* p_type =
+		        static_cast<CompleteAnnotationParameter*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7482,16 +5880,9 @@ bool CompleteAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteAnnotationParameter data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7501,45 +5892,17 @@ bool CompleteAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteAnnotationParameter* p_type = static_cast<const CompleteAnnotationParameter*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteAnnotationParameter_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteAnnotationParameter_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteAnnotationParameterPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalAnnotationParameterPubSubType::MinimalAnnotationParameterPubSubType()
@@ -7549,17 +5912,10 @@ MinimalAnnotationParameterPubSubType::MinimalAnnotationParameterPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalAnnotationParameter_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalAnnotationParameter_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalAnnotationParameterPubSubType::~MinimalAnnotationParameterPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalAnnotationParameterPubSubType::serialize(
@@ -7567,7 +5923,8 @@ bool MinimalAnnotationParameterPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalAnnotationParameter* p_type = static_cast<const MinimalAnnotationParameter*>(data);
+    const MinimalAnnotationParameter* p_type =
+	        static_cast<const MinimalAnnotationParameter*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7587,7 +5944,7 @@ bool MinimalAnnotationParameterPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7606,7 +5963,8 @@ bool MinimalAnnotationParameterPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalAnnotationParameter* p_type = static_cast<MinimalAnnotationParameter*>(data);
+        MinimalAnnotationParameter* p_type =
+		        static_cast<MinimalAnnotationParameter*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7665,16 +6023,9 @@ bool MinimalAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalAnnotationParameter data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7684,45 +6035,17 @@ bool MinimalAnnotationParameterPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalAnnotationParameter* p_type = static_cast<const MinimalAnnotationParameter*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalAnnotationParameter_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalAnnotationParameter_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalAnnotationParameterPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteAnnotationHeaderPubSubType::CompleteAnnotationHeaderPubSubType()
@@ -7732,17 +6055,10 @@ CompleteAnnotationHeaderPubSubType::CompleteAnnotationHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteAnnotationHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteAnnotationHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteAnnotationHeaderPubSubType::~CompleteAnnotationHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteAnnotationHeaderPubSubType::serialize(
@@ -7750,7 +6066,8 @@ bool CompleteAnnotationHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteAnnotationHeader* p_type = static_cast<const CompleteAnnotationHeader*>(data);
+    const CompleteAnnotationHeader* p_type =
+	        static_cast<const CompleteAnnotationHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7770,7 +6087,7 @@ bool CompleteAnnotationHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7789,7 +6106,8 @@ bool CompleteAnnotationHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteAnnotationHeader* p_type = static_cast<CompleteAnnotationHeader*>(data);
+        CompleteAnnotationHeader* p_type =
+		        static_cast<CompleteAnnotationHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -7848,16 +6166,9 @@ bool CompleteAnnotationHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteAnnotationHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -7867,45 +6178,17 @@ bool CompleteAnnotationHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteAnnotationHeader* p_type = static_cast<const CompleteAnnotationHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteAnnotationHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteAnnotationHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteAnnotationHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalAnnotationHeaderPubSubType::MinimalAnnotationHeaderPubSubType()
@@ -7915,17 +6198,10 @@ MinimalAnnotationHeaderPubSubType::MinimalAnnotationHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalAnnotationHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalAnnotationHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalAnnotationHeaderPubSubType::~MinimalAnnotationHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalAnnotationHeaderPubSubType::serialize(
@@ -7933,7 +6209,8 @@ bool MinimalAnnotationHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalAnnotationHeader* p_type = static_cast<const MinimalAnnotationHeader*>(data);
+    const MinimalAnnotationHeader* p_type =
+	        static_cast<const MinimalAnnotationHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -7953,7 +6230,7 @@ bool MinimalAnnotationHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -7972,7 +6249,8 @@ bool MinimalAnnotationHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalAnnotationHeader* p_type = static_cast<MinimalAnnotationHeader*>(data);
+        MinimalAnnotationHeader* p_type =
+		        static_cast<MinimalAnnotationHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8031,16 +6309,9 @@ bool MinimalAnnotationHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalAnnotationHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8050,45 +6321,17 @@ bool MinimalAnnotationHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalAnnotationHeader* p_type = static_cast<const MinimalAnnotationHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalAnnotationHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalAnnotationHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalAnnotationHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteAnnotationTypePubSubType::CompleteAnnotationTypePubSubType()
@@ -8098,17 +6341,10 @@ CompleteAnnotationTypePubSubType::CompleteAnnotationTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteAnnotationType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteAnnotationType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteAnnotationTypePubSubType::~CompleteAnnotationTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteAnnotationTypePubSubType::serialize(
@@ -8116,7 +6352,8 @@ bool CompleteAnnotationTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteAnnotationType* p_type = static_cast<const CompleteAnnotationType*>(data);
+    const CompleteAnnotationType* p_type =
+	        static_cast<const CompleteAnnotationType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8136,7 +6373,7 @@ bool CompleteAnnotationTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8155,7 +6392,8 @@ bool CompleteAnnotationTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteAnnotationType* p_type = static_cast<CompleteAnnotationType*>(data);
+        CompleteAnnotationType* p_type =
+		        static_cast<CompleteAnnotationType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8214,16 +6452,9 @@ bool CompleteAnnotationTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteAnnotationType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8233,45 +6464,17 @@ bool CompleteAnnotationTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteAnnotationType* p_type = static_cast<const CompleteAnnotationType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteAnnotationType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteAnnotationType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteAnnotationTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalAnnotationTypePubSubType::MinimalAnnotationTypePubSubType()
@@ -8281,17 +6484,10 @@ MinimalAnnotationTypePubSubType::MinimalAnnotationTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalAnnotationType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalAnnotationType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalAnnotationTypePubSubType::~MinimalAnnotationTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalAnnotationTypePubSubType::serialize(
@@ -8299,7 +6495,8 @@ bool MinimalAnnotationTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalAnnotationType* p_type = static_cast<const MinimalAnnotationType*>(data);
+    const MinimalAnnotationType* p_type =
+	        static_cast<const MinimalAnnotationType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8319,7 +6516,7 @@ bool MinimalAnnotationTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8338,7 +6535,8 @@ bool MinimalAnnotationTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalAnnotationType* p_type = static_cast<MinimalAnnotationType*>(data);
+        MinimalAnnotationType* p_type =
+		        static_cast<MinimalAnnotationType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8397,16 +6595,9 @@ bool MinimalAnnotationTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalAnnotationType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8416,45 +6607,17 @@ bool MinimalAnnotationTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalAnnotationType* p_type = static_cast<const MinimalAnnotationType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalAnnotationType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalAnnotationType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalAnnotationTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonAliasBodyPubSubType::CommonAliasBodyPubSubType()
@@ -8464,17 +6627,10 @@ CommonAliasBodyPubSubType::CommonAliasBodyPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonAliasBody_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonAliasBody_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonAliasBodyPubSubType::~CommonAliasBodyPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonAliasBodyPubSubType::serialize(
@@ -8482,7 +6638,8 @@ bool CommonAliasBodyPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonAliasBody* p_type = static_cast<const CommonAliasBody*>(data);
+    const CommonAliasBody* p_type =
+	        static_cast<const CommonAliasBody*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8502,7 +6659,7 @@ bool CommonAliasBodyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8521,7 +6678,8 @@ bool CommonAliasBodyPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonAliasBody* p_type = static_cast<CommonAliasBody*>(data);
+        CommonAliasBody* p_type =
+		        static_cast<CommonAliasBody*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8580,16 +6738,9 @@ bool CommonAliasBodyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonAliasBody data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8599,45 +6750,17 @@ bool CommonAliasBodyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonAliasBody* p_type = static_cast<const CommonAliasBody*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonAliasBody_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonAliasBody_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonAliasBodyPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteAliasBodyPubSubType::CompleteAliasBodyPubSubType()
@@ -8647,17 +6770,10 @@ CompleteAliasBodyPubSubType::CompleteAliasBodyPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteAliasBody_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteAliasBody_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteAliasBodyPubSubType::~CompleteAliasBodyPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteAliasBodyPubSubType::serialize(
@@ -8665,7 +6781,8 @@ bool CompleteAliasBodyPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteAliasBody* p_type = static_cast<const CompleteAliasBody*>(data);
+    const CompleteAliasBody* p_type =
+	        static_cast<const CompleteAliasBody*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8685,7 +6802,7 @@ bool CompleteAliasBodyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8704,7 +6821,8 @@ bool CompleteAliasBodyPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteAliasBody* p_type = static_cast<CompleteAliasBody*>(data);
+        CompleteAliasBody* p_type =
+		        static_cast<CompleteAliasBody*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8763,16 +6881,9 @@ bool CompleteAliasBodyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteAliasBody data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8782,45 +6893,17 @@ bool CompleteAliasBodyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteAliasBody* p_type = static_cast<const CompleteAliasBody*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteAliasBody_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteAliasBody_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteAliasBodyPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalAliasBodyPubSubType::MinimalAliasBodyPubSubType()
@@ -8830,17 +6913,10 @@ MinimalAliasBodyPubSubType::MinimalAliasBodyPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalAliasBody_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalAliasBody_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalAliasBodyPubSubType::~MinimalAliasBodyPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalAliasBodyPubSubType::serialize(
@@ -8848,7 +6924,8 @@ bool MinimalAliasBodyPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalAliasBody* p_type = static_cast<const MinimalAliasBody*>(data);
+    const MinimalAliasBody* p_type =
+	        static_cast<const MinimalAliasBody*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -8868,7 +6945,7 @@ bool MinimalAliasBodyPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -8887,7 +6964,8 @@ bool MinimalAliasBodyPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalAliasBody* p_type = static_cast<MinimalAliasBody*>(data);
+        MinimalAliasBody* p_type =
+		        static_cast<MinimalAliasBody*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -8946,16 +7024,9 @@ bool MinimalAliasBodyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalAliasBody data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -8965,45 +7036,17 @@ bool MinimalAliasBodyPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalAliasBody* p_type = static_cast<const MinimalAliasBody*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalAliasBody_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalAliasBody_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalAliasBodyPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteAliasHeaderPubSubType::CompleteAliasHeaderPubSubType()
@@ -9013,17 +7056,10 @@ CompleteAliasHeaderPubSubType::CompleteAliasHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteAliasHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteAliasHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteAliasHeaderPubSubType::~CompleteAliasHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteAliasHeaderPubSubType::serialize(
@@ -9031,7 +7067,8 @@ bool CompleteAliasHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteAliasHeader* p_type = static_cast<const CompleteAliasHeader*>(data);
+    const CompleteAliasHeader* p_type =
+	        static_cast<const CompleteAliasHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9051,7 +7088,7 @@ bool CompleteAliasHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9070,7 +7107,8 @@ bool CompleteAliasHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteAliasHeader* p_type = static_cast<CompleteAliasHeader*>(data);
+        CompleteAliasHeader* p_type =
+		        static_cast<CompleteAliasHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9129,16 +7167,9 @@ bool CompleteAliasHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteAliasHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9148,45 +7179,17 @@ bool CompleteAliasHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteAliasHeader* p_type = static_cast<const CompleteAliasHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteAliasHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteAliasHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteAliasHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalAliasHeaderPubSubType::MinimalAliasHeaderPubSubType()
@@ -9196,17 +7199,10 @@ MinimalAliasHeaderPubSubType::MinimalAliasHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalAliasHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalAliasHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalAliasHeaderPubSubType::~MinimalAliasHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalAliasHeaderPubSubType::serialize(
@@ -9214,7 +7210,8 @@ bool MinimalAliasHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalAliasHeader* p_type = static_cast<const MinimalAliasHeader*>(data);
+    const MinimalAliasHeader* p_type =
+	        static_cast<const MinimalAliasHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9234,7 +7231,7 @@ bool MinimalAliasHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9253,7 +7250,8 @@ bool MinimalAliasHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalAliasHeader* p_type = static_cast<MinimalAliasHeader*>(data);
+        MinimalAliasHeader* p_type =
+		        static_cast<MinimalAliasHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9312,16 +7310,9 @@ bool MinimalAliasHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalAliasHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9331,45 +7322,17 @@ bool MinimalAliasHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalAliasHeader* p_type = static_cast<const MinimalAliasHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalAliasHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalAliasHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalAliasHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteAliasTypePubSubType::CompleteAliasTypePubSubType()
@@ -9379,17 +7342,10 @@ CompleteAliasTypePubSubType::CompleteAliasTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteAliasType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteAliasType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteAliasTypePubSubType::~CompleteAliasTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteAliasTypePubSubType::serialize(
@@ -9397,7 +7353,8 @@ bool CompleteAliasTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteAliasType* p_type = static_cast<const CompleteAliasType*>(data);
+    const CompleteAliasType* p_type =
+	        static_cast<const CompleteAliasType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9417,7 +7374,7 @@ bool CompleteAliasTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9436,7 +7393,8 @@ bool CompleteAliasTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteAliasType* p_type = static_cast<CompleteAliasType*>(data);
+        CompleteAliasType* p_type =
+		        static_cast<CompleteAliasType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9495,16 +7453,9 @@ bool CompleteAliasTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteAliasType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9514,45 +7465,17 @@ bool CompleteAliasTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteAliasType* p_type = static_cast<const CompleteAliasType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteAliasType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteAliasType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteAliasTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalAliasTypePubSubType::MinimalAliasTypePubSubType()
@@ -9562,17 +7485,10 @@ MinimalAliasTypePubSubType::MinimalAliasTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalAliasType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalAliasType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalAliasTypePubSubType::~MinimalAliasTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalAliasTypePubSubType::serialize(
@@ -9580,7 +7496,8 @@ bool MinimalAliasTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalAliasType* p_type = static_cast<const MinimalAliasType*>(data);
+    const MinimalAliasType* p_type =
+	        static_cast<const MinimalAliasType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9600,7 +7517,7 @@ bool MinimalAliasTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9619,7 +7536,8 @@ bool MinimalAliasTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalAliasType* p_type = static_cast<MinimalAliasType*>(data);
+        MinimalAliasType* p_type =
+		        static_cast<MinimalAliasType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9678,16 +7596,9 @@ bool MinimalAliasTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalAliasType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9697,45 +7608,17 @@ bool MinimalAliasTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalAliasType* p_type = static_cast<const MinimalAliasType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalAliasType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalAliasType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalAliasTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteElementDetailPubSubType::CompleteElementDetailPubSubType()
@@ -9745,17 +7628,10 @@ CompleteElementDetailPubSubType::CompleteElementDetailPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteElementDetail_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteElementDetail_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteElementDetailPubSubType::~CompleteElementDetailPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteElementDetailPubSubType::serialize(
@@ -9763,7 +7639,8 @@ bool CompleteElementDetailPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteElementDetail* p_type = static_cast<const CompleteElementDetail*>(data);
+    const CompleteElementDetail* p_type =
+	        static_cast<const CompleteElementDetail*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9783,7 +7660,7 @@ bool CompleteElementDetailPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9802,7 +7679,8 @@ bool CompleteElementDetailPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteElementDetail* p_type = static_cast<CompleteElementDetail*>(data);
+        CompleteElementDetail* p_type =
+		        static_cast<CompleteElementDetail*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -9861,16 +7739,9 @@ bool CompleteElementDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteElementDetail data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -9880,45 +7751,17 @@ bool CompleteElementDetailPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteElementDetail* p_type = static_cast<const CompleteElementDetail*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteElementDetail_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteElementDetail_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteElementDetailPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonCollectionElementPubSubType::CommonCollectionElementPubSubType()
@@ -9928,17 +7771,10 @@ CommonCollectionElementPubSubType::CommonCollectionElementPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonCollectionElement_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonCollectionElement_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonCollectionElementPubSubType::~CommonCollectionElementPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonCollectionElementPubSubType::serialize(
@@ -9946,7 +7782,8 @@ bool CommonCollectionElementPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonCollectionElement* p_type = static_cast<const CommonCollectionElement*>(data);
+    const CommonCollectionElement* p_type =
+	        static_cast<const CommonCollectionElement*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -9966,7 +7803,7 @@ bool CommonCollectionElementPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -9985,7 +7822,8 @@ bool CommonCollectionElementPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonCollectionElement* p_type = static_cast<CommonCollectionElement*>(data);
+        CommonCollectionElement* p_type =
+		        static_cast<CommonCollectionElement*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10044,16 +7882,9 @@ bool CommonCollectionElementPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonCollectionElement data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10063,45 +7894,17 @@ bool CommonCollectionElementPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonCollectionElement* p_type = static_cast<const CommonCollectionElement*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonCollectionElement_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonCollectionElement_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonCollectionElementPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteCollectionElementPubSubType::CompleteCollectionElementPubSubType()
@@ -10111,17 +7914,10 @@ CompleteCollectionElementPubSubType::CompleteCollectionElementPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteCollectionElement_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteCollectionElement_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteCollectionElementPubSubType::~CompleteCollectionElementPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteCollectionElementPubSubType::serialize(
@@ -10129,7 +7925,8 @@ bool CompleteCollectionElementPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteCollectionElement* p_type = static_cast<const CompleteCollectionElement*>(data);
+    const CompleteCollectionElement* p_type =
+	        static_cast<const CompleteCollectionElement*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10149,7 +7946,7 @@ bool CompleteCollectionElementPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10168,7 +7965,8 @@ bool CompleteCollectionElementPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteCollectionElement* p_type = static_cast<CompleteCollectionElement*>(data);
+        CompleteCollectionElement* p_type =
+		        static_cast<CompleteCollectionElement*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10227,16 +8025,9 @@ bool CompleteCollectionElementPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteCollectionElement data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10246,45 +8037,17 @@ bool CompleteCollectionElementPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteCollectionElement* p_type = static_cast<const CompleteCollectionElement*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteCollectionElement_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteCollectionElement_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteCollectionElementPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalCollectionElementPubSubType::MinimalCollectionElementPubSubType()
@@ -10294,17 +8057,10 @@ MinimalCollectionElementPubSubType::MinimalCollectionElementPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalCollectionElement_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalCollectionElement_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalCollectionElementPubSubType::~MinimalCollectionElementPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalCollectionElementPubSubType::serialize(
@@ -10312,7 +8068,8 @@ bool MinimalCollectionElementPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalCollectionElement* p_type = static_cast<const MinimalCollectionElement*>(data);
+    const MinimalCollectionElement* p_type =
+	        static_cast<const MinimalCollectionElement*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10332,7 +8089,7 @@ bool MinimalCollectionElementPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10351,7 +8108,8 @@ bool MinimalCollectionElementPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalCollectionElement* p_type = static_cast<MinimalCollectionElement*>(data);
+        MinimalCollectionElement* p_type =
+		        static_cast<MinimalCollectionElement*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10410,16 +8168,9 @@ bool MinimalCollectionElementPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalCollectionElement data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10429,45 +8180,17 @@ bool MinimalCollectionElementPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalCollectionElement* p_type = static_cast<const MinimalCollectionElement*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalCollectionElement_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalCollectionElement_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalCollectionElementPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonCollectionHeaderPubSubType::CommonCollectionHeaderPubSubType()
@@ -10477,17 +8200,10 @@ CommonCollectionHeaderPubSubType::CommonCollectionHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonCollectionHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonCollectionHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonCollectionHeaderPubSubType::~CommonCollectionHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonCollectionHeaderPubSubType::serialize(
@@ -10495,7 +8211,8 @@ bool CommonCollectionHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonCollectionHeader* p_type = static_cast<const CommonCollectionHeader*>(data);
+    const CommonCollectionHeader* p_type =
+	        static_cast<const CommonCollectionHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10515,7 +8232,7 @@ bool CommonCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10534,7 +8251,8 @@ bool CommonCollectionHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonCollectionHeader* p_type = static_cast<CommonCollectionHeader*>(data);
+        CommonCollectionHeader* p_type =
+		        static_cast<CommonCollectionHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10593,16 +8311,9 @@ bool CommonCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonCollectionHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10612,45 +8323,17 @@ bool CommonCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonCollectionHeader* p_type = static_cast<const CommonCollectionHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonCollectionHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonCollectionHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonCollectionHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteCollectionHeaderPubSubType::CompleteCollectionHeaderPubSubType()
@@ -10660,17 +8343,10 @@ CompleteCollectionHeaderPubSubType::CompleteCollectionHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteCollectionHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteCollectionHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteCollectionHeaderPubSubType::~CompleteCollectionHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteCollectionHeaderPubSubType::serialize(
@@ -10678,7 +8354,8 @@ bool CompleteCollectionHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteCollectionHeader* p_type = static_cast<const CompleteCollectionHeader*>(data);
+    const CompleteCollectionHeader* p_type =
+	        static_cast<const CompleteCollectionHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10698,7 +8375,7 @@ bool CompleteCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10717,7 +8394,8 @@ bool CompleteCollectionHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteCollectionHeader* p_type = static_cast<CompleteCollectionHeader*>(data);
+        CompleteCollectionHeader* p_type =
+		        static_cast<CompleteCollectionHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10776,16 +8454,9 @@ bool CompleteCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteCollectionHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10795,45 +8466,17 @@ bool CompleteCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteCollectionHeader* p_type = static_cast<const CompleteCollectionHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteCollectionHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteCollectionHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteCollectionHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalCollectionHeaderPubSubType::MinimalCollectionHeaderPubSubType()
@@ -10843,17 +8486,10 @@ MinimalCollectionHeaderPubSubType::MinimalCollectionHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalCollectionHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalCollectionHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalCollectionHeaderPubSubType::~MinimalCollectionHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalCollectionHeaderPubSubType::serialize(
@@ -10861,7 +8497,8 @@ bool MinimalCollectionHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalCollectionHeader* p_type = static_cast<const MinimalCollectionHeader*>(data);
+    const MinimalCollectionHeader* p_type =
+	        static_cast<const MinimalCollectionHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -10881,7 +8518,7 @@ bool MinimalCollectionHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -10900,7 +8537,8 @@ bool MinimalCollectionHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalCollectionHeader* p_type = static_cast<MinimalCollectionHeader*>(data);
+        MinimalCollectionHeader* p_type =
+		        static_cast<MinimalCollectionHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -10959,16 +8597,9 @@ bool MinimalCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalCollectionHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -10978,45 +8609,17 @@ bool MinimalCollectionHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalCollectionHeader* p_type = static_cast<const MinimalCollectionHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalCollectionHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalCollectionHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalCollectionHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteSequenceTypePubSubType::CompleteSequenceTypePubSubType()
@@ -11026,17 +8629,10 @@ CompleteSequenceTypePubSubType::CompleteSequenceTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteSequenceType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteSequenceType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteSequenceTypePubSubType::~CompleteSequenceTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteSequenceTypePubSubType::serialize(
@@ -11044,7 +8640,8 @@ bool CompleteSequenceTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteSequenceType* p_type = static_cast<const CompleteSequenceType*>(data);
+    const CompleteSequenceType* p_type =
+	        static_cast<const CompleteSequenceType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11064,7 +8661,7 @@ bool CompleteSequenceTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11083,7 +8680,8 @@ bool CompleteSequenceTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteSequenceType* p_type = static_cast<CompleteSequenceType*>(data);
+        CompleteSequenceType* p_type =
+		        static_cast<CompleteSequenceType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11142,16 +8740,9 @@ bool CompleteSequenceTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteSequenceType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11161,45 +8752,17 @@ bool CompleteSequenceTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteSequenceType* p_type = static_cast<const CompleteSequenceType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteSequenceType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteSequenceType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteSequenceTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalSequenceTypePubSubType::MinimalSequenceTypePubSubType()
@@ -11209,17 +8772,10 @@ MinimalSequenceTypePubSubType::MinimalSequenceTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalSequenceType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalSequenceType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalSequenceTypePubSubType::~MinimalSequenceTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalSequenceTypePubSubType::serialize(
@@ -11227,7 +8783,8 @@ bool MinimalSequenceTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalSequenceType* p_type = static_cast<const MinimalSequenceType*>(data);
+    const MinimalSequenceType* p_type =
+	        static_cast<const MinimalSequenceType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11247,7 +8804,7 @@ bool MinimalSequenceTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11266,7 +8823,8 @@ bool MinimalSequenceTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalSequenceType* p_type = static_cast<MinimalSequenceType*>(data);
+        MinimalSequenceType* p_type =
+		        static_cast<MinimalSequenceType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11325,16 +8883,9 @@ bool MinimalSequenceTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalSequenceType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11344,45 +8895,17 @@ bool MinimalSequenceTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalSequenceType* p_type = static_cast<const MinimalSequenceType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalSequenceType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalSequenceType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalSequenceTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonArrayHeaderPubSubType::CommonArrayHeaderPubSubType()
@@ -11392,17 +8915,10 @@ CommonArrayHeaderPubSubType::CommonArrayHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonArrayHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonArrayHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonArrayHeaderPubSubType::~CommonArrayHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonArrayHeaderPubSubType::serialize(
@@ -11410,7 +8926,8 @@ bool CommonArrayHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonArrayHeader* p_type = static_cast<const CommonArrayHeader*>(data);
+    const CommonArrayHeader* p_type =
+	        static_cast<const CommonArrayHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11430,7 +8947,7 @@ bool CommonArrayHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11449,7 +8966,8 @@ bool CommonArrayHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonArrayHeader* p_type = static_cast<CommonArrayHeader*>(data);
+        CommonArrayHeader* p_type =
+		        static_cast<CommonArrayHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11508,16 +9026,9 @@ bool CommonArrayHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonArrayHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11527,45 +9038,17 @@ bool CommonArrayHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonArrayHeader* p_type = static_cast<const CommonArrayHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonArrayHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonArrayHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonArrayHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteArrayHeaderPubSubType::CompleteArrayHeaderPubSubType()
@@ -11575,17 +9058,10 @@ CompleteArrayHeaderPubSubType::CompleteArrayHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteArrayHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteArrayHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteArrayHeaderPubSubType::~CompleteArrayHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteArrayHeaderPubSubType::serialize(
@@ -11593,7 +9069,8 @@ bool CompleteArrayHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteArrayHeader* p_type = static_cast<const CompleteArrayHeader*>(data);
+    const CompleteArrayHeader* p_type =
+	        static_cast<const CompleteArrayHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11613,7 +9090,7 @@ bool CompleteArrayHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11632,7 +9109,8 @@ bool CompleteArrayHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteArrayHeader* p_type = static_cast<CompleteArrayHeader*>(data);
+        CompleteArrayHeader* p_type =
+		        static_cast<CompleteArrayHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11691,16 +9169,9 @@ bool CompleteArrayHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteArrayHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11710,45 +9181,17 @@ bool CompleteArrayHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteArrayHeader* p_type = static_cast<const CompleteArrayHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteArrayHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteArrayHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteArrayHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalArrayHeaderPubSubType::MinimalArrayHeaderPubSubType()
@@ -11758,17 +9201,10 @@ MinimalArrayHeaderPubSubType::MinimalArrayHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalArrayHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalArrayHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalArrayHeaderPubSubType::~MinimalArrayHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalArrayHeaderPubSubType::serialize(
@@ -11776,7 +9212,8 @@ bool MinimalArrayHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalArrayHeader* p_type = static_cast<const MinimalArrayHeader*>(data);
+    const MinimalArrayHeader* p_type =
+	        static_cast<const MinimalArrayHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11796,7 +9233,7 @@ bool MinimalArrayHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11815,7 +9252,8 @@ bool MinimalArrayHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalArrayHeader* p_type = static_cast<MinimalArrayHeader*>(data);
+        MinimalArrayHeader* p_type =
+		        static_cast<MinimalArrayHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -11874,16 +9312,9 @@ bool MinimalArrayHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalArrayHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -11893,45 +9324,17 @@ bool MinimalArrayHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalArrayHeader* p_type = static_cast<const MinimalArrayHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalArrayHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalArrayHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalArrayHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteArrayTypePubSubType::CompleteArrayTypePubSubType()
@@ -11941,17 +9344,10 @@ CompleteArrayTypePubSubType::CompleteArrayTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteArrayType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteArrayType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteArrayTypePubSubType::~CompleteArrayTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteArrayTypePubSubType::serialize(
@@ -11959,7 +9355,8 @@ bool CompleteArrayTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteArrayType* p_type = static_cast<const CompleteArrayType*>(data);
+    const CompleteArrayType* p_type =
+	        static_cast<const CompleteArrayType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -11979,7 +9376,7 @@ bool CompleteArrayTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -11998,7 +9395,8 @@ bool CompleteArrayTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteArrayType* p_type = static_cast<CompleteArrayType*>(data);
+        CompleteArrayType* p_type =
+		        static_cast<CompleteArrayType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12057,16 +9455,9 @@ bool CompleteArrayTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteArrayType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12076,45 +9467,17 @@ bool CompleteArrayTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteArrayType* p_type = static_cast<const CompleteArrayType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteArrayType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteArrayType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteArrayTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalArrayTypePubSubType::MinimalArrayTypePubSubType()
@@ -12124,17 +9487,10 @@ MinimalArrayTypePubSubType::MinimalArrayTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalArrayType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalArrayType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalArrayTypePubSubType::~MinimalArrayTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalArrayTypePubSubType::serialize(
@@ -12142,7 +9498,8 @@ bool MinimalArrayTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalArrayType* p_type = static_cast<const MinimalArrayType*>(data);
+    const MinimalArrayType* p_type =
+	        static_cast<const MinimalArrayType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12162,7 +9519,7 @@ bool MinimalArrayTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12181,7 +9538,8 @@ bool MinimalArrayTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalArrayType* p_type = static_cast<MinimalArrayType*>(data);
+        MinimalArrayType* p_type =
+		        static_cast<MinimalArrayType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12240,16 +9598,9 @@ bool MinimalArrayTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalArrayType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12259,45 +9610,17 @@ bool MinimalArrayTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalArrayType* p_type = static_cast<const MinimalArrayType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalArrayType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalArrayType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalArrayTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteMapTypePubSubType::CompleteMapTypePubSubType()
@@ -12307,17 +9630,10 @@ CompleteMapTypePubSubType::CompleteMapTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteMapType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteMapType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteMapTypePubSubType::~CompleteMapTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteMapTypePubSubType::serialize(
@@ -12325,7 +9641,8 @@ bool CompleteMapTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteMapType* p_type = static_cast<const CompleteMapType*>(data);
+    const CompleteMapType* p_type =
+	        static_cast<const CompleteMapType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12345,7 +9662,7 @@ bool CompleteMapTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12364,7 +9681,8 @@ bool CompleteMapTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteMapType* p_type = static_cast<CompleteMapType*>(data);
+        CompleteMapType* p_type =
+		        static_cast<CompleteMapType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12423,16 +9741,9 @@ bool CompleteMapTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteMapType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12442,45 +9753,17 @@ bool CompleteMapTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteMapType* p_type = static_cast<const CompleteMapType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteMapType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteMapType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteMapTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalMapTypePubSubType::MinimalMapTypePubSubType()
@@ -12490,17 +9773,10 @@ MinimalMapTypePubSubType::MinimalMapTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalMapType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalMapType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalMapTypePubSubType::~MinimalMapTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalMapTypePubSubType::serialize(
@@ -12508,7 +9784,8 @@ bool MinimalMapTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalMapType* p_type = static_cast<const MinimalMapType*>(data);
+    const MinimalMapType* p_type =
+	        static_cast<const MinimalMapType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12528,7 +9805,7 @@ bool MinimalMapTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12547,7 +9824,8 @@ bool MinimalMapTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalMapType* p_type = static_cast<MinimalMapType*>(data);
+        MinimalMapType* p_type =
+		        static_cast<MinimalMapType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12606,16 +9884,9 @@ bool MinimalMapTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalMapType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12625,45 +9896,17 @@ bool MinimalMapTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalMapType* p_type = static_cast<const MinimalMapType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalMapType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalMapType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalMapTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonEnumeratedLiteralPubSubType::CommonEnumeratedLiteralPubSubType()
@@ -12673,17 +9916,10 @@ CommonEnumeratedLiteralPubSubType::CommonEnumeratedLiteralPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonEnumeratedLiteral_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonEnumeratedLiteral_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonEnumeratedLiteralPubSubType::~CommonEnumeratedLiteralPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonEnumeratedLiteralPubSubType::serialize(
@@ -12691,7 +9927,8 @@ bool CommonEnumeratedLiteralPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonEnumeratedLiteral* p_type = static_cast<const CommonEnumeratedLiteral*>(data);
+    const CommonEnumeratedLiteral* p_type =
+	        static_cast<const CommonEnumeratedLiteral*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12711,7 +9948,7 @@ bool CommonEnumeratedLiteralPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12730,7 +9967,8 @@ bool CommonEnumeratedLiteralPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonEnumeratedLiteral* p_type = static_cast<CommonEnumeratedLiteral*>(data);
+        CommonEnumeratedLiteral* p_type =
+		        static_cast<CommonEnumeratedLiteral*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12789,16 +10027,9 @@ bool CommonEnumeratedLiteralPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonEnumeratedLiteral data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12808,45 +10039,17 @@ bool CommonEnumeratedLiteralPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonEnumeratedLiteral* p_type = static_cast<const CommonEnumeratedLiteral*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonEnumeratedLiteral_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonEnumeratedLiteral_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonEnumeratedLiteralPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteEnumeratedLiteralPubSubType::CompleteEnumeratedLiteralPubSubType()
@@ -12856,17 +10059,10 @@ CompleteEnumeratedLiteralPubSubType::CompleteEnumeratedLiteralPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteEnumeratedLiteral_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteEnumeratedLiteral_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteEnumeratedLiteralPubSubType::~CompleteEnumeratedLiteralPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteEnumeratedLiteralPubSubType::serialize(
@@ -12874,7 +10070,8 @@ bool CompleteEnumeratedLiteralPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteEnumeratedLiteral* p_type = static_cast<const CompleteEnumeratedLiteral*>(data);
+    const CompleteEnumeratedLiteral* p_type =
+	        static_cast<const CompleteEnumeratedLiteral*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -12894,7 +10091,7 @@ bool CompleteEnumeratedLiteralPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -12913,7 +10110,8 @@ bool CompleteEnumeratedLiteralPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteEnumeratedLiteral* p_type = static_cast<CompleteEnumeratedLiteral*>(data);
+        CompleteEnumeratedLiteral* p_type =
+		        static_cast<CompleteEnumeratedLiteral*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -12972,16 +10170,9 @@ bool CompleteEnumeratedLiteralPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteEnumeratedLiteral data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -12991,45 +10182,17 @@ bool CompleteEnumeratedLiteralPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteEnumeratedLiteral* p_type = static_cast<const CompleteEnumeratedLiteral*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteEnumeratedLiteral_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteEnumeratedLiteral_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteEnumeratedLiteralPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalEnumeratedLiteralPubSubType::MinimalEnumeratedLiteralPubSubType()
@@ -13039,17 +10202,10 @@ MinimalEnumeratedLiteralPubSubType::MinimalEnumeratedLiteralPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalEnumeratedLiteral_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalEnumeratedLiteral_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalEnumeratedLiteralPubSubType::~MinimalEnumeratedLiteralPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalEnumeratedLiteralPubSubType::serialize(
@@ -13057,7 +10213,8 @@ bool MinimalEnumeratedLiteralPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalEnumeratedLiteral* p_type = static_cast<const MinimalEnumeratedLiteral*>(data);
+    const MinimalEnumeratedLiteral* p_type =
+	        static_cast<const MinimalEnumeratedLiteral*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13077,7 +10234,7 @@ bool MinimalEnumeratedLiteralPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13096,7 +10253,8 @@ bool MinimalEnumeratedLiteralPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalEnumeratedLiteral* p_type = static_cast<MinimalEnumeratedLiteral*>(data);
+        MinimalEnumeratedLiteral* p_type =
+		        static_cast<MinimalEnumeratedLiteral*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13155,16 +10313,9 @@ bool MinimalEnumeratedLiteralPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalEnumeratedLiteral data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13174,45 +10325,17 @@ bool MinimalEnumeratedLiteralPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalEnumeratedLiteral* p_type = static_cast<const MinimalEnumeratedLiteral*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalEnumeratedLiteral_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalEnumeratedLiteral_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalEnumeratedLiteralPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonEnumeratedHeaderPubSubType::CommonEnumeratedHeaderPubSubType()
@@ -13222,17 +10345,10 @@ CommonEnumeratedHeaderPubSubType::CommonEnumeratedHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonEnumeratedHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonEnumeratedHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonEnumeratedHeaderPubSubType::~CommonEnumeratedHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonEnumeratedHeaderPubSubType::serialize(
@@ -13240,7 +10356,8 @@ bool CommonEnumeratedHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonEnumeratedHeader* p_type = static_cast<const CommonEnumeratedHeader*>(data);
+    const CommonEnumeratedHeader* p_type =
+	        static_cast<const CommonEnumeratedHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13260,7 +10377,7 @@ bool CommonEnumeratedHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13279,7 +10396,8 @@ bool CommonEnumeratedHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonEnumeratedHeader* p_type = static_cast<CommonEnumeratedHeader*>(data);
+        CommonEnumeratedHeader* p_type =
+		        static_cast<CommonEnumeratedHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13338,16 +10456,9 @@ bool CommonEnumeratedHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonEnumeratedHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13357,45 +10468,17 @@ bool CommonEnumeratedHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonEnumeratedHeader* p_type = static_cast<const CommonEnumeratedHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonEnumeratedHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonEnumeratedHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonEnumeratedHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteEnumeratedHeaderPubSubType::CompleteEnumeratedHeaderPubSubType()
@@ -13405,17 +10488,10 @@ CompleteEnumeratedHeaderPubSubType::CompleteEnumeratedHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteEnumeratedHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteEnumeratedHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteEnumeratedHeaderPubSubType::~CompleteEnumeratedHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteEnumeratedHeaderPubSubType::serialize(
@@ -13423,7 +10499,8 @@ bool CompleteEnumeratedHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteEnumeratedHeader* p_type = static_cast<const CompleteEnumeratedHeader*>(data);
+    const CompleteEnumeratedHeader* p_type =
+	        static_cast<const CompleteEnumeratedHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13443,7 +10520,7 @@ bool CompleteEnumeratedHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13462,7 +10539,8 @@ bool CompleteEnumeratedHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteEnumeratedHeader* p_type = static_cast<CompleteEnumeratedHeader*>(data);
+        CompleteEnumeratedHeader* p_type =
+		        static_cast<CompleteEnumeratedHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13521,16 +10599,9 @@ bool CompleteEnumeratedHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteEnumeratedHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13540,45 +10611,17 @@ bool CompleteEnumeratedHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteEnumeratedHeader* p_type = static_cast<const CompleteEnumeratedHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteEnumeratedHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteEnumeratedHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteEnumeratedHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalEnumeratedHeaderPubSubType::MinimalEnumeratedHeaderPubSubType()
@@ -13588,17 +10631,10 @@ MinimalEnumeratedHeaderPubSubType::MinimalEnumeratedHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalEnumeratedHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalEnumeratedHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalEnumeratedHeaderPubSubType::~MinimalEnumeratedHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalEnumeratedHeaderPubSubType::serialize(
@@ -13606,7 +10642,8 @@ bool MinimalEnumeratedHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalEnumeratedHeader* p_type = static_cast<const MinimalEnumeratedHeader*>(data);
+    const MinimalEnumeratedHeader* p_type =
+	        static_cast<const MinimalEnumeratedHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13626,7 +10663,7 @@ bool MinimalEnumeratedHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13645,7 +10682,8 @@ bool MinimalEnumeratedHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalEnumeratedHeader* p_type = static_cast<MinimalEnumeratedHeader*>(data);
+        MinimalEnumeratedHeader* p_type =
+		        static_cast<MinimalEnumeratedHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13704,16 +10742,9 @@ bool MinimalEnumeratedHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalEnumeratedHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13723,45 +10754,17 @@ bool MinimalEnumeratedHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalEnumeratedHeader* p_type = static_cast<const MinimalEnumeratedHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalEnumeratedHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalEnumeratedHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalEnumeratedHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteEnumeratedTypePubSubType::CompleteEnumeratedTypePubSubType()
@@ -13771,17 +10774,10 @@ CompleteEnumeratedTypePubSubType::CompleteEnumeratedTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteEnumeratedType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteEnumeratedType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteEnumeratedTypePubSubType::~CompleteEnumeratedTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteEnumeratedTypePubSubType::serialize(
@@ -13789,7 +10785,8 @@ bool CompleteEnumeratedTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteEnumeratedType* p_type = static_cast<const CompleteEnumeratedType*>(data);
+    const CompleteEnumeratedType* p_type =
+	        static_cast<const CompleteEnumeratedType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13809,7 +10806,7 @@ bool CompleteEnumeratedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -13828,7 +10825,8 @@ bool CompleteEnumeratedTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteEnumeratedType* p_type = static_cast<CompleteEnumeratedType*>(data);
+        CompleteEnumeratedType* p_type =
+		        static_cast<CompleteEnumeratedType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -13887,16 +10885,9 @@ bool CompleteEnumeratedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteEnumeratedType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -13906,45 +10897,17 @@ bool CompleteEnumeratedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteEnumeratedType* p_type = static_cast<const CompleteEnumeratedType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteEnumeratedType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteEnumeratedType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteEnumeratedTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalEnumeratedTypePubSubType::MinimalEnumeratedTypePubSubType()
@@ -13954,17 +10917,10 @@ MinimalEnumeratedTypePubSubType::MinimalEnumeratedTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalEnumeratedType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalEnumeratedType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalEnumeratedTypePubSubType::~MinimalEnumeratedTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalEnumeratedTypePubSubType::serialize(
@@ -13972,7 +10928,8 @@ bool MinimalEnumeratedTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalEnumeratedType* p_type = static_cast<const MinimalEnumeratedType*>(data);
+    const MinimalEnumeratedType* p_type =
+	        static_cast<const MinimalEnumeratedType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -13992,7 +10949,7 @@ bool MinimalEnumeratedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14011,7 +10968,8 @@ bool MinimalEnumeratedTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalEnumeratedType* p_type = static_cast<MinimalEnumeratedType*>(data);
+        MinimalEnumeratedType* p_type =
+		        static_cast<MinimalEnumeratedType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14070,16 +11028,9 @@ bool MinimalEnumeratedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalEnumeratedType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14089,45 +11040,17 @@ bool MinimalEnumeratedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalEnumeratedType* p_type = static_cast<const MinimalEnumeratedType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalEnumeratedType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalEnumeratedType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalEnumeratedTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonBitflagPubSubType::CommonBitflagPubSubType()
@@ -14137,17 +11060,10 @@ CommonBitflagPubSubType::CommonBitflagPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonBitflag_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonBitflag_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonBitflagPubSubType::~CommonBitflagPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonBitflagPubSubType::serialize(
@@ -14155,7 +11071,8 @@ bool CommonBitflagPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonBitflag* p_type = static_cast<const CommonBitflag*>(data);
+    const CommonBitflag* p_type =
+	        static_cast<const CommonBitflag*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14175,7 +11092,7 @@ bool CommonBitflagPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14194,7 +11111,8 @@ bool CommonBitflagPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonBitflag* p_type = static_cast<CommonBitflag*>(data);
+        CommonBitflag* p_type =
+		        static_cast<CommonBitflag*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14253,16 +11171,9 @@ bool CommonBitflagPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonBitflag data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14272,45 +11183,17 @@ bool CommonBitflagPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonBitflag* p_type = static_cast<const CommonBitflag*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonBitflag_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonBitflag_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonBitflagPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteBitflagPubSubType::CompleteBitflagPubSubType()
@@ -14320,17 +11203,10 @@ CompleteBitflagPubSubType::CompleteBitflagPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteBitflag_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteBitflag_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteBitflagPubSubType::~CompleteBitflagPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteBitflagPubSubType::serialize(
@@ -14338,7 +11214,8 @@ bool CompleteBitflagPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteBitflag* p_type = static_cast<const CompleteBitflag*>(data);
+    const CompleteBitflag* p_type =
+	        static_cast<const CompleteBitflag*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14358,7 +11235,7 @@ bool CompleteBitflagPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14377,7 +11254,8 @@ bool CompleteBitflagPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteBitflag* p_type = static_cast<CompleteBitflag*>(data);
+        CompleteBitflag* p_type =
+		        static_cast<CompleteBitflag*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14436,16 +11314,9 @@ bool CompleteBitflagPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteBitflag data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14455,45 +11326,17 @@ bool CompleteBitflagPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteBitflag* p_type = static_cast<const CompleteBitflag*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteBitflag_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteBitflag_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteBitflagPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalBitflagPubSubType::MinimalBitflagPubSubType()
@@ -14503,17 +11346,10 @@ MinimalBitflagPubSubType::MinimalBitflagPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalBitflag_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalBitflag_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalBitflagPubSubType::~MinimalBitflagPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalBitflagPubSubType::serialize(
@@ -14521,7 +11357,8 @@ bool MinimalBitflagPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalBitflag* p_type = static_cast<const MinimalBitflag*>(data);
+    const MinimalBitflag* p_type =
+	        static_cast<const MinimalBitflag*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14541,7 +11378,7 @@ bool MinimalBitflagPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14560,7 +11397,8 @@ bool MinimalBitflagPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalBitflag* p_type = static_cast<MinimalBitflag*>(data);
+        MinimalBitflag* p_type =
+		        static_cast<MinimalBitflag*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14619,16 +11457,9 @@ bool MinimalBitflagPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalBitflag data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14638,45 +11469,17 @@ bool MinimalBitflagPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalBitflag* p_type = static_cast<const MinimalBitflag*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalBitflag_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalBitflag_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalBitflagPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonBitmaskHeaderPubSubType::CommonBitmaskHeaderPubSubType()
@@ -14686,17 +11489,10 @@ CommonBitmaskHeaderPubSubType::CommonBitmaskHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonBitmaskHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonBitmaskHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonBitmaskHeaderPubSubType::~CommonBitmaskHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonBitmaskHeaderPubSubType::serialize(
@@ -14704,7 +11500,8 @@ bool CommonBitmaskHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonBitmaskHeader* p_type = static_cast<const CommonBitmaskHeader*>(data);
+    const CommonBitmaskHeader* p_type =
+	        static_cast<const CommonBitmaskHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14724,7 +11521,7 @@ bool CommonBitmaskHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14743,7 +11540,8 @@ bool CommonBitmaskHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonBitmaskHeader* p_type = static_cast<CommonBitmaskHeader*>(data);
+        CommonBitmaskHeader* p_type =
+		        static_cast<CommonBitmaskHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14802,16 +11600,9 @@ bool CommonBitmaskHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonBitmaskHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -14821,45 +11612,17 @@ bool CommonBitmaskHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonBitmaskHeader* p_type = static_cast<const CommonBitmaskHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonBitmaskHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonBitmaskHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonBitmaskHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteBitmaskTypePubSubType::CompleteBitmaskTypePubSubType()
@@ -14869,17 +11632,10 @@ CompleteBitmaskTypePubSubType::CompleteBitmaskTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteBitmaskType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteBitmaskType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteBitmaskTypePubSubType::~CompleteBitmaskTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteBitmaskTypePubSubType::serialize(
@@ -14887,7 +11643,8 @@ bool CompleteBitmaskTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteBitmaskType* p_type = static_cast<const CompleteBitmaskType*>(data);
+    const CompleteBitmaskType* p_type =
+	        static_cast<const CompleteBitmaskType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -14907,7 +11664,7 @@ bool CompleteBitmaskTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -14926,7 +11683,8 @@ bool CompleteBitmaskTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteBitmaskType* p_type = static_cast<CompleteBitmaskType*>(data);
+        CompleteBitmaskType* p_type =
+		        static_cast<CompleteBitmaskType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -14985,16 +11743,9 @@ bool CompleteBitmaskTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteBitmaskType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15004,45 +11755,17 @@ bool CompleteBitmaskTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteBitmaskType* p_type = static_cast<const CompleteBitmaskType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteBitmaskType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteBitmaskType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteBitmaskTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalBitmaskTypePubSubType::MinimalBitmaskTypePubSubType()
@@ -15052,17 +11775,10 @@ MinimalBitmaskTypePubSubType::MinimalBitmaskTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalBitmaskType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalBitmaskType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalBitmaskTypePubSubType::~MinimalBitmaskTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalBitmaskTypePubSubType::serialize(
@@ -15070,7 +11786,8 @@ bool MinimalBitmaskTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalBitmaskType* p_type = static_cast<const MinimalBitmaskType*>(data);
+    const MinimalBitmaskType* p_type =
+	        static_cast<const MinimalBitmaskType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15090,7 +11807,7 @@ bool MinimalBitmaskTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15109,7 +11826,8 @@ bool MinimalBitmaskTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalBitmaskType* p_type = static_cast<MinimalBitmaskType*>(data);
+        MinimalBitmaskType* p_type =
+		        static_cast<MinimalBitmaskType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15168,16 +11886,9 @@ bool MinimalBitmaskTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalBitmaskType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15187,45 +11898,17 @@ bool MinimalBitmaskTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalBitmaskType* p_type = static_cast<const MinimalBitmaskType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalBitmaskType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalBitmaskType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalBitmaskTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CommonBitfieldPubSubType::CommonBitfieldPubSubType()
@@ -15235,17 +11918,10 @@ CommonBitfieldPubSubType::CommonBitfieldPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CommonBitfield_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CommonBitfield_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CommonBitfieldPubSubType::~CommonBitfieldPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CommonBitfieldPubSubType::serialize(
@@ -15253,7 +11929,8 @@ bool CommonBitfieldPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CommonBitfield* p_type = static_cast<const CommonBitfield*>(data);
+    const CommonBitfield* p_type =
+	        static_cast<const CommonBitfield*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15273,7 +11950,7 @@ bool CommonBitfieldPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15292,7 +11969,8 @@ bool CommonBitfieldPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CommonBitfield* p_type = static_cast<CommonBitfield*>(data);
+        CommonBitfield* p_type =
+		        static_cast<CommonBitfield*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15351,16 +12029,9 @@ bool CommonBitfieldPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CommonBitfield data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15370,45 +12041,17 @@ bool CommonBitfieldPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CommonBitfield* p_type = static_cast<const CommonBitfield*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CommonBitfield_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CommonBitfield_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CommonBitfieldPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteBitfieldPubSubType::CompleteBitfieldPubSubType()
@@ -15418,17 +12061,10 @@ CompleteBitfieldPubSubType::CompleteBitfieldPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteBitfield_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteBitfield_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteBitfieldPubSubType::~CompleteBitfieldPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteBitfieldPubSubType::serialize(
@@ -15436,7 +12072,8 @@ bool CompleteBitfieldPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteBitfield* p_type = static_cast<const CompleteBitfield*>(data);
+    const CompleteBitfield* p_type =
+	        static_cast<const CompleteBitfield*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15456,7 +12093,7 @@ bool CompleteBitfieldPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15475,7 +12112,8 @@ bool CompleteBitfieldPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteBitfield* p_type = static_cast<CompleteBitfield*>(data);
+        CompleteBitfield* p_type =
+		        static_cast<CompleteBitfield*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15534,16 +12172,9 @@ bool CompleteBitfieldPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteBitfield data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15553,45 +12184,17 @@ bool CompleteBitfieldPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteBitfield* p_type = static_cast<const CompleteBitfield*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteBitfield_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteBitfield_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteBitfieldPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalBitfieldPubSubType::MinimalBitfieldPubSubType()
@@ -15601,17 +12204,10 @@ MinimalBitfieldPubSubType::MinimalBitfieldPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalBitfield_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalBitfield_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalBitfieldPubSubType::~MinimalBitfieldPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalBitfieldPubSubType::serialize(
@@ -15619,7 +12215,8 @@ bool MinimalBitfieldPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalBitfield* p_type = static_cast<const MinimalBitfield*>(data);
+    const MinimalBitfield* p_type =
+	        static_cast<const MinimalBitfield*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15639,7 +12236,7 @@ bool MinimalBitfieldPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15658,7 +12255,8 @@ bool MinimalBitfieldPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalBitfield* p_type = static_cast<MinimalBitfield*>(data);
+        MinimalBitfield* p_type =
+		        static_cast<MinimalBitfield*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15717,16 +12315,9 @@ bool MinimalBitfieldPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalBitfield data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15736,45 +12327,17 @@ bool MinimalBitfieldPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalBitfield* p_type = static_cast<const MinimalBitfield*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalBitfield_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalBitfield_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalBitfieldPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteBitsetHeaderPubSubType::CompleteBitsetHeaderPubSubType()
@@ -15784,17 +12347,10 @@ CompleteBitsetHeaderPubSubType::CompleteBitsetHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteBitsetHeaderPubSubType::~CompleteBitsetHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteBitsetHeaderPubSubType::serialize(
@@ -15802,7 +12358,8 @@ bool CompleteBitsetHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteBitsetHeader* p_type = static_cast<const CompleteBitsetHeader*>(data);
+    const CompleteBitsetHeader* p_type =
+	        static_cast<const CompleteBitsetHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -15822,7 +12379,7 @@ bool CompleteBitsetHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -15841,7 +12398,8 @@ bool CompleteBitsetHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteBitsetHeader* p_type = static_cast<CompleteBitsetHeader*>(data);
+        CompleteBitsetHeader* p_type =
+		        static_cast<CompleteBitsetHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -15900,16 +12458,9 @@ bool CompleteBitsetHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteBitsetHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -15919,45 +12470,17 @@ bool CompleteBitsetHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteBitsetHeader* p_type = static_cast<const CompleteBitsetHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteBitsetHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteBitsetHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalBitsetHeaderPubSubType::MinimalBitsetHeaderPubSubType()
@@ -15967,17 +12490,10 @@ MinimalBitsetHeaderPubSubType::MinimalBitsetHeaderPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalBitsetHeader_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalBitsetHeader_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalBitsetHeaderPubSubType::~MinimalBitsetHeaderPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalBitsetHeaderPubSubType::serialize(
@@ -15985,7 +12501,8 @@ bool MinimalBitsetHeaderPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalBitsetHeader* p_type = static_cast<const MinimalBitsetHeader*>(data);
+    const MinimalBitsetHeader* p_type =
+	        static_cast<const MinimalBitsetHeader*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16005,7 +12522,7 @@ bool MinimalBitsetHeaderPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16024,7 +12541,8 @@ bool MinimalBitsetHeaderPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalBitsetHeader* p_type = static_cast<MinimalBitsetHeader*>(data);
+        MinimalBitsetHeader* p_type =
+		        static_cast<MinimalBitsetHeader*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16083,16 +12601,9 @@ bool MinimalBitsetHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalBitsetHeader data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16102,45 +12613,17 @@ bool MinimalBitsetHeaderPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalBitsetHeader* p_type = static_cast<const MinimalBitsetHeader*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalBitsetHeader_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalBitsetHeader_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalBitsetHeaderPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteBitsetTypePubSubType::CompleteBitsetTypePubSubType()
@@ -16150,17 +12633,10 @@ CompleteBitsetTypePubSubType::CompleteBitsetTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteBitsetType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteBitsetType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteBitsetTypePubSubType::~CompleteBitsetTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteBitsetTypePubSubType::serialize(
@@ -16168,7 +12644,8 @@ bool CompleteBitsetTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteBitsetType* p_type = static_cast<const CompleteBitsetType*>(data);
+    const CompleteBitsetType* p_type =
+	        static_cast<const CompleteBitsetType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16188,7 +12665,7 @@ bool CompleteBitsetTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16207,7 +12684,8 @@ bool CompleteBitsetTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteBitsetType* p_type = static_cast<CompleteBitsetType*>(data);
+        CompleteBitsetType* p_type =
+		        static_cast<CompleteBitsetType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16266,16 +12744,9 @@ bool CompleteBitsetTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteBitsetType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16285,45 +12756,17 @@ bool CompleteBitsetTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteBitsetType* p_type = static_cast<const CompleteBitsetType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteBitsetType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteBitsetType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteBitsetTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalBitsetTypePubSubType::MinimalBitsetTypePubSubType()
@@ -16333,17 +12776,10 @@ MinimalBitsetTypePubSubType::MinimalBitsetTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalBitsetType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalBitsetType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalBitsetTypePubSubType::~MinimalBitsetTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalBitsetTypePubSubType::serialize(
@@ -16351,7 +12787,8 @@ bool MinimalBitsetTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalBitsetType* p_type = static_cast<const MinimalBitsetType*>(data);
+    const MinimalBitsetType* p_type =
+	        static_cast<const MinimalBitsetType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16371,7 +12808,7 @@ bool MinimalBitsetTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16390,7 +12827,8 @@ bool MinimalBitsetTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalBitsetType* p_type = static_cast<MinimalBitsetType*>(data);
+        MinimalBitsetType* p_type =
+		        static_cast<MinimalBitsetType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16449,16 +12887,9 @@ bool MinimalBitsetTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalBitsetType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16468,45 +12899,17 @@ bool MinimalBitsetTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalBitsetType* p_type = static_cast<const MinimalBitsetType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalBitsetType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalBitsetType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalBitsetTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 CompleteExtendedTypePubSubType::CompleteExtendedTypePubSubType()
@@ -16516,17 +12919,10 @@ CompleteExtendedTypePubSubType::CompleteExtendedTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_CompleteExtendedType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_CompleteExtendedType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 CompleteExtendedTypePubSubType::~CompleteExtendedTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool CompleteExtendedTypePubSubType::serialize(
@@ -16534,7 +12930,8 @@ bool CompleteExtendedTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const CompleteExtendedType* p_type = static_cast<const CompleteExtendedType*>(data);
+    const CompleteExtendedType* p_type =
+	        static_cast<const CompleteExtendedType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16554,7 +12951,7 @@ bool CompleteExtendedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16573,7 +12970,8 @@ bool CompleteExtendedTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        CompleteExtendedType* p_type = static_cast<CompleteExtendedType*>(data);
+        CompleteExtendedType* p_type =
+		        static_cast<CompleteExtendedType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16632,16 +13030,9 @@ bool CompleteExtendedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    CompleteExtendedType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16651,45 +13042,17 @@ bool CompleteExtendedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const CompleteExtendedType* p_type = static_cast<const CompleteExtendedType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_CompleteExtendedType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_CompleteExtendedType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void CompleteExtendedTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 MinimalExtendedTypePubSubType::MinimalExtendedTypePubSubType()
@@ -16699,17 +13062,10 @@ MinimalExtendedTypePubSubType::MinimalExtendedTypePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_MinimalExtendedType_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_MinimalExtendedType_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 MinimalExtendedTypePubSubType::~MinimalExtendedTypePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool MinimalExtendedTypePubSubType::serialize(
@@ -16717,7 +13073,8 @@ bool MinimalExtendedTypePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const MinimalExtendedType* p_type = static_cast<const MinimalExtendedType*>(data);
+    const MinimalExtendedType* p_type =
+	        static_cast<const MinimalExtendedType*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16737,7 +13094,7 @@ bool MinimalExtendedTypePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16756,7 +13113,8 @@ bool MinimalExtendedTypePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        MinimalExtendedType* p_type = static_cast<MinimalExtendedType*>(data);
+        MinimalExtendedType* p_type =
+		        static_cast<MinimalExtendedType*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16815,16 +13173,9 @@ bool MinimalExtendedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    MinimalExtendedType data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -16834,45 +13185,17 @@ bool MinimalExtendedTypePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const MinimalExtendedType* p_type = static_cast<const MinimalExtendedType*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_MinimalExtendedType_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_MinimalExtendedType_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void MinimalExtendedTypePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 TypeIdentifierTypeObjectPairPubSubType::TypeIdentifierTypeObjectPairPubSubType()
@@ -16882,17 +13205,10 @@ TypeIdentifierTypeObjectPairPubSubType::TypeIdentifierTypeObjectPairPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_TypeIdentifierTypeObjectPair_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_TypeIdentifierTypeObjectPair_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 TypeIdentifierTypeObjectPairPubSubType::~TypeIdentifierTypeObjectPairPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool TypeIdentifierTypeObjectPairPubSubType::serialize(
@@ -16900,7 +13216,8 @@ bool TypeIdentifierTypeObjectPairPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const TypeIdentifierTypeObjectPair* p_type = static_cast<const TypeIdentifierTypeObjectPair*>(data);
+    const TypeIdentifierTypeObjectPair* p_type =
+	        static_cast<const TypeIdentifierTypeObjectPair*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -16920,7 +13237,7 @@ bool TypeIdentifierTypeObjectPairPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -16939,7 +13256,8 @@ bool TypeIdentifierTypeObjectPairPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        TypeIdentifierTypeObjectPair* p_type = static_cast<TypeIdentifierTypeObjectPair*>(data);
+        TypeIdentifierTypeObjectPair* p_type =
+		        static_cast<TypeIdentifierTypeObjectPair*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -16998,16 +13316,9 @@ bool TypeIdentifierTypeObjectPairPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    TypeIdentifierTypeObjectPair data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17017,45 +13328,17 @@ bool TypeIdentifierTypeObjectPairPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const TypeIdentifierTypeObjectPair* p_type = static_cast<const TypeIdentifierTypeObjectPair*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_TypeIdentifierTypeObjectPair_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_TypeIdentifierTypeObjectPair_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void TypeIdentifierTypeObjectPairPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 TypeIdentifierPairPubSubType::TypeIdentifierPairPubSubType()
@@ -17065,17 +13348,10 @@ TypeIdentifierPairPubSubType::TypeIdentifierPairPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_TypeIdentifierPair_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_TypeIdentifierPair_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 TypeIdentifierPairPubSubType::~TypeIdentifierPairPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool TypeIdentifierPairPubSubType::serialize(
@@ -17083,7 +13359,8 @@ bool TypeIdentifierPairPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const TypeIdentifierPair* p_type = static_cast<const TypeIdentifierPair*>(data);
+    const TypeIdentifierPair* p_type =
+	        static_cast<const TypeIdentifierPair*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17103,7 +13380,7 @@ bool TypeIdentifierPairPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17122,7 +13399,8 @@ bool TypeIdentifierPairPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        TypeIdentifierPair* p_type = static_cast<TypeIdentifierPair*>(data);
+        TypeIdentifierPair* p_type =
+		        static_cast<TypeIdentifierPair*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17181,16 +13459,9 @@ bool TypeIdentifierPairPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    TypeIdentifierPair data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17200,45 +13471,17 @@ bool TypeIdentifierPairPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const TypeIdentifierPair* p_type = static_cast<const TypeIdentifierPair*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_TypeIdentifierPair_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_TypeIdentifierPair_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void TypeIdentifierPairPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 TypeIdentfierWithSizePubSubType::TypeIdentfierWithSizePubSubType()
@@ -17248,17 +13491,10 @@ TypeIdentfierWithSizePubSubType::TypeIdentfierWithSizePubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_TypeIdentfierWithSize_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_TypeIdentfierWithSize_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 TypeIdentfierWithSizePubSubType::~TypeIdentfierWithSizePubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool TypeIdentfierWithSizePubSubType::serialize(
@@ -17266,7 +13502,8 @@ bool TypeIdentfierWithSizePubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const TypeIdentfierWithSize* p_type = static_cast<const TypeIdentfierWithSize*>(data);
+    const TypeIdentfierWithSize* p_type =
+	        static_cast<const TypeIdentfierWithSize*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17286,7 +13523,7 @@ bool TypeIdentfierWithSizePubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17305,7 +13542,8 @@ bool TypeIdentfierWithSizePubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        TypeIdentfierWithSize* p_type = static_cast<TypeIdentfierWithSize*>(data);
+        TypeIdentfierWithSize* p_type =
+		        static_cast<TypeIdentfierWithSize*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17364,16 +13602,9 @@ bool TypeIdentfierWithSizePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    TypeIdentfierWithSize data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17383,45 +13614,17 @@ bool TypeIdentfierWithSizePubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const TypeIdentfierWithSize* p_type = static_cast<const TypeIdentfierWithSize*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_TypeIdentfierWithSize_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_TypeIdentfierWithSize_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void TypeIdentfierWithSizePubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 TypeIdentifierWithDependenciesPubSubType::TypeIdentifierWithDependenciesPubSubType()
@@ -17431,17 +13634,10 @@ TypeIdentifierWithDependenciesPubSubType::TypeIdentifierWithDependenciesPubSubTy
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_TypeIdentifierWithDependencies_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_TypeIdentifierWithDependencies_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 TypeIdentifierWithDependenciesPubSubType::~TypeIdentifierWithDependenciesPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool TypeIdentifierWithDependenciesPubSubType::serialize(
@@ -17449,7 +13645,8 @@ bool TypeIdentifierWithDependenciesPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const TypeIdentifierWithDependencies* p_type = static_cast<const TypeIdentifierWithDependencies*>(data);
+    const TypeIdentifierWithDependencies* p_type =
+	        static_cast<const TypeIdentifierWithDependencies*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17469,7 +13666,7 @@ bool TypeIdentifierWithDependenciesPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17488,7 +13685,8 @@ bool TypeIdentifierWithDependenciesPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        TypeIdentifierWithDependencies* p_type = static_cast<TypeIdentifierWithDependencies*>(data);
+        TypeIdentifierWithDependencies* p_type =
+		        static_cast<TypeIdentifierWithDependencies*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17547,16 +13745,9 @@ bool TypeIdentifierWithDependenciesPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    TypeIdentifierWithDependencies data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17566,45 +13757,17 @@ bool TypeIdentifierWithDependenciesPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const TypeIdentifierWithDependencies* p_type = static_cast<const TypeIdentifierWithDependencies*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_TypeIdentifierWithDependencies_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_TypeIdentifierWithDependencies_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void TypeIdentifierWithDependenciesPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 TypeInformationPubSubType::TypeInformationPubSubType()
@@ -17614,17 +13777,10 @@ TypeInformationPubSubType::TypeInformationPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     max_serialized_type_size = type_size + 4; /*encapsulation*/
     is_compute_key_provided = false;
-    uint32_t key_length = eprosima_fastdds_dds_xtypes_TypeInformation_max_key_cdr_typesize > 16 ? eprosima_fastdds_dds_xtypes_TypeInformation_max_key_cdr_typesize : 16;
-    key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
-    memset(key_buffer_, 0, key_length);
 }
 
 TypeInformationPubSubType::~TypeInformationPubSubType()
 {
-    if (key_buffer_ != nullptr)
-    {
-        free(key_buffer_);
-    }
 }
 
 bool TypeInformationPubSubType::serialize(
@@ -17632,7 +13788,8 @@ bool TypeInformationPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const TypeInformation* p_type = static_cast<const TypeInformation*>(data);
+    const TypeInformation* p_type =
+	        static_cast<const TypeInformation*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -17652,7 +13809,7 @@ bool TypeInformationPubSubType::serialize(
         ser.serialize_encapsulation();
         // Serialize the object.
         ser << *p_type;
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -17671,7 +13828,8 @@ bool TypeInformationPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        TypeInformation* p_type = static_cast<TypeInformation*>(data);
+        TypeInformation* p_type =
+		        static_cast<TypeInformation*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -17730,16 +13888,9 @@ bool TypeInformationPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
-
-    TypeInformation data;
-    if (deserialize(payload, static_cast<void*>(&data)))
-    {
-        return compute_key(static_cast<void*>(&data), handle, force_md5);
-    }
+    static_cast<void>(payload);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
     return false;
 }
@@ -17749,45 +13900,17 @@ bool TypeInformationPubSubType::compute_key(
         InstanceHandle_t& handle,
         bool force_md5)
 {
-    if (!is_compute_key_provided)
-    {
-        return false;
-    }
+    static_cast<void>(data);
+    static_cast<void>(handle);
+    static_cast<void>(force_md5);
 
-    const TypeInformation* p_type = static_cast<const TypeInformation*>(data);
-
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer_),
-            eprosima_fastdds_dds_xtypes_TypeInformation_max_key_cdr_typesize);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv2);
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
-    eprosima::fastcdr::serialize_key(ser, *p_type);
-    if (force_md5 || eprosima_fastdds_dds_xtypes_TypeInformation_max_key_cdr_typesize > 16)
-    {
-        md5_.init();
-        md5_.update(key_buffer_, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        md5_.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = md5_.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle.value[i] = key_buffer_[i];
-        }
-    }
-    return true;
+    return false;
 }
 
 void TypeInformationPubSubType::register_type_object_representation()
 {
     EPROSIMA_LOG_WARNING(XTYPES_TYPE_REPRESENTATION,
-        "TypeObject type representation support disabled in generated code");
+            "TypeObject type representation support disabled in generated code");
 }
 
 
@@ -17799,7 +13922,6 @@ void TypeInformationPubSubType::register_type_object_representation()
 } // namespace fastdds
 
 } // namespace eprosima
-
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "dds_xtypes_typeobjectCdrAux.ipp"

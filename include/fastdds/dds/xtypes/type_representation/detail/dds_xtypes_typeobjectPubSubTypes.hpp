@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__EPROSIMA_FASTDDS_DDS_XTYPES_DDS_XTYPES_TYPEOBJECT_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__EPROSIMA_FASTDDS_DDS_XTYPES_DDS_XTYPES_TYPEOBJECT_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -192,9 +194,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -327,9 +326,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -423,9 +419,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -503,9 +496,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -585,9 +575,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -665,9 +652,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -747,9 +731,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -827,9 +808,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -909,9 +887,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -990,9 +965,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -1070,9 +1042,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1157,9 +1126,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 
     static constexpr bool is_plain_xcdrv1_impl()
@@ -1252,9 +1218,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -1332,9 +1295,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter> AppliedAnnotationParameterSeq;
@@ -1415,9 +1375,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::AppliedAnnotation> AppliedAnnotationSeq;
 
@@ -1497,9 +1454,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -1577,9 +1531,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1659,9 +1610,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -1739,9 +1687,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -1860,9 +1805,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -1956,9 +1898,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteStructMember> CompleteStructMemberSeq;
 
@@ -2038,9 +1977,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalStructMember> MinimalStructMemberSeq;
 
@@ -2119,9 +2055,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2206,9 +2139,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 
     static constexpr bool is_plain_xcdrv1_impl()
@@ -2299,9 +2229,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -2379,9 +2306,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -2461,9 +2385,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -2542,9 +2463,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -2622,9 +2540,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<int32_t> UnionCaseLabelSeq;
@@ -2705,9 +2620,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -2785,9 +2697,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteUnionMember> CompleteUnionMemberSeq;
@@ -2868,9 +2777,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalUnionMember> MinimalUnionMemberSeq;
 
@@ -2950,9 +2856,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -3030,9 +2933,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3112,9 +3012,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -3192,9 +3089,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3274,9 +3168,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -3354,9 +3245,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3436,9 +3324,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -3517,9 +3402,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -3597,9 +3479,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter> CompleteAnnotationParameterSeq;
@@ -3680,9 +3559,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter> MinimalAnnotationParameterSeq;
 
@@ -3762,9 +3638,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -3842,9 +3715,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -3924,9 +3794,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4004,9 +3871,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -4086,9 +3950,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4166,9 +4027,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -4248,9 +4106,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4328,9 +4183,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -4410,9 +4262,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4490,9 +4339,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -4572,9 +4418,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4652,9 +4495,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -4734,9 +4574,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4815,9 +4652,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -4895,9 +4729,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -5016,9 +4847,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -5112,9 +4940,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -5192,9 +5017,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -5274,9 +5096,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -5354,9 +5173,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -5436,9 +5252,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -5516,9 +5329,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -5598,9 +5408,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -5678,9 +5485,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -5760,9 +5564,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -5841,9 +5642,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -5921,9 +5719,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef uint16_t BitBound;
@@ -6004,9 +5799,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -6084,9 +5876,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
@@ -6166,9 +5955,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral> MinimalEnumeratedLiteralSeq;
@@ -6288,9 +6074,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -6384,9 +6167,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -6464,9 +6244,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -6546,9 +6323,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -6626,9 +6400,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -6708,9 +6479,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -6788,9 +6556,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteBitflag> CompleteBitflagSeq;
@@ -6870,9 +6635,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalBitflag> MinimalBitflagSeq;
@@ -6992,9 +6754,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -7090,9 +6849,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -7170,9 +6926,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -7252,9 +7005,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -7332,9 +7082,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteBitfield> CompleteBitfieldSeq;
@@ -7415,9 +7162,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalBitfield> MinimalBitfieldSeq;
 
@@ -7497,9 +7241,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -7577,9 +7318,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -7659,9 +7397,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -7739,9 +7474,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 
@@ -7821,9 +7553,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 
 /*!
@@ -7901,9 +7630,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeObject> TypeObjectSeq;
@@ -7985,9 +7711,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSeq;
 
@@ -8066,9 +7789,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair> TypeIdentifierPairSeq;
@@ -8149,9 +7869,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize> TypeIdentfierWithSizeSeq;
 
@@ -8231,9 +7948,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies> TypeIdentifierWithDependenciesSeq;
 
@@ -8312,9 +8026,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeInformation> TypeInformationSeq;

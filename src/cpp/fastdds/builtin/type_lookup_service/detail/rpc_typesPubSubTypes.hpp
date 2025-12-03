@@ -23,6 +23,8 @@
 #ifndef FAST_DDS_GENERATED__EPROSIMA_FASTDDS_DDS_RPC_RPC_TYPES_PUBSUBTYPES_HPP
 #define FAST_DDS_GENERATED__EPROSIMA_FASTDDS_DDS_RPC_RPC_TYPES_PUBSUBTYPES_HPP
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
@@ -161,9 +163,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -295,9 +294,6 @@ public:
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
 private:
-
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
 
 
     static constexpr bool is_plain_xcdrv1_impl()
@@ -431,9 +427,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -566,9 +559,6 @@ public:
 
 private:
 
-    eprosima::fastdds::MD5 md5_;
-    unsigned char* key_buffer_;
-
 
     static constexpr bool is_plain_xcdrv1_impl()
     {
@@ -585,229 +575,222 @@ private:
     }
 
 };
-namespace rpc
+namespace rpc {
+typedef uint8_t UnknownOperation;
+typedef uint8_t UnknownException;
+typedef uint8_t UnusedMember;
+typedef eprosima::fastcdr::fixed_string<255> InstanceName;
+
+/*!
+ * @brief This class represents the TopicDataType of the type RequestHeader defined by the user in the IDL file.
+ * @ingroup rpc_types
+ */
+class RequestHeaderPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
-    typedef uint8_t UnknownOperation;
-    typedef uint8_t UnknownException;
-    typedef uint8_t UnusedMember;
-    typedef eprosima::fastcdr::fixed_string<255> InstanceName;
+public:
 
-    /*!
-     * @brief This class represents the TopicDataType of the type RequestHeader defined by the user in the IDL file.
-     * @ingroup rpc_types
-     */
-    class RequestHeaderPubSubType : public eprosima::fastdds::dds::TopicDataType
+    typedef RequestHeader type;
+
+    eProsima_user_DllExport RequestHeaderPubSubType();
+
+    eProsima_user_DllExport ~RequestHeaderPubSubType() override;
+
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            void* data) override;
+
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport bool compute_key(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport void* create_data() override;
+
+    eProsima_user_DllExport void delete_data(
+            void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
     {
-    public:
-
-        typedef RequestHeader type;
-
-        eProsima_user_DllExport RequestHeaderPubSubType();
-
-        eProsima_user_DllExport ~RequestHeaderPubSubType() override;
-
-        eProsima_user_DllExport bool serialize(
-                const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-        eProsima_user_DllExport bool deserialize(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                void* data) override;
-
-        eProsima_user_DllExport uint32_t calculate_serialized_size(
-                const void* const data,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-        eProsima_user_DllExport bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override;
-
-        eProsima_user_DllExport bool compute_key(
-                const void* const data,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override;
-
-        eProsima_user_DllExport void* create_data() override;
-
-        eProsima_user_DllExport void delete_data(
-                void* data) override;
-
-        //Register TypeObject representation in Fast DDS TypeObjectRegistry
-        eProsima_user_DllExport void register_type_object_representation() override;
-
-    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-        eProsima_user_DllExport inline bool is_bounded() const override
-        {
-            return true;
-        }
-
-    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-        eProsima_user_DllExport inline bool is_plain(
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
-        {
-            static_cast<void>(data_representation);
-            return false;
-        }
-
-    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-    #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-        eProsima_user_DllExport inline bool construct_sample(
-                void* memory) const override
-        {
-            static_cast<void>(memory);
-            return false;
-        }
-
-    #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    private:
-
-        eprosima::fastdds::MD5 md5_;
-        unsigned char* key_buffer_;
-
-    };
-
-    #ifndef SWIG
-    namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct ReplyHeader_rob
-    {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-
-    };
-
-    struct ReplyHeader_f
-    {
-        typedef eprosima::fastdds::dds::rpc::RemoteExceptionCode_t ReplyHeader::* type;
-        friend constexpr type get(
-                ReplyHeader_f);
-    };
-
-    template struct ReplyHeader_rob<ReplyHeader_f, &ReplyHeader::m_remoteEx>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr ReplyHeader_offset_of()
-    {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        return true;
     }
 
-    } // namespace detail
-    #endif // ifndef SWIG
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
 
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    /*!
-     * @brief This class represents the TopicDataType of the type ReplyHeader defined by the user in the IDL file.
-     * @ingroup rpc_types
-     */
-    class ReplyHeaderPubSubType : public eprosima::fastdds::dds::TopicDataType
+    eProsima_user_DllExport inline bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-    public:
+        static_cast<void>(data_representation);
+        return false;
+    }
 
-        typedef ReplyHeader type;
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-        eProsima_user_DllExport ReplyHeaderPubSubType();
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        static_cast<void>(memory);
+        return false;
+    }
 
-        eProsima_user_DllExport ~ReplyHeaderPubSubType() override;
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-        eProsima_user_DllExport bool serialize(
-                const void* const data,
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+private:
 
-        eProsima_user_DllExport bool deserialize(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                void* data) override;
+};
 
-        eProsima_user_DllExport uint32_t calculate_serialized_size(
-                const void* const data,
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+#ifndef SWIG
+namespace detail {
 
-        eProsima_user_DllExport bool compute_key(
-                eprosima::fastdds::rtps::SerializedPayload_t& payload,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override;
+template<typename Tag, typename Tag::type M>
+struct ReplyHeader_rob
+{
+    friend constexpr typename Tag::type get(
+            Tag)
+    {
+        return M;
+    }
 
-        eProsima_user_DllExport bool compute_key(
-                const void* const data,
-                eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
-                bool force_md5 = false) override;
+};
 
-        eProsima_user_DllExport void* create_data() override;
+struct ReplyHeader_f
+{
+    typedef eprosima::fastdds::dds::rpc::RemoteExceptionCode_t ReplyHeader::* type;
+    friend constexpr type get(
+            ReplyHeader_f);
+};
 
-        eProsima_user_DllExport void delete_data(
-                void* data) override;
+template struct ReplyHeader_rob<ReplyHeader_f, &ReplyHeader::m_remoteEx>;
 
-        //Register TypeObject representation in Fast DDS TypeObjectRegistry
-        eProsima_user_DllExport void register_type_object_representation() override;
+template <typename T, typename Tag>
+inline size_t constexpr ReplyHeader_offset_of()
+{
+    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+}
 
-    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-        eProsima_user_DllExport inline bool is_bounded() const override
+} // namespace detail
+#endif // ifndef SWIG
+
+
+/*!
+ * @brief This class represents the TopicDataType of the type ReplyHeader defined by the user in the IDL file.
+ * @ingroup rpc_types
+ */
+class ReplyHeaderPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef ReplyHeader type;
+
+    eProsima_user_DllExport ReplyHeaderPubSubType();
+
+    eProsima_user_DllExport ~ReplyHeaderPubSubType() override;
+
+    eProsima_user_DllExport bool serialize(
+            const void* const data,
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool deserialize(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            void* data) override;
+
+    eProsima_user_DllExport uint32_t calculate_serialized_size(
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
+
+    eProsima_user_DllExport bool compute_key(
+            eprosima::fastdds::rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport bool compute_key(
+            const void* const data,
+            eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport void* create_data() override;
+
+    eProsima_user_DllExport void delete_data(
+            void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+    eProsima_user_DllExport inline bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
-            return true;
+            return is_plain_xcdrv2_impl();
         }
-
-    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-    #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-        eProsima_user_DllExport inline bool is_plain(
-                eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+        else
         {
-            if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
-            {
-                return is_plain_xcdrv2_impl();
-            }
-            else
-            {
-                return is_plain_xcdrv1_impl();
-            }
+            return is_plain_xcdrv1_impl();
         }
+    }
 
-    #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
-    #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-        eProsima_user_DllExport inline bool construct_sample(
-                void* memory) const override
-        {
-            new (memory) ReplyHeader();
-            return true;
-        }
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) ReplyHeader();
+        return true;
+    }
 
-    #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    private:
-
-        eprosima::fastdds::MD5 md5_;
-        unsigned char* key_buffer_;
+private:
 
 
-        static constexpr bool is_plain_xcdrv1_impl()
-        {
-            return 28ULL ==
-                   (detail::ReplyHeader_offset_of<ReplyHeader, detail::ReplyHeader_f>() +
-                   sizeof(eprosima::fastdds::dds::rpc::RemoteExceptionCode_t));
-        }
+    static constexpr bool is_plain_xcdrv1_impl()
+    {
+        return 28ULL ==
+               (detail::ReplyHeader_offset_of<ReplyHeader, detail::ReplyHeader_f>() +
+               sizeof(eprosima::fastdds::dds::rpc::RemoteExceptionCode_t));
+    }
 
-        static constexpr bool is_plain_xcdrv2_impl()
-        {
-            return 28ULL ==
-                   (detail::ReplyHeader_offset_of<ReplyHeader, detail::ReplyHeader_f>() +
-                   sizeof(eprosima::fastdds::dds::rpc::RemoteExceptionCode_t));
-        }
+    static constexpr bool is_plain_xcdrv2_impl()
+    {
+        return 28ULL ==
+               (detail::ReplyHeader_offset_of<ReplyHeader, detail::ReplyHeader_f>() +
+               sizeof(eprosima::fastdds::dds::rpc::RemoteExceptionCode_t));
+    }
 
-    };
-} // namespace rpc
+};
+}  // namespace rpc
 
 } // namespace dds
 
