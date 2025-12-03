@@ -241,6 +241,150 @@ public:
 
 };
 
+
+class ComputeKeyFalseDefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyFalseDefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        max_serialized_type_size = 4u;
+        is_compute_key_provided = true;
+        set_name("unknowninstancefootype");
+    }
+
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.value[0] = 1;
+        return false;
+    }
+
+    bool compute_key(
+            const void* const /*data*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.value[0] = 1;
+        return false;
+    }
+};
+
+
+class ComputeKeyTrueDefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyTrueDefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        max_serialized_type_size = 4u;
+        is_compute_key_provided = true;
+        set_name("unknowninstancefootype");
+    }
+
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.value[0] = 1;
+        return true;
+    }
+
+    bool compute_key(
+            const void* const /*data*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.value[0] = 1;
+        return true;
+    }
+};
+
+
+class ComputeKeyFalseUndefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyFalseUndefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        max_serialized_type_size = 4u;
+        is_compute_key_provided = true;
+        set_name("unknowninstancefootype");
+    }
+
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.clear();
+        return false;
+    }
+
+    bool compute_key(
+            const void* const /*data*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.clear();
+        return false;
+    }
+};
+
+
+class ComputeKeyTrueUndefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyTrueUndefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        max_serialized_type_size = 4u;
+        is_compute_key_provided = true;
+        set_name("unknowninstancefootype");
+    }
+
+    bool compute_key(
+            fastdds::rtps::SerializedPayload_t& /*payload*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.clear();
+        return true;
+    }
+
+    bool compute_key(
+            const void* const /*data*/,
+            fastdds::rtps::InstanceHandle_t& ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle.clear();
+        return true;
+    }
+};
+
 class BoundedTopicDataTypeMock : public TopicDataType
 {
 public:
@@ -787,6 +931,243 @@ TEST(DataWriterTests, Write)
     ASSERT_TRUE(datawriter->write(&data, datawriter->get_instance_handle()) ==
             RETCODE_PRECONDITION_NOT_MET);
 
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
+TEST(DataWriterTests, write_with_compute_key_true_defined_instance)
+{
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    // Create publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+    // Register types and topics
+    TypeSupport instance_type(new ComputeKeyTrueDefinedInstanceDataTypeMock());
+    instance_type.register_type(participant);
+    Topic* topic = participant->create_topic("unknowninstancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    // Create datawriter
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+
+    InstanceHandle_t valid_handle;
+    // Setting this value up automatically makes the instance valid
+    valid_handle.value[0] = 5;
+
+    FooType data;
+    data.message("HelloWorld");
+    fastdds::rtps::WriteParams wp;
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
+
+    // Compute key will return true and a defined instance with value 1 (!= valid_handle)
+    ASSERT_TRUE(datawriter->write(&data) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write(&data, wp) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == RETCODE_OK);
+    // Fails with valid handle
+    #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
+    #endif
+    #if !defined(NDEBUG) // In Debug build, instance is recomputed and detected as different
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    valid_handle.clear();
+    instance_type->compute_key(&data, valid_handle);
+    // Both debug and release work fine because the key is the same as computed
+    #if defined(NDEBUG)
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    #else
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    #endif
+
+    // Cleanup
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
+TEST(DataWriterTests, write_with_compute_key_true_undefined_instance)
+{
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    // Create publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+    // Register types and topics
+    TypeSupport instance_type(new ComputeKeyTrueUndefinedInstanceDataTypeMock());
+    instance_type.register_type(participant);
+    Topic* topic = participant->create_topic("unknowninstancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    // Create datawriter
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+
+    InstanceHandle_t valid_handle;
+    // Setting this value up automatically makes the instance valid
+    valid_handle.value[0] = 5;
+
+    FooType data;
+    data.message("HelloWorld");
+    fastdds::rtps::WriteParams wp;
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
+
+    // Compute key will return true but and invalid instance, and it is required
+    ASSERT_TRUE(datawriter->write(&data) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write(&data, wp) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == RETCODE_PRECONDITION_NOT_MET);
+    // Fails with valid handle
+    #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
+    #endif
+    #if !defined(NDEBUG) // In Debug build, instance is recomputed and detected as different
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    valid_handle.clear();
+    valid_handle.value[0] = 1; // Same as computed instance
+    ASSERT_TRUE(valid_handle.isDefined());
+    // Attempt to recompute key to check equality, but compute_key returns invalid instance
+    #if defined(NDEBUG)
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    #else
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    // Cleanup
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
+TEST(DataWriterTests, write_with_compute_key_false_defined_instance)
+{
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    // Create publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+    // Register types and topics
+    TypeSupport instance_type(new ComputeKeyFalseDefinedInstanceDataTypeMock());
+    instance_type.register_type(participant);
+    Topic* topic = participant->create_topic("unknowninstancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    // Create datawriter
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+
+    InstanceHandle_t valid_handle;
+    // Setting this value up automatically makes the instance valid
+    valid_handle.value[0] = 5;
+    ASSERT_TRUE(valid_handle.isDefined());
+
+    FooType data;
+    data.message("HelloWorld");
+    fastdds::rtps::WriteParams wp;
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
+
+    // Compute key will return false and it is required
+    ASSERT_TRUE(datawriter->write(&data) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write(&data, wp) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == RETCODE_PRECONDITION_NOT_MET);
+    // Fails with valid handle
+    #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
+    #endif
+    #if !defined(NDEBUG) // In Debug build, instance is recomputed and compute_key fails
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    valid_handle.clear();
+    valid_handle.value[0] = 1; // Same as computed instance
+    ASSERT_TRUE(valid_handle.isDefined());
+    // Attempt to recompute key to check equality, but compute_key returns false
+    #if defined(NDEBUG)
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    #else
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    // Cleanup
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
+TEST(DataWriterTests, write_with_compute_key_false_undefined_instance)
+{
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+    // Create publisher
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+    // Register types and topics
+    TypeSupport instance_type(new ComputeKeyFalseUndefinedInstanceDataTypeMock());
+    instance_type.register_type(participant);
+    Topic* topic = participant->create_topic("unknowninstancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    // Create datawriter
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, datawriter);
+
+    InstanceHandle_t valid_handle;
+    // Setting this value up automatically makes the instance valid
+    valid_handle.value[0] = 5;
+    ASSERT_TRUE(valid_handle.isDefined());
+
+    FooType data;
+    data.message("HelloWorld");
+    fastdds::rtps::WriteParams wp;
+    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
+
+    // Compute key will return false and it is required
+    ASSERT_TRUE(datawriter->write(&data) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write(&data, wp) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write(&data, HANDLE_NIL) == RETCODE_PRECONDITION_NOT_MET);
+    // Fails with valid handle
+    #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
+    #endif
+    #if !defined(NDEBUG) // In Debug build, instance is recomputed and compute_key fails
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    valid_handle.clear();
+    valid_handle.value[0] = 1; // Same as computed instance
+    ASSERT_TRUE(valid_handle.isDefined());
+    // Attempt to recompute key to check equality, but compute_key returns false
+    #if defined(NDEBUG)
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
+    #else
+    ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
+    #endif
+
+    // Cleanup
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
     ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
