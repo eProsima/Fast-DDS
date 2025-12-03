@@ -271,9 +271,9 @@ bool RTPSMessageCreator::addSubmessageData(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        if(WITH_KEY == topicKind &&
-           change->instanceHandle.isDefined() == false &&
-           (expectsInlineQos || change->kind != ALIVE))
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false &&
+                (expectsInlineQos || change->kind != ALIVE))
         {
             // Instance handle is required but not defined
             EPROSIMA_LOG_ERROR(RTPS_WRITER,
@@ -470,9 +470,9 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
-        if(WITH_KEY == topicKind &&
-           change->instanceHandle.isDefined() == false &&
-           (expectsInlineQos || change->kind != ALIVE))
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false &&
+                (expectsInlineQos || change->kind != ALIVE))
         {
             // Instance handle is required but not defined
             EPROSIMA_LOG_ERROR(RTPS_WRITER,

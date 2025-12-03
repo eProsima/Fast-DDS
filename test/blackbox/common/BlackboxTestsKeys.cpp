@@ -297,6 +297,260 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
     EXPECT_TRUE(writer_sends_pid_key_hash);
 }
 
+TEST(KeyedTopic, DataWriterDoesNotSendTheSerializedKeyWhenComputeKeyFails)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
+    bool writer_sends_inline_qos = true;
+    bool writer_sends_pid_key_hash = true;
+
+    test_transport->drop_data_messages_filter_ = [&writer_sends_inline_qos,
+                    &writer_sends_pid_key_hash](eprosima::fastdds::rtps::CDRMessage_t& msg) -> bool
+            {
+                // Check for inline_qos
+                uint8_t flags = msg.buffer[msg.pos - 3];
+                auto old_pos = msg.pos;
+
+                // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
+                msg.pos += 2;
+                uint16_t to_inline_qos = eprosima::fastdds::helpers::cdr_parse_u16(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 2;
+
+                uint32_t inline_qos_pos = msg.pos + to_inline_qos;
+
+                // Filters are only applied to user data
+                // no need to check if the packets comer from a builtin
+
+                writer_sends_inline_qos &= static_cast<bool>((flags & (1 << 1)));
+
+                // Stop seeking if inline qos are not present
+                // Fail the test afterwards
+                if (!writer_sends_inline_qos)
+                {
+                    return false;
+                }
+                else
+                {
+                    // Process inline qos
+                    msg.pos = inline_qos_pos;
+                    bool key_hash_was_found = false;
+                    while (msg.pos < msg.length)
+                    {
+                        uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                            (char*)&msg.buffer[msg.pos]);
+                        msg.pos += 2;
+                        uint16_t plen = eprosima::fastdds::helpers::cdr_parse_u16(
+                            (char*)&msg.buffer[msg.pos]);
+                        msg.pos += 2;
+                        uint32_t next_pos = msg.pos + plen;
+
+                        if (pid == eprosima::fastdds::dds::PID_KEY_HASH)
+                        {
+                            key_hash_was_found = true;
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                        {
+                            break;
+                        }
+
+                        msg.pos = next_pos;
+                    }
+
+                    writer_sends_pid_key_hash &= key_hash_was_found;
+                    msg.pos = old_pos;
+                }
+
+                // Do not drop the packet in any case
+                return false;
+    };
+
+    struct TestTypeSupport : public KeyedHelloWorldPubSubType
+    {
+        typedef KeyedHelloWorldPubSubType::type type;
+
+        bool compute_key(
+                eprosima::fastdds::rtps::SerializedPayload_t& ,
+                eprosima::fastdds::rtps::InstanceHandle_t& ,
+                bool ) override
+        {
+           return false;
+        }
+
+        bool compute_key(
+                const void* const ,
+                eprosima::fastdds::rtps::InstanceHandle_t& ,
+                bool ) override
+        {
+            // Returning false to simulate failure to compute key
+            return false;
+        }
+
+    private:
+
+        mutable std::mutex mtx_;
+        std::condition_variable cv_;
+        std::uint32_t key_only_payload_count_ = 0;
+    };
+
+
+    PubSubWriter<TestTypeSupport> writer(TEST_TOPIC_NAME);
+    PubSubReader<TestTypeSupport> reader(TEST_TOPIC_NAME);
+    auto type_support_ptr = std::dynamic_pointer_cast<TestTypeSupport>(reader.get_type_support());
+
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.expect_inline_qos(false).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+
+    // Start of proper test
+
+    // Generate a sample
+    auto data = default_keyedhelloworld_data_generator(1);
+    InstanceHandle_t undefined_handle;
+    // Send the sample with an undefined key
+    writer.send_sample(data.front(), undefined_handle);
+    // Reception
+    reader.startReception(data);
+    // The writer should not send pid KEY_HASH as it was not defined
+    EXPECT_FALSE(writer_sends_pid_key_hash);
+}
+
+TEST(KeyedTopic, DataWriterDoesNotSendTheSerializedKeyWhenInstanceUndefined)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
+    bool writer_sends_inline_qos = true;
+    bool writer_sends_pid_key_hash = true;
+
+    test_transport->drop_data_messages_filter_ = [&writer_sends_inline_qos,
+                    &writer_sends_pid_key_hash](eprosima::fastdds::rtps::CDRMessage_t& msg) -> bool
+            {
+                // Check for inline_qos
+                uint8_t flags = msg.buffer[msg.pos - 3];
+                auto old_pos = msg.pos;
+
+                // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
+                msg.pos += 2;
+                uint16_t to_inline_qos = eprosima::fastdds::helpers::cdr_parse_u16(
+                    (char*)&msg.buffer[msg.pos]);
+                msg.pos += 2;
+
+                uint32_t inline_qos_pos = msg.pos + to_inline_qos;
+
+                // Filters are only applied to user data
+                // no need to check if the packets comer from a builtin
+
+                writer_sends_inline_qos &= static_cast<bool>((flags & (1 << 1)));
+
+                // Stop seeking if inline qos are not present
+                // Fail the test afterwards
+                if (!writer_sends_inline_qos)
+                {
+                    return false;
+                }
+                else
+                {
+                    // Process inline qos
+                    msg.pos = inline_qos_pos;
+                    bool key_hash_was_found = false;
+                    while (msg.pos < msg.length)
+                    {
+                        uint16_t pid = eprosima::fastdds::helpers::cdr_parse_u16(
+                            (char*)&msg.buffer[msg.pos]);
+                        msg.pos += 2;
+                        uint16_t plen = eprosima::fastdds::helpers::cdr_parse_u16(
+                            (char*)&msg.buffer[msg.pos]);
+                        msg.pos += 2;
+                        uint32_t next_pos = msg.pos + plen;
+
+                        if (pid == eprosima::fastdds::dds::PID_KEY_HASH)
+                        {
+                            key_hash_was_found = true;
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                        {
+                            break;
+                        }
+
+                        msg.pos = next_pos;
+                    }
+
+                    writer_sends_pid_key_hash &= key_hash_was_found;
+                    msg.pos = old_pos;
+                }
+
+                // Do not drop the packet in any case
+                return false;
+    };
+
+    struct TestTypeSupport : public KeyedHelloWorldPubSubType
+    {
+        typedef KeyedHelloWorldPubSubType::type type;
+
+        bool compute_key(
+                eprosima::fastdds::rtps::SerializedPayload_t& ,
+                eprosima::fastdds::rtps::InstanceHandle_t& handle,
+                bool ) override
+        {
+            handle = eprosima::fastdds::rtps::InstanceHandle_t();
+            return true;
+        }
+
+        bool compute_key(
+                const void* const ,
+                eprosima::fastdds::rtps::InstanceHandle_t& handle,
+                bool ) override
+        {
+            handle = eprosima::fastdds::rtps::InstanceHandle_t();
+            return true;
+        }
+
+    private:
+
+        mutable std::mutex mtx_;
+        std::condition_variable cv_;
+        std::uint32_t key_only_payload_count_ = 0;
+    };
+
+    PubSubWriter<TestTypeSupport> writer(TEST_TOPIC_NAME);
+    PubSubReader<TestTypeSupport> reader(TEST_TOPIC_NAME);
+    auto type_support_ptr = std::dynamic_pointer_cast<TestTypeSupport>(reader.get_type_support());
+
+    writer.disable_builtin_transport().add_user_transport_to_pparams(test_transport).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.expect_inline_qos(false).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Generate a sample
+    auto data = default_keyedhelloworld_data_generator(1);
+    // Set undefined handle, howeveer, compute_key will overwrite it as it is undefined
+    InstanceHandle_t undefined_handle;
+    // Send the sample with an undefined key
+    writer.send_sample(data.front(), undefined_handle);
+    // Reception
+    reader.startReception(data);
+    // The writer should not send pid KEY_HASH as it was not defined
+    EXPECT_FALSE(writer_sends_pid_key_hash);
+}
+
 // Check that compute_key is called with a key-only payload when KEY_HASH is not present
 TEST(KeyedTopic, key_only_payload)
 {
