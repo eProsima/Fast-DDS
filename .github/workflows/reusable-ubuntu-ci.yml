@@ -61,11 +61,19 @@ on:
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
+<<<<<<< HEAD
   fastdds-python-branch: '2.3.x'
   fastdds-docs-branch: '3.3.x'
   shapes-demo-branch: '3.3.x'
   discovery-server-branch: '2.1.x'
   
+=======
+  fastdds-python-branch: 'main'
+  fastdds-docs-branch: 'master'
+  shapes-demo-branch: 'master'
+  discovery-server-branch: 'master'
+
+>>>>>>> 8b08b32c (Free disk space in Ubuntu runners (#6192))
 defaults:
   run:
     shell: bash
@@ -87,6 +95,9 @@ jobs:
           labels: ci-pending
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
+
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
 
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -178,6 +189,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -278,6 +292,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -355,6 +372,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download python build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -441,6 +461,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download python build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -460,7 +483,7 @@ jobs:
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig doxygen imagemagick plantuml
+          packages: libasio-dev libtinyxml2-dev libssl-dev swig doxygen imagemagick plantuml libenchant-2-2
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -548,6 +571,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -629,6 +655,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
@@ -729,6 +758,9 @@ jobs:
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
       - name: Download build artifacts
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
