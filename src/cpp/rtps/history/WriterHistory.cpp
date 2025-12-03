@@ -151,6 +151,13 @@ bool WriterHistory::prepare_and_add_change(
                 "' bytes and cannot be resized.");
         return false;
     }
+    if (TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind && !a_change->instanceHandle.isDefined() &&
+            a_change->kind != ALIVE)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "Changes of type not equal to ALIVE in KEYED Writers need a valid instanceHandle.");
+        return false;
+    }
 
     if (m_isHistoryFull)
     {

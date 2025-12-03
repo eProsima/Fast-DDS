@@ -147,28 +147,21 @@ struct DataMsgUtils
                 msg, change->write_params.original_writer_info());
         }
 
-        if (WITH_KEY == topicKind && (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
+        if (WITH_KEY == topicKind && change->instanceHandle.isDefined() &&
+                (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
         {
-            if (change->instanceHandle.isDefined())
-            {
-                /**
-                 * If instanceHandle is not defined, this means the key hash is not populated. It makes no sense
-                 * to serialize a parameter with an undefined or empty value because it could be interpreted as
-                 * a 'valid' key hash on the reader side
-                 **/
-                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
-                        change->instanceHandle);
+            /**
+             * If instanceHandle is not defined, this means the key hash is not populated. It makes no sense
+             * to serialize a parameter with an undefined or empty value because it could be interpreted as
+             * a 'valid' key hash on the reader side
+             **/
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
+                    change->instanceHandle);
 
-                /** Changes like UNREGISTER or DISPOSE must include the key, they can't be sent without key */
-                if (ALIVE != change->kind)
-                {
-                    fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
-                }
-            }
-            else
+            /** Changes like UNREGISTER or DISPOSE must include the key, they can't be sent without key */
+            if (ALIVE != change->kind)
             {
-                EPROSIMA_LOG_WARNING(RTPS_WRITER,
-                        "Change does not have a valid instanceHandle. KEY_HASH will not be serialized.");
+                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
             }
         }
 
@@ -279,6 +272,13 @@ bool RTPSMessageCreator::addSubmessageData(
             EPROSIMA_LOG_ERROR(RTPS_WRITER,
                     "Changes in KEYED Writers need a valid instanceHandle. Message won't be serialized");
             return false;
+        }
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false)
+        {
+            // Instance handle should be defined but is not compulsory, this is just a warning
+            EPROSIMA_LOG_WARNING(RTPS_WRITER,
+                    "Change does not have a valid instanceHandle. KEY_HASH will not be serialized.");
         }
         DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
@@ -478,6 +478,13 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
             EPROSIMA_LOG_ERROR(RTPS_WRITER,
                     "Changes in KEYED Writers need a valid instanceHandle. Message won't be serialized");
             return false;
+        }
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false)
+        {
+            // Instance handle should be defined but is not compulsory, this is just a warning
+            EPROSIMA_LOG_WARNING(RTPS_WRITER,
+                    "Change does not have a valid instanceHandle. KEY_HASH will not be serialized.");
         }
         DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }

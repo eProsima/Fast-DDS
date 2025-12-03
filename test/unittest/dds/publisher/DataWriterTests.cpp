@@ -275,6 +275,7 @@ public:
         ihandle.value[0] = 1;
         return false;
     }
+
 };
 
 
@@ -311,6 +312,7 @@ public:
         ihandle.value[0] = 1;
         return true;
     }
+
 };
 
 
@@ -347,6 +349,7 @@ public:
         ihandle.clear();
         return false;
     }
+
 };
 
 
@@ -383,6 +386,7 @@ public:
         ihandle.clear();
         return true;
     }
+
 };
 
 class BoundedTopicDataTypeMock : public TopicDataType
@@ -973,11 +977,11 @@ TEST(DataWriterTests, write_with_compute_key_true_defined_instance)
     #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
-    #endif
+    #endif // if defined(NDEBUG)
     #if !defined(NDEBUG) // In Debug build, instance is recomputed and detected as different
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if !defined(NDEBUG)
 
     valid_handle.clear();
     instance_type->compute_key(&data, valid_handle);
@@ -986,7 +990,7 @@ TEST(DataWriterTests, write_with_compute_key_true_defined_instance)
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     #else
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
-    #endif
+    #endif // if defined(NDEBUG)
 
     // Cleanup
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
@@ -1031,11 +1035,11 @@ TEST(DataWriterTests, write_with_compute_key_true_undefined_instance)
     #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
-    #endif
+    #endif // if defined(NDEBUG)
     #if !defined(NDEBUG) // In Debug build, instance is recomputed and detected as different
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if !defined(NDEBUG)
 
     valid_handle.clear();
     valid_handle.value[0] = 1; // Same as computed instance
@@ -1045,7 +1049,7 @@ TEST(DataWriterTests, write_with_compute_key_true_undefined_instance)
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     #else
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if defined(NDEBUG)
 
     // Cleanup
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
@@ -1091,11 +1095,11 @@ TEST(DataWriterTests, write_with_compute_key_false_defined_instance)
     #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
-    #endif
+    #endif // if defined(NDEBUG)
     #if !defined(NDEBUG) // In Debug build, instance is recomputed and compute_key fails
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if !defined(NDEBUG)
 
     valid_handle.clear();
     valid_handle.value[0] = 1; // Same as computed instance
@@ -1105,7 +1109,7 @@ TEST(DataWriterTests, write_with_compute_key_false_defined_instance)
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     #else
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if defined(NDEBUG)
 
     // Cleanup
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
@@ -1151,11 +1155,11 @@ TEST(DataWriterTests, write_with_compute_key_false_undefined_instance)
     #if defined(NDEBUG) // In Release build, this is valid because instance is not recomputed
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_OK);
-    #endif
+    #endif // if defined(NDEBUG)
     #if !defined(NDEBUG) // In Debug build, instance is recomputed and compute_key fails
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
     ASSERT_TRUE(datawriter->write_w_timestamp(&data, valid_handle, ts) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if !defined(NDEBUG)
 
     valid_handle.clear();
     valid_handle.value[0] = 1; // Same as computed instance
@@ -1165,7 +1169,7 @@ TEST(DataWriterTests, write_with_compute_key_false_undefined_instance)
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_OK);
     #else
     ASSERT_TRUE(datawriter->write(&data, valid_handle) == RETCODE_PRECONDITION_NOT_MET);
-    #endif
+    #endif // if defined(NDEBUG)
 
     // Cleanup
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
