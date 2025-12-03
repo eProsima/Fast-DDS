@@ -23,6 +23,8 @@
 #ifndef _FAST_DDS_GENERATED_SAMPLE_PUBSUBTYPES_H_
 #define _FAST_DDS_GENERATED_SAMPLE_PUBSUBTYPES_H_
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -123,9 +125,12 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
+private:
 
+    unsigned char* key_buffer_ = nullptr;
+    std::mutex compute_key_mtx_;
+
+    unsigned char* get_key_buffer_nts();
 };
 
 #endif // _FAST_DDS_GENERATED_SAMPLE_PUBSUBTYPES_H_

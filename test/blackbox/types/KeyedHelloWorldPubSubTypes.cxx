@@ -20,6 +20,9 @@
  */
 
 
+#include <algorithm>
+#include <mutex>
+
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 
 #include "KeyedHelloWorldPubSubTypes.h"
@@ -43,16 +46,15 @@ KeyedHelloWorldPubSubType::KeyedHelloWorldPubSubType()
     type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = true;
-    uint32_t keyLength = KeyedHelloWorld_max_key_cdr_typesize > 16 ? KeyedHelloWorld_max_key_cdr_typesize : 16;
-    m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
-    memset(m_keyBuffer, 0, keyLength);
+    key_buffer_ = nullptr;
+    get_key_buffer_nts();
 }
 
 KeyedHelloWorldPubSubType::~KeyedHelloWorldPubSubType()
 {
-    if (m_keyBuffer != nullptr)
+    if (key_buffer_ != nullptr)
     {
-        free(m_keyBuffer);
+        free(key_buffer_);
     }
 }
 
@@ -61,7 +63,8 @@ bool KeyedHelloWorldPubSubType::serialize(
         SerializedPayload_t* payload,
         DataRepresentationId_t data_representation)
 {
-    KeyedHelloWorld* p_type = static_cast<KeyedHelloWorld*>(data);
+    KeyedHelloWorld* p_type =
+            static_cast<KeyedHelloWorld*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
@@ -84,7 +87,7 @@ bool KeyedHelloWorldPubSubType::serialize(
         // Serialize the object.
         ser << *p_type;
 #if FASTCDR_VERSION_MAJOR > 1
-        ser.set_dds_cdr_options({0,0});
+        ser.set_dds_cdr_options({0, 0});
 #else
         ser.setDDSCdrOptions(0);
 #endif // FASTCDR_VERSION_MAJOR > 1
@@ -110,7 +113,8 @@ bool KeyedHelloWorldPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        KeyedHelloWorld* p_type = static_cast<KeyedHelloWorld*>(data);
+        KeyedHelloWorld* p_type =
+		        static_cast<KeyedHelloWorld*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
@@ -182,19 +186,26 @@ bool KeyedHelloWorldPubSubType::getKey(
         InstanceHandle_t* handle,
         bool force_md5)
 {
-    if (!m_isGetKeyDefined)
+    std::lock_guard<std::mutex> guard(compute_key_mtx_);
+    KeyedHelloWorld* p_type =
+        static_cast<KeyedHelloWorld*>(data);
+
+    // Ensure the key buffer is reserved
+    unsigned char* key_buffer = get_key_buffer_nts();
+    if (key_buffer == nullptr)
     {
         return false;
     }
 
-    KeyedHelloWorld* p_type = static_cast<KeyedHelloWorld*>(data);
-
     // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
+    eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(key_buffer),
             KeyedHelloWorld_max_key_cdr_typesize);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS, eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer,
+        eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
+        eprosima::fastcdr::CdrVersion::XCDRv1);
 #if FASTCDR_VERSION_MAJOR == 1
     p_type->serializeKey(ser);
 #else
@@ -202,25 +213,40 @@ bool KeyedHelloWorldPubSubType::getKey(
 #endif // FASTCDR_VERSION_MAJOR == 1
     if (force_md5 || KeyedHelloWorld_max_key_cdr_typesize > 16)
     {
-        m_md5.init();
+        MD5 md5;
+        md5.init();
 #if FASTCDR_VERSION_MAJOR == 1
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        md5.update(key_buffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
 #else
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
+        md5.update(key_buffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
 #endif // FASTCDR_VERSION_MAJOR == 1
-        m_md5.finalize();
+        md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = m_md5.digest[i];
+            handle->value[i] = md5.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = m_keyBuffer[i];
+            handle->value[i] = key_buffer[i];
         }
     }
     return true;
+}
+
+unsigned char* KeyedHelloWorldPubSubType::get_key_buffer_nts()
+{
+    // If already reserved, return
+    if (key_buffer_ != nullptr)
+    {
+        return key_buffer_;
+    }
+
+    // Allocate the key buffer
+    uint32_t key_length = (std::max)(KeyedHelloWorld_max_key_cdr_typesize, 16u);
+    key_buffer_ = reinterpret_cast<unsigned char*>(calloc(key_length, 1u));
+    return key_buffer_;
 }
 

@@ -23,6 +23,8 @@
 #ifndef _FAST_DDS_GENERATED_TEST_PUBSUBTYPES_H_
 #define _FAST_DDS_GENERATED_TEST_PUBSUBTYPES_H_
 
+#include <mutex>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -126,9 +128,6 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
 };
 typedef std::array<uint8_t, 500> MyOctetArray500;
 typedef std::array<BasicStruct, 5> BSAlias5;
@@ -222,9 +221,6 @@ public:
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
 
 };
 
@@ -321,9 +317,6 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
 };
 
 
@@ -411,9 +404,12 @@ public:
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
+private:
 
+    unsigned char* key_buffer_ = nullptr;
+    std::mutex compute_key_mtx_;
+
+    unsigned char* get_key_buffer_nts();
 };
 
 #endif // _FAST_DDS_GENERATED_TEST_PUBSUBTYPES_H_

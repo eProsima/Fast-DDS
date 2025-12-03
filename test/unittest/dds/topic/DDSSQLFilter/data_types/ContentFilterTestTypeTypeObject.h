@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
+#endif
 #else
 #define eProsima_user_DllExport
-#endif // if defined(_WIN32)
+#endif
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // ContentFilterTestType_SOURCE
 #else
 #define ContentFilterTestType_DllAPI
-#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
+#endif
 #else
 #define ContentFilterTestType_DllAPI
 #endif // _WIN32
@@ -54,40 +54,30 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerContentFilterTestTypeTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetColorIdentifier(
-        bool complete = false);
-eProsima_user_DllExport const TypeObject* GetColorObject(
-        bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetColorIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetColorObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalColorObject();
 eProsima_user_DllExport const TypeObject* GetCompleteColorObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMaterialIdentifier(
-        bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMaterialObject(
-        bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetMaterialIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMaterialObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalMaterialObject();
 eProsima_user_DllExport const TypeObject* GetCompleteMaterialObject();
 
-eProsima_user_DllExport const TypeIdentifier* Getstring_64Identifier(
-        bool complete = false);
-eProsima_user_DllExport const TypeObject* Getstring_64Object(
-        bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* Getstring_64Identifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* Getstring_64Object(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalstring_64Object();
 eProsima_user_DllExport const TypeObject* GetCompletestring_64Object();
 
-eProsima_user_DllExport const TypeIdentifier* Getalias_stringIdentifier(
-        bool complete = false);
-eProsima_user_DllExport const TypeObject* Getalias_stringObject(
-        bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* Getalias_stringIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* Getalias_stringObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalalias_stringObject();
 eProsima_user_DllExport const TypeObject* GetCompletealias_stringObject();
 
 
 
-eProsima_user_DllExport const TypeIdentifier* GetStructTypeIdentifier(
-        bool complete = false);
-eProsima_user_DllExport const TypeObject* GetStructTypeObject(
-        bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetStructTypeIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructTypeObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalStructTypeObject();
 eProsima_user_DllExport const TypeObject* GetCompleteStructTypeObject();
 
@@ -99,10 +89,8 @@ eProsima_user_DllExport const TypeObject* GetCompleteStructTypeObject();
 
 
 
-eProsima_user_DllExport const TypeIdentifier* GetContentFilterTestTypeIdentifier(
-        bool complete = false);
-eProsima_user_DllExport const TypeObject* GetContentFilterTestTypeObject(
-        bool complete = false);
+eProsima_user_DllExport const TypeIdentifier* GetContentFilterTestTypeIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetContentFilterTestTypeObject(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalContentFilterTestTypeObject();
 eProsima_user_DllExport const TypeObject* GetCompleteContentFilterTestTypeObject();
 
