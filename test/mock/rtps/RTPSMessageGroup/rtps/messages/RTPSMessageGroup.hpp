@@ -31,6 +31,7 @@ namespace rtps {
 class RTPSParticipantImpl;
 class Endpoint;
 class RTPSMessageSenderInterface;
+class IRTPSMessageGroupLimitation;
 
 class RTPSMessageGroup
 {
@@ -76,6 +77,11 @@ public:
 
     void set_sent_bytes_limitation(
             uint32_t) const
+    {
+    }
+
+    void set_limitation(
+            IRTPSMessageGroupLimitation*)
     {
     }
 

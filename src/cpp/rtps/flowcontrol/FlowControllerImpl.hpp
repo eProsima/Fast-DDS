@@ -13,6 +13,7 @@
 #include <fastdds/utils/TimedConditionVariable.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
+#include <rtps/messages/IRTPSMessageGroupLimitation.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
@@ -187,6 +188,51 @@ private:
     ListInfo old_ones_;
 };
 
+class RTPSMessageGroupThroughputLimitation : public IRTPSMessageGroupLimitation
+{
+public:
+
+    RTPSMessageGroupThroughputLimitation(
+            uint32_t sent_bytes_limitation)
+        : sent_bytes_limitation_(sent_bytes_limitation)
+    {
+    }
+
+    void add_sent_bytes_by_group(
+            uint32_t bytes) override
+    {
+        current_sent_bytes_ += bytes;
+    }
+
+    bool data_exceeds_limitation(
+            CacheChange_t&,
+            uint32_t size_to_add,
+            uint32_t pending_to_send) override
+    {
+        return
+            //   either limitation has already been reached
+            (sent_bytes_limitation_ <= (current_sent_bytes() + pending_to_send)) ||
+            //   or adding size_to_add will exceed limitation
+            (size_to_add > (sent_bytes_limitation_ - (current_sent_bytes() + pending_to_send)));
+    }
+
+    uint32_t current_sent_bytes() const
+    {
+        return current_sent_bytes_;
+    }
+
+    void reset_current_bytes_processed()
+    {
+        current_sent_bytes_ = 0;
+    }
+
+private:
+
+    uint32_t sent_bytes_limitation_ {0};
+
+    uint32_t current_sent_bytes_ {0};
+};
+
 /** Classes used to specify FlowController's publication model **/
 
 //! Only sends new samples synchronously. There is no mechanism to send old ones.
@@ -283,13 +329,14 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor)
         : FlowControllerAsyncPublishMode(participant, descriptor)
+        , limitation_(static_cast<uint32_t>(max_bytes_per_period))
     {
         assert(nullptr != descriptor);
         assert(0 < descriptor->max_bytes_per_period);
 
         max_bytes_per_period = descriptor->max_bytes_per_period;
         period_ms = std::chrono::milliseconds(descriptor->period_ms);
-        group.set_sent_bytes_limitation(static_cast<uint32_t>(max_bytes_per_period));
+        group.set_limitation(&limitation_);
     }
 
     bool fast_check_is_there_slot_for_change(
@@ -311,7 +358,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
 
         }
 
-        bool ret = (max_bytes_per_period - group.get_current_bytes_processed()) > size_to_check;
+        bool ret = (max_bytes_per_period - limitation_.current_sent_bytes()) > size_to_check;
 
         if (!ret)
         {
@@ -345,7 +392,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
         {
             last_period_ = std::chrono::steady_clock::now();
             force_wait_ = false;
-            group.reset_current_bytes_processed();
+            limitation_.reset_current_bytes_processed();
         }
 
         return reset_limit;
@@ -374,6 +421,8 @@ private:
     bool force_wait_ = false;
 
     std::chrono::steady_clock::time_point last_period_ = std::chrono::steady_clock::now();
+
+    RTPSMessageGroupThroughputLimitation limitation_;
 };
 
 
