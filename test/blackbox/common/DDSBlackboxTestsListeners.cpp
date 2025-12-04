@@ -3684,7 +3684,6 @@ TEST(DDSStatus, keyed_sample_discard_by_unknown_instance)
 
         mutable std::mutex mtx_;
         std::condition_variable cv_;
-        std::uint32_t key_only_payload_count_ = 0;
     };
 
     // Force using UDP transport
