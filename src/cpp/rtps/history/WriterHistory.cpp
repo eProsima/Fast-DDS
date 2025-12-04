@@ -486,12 +486,17 @@ void WriterHistory::set_fragments(
     {
         inline_qos_size += 4u;
     }
-    if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
+    if (change->instanceHandle.isDefined() && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
     {
-        // TODO (Review): KEY_HASH inlineQoS could be added even if the change is ALIVE. It could always be sent.
-        // The only restriction is that it MUST be present if the change is not ALIVE (DIPOSE or UNREGISTER).
+        // KEY_HASH inlineQoS could be added even if the change is ALIVE. It could always be sent.
+        // The only restriction is that it MUST be present if the change is not ALIVE (DISPOSE or UNREGISTER).
+        // It is sent it always as long as the instanceHandle is defined.
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
-        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+        if (change->kind != ALIVE)
+        {
+            // If the change is not ALIVE, STATUS inlineQoS will also be added.
+            inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+        }
     }
 
     // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
