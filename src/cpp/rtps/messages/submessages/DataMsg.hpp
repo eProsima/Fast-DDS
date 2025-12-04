@@ -164,6 +164,12 @@ struct DataMsgUtils
                 fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
             }
         }
+        else if (ALIVE != change->kind && change->serializedPayload.length > 0)
+        {
+            // This case is added in order to support DISPOSE or UNREGISTER changes when the data
+            // is passed in the payload. Thus the KEY_HASH inline QoS is not compulsory for us
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
+        }
 
         if (inlineQos != nullptr)
         {
@@ -266,11 +272,11 @@ bool RTPSMessageCreator::addSubmessageData(
     {
         if (WITH_KEY == topicKind &&
                 change->instanceHandle.isDefined() == false &&
-                (expectsInlineQos || change->kind != ALIVE))
+                change->kind != ALIVE && change->serializedPayload.length == 0)
         {
             // Instance handle is required but not defined
             EPROSIMA_LOG_ERROR(RTPS_WRITER,
-                    "Changes in KEYED Writers need a valid instanceHandle. Message won't be serialized");
+                    "DISPOSE or UNREGISTER Changes in KEYED Writers need a valid instanceHandle or the payload to be transmitted. Message won't be serialized");
             return false;
         }
         if (WITH_KEY == topicKind &&
@@ -472,11 +478,11 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     {
         if (WITH_KEY == topicKind &&
                 change->instanceHandle.isDefined() == false &&
-                (expectsInlineQos || change->kind != ALIVE))
+                change->kind != ALIVE && change->serializedPayload.length == 0)
         {
             // Instance handle is required but not defined
             EPROSIMA_LOG_ERROR(RTPS_WRITER,
-                    "Changes in KEYED Writers need a valid instanceHandle. Message won't be serialized");
+                    "DISPOSE or UNREGISTER Changes in KEYED Writers need a valid instanceHandle or the payload to be transmitted. Message won't be serialized");
             return false;
         }
         if (WITH_KEY == topicKind &&

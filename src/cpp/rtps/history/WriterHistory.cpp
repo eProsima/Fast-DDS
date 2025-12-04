@@ -152,10 +152,10 @@ bool WriterHistory::prepare_and_add_change(
         return false;
     }
     if (TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind && !a_change->instanceHandle.isDefined() &&
-            a_change->kind != ALIVE)
+            a_change->kind != ALIVE && a_change->serializedPayload.length == 0)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
-                "Changes of type not equal to ALIVE in KEYED Writers need a valid instanceHandle.");
+                "Changes of type not equal to ALIVE in KEYED Writers need a valid instanceHandle or the payload to be transmitted");
         return false;
     }
 
