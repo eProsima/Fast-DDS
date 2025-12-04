@@ -335,7 +335,7 @@ public:
             fastdds::rtps::InstanceHandle_t& ihandle,
             bool /*force_md5*/) override
     {
-        // Setting instance as valid
+        // Setting instance as invalid
         ihandle.clear();
         return false;
     }
@@ -345,7 +345,7 @@ public:
             fastdds::rtps::InstanceHandle_t& ihandle,
             bool /*force_md5*/) override
     {
-        // Setting instance as valid
+        // Setting instance as invalid
         ihandle.clear();
         return false;
     }
@@ -372,7 +372,7 @@ public:
             fastdds::rtps::InstanceHandle_t& ihandle,
             bool /*force_md5*/) override
     {
-        // Setting instance as valid
+        // Setting instance as invalid
         ihandle.clear();
         return true;
     }
@@ -382,7 +382,7 @@ public:
             fastdds::rtps::InstanceHandle_t& ihandle,
             bool /*force_md5*/) override
     {
-        // Setting instance as valid
+        // Setting instance as invalid
         ihandle.clear();
         return true;
     }

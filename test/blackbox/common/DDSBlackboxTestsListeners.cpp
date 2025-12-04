@@ -3708,7 +3708,7 @@ TEST(DDSStatus, keyed_sample_discard_by_unknown_instance)
     sample_rejected_test_init(reader, writer, [&test_mtx, &test_cv, &test_status](
                 const eprosima::fastdds::dds::SampleRejectedStatus& status)
             {
-                std::unique_lock<std::mutex> lock(test_mtx);
+                std::lock_guard<std::mutex> lock(test_mtx);
                 test_status.total_count = status.total_count;
                 test_status.total_count_change += status.total_count_change;
                 ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE, status.last_reason);
