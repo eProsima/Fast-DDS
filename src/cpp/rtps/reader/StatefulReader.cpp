@@ -825,9 +825,8 @@ bool StatefulReader::process_data_frag_msg(
                          */
                         if (fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE == rejection_reason)
                         {
-                            EPROSIMA_LOG_ERROR(RTPS_READER, "Change received from " << work_change->writerGUID << " with sequence number: "
-                                                                                    << work_change->sequenceNumber <<
-                                    " ignored. Could not compute key in keyed topic.");
+                            EPROSIMA_LOG_ERROR(RTPS_READER, "Change received from " << work_change->writerGUID << " with sequence number: " <<
+                                    work_change->sequenceNumber << " ignored. Could not compute key in keyed topic.");
                             pWP->irrelevant_change_set(work_change->sequenceNumber);
                             has_to_notify = true;
                         }
