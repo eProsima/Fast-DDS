@@ -143,7 +143,7 @@ public:
             FragmentNumber_t& next_unsent_frag,
             SequenceNumber_t& gap_seq,
             const SequenceNumber_t& min_seq,
-            bool& need_reactivate_periodic_heartbeat) const;
+            bool& need_reactivate_periodic_heartbeat);
 
     /**
      * Mark all changes up to the one indicated by seq_num as Acknowledged.
@@ -345,9 +345,36 @@ public:
      * Get the highest fully acknowledged sequence number.
      * @return the highest fully acknowledged sequence number.
      */
-    SequenceNumber_t changes_low_mark() const
+    inline SequenceNumber_t changes_low_mark() const
     {
         return changes_low_mark_;
+    }
+
+    /*!
+     * Get the first sequence number not relevant that was removed without reader being informed.
+     * @return First sequence number.
+     */
+    inline SequenceNumber_t first_irrelevant_removed() const
+    {
+        return first_irrelevant_removed_;
+    }
+
+    /*!
+     * Get the last sequence number not relevant that was removed without reader being informed.
+     * @return last sequence number.
+     */
+    inline SequenceNumber_t last_irrelevant_removed() const
+    {
+        return last_irrelevant_removed_;
+    }
+
+    /*!
+     * Reset the interval of sequence numbers not relevant that were removed without reader being informed.
+     */
+    inline void reset_irrelevant_removed()
+    {
+        first_irrelevant_removed_ = SequenceNumber_t::unknown();
+        last_irrelevant_removed_ = SequenceNumber_t::unknown();
     }
 
     /**
@@ -450,7 +477,13 @@ private:
     //! Last  NACKFRAG count.
     uint32_t last_nackfrag_count_;
 
+    //! Sequence number of the lowest change not fully acknowledged.
     SequenceNumber_t changes_low_mark_;
+
+    //! First sequence number not relevant that was removed without reader being informed.
+    SequenceNumber_t first_irrelevant_removed_ {SequenceNumber_t::unknown()};
+    //! Last sequence number not relevant that was removed without reader being informed.
+    SequenceNumber_t last_irrelevant_removed_ {SequenceNumber_t::unknown()};
 
     bool active_ = false;
 
