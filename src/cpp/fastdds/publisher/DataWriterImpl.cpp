@@ -676,7 +676,7 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
     if (type_.get()->is_compute_key_provided)
     {
         #if defined(NDEBUG) // In Release build, compute key only if necessary
-        if (!instance_handle.isDefined())
+        if (!handle.isDefined())
         #endif // if !defined(NDEBUG)
         {
             bool is_key_protected = false;
@@ -697,13 +697,6 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
             return RETCODE_PRECONDITION_NOT_MET;
         }
         #endif // if !defined(NDEBUG)
-    }
-
-    // Check if the Handle is different from the special value HANDLE_NIL and
-    // does not correspond with the instance referred by the data
-    if (handle.isDefined() && handle != instance_handle)
-    {
-        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     return RETCODE_OK;
