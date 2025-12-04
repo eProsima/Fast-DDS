@@ -838,14 +838,15 @@ TEST(TransportUDP, MaliciousGapBigRange)
             SequenceNumber_t gap_start{ 10u };
             SequenceNumber_t gap_list_base{ std::numeric_limits<uint32_t>::max() };
             uint32_t num_longs_bitmap = 0;
-        } gap;
+        }
+        gap;
     };
 
     UDPMessageSender fake_msg_sender;
 
     // Set common QoS
     reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
-        .history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+            .history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
 
     // Set custom reader locator so we can send malicious data to a known location
@@ -986,6 +987,97 @@ TEST(TransportUDP, MaliciousDataFragUnalignedSizes)
 
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+}
+
+// Regression test for redmine issue #23917
+TEST(TransportUDP, MaliciousHeartbeatBigStart)
+{
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<UnboundedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<UnboundedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    struct MaliciousHeartbeatBigStart
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        struct HeartbeatSubMsg
+        {
+            uint8_t submessage_id = 0x07;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+            uint8_t flags = 0x00;
+#else
+            uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+            uint16_t octets_to_next_header = 28;
+            EntityId_t reader_id{};
+            EntityId_t writer_id{};
+            SequenceNumber_t first_sn{ 1, 0u };
+            SequenceNumber_t last_sn{ 1, 1u };
+            uint32_t hb_count = 0x7fffffffu;
+        }
+        hb;
+    };
+
+    UDPMessageSender fake_msg_sender;
+
+    // Set common QoS
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
+            .history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+    // Set custom reader locator so we can send malicious data to a known location
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    // Initialize and wait for discovery
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Send 10 samples
+    auto data = default_unbounded_helloworld_data_generator(10);
+    auto expected_data = data;
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    auto start = std::chrono::steady_clock::now();
+
+    // Send malicious heartbeat before taking samples
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        MaliciousHeartbeatBigStart malicious_packet{};
+        malicious_packet.sender_prefix = writer_guid.guidPrefix;
+        malicious_packet.hb.writer_id = writer_guid.entityId;
+        malicious_packet.hb.reader_id = reader.datareader_guid().entityId;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(malicious_packet));
+        msg.init(reinterpret_cast<octet*>(&malicious_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Start reception of expected data
+    reader.startReception(expected_data);
+    EXPECT_EQ(reader.block_for_all(std::chrono::seconds(10)), expected_data.size());
+    reader.destroy();
+
+    // Ensure that the test does not take too long
+    auto end = std::chrono::steady_clock::now();
+    EXPECT_LT(end - start, std::chrono::seconds(15));
 }
 
 // Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
