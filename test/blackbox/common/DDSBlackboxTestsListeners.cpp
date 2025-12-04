@@ -3680,10 +3680,6 @@ TEST(DDSStatus, keyed_sample_discard_by_unknown_instance)
             return false;
         }
 
-    private:
-
-        mutable std::mutex mtx_;
-        std::condition_variable cv_;
     };
 
     // Force using UDP transport

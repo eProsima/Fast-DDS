@@ -106,7 +106,7 @@ TEST(WriterHistoryTests, final_high_mark_for_frag_overflow)
     }
 }
 
-TEST(WriterHistoryTests, add_change_with_undefined_instance_handle)
+TEST(WriterHistoryTests, add_change_with_undefined_instance_handle_and_no_payload)
 {
     uint32_t domain_id = 0;
 
@@ -139,7 +139,7 @@ TEST(WriterHistoryTests, add_change_with_undefined_instance_handle)
     ASSERT_FALSE(history->add_change(change));
 }
 
-TEST(WriterHistoryTests, add_change_with_defined_instance_handle)
+TEST(WriterHistoryTests, add_change_with_defined_instance_handle_and_no_payload)
 {
     uint32_t domain_id = 0;
 
@@ -172,6 +172,41 @@ TEST(WriterHistoryTests, add_change_with_defined_instance_handle)
     ASSERT_TRUE(history->add_change(change));
     change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
     change->instanceHandle.value[0] = 1;
+    ASSERT_TRUE(history->add_change(change));
+}
+
+TEST(WriterHistoryTests, add_change_with_payload_but_undefined_handle)
+{
+    uint32_t domain_id = 0;
+
+    RTPSParticipantAttributes p_attr;
+    RTPSParticipant* participant = RTPSDomain::createParticipant(
+        domain_id, true, p_attr);
+
+    ASSERT_NE(participant, nullptr);
+
+    HistoryAttributes h_attr;
+    WriterHistory* history = new WriterHistory(h_attr);
+
+    WriterAttributes w_attr;
+    // The topic must be keyed to use instance handles
+    w_attr.endpoint.topicKind = WITH_KEY;
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
+
+    ASSERT_NE(writer, nullptr);
+
+    CacheChange_t* change = history->create_change(ALIVE);
+    // This len simulates a payload
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED);
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_UNREGISTERED);
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
+    change->serializedPayload.length = 10;
     ASSERT_TRUE(history->add_change(change));
 }
 
