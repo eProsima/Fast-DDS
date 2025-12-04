@@ -1068,7 +1068,7 @@ public:
         return get_max_payload_impl();
     }
 
-private:
+protected:
 
     /*!
      * Initialize asynchronous thread.
