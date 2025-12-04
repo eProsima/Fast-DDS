@@ -298,7 +298,7 @@ public:
         return ch;
     }
 
-     eprosima::fastdds::rtps::CacheChange_t* send_sample(
+    eprosima::fastdds::rtps::CacheChange_t* send_sample(
             type& msg,
             const eprosima::fastdds::rtps::InstanceHandle_t& handle)
     {

@@ -373,7 +373,7 @@ TEST(KeyedTopic, DataWriterDoesNotSendTheSerializedKeyWhenInstanceUndefined)
 
                 // Do not drop the packet in any case
                 return false;
-    };
+            };
 
     RTPSWithRegistrationWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     RTPSWithRegistrationReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
