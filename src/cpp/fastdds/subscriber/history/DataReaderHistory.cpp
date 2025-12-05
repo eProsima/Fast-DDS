@@ -222,8 +222,20 @@ bool DataReaderHistory::received_change_keep_all(
 {
     if (!compute_key_for_change_fn_(a_change))
     {
+<<<<<<< HEAD
         // Store the sample temporally only in ReaderHistory. When completed it will be stored in DataReaderHistory too.
         return add_to_reader_history_if_not_full(a_change, rejection_reason);
+=======
+        if (!a_change->is_fully_assembled())
+        {
+            // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
+            return add_to_reader_history_if_not_full(a_change, rejection_reason);
+        }
+
+        FASTDDS_TODO_BEFORE(3, 5, "Change REJECTED_BY_INSTANCES_LIMIT for REJECTED_BY_UNKNOWN_INSTANCE");
+        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+        return false;
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 
     bool ret_value = false;
@@ -258,8 +270,20 @@ bool DataReaderHistory::received_change_keep_last(
 {
     if (!compute_key_for_change_fn_(a_change))
     {
+<<<<<<< HEAD
         // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
         return add_to_reader_history_if_not_full(a_change, rejection_reason);
+=======
+        if (!a_change->is_fully_assembled())
+        {
+            // Store the sample temporally only in ReaderHistory. When completed it will be stored in SubscriberHistory too.
+            return add_to_reader_history_if_not_full(a_change, rejection_reason);
+        }
+
+        FASTDDS_TODO_BEFORE(3, 5, "Change REJECTED_BY_INSTANCES_LIMIT for REJECTED_BY_UNKNOWN_INSTANCE");
+        rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
+        return false;
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 
     bool ret_value = false;

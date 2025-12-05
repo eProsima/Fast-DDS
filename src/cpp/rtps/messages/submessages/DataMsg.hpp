@@ -134,15 +134,43 @@ struct DataMsgUtils
                 change->write_params.related_sample_identity());
         }
 
+<<<<<<< HEAD
         if (WITH_KEY == topicKind && (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
+=======
+        if (change->write_params.has_more_replies())
         {
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_more_replies(msg);
+        }
+
+        if (change->write_params.original_writer_info() != OriginalWriterInfo::unknown())
+        {
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_original_writer(
+                msg, change->write_params.original_writer_info());
+        }
+
+        if (WITH_KEY == topicKind && change->instanceHandle.isDefined() &&
+                (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
+        {
+            /**
+             * If instanceHandle is not defined, this means the key hash is not populated. It makes no sense
+             * to serialize a parameter with an undefined or empty value because it could be interpreted as
+             * a 'valid' key hash on the reader side
+             **/
             fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                     change->instanceHandle);
 
+            /** Changes like UNREGISTER or DISPOSE must include the key, they can't be sent without key */
             if (ALIVE != change->kind)
             {
                 fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
             }
+        }
+        else if (ALIVE != change->kind && change->serializedPayload.length > 0)
+        {
+            // This case is added in order to support DISPOSE or UNREGISTER changes when the data
+            // is passed in the payload. Thus the KEY_HASH inline QoS is not compulsory for us
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
         }
 
         if (inlineQos != nullptr)
@@ -244,6 +272,22 @@ bool RTPSMessageCreator::addSubmessageData(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false &&
+                change->kind != ALIVE && change->serializedPayload.length == 0)
+        {
+            // Instance handle is required but not defined
+            EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                    "DISPOSE or UNREGISTER Changes in KEYED Writers need a valid instanceHandle or the payload to be transmitted. Message won't be serialized");
+            return false;
+        }
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false)
+        {
+            // Instance handle should be defined but is not compulsory, this is just a warning
+            EPROSIMA_LOG_WARNING(RTPS_WRITER,
+                    "Change does not have a valid instanceHandle. KEY_HASH will not be serialized.");
+        }
         DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
@@ -279,11 +323,16 @@ bool RTPSMessageCreator::addSubmessageData(
         }
 
         added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
-        added_no_error &=
-                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
-                        change->instanceHandle);
-        added_no_error &=
-                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg,
+
+        if (change->instanceHandle.isDefined())
+        {
+            // Even if requested in the serializedPayload, it makes no sense an undefined key hash
+            added_no_error &=
+                    fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
+                            change->instanceHandle);
+        }
+
+        added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg,
                         status);
         added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sentinel(msg);
     }
@@ -429,6 +478,22 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     //Add INLINE QOS AND SERIALIZED PAYLOAD DEPENDING ON FLAGS:
     if (inlineQosFlag) //inlineQoS
     {
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false &&
+                change->kind != ALIVE && change->serializedPayload.length == 0)
+        {
+            // Instance handle is required but not defined
+            EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                    "DISPOSE or UNREGISTER Changes in KEYED Writers need a valid instanceHandle or the payload to be transmitted. Message won't be serialized");
+            return false;
+        }
+        if (WITH_KEY == topicKind &&
+                change->instanceHandle.isDefined() == false)
+        {
+            // Instance handle should be defined but is not compulsory, this is just a warning
+            EPROSIMA_LOG_WARNING(RTPS_WRITER,
+                    "Change does not have a valid instanceHandle. KEY_HASH will not be serialized.");
+        }
         DataMsgUtils::serialize_inline_qos(msg, change, topicKind, expectsInlineQos, inlineQos, status);
     }
 
