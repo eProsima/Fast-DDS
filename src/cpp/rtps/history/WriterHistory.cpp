@@ -61,10 +61,6 @@ static CacheChange_t* initialize_change(
         RTPSWriter* writer)
 {
     reserved_change->kind = change_kind;
-    if ((WITH_KEY == writer->getAttributes().topicKind) && !handle.isDefined())
-    {
-        EPROSIMA_LOG_WARNING(RTPS_WRITER, "Changes in KEYED Writers need a valid instanceHandle");
-    }
     reserved_change->instanceHandle = handle;
     reserved_change->writerGUID = writer->getGuid();
     reserved_change->writer_info.previous = nullptr;
@@ -153,6 +149,13 @@ bool WriterHistory::prepare_and_add_change(
                 "Change payload size of '" << a_change->serializedPayload.length <<
                 "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
                 "' bytes and cannot be resized.");
+        return false;
+    }
+    if (TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind && !a_change->instanceHandle.isDefined() &&
+            a_change->kind != ALIVE && a_change->serializedPayload.length == 0)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "Changes of type not equal to ALIVE in KEYED Writers need a valid instanceHandle or the payload to be transmitted");
         return false;
     }
 
@@ -483,10 +486,17 @@ void WriterHistory::set_fragments(
     {
         inline_qos_size += 4u;
     }
-    if (ChangeKind_t::ALIVE != change->kind && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
+    if (change->instanceHandle.isDefined() && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
     {
+        // KEY_HASH inlineQoS could be added even if the change is ALIVE. It could always be sent.
+        // The only restriction is that it MUST be present if the change is not ALIVE (DISPOSE or UNREGISTER).
+        // It is sent it always as long as the instanceHandle is defined.
         inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
-        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+        if (change->kind != ALIVE)
+        {
+            // If the change is not ALIVE, STATUS inlineQoS will also be added.
+            inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+        }
     }
 
     // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.

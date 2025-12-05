@@ -298,6 +298,33 @@ public:
         return ch;
     }
 
+    eprosima::fastdds::rtps::CacheChange_t* send_sample(
+            type& msg,
+            const eprosima::fastdds::rtps::InstanceHandle_t& handle)
+    {
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+        size_t current_alignment{ 0 };
+        uint32_t cdr_size = static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment));
+        eprosima::fastdds::rtps::CacheChange_t* ch = history_->create_change(
+            cdr_size, eprosima::fastdds::rtps::ALIVE, handle);
+
+        eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
+        eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
+
+        cdr.serialize_encapsulation();
+        cdr << msg;
+
+        ch->serializedPayload.length = static_cast<uint32_t>(cdr.get_serialized_data_length());
+        if (ch->serializedPayload.length > 65000u)
+        {
+            ch->setFragmentSize(65000u);
+        }
+
+        history_->add_change(ch);
+        return ch;
+    }
+
     bool remove_change (
             const eprosima::fastdds::rtps::SequenceNumber_t& sequence_number)
     {

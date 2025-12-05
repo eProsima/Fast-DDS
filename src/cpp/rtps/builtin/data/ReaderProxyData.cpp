@@ -240,6 +240,7 @@ uint32_t ReaderProxyData::get_serialized_size(
     ret_val += dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(type_name);
 
     // PID_KEY_HASH
+    // ReaderProxyData always contains the reader's GUID as a key hash
     ret_val += 4 + 16;
 
     // PID_PROTOCOL_VERSION

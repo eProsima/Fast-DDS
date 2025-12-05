@@ -2040,12 +2040,11 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
         const void* instance) const
 {
     InstanceHandle_t handle = HANDLE_NIL;
-
     if (instance && type_->is_compute_key_provided)
     {
         if (type_->compute_key(const_cast<void*>(instance), handle, false))
         {
-            if (!history_.is_instance_present(handle))
+            if (!history_.is_instance_present(handle) || !handle.isDefined())
             {
                 handle = HANDLE_NIL;
             }

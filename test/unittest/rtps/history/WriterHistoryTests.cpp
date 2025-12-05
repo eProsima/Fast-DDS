@@ -106,6 +106,110 @@ TEST(WriterHistoryTests, final_high_mark_for_frag_overflow)
     }
 }
 
+TEST(WriterHistoryTests, add_change_with_undefined_instance_handle_and_no_payload)
+{
+    uint32_t domain_id = 0;
+
+    RTPSParticipantAttributes p_attr;
+    RTPSParticipant* participant = RTPSDomain::createParticipant(
+        domain_id, true, p_attr);
+
+    ASSERT_NE(participant, nullptr);
+
+    HistoryAttributes h_attr;
+    WriterHistory* history = new WriterHistory(h_attr);
+
+    WriterAttributes w_attr;
+    // The topic must be keyed to use instance handles
+    w_attr.endpoint.topicKind = WITH_KEY;
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
+
+    ASSERT_NE(writer, nullptr);
+
+    // Any of these changes have a well defined instance handle
+    CacheChange_t* change = history->create_change(ALIVE);
+    // Valid because ALIVE changes don't enforce defined instance handles
+    ASSERT_TRUE(history->add_change(change));
+    // Rest are invalid because instance handle is enforced to be defined
+    change = history->create_change(NOT_ALIVE_DISPOSED);
+    ASSERT_FALSE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_UNREGISTERED);
+    ASSERT_FALSE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
+    ASSERT_FALSE(history->add_change(change));
+}
+
+TEST(WriterHistoryTests, add_change_with_defined_instance_handle_and_no_payload)
+{
+    uint32_t domain_id = 0;
+
+    RTPSParticipantAttributes p_attr;
+    RTPSParticipant* participant = RTPSDomain::createParticipant(
+        domain_id, true, p_attr);
+
+    ASSERT_NE(participant, nullptr);
+
+    HistoryAttributes h_attr;
+    WriterHistory* history = new WriterHistory(h_attr);
+
+    WriterAttributes w_attr;
+    // The topic must be keyed to use instance handles
+    w_attr.endpoint.topicKind = WITH_KEY;
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
+
+    ASSERT_NE(writer, nullptr);
+
+    // All these changes have a well defined instance handle and they must be added successfully
+    CacheChange_t* change = history->create_change(ALIVE);
+    // Setting any value makes the handle defined because of its = operator
+    change->instanceHandle.value[0] = 1;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED);
+    change->instanceHandle.value[0] = 1;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_UNREGISTERED);
+    change->instanceHandle.value[0] = 1;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
+    change->instanceHandle.value[0] = 1;
+    ASSERT_TRUE(history->add_change(change));
+}
+
+TEST(WriterHistoryTests, add_change_with_payload_but_undefined_handle)
+{
+    uint32_t domain_id = 0;
+
+    RTPSParticipantAttributes p_attr;
+    RTPSParticipant* participant = RTPSDomain::createParticipant(
+        domain_id, true, p_attr);
+
+    ASSERT_NE(participant, nullptr);
+
+    HistoryAttributes h_attr;
+    WriterHistory* history = new WriterHistory(h_attr);
+
+    WriterAttributes w_attr;
+    // The topic must be keyed to use instance handles
+    w_attr.endpoint.topicKind = WITH_KEY;
+    RTPSWriter* writer = RTPSDomain::createRTPSWriter(participant, w_attr, history);
+
+    ASSERT_NE(writer, nullptr);
+
+    CacheChange_t* change = history->create_change(ALIVE);
+    // This len simulates a payload
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED);
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_UNREGISTERED);
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+    change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
+    change->serializedPayload.length = 10;
+    ASSERT_TRUE(history->add_change(change));
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

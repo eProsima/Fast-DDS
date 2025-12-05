@@ -29,6 +29,7 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 using namespace eprosima::fastdds::rtps;
 
@@ -1785,6 +1786,20 @@ template<typename T>
 void sample_rejected_test_init(
         PubSubReader<T>& reader,
         PubSubWriter<T>& writer,
+        std::function<void(const eprosima::fastdds::dds::SampleRejectedStatus& status)> functor)
+{
+    sample_rejected_test_dw_init(writer);
+    sample_rejected_test_dr_init(reader, functor);
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+}
+
+template<typename T, typename U>
+void sample_rejected_test_init(
+        PubSubReader<T>& reader,
+        PubSubWriter<U>& writer,
         std::function<void(const eprosima::fastdds::dds::SampleRejectedStatus& status)> functor)
 {
     sample_rejected_test_dw_init(writer);
@@ -3633,6 +3648,161 @@ TEST(DDSStatus, several_writers_on_unack_sample_removed)
     reliable_writer.send_sample(reliable_data.front());
     reliable_writer.waitForAllAcked(std::chrono::milliseconds(150));
     EXPECT_EQ(listener.notified_writer(), &(reliable_writer.get_native_writer()));
+}
+
+/**
+ *   Checks that a sample is rejected with reason REJECTED_BY_UNKNOWN_INSTANCE when the KEY_HASH
+ *   parameter is not present in the CDR message and cannot be computed on the reader side
+ *
+ *   NOTE: At the moment this checks REJECTED_BY_INSTANCES_LIMIT instead of REJECTED_BY_UNKNOWN_INSTANCE
+ *   until FAST DDS 3.5 is released, to avoid an ABI break.
+ **/
+TEST(DDSStatus, keyed_sample_discard_by_unknown_instance)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    struct TestTypeSupport : public KeyedHelloWorldPubSubType
+    {
+        typedef KeyedHelloWorldPubSubType::type type;
+
+
+        bool compute_key(
+                eprosima::fastdds::rtps::SerializedPayload_t&,
+                eprosima::fastdds::rtps::InstanceHandle_t&,
+                bool ) override
+        {
+            return false;
+        }
+
+        bool compute_key(
+                const void* const,
+                eprosima::fastdds::rtps::InstanceHandle_t&,
+                bool ) override
+        {
+            return false;
+        }
+
+    };
+
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    // Writer can compute key normally
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(udp_transport);
+
+    // Reader use custom TypeSupport that cannot compute key
+    PubSubReader<TestTypeSupport> reader(TEST_TOPIC_NAME);
+    // Set custom reader locator so we can send hand-crafted data to a known location
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport);
+
+    std::mutex test_mtx;
+    std::condition_variable test_cv;
+    eprosima::fastdds::dds::SampleRejectedStatus test_status;
+    sample_rejected_test_init(reader, writer, [&test_mtx, &test_cv, &test_status](
+                const eprosima::fastdds::dds::SampleRejectedStatus& status)
+            {
+                std::lock_guard<std::mutex> lock(test_mtx);
+                test_status.total_count = status.total_count;
+                test_status.total_count_change += status.total_count_change;
+                FASTDDS_TODO_BEFORE(3, 5, "Change REJECTED_BY_INSTANCES_LIMIT for REJECTED_BY_UNKNOWN_INSTANCE");
+                ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, status.last_reason);
+                test_status.last_reason = status.last_reason;
+                test_status.last_instance_handle = status.last_instance_handle;
+                test_cv.notify_one();
+            });
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Starting normal reception of some data just to ensure everything is working properly
+    auto data = default_keyedhelloworld_data_generator(2);
+    reader.startReception(data);
+    // Send data
+    writer.send(data);
+    EXPECT_TRUE(data.empty());
+    reader.block_for_all();
+
+    // Sending fake message, remember DataReader cannot recompute key as compute_key is
+    // overridden to always return false
+    UDPMessageSender fake_msg_sender;
+
+    // Send hand-crafted data that does not contain KEY_HASH PID
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        struct KeyOnlyPayloadPacket
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            GuidPrefix_t sender_prefix{};
+
+            struct DataSubMsg
+            {
+                struct Header
+                {
+                    uint8_t submessage_id = 0x15;
+    #if FASTDDS_IS_BIG_ENDIAN_TARGET
+                    uint8_t flags = 0x08;
+    #else
+                    uint8_t flags = 0x09;
+    #endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                    uint16_t octets_to_next_header = 28;
+                    uint16_t extra_flags = 0;
+                    uint16_t octets_to_inline_qos = 16;
+                    EntityId_t reader_id{};
+                    EntityId_t writer_id{};
+                    SequenceNumber_t sn{ 3 };
+                };
+
+                struct SerializedData
+                {
+                    uint8_t encapsulation[2] = {0x00, CDR_LE};
+                    uint8_t encapsulation_opts[2] = {0x00, 0x00};
+                    uint8_t data[4] = {0x0A, 0x00, 0x00, 0x00};
+                };
+
+                Header header;
+                SerializedData payload;
+            }
+            data;
+        };
+
+        KeyOnlyPayloadPacket key_only_packet{};
+        key_only_packet.sender_prefix = writer_guid.guidPrefix;
+        key_only_packet.data.header.writer_id = writer_guid.entityId;
+        key_only_packet.data.header.reader_id = reader.datareader_guid().entityId;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(key_only_packet));
+        msg.init(reinterpret_cast<octet*>(&key_only_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Wait in the cv for the listener to be called
+    std::unique_lock<std::mutex> lock(test_mtx);
+    test_cv.wait_for(lock,
+            std::chrono::milliseconds(500),
+            [&test_status]() -> bool
+            {
+                return test_status.total_count >= 1;
+            });
+
+    // Only one sample was rejected
+    ASSERT_EQ(1u, test_status.total_count);
+    ASSERT_EQ(1u, test_status.total_count_change);
+    // The rejection reason and instance handle are as expected
+    FASTDDS_TODO_BEFORE(3, 5, "Change REJECTED_BY_INSTANCES_LIMIT for REJECTED_BY_UNKNOWN_INSTANCE");
+    ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_INSTANCES_LIMIT, test_status.last_reason);
+    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

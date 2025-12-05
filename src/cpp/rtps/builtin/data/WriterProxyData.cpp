@@ -229,6 +229,7 @@ uint32_t WriterProxyData::get_serialized_size(
     ret_val += dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(type_name);
 
     // PID_KEY_HASH
+    // WriterProxyData always contains the writer's GUID as a key hash
     ret_val += 4 + 16;
 
     // PID_TYPE_MAX_SIZE_SERIALIZED

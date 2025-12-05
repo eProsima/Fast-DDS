@@ -221,6 +221,7 @@ bool DataReaderHistory::received_change_keep_all(
             return add_to_reader_history_if_not_full(a_change, rejection_reason);
         }
 
+        FASTDDS_TODO_BEFORE(3, 5, "Change REJECTED_BY_INSTANCES_LIMIT for REJECTED_BY_UNKNOWN_INSTANCE");
         rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
         return false;
     }
@@ -263,6 +264,7 @@ bool DataReaderHistory::received_change_keep_last(
             return add_to_reader_history_if_not_full(a_change, rejection_reason);
         }
 
+        FASTDDS_TODO_BEFORE(3, 5, "Change REJECTED_BY_INSTANCES_LIMIT for REJECTED_BY_UNKNOWN_INSTANCE");
         rejection_reason = REJECTED_BY_INSTANCES_LIMIT;
         return false;
     }
