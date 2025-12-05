@@ -329,7 +329,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor)
         : FlowControllerAsyncPublishMode(participant, descriptor)
-        , limitation_(static_cast<uint32_t>(max_bytes_per_period))
+        , limitation_(static_cast<uint32_t>(descriptor->max_bytes_per_period))
     {
         assert(nullptr != descriptor);
         assert(0 < descriptor->max_bytes_per_period);
@@ -416,13 +416,15 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
 
     std::chrono::milliseconds period_ms;
 
-private:
-
-    bool force_wait_ = false;
-
-    std::chrono::steady_clock::time_point last_period_ = std::chrono::steady_clock::now();
+protected:
 
     RTPSMessageGroupThroughputLimitation limitation_;
+
+private:
+
+    bool force_wait_ {false};
+
+    std::chrono::steady_clock::time_point last_period_ {std::chrono::steady_clock::now()};
 };
 
 

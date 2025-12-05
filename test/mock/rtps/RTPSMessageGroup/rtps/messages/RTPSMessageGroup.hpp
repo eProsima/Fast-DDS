@@ -65,18 +65,9 @@ public:
 
     MOCK_METHOD0(flush_and_reset, void());
 
-    MOCK_METHOD0(get_current_bytes_processed, uint32_t());
-
-    MOCK_METHOD0(reset_current_bytes_processed, void());
-
     void sender(
             Endpoint*,
             const RTPSMessageSenderInterface*) const
-    {
-    }
-
-    void set_sent_bytes_limitation(
-            uint32_t) const
     {
     }
 

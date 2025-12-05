@@ -40,24 +40,24 @@ std::ostream& operator <<(
 
 using namespace testing;
 
-struct FlowControllerLimitedAsyncPublishModeMock : FlowControllerLimitedAsyncPublishMode
+struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedAsyncPublishMode
 {
     FlowControllerLimitedAsyncPublishModeMock(
             RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor)
         : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
     {
-        group_mock = &group;
+        limitation_mock = &limitation_;
     }
 
-    static RTPSMessageGroup* get_group()
+    static RTPSMessageGroupThroughputLimitation& get_limitation()
     {
-        return group_mock;
+        return *limitation_mock;
     }
 
-    static RTPSMessageGroup* group_mock;
+    static RTPSMessageGroupThroughputLimitation* limitation_mock;
 };
-RTPSMessageGroup* FlowControllerLimitedAsyncPublishModeMock::group_mock = nullptr;
+RTPSMessageGroupThroughputLimitation* FlowControllerLimitedAsyncPublishModeMock::limitation_mock {nullptr};
 
 class FlowControllerSchedulers :  public testing::Test
 {
@@ -66,7 +66,6 @@ protected:
     void TearDown() override
     {
         changes_delivered.clear();
-        current_bytes_processed = 0;
     }
 
     void wait_changes_was_delivered(
@@ -84,10 +83,6 @@ protected:
     std::mutex changes_delivered_mutex;
 
     std::condition_variable number_changes_delivered_cv;
-
-    uint32_t current_bytes_processed = 0;
-
-    bool allow_resetting = false;
 };
 
 #define INIT_CACHE_CHANGE(change, writer, seq) \
@@ -100,7 +95,7 @@ protected:
 TEST_F(FlowControllerSchedulers, Fifo)
 {
     FlowControllerDescriptor flow_controller_descr;
-    flow_controller_descr.max_bytes_per_period = 10200;
+    flow_controller_descr.max_bytes_per_period = 102000;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerFifoSchedule> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
@@ -125,7 +120,8 @@ TEST_F(FlowControllerSchedulers, Fifo)
         LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                this->current_bytes_processed += change->serializedPayload.length;
+                FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
+                    change->serializedPayload.length);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -208,19 +204,7 @@ TEST_F(FlowControllerSchedulers, Fifo)
 
 
     {
-        this->current_bytes_processed = 10100;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -420,26 +404,12 @@ TEST_F(FlowControllerSchedulers, Fifo)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     {
-        this->current_bytes_processed = 10100;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -679,10 +649,8 @@ TEST_F(FlowControllerSchedulers, Fifo)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     // Register writers.
@@ -726,7 +694,8 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
         LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                this->current_bytes_processed += change->serializedPayload.length;
+                FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
+                    change->serializedPayload.length);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -809,19 +778,7 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
 
 
     {
-        this->current_bytes_processed = 10100;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1021,26 +978,12 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     {
-        this->current_bytes_processed = 10100;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1280,10 +1223,8 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     // Register writers.
@@ -1349,7 +1290,8 @@ TEST_F(FlowControllerSchedulers, HighPriority)
         LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                this->current_bytes_processed += change->serializedPayload.length;
+                FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
+                    change->serializedPayload.length);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -1432,19 +1374,7 @@ TEST_F(FlowControllerSchedulers, HighPriority)
 
 
     {
-        this->current_bytes_processed = 10100;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1644,26 +1574,12 @@ TEST_F(FlowControllerSchedulers, HighPriority)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     {
-        this->current_bytes_processed = 10100;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1903,10 +1819,8 @@ TEST_F(FlowControllerSchedulers, HighPriority)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     // Register writers.
@@ -1981,7 +1895,8 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
         LocatorSelectorSender&,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                this->current_bytes_processed += change->serializedPayload.length;
+                FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
+                    change->serializedPayload.length);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -2064,19 +1979,7 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
 
 
     {
-        this->current_bytes_processed = 101000;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(101000);
         auto& call_change_writer8_1 = EXPECT_CALL(writer8,
                         deliver_sample_nts(&change_writer8_1, _, Ref(writer8.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -2276,28 +2179,14 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Makes sure it start a new period.
 
     {
-        this->current_bytes_processed = 101000;
-        this->allow_resetting = false;
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                get_current_bytes_processed()).WillRepeatedly(
-            ReturnPointee(&this->current_bytes_processed));
-        EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                reset_current_bytes_processed()).WillRepeatedly([&]()
-                {
-                    if (this->allow_resetting)
-                    {
-                        this->current_bytes_processed = 0;
-                    }
-                });
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(101000);
         auto& call_change_writer8_1 = EXPECT_CALL(writer8,
                         deliver_sample_nts(&change_writer8_1, _, Ref(writer8.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -2537,13 +2426,11 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
         ASSERT_TRUE(async.add_new_sample(&writer10, &change_writer10_3,
                 std::chrono::steady_clock::now() + std::chrono::hours(24)));
         writer10.getMutex().unlock();
-        this->allow_resetting = true;
         this->wait_changes_was_delivered(30);
         this->changes_delivered.clear();
-        this->current_bytes_processed = 0;
     }
 
-    // Register writers.
+    //Unregister writers.
     async.unregister_writer(&writer1);
     async.unregister_writer(&writer2);
     async.unregister_writer(&writer3);
