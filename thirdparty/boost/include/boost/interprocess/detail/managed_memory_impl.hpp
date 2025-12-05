@@ -32,7 +32,6 @@
 #include <boost/interprocess/detail/nothrow.hpp>
 #include <boost/interprocess/detail/simple_swap.hpp>
 //
-#include <boost/core/no_exceptions_support.hpp>
 //
 #include <boost/intrusive/detail/minimal_pair_header.hpp>
 #include <boost/assert.hpp>
@@ -110,48 +109,48 @@ class basic_managed_memory_impl
    typedef basic_managed_memory_impl
                <CharType, MemoryAlgorithm, IndexType, Offset> self_t;
    protected:
-   template<class ManagedMemory>
-   static bool grow(const char *filename, size_type extra_bytes)
+   template<class ManagedMemory, class CharT>
+   static bool grow(const CharT *filename, size_type extra_bytes)
    {
       typedef typename ManagedMemory::device_type device_type;
       //Increase file size
-      try{
+      BOOST_INTERPROCESS_TRY{
          offset_t old_size;
          {
             device_type f(open_or_create, filename, read_write);
             if(!f.get_size(old_size))
                return false;
-            f.truncate(old_size + extra_bytes);
+            f.truncate(old_size + static_cast<offset_t>(extra_bytes));
          }
          ManagedMemory managed_memory(open_only, filename);
          //Grow always works
          managed_memory.self_t::grow(extra_bytes);
       }
-      catch(...){
+      BOOST_INTERPROCESS_CATCH(...){
          return false;
-      }
+      } BOOST_INTERPROCESS_CATCH_END
       return true;
    }
 
-   template<class ManagedMemory>
-   static bool shrink_to_fit(const char *filename)
+   template<class ManagedMemory, class CharT>
+   static bool shrink_to_fit(const CharT *filename)
    {
       typedef typename ManagedMemory::device_type device_type;
       size_type new_size;
-      try{
+      BOOST_INTERPROCESS_TRY{
          ManagedMemory managed_memory(open_only, filename);
          managed_memory.get_size();
          managed_memory.self_t::shrink_to_fit();
          new_size = managed_memory.get_size();
       }
-      catch(...){
+      BOOST_INTERPROCESS_CATCH(...){
          return false;
-      }
+      } BOOST_INTERPROCESS_CATCH_END
 
       //Decrease file size
       {
          device_type f(open_or_create, filename, read_write);
-         f.truncate(new_size);
+         f.truncate(static_cast<offset_t>(new_size));
       }
       return true;
    }
@@ -175,14 +174,14 @@ class basic_managed_memory_impl
 
       //This function should not throw. The index construction can
       //throw if constructor allocates memory. So we must catch it.
-      BOOST_TRY{
+      BOOST_INTERPROCESS_TRY{
          //Let's construct the allocator in memory
+         BOOST_ASSERT((0 == (std::size_t)addr % boost::move_detail::alignment_of<segment_manager>::value));
          mp_header       = ::new(addr, boost_container_new_t()) segment_manager(size);
       }
-      BOOST_CATCH(...){
+      BOOST_INTERPROCESS_CATCH(...){
          return false;
-      }
-      BOOST_CATCH_END
+      } BOOST_INTERPROCESS_CATCH_END
       return true;
    }
 

@@ -191,6 +191,7 @@ static void setup_transports_shm(
 {
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
     static_cast<void>(att);
+    static_cast<void>(options);
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
             "but Fast DDS was built without SHM transport support.");
 #else
@@ -223,6 +224,7 @@ static void setup_large_data_shm_transport(
 {
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
     static_cast<void>(att);
+    static_cast<void>(options);
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure Large Data transport, " <<
             "but Fast DDS was built without SHM transport support. Will use " <<
             "TCP for communications on the same host.");

@@ -32,20 +32,41 @@
 #include <iostream>
 #endif
 
+//Forward declaration of MSVC intrinsics
+#if defined(_MSC_VER)
+#if defined(_M_AMD64) || defined(_M_IX86) || defined(_M_X64)
+extern "C" void _mm_pause(void);
+#if defined(BOOST_MSVC)
+#pragma intrinsic(_mm_pause)
+#endif
+#elif defined(_M_ARM64) || defined(_M_ARM)
+extern "C" void __yield(void);
+#if defined(BOOST_MSVC)
+#pragma intrinsic(__yield)
+#endif
+#endif
+#endif
+
 // BOOST_INTERPROCESS_SMT_PAUSE
 
-#if defined(_MSC_VER) && ( defined(_M_IX86) || defined(_M_X64) )
-
-extern "C" void _mm_pause();
-#pragma intrinsic( _mm_pause )
+#if defined(_MSC_VER) && ( defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64) )
 
 #define BOOST_INTERPROCESS_SMT_PAUSE _mm_pause();
 
+#elif defined(_MSC_VER) && ( defined(_M_ARM64) || defined(_M_ARM) )
+
+#define BOOST_INTERPROCESS_SMT_PAUSE __yield();
+
 #elif defined(__GNUC__) && ( defined(__i386__) || defined(__x86_64__) ) && !defined(_CRAYC)
 
-#define BOOST_INTERPROCESS_SMT_PAUSE __asm__ __volatile__( "rep; nop" : : : "memory" );
+#define BOOST_INTERPROCESS_SMT_PAUSE   __asm__ __volatile__("rep; nop" : : : "memory");
 
+#elif defined(__GNUC__) && ((defined(__ARM_ARCH) && __ARM_ARCH >= 8) || defined(__ARM_ARCH_8A__) || defined(__aarch64__))
+
+#define BOOST_INTERPROCESS_SMT_PAUSE   __asm__ __volatile__("yield;" : : : "memory");
+    
 #endif
+
 
 namespace boost{
 namespace interprocess{
