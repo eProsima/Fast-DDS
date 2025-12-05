@@ -121,6 +121,7 @@ public:
             fastrtps::rtps::CDRMessage_t* cdr_message,
             const fastrtps::rtps::InstanceHandle_t& iHandle)
     {
+        // Size of parameter key is 20 bytes: 4 for PID (2) and length (2), 16 for the key hash
         if (cdr_message->pos + 20 >= cdr_message->max_size)
         {
             return false;

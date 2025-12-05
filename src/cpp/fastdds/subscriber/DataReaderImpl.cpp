@@ -2058,12 +2058,16 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
         const void* instance) const
 {
     InstanceHandle_t handle = HANDLE_NIL;
+<<<<<<< HEAD
 
     if (instance && type_->m_isGetKeyDefined)
+=======
+    if (instance && type_->is_compute_key_provided)
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     {
         if (type_->getKey(const_cast<void*>(instance), &handle, false))
         {
-            if (!history_.is_instance_present(handle))
+            if (!history_.is_instance_present(handle) || !handle.isDefined())
             {
                 handle = HANDLE_NIL;
             }

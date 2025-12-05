@@ -506,7 +506,8 @@ bool RTPSMessageGroup::add_data(
     if (!RTPSMessageCreator::addSubmessageData(submessage_msg_, &change_to_add, endpoint_->getAttributes().topicKind,
             readerId, expectsInlineQos, inline_qos, &is_big_submessage))
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add DATA submsg to the CDRMessage. Buffer too small");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                "Cannot add DATA submsg to the CDRMessage. Either buffer is too small or handle was required and not set");
         change_to_add.serializedPayload.data = nullptr;
         return false;
     }
@@ -609,7 +610,8 @@ bool RTPSMessageGroup::add_data_frag(
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
             expectsInlineQos, inline_qos))
     {
-        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER,
+                "Cannot add DATA_FRAG submsg to the CDRMessage. Either buffer is too small or handle was required and not set");
         change_to_add.serializedPayload.data = nullptr;
         return false;
     }

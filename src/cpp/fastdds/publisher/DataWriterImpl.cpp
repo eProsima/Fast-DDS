@@ -686,14 +686,25 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
+<<<<<<< HEAD
         type_.get()->getKey(data, &instance_handle, is_key_protected);
+=======
+        if (!type_->compute_key(data, instance_handle, is_key_protected) || !instance_handle.isDefined())
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 
-    // Check if the Handle is different from the special value HANDLE_NIL and
-    // does not correspond with the instance referred by the data
-    if (handle.isDefined() && handle != instance_handle)
+    if (handle.isDefined() && instance_handle != handle)
     {
+<<<<<<< HEAD
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+=======
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Handle differs from data's key.");
+        return RETCODE_PRECONDITION_NOT_MET;
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 
     return ReturnCode_t::RETCODE_OK;
@@ -767,7 +778,7 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 
     instance_handle = handle;
 
-#if defined(NDEBUG)
+#if defined(NDEBUG) // In Release build, compute key only if necessary
     if (!instance_handle.isDefined())
 #endif // if !defined(NDEBUG)
     {
@@ -775,14 +786,27 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
+<<<<<<< HEAD
         type_->getKey(data, &instance_handle, is_key_protected);
+=======
+        if (!type_->compute_key(data, instance_handle, is_key_protected) || !instance_handle.isDefined())
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 
-#if !defined(NDEBUG)
+#if !defined(NDEBUG) // In Debug build, always check that provided handle matches data's key
     if (handle.isDefined() && instance_handle != handle)
     {
+<<<<<<< HEAD
         EPROSIMA_LOG_ERROR(DATA_WRITER, "handle differs from data's key.");
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+=======
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Handle differs from data's key.");
+        return RETCODE_PRECONDITION_NOT_MET;
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 #endif // if !defined(NDEBUG)
 
@@ -1135,6 +1159,8 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
         return ret_code;
     }
 
+    // As this entry point does not receive an InstanceHandle_t, it has to be computed if the topic
+    // requires it
     InstanceHandle_t handle;
     if (type_->m_isGetKeyDefined)
     {
@@ -1142,7 +1168,15 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
+<<<<<<< HEAD
         type_->getKey(data, &handle, is_key_protected);
+=======
+        if (!type_->compute_key(data, handle, is_key_protected) || !handle.isDefined())
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
+            return RETCODE_PRECONDITION_NOT_MET;
+        }
+>>>>>>> 613789a83 (Fix handling of InstanceHandle use cases (#6194))
     }
 
     return perform_create_new_change(changeKind, data, wparams, handle);
