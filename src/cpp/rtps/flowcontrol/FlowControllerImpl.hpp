@@ -199,7 +199,8 @@ public:
     }
 
     void add_sent_bytes_by_group(
-            uint32_t bytes) override
+            uint32_t bytes,
+            RTPSMessageSenderInterface&) override
     {
         current_sent_bytes_ += bytes;
     }

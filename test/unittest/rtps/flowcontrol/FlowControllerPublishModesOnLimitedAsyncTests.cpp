@@ -57,11 +57,11 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     auto send_functor = [&](
         CacheChange_t* change,
         RTPSMessageGroup&,
-        LocatorSelectorSender&,
+        LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
                 FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
-                    change->serializedPayload.length);
+                    change->serializedPayload.length, sender);
                 this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);

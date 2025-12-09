@@ -117,11 +117,11 @@ TEST_F(FlowControllerSchedulers, Fifo)
     auto send_functor = [&](
         CacheChange_t* change,
         RTPSMessageGroup&,
-        LocatorSelectorSender&,
+        LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
                 FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
-                    change->serializedPayload.length);
+                    change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -204,7 +204,8 @@ TEST_F(FlowControllerSchedulers, Fifo)
 
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100,
+                writer1.async_locator_selector_);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -409,7 +410,8 @@ TEST_F(FlowControllerSchedulers, Fifo)
     }
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100,
+                writer1.async_locator_selector_);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -691,11 +693,11 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     auto send_functor = [&](
         CacheChange_t* change,
         RTPSMessageGroup&,
-        LocatorSelectorSender&,
+        LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
                 FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
-                    change->serializedPayload.length);
+                    change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -778,7 +780,8 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
 
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100,
+                writer1.async_locator_selector_);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -983,7 +986,8 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     }
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100,
+                writer1.async_locator_selector_);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1287,11 +1291,11 @@ TEST_F(FlowControllerSchedulers, HighPriority)
     auto send_functor = [&](
         CacheChange_t* change,
         RTPSMessageGroup&,
-        LocatorSelectorSender&,
+        LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
                 FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
-                    change->serializedPayload.length);
+                    change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -1374,7 +1378,8 @@ TEST_F(FlowControllerSchedulers, HighPriority)
 
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100,
+                writer1.async_locator_selector_);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1579,7 +1584,8 @@ TEST_F(FlowControllerSchedulers, HighPriority)
     }
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(10100,
+                writer1.async_locator_selector_);
         auto& call_change_writer1_1 = EXPECT_CALL(writer1,
                         deliver_sample_nts(&change_writer1_1, _, Ref(writer1.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -1892,11 +1898,11 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
     auto send_functor = [&](
         CacheChange_t* change,
         RTPSMessageGroup&,
-        LocatorSelectorSender&,
+        LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
                 FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
-                    change->serializedPayload.length);
+                    change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -1979,7 +1985,8 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
 
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(101000);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(101000,
+                writer8.async_locator_selector_);
         auto& call_change_writer8_1 = EXPECT_CALL(writer8,
                         deliver_sample_nts(&change_writer8_1, _, Ref(writer8.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -2186,7 +2193,8 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
     std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Makes sure it start a new period.
 
     {
-        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(101000);
+        FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(101000,
+                writer8.async_locator_selector_);
         auto& call_change_writer8_1 = EXPECT_CALL(writer8,
                         deliver_sample_nts(&change_writer8_1, _, Ref(writer8.async_locator_selector_), _)).
                         WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));

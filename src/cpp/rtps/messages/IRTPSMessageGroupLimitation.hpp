@@ -29,13 +29,33 @@ namespace rtps {
 class CacheChange_t;
 class RTPSMessageSenderInterface;
 
+/*!
+ * Interface to implement mechanisms that taking into account the bytes sent by RTPSMessageGroup are able to limit
+ * the data sent depending on certain conditions.
+ */
 class IRTPSMessageGroupLimitation
 {
 public:
 
+    /*!
+     * RTPSMessageGroup uses this function to announce the number of bytes just sent in the group.
+     *
+     * @param bytes Number of bytes just sent in the group.
+     * @param sender RTPSMessageSenderInterface that is sending the message group.
+     */
     virtual void add_sent_bytes_by_group(
-            uint32_t bytes) = 0;
+            uint32_t bytes,
+            RTPSMessageSenderInterface& sender) = 0;
 
+    /*! RTPSMessageGroup uses this function to know whether adding a new change to the group would exceed the
+     *  limitation or not.
+     *
+     * @param change Change to be added.
+     * @param size_to_add Size in bytes that adding the change would imply.
+     * @param pending_to_send Number of bytes pending to be sent in the group.
+     * @param sender RTPSMessageSenderInterface that is sending the message group.
+     * @return True if adding the change would exceed the limitation, false otherwise.
+     */
     virtual bool data_exceeds_limitation(
             CacheChange_t& change,
             uint32_t size_to_add,

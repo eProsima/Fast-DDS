@@ -402,7 +402,7 @@ void RTPSMessageGroup::send()
 
             if (nullptr != limitation_)
             {
-                limitation_->add_sent_bytes_by_group(buffers_bytes_);
+                limitation_->add_sent_bytes_by_group(buffers_bytes_, *sender_);
             }
         }
     }
