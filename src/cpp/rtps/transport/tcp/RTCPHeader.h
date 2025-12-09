@@ -364,7 +364,7 @@ public:
                 fastrtps::rtps::Endianness_t::BIGEND;
         if (internal_endian != msg_endian)
         {
-            logWarning(RTCP_MSG, "endianness of rtcp header is not consistent with CDRMsg");
+            EPROSIMA_LOG_WARNING(RTCP_MSG, "endianness of rtcp header is not consistent with CDRMsg");
             return;
         }
 
