@@ -30,30 +30,32 @@ class CacheChange_t;
 class RTPSMessageSenderInterface;
 
 /*!
- * Interface to implement mechanisms that taking into account the bytes sent by RTPSMessageGroup are able to limit
- * the data sent depending on certain conditions.
+ * Interface to implement mechanisms that limit the data sent by an RTPSMessageGroup under certain conditions,
+ * taking into account the bytes already sent by said group.
  */
 class IRTPSMessageGroupLimitation
 {
 public:
 
     /*!
-     * RTPSMessageGroup uses this function to announce the number of bytes just sent in the group.
+     * RTPSMessageGroup uses this method to announce the number of bytes just sent by the group.
      *
-     * @param bytes Number of bytes just sent in the group.
-     * @param sender RTPSMessageSenderInterface that is sending the message group.
+     * @param bytes Number of bytes just sent by the group.
+     * @param sender RTPSMessageSenderInterface used for delivering sent bytes.
      */
     virtual void add_sent_bytes_by_group(
             uint32_t bytes,
             RTPSMessageSenderInterface& sender) = 0;
 
-    /*! RTPSMessageGroup uses this function to know whether adding a new change to the group would exceed the
-     *  limitation or not.
+    /*!
+     * RTPSMessageGroup uses this method to query whether adding a new change to the group would exceed the
+     * limitation or not.
      *
      * @param change Change to be added.
      * @param size_to_add Size in bytes that adding the change would imply.
-     * @param pending_to_send Number of bytes pending to be sent in the group.
-     * @param sender RTPSMessageSenderInterface that is sending the message group.
+     * @param pending_to_send Number of bytes pending to be sent by the group.
+     * @param sender RTPSMessageSenderInterface that the group will use for data delivery.
+     *
      * @return True if adding the change would exceed the limitation, false otherwise.
      */
     virtual bool data_exceeds_limitation(
