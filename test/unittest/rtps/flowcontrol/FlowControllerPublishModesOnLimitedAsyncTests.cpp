@@ -28,17 +28,17 @@ struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedA
             const FlowControllerDescriptor* descriptor)
         : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
     {
-        limitation_mock = &limitation_;
+        publish_mode = this;
     }
 
-    static RTPSMessageGroupThroughputLimitation& get_limitation()
+    static FlowControllerLimitedAsyncPublishMode& get_publish_mode()
     {
-        return *limitation_mock;
+        return *publish_mode;
     }
 
-    static RTPSMessageGroupThroughputLimitation* limitation_mock;
+    static FlowControllerLimitedAsyncPublishMode* publish_mode;
 };
-RTPSMessageGroupThroughputLimitation* FlowControllerLimitedAsyncPublishModeMock::limitation_mock {nullptr};
+FlowControllerLimitedAsyncPublishMode* FlowControllerLimitedAsyncPublishModeMock::publish_mode {nullptr};
 
 TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
 {
@@ -60,7 +60,7 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_limitation().add_sent_bytes_by_group(
+                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
                     change->serializedPayload.length, sender);
                 this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
