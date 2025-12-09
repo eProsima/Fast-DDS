@@ -207,7 +207,8 @@ public:
     bool data_exceeds_limitation(
             CacheChange_t&,
             uint32_t size_to_add,
-            uint32_t pending_to_send) override
+            uint32_t pending_to_send,
+            RTPSMessageSenderInterface&) override
     {
         return
             //   either limitation has already been reached
