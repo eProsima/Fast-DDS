@@ -29,7 +29,6 @@ protected:
     void TearDown() override
     {
         changes_delivered.clear();
-        current_bytes_processed = 0;
     }
 
     void wait_changes_was_delivered(
@@ -49,8 +48,6 @@ protected:
     std::mutex changes_delivered_mutex;
 
     std::condition_variable number_changes_delivered_cv;
-
-    uint32_t current_bytes_processed = 0;
 };
 
 using Schedulers = ::testing::Types<eprosima::fastdds::rtps::FlowControllerFifoSchedule,

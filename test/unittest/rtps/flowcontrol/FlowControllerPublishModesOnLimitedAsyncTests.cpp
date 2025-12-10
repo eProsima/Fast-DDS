@@ -21,24 +21,24 @@
 using namespace eprosima::fastdds::rtps;
 using namespace testing;
 
-struct FlowControllerLimitedAsyncPublishModeMock : FlowControllerLimitedAsyncPublishMode
+struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedAsyncPublishMode
 {
     FlowControllerLimitedAsyncPublishModeMock(
             RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor)
         : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
     {
-        group_mock = &group;
+        publish_mode = this;
     }
 
-    static RTPSMessageGroup* get_group()
+    static FlowControllerLimitedAsyncPublishMode& get_publish_mode()
     {
-        return group_mock;
+        return *publish_mode;
     }
 
-    static RTPSMessageGroup* group_mock;
+    static FlowControllerLimitedAsyncPublishMode* publish_mode;
 };
-RTPSMessageGroup* FlowControllerLimitedAsyncPublishModeMock::group_mock = nullptr;
+FlowControllerLimitedAsyncPublishMode* FlowControllerLimitedAsyncPublishModeMock::publish_mode {nullptr};
 
 TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
 {
@@ -57,14 +57,12 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     auto send_functor = [&](
         CacheChange_t* change,
         RTPSMessageGroup&,
-        LocatorSelectorSender&,
+        LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
+                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
+                    change->serializedPayload.length, sender);
                 this->last_thread_delivering_sample = std::this_thread::get_id();
-                this->current_bytes_processed += change->serializedPayload.length;
-                EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-                        get_current_bytes_processed()).WillRepeatedly(
-                    ReturnPointee(&this->current_bytes_processed));
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
@@ -74,6 +72,7 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
 
     // Register writers.
     async.register_writer(&writer1);
+    async.register_writer(&writer2);
 
     CacheChange_t change_writer1;
     INIT_CACHE_CHANGE(change_writer1, writer1, 1);
@@ -81,15 +80,7 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     CacheChange_t change_writer2;
     INIT_CACHE_CHANGE(change_writer2, writer2, 1);
 
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            reset_current_bytes_processed()).WillRepeatedly([&]()
-            {
-                this->current_bytes_processed = 0;
-            });
-
     // Testing add_new_sample. Writer will be able to deliver it.
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(), get_current_bytes_processed()).WillOnce(Return(
-                0));
     EXPECT_CALL(writer1,
             deliver_sample_nts(&change_writer1, _, Ref(writer1.async_locator_selector_), _)).
             WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
@@ -493,40 +484,24 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
             deliver_sample_nts(&change_writer10, _, Ref(writer1.async_locator_selector_), _)).
             WillOnce(Return(DeliveryRetCode::EXCEEDED_LIMIT)).
             WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer1,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     writer1.getMutex().unlock();
     this->wait_changes_was_delivered(1);
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer2,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     writer1.getMutex().unlock();
     this->wait_changes_was_delivered(2);
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer3,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
     writer1.getMutex().unlock();
     this->wait_changes_was_delivered(3);
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_new_sample(&writer1, &change_writer4,
             std::chrono::steady_clock::now() + std::chrono::hours(24)));
@@ -592,37 +567,21 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
             deliver_sample_nts(&change_writer10, _, Ref(writer1.async_locator_selector_), _)).
             WillOnce(Return(DeliveryRetCode::EXCEEDED_LIMIT)).
             WillOnce(DoAll(send_functor, Return(DeliveryRetCode::DELIVERED)));
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer1));
     writer1.getMutex().unlock();
     this->wait_changes_was_delivered(1);
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer2));
     writer1.getMutex().unlock();
     this->wait_changes_was_delivered(2);
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer3));
     writer1.getMutex().unlock();
     this->wait_changes_was_delivered(3);
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
-    EXPECT_CALL(*FlowControllerLimitedAsyncPublishModeMock::get_group(),
-            get_current_bytes_processed()).
-            WillOnce(Return(10100)).
-            WillRepeatedly(Return(0));
     writer1.getMutex().lock();
     ASSERT_TRUE(async.add_old_sample(&writer1, &change_writer4));
     writer1.getMutex().unlock();
@@ -640,5 +599,6 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     EXPECT_NE(std::this_thread::get_id(), this->last_thread_delivering_sample);
     this->changes_delivered.clear();
 
+    async.unregister_writer(&writer2);
     async.unregister_writer(&writer1);
 }

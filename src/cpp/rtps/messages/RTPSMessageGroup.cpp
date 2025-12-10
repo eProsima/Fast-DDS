@@ -69,21 +69,6 @@ public:
 
 };
 
-static bool data_exceeds_limitation(
-        uint32_t size_to_add,
-        uint32_t limitation,
-        uint32_t total_sent,
-        uint32_t pending_to_send)
-{
-    return
-        // Limitation has been set and
-        (0 < limitation) &&
-        //   either limitation has already been reached
-        ((limitation <= (total_sent + pending_to_send)) ||
-        //   or adding size_to_add will exceed limitation
-        (size_to_add > (limitation - (total_sent + pending_to_send))));
-}
-
 static bool append_message(
         RTPSParticipantImpl* participant,
         CDRMessage_t* full_msg,
@@ -260,6 +245,7 @@ RTPSMessageGroup::RTPSMessageGroup(
     , max_blocking_time_point_(max_blocking_time_point)
     , send_buffer_(!internal_buffer ? participant->get_send_buffer(max_blocking_time_point) : nullptr)
     , internal_buffer_(internal_buffer)
+    , config_send_buffer_size_(participant->get_min_network_send_buffer_size())
 {
     // Avoid warning when neither SECURITY nor DEBUG is used
     (void)participant;
@@ -406,7 +392,18 @@ void RTPSMessageGroup::send()
             {
                 throw timeout();
             }
-            current_sent_bytes_ += buffers_bytes_;
+
+            current_send_buffer_size_ += buffers_bytes_;
+            if (current_send_buffer_size_ > config_send_buffer_size_)
+            {
+                ++num_of_exceeded_send_buffer_size;
+                current_send_buffer_size_ = current_send_buffer_size_ - config_send_buffer_size_;
+            }
+
+            if (nullptr != limitation_)
+            {
+                limitation_->add_sent_bytes_by_group(buffers_bytes_, *sender_);
+            }
         }
     }
 }
@@ -572,8 +569,7 @@ bool RTPSMessageGroup::add_data(
 
     // Check limitation
     uint32_t data_size = change.serializedPayload.length;
-    if (data_exceeds_limitation(data_size, sent_bytes_limitation_, current_sent_bytes_,
-            buffers_bytes_))
+    if (nullptr != limitation_ && limitation_->data_exceeds_limitation(change, data_size, buffers_bytes_, *sender_))
     {
         flush_and_reset();
         throw limit_exceeded();
@@ -692,8 +688,7 @@ bool RTPSMessageGroup::add_data_frag(
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
     // Check limitation
-    if (data_exceeds_limitation(fragment_size, sent_bytes_limitation_, current_sent_bytes_,
-            buffers_bytes_))
+    if (nullptr != limitation_ && limitation_->data_exceeds_limitation(change, fragment_size, buffers_bytes_, *sender_))
     {
         flush_and_reset();
         throw limit_exceeded();

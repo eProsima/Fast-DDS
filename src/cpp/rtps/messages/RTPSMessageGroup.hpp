@@ -32,6 +32,7 @@
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <rtps/messages/IRTPSMessageGroupLimitation.hpp>
 #include <rtps/messages/RTPSMessageCreator.hpp>
 
 namespace eprosima {
@@ -232,20 +233,20 @@ public:
         return std::numeric_limits<uint16_t>::max() - data_frag_header_size_ - max_inline_qos_size_ - 3;
     }
 
-    void set_sent_bytes_limitation(
-            uint32_t limit)
+    void set_limitation(
+            IRTPSMessageGroupLimitation* limitation)
     {
-        sent_bytes_limitation_ = limit;
+        limitation_ = limitation;
     }
 
-    void reset_current_bytes_processed()
+    uint32_t current_buffer_bytes() const
     {
-        current_sent_bytes_ = 0;
+        return buffers_bytes_;
     }
 
-    inline uint32_t get_current_bytes_processed() const
+    uint32_t num_exceeded_send_buffer_size() const
     {
-        return current_sent_bytes_ + buffers_bytes_;
+        return num_of_exceeded_send_buffer_size;
     }
 
 private:
@@ -326,17 +327,17 @@ private:
     void add_stats_submsg();
 #endif // FASTDDS_STATISTICS
 
-    RTPSMessageSenderInterface* sender_ = nullptr;
+    RTPSMessageSenderInterface* sender_ {nullptr};
 
-    Endpoint* endpoint_ = nullptr;
+    Endpoint* endpoint_ {nullptr};
 
-    CDRMessage_t* header_msg_ = nullptr;
+    CDRMessage_t* header_msg_ {nullptr};
 
-    CDRMessage_t* submessage_msg_ = nullptr;
+    CDRMessage_t* submessage_msg_ {nullptr};
 
     GuidPrefix_t current_dst_;
 
-    RTPSParticipantImpl* participant_ = nullptr;
+    RTPSParticipantImpl* participant_ {nullptr};
 
      #if HAVE_SECURITY
 
@@ -348,11 +349,7 @@ private:
 
     std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
 
-    bool internal_buffer_ = false;
-
-    uint32_t sent_bytes_limitation_ = 0;
-
-    uint32_t current_sent_bytes_ = 0;
+    bool internal_buffer_ {false};
 
     // Next buffer that will be sent
     eprosima::fastdds::rtps::NetworkBuffer pending_buffer_;
@@ -363,6 +360,12 @@ private:
     // Vector of payloads of which the RTPSMessageGroup is the owner
     ResourceLimitedVector<eprosima::fastdds::rtps::SerializedPayload_t>* payloads_to_send_ = nullptr;
 
+    const uint32_t config_send_buffer_size_ {0};
+
+    uint32_t current_send_buffer_size_ {0};
+
+    uint32_t num_of_exceeded_send_buffer_size {0};
+
     // Bytes to send in the next list of buffers
     uint32_t buffers_bytes_ = 0;
 
@@ -371,6 +374,8 @@ private:
 
     // Fixed padding to be used whenever needed
     const octet padding_[3] = {0, 0, 0};
+
+    IRTPSMessageGroupLimitation* limitation_ {nullptr};
 };
 
 } // namespace rtps

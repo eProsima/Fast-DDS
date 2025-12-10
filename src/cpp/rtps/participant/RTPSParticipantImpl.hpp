@@ -48,7 +48,7 @@
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 
-#include "../flowcontrol/FlowControllerFactory.hpp"
+#include <fastdds/types.hpp>
 #include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
@@ -746,7 +746,7 @@ private:
     /*
      * Flow controller factory.
      */
-    FlowControllerFactory flow_controller_factory_;
+    FlowControllerFactoryType flow_controller_factory_;
 
 #if HAVE_SECURITY
     security::ParticipantSecurityAttributes security_attributes_;
