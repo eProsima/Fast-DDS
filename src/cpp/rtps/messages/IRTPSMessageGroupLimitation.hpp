@@ -26,7 +26,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class CacheChange_t;
+struct CacheChange_t;
 class RTPSMessageSenderInterface;
 
 /*!
