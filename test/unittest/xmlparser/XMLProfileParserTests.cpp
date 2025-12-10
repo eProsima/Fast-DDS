@@ -4144,6 +4144,304 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
     }
 }
 
+/*
+ * Tests the validation of entityID and userDefinedID in data_writer profile
+ * Values should be in range [0, 32767]
+ */
+TEST_F(XMLProfileParserBasicTests, XMLParserDataWriterEntityIDValidation)
+{
+    // Test valid values at boundaries
+    {
+        const char* xml_valid_min =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_valid_min">
+                            <entityID>0</entityID>
+                            <userDefinedID>0</userDefinedID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::loadXMLString(xml_valid_min, strlen(xml_valid_min)));
+
+        xmlparser::PublisherAttributes pub_atts;
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::fillPublisherAttributes("test_writer_valid_min", pub_atts));
+        EXPECT_EQ(pub_atts.getEntityID(), 0);
+        EXPECT_EQ(pub_atts.getUserDefinedID(), 0);
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_valid_max =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_valid_max">
+                            <entityID>32767</entityID>
+                            <userDefinedID>32767</userDefinedID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::loadXMLString(xml_valid_max, strlen(xml_valid_max)));
+
+        xmlparser::PublisherAttributes pub_atts;
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::fillPublisherAttributes("test_writer_valid_max", pub_atts));
+        EXPECT_EQ(pub_atts.getEntityID(), 32767);
+        EXPECT_EQ(pub_atts.getUserDefinedID(), 32767);
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // Test invalid values - negative
+    {
+        const char* xml_invalid_negative_entity =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_invalid_neg">
+                            <entityID>-1</entityID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_negative_entity,
+                strlen(xml_invalid_negative_entity)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_invalid_negative_user =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_invalid_neg">
+                            <userDefinedID>-1</userDefinedID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_negative_user,
+                strlen(xml_invalid_negative_user)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // Test invalid values - too large
+    {
+        const char* xml_invalid_large_entity =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_invalid_large">
+                            <entityID>32768</entityID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_large_entity,
+                strlen(xml_invalid_large_entity)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_invalid_large_user =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_invalid_large">
+                            <userDefinedID>32768</userDefinedID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_large_user,
+                strlen(xml_invalid_large_user)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_invalid_very_large =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_writer profile_name="test_writer_invalid_very_large">
+                            <entityID>65536</entityID>
+                            <userDefinedID>100000</userDefinedID>
+                        </data_writer>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_very_large,
+                strlen(xml_invalid_very_large)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
+/*
+ * Tests the validation of entityID and userDefinedID in data_reader profile
+ * Values should be in range [0, 32767]
+ */
+TEST_F(XMLProfileParserBasicTests, XMLParserDataReaderEntityIDValidation)
+{
+    // Test valid values at boundaries
+    {
+        const char* xml_valid_min =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_valid_min">
+                            <entityID>0</entityID>
+                            <userDefinedID>0</userDefinedID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::loadXMLString(xml_valid_min, strlen(xml_valid_min)));
+
+        xmlparser::SubscriberAttributes sub_atts;
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::fillSubscriberAttributes("test_reader_valid_min", sub_atts));
+        EXPECT_EQ(sub_atts.getEntityID(), 0);
+        EXPECT_EQ(sub_atts.getUserDefinedID(), 0);
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_valid_max =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_valid_max">
+                            <entityID>32767</entityID>
+                            <userDefinedID>32767</userDefinedID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::loadXMLString(xml_valid_max, strlen(xml_valid_max)));
+
+        xmlparser::SubscriberAttributes sub_atts;
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
+                xmlparser::XMLProfileManager::fillSubscriberAttributes("test_reader_valid_max", sub_atts));
+        EXPECT_EQ(sub_atts.getEntityID(), 32767);
+        EXPECT_EQ(sub_atts.getUserDefinedID(), 32767);
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // Test invalid values - negative
+    {
+        const char* xml_invalid_negative_entity =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_invalid_neg">
+                            <entityID>-1</entityID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_negative_entity,
+                strlen(xml_invalid_negative_entity)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_invalid_negative_user =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_invalid_neg">
+                            <userDefinedID>-1</userDefinedID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_negative_user,
+                strlen(xml_invalid_negative_user)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    // Test invalid values - too large
+    {
+        const char* xml_invalid_large_entity =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_invalid_large">
+                            <entityID>32768</entityID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_large_entity,
+                strlen(xml_invalid_large_entity)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_invalid_large_user =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_invalid_large">
+                            <userDefinedID>32768</userDefinedID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_large_user,
+                strlen(xml_invalid_large_user)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+
+    {
+        const char* xml_invalid_very_large =
+                R"(<?xml version="1.0" encoding="UTF-8" ?>
+                <dds xmlns="http://www.eprosima.com">
+                    <profiles>
+                        <data_reader profile_name="test_reader_invalid_very_large">
+                            <entityID>65536</entityID>
+                            <userDefinedID>100000</userDefinedID>
+                        </data_reader>
+                    </profiles>
+                </dds>)";
+
+        EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR,
+                xmlparser::XMLProfileManager::loadXMLString(xml_invalid_very_large,
+                strlen(xml_invalid_very_large)));
+
+        xmlparser::XMLProfileManager::DeleteInstance();
+    }
+}
+
 INSTANTIATE_TEST_SUITE_P(XMLProfileParserTests, XMLProfileParserTests, testing::Values(false));
 INSTANTIATE_TEST_SUITE_P(XMLProfileParserEnvVarTests, XMLProfileParserTests, testing::Values(true));
 

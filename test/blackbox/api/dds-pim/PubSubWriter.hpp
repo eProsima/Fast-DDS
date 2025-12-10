@@ -1483,8 +1483,8 @@ public:
     }
 
     PubSubWriter& setPublisherIDs(
-            uint8_t UserID,
-            uint8_t EntityID)
+            int16_t UserID,
+            int16_t EntityID)
     {
         datawriter_qos_.endpoint().user_defined_id = UserID;
         datawriter_qos_.endpoint().entity_id = EntityID;
