@@ -17,12 +17,11 @@
 
 #ifdef BOOST_MSVC
    #pragma warning (push)
+   #pragma warning (disable : 4619) // there is no warning number 'XXXX'
    #pragma warning (disable : 4127) // conditional expression is constant
    #pragma warning (disable : 4146) // unary minus operator applied to unsigned type, result still unsigned
    #pragma warning (disable : 4197) // top-level volatile in cast is ignored
-   #pragma warning (disable : 4244) // possible loss of data
    #pragma warning (disable : 4251) // "identifier" : class "type" needs to have dll-interface to be used by clients of class "type2"
-   #pragma warning (disable : 4267) // conversion from "X" to "Y", possible loss of data
    #pragma warning (disable : 4275) // non DLL-interface classkey "identifier" used as base for DLL-interface classkey "identifier"
    #pragma warning (disable : 4284) // odd return type for operator->
    #pragma warning (disable : 4290) // C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
@@ -51,3 +50,13 @@
    #pragma warning (disable : 4996) // "function": was declared deprecated
  
 #endif   //BOOST_MSVC
+
+
+#if defined(BOOST_GCC) && (BOOST_GCC >= 40600)
+#pragma GCC diagnostic push
+//Sign conversion warnings broken before GCC 9.3
+//(https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87519)
+#if BOOST_GCC < 90300
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
+#endif

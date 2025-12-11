@@ -19,21 +19,29 @@
 #  pragma once
 #endif
 
+#if defined(BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION) && defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION) 
+#error "BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION && BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION can't be defined at the same time"
+#endif
+
+//#define BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION
+
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
    #define BOOST_INTERPROCESS_WINDOWS
-   #if !defined(BOOST_FASTDDS_PATCHES)
+   #if !defined(BOOST_INTERPROCESS_FORCE_NATIVE_EMULATION) && !defined(BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION)
       #define BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
    #endif
    #define BOOST_INTERPROCESS_HAS_KERNEL_BOOTTIME
-   //Define this to connect with shared memory created with versions < 1.54
-   //#define BOOST_INTERPROCESS_BOOTSTAMP_IS_LASTBOOTUPTIME
 #else
    #include <unistd.h>
+
+   #if defined (__CYGWIN__) && (!defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE < 200112L))
+   #error "Error: Compiling on Cygwin without POSIX is not supported. Please define _XOPEN_SOURCE >= 600 or _POSIX_C_SOURCE >= 200112 when compiling"
+   #endif
 
    //////////////////////////////////////////////////////
    //Check for XSI shared memory objects. They are available in nearly all UNIX platforms
    //////////////////////////////////////////////////////
-   #if !defined(__QNXNTO__) && !defined(__ANDROID__) && !defined(__HAIKU__) && !(__VXWORKS__)
+   #if !defined(__QNXNTO__) && !defined(__ANDROID__) && !defined(__HAIKU__) && !(__VXWORKS__) && !(__EMSCRIPTEN__)
       #define BOOST_INTERPROCESS_XSI_SHARED_MEMORY_OBJECTS
    #endif
 
@@ -68,6 +76,13 @@
    #endif
 
    //////////////////////////////////////////////////////
+   //    BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   //////////////////////////////////////////////////////
+   #if (_XOPEN_SOURCE >= 700 || _POSIX_C_SOURCE >= 200809L)
+      #define BOOST_INTERPROCESS_POSIX_ROBUST_MUTEXES
+   #endif
+
+   //////////////////////////////////////////////////////
    // _POSIX_SHARED_MEMORY_OBJECTS (POSIX.1b/POSIX.4)
    //////////////////////////////////////////////////////
    #if ( defined(_POSIX_SHARED_MEMORY_OBJECTS) && ((_POSIX_SHARED_MEMORY_OBJECTS + 0) > 0) ) ||\
@@ -96,34 +111,20 @@
    //////////////////////////////////////////////////////
    // _POSIX_SEMAPHORES (POSIX.1b/POSIX.4)
    //////////////////////////////////////////////////////
-   #if !defined(BOOST_FASTDDS_PATCHES)
-      #if ( defined(_POSIX_SEMAPHORES) && ((_POSIX_SEMAPHORES + 0) > 0) ) ||\
-          ( defined(__FreeBSD__) && (__FreeBSD__ >= 4)) || \
-            defined(__APPLE__)
-         #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
-         //MacOsX declares _POSIX_SEMAPHORES but sem_init returns ENOSYS
-         #if !defined(__APPLE__)
-            #define BOOST_INTERPROCESS_POSIX_UNNAMED_SEMAPHORES
-         #endif
-         #if defined(__osf__) || defined(__vms)
-            #define BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SEMAPHORES
-         #endif
+   #if ( defined(_POSIX_SEMAPHORES) && ((_POSIX_SEMAPHORES + 0) > 0) ) ||\
+       ( defined(__FreeBSD__) && (__FreeBSD__ >= 4)) || \
+         defined(__APPLE__)
+      #if !defined(BOOST_FASTDDS_PATCHES)
+          #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
+      #elif !defined(__ANDROID__)
+          #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
+      #endif // if !defined(BOOST_FASTDDS_PATCHES)
+      //MacOsX declares _POSIX_SEMAPHORES but sem_init returns ENOSYS
+      #if !defined(__APPLE__)
+         #define BOOST_INTERPROCESS_POSIX_UNNAMED_SEMAPHORES
       #endif
-   #else
-      #if ( defined(_POSIX_SEMAPHORES) && ((_POSIX_SEMAPHORES + 0) > 0) ) ||\
-          ( defined(__FreeBSD__) && (__FreeBSD__ >= 4)) || \
-            defined(__APPLE__)
-         // Android does not implement sem_open/sem_close
-         #if !defined(__ANDROID__)
-            #define BOOST_INTERPROCESS_POSIX_NAMED_SEMAPHORES
-         #endif
-         //MacOsX declares _POSIX_SEMAPHORES but sem_init returns ENOSYS
-         #if !defined(__APPLE__)
-            #define BOOST_INTERPROCESS_POSIX_UNNAMED_SEMAPHORES
-         #endif
-         #if defined(__osf__) || defined(__vms)
-            #define BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SEMAPHORES
-         #endif
+      #if defined(__osf__) || defined(__vms)
+         #define BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SEMAPHORES
       #endif
    #endif
 
@@ -169,6 +170,14 @@
        (defined (_FILE_OFFSET_BITS) &&(_FILE_OFFSET_BITS  - 0 >= 64))
       #define BOOST_INTERPROCESS_UNIX_64_BIT_OR_BIGGER_OFF_T
    #endif
+
+   //////////////////////////////////////////////////////
+   //posix_fallocate
+   //////////////////////////////////////////////////////
+   #if (_XOPEN_SOURCE >= 600 || _POSIX_C_SOURCE >= 200112L)
+   #define BOOST_INTERPROCESS_POSIX_FALLOCATE
+   #endif
+
 #endif   //!defined(BOOST_INTERPROCESS_WINDOWS)
 
 #if defined(BOOST_INTERPROCESS_WINDOWS) || defined(BOOST_INTERPROCESS_POSIX_MAPPED_FILES)
@@ -188,6 +197,18 @@
 // Timeout duration use if BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING is set
 #ifndef BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS
    #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 10000
+#endif
+
+
+// Max open or create tries with managed memory segments
+#ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_MAX_TRIES
+   #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_MAX_TRIES 20u
+#endif
+
+// Maximum timeout in seconds with open or create tries with managed memory segments
+// waiting the creator to initialize the shared memory
+#ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC
+   #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC 300u
 #endif
 
 //Other switches
@@ -210,18 +231,155 @@
    #define BOOST_INTERPROCESS_FORCEINLINE inline
 #elif defined(BOOST_INTERPROCESS_FORCEINLINE_IS_BOOST_FORCELINE)
    #define BOOST_INTERPROCESS_FORCEINLINE BOOST_FORCEINLINE
-#elif defined(BOOST_MSVC) && defined(_DEBUG)
-   //"__forceinline" and MSVC seems to have some bugs in debug mode
+#elif defined(BOOST_MSVC) && (_MSC_VER < 1900 || defined(_DEBUG))
+   //"__forceinline" and MSVC seems to have some bugs in old versions and in debug mode
    #define BOOST_INTERPROCESS_FORCEINLINE inline
-#elif defined(__GNUC__) && ((__GNUC__ < 4) || (__GNUC__ == 4 && (__GNUC_MINOR__ < 5)))
+#elif defined(BOOST_CLANG) || (defined(BOOST_GCC) && ((__GNUC__ <= 5) || defined(__MINGW32__)))
    //Older GCCs have problems with forceinline
+   //Clang can have code bloat issues with forceinline, see
+   //https://lists.boost.org/boost-users/2023/04/91445.php and
+   //https://github.com/llvm/llvm-project/issues/62202
    #define BOOST_INTERPROCESS_FORCEINLINE inline
 #else
    #define BOOST_INTERPROCESS_FORCEINLINE BOOST_FORCEINLINE
 #endif
 
-#if !defined(BOOST_INTERPROCESS_ATEXIT)
-   #define BOOST_INTERPROCESS_ATEXIT(f) std::atexit((f))
+#ifdef BOOST_WINDOWS
+
+#define BOOST_INTERPROCESS_WCHAR_NAMED_RESOURCES
+
+#ifdef __clang__
+   #define BOOST_INTERPROCESS_DISABLE_DEPRECATED_WARNING _Pragma("clang diagnostic push") \
+                                                         _Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+   #define BOOST_INTERPROCESS_RESTORE_WARNING            _Pragma("clang diagnostic pop")
+#else // __clang__
+   #define BOOST_INTERPROCESS_DISABLE_DEPRECATED_WARNING __pragma(warning(push)) \
+                                                         __pragma(warning(disable : 4996))
+   #define BOOST_INTERPROCESS_RESTORE_WARNING            __pragma(warning(pop))
+#endif // __clang__
+
 #endif
+
+#if defined(BOOST_HAS_THREADS) 
+#  if defined(_MSC_VER) || defined(__MWERKS__) || defined(__MINGW32__) ||  defined(__BORLANDC__)
+     //no reentrant posix functions (eg: localtime_r)
+#  elif (!defined(__hpux) || (defined(__hpux) && defined(_REENTRANT)))
+#   define BOOST_INTERPROCESS_HAS_REENTRANT_STD_FUNCTIONS
+#  endif
+#endif
+
+namespace boost {
+namespace interprocess {
+
+template <typename T1>
+BOOST_FORCEINLINE BOOST_CXX14_CONSTEXPR void ignore(T1 const&)
+{}
+
+}} //namespace boost::interprocess {
+
+#if !(defined BOOST_NO_EXCEPTIONS)
+#    define BOOST_INTERPROCESS_TRY { try
+#    define BOOST_INTERPROCESS_CATCH(x) catch(x)
+#    define BOOST_INTERPROCESS_RETHROW throw;
+#    define BOOST_INTERPROCESS_CATCH_END }
+#else
+#    if !defined(BOOST_MSVC) || BOOST_MSVC >= 1900
+#        define BOOST_INTERPROCESS_TRY { if (true)
+#        define BOOST_INTERPROCESS_CATCH(x) else if (false)
+#    else
+// warning C4127: conditional expression is constant
+#        define BOOST_INTERPROCESS_TRY { \
+             __pragma(warning(push)) \
+             __pragma(warning(disable: 4127)) \
+             if (true) \
+             __pragma(warning(pop))
+#        define BOOST_INTERPROCESS_CATCH(x) else \
+             __pragma(warning(push)) \
+             __pragma(warning(disable: 4127)) \
+             if (false) \
+             __pragma(warning(pop))
+#    endif
+#    define BOOST_INTERPROCESS_RETHROW
+#    define BOOST_INTERPROCESS_CATCH_END }
+#endif
+
+#ifndef BOOST_NO_CXX11_STATIC_ASSERT
+#  ifndef BOOST_NO_CXX11_VARIADIC_MACROS
+#     define BOOST_INTERPROCESS_STATIC_ASSERT( ... ) static_assert(__VA_ARGS__, #__VA_ARGS__)
+#  else
+#     define BOOST_INTERPROCESS_STATIC_ASSERT( B ) static_assert(B, #B)
+#  endif
+#else
+namespace boost {
+   namespace interprocess {
+      namespace dtl {
+
+         template<bool B>
+         struct STATIC_ASSERTION_FAILURE;
+
+         template<>
+         struct STATIC_ASSERTION_FAILURE<true> {};
+
+         template<unsigned> struct static_assert_test {};
+
+      }
+   }
+}
+
+#define BOOST_INTERPROCESS_STATIC_ASSERT(B) \
+         typedef ::boost::interprocess::dtl::static_assert_test<\
+            (unsigned)sizeof(::boost::interprocess::dtl::STATIC_ASSERTION_FAILURE<bool(B)>)>\
+               BOOST_JOIN(boost_container_static_assert_typedef_, __LINE__) BOOST_ATTRIBUTE_UNUSED
+
+#endif
+
+#ifndef BOOST_NO_CXX11_STATIC_ASSERT
+#  ifndef BOOST_NO_CXX11_VARIADIC_MACROS
+#     define BOOST_INTERPROCESS_STATIC_ASSERT_MSG( ... ) static_assert(__VA_ARGS__)
+#  else
+#     define BOOST_INTERPROCESS_STATIC_ASSERT_MSG( B, Msg ) static_assert( B, Msg )
+#  endif
+#else
+#     define BOOST_INTERPROCESS_STATIC_ASSERT_MSG( B, Msg ) BOOST_INTERPROCESS_STATIC_ASSERT( B )
+#endif
+
+#if !defined(BOOST_NO_CXX17_INLINE_VARIABLES)
+#  define BOOST_INTERPROCESS_CONSTANT_VAR BOOST_INLINE_CONSTEXPR
+#else
+#  define BOOST_INTERPROCESS_CONSTANT_VAR static BOOST_CONSTEXPR_OR_CONST
+#endif
+
+#if defined(__GNUC__) && ((__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) >= 40600)
+#define BOOST_INTERPROCESS_GCC_COMPATIBLE_HAS_DIAGNOSTIC_IGNORED
+#elif defined(__clang__)
+#define BOOST_INTERPROCESS_GCC_COMPATIBLE_HAS_DIAGNOSTIC_IGNORED
+#endif
+
+
+////////////////////////////////////////////
+//
+//    BOOST_INTERPROCESS_EINTR_RETRY
+//
+////////////////////////////////////////////
+
+//#define DISABLE_BOOST_INTERPROCESS_EINTR_RETRY
+#if !defined(DISABLE_BOOST_INTERPROCESS_EINTR_RETRY) && defined(__GNUC__)
+
+/* taken from glibc unistd.h and fixes musl */
+#define BOOST_INTERPROCESS_EINTR_RETRY(RESULTTYPE, FAILUREVALUE, EXPRESSION) \
+  (__extension__                                   \
+    ({ RESULTTYPE __result;                        \
+       do __result = (RESULTTYPE) (EXPRESSION);    \
+       while (__result == FAILUREVALUE && errno == EINTR);  \
+       __result; }))
+
+#else    //!defined(DISABLE_BOOST_INTERPROCESS_EINTR_RETRY) && defined(__GNUC__)
+
+#define BOOST_INTERPROCESS_EINTR_RETRY(RESULTTYPE, FAILUREVALUE, EXPRESSION) ((RESULTTYPE)(EXPRESSION))
+#endif   //!defined(DISABLE_BOOST_INTERPROCESS_EINTR_RETRY) && defined(__GNUC__)
+
+#if defined(BOOST_FASTDDS_PATCHES) && !defined(BOOST_INTERPROCESS_ATEXIT)
+   #define BOOST_INTERPROCESS_ATEXIT(f) std::atexit((f))
+#endif // if defined(BOOST_FASTDDS_PATCHES) && !defined(BOOST_INTERPROCESS_ATEXIT)
 
 #endif   //#ifndef BOOST_INTERPROCESS_DETAIL_WORKAROUND_HPP
