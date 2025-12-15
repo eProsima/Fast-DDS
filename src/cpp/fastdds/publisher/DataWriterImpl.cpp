@@ -1028,7 +1028,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     if (!was_loaned)
     {
         uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
-                data, data_representation_);
+            data, data_representation_);
         if (payload_size == 0 && change_kind != ALIVE)
         {
             // For NOT_ALIVE changes, allow zero-size payloads without pool allocation

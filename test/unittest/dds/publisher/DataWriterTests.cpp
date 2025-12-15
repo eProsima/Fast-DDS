@@ -253,6 +253,7 @@ public:
         // This has to be > 0 in order to activate another branch in the code
         return 100;
     }
+
 };
 
 class ComputeKeyFalseDefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
