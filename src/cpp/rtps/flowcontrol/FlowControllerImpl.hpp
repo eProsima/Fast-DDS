@@ -248,6 +248,11 @@ struct FlowControllerAsyncPublishMode
     {
     }
 
+    void prepare_locator_selector(
+            LocatorSelectorSender&)
+    {
+    }
+
     eprosima::thread thread;
 
     std::atomic_bool running {false};
@@ -284,13 +289,13 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor)
         : FlowControllerAsyncPublishMode(participant, descriptor)
+        , max_bytes_per_period(descriptor->max_bytes_per_period)
+        , period_ms(std::chrono::milliseconds(descriptor->period_ms))
         , sent_bytes_limitation_(static_cast<uint32_t>(descriptor->max_bytes_per_period))
     {
         assert(nullptr != descriptor);
         assert(0 < descriptor->max_bytes_per_period);
 
-        max_bytes_per_period = descriptor->max_bytes_per_period;
-        period_ms = std::chrono::milliseconds(descriptor->period_ms);
         group.set_limitation(this);
     }
 
@@ -313,7 +318,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
 
         }
 
-        bool ret = (max_bytes_per_period - current_sent_bytes_) > size_to_check;
+        bool ret = (sent_bytes_limitation_ - current_sent_bytes_) > size_to_check;
 
         if (!ret)
         {
@@ -1450,6 +1455,9 @@ protected:
                         current_writer->get_async_locator_selector();
                 async_mode.group.sender(current_writer, &locator_selector);
                 locator_selector.lock();
+
+                // Prepare locator_selector
+                async_mode.prepare_locator_selector(locator_selector);
 
                 // Remove previously from queue, because deliver_sample_nts could call FlowController::remove_sample()
                 // provoking a deadlock.
