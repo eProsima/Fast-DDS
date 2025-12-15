@@ -183,7 +183,7 @@ public:
     {
         for (LocatorSelectorEntry* entry : entries_)
         {
-            entry->transport_should_process = entry->enabled;
+            entry->transport_should_process = entry->enabled && entry->allowed_to_send;
         }
 
         return entries_;
@@ -285,6 +285,19 @@ public:
             for (size_t loc_index : entry->state.unicast)
             {
                 action(entry->unicast.at(loc_index));
+            }
+        }
+    }
+
+    template<class UnaryPredicate>
+    void for_every_entry(
+            UnaryPredicate action) const
+    {
+        for (LocatorSelectorEntry* entry : entries_)
+        {
+            if (!action(entry))
+            {
+                break;
             }
         }
     }
