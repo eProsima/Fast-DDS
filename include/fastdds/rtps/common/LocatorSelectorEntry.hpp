@@ -75,8 +75,6 @@ struct LocatorSelectorEntry
         , unicast(ResourceLimitedContainerConfig::fixed_size_configuration(max_unicast_locators))
         , multicast(ResourceLimitedContainerConfig::fixed_size_configuration(max_multicast_locators))
         , state(max_unicast_locators, max_multicast_locators)
-        , enabled(false)
-        , transport_should_process(false)
     {
     }
 
@@ -89,6 +87,17 @@ struct LocatorSelectorEntry
             bool should_enable)
     {
         enabled = should_enable && remote_guid != c_Guid_Unknown;
+    }
+
+    /*!
+     * Set the allowed_to_receive value.
+     *
+     * @param can_send Whether this entry is allowed to send data.
+     */
+    void allow_to_send(
+            bool can_send)
+    {
+        allowed_to_send = can_send && remote_guid != c_Guid_Unknown;
     }
 
     /**
@@ -139,9 +148,11 @@ struct LocatorSelectorEntry
     //! State of the entry
     EntryState state;
     //! Indicates whether this entry should be taken into consideration.
-    bool enabled;
+    bool enabled {false};
+    //! Indicates whether this entry is allowed to send data.
+    bool allowed_to_send {true};
     //! A temporary value for each transport to help optimizing some use cases.
-    bool transport_should_process;
+    bool transport_should_process {false};
 };
 
 } // namespace rtps
