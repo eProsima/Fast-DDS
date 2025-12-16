@@ -238,7 +238,7 @@ void TCPReqRepHelloWorldReplier::ReplyListener::onNewDataMessage(
     {
         if (info.sampleKind == ALIVE)
         {
-            ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
+            ASSERT_EQ(hello.message().to_string().compare("HelloWorld"), 0);
             replier_.newNumber(info.sample_identity, hello.index());
         }
     }
