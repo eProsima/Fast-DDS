@@ -1668,62 +1668,62 @@ size_t ContentFilterTestType::getCdrSerializedSize(
 
 
     current_alignment += StructType::getCdrSerializedSize(data.struct_field(), current_alignment);
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
@@ -1734,12 +1734,12 @@ size_t ContentFilterTestType::getCdrSerializedSize(
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.array_string_field().at(a).size() + 1;
 
     }
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
 
-    if ((max_array_size) > 0)
+    // if ((max_array_size) > 0)
     {
         current_alignment += ((max_array_size) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }

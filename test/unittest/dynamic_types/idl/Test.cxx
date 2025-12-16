@@ -1215,12 +1215,12 @@ size_t ComplexStruct::getCdrSerializedSize(
     {
         current_alignment += BasicStruct::getCdrSerializedSize(data.my_sequence_struct().at(a), current_alignment);}
 
-    if ((500 * 5 * 4) > 0)
+    // if ((500 * 5 * 4) > 0)
     {
         current_alignment += ((500 * 5 * 4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
 
-    if ((500) > 0)
+    // if ((500) > 0)
     {
         current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
@@ -1285,7 +1285,7 @@ size_t ComplexStruct::getCdrSerializedSize(
 
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-            if ((500) > 0)
+            // if ((500) > 0)
             {
                 current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
             }
@@ -1332,7 +1332,7 @@ size_t ComplexStruct::getCdrSerializedSize(
 
         }
     }
-    if ((42) > 0)
+    // if ((42) > 0)
     {
         current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
@@ -1340,7 +1340,7 @@ size_t ComplexStruct::getCdrSerializedSize(
 
     for(size_t a = 0; a < data.my_array_arrays().size(); ++a)
     {
-            if ((2) > 0)
+            // if ((2) > 0)
             {
                 current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             }

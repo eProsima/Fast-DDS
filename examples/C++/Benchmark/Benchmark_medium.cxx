@@ -120,7 +120,7 @@ size_t BenchMarkMedium::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((524288) > 0)
+    // if ((524288) > 0)
     {
         current_alignment += ((524288) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }

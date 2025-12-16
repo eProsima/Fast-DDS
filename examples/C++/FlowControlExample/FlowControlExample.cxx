@@ -120,7 +120,7 @@ size_t FlowControlExample::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    if ((600000) > 0)
+    // if ((600000) > 0)
     {
         current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }

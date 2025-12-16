@@ -123,7 +123,7 @@ size_t LoanableHelloWorld::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    if ((256) > 0)
+    // if ((256) > 0)
     {
         current_alignment += ((256) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
