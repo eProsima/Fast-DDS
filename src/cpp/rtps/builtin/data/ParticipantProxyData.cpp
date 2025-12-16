@@ -34,6 +34,8 @@
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 
+#include <utils/license/LicenseTools.hpp>
+
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"
 
@@ -46,6 +48,20 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+static bool validate_safedds_signature(
+        const octet* const buffer,
+        uint16_t length)
+{
+    if (length != 0x50)
+    {
+        return false;
+    }
+
+    const octet* const data = buffer;
+    const octet* const signature = buffer + 0x10;
+    return verify_safedds_signature(data, 0x10, signature, 0x40);
+}
 
 ParticipantProxyData::ParticipantProxyData(
         const RTPSParticipantAllocationAttributes& allocation)
@@ -381,10 +397,14 @@ bool ParticipantProxyData::readFromCDRMessage(
     bool are_shm_metatraffic_locators_present = false;
     bool are_shm_default_locators_present = false;
     bool is_shm_transport_possible = false;
+    bool safedds_signature_valid = false;
+    bool shall_validate_safedds_signature = false;
 
     auto param_process = [this, &network, &is_shm_transport_possible,
                     &are_shm_metatraffic_locators_present,
                     &are_shm_default_locators_present,
+                    &safedds_signature_valid,
+                    &shall_validate_safedds_signature,
                     &is_shm_transport_available](CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
@@ -431,6 +451,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_VendorId[0] = p.vendorId[0];
                         m_VendorId[1] = p.vendorId[1];
                         is_shm_transport_available &= (m_VendorId == c_VendorId_eProsima);
+                        shall_validate_safedds_signature = (m_VendorId == c_VendorId_SafeDDS);
                         break;
                     }
                     case fastdds::dds::PID_EXPECTS_INLINE_QOS:
@@ -651,6 +672,21 @@ bool ParticipantProxyData::readFromCDRMessage(
 #endif // if HAVE_SECURITY
                         break;
                     }
+                    case fastdds::dds::PID_SAFE_DDS_SIGNATURE:
+                    {
+                        if (shall_validate_safedds_signature)
+                        {
+                            // Validate length
+                            if (msg->length - msg->pos < plength)
+                            {
+                                return false;
+                            }
+
+                            safedds_signature_valid = validate_safedds_signature(&msg->buffer[msg->pos], plength);
+                            msg->pos += plength;
+                        }
+                        break;
+                    }
                     default:
                     {
                         break;
@@ -664,13 +700,17 @@ bool ParticipantProxyData::readFromCDRMessage(
     clear();
     try
     {
-        return ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size);
+        if(ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size))
+        {
+            return !shall_validate_safedds_signature || safedds_signature_valid;
+        }
     }
     catch (std::bad_alloc& ba)
     {
         std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-        return false;
     }
+
+    return false;
 }
 
 void ParticipantProxyData::clear()

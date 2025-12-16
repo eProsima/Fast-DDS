@@ -80,6 +80,7 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
     )
 target_link_libraries(BuiltinDataSerializationTests foonathan_memory
     GTest::gmock
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     ${CMAKE_DL_LIBS})
 if(MSVC OR MSVC_IDE)
     target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)

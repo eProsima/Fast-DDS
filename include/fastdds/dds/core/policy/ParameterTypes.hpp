@@ -152,6 +152,9 @@ enum ParameterId_t : uint16_t
     PID_RELATED_SAMPLE_IDENTITY             = 0x800f,
     PID_DISABLE_POSITIVE_ACKS               = 0x8005,
     PID_DATASHARING                         = 0x8006,
+
+    /* eProsima Safe DDS extensions */
+    PID_SAFE_DDS_SIGNATURE                  = 0x9000,
 };
 
 /*!
