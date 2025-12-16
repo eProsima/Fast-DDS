@@ -1029,27 +1029,26 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     {
         uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
             data, data_representation_);
-        if (payload_size == 0 && change_kind != ALIVE)
+        // ALIVE changes need a payload and serialization
+        if (!get_free_payload_from_pool(payload_size, payload))
         {
-            // For NOT_ALIVE changes, allow zero-size payloads without pool allocation
-            payload.length = 0;
-            payload.max_size = 0;
-            payload.data = nullptr;
-        }
-        else
-        {
-            // ALIVE changes need a payload and serialization
-            if (!get_free_payload_from_pool(payload_size, payload))
+            if (payload_size == 0 && change_kind != ALIVE)
+            {
+                // For NOT_ALIVE changes, allow zero-size payloads without pool allocation
+                payload.length = 0;
+                payload.max_size = 0;
+                payload.data = nullptr;
+            }
+            else
             {
                 return RETCODE_OUT_OF_RESOURCES;
             }
-
-            if (!type_->serialize(data, payload, data_representation_))
-            {
-                EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
-                payload_pool_->release_payload(payload);
-                return RETCODE_ERROR;
-            }
+        }
+        else if (!type_->serialize(data, payload, data_representation_))
+        {
+            EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
+            payload_pool_->release_payload(payload);
+            return RETCODE_ERROR;
         }
     }
 
