@@ -197,7 +197,7 @@ void ReqRepHelloWorldReplier::ReplyListener::on_data_available(
     {
         if (info.valid_data)
         {
-            ASSERT_EQ(hello.message().compare("HelloWorld"), 0);
+            ASSERT_EQ(hello.message().to_string().compare("HelloWorld"), 0);
             replier_.newNumber(info.sample_identity, hello.index());
         }
     }

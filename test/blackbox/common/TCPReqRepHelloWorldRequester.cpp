@@ -262,7 +262,7 @@ void TCPReqRepHelloWorldRequester::ReplyListener::onNewDataMessage(
     {
         if (info.sampleKind == ALIVE)
         {
-            ASSERT_EQ(hello.message().compare("GoodBye"), 0);
+            ASSERT_EQ(hello.message().to_string().compare("GoodBye"), 0);
             requester_.newNumber(info.related_sample_identity, hello.index());
         }
     }
