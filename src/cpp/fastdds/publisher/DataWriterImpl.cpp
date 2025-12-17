@@ -1029,20 +1029,18 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     {
         uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
             data, data_representation_);
-        // ALIVE changes need a payload and serialization
-        if (!get_free_payload_from_pool(payload_size, payload))
+        // For NOT_ALIVE changes, allow zero-size payloads without pool allocation if the
+        // handle is defined
+        if (payload_size == 0 && change_kind != ALIVE && handle.isDefined())
         {
-            if (payload_size == 0 && change_kind != ALIVE)
-            {
-                // For NOT_ALIVE changes, allow zero-size payloads without pool allocation
-                payload.length = 0;
-                payload.max_size = 0;
-                payload.data = nullptr;
-            }
-            else
-            {
-                return RETCODE_OUT_OF_RESOURCES;
-            }
+            payload.length = 0;
+            payload.max_size = 0;
+            payload.data = nullptr;
+        }
+        else if (!get_free_payload_from_pool(payload_size, payload))
+        {
+            // ALIVE changes need a payload and serialization
+            return RETCODE_OUT_OF_RESOURCES;
         }
         else if (!type_->serialize(data, payload, data_representation_))
         {
