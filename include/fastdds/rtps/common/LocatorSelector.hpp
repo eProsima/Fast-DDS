@@ -204,6 +204,19 @@ public:
         }
     }
 
+    void unselect(
+            size_t index)
+    {
+        if (index < entries_.size())
+        {
+            auto it = std::find(selections_.begin(), selections_.end(), index);
+            if (it != selections_.end())
+            {
+                selections_.erase(it);
+            }
+        }
+    }
+
     /**
      * Count the number of selected locators.
      *
@@ -293,9 +306,9 @@ public:
     void for_every_entry(
             UnaryPredicate action) const
     {
-        for (LocatorSelectorEntry* entry : entries_)
+        for (size_t count {0}; count < entries_.size(); ++count)
         {
-            if (!action(entry))
+            if (!action(entries_.at(count), count))
             {
                 break;
             }

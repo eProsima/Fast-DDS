@@ -385,11 +385,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             uint32_t pending_to_send,
             RTPSMessageSenderInterface&) override
     {
-        return
-            //   either limitation has already been reached
-            (sent_bytes_limitation_ <= (current_sent_bytes_ + pending_to_send)) ||
-            //   or adding size_to_add will exceed limitation
-            (size_to_add > (sent_bytes_limitation_ - (current_sent_bytes_ + pending_to_send)));
+        return sent_bytes_limitation_ <= (current_sent_bytes_ + size_to_add + pending_to_send);
     }
 
     int32_t max_bytes_per_period = 0;
