@@ -178,7 +178,8 @@ void SubscriberApp::on_data_available(
         }
         else if (info.instance_state == NOT_ALIVE_DISPOSED_INSTANCE_STATE)
         {
-            std::string instance_name = shape_.color() != "" ? shape_.color() :  color_per_instance_[info.instance_handle];
+            std::string instance_name = shape_.color() !=
+                    "" ? shape_.color() :  color_per_instance_[info.instance_handle];
             std::cout << instance_name << " Shape has been disposed" << std::endl;
             if (std::find(disposed_instances_.begin(), disposed_instances_.end(),
                     info.instance_handle) == disposed_instances_.end())
@@ -188,7 +189,8 @@ void SubscriberApp::on_data_available(
         }
         else if (info.instance_state == NOT_ALIVE_NO_WRITERS_INSTANCE_STATE)
         {
-            std::string instance_name = shape_.color() != "" ? shape_.color() :  color_per_instance_[info.instance_handle];
+            std::string instance_name = shape_.color() !=
+                    "" ? shape_.color() :  color_per_instance_[info.instance_handle];
             std::cout << instance_name << " Shape has been disposed by all publishers" << std::endl;
         }
 

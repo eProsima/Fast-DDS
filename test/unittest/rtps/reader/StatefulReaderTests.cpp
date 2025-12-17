@@ -115,7 +115,7 @@ TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
 /* Regression test for: https://github.com/eProsima/Fast-DDS/pull/6217
    Test that checks that non empty changes (dispose, unregister, ...) with empty
    payloads are processed.
-*/
+ */
 TEST(StatefulReaderTests, EmptyPayloadUnregisterDisposeProcessing)
 {
     RTPSParticipantAttributes part_attrs;
@@ -155,7 +155,7 @@ TEST(StatefulReaderTests, EmptyPayloadUnregisterDisposeProcessing)
 
     CacheChange_t change;
     change.writerGUID = writer_guid;
-    change.sequenceNumber = {0,1};
+    change.sequenceNumber = {0, 1};
     change.serializedPayload.length = 0;
     change.instanceHandle.value[0] = 1;
     // Alive change is not actually processed, but the method returns true because
