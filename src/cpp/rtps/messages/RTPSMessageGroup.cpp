@@ -333,7 +333,7 @@ void RTPSMessageGroup::reset_to_header()
     header_msg_->length = RTPSMESSAGE_HEADER_SIZE;
 
     buffers_to_send_->clear();
-    buffers_bytes_ = 0;
+    buffers_bytes_ = RTPSMESSAGE_HEADER_SIZE;
     // Payloads are released in the destructor
     payloads_to_send_->clear();
 }
@@ -567,14 +567,6 @@ bool RTPSMessageGroup::add_data(
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA messages");
 
-    // Check limitation
-    uint32_t data_size = change.serializedPayload.length;
-    if (nullptr != limitation_ && limitation_->data_exceeds_limitation(change, data_size, buffers_bytes_, *sender_))
-    {
-        flush_and_reset();
-        throw limit_exceeded();
-    }
-
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush();
     add_info_ts_in_buffer(change.sourceTimestamp);
@@ -660,6 +652,15 @@ bool RTPSMessageGroup::add_data(
     }
 #endif // if HAVE_SECURITY
 
+    // Check limitation
+    if (nullptr != limitation_ &&
+            limitation_->data_exceeds_limitation(change, submessage_msg_->length,
+            pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
+    {
+        flush_and_reset();
+        throw limit_exceeded();
+    }
+
     if (insert_submessage(is_big_submessage))
     {
         // If gather-send is possible, get payload
@@ -687,12 +688,6 @@ bool RTPSMessageGroup::add_data_frag(
     // Calculate fragment size. If last fragment, size may be smaller
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
-    // Check limitation
-    if (nullptr != limitation_ && limitation_->data_exceeds_limitation(change, fragment_size, buffers_bytes_, *sender_))
-    {
-        flush_and_reset();
-        throw limit_exceeded();
-    }
 
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush();
@@ -778,6 +773,15 @@ bool RTPSMessageGroup::add_data_frag(
         }
     }
 #endif // if HAVE_SECURITY
+
+    // Check limitation
+    if (nullptr != limitation_ &&
+            limitation_->data_exceeds_limitation(change, submessage_msg_->length,
+            pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
+    {
+        flush_and_reset();
+        throw limit_exceeded();
+    }
 
     if (insert_submessage(false))
     {
