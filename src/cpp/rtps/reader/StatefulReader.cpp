@@ -649,11 +649,14 @@ bool StatefulReader::process_data_msg(
                 }
                 datasharing_pool->get_datasharing_change(change->serializedPayload, *change_to_add);
             }
-            else if (change->serializedPayload.length == 0 && change->kind != ChangeKind_t::ALIVE && change->instanceHandle.isDefined())
+            else if (change->serializedPayload.length == 0 && change->kind != ChangeKind_t::ALIVE &&
+                    change->instanceHandle.isDefined())
             {
                 // A UNREGISTER or DISPOSE status change was sent without payload, but calling get_payload with size 0 might fail
                 // depending on the configured payload pool. However, those operations are still valid iff instanceHandle is defined
                 // so they are handled in this special case
+                // These conditions were already checked in change_is_relevant_for_filter, but it makes sense to have a proper case
+                // here
                 change_to_add->serializedPayload.length = 0;
                 change_to_add->serializedPayload.max_size = 0;
                 change_to_add->serializedPayload.data = nullptr;
