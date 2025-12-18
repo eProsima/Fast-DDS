@@ -89,17 +89,6 @@ struct LocatorSelectorEntry
         enabled = should_enable && remote_guid != c_Guid_Unknown;
     }
 
-    /*!
-     * Set the allowed_to_receive value.
-     *
-     * @param can_send Whether this entry is allowed to send data.
-     */
-    void allow_to_send(
-            bool can_send)
-    {
-        allowed_to_send = can_send && remote_guid != c_Guid_Unknown;
-    }
-
     /**
      * Reset the selections.
      */
