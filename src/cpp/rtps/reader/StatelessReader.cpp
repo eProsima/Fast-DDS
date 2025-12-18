@@ -674,8 +674,6 @@ bool StatelessReader::process_data_msg(
                 change_to_add->serializedPayload.length = 0;
                 change_to_add->serializedPayload.max_size = 0;
                 change_to_add->serializedPayload.data = nullptr;
-                // TODO: check if this is useful (copies above apparently not)
-                change_to_add->instanceHandle = change->instanceHandle;
             }
             else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
             {
