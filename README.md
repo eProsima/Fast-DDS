@@ -28,9 +28,9 @@
     <a href="https://eprosima-fast-rtps.readthedocs.io"><img alt="Documentation badge" src="https://img.shields.io/readthedocs/eprosima-fast-rtps.svg"/></a>
     <br>
     <a href=""><img alt="Status" src="https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg"/></a>
-    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-ubuntu-master.yml"><img alt="Fast DDS Ubuntu CI (nightly)" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-ubuntu-master.yml/badge.svg"/></a>
-    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-master.yml"><img alt="Fast DDS Windows CI (nightly)" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-master.yml/badge.svg"/></a>
-    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-mac-master.yml"><img alt="Fast DDS MacOS CI (nightly)" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-mac-master.yml/badge.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-ubuntu-3.4.x.yml"><img alt="Fast DDS Ubuntu CI (nightly 3.4.x)" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-ubuntu-3.4.x.yml/badge.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-3.4.x.yml"><img alt="Fast DDS Windows CI (nightly 3.4.x)" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-3.4.x.yml/badge.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-mac-3.4.x.yml"><img alt="Fast DDS MacOS CI (nightly 3.4.x)" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-mac-3.4.x.yml/badge.svg"/></a>
     <a href="http://jenkins.eprosima.com:8080/job/nightly_fastdds_coverage_linux"><img alt="Coverage" src="https://img.shields.io/jenkins/coverage/cobertura.svg?jobUrl=http%3A%2F%2Fjenkins.eprosima.com%3A8080%2Fjob%2Fnightly_fastdds_coverage_linux"/></a>
 </div>
 

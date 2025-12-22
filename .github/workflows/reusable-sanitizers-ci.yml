@@ -43,7 +43,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: 'master'
+        default: '2.3.x'
       discovery_server_ref:
         description: >
           Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
