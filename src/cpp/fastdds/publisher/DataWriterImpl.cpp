@@ -1029,25 +1029,22 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     {
         uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
             data, data_representation_);
-        if (!get_free_payload_from_pool(payload_size, payload))
+        if (payload_size == 0 && change_kind != ALIVE && handle.isDefined())
         {
-            if (payload_size == 0 && change_kind != ALIVE && handle.isDefined())
-            {
-                // For NOT_ALIVE changes, allow zero-size payloads without pool allocation if the
-                // handle is defined
-                // TODO: I would expect this if to be at the same level of get_free_payload_from_pool, but that
-                // causes some tests to fail. Needs further investigation.
-                payload.length = 0;
-                payload.max_size = 0;
-                payload.data = nullptr;
-            }
-            else
-            {
-                // ALIVE changes need a payload and serialization
-                return RETCODE_OUT_OF_RESOURCES;
-            }
+            // For NOT_ALIVE changes, allow zero-size payloads without pool allocation if the
+            // handle is defined
+            payload.length = 0;
+            payload.max_size = 0;
+            payload.data = nullptr;
+            payload.payload_owner = nullptr;
         }
-        else if (!type_->serialize(data, payload, data_representation_))
+        else if (!get_free_payload_from_pool(payload_size, payload))
+        {
+            // ALIVE changes need a payload and serialization
+            return RETCODE_OUT_OF_RESOURCES;
+        }
+
+        if (!type_->serialize(data, payload, data_representation_))
         {
             EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
             payload_pool_->release_payload(payload);

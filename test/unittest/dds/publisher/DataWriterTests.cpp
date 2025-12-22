@@ -1435,7 +1435,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
 /**
  * This test checks unregister_instance API
  */
-TEST(DataWriterTests, UnregisterInstance)
+TEST(DataWriterTests, UnregisterInstanceWithoutPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1527,7 +1527,7 @@ TEST(DataWriterTests, UnregisterInstanceWithPayload)
 /**
  * This test checks unregister_instance_w_timestamp API
  */
-TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
+TEST(DataWriterTests, UnregisterInstanceWithTimestampAndNoPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1644,10 +1644,10 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestampAndPayload)
 }
 
 /**
- * This test checks dispose API. Note that instance foo type support always return 0 sized
- * payloads.
+ * This test checks dispose API when a 0 size payload is sent.
+ * NOTE: InstanceFooType method calculate_serialized_size always returns 0.
  */
-TEST(DataWriterTests, Dispose)
+TEST(DataWriterTests, DisposeWithoutPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1695,8 +1695,8 @@ TEST(DataWriterTests, Dispose)
 }
 
 /**
- * This test checks dispose API. Note that instance foo type support always return 0 sized
- * payloads.
+ * This test checks dispose API when a non-zero size payload is sent.
+ * NOTE: NonEmptyPayloadInstanceFooType method calculate_serialized_size always returns a non-zero value.
  */
 TEST(DataWriterTests, DisposeWithPayload)
 {
@@ -1739,7 +1739,7 @@ TEST(DataWriterTests, DisposeWithPayload)
 /**
  * This test checks dispose_w_timestamp API
  */
-TEST(DataWriterTests, DisposeWithTimestamp)
+TEST(DataWriterTests, DisposeWithTimestampAndNoPayload)
 {
     // Test parameters
     InstanceHandle_t handle;

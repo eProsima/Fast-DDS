@@ -672,8 +672,6 @@ bool StatelessReader::process_data_msg(
                 // These conditions were already checked in change_is_relevant_for_filter, but it makes sense to have a proper case
                 // here
                 change_to_add->serializedPayload.length = 0;
-                change_to_add->serializedPayload.max_size = 0;
-                change_to_add->serializedPayload.data = nullptr;
             }
             else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
             {
