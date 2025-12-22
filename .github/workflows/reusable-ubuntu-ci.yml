@@ -31,7 +31,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: 'master'
+        default: '2.3.x'
       security:
         description: 'Enable security features'
         required: false
@@ -61,10 +61,10 @@ on:
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
-  fastdds-python-branch: 'main'
-  fastdds-docs-branch: 'master'
-  shapes-demo-branch: 'master'
-  discovery-server-branch: 'master'
+  fastdds-python-branch: '2.4.x'
+  fastdds-docs-branch: '3.4.x'
+  shapes-demo-branch: '3.4.x'
+  discovery-server-branch: '2.2.x'
 
 defaults:
   run:
