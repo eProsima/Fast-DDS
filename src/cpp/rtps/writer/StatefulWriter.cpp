@@ -792,16 +792,24 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 {
                                     if ((*remote_reader)->active())
                                     {
-                                        if (!(*remote_reader)->is_reliable())
+                                        // TODO(richiware). Do only with congestion control
+                                        LocatorSelectorEntry* entry =
+                                                locator_selector.locator_selector.get_entry_by_guid(
+                                            (*remote_reader)->guid());
+                                        assert(nullptr != entry);
+                                        if (entry && entry->allowed_to_send)
                                         {
-                                            (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
-                                        }
-                                        else
-                                        {
-                                            (*remote_reader)->from_unsent_to_status(
-                                                change->sequenceNumber,
-                                                UNDERWAY,
-                                                true);
+                                            if (!(*remote_reader)->is_reliable())
+                                            {
+                                                (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
+                                            }
+                                            else
+                                            {
+                                                (*remote_reader)->from_unsent_to_status(
+                                                    change->sequenceNumber,
+                                                    UNDERWAY,
+                                                    true);
+                                            }
                                         }
                                     }
                                 }
@@ -1884,7 +1892,6 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
     {
         if (history_->isFull() || next_all_acked_notify_sequence_ < get_seq_num_min())
         {
-            select_all_readers_nts(message_group, locator_selector);
             size_t number_of_readers = locator_selector.all_remote_readers.size();
             send_heartbeat_nts_(number_of_readers, message_group, disable_positive_acks_);
         }
@@ -1893,7 +1900,6 @@ void StatefulWriter::send_heartbeat_piggyback_nts_(
             if (last_num_exceeded_send_buffer_size_ != message_group.num_exceeded_send_buffer_size())
             {
                 last_num_exceeded_send_buffer_size_ = message_group.num_exceeded_send_buffer_size();
-                select_all_readers_nts(message_group, locator_selector);
                 size_t number_of_readers = locator_selector.all_remote_readers.size();
                 send_heartbeat_nts_(number_of_readers, message_group, disable_positive_acks_);
             }
@@ -2304,6 +2310,26 @@ void StatefulWriter::add_gaps_for_holes_in_history(
             ++cit;
         }
         gaps.flush();
+    }
+}
+
+void StatefulWriter::reschedule_unsent_changes()
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+
+    //TODO(richiware) take into account num bytes allowed to resend
+    for (History::iterator cit = history_->changesBegin(); cit != history_->changesEnd(); ++cit)
+    {
+        for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+                [&](ReaderProxy* reader)
+                {
+                    if (reader->change_is_unsent((*cit)->sequenceNumber))
+                    {
+                        flow_controller_->add_old_sample(this, *cit);
+                        return true;
+                    }
+                    return false;
+                });
     }
 }
 

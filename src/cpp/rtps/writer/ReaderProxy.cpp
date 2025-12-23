@@ -299,6 +299,25 @@ bool ReaderProxy::change_is_acked(
 }
 
 bool ReaderProxy::change_is_unsent(
+        const SequenceNumber_t& seq_num) const
+{
+    if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
+    {
+        return false;
+    }
+
+    ChangeConstIterator chit = find_change(seq_num);
+    if (chit == changes_for_reader_.end())
+    {
+        // There is a hole in changes_for_reader_
+        // This means a change was removed.
+        return false;
+    }
+
+    return UNSENT == chit->getStatus();
+}
+
+bool ReaderProxy::change_is_unsent(
         const SequenceNumber_t& seq_num,
         FragmentNumber_t& next_unsent_frag,
         SequenceNumber_t& gap_seq,
