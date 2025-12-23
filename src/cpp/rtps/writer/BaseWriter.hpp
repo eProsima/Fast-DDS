@@ -349,6 +349,10 @@ public:
 
     virtual ~BaseWriter();
 
+    virtual void reschedule_unsent_changes()
+    {
+    }
+
 protected:
 
     BaseWriter(

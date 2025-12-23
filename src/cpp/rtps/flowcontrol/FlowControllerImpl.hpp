@@ -217,7 +217,7 @@ struct FlowControllerAsyncPublishMode
         if (running)
         {
             {
-                std::unique_lock<fastdds::TimedMutex> lock(changes_interested_mutex);
+                std::unique_lock<fastdds::RecursiveTimedMutex> lock(changes_interested_mutex);
                 running = false;
                 cv.notify_one();
             }
@@ -232,7 +232,7 @@ struct FlowControllerAsyncPublishMode
     }
 
     bool wait(
-            std::unique_lock<fastdds::TimedMutex>& lock)
+            std::unique_lock<fastdds::RecursiveTimedMutex>& lock)
     {
         cv.wait(lock);
         return false;
@@ -262,7 +262,7 @@ struct FlowControllerAsyncPublishMode
     RTPSMessageGroup group;
 
     //! Mutex for interested samples to be added.
-    fastdds::TimedMutex changes_interested_mutex;
+    fastdds::RecursiveTimedMutex changes_interested_mutex;
 
     //! Used to warning async thread a writer wants to remove a sample.
     std::atomic<uint32_t> writers_interested_in_remove = {0};
@@ -335,7 +335,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
      * @return false if the condition_variable was awaken because a new change was added. true if the condition_variable was awaken because the bandwidth limitation has to be reset.
      */
     bool wait(
-            std::unique_lock<fastdds::TimedMutex>& lock)
+            std::unique_lock<fastdds::RecursiveTimedMutex>& lock)
     {
         auto lapse = std::chrono::steady_clock::now() - last_period_;
         bool reset_limit = true;
@@ -468,6 +468,11 @@ struct FlowControllerFifoSchedule
     }
 
     void trigger_bandwidth_limit_reset() const
+    {
+    }
+
+    void processing_change_of_writer(
+            BaseWriter* ) const
     {
     }
 
@@ -610,6 +615,11 @@ struct FlowControllerRoundRobinSchedule
     {
     }
 
+    void processing_change_of_writer(
+            BaseWriter* ) const
+    {
+    }
+
 private:
 
     iterator find(
@@ -726,6 +736,11 @@ struct FlowControllerHighPrioritySchedule
     }
 
     void trigger_bandwidth_limit_reset() const
+    {
+    }
+
+    void processing_change_of_writer(
+            BaseWriter* ) const
     {
     }
 
@@ -948,6 +963,11 @@ struct FlowControllerPriorityWithReservationSchedule
         }
     }
 
+    void processing_change_of_writer(
+            BaseWriter* ) const
+    {
+    }
+
 private:
 
     using map_writers = std::unordered_map<BaseWriter*, std::tuple<FlowQueue, int32_t, uint32_t,
@@ -1130,7 +1150,7 @@ protected:
     register_writer_impl(
             BaseWriter* writer)
     {
-        std::unique_lock<fastdds::TimedMutex> in_lock(async_mode.changes_interested_mutex);
+        std::unique_lock<fastdds::RecursiveTimedMutex> in_lock(async_mode.changes_interested_mutex);
         sched.register_writer(writer);
     }
 
@@ -1147,7 +1167,7 @@ protected:
     unregister_writer_impl(
             BaseWriter* writer)
     {
-        std::unique_lock<fastdds::TimedMutex> in_lock(async_mode.changes_interested_mutex);
+        std::unique_lock<fastdds::RecursiveTimedMutex> in_lock(async_mode.changes_interested_mutex);
         sched.unregister_writer(writer);
     }
 
@@ -1174,11 +1194,11 @@ protected:
         bool ret_value = false;
         // Sync delivery failed. Try to store for asynchronous delivery.
 #if HAVE_STRICT_REALTIME
-        std::unique_lock<fastdds::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
+        std::unique_lock<fastdds::RecursiveTimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
         if (lock.try_lock_until(max_blocking_time))
 #else
         static_cast<void>(max_blocking_time);
-        std::unique_lock<fastdds::TimedMutex> lock(async_mode.changes_interested_mutex);
+        std::unique_lock<fastdds::RecursiveTimedMutex> lock(async_mode.changes_interested_mutex);
 #endif // if HAVE_STRICT_REALTIME{
         {
             sched.add_new_sample(writer, change);
@@ -1275,11 +1295,11 @@ protected:
         if (!change->writer_info.is_linked.load())
         {
 #if HAVE_STRICT_REALTIME
-            std::unique_lock<fastdds::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
+            std::unique_lock<fastdds::RecursiveTimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
             if (lock.try_lock_until(max_blocking_time))
 #else
             static_cast<void>(max_blocking_time);
-            std::unique_lock<fastdds::TimedMutex> lock(async_mode.changes_interested_mutex);
+            std::unique_lock<fastdds::RecursiveTimedMutex> lock(async_mode.changes_interested_mutex);
 #endif // if HAVE_STRICT_REALTIME{
             {
                 sched.add_old_sample(writer, change);
@@ -1328,11 +1348,11 @@ protected:
 #endif // if HAVE_STRICT_REALTIME
             {
 #if HAVE_STRICT_REALTIME
-                std::unique_lock<fastdds::TimedMutex> interested_lock(async_mode.changes_interested_mutex,
+                std::unique_lock<fastdds::RecursiveTimedMutex> interested_lock(async_mode.changes_interested_mutex,
                         std::defer_lock);
                 if (interested_lock.try_lock_until(max_blocking_time))
 #else
-                std::unique_lock<fastdds::TimedMutex> interested_lock(async_mode.changes_interested_mutex);
+                std::unique_lock<fastdds::RecursiveTimedMutex> interested_lock(async_mode.changes_interested_mutex);
 #endif // if HAVE_STRICT_REALTIME
                 {
 
@@ -1402,7 +1422,7 @@ protected:
 
             //Check if we have to sleep.
             {
-                std::unique_lock<fastdds::TimedMutex> in_lock(async_mode.changes_interested_mutex);
+                std::unique_lock<fastdds::RecursiveTimedMutex> in_lock(async_mode.changes_interested_mutex);
                 // Add interested changes into the queue.
                 sched.add_interested_changes_to_queue_nts();
 
@@ -1441,6 +1461,8 @@ protected:
 
                     current_writer = writer_it->second;
                 }
+
+                sched.processing_change_of_writer(current_writer);
 
                 if (!current_writer->getMutex().try_lock())
                 {
@@ -1499,7 +1521,7 @@ protected:
 
                 // Add interested changes into the queue.
                 {
-                    std::unique_lock<fastdds::TimedMutex> in_lock(async_mode.changes_interested_mutex);
+                    std::unique_lock<fastdds::RecursiveTimedMutex> in_lock(async_mode.changes_interested_mutex);
                     sched.add_interested_changes_to_queue_nts();
                 }
 
