@@ -86,6 +86,7 @@ public:
     bool add_entry(
             LocatorSelectorEntry* entry)
     {
+        force_reset_ = true;
         return entries_.push_back(entry) != nullptr;
     }
 
@@ -96,6 +97,7 @@ public:
     bool remove_entry(
             const GUID_t& guid)
     {
+        force_reset_ = true;
         return entries_.remove_if(
             [&guid](LocatorSelectorEntry* entry)
             {
@@ -111,11 +113,28 @@ public:
     void reset(
             bool enable_all)
     {
-        last_state_.clear();
-        for (LocatorSelectorEntry* entry : entries_)
+        if (last_state_.size() == entries_.size() && initial_allow_to_send_ && !force_reset_)
         {
-            last_state_.push_back(entry->enabled ? 1 : 0);
-            entry->enable(enable_all);
+            for (size_t count {0}; count < entries_.size(); ++count)
+            {
+                if (last_state_.at(count).second != entries_.at(count)->allowed_to_send ? 1 : 0)
+                {
+                    force_reset_ = true;
+                }
+                last_state_.at(count).first = entries_.at(count)->enabled ? 1 : 0;
+                last_state_.at(count).second = entries_.at(count)->allowed_to_send ? 1 : 0;
+                entries_.at(count)->enable(enable_all);
+            }
+        }
+        else
+        {
+            force_reset_ = last_state_.size() != entries_.size();
+            last_state_.clear();
+            for (LocatorSelectorEntry* entry : entries_)
+            {
+                last_state_.emplace_back(entry->enabled ? 1 : 0, entry->allowed_to_send ? 1 : 0);
+                entry->enable(enable_all);
+            }
         }
     }
 
@@ -144,14 +163,14 @@ public:
      */
     bool state_has_changed() const
     {
-        if (entries_.size() != last_state_.size())
+        if (entries_.size() != last_state_.size() || force_reset_)
         {
             return true;
         }
 
         for (size_t i = 0; i < entries_.size(); ++i)
         {
-            if (last_state_.at(i) != (entries_.at(i)->enabled ? 1 : 0))
+            if (last_state_.at(i).first != (entries_.at(i)->enabled ? 1 : 0))
             {
                 return true;
             }
@@ -181,9 +200,10 @@ public:
      */
     ResourceLimitedVector<LocatorSelectorEntry*>& transport_starts()
     {
+        force_reset_ = false;
         for (LocatorSelectorEntry* entry : entries_)
         {
-            entry->transport_should_process = entry->enabled && entry->allowed_to_send;
+            entry->transport_should_process = entry->enabled;
         }
 
         return entries_;
@@ -303,16 +323,33 @@ public:
     }
 
     template<class UnaryPredicate>
-    void for_every_entry(
+    bool for_every_entry(
             UnaryPredicate action) const
     {
+        bool ret_value {true};
         for (size_t count {0}; count < entries_.size(); ++count)
         {
             if (!action(entries_.at(count), count))
             {
+                ret_value = false;
                 break;
             }
         }
+        return ret_value;
+    }
+
+    LocatorSelectorEntry* get_entry_by_guid(
+            const GUID_t& guid) const
+    {
+        for (LocatorSelectorEntry* entry : entries_)
+        {
+            if (guid == entry->remote_guid)
+            {
+                return entry;
+            }
+        }
+
+        return nullptr;
     }
 
     struct IteratorIndex
@@ -488,6 +525,9 @@ public:
         return iterator(*this, iterator::Position::End);
     }
 
+    //! Initial allow to send processing.
+    bool initial_allow_to_send_ {true};
+
 private:
 
     //! Entries collection.
@@ -495,7 +535,9 @@ private:
     //! List of selected indexes.
     ResourceLimitedVector<size_t> selections_;
     //! Enabling state when reset was called.
-    ResourceLimitedVector<int> last_state_;
+    ResourceLimitedVector<std::pair<int, int>> last_state_;
+
+    bool force_reset_ {false};
 };
 
 } // namespace rtps

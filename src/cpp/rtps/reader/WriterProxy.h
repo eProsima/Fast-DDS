@@ -400,7 +400,7 @@ public:
     virtual bool send(
             const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
-            std::chrono::steady_clock::time_point max_blocking_time_point) const override;
+            std::chrono::steady_clock::time_point max_blocking_time_point) override;
 
     bool is_on_same_process() const
     {
