@@ -184,7 +184,10 @@ enum ParameterId_t : uint16_t
     PID_RTPS_RELIABLE_READER                = 0x8201,
     PID_READER_RESOURCE_LIMITS              = 0x8202,
     /* Participant specific */
-    PID_WIREPROTOCOL_CONFIG                 = 0x8300
+    PID_WIREPROTOCOL_CONFIG                 = 0x8300,
+
+    /* eProsima Safe DDS extensions */
+    PID_SAFE_DDS_SIGNATURE                  = 0x9000,
 };
 
 /*!
