@@ -160,6 +160,7 @@ FASTDDS_TODO_BEFORE(3, 0, "Remove eprosima::fastrtps::rtps::VendorId_t usings");
 using VendorId_t = eprosima::fastdds::rtps::VendorId_t;
 using eprosima::fastdds::rtps::c_VendorId_Unknown;
 using eprosima::fastdds::rtps::c_VendorId_eProsima;
+using eprosima::fastdds::rtps::c_VendorId_SafeDDS;
 
 } // namespace rtps
 } // namespace fastrtps
