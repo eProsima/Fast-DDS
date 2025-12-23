@@ -640,7 +640,7 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                group.limitaion_->add_sent_bytes_by_group(change->serializedPayload.length, sender);
+                group.limitation_->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);
                     this->changes_delivered.push_back(change);
