@@ -117,7 +117,7 @@ public:
         {
             for (size_t count {0}; count < entries_.size(); ++count)
             {
-                if (last_state_.at(count).second != entries_.at(count)->allowed_to_send ? 1 : 0)
+                if (last_state_.at(count).second != (entries_.at(count)->allowed_to_send ? 1 : 0))
                 {
                     force_reset_ = true;
                 }
