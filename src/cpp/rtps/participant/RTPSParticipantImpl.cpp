@@ -1272,11 +1272,12 @@ bool RTPSParticipantImpl::create_writer(
                     if (persistence != nullptr)
                     {
                         writer = new StatefulPersistentWriter(this, guid, watt,
-                                        flow_controller, hist, listen, nullptr, persistence);
+                                        flow_controller, hist, listen, stateful_writer_listener_, persistence);
                     }
                     else
                     {
-                        writer = new StatefulWriter(this, guid, watt, flow_controller, hist, listen, nullptr);
+                        writer = new StatefulWriter(this, guid, watt,
+                                        flow_controller, hist, listen, stateful_writer_listener_);
                     }
                 }
                 else
