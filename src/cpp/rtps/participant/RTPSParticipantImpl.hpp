@@ -142,8 +142,8 @@ class WLP;
  * @ingroup RTPS_MODULE
  */
 class RTPSParticipantImpl
-    : public fastdds::statistics::StatisticsParticipantImpl,
-    public fastdds::statistics::rtps::IConnectionsQueryable
+    : public fastdds::statistics::StatisticsParticipantImpl
+    , public fastdds::statistics::rtps::IConnectionsQueryable
 #if HAVE_SECURITY
     , private security::SecurityPluginFactory
 #endif // if HAVE_SECURITY
@@ -155,7 +155,7 @@ class RTPSParticipantImpl
        -A ReceiverResource (as produced by the NetworkFactory Element)
        -Its associated MessageReceiver
      */
-    typedef struct ReceiverControlBlock
+    struct ReceiverControlBlock
     {
         std::shared_ptr<ReceiverResource> Receiver;
         MessageReceiver* mp_receiver;                  //Associated Readers/Writers inside of MessageReceiver
@@ -191,7 +191,7 @@ class RTPSParticipantImpl
         const ReceiverControlBlock& operator =(
                 const ReceiverControlBlock&) = delete;
 
-    } ReceiverControlBlock;
+    };
 
 public:
 
@@ -549,7 +549,7 @@ public:
         return initialized_;
     }
 
-private:
+protected:
 
     //! DomainId
     uint32_t domain_id_;
@@ -575,7 +575,6 @@ private:
     std::vector<BaseWriter*> m_allWriterList;
     //!Reader List
     std::vector<BaseReader*> m_allReaderList;
-    //!Listen thread list.
     //!Writer List.
     std::vector<BaseWriter*> m_userWriterList;
     //!Reader List
@@ -632,6 +631,8 @@ private:
     std::set<GUID_t> ignored_readers_;
     //! Protect ignored entities collection concurrent access
     mutable shared_mutex ignored_mtx_;
+
+private:
 
     void setup_guids(
             const GuidPrefix_t& persistence_guid);
