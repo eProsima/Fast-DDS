@@ -39,6 +39,8 @@
 #include <utils/SystemInfo.hpp>
 #include <utils/TimeConversion.hpp>
 
+#include <utils/license/LicenseTools.hpp>
+
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"
 
@@ -49,6 +51,20 @@ namespace fastdds {
 namespace rtps {
 
 using ::operator <<;
+
+static bool validate_safedds_signature(
+        const octet* const buffer,
+        uint16_t length)
+{
+    if (length != 0x50)
+    {
+        return false;
+    }
+
+    const octet* const data = buffer;
+    const octet* const signature = buffer + 0x10;
+    return verify_safedds_signature(data, 0x10, signature, 0x40);
+}
 
 ParticipantProxyData::ParticipantProxyData(
         const RTPSParticipantAllocationAttributes& allocation)
@@ -482,8 +498,11 @@ bool ParticipantProxyData::read_from_cdr_message(
         bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
+    bool shall_validate_safedds_signature = source_vendor_id == c_VendorId_SafeDDS;
+    bool safedds_signature_valid = false;
+
     auto param_process =
-            [this, &network, &should_filter_locators, source_vendor_id](
+            [this, &network, &should_filter_locators, source_vendor_id, &safedds_signature_valid](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 vendor_id = source_vendor_id;
@@ -897,6 +916,21 @@ bool ParticipantProxyData::read_from_cdr_message(
                         }
                         break;
                     }
+                    case fastdds::dds::PID_SAFE_DDS_SIGNATURE:
+                    {
+                        if (source_vendor_id == c_VendorId_SafeDDS)
+                        {
+                            // Validate length
+                            if (msg->length - msg->pos < plength)
+                            {
+                                return false;
+                            }
+
+                            safedds_signature_valid = validate_safedds_signature(&msg->buffer[msg->pos], plength);
+                            msg->pos += plength;
+                        }
+                        break;
+                    }
                     default:
                     {
                         break;
@@ -910,15 +944,17 @@ bool ParticipantProxyData::read_from_cdr_message(
     clear();
     try
     {
-        return ParameterList::readParameterListfromCDRMsg(
-            *msg, param_process, use_encapsulation,
-            qos_size);
+        if (ParameterList::readParameterListfromCDRMsg(*msg, param_process, use_encapsulation, qos_size))
+        {
+            return !shall_validate_safedds_signature || safedds_signature_valid;
+        }
     }
     catch (std::bad_alloc& ba)
     {
         std::cerr << "bad_alloc caught: " << ba.what() << '\n';
-        return false;
     }
+
+    return false;
 }
 
 bool ParticipantProxyData::is_from_this_host() const

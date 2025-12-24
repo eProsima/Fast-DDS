@@ -187,7 +187,10 @@ enum ParameterId_t : uint16_t
     /* Participant specific */
     PID_WIREPROTOCOL_CONFIG                 = 0x8300,
     /* RPC specific */
-    PID_RPC_MORE_REPLIES                    = 0x8400
+    PID_RPC_MORE_REPLIES                    = 0x8400,
+
+    /* eProsima Safe DDS extensions */
+    PID_SAFE_DDS_SIGNATURE                  = 0x9000,
 };
 
 /*!
