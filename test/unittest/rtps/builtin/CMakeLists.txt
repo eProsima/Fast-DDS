@@ -86,6 +86,7 @@ target_link_libraries(BuiltinDataSerializationTests
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     ${CMAKE_DL_LIBS})
 
 gtest_discover_tests(BuiltinDataSerializationTests)

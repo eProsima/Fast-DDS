@@ -1073,6 +1073,310 @@ TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
     }
 }
 
+TEST(BuiltinDataSerializationTests, safe_dds_signature_parsing)
+{
+
+#if HAVE_SECURITY
+
+    // Safe DDS vendor but no signature property
+    {
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+
+            // PID_PROTOCOL_VERSION
+            0x15, 0, 4, 0,
+            2, 5, 0, 0,
+
+            // PID_VENDORID
+            0x16, 0, 4, 0,
+            1, 0x15, 0, 0,
+
+            // PID_PARTICIPANT_GUID
+            0x50, 0, 16, 0,
+            1, 0x15, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+            // PID_DOMAIN_ID
+            0x0f, 0, 4, 0,
+            0, 0, 0, 0,
+
+            // PID_DEFAULT_UNICAST_LOCATOR
+            0x31, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_METATRAFFIC_UNICAST_LOCATOR
+            0x32, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+        EXPECT_NO_THROW(EXPECT_FALSE(out.read_from_cdr_message(&msg, true, network, false, {1, 0x15})));
+    }
+
+    // Safe DDS vendor with signature property and short length
+    {
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+
+            // PID_PROTOCOL_VERSION
+            0x15, 0, 4, 0,
+            2, 5, 0, 0,
+
+            // PID_VENDORID
+            0x16, 0, 4, 0,
+            1, 0x15, 0, 0,
+
+            // PID_PARTICIPANT_GUID
+            0x50, 0, 16, 0,
+            1, 0x15, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+            // PID_DOMAIN_ID
+            0x0f, 0, 4, 0,
+            0, 0, 0, 0,
+
+            // PID_DEFAULT_UNICAST_LOCATOR
+            0x31, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_METATRAFFIC_UNICAST_LOCATOR
+            0x32, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_SAFE_DDS_SIGNATURE
+            0x00, 0x90, 0x10, 0x00,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+        EXPECT_NO_THROW(EXPECT_FALSE(out.read_from_cdr_message(&msg, true, network, false, {1, 0x15})));
+    }
+
+    // Safe DDS vendor with signature property and long length
+    {
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+
+            // PID_PROTOCOL_VERSION
+            0x15, 0, 4, 0,
+            2, 5, 0, 0,
+
+            // PID_VENDORID
+            0x16, 0, 4, 0,
+            1, 0x15, 0, 0,
+
+            // PID_PARTICIPANT_GUID
+            0x50, 0, 16, 0,
+            1, 0x15, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+            // PID_DOMAIN_ID
+            0x0f, 0, 4, 0,
+            0, 0, 0, 0,
+
+            // PID_DEFAULT_UNICAST_LOCATOR
+            0x31, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_METATRAFFIC_UNICAST_LOCATOR
+            0x32, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_SAFE_DDS_SIGNATURE
+            0x00, 0x90, 0x60, 0x00,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+        EXPECT_NO_THROW(EXPECT_FALSE(out.read_from_cdr_message(&msg, true, network, false, {1, 0x15})));
+    }
+
+    // Safe DDS vendor with signature property, correct length but invalid content
+    {
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+
+            // PID_PROTOCOL_VERSION
+            0x15, 0, 4, 0,
+            2, 5, 0, 0,
+
+            // PID_VENDORID
+            0x16, 0, 4, 0,
+            1, 0x15, 0, 0,
+
+            // PID_PARTICIPANT_GUID
+            0x50, 0, 16, 0,
+            1, 0x15, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+            // PID_DOMAIN_ID
+            0x0f, 0, 4, 0,
+            0, 0, 0, 0,
+
+            // PID_DEFAULT_UNICAST_LOCATOR
+            0x31, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_METATRAFFIC_UNICAST_LOCATOR
+            0x32, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_SAFE_DDS_SIGNATURE
+            0x00, 0x90, 0x50, 0x00,
+            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+            0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+            0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+            0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
+
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+        EXPECT_NO_THROW(EXPECT_FALSE(out.read_from_cdr_message(&msg, true, network, false, {1, 0x15})));
+    }
+
+    // Safe DDS vendor with signature property, correct length and valid content
+    {
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+
+            // PID_PROTOCOL_VERSION
+            0x15, 0, 4, 0,
+            2, 5, 0, 0,
+
+            // PID_VENDORID
+            0x16, 0, 4, 0,
+            1, 0x15, 0, 0,
+
+            // PID_PARTICIPANT_GUID
+            0x50, 0, 16, 0,
+            1, 0x15, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+            // PID_DOMAIN_ID
+            0x0f, 0, 4, 0,
+            0, 0, 0, 0,
+
+            // PID_DEFAULT_UNICAST_LOCATOR
+            0x31, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_METATRAFFIC_UNICAST_LOCATOR
+            0x32, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_SAFE_DDS_SIGNATURE
+            0x00, 0x90, 0x50, 0x00,
+            0x35, 0x41, 0x46, 0x45, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+            0x8f, 0xce, 0xd0, 0xd5, 0x9f, 0x29, 0x67, 0x76, 0x64, 0xad, 0xab, 0x75, 0x39, 0x1e, 0x23, 0xa2,
+            0xd7, 0xf3, 0xc3, 0xa5, 0xf4, 0xcc, 0x37, 0x57, 0x9c, 0x8d, 0x2d, 0x30, 0xe6, 0x4d, 0xed, 0xfe,
+            0x9a, 0x29, 0x36, 0x9e, 0x48, 0xc7, 0xbb, 0xcf, 0xbf, 0xf7, 0x38, 0xbe, 0xfe, 0xd5, 0x15, 0xfa,
+            0x82, 0xc6, 0xc3, 0xfa, 0xee, 0x3e, 0x0f, 0x69, 0x7c, 0xbb, 0x91, 0x92, 0xec, 0x04, 0x4c, 0x03,
+
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false, {1, 0x15})));
+    }
+
+    // Other vendor with invalid signature property
+    {
+        octet data_p_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+
+            // PID_PROTOCOL_VERSION
+            0x15, 0, 4, 0,
+            2, 5, 0, 0,
+
+            // PID_VENDORID
+            0x16, 0, 4, 0,
+            1, 1, 0, 0,
+
+            // PID_PARTICIPANT_GUID
+            0x50, 0, 16, 0,
+            1, 0x15, 54, 83, 136, 247, 149, 252, 47, 105, 174, 141, 0, 0, 1, 193,
+
+            // PID_DOMAIN_ID
+            0x0f, 0, 4, 0,
+            0, 0, 0, 0,
+
+            // PID_DEFAULT_UNICAST_LOCATOR
+            0x31, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_METATRAFFIC_UNICAST_LOCATOR
+            0x32, 0, 24, 0,
+            1, 0, 0, 0, 68, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 133, 54,
+
+            // PID_SAFE_DDS_SIGNATURE
+            0x00, 0x90, 0x50, 0x00,
+            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+            0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+            0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+            0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+            0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
+
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        CDRMessage_t msg(0);
+        msg.init(data_p_buffer, static_cast<uint32_t>(sizeof(data_p_buffer)));
+        msg.length = msg.max_size;
+
+        ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+        EXPECT_NO_THROW(EXPECT_TRUE(out.read_from_cdr_message(&msg, true, network, false, {1, 1})));
+    }
+
+#endif  // HAVE_SECURITY
+
+}
+
 /*!
  * \test RTPS-CFT-CFP-01 Tests serialization of `ContentFilterProperty_t` works successfully without parameters.
  */
