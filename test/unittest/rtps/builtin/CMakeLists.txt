@@ -82,6 +82,7 @@ target_link_libraries(BuiltinDataSerializationTests
     fastdds::log
     foonathan_memory
     GTest::gmock
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     ${CMAKE_DL_LIBS})
 if(QNX)
     target_link_libraries(BuiltinDataSerializationTests socket)
