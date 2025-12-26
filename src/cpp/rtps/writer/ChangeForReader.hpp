@@ -103,6 +103,17 @@ public:
         return unsent_fragments_.min();
     }
 
+    FragmentNumber_t get_next_unsent_fragment(
+            const FragmentNumber_t& min_frag) const
+    {
+        if (unsent_fragments_.empty())
+        {
+            return change_->getFragmentCount() + 1;
+        }
+
+        return unsent_fragments_.min_after(min_frag);
+    }
+
     FragmentNumberSet_t getUnsentFragments() const
     {
         return unsent_fragments_;

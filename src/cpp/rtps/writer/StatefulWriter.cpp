@@ -572,7 +572,7 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
         SequenceNumber_t gap_seq;
         FragmentNumber_t dummy = 0;
         bool dumb = false;
-        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, get_seq_num_min(), dumb))
+        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, get_seq_num_min(), 0, dumb))
         {
             // If there is a hole (removed from history or not relevants) between previous sample and this one,
             // send it a personal GAP.
@@ -607,7 +607,7 @@ void StatefulWriter::deliver_sample_to_datasharing(
         SequenceNumber_t gap_seq;
         FragmentNumber_t dummy = 0;
         bool dumb = false;
-        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, get_seq_num_min(), dumb))
+        if (remoteReader->change_is_unsent(change->sequenceNumber, dummy, gap_seq, get_seq_num_min(), 0, dumb))
         {
             if (!remoteReader->is_reliable())
             {
@@ -631,11 +631,12 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         LocatorSelectorSender& locator_selector, // Object locked by FlowControllerImpl
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
-    NetworkFactory& network = mp_RTPSParticipant->network_factory();
-    DeliveryRetCode ret_code = DeliveryRetCode::DELIVERED;
-    uint32_t n_fragments = change->getFragmentCount();
-    FragmentNumber_t min_unsent_fragment = 0;
-    bool need_reactivate_periodic_heartbeat = false;
+    NetworkFactory& network {mp_RTPSParticipant->network_factory()};
+    DeliveryRetCode ret_code {DeliveryRetCode::DELIVERED};
+    uint32_t n_fragments {change->getFragmentCount()};
+    FragmentNumber_t min_unsent_fragment {0};
+    FragmentNumber_t last_unsent_fragment {0};
+    bool need_reactivate_periodic_heartbeat {false};
 
     while (DeliveryRetCode::DELIVERED == ret_code &&
             min_unsent_fragment != n_fragments + 1)
@@ -662,8 +663,10 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
             }
 
             if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq, get_seq_num_min(),
-                    need_reactivate_periodic_heartbeat) &&
-                    (0 == n_fragments || min_unsent_fragment >= next_unsent_frag))
+                    last_unsent_fragment, need_reactivate_periodic_heartbeat) &&
+                    (0 == n_fragments ||
+                    (last_unsent_fragment < next_unsent_frag &&
+                    min_unsent_fragment >= next_unsent_frag)))
             {
                 if (min_unsent_fragment > next_unsent_frag)
                 {
@@ -715,6 +718,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 (*remote_reader)->active(false);
             }
         }
+        last_unsent_fragment = min_unsent_fragment;
 
         bool should_send_global_gap = SequenceNumber_t::unknown() != gap_seq_for_all;
 
@@ -752,24 +756,32 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                     {
                                         if ((*remote_reader)->active())
                                         {
-                                            bool allFragmentsSent = false;
-                                            (*remote_reader)->mark_fragment_as_sent_for_change(
-                                                change->sequenceNumber,
-                                                min_unsent_fragment,
-                                                allFragmentsSent);
-
-                                            if (allFragmentsSent)
+                                            // TODO(richiware). Do only with congestion control
+                                            LocatorSelectorEntry* entry =
+                                                    locator_selector.locator_selector.get_entry_by_guid(
+                                                (*remote_reader)->guid());
+                                            assert(nullptr != entry);
+                                            if (entry && entry->allowed_to_send)
                                             {
-                                                if (!(*remote_reader)->is_reliable())
+                                                bool allFragmentsSent = false;
+                                                (*remote_reader)->mark_fragment_as_sent_for_change(
+                                                    change->sequenceNumber,
+                                                    min_unsent_fragment,
+                                                    allFragmentsSent);
+
+                                                if (allFragmentsSent)
                                                 {
-                                                    (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
-                                                }
-                                                else
-                                                {
-                                                    (*remote_reader)->from_unsent_to_status(
-                                                        change->sequenceNumber,
-                                                        UNDERWAY,
-                                                        true);
+                                                    if (!(*remote_reader)->is_reliable())
+                                                    {
+                                                        (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
+                                                    }
+                                                    else
+                                                    {
+                                                        (*remote_reader)->from_unsent_to_status(
+                                                            change->sequenceNumber,
+                                                            UNDERWAY,
+                                                            true);
+                                                    }
                                                 }
                                             }
                                         }

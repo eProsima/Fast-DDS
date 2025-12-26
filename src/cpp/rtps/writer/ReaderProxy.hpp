@@ -145,6 +145,7 @@ public:
             FragmentNumber_t& next_unsent_frag,
             SequenceNumber_t& gap_seq,
             const SequenceNumber_t& min_seq,
+            const FragmentNumber_t& min_frag,
             bool& need_reactivate_periodic_heartbeat);
 
     /**

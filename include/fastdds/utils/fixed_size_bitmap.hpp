@@ -258,6 +258,87 @@ public:
     }
 
     /**
+     * Returns the lowest value set strictly after `after_item`.
+     *
+     * @param after_item  Item after which to search (exclusive).
+     * @return The lowest value set > after_item. If none is set, the result is undetermined.
+     */
+    T min_after(
+            const T after_item) const noexcept
+    {
+        const uint32_t n_longs = (num_bits_ + 31u) / 32u;
+        if (n_longs == 0u)
+        {
+            return base_;
+        }
+
+        // If the requested item is before the range, behave like min()
+        if (after_item < base_)
+        {
+            return min();
+        }
+
+        // Start searching from the next item (exclusive)
+        const T first = after_item + 1;
+
+        // If we're already past the range, nothing to find
+        const T end_exclusive = base_ + static_cast<T>(num_bits_);
+        if (first >= end_exclusive)
+        {
+            return base_;
+        }
+
+        const uint32_t rel = static_cast<uint32_t>(first - base_); // 0..num_bits_-1
+        const uint32_t start_long = rel / 32u;
+        const uint32_t start_off  = rel % 32u;// item offset inside that 32-bit word (0..31)
+
+        T item = base_ + static_cast<T>(start_long * 32u);
+
+        for (uint32_t i = start_long; i < n_longs; ++i)
+        {
+            uint32_t bits = bitmap_[i];
+
+            // In the first word, discard bits for items < first
+            // With your encoding: offset 0 => bit31, offset 31 => bit0.
+            // So we clear the top `start_off` bits (those represent earlier items).
+            if (i == start_long && start_off != 0u)
+            {
+                const uint64_t mask64 = (start_off >= 32u) ? 0ull
+                : ((1ull << (32u - start_off)) - 1ull); // keeps low (32-start_off) bits
+                bits &= static_cast<uint32_t>(mask64);
+            }
+
+            // In the last word, discard bits beyond num_bits_ (safety, if not already zeroed)
+            if (i == (n_longs - 1u))
+            {
+                const uint32_t valid = (num_bits_ & 31u); // 0 means full 32 valid
+                if (valid != 0u)
+                {
+                    // Keep only the top `valid` bits (offsets 0..valid-1 => bits 31..(32-valid))
+                    const uint64_t last_mask64 = ~((1ull << (32u - valid)) - 1ull);
+                    bits &= static_cast<uint32_t>(last_mask64);
+                }
+            }
+
+            if (bits)
+            {
+#if defined(_MSC_VER)
+                unsigned long bit;
+                _BitScanReverse(&bit, bits);          // index of highest set bit (0..31)
+                const uint32_t offset = 31u ^ static_cast<uint32_t>(bit);
+#else
+                const uint32_t offset = static_cast<uint32_t>(__builtin_clz(static_cast<unsigned>(bits)));
+#endif // if defined(_MSC_VER)
+                return item + static_cast<T>(offset);
+            }
+
+            item = item + 32u;
+        }
+
+        return base_;
+    }
+
+    /**
      * Checks if an element is present in the bitmap.
      *
      * @param item   Value to be checked.

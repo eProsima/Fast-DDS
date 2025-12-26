@@ -333,9 +333,11 @@ void RTPSMessageGroup::reset_to_header()
     header_msg_->length = RTPSMESSAGE_HEADER_SIZE;
 
     buffers_to_send_->clear();
-    buffers_bytes_ = RTPSMESSAGE_HEADER_SIZE;
+    buffers_bytes_ = 0;
     // Payloads are released in the destructor
     payloads_to_send_->clear();
+
+    message_contains_data = false;
 }
 
 void RTPSMessageGroup::flush()
@@ -400,7 +402,7 @@ void RTPSMessageGroup::send()
                 current_send_buffer_size_ = current_send_buffer_size_ - config_send_buffer_size_;
             }
 
-            if (nullptr != limitation_)
+            if (nullptr != limitation_ && message_contains_data)
             {
                 limitation_->add_sent_bytes_by_group(buffers_bytes_, *sender_);
             }
@@ -563,12 +565,33 @@ bool RTPSMessageGroup::add_data(
         CacheChange_t& change,
         bool expectsInlineQos)
 {
+    constexpr uint32_t info_ts_message_length = 12;
+    constexpr uint32_t data_submessage_header_length = 24;
+
     assert(nullptr != sender_);
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA messages");
 
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush();
+
+    if (nullptr != limitation_ && DataExceedsLimitationResult::NO_EXCEEDED !=
+            limitation_->data_exceeds_limitation(change, change.serializedPayload.length
+            + info_ts_message_length
+            + data_submessage_header_length
+#if HAVE_SECURITY
+            + participant_->calculate_extra_size_for_rtps_message()
+#endif  // HAVE_SECURITY
+#ifdef FASTDDS_STATISTICS
+            + eprosima::fastdds::statistics::rtps::statistics_submessage_length
+#endif  // FASTDDS_STATISTICS
+            , pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
+    {
+        CDRMessage::initCDRMsg(submessage_msg_);
+        //flush_and_reset();
+        throw limit_exceeded();
+    }
+
     add_info_ts_in_buffer(change.sourceTimestamp);
 
     CacheChangeInlineQoSWriter qos_writer(change);
@@ -652,14 +675,7 @@ bool RTPSMessageGroup::add_data(
     }
 #endif // if HAVE_SECURITY
 
-    // Check limitation
-    if (nullptr != limitation_ &&
-            limitation_->data_exceeds_limitation(change, submessage_msg_->length,
-            pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
-    {
-        flush_and_reset();
-        throw limit_exceeded();
-    }
+    message_contains_data = true;
 
     if (insert_submessage(is_big_submessage))
     {
@@ -679,6 +695,9 @@ bool RTPSMessageGroup::add_data_frag(
         const uint32_t fragment_number,
         bool expectsInlineQos)
 {
+    constexpr uint32_t info_ts_message_length = 12;
+    constexpr uint32_t data_frag_submessage_header_length = 36;
+
     assert(nullptr != sender_);
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA_FRAG messages");
@@ -688,6 +707,35 @@ bool RTPSMessageGroup::add_data_frag(
     // Calculate fragment size. If last fragment, size may be smaller
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
+
+    // Check limitation
+    if (nullptr != limitation_)
+    {
+        auto result = limitation_->data_exceeds_limitation(change, fragment_size
+                        + info_ts_message_length
+                        + data_frag_submessage_header_length
+#if HAVE_SECURITY
+                        + participant_->calculate_extra_size_for_rtps_message()
+#endif  // HAVE_SECURITY
+#ifdef FASTDDS_STATISTICS
+                        + eprosima::fastdds::statistics::rtps::statistics_submessage_length
+#endif  // FASTDDS_STATISTICS
+                        , pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_);
+        if (DataExceedsLimitationResult::NO_EXCEEDED != result)
+        {
+            //flush_and_reset();
+            CDRMessage::initCDRMsg(submessage_msg_);
+
+            if (result == DataExceedsLimitationResult::EXCEEDS_LIMITATION_BUT_ARE_READERS_DISABLED)
+            {
+                return true; // Continue sending next fragments.
+            }
+            else
+            {
+                throw limit_exceeded();
+            }
+        }
+    }
 
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush();
@@ -774,14 +822,7 @@ bool RTPSMessageGroup::add_data_frag(
     }
 #endif // if HAVE_SECURITY
 
-    // Check limitation
-    if (nullptr != limitation_ &&
-            limitation_->data_exceeds_limitation(change, submessage_msg_->length,
-            pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
-    {
-        flush_and_reset();
-        throw limit_exceeded();
-    }
+    message_contains_data = true;
 
     if (insert_submessage(false))
     {

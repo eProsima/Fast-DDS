@@ -322,6 +322,7 @@ bool ReaderProxy::change_is_unsent(
         FragmentNumber_t& next_unsent_frag,
         SequenceNumber_t& gap_seq,
         const SequenceNumber_t& min_seq,
+        const FragmentNumber_t& min_frag,
         bool& need_reactivate_periodic_heartbeat)
 {
     if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
@@ -341,7 +342,7 @@ bool ReaderProxy::change_is_unsent(
 
     if (returned_value)
     {
-        next_unsent_frag = chit->get_next_unsent_fragment();
+        next_unsent_frag = is_reliable_ ? chit->get_next_unsent_fragment(min_frag) : chit->get_next_unsent_fragment();
         gap_seq = SequenceNumber_t::unknown();
 
         if (is_reliable_ && !chit->has_been_delivered())
