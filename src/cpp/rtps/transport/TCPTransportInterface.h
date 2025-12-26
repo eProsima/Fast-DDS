@@ -186,7 +186,7 @@ protected:
     virtual void set_send_buffer_size(
             uint32_t size) = 0;
 
-    void clean(); // Must be called on childs destructors!
+    virtual void clean(); // Must be called on childs destructors!
 
     virtual void endpoint_to_locator(
             const asio::ip::tcp::endpoint& endpoint,

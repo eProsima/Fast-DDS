@@ -80,7 +80,7 @@ static asio::ip::address_v4::bytes_type locator_to_native(
 
 TCPv4Transport::TCPv4Transport(
         const TCPv4TransportDescriptor& descriptor)
-    : TCPTransportInterface(LOCATOR_KIND_TCPv4)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv4)
     , configuration_(descriptor)
 {
     // Copy descriptor's netmask filter configuration
@@ -211,7 +211,7 @@ TCPv4Transport::TCPv4Transport(
 }
 
 TCPv4Transport::TCPv4Transport()
-    : TCPTransportInterface(LOCATOR_KIND_TCPv4)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv4)
 {
 }
 
@@ -221,14 +221,14 @@ TCPv4Transport::~TCPv4Transport()
 }
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor()
-    : TCPTransportDescriptor()
+    : TCPTransportDescriptor_t()
 {
     memset(wan_addr, 0, 4);
 }
 
 TCPv4TransportDescriptor::TCPv4TransportDescriptor(
         const TCPv4TransportDescriptor& t)
-    : TCPTransportDescriptor(t)
+    : TCPTransportDescriptor_t(t)
 {
     memcpy(wan_addr, t.wan_addr, 4);
 }
@@ -236,7 +236,7 @@ TCPv4TransportDescriptor::TCPv4TransportDescriptor(
 TCPv4TransportDescriptor& TCPv4TransportDescriptor::operator =(
         const TCPv4TransportDescriptor& t)
 {
-    *static_cast<TCPTransportDescriptor*>(this) = t;
+    *static_cast<TCPTransportDescriptor_t*>(this) = t;
     memcpy(wan_addr, t.wan_addr, 4);
 
     return *this;
@@ -249,7 +249,7 @@ bool TCPv4TransportDescriptor::operator ==(
            this->wan_addr[1] == t.wan_addr[1] &&
            this->wan_addr[2] == t.wan_addr[2] &&
            this->wan_addr[3] == t.wan_addr[3] &&
-           TCPTransportDescriptor::operator ==(t));
+           TCPTransportDescriptor_t::operator ==(t));
 }
 
 TransportInterface* TCPv4TransportDescriptor::create_transport() const
