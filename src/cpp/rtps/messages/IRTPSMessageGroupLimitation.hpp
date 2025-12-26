@@ -29,6 +29,13 @@ namespace rtps {
 struct CacheChange_t;
 class RTPSMessageSenderInterface;
 
+enum class DataExceedsLimitationResult : uint32_t
+{
+    NO_EXCEEDED,
+    EXCEEDS_LIMITATION,
+    EXCEEDS_LIMITATION_BUT_ARE_READERS_DISABLED,
+};
+
 /*!
  * Interface to implement mechanisms that limit the data sent by an RTPSMessageGroup under certain conditions,
  * taking into account the bytes already sent by said group.
@@ -58,7 +65,7 @@ public:
      *
      * @return True if adding the change would exceed the limitation, false otherwise.
      */
-    virtual bool data_exceeds_limitation(
+    virtual DataExceedsLimitationResult data_exceeds_limitation(
             CacheChange_t& change,
             uint32_t size_to_add,
             uint32_t pending_to_send,

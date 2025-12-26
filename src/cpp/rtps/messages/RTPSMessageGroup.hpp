@@ -376,6 +376,8 @@ private:
     const octet padding_[3] = {0, 0, 0};
 
     IRTPSMessageGroupLimitation* limitation_ {nullptr};
+
+    bool message_contains_data {false};
 };
 
 } // namespace rtps
