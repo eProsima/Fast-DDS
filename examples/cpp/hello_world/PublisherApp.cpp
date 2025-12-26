@@ -50,6 +50,7 @@ PublisherApp::PublisherApp(
     , expected_matches_(config.matched)
     , stop_(false)
 {
+    Log::SetVerbosity(Log::Kind::Warning);
     // Set up the data type with initial values
     hello_.index(0);
     hello_.message("Hello world");

@@ -293,8 +293,10 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     ConnectionRequest_t request;
     Locator locator;
     mTransport->endpoint_to_locator(channel->local_endpoint(), locator);
+    std::cout << "Filling bind request locator with: " << IPLocator::to_string(locator) << std::endl;
 
     mTransport->fill_local_physical_port(locator);
+    std::cout << "Re-Filling bind request locator with: " << IPLocator::to_string(locator) << std::endl;
 
     if (locator.kind == LOCATOR_KIND_TCPv4)
     {
@@ -309,7 +311,7 @@ TCPTransactionId RTCPMessageManager::sendConnectionRequest(
     SerializedPayload_t payload(static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
 
-    EPROSIMA_LOG_INFO(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
+    EPROSIMA_LOG_WARNING(RTCP_MSG, "Send [BIND_CONNECTION_REQUEST] PhysicalPort: " << IPLocator::getPhysicalPort(locator));
     //EPROSIMA_LOG_ERROR(DEBUG, "Sending Connection Request with locator: " << IPLocator::to_string(request.transportLocator()));
     channel->change_status(TCPChannelResource::eConnectionStatus::eWaitingForBindResponse);
     TCPTransactionId id = getTransactionId();
@@ -369,7 +371,7 @@ TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(
 {
     SerializedPayload_t payload(static_cast<uint32_t>(KeepAliveRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
-    EPROSIMA_LOG_INFO(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
+    EPROSIMA_LOG_WARNING(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
     TCPTransactionId id = getTransactionId();
     sendData(channel, KEEP_ALIVE_REQUEST, id, &payload, RETCODE_VOID);
     return id;
@@ -451,8 +453,8 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
         return RETCODE_INCOMPATIBLE_VERSION;
     }
 
-    //EPROSIMA_LOG_ERROR(DEBUG, "Receive Connection Request with locator: " << IPLocator::to_string(request.transportLocator())
-    //    << " and will respond with our locator: " << response.locator());
+    EPROSIMA_LOG_ERROR(DEBUG, "Receive Connection Request with locator: " << IPLocator::to_string(request.transportLocator())
+       << " and will respond with our locator: " << response.locator());
 
     ResponseCode code = channel->process_bind_request(request.transportLocator());
 
@@ -540,14 +542,17 @@ ResponseCode RTCPMessageManager::processKeepAliveRequest(
 {
     if (!channel->connection_established())
     {
+        EPROSIMA_LOG_WARNING(RTCP, "Received KeepAliveRequest without connection established.");
         sendData(channel, KEEP_ALIVE_RESPONSE, transaction_id, nullptr, RETCODE_SERVER_ERROR);
     }
     else if (IPLocator::getLogicalPort(channel->locator()) == IPLocator::getLogicalPort(request.locator()))
     {
+        EPROSIMA_LOG_WARNING(RTCP, "Received KeepAliveRequest CORRECTLY.");
         sendData(channel, KEEP_ALIVE_RESPONSE, transaction_id, nullptr, RETCODE_OK);
     }
     else
     {
+        EPROSIMA_LOG_WARNING(RTCP, "Received KeepAliveRequest with unknown locator.");
         sendData(channel, KEEP_ALIVE_RESPONSE, transaction_id, nullptr, RETCODE_UNKNOWN_LOCATOR);
         return RETCODE_UNKNOWN_LOCATOR;
     }
@@ -724,9 +729,10 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size() + 4]), dataSize);
             response.deserialize(&payload);
 
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " \
+            EPROSIMA_LOG_ERROR(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " \
                     << IPLocator::getLogicalPort(response.locator()) << ", Physical remote: " \
-                    << IPLocator::getPhysicalPort(response.locator()));
+                    << IPLocator::getPhysicalPort(response.locator()) << " .ResponseCode: " << respCode);
+
 
             if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
             {
@@ -784,7 +790,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
         break;
         case KEEP_ALIVE_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [KEEP_ALIVE_REQUEST] Seq: " << controlHeader.transaction_id());
+            EPROSIMA_LOG_WARNING(RTCP_SEQ, "Receive [KEEP_ALIVE_REQUEST] Seq: " << controlHeader.transaction_id());
             KeepAliveRequest_t request;
             SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
             readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
@@ -831,7 +837,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [KEEP_ALIVE_RESPONSE] Seq: " << controlHeader.transaction_id());
             ResponseCode respCode;
             memcpy(&respCode, &(receive_buffer[TCPControlMsgHeader::size()]), 4);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [KEEP_ALIVE_RESPONSE]");
+            EPROSIMA_LOG_WARNING(RTCP_MSG, "Receive [KEEP_ALIVE_RESPONSE]");
             responseCode = processKeepAliveResponse(channel, respCode, controlHeader.transaction_id());
         }
         break;

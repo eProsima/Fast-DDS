@@ -335,7 +335,7 @@ void PubSubApp::on_data_available(
     DataSeq delivery_mechanisms_sequence;
     SampleInfoSeq info_sequence;
     while ((!is_stopped()) && ((samples_ == 0) || ((samples_ > 0) && (received_samples_ < samples_)))
-            && (RETCODE_OK == reader->take(delivery_mechanisms_sequence, info_sequence)))
+            && (dds::RETCODE_OK == reader->take(delivery_mechanisms_sequence, info_sequence)))
     {
         for (LoanableCollection::size_type i = 0; i < info_sequence.length(); ++i)
         {
@@ -377,7 +377,7 @@ void PubSubApp::run()
                     dds::Duration_t acked_wait{1, 0};
                     acked = writer_->wait_for_acknowledgments(acked_wait);
                 }
-                while (acked != RETCODE_OK);
+                while (acked != dds::RETCODE_OK);
             }
 
 #ifdef _WIN32
@@ -390,7 +390,7 @@ void PubSubApp::run()
                     dds::Duration_t acked_wait{1, 0};
                     acked = writer_->wait_for_acknowledgments(acked_wait);
                 }
-                while (acked != RETCODE_OK);
+                while (acked != dds::RETCODE_OK);
             }
 #endif // _WIN32
         }
@@ -420,12 +420,12 @@ bool PubSubApp::publish()
                 return ((matched_ >= expected_matches_) || is_stopped());
             });
     void* sample_ = nullptr;
-    if (!is_stopped() && (RETCODE_OK == writer_->loan_sample(sample_)))
+    if (!is_stopped() && (dds::RETCODE_OK == writer_->loan_sample(sample_)))
     {
         DeliveryMechanisms* delivery_mechanisms_ = static_cast<DeliveryMechanisms*>(sample_);
         delivery_mechanisms_->index() = ++index_of_last_sample_sent_;
         memcpy(delivery_mechanisms_->message().data(), "Delivery mechanisms", sizeof("Delivery mechanisms"));
-        ret = (RETCODE_OK == writer_->write(sample_));
+        ret = (dds::RETCODE_OK == writer_->write(sample_));
         std::cout << "Sample: '" << delivery_mechanisms_->message().data() << "' with index: '"
                   << delivery_mechanisms_->index() << "' SENT" << std::endl;
     }

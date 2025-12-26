@@ -53,6 +53,7 @@ ListenerSubscriberApp::ListenerSubscriberApp(
     , received_samples_(0)
     , stop_(false)
 {
+    Log::SetVerbosity(Log::Kind::Warning);
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());

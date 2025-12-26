@@ -60,6 +60,7 @@ PublisherApp::PublisherApp(
     , samples_(config.samples)
     , stop_(false)
 {
+    Log::SetVerbosity(Log::Kind::Warning);
     // Check that the generated type fulfils example constraints: it is plain and bounded
     if (!type_->is_plain(eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION) || !type_->is_bounded())
     {
@@ -114,6 +115,8 @@ PublisherApp::PublisherApp(
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
             tcp_v4_transport_->sendBufferSize = 0;
             tcp_v4_transport_->receiveBufferSize = 0;
+            tcp_v4_transport_->keep_alive_frequency_ms = 5000; // 5 seconds
+            tcp_v4_transport_->keep_alive_timeout_ms = 15000;   // 15 seconds
             std::string tcp_ip_address = "127.0.0.1";
             if (!config.tcp_ip_address.empty())
             {
@@ -275,7 +278,7 @@ void PublisherApp::run()
                 dds::Duration_t acked_wait{1, 0};
                 acked = writer_->wait_for_acknowledgments(acked_wait);
             }
-            while (acked != RETCODE_OK);
+            while (acked != dds::RETCODE_OK);
         }
 
         // Wait for period or stop event
@@ -298,12 +301,12 @@ bool PublisherApp::publish()
                 return ((matched_ >= expected_matches_) || is_stopped());
             });
     void* sample_ = nullptr;
-    if (!is_stopped() && (RETCODE_OK == writer_->loan_sample(sample_)))
+    if (!is_stopped() && (dds::RETCODE_OK == writer_->loan_sample(sample_)))
     {
         DeliveryMechanisms* delivery_mechanisms_ = static_cast<DeliveryMechanisms*>(sample_);
         delivery_mechanisms_->index() = ++index_of_last_sample_sent_;
         memcpy(delivery_mechanisms_->message().data(), "Delivery mechanisms", sizeof("Delivery mechanisms"));
-        ret = (RETCODE_OK == writer_->write(sample_));
+        ret = (dds::RETCODE_OK == writer_->write(sample_));
         std::cout << "Sample: '" << delivery_mechanisms_->message().data() << "' with index: '"
                   << delivery_mechanisms_->index() << "' SENT" << std::endl;
     }

@@ -90,7 +90,7 @@ private:
 
     std::atomic<bool> stop_;
 
-    const uint32_t period_ms_ = 100; // in ms
+    const uint32_t period_ms_ = 3000; // in ms
 };
 
 } // namespace hello_world

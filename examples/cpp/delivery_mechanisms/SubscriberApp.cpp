@@ -58,6 +58,7 @@ SubscriberApp::SubscriberApp(
     , samples_(config.samples)
     , stop_(false)
 {
+    Log::SetVerbosity(Log::Kind::Warning);
     // Check that the generated type fulfils example constraints: it is plain and bounded
     if (!type_->is_plain(eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION) || !type_->is_bounded())
     {
@@ -108,9 +109,12 @@ SubscriberApp::SubscriberApp(
         }
         case CLIParser::DeliveryMechanismKind::TCPv4:
         {
+            std::shared_ptr<TCPv4TransportDescriptor> tcp_v4_transport_ = std::make_shared<TCPv4TransportDescriptor>();
             Locator tcp_v4_initial_peers_locator_;
             tcp_v4_initial_peers_locator_.kind = LOCATOR_KIND_TCPv4;
             tcp_v4_initial_peers_locator_.port = 5100;
+            tcp_v4_transport_->keep_alive_frequency_ms = 5000; // 5 seconds
+            tcp_v4_transport_->keep_alive_timeout_ms = 15000;   // 15 seconds
             std::string tcp_ip_address = "127.0.0.1";
             if (!config.tcp_ip_address.empty())
             {
@@ -120,7 +124,7 @@ SubscriberApp::SubscriberApp(
             pqos.wire_protocol().builtin.initialPeersList.push_back(tcp_v4_initial_peers_locator_);
             pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
             pqos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = dds::Duration_t(5, 0);
-            pqos.transport().user_transports.push_back(std::make_shared<TCPv4TransportDescriptor>());
+            pqos.transport().user_transports.push_back(tcp_v4_transport_);
             break;
         }
         case CLIParser::DeliveryMechanismKind::TCPv6:
@@ -248,7 +252,7 @@ void SubscriberApp::on_data_available(
 
     DataSeq delivery_mechanisms_sequence;
     SampleInfoSeq info_sequence;
-    while ((!is_stopped()) && (RETCODE_OK == reader->take(delivery_mechanisms_sequence, info_sequence)))
+    while ((!is_stopped()) && (dds::RETCODE_OK == reader->take(delivery_mechanisms_sequence, info_sequence)))
     {
         for (LoanableCollection::size_type i = 0; i < info_sequence.length(); ++i)
         {

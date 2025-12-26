@@ -280,6 +280,7 @@ ResponseCode TCPTransportInterface::bind_socket(
     auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
     assert(it_remove != unbound_channel_resources_.end());
     unbound_channel_resources_.erase(it_remove);
+    EPROSIMA_LOG_ERROR(RTCP, "Binding socket for locator: " << channel->locator());
 
     ResponseCode ret = RETCODE_OK;
     const auto insert_ret = channel_resources_.insert(
@@ -289,6 +290,7 @@ ResponseCode TCPTransportInterface::bind_socket(
         if (insert_ret.first->second->connection_established())
         {
             // There is an existing channel that can be used. Force the Client to close unnecessary socket
+            EPROSIMA_LOG_ERROR(RTCP, "Channel for locator: " << channel->locator() << " already exists.");
             ret = RETCODE_SERVER_ERROR;
         }
         else
@@ -378,7 +380,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                 final_port = static_cast<uint16_t>(acceptor->locator().port);
             }
 
-            EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
+            EPROSIMA_LOG_WARNING(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
                         locator) << "; logical: "
                                                                     << IPLocator::getLogicalPort(locator) << ")");
 
@@ -416,7 +418,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                     final_port = static_cast<uint16_t>(acceptor->locator().port);
                 }
 
-                EPROSIMA_LOG_INFO(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
+                EPROSIMA_LOG_WARNING(RTCP, " OpenAndBindInput (physical: " << IPLocator::getPhysicalPort(
                             locator) << "; logical: "
                                                                         << IPLocator::getLogicalPort(locator) << ")");
             }
@@ -788,7 +790,7 @@ bool TCPTransportInterface::OpenOutputChannel(
     // At this point, if there is no SenderResource to reuse, this is the first call to OpenOutputChannel for this locator.
     // Need to check if a channel already exists for this locator.
 
-    EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_ERROR(RTCP, "Called to OpenOutputChannel @ " << IPLocator::to_string(locator));
 
     auto channel_resource = channel_resources_.find(physical_locator);
 
@@ -799,6 +801,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(wan_locator));
         if (channel_resource != channel_resources_.end())
         {
+            EPROSIMA_LOG_ERROR(RTCP, "Channel for locator: " << physical_locator << " adding alias for WAN: " << wan_locator);
             channel_resources_[physical_locator] = channel_resource->second;     // Add alias!
         }
     }
@@ -811,6 +814,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         channel = channel_resource->second;
         // Add logical port to channel if it's not there yet
         channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+        EPROSIMA_LOG_ERROR(RTCP, "Channel reused for locator: " << IPLocator::to_string(locator));
     }
     // (Server-Client Topology - Client Side) OR LARGE DATA Topology with PDP discovery before TCP connection
     else
@@ -851,7 +855,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
-            EPROSIMA_LOG_INFO(RTCP, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
+            EPROSIMA_LOG_ERROR(RTCP, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
 
             // Create a TCP_CONNECT_TYPE channel
             std::shared_ptr<TCPChannelResource> channel(
@@ -874,7 +878,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         {
             // Server side LARGE_DATA
             // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
-            EPROSIMA_LOG_INFO(RTCP,
+            EPROSIMA_LOG_ERROR(RTCP,
                     "OpenOutputChannel: [WAIT_CONNECTION] @ " << IPLocator::to_string(locator));
             std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
             channel_pending_logical_ports_[physical_locator].insert(logical_port);
@@ -973,7 +977,7 @@ bool TCPTransportInterface::CreateInitialConnect(
     // There is no need to check if a channel already exists for this locator because this method is called only when
     // a new connection is required.
 
-    EPROSIMA_LOG_INFO(RTCP, "Called to CreateInitialConnect @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_ERROR(RTCP, "Called to CreateInitialConnect @ " << IPLocator::to_string(locator));
 
     // Create a TCP_CONNECT_TYPE channel
     std::shared_ptr<TCPChannelResource> channel(
@@ -988,7 +992,7 @@ bool TCPTransportInterface::CreateInitialConnect(
             configuration()->maxMessageSize))
         );
 
-    EPROSIMA_LOG_INFO(RTCP, "CreateInitialConnect: [CONNECT] @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_ERROR(RTCP, "CreateInitialConnect: [CONNECT] @ " << IPLocator::to_string(locator));
 
     channel_resources_[physical_locator] = channel;
     channel->connect(channel_resources_[physical_locator]);
@@ -1421,6 +1425,7 @@ bool TCPTransportInterface::send(
     using namespace eprosima::fastdds::statistics::rtps;
 
     bool locator_mismatch = false;
+    std::cout << "Sending TCP RTCP message with loc: " << locator << ", remote: " << remote_locator << std::endl;
 
     if (locator != IPLocator::toPhysicalLocator(remote_locator))
     {
@@ -1441,6 +1446,7 @@ bool TCPTransportInterface::send(
 
     if (locator_mismatch || total_bytes > configuration()->sendBufferSize)
     {
+        std::cout << "Locator mismatch or total_bytes exceed send buffer size." << std::endl;
         return false;
     }
 
@@ -1451,6 +1457,7 @@ bool TCPTransportInterface::send(
     if (channel_resource == channel_resources_.end())
     {
         // There is no channel for this locator. Skip send
+        std::cout << "No channel for this locator. Skip send." << std::endl;
         return false;
     }
 
@@ -1470,6 +1477,7 @@ bool TCPTransportInterface::send(
 
     if (channel->connection_established())
     {
+        std::cout << "Channel connection established. Preparing to send." << std::endl;
         uint16_t logical_port = IPLocator::getLogicalPort(remote_locator);
 
         if (channel->is_logical_port_added(logical_port))
@@ -1522,6 +1530,7 @@ bool TCPTransportInterface::send(
     else if (TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel->tcp_connection_type() &&
             TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
     {
+        EPROSIMA_LOG_WARNING(RTCP, "Channel disconnected (locator: " << channel->locator() << "). Trying to reconnect...");
         channel->set_all_ports_pending();
         channel->connect(channel_resources_[channel->locator()]);
     }
@@ -1579,13 +1588,13 @@ void TCPTransportInterface::SocketAccepted(
             channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
             create_listening_thread(channel);
 
-            EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
+            EPROSIMA_LOG_WARNING(RTCP, "Accepted connection (local: "
                     << local_endpoint_to_locator(channel) << ", remote: "
                     << remote_endpoint_to_locator(channel) << ")");
         }
         else
         {
-            EPROSIMA_LOG_INFO(RTCP, "Accepting connection (" << error.message() << ")");
+            EPROSIMA_LOG_WARNING(RTCP, "Accepting connection (" << error.message() << ")");
             std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 
@@ -1660,6 +1669,10 @@ void TCPTransportInterface::SocketConnected(
             {
                 channel->set_options(configuration());
                 channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
+                EPROSIMA_LOG_WARNING(RTCP, "Socket connected and listening thread created (local: "
+                        << local_endpoint_to_locator(channel) << ", remote: "
+                        << remote_endpoint_to_locator(channel) << ")");
+
                 create_listening_thread(channel);
             }
             else

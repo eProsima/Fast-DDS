@@ -82,7 +82,7 @@ private:
 
     std::mutex mutex_;
 
-    const uint32_t period_ms_ = 100; // in ms
+    const uint32_t period_ms_ = 3000; // in ms
 
     uint32_t index_of_last_sample_sent_;
 

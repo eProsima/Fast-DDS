@@ -38,6 +38,7 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
     : TCPChannelResource_t(parent, locator, maxMsgSize)
     , context_(context)
 {
+    EPROSIMA_LOG_WARNING(RTCP, "TCPChannelResourceBasic created for locator: " << locator_);
 }
 
 TCPChannelResourceBasic::TCPChannelResourceBasic(
@@ -53,6 +54,7 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
 
 TCPChannelResourceBasic::~TCPChannelResourceBasic()
 {
+    EPROSIMA_LOG_WARNING(RTCP, "TCPChannelResourceBasic destroyed for locator: " << locator_);
 }
 
 void TCPChannelResourceBasic::connect(
@@ -73,6 +75,7 @@ void TCPChannelResourceBasic::connect(
                 std::to_string(IPLocator::getPhysicalPort(locator_)));
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(context_);
+            EPROSIMA_LOG_WARNING(RTCP, "TCPChannelResourceBasic socket CONNECT TO: " << locator_);
             std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
 
             asio::async_connect(
