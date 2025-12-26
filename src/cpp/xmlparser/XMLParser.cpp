@@ -276,8 +276,6 @@ XMLP_ret XMLParser::parseXMLTransportData(
                 <xs:element name="interfaceWhiteList" type="stringListType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="wan_addr" type="stringType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="output_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="keep_alive_frequency_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="keep_alive_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="max_logical_port" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="logical_port_range" type="uint16Type" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="logical_port_increment" type="uint16Type" minOccurs="0" maxOccurs="1"/>
@@ -443,8 +441,6 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, UDP_OUTPUT_PORT) == 0 ||
                 strcmp(name, UDP_PRIORITY_MAPPINGS) == 0 ||
                 strcmp(name, TCP_WAN_ADDR) == 0 ||
-                strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 ||
-                strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
                 strcmp(name, MAX_LOGICAL_PORT) == 0 ||
                 strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
                 strcmp(name, LOGICAL_PORT_INCREMENT) == 0 ||
@@ -856,8 +852,6 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
     /*
         <xs:complexType name="rtpsTransportDescriptorType">
             <xs:all minOccurs="0">
-                <xs:element name="keep_alive_frequency_ms" type="uint32Type"/>
-                <xs:element name="keep_alive_timeout_ms" type="uint32Type"/>
                 <xs:element name="max_logical_port" type="uint16Type"/>
                 <xs:element name="logical_port_range" type="uint16Type"/>
                 <xs:element name="logical_port_increment" type="uint16Type"/>
@@ -886,27 +880,7 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
         for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
         {
             name = p_aux0->Name();
-            if (strcmp(name, KEEP_ALIVE_FREQUENCY) == 0)
-            {
-                // keep_alive_frequency_ms - uint32Type
-                int iFrequency(0);
-                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iFrequency, 0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-                pTCPDesc->keep_alive_frequency_ms = static_cast<uint32_t>(iFrequency);
-            }
-            else if (strcmp(name, KEEP_ALIVE_TIMEOUT) == 0)
-            {
-                // keep_alive_timeout_ms - uint32Type
-                int iTimeout(0);
-                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
-                {
-                    return XMLP_ret::XML_ERROR;
-                }
-                pTCPDesc->keep_alive_timeout_ms = static_cast<uint32_t>(iTimeout);
-            }
-            else if (strcmp(name, MAX_LOGICAL_PORT) == 0)
+            if (strcmp(name, MAX_LOGICAL_PORT) == 0)
             {
                 // max_logical_port - uint16Type
                 int iPort(0);

@@ -53,7 +53,6 @@ TCPChannelResource::TCPChannelResource(
     : ChannelResource(maxMsgSize)
     , parent_ (parent)
     , locator_(locator)
-    , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
     , tcp_connection_type_(TCPConnectionType::TCP_CONNECT_TYPE)
 {
@@ -65,7 +64,6 @@ TCPChannelResource::TCPChannelResource(
     : ChannelResource(maxMsgSize)
     , parent_(parent)
     , locator_()
-    , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
     , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
 {
@@ -196,7 +194,6 @@ void TCPChannelResource::add_logical_port(
             }
         }
     }
-
 }
 
 void TCPChannelResource::send_pending_open_logical_ports(

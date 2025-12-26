@@ -69,8 +69,6 @@ extern const char* ALLOWLIST;
 extern const char* BLOCKLIST;
 extern const char* MAX_MESSAGE_SIZE;
 extern const char* MAX_INITIAL_PEERS_RANGE;
-extern const char* KEEP_ALIVE_FREQUENCY;
-extern const char* KEEP_ALIVE_TIMEOUT;
 extern const char* MAX_LOGICAL_PORT;
 extern const char* LOGICAL_PORT_RANGE;
 extern const char* LOGICAL_PORT_INCREMENT;

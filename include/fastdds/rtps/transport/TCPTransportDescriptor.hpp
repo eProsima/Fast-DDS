@@ -38,10 +38,6 @@ namespace rtps {
  *
  * - \c listening_ports: list of ports to listen as server.
  *
- * - \c keep_alive_frequency_ms: frequency of RTCP keep alive requests (in ms).
- *
- * - \c keep_alive_timeout_ms: time since sending the last keep alive request to consider a connection as broken (in ms).
- *
  * - \c max_logical_port: maximum number of logical ports to try during RTCP negotiation.
  *
  * - \c logical_port_range: maximum number of logical ports per request to try during RTCP negotiation.
@@ -251,10 +247,6 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     //! List of ports to listen as server
     std::vector<uint16_t> listening_ports;
-    //! Frequency of RTCP keep alive requests (ms)
-    uint32_t keep_alive_frequency_ms;
-    //! Time since sending the last keep alive request to consider a connection as broken (ms)
-    uint32_t keep_alive_timeout_ms;
     //! Maximum number of logical ports to try during RTCP negotiation
     uint16_t max_logical_port;
     //! Maximum number of logical ports per request to try during RTCP negotiation

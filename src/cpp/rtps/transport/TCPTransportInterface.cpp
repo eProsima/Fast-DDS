@@ -77,14 +77,8 @@ namespace rtps {
 
 using Log = fastdds::dds::Log;
 
-static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
-static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
-//static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
-
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
-    , keep_alive_frequency_ms(s_default_keep_alive_frequency)
-    , keep_alive_timeout_ms(s_default_keep_alive_timeout)
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
@@ -101,8 +95,6 @@ TCPTransportDescriptor::TCPTransportDescriptor(
         const TCPTransportDescriptor& t)
     : SocketTransportDescriptor(t)
     , listening_ports(t.listening_ports)
-    , keep_alive_frequency_ms(t.keep_alive_frequency_ms)
-    , keep_alive_timeout_ms(t.keep_alive_timeout_ms)
     , max_logical_port(t.max_logical_port)
     , logical_port_range(t.logical_port_range)
     , logical_port_increment(t.logical_port_increment)
@@ -123,8 +115,6 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
 {
     SocketTransportDescriptor::operator =(t);
     listening_ports = t.listening_ports;
-    keep_alive_frequency_ms = t.keep_alive_frequency_ms;
-    keep_alive_timeout_ms = t.keep_alive_timeout_ms;
     max_logical_port = t.max_logical_port;
     logical_port_range = t.logical_port_range;
     logical_port_increment = t.logical_port_increment;
@@ -144,8 +134,6 @@ bool TCPTransportDescriptor::operator ==(
         const TCPTransportDescriptor& t) const
 {
     return (this->listening_ports == t.listening_ports &&
-           this->keep_alive_frequency_ms == t.keep_alive_frequency_ms &&
-           this->keep_alive_timeout_ms == t.keep_alive_timeout_ms &&
            this->max_logical_port == t.max_logical_port &&
            this->logical_port_range == t.logical_port_range &&
            this->logical_port_increment == t.logical_port_increment &&
@@ -168,7 +156,6 @@ TCPTransportInterface::TCPTransportInterface(
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
-    , keep_alive_event_(io_context_timers_)
 {
 }
 
@@ -180,13 +167,6 @@ void TCPTransportInterface::clean()
 {
     assert(receiver_resources_.size() == 0);
     alive_.store(false);
-
-    keep_alive_event_.cancel();
-    if (io_context_timers_thread_.joinable())
-    {
-        io_context_timers_.stop();
-        io_context_timers_thread_.join();
-    }
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
@@ -580,18 +560,6 @@ bool TCPTransportInterface::init(
                 io_context_.run();
             };
     io_context_thread_ = create_thread(ioContextFunction, configuration()->accept_thread, "dds.tcp_accept");
-
-    if (0 < configuration()->keep_alive_frequency_ms)
-    {
-        auto ioContextTimersFunction = [&]()
-                {
-                    asio::executor_work_guard<asio::io_context::executor_type> work = make_work_guard(io_context_timers_.
-                                            get_executor());
-                    io_context_timers_.run();
-                };
-        io_context_timers_thread_ = create_thread(ioContextTimersFunction,
-                        configuration()->keep_alive_thread, "dds.tcp_keep");
-    }
 
     return true;
 }
@@ -1073,64 +1041,6 @@ bool TCPTransportInterface::OpenInputChannel(
         }
     }
     return success;
-}
-
-void TCPTransportInterface::keep_alive()
-{
-    std::map<Locator, std::shared_ptr<TCPChannelResource>> tmp_vec;
-
-    {
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
-        tmp_vec = channel_resources_;
-    }
-
-
-    for (auto& channel_resource : tmp_vec)
-    {
-        if (TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel_resource.second->tcp_connection_type())
-        {
-            rtcp_message_manager_->sendKeepAliveRequest(channel_resource.second);
-        }
-    }
-    //TODO Check timeout.
-
-    /*
-       const TCPTransportDescriptor* config = configuration(); // Keep a copy for us.
-
-       std::chrono::time_point<std::chrono::system_clock> time_now = std::chrono::system_clock::now();
-       std::chrono::time_point<std::chrono::system_clock> next_time = time_now +
-        std::chrono::milliseconds(config->keep_alive_frequency_ms);
-       std::chrono::time_point<std::chrono::system_clock> timeout_time =
-        time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
-
-       while (channel && TCPChannelResource::TCPConnectionStatus::TCP_CONNECTED == channel->tcp_connection_status())
-       {
-        if (channel->connection_established())
-        {
-            // KeepAlive
-            if (config->keep_alive_frequency_ms > 0 && config->keep_alive_timeout_ms > 0)
-            {
-                time_now = std::chrono::system_clock::now();
-
-                // Keep Alive Management
-                if (!channel->waiting_for_keep_alive_ && time_now > next_time)
-                {
-                    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
-                    rtcp_message_manager_->sendKeepAliveRequest(channel);
-                    channel->waiting_for_keep_alive_ = true;
-                    next_time = time_now + std::chrono::milliseconds(config->keep_alive_frequency_ms);
-                    timeout_time = time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
-                }
-                else if (channel->waiting_for_keep_alive_ && time_now >= timeout_time)
-                {
-                    // Disable the socket to erase it after the reception.
-                    close_tcp_socket(channel);
-                }
-            }
-        }
-       }
-       EPROSIMA_LOG_INFO(RTCP, "End perform_rtcp_management_thread " << channel->locator());
-     */
 }
 
 void TCPTransportInterface::create_listening_thread(
