@@ -35,7 +35,7 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
         asio::io_context& context,
         const Locator& locator,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, locator, maxMsgSize)
+    : TCPChannelResource_t(parent, locator, maxMsgSize)
     , context_(context)
 {
 }
@@ -45,7 +45,7 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
         asio::io_context& context,
         std::shared_ptr<asio::ip::tcp::socket> socket,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, maxMsgSize)
+    : TCPChannelResource_t(parent, maxMsgSize)
     , context_(context)
     , socket_(socket)
 {

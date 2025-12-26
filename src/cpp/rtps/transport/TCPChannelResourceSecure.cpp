@@ -35,7 +35,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
         asio::ssl::context& ssl_context,
         const Locator_t& locator,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, locator, maxMsgSize)
+    : TCPChannelResource_t(parent, locator, maxMsgSize)
     , context_(context)
     , ssl_context_(ssl_context)
     , strand_read_(make_strand(context))
@@ -49,7 +49,7 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
         asio::ssl::context& ssl_context,
         std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         uint32_t maxMsgSize)
-    : TCPChannelResource(parent, maxMsgSize)
+    : TCPChannelResource_t(parent, maxMsgSize)
     , context_(context)
     , ssl_context_(ssl_context)
     , strand_read_(make_strand(context))
