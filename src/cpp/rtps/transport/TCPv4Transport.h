@@ -22,8 +22,8 @@
 #include <asio.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
-#include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/transport/types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -43,7 +43,7 @@ namespace rtps {
  *       after each establishment.
  * @ingroup TRANSPORT_MODULE
  */
-class TCPv4Transport : public TCPTransportInterface
+class TCPv4Transport : public TCPTransportInterface_t
 {
 protected:
 
