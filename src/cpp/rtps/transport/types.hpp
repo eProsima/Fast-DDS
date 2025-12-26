@@ -16,12 +16,14 @@
 #define RTPS_TRANSPORT_FASTDDS_TYPES_HPP
 
 #include <rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPTransportDescriptor.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 using TCPChannelResource_t = fastdds::rtps::TCPChannelResource;
+using TCPTransportDescriptor_t = fastdds::rtps::TCPTransportDescriptor;
 
 } // namespace rtps
 } // namespace fastdds

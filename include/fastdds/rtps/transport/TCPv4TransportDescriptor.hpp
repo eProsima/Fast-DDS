@@ -22,7 +22,7 @@
 
 #include <sstream>
 
-#include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
+#include <rtps/transport/types.hpp>
 #include <fastdds/rtps/common/Types.hpp>
 
 namespace eprosima {
@@ -37,7 +37,7 @@ namespace rtps {
  *
  * @ingroup TRANSPORT_MODULE
  */
-struct TCPv4TransportDescriptor : public TCPTransportDescriptor
+struct TCPv4TransportDescriptor : public TCPTransportDescriptor_t
 {
     //! Destructor
     virtual ~TCPv4TransportDescriptor() = default;

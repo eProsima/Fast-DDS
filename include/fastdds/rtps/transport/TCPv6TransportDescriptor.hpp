@@ -20,7 +20,7 @@
 #ifndef FASTDDS_RTPS_TRANSPORT__TCPV6TRANSPORTDESCRIPTOR_HPP
 #define FASTDDS_RTPS_TRANSPORT__TCPV6TRANSPORTDESCRIPTOR_HPP
 
-#include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
+#include <rtps/transport/types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -32,7 +32,7 @@ namespace rtps {
  *
  * @ingroup TRANSPORT_MODULE
  */
-struct TCPv6TransportDescriptor : public TCPTransportDescriptor
+struct TCPv6TransportDescriptor : public TCPTransportDescriptor_t
 {
     //! Destructor
     virtual ~TCPv6TransportDescriptor() = default;
