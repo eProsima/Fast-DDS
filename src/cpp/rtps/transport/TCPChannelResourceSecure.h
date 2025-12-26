@@ -23,13 +23,13 @@
 #include <asio.hpp>
 #include <asio/ssl.hpp>
 #include <asio/strand.hpp>
-#include <rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/types.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class TCPChannelResourceSecure : public TCPChannelResource
+class TCPChannelResourceSecure : public TCPChannelResource_t
 {
 public:
 
@@ -100,9 +100,9 @@ public:
 private:
 
     TCPChannelResourceSecure(
-            const TCPChannelResource&) = delete;
+            const TCPChannelResource_t&) = delete;
     TCPChannelResourceSecure& operator =(
-            const TCPChannelResource&) = delete;
+            const TCPChannelResource_t&) = delete;
 
     asio::io_context& context_;
     asio::ssl::context& ssl_context_;

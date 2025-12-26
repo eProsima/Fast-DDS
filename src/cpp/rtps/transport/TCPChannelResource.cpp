@@ -20,6 +20,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/transport/asio_helpers.hpp>
+#include <rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {

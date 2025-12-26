@@ -38,11 +38,10 @@
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <rtps/transport/tcp/RTCPHeader.h>
-#include <rtps/transport/TCPAcceptorBasic.h>
-#include <rtps/transport/TCPChannelResourceBasic.h>
+#include <rtps/transport/TCPAcceptor.h>
+#include <rtps/transport/tcp/TCPControlMessage.h>
 
 #if TLS_FOUND
-#include <rtps/transport/TCPAcceptorSecure.h>
 #include <asio/ssl.hpp>
 #endif // if TLS_FOUND
 
@@ -175,7 +174,7 @@ protected:
             std::weak_ptr<TCPChannelResource> channel,
             std::weak_ptr<RTCPMessageManager> rtcp_manager);
 
-    bool read_body(
+    virtual bool read_body(
             octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t* bytes_received,

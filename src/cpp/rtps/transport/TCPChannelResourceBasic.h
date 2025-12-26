@@ -17,13 +17,13 @@
 
 #include <mutex>
 #include <asio.hpp>
-#include <rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/types.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class TCPChannelResourceBasic : public TCPChannelResource
+class TCPChannelResourceBasic : public TCPChannelResource_t
 {
     asio::io_context& context_;
 

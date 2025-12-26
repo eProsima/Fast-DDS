@@ -21,9 +21,9 @@
 
 #include <thread>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/transport/tcp/RTCPHeader.h>
 #include <rtps/transport/TCPChannelResource.h>

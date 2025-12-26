@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_TYPES_HPP
-#define FASTDDS_TYPES_HPP
+#ifndef RTPS_TRANSPORT_FASTDDS_TYPES_HPP
+#define RTPS_TRANSPORT_FASTDDS_TYPES_HPP
 
-#include <rtps/flowcontrol/FlowControllerFactory.hpp>
+#include <rtps/transport/TCPChannelResource.h>
 
 namespace eprosima {
 namespace fastdds {
+namespace rtps {
 
-using FlowControllerFactoryType = fastdds::rtps::FlowControllerFactory;
+using TCPChannelResource_t = fastdds::rtps::TCPChannelResource;
 
+} // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_TYPES_HPP
+#endif // RTPS_TRANSPORT_FASTDDS_TYPES_HPP
