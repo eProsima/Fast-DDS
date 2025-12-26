@@ -88,6 +88,7 @@ static CacheChange_t* create_change_for_message(
 
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
+        const RTPSParticipantAttributes& pattr,
         ISecurityPluginFactory& plugin_factory)
     : participant_stateless_message_listener_(*this)
     , participant_volatile_message_secure_listener_(*this)
@@ -97,14 +98,14 @@ SecurityManager::SecurityManager(
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({
-                participant->get_attributes().allocation.locators.max_unicast_locators,
-                participant->get_attributes().allocation.locators.max_multicast_locators,
-                participant->get_attributes().allocation.data_limits,
-                participant->get_attributes().allocation.content_filter})
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits,
+                pattr.allocation.content_filter})
     , temp_writer_proxies_({
-                participant->get_attributes().allocation.locators.max_unicast_locators,
-                participant->get_attributes().allocation.locators.max_multicast_locators,
-                participant->get_attributes().allocation.data_limits})
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits})
 {
     assert(participant != nullptr);
 }

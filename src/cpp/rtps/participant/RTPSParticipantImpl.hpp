@@ -990,6 +990,9 @@ public:
     void update_attributes(
             const RTPSParticipantAttributes& patt);
 
+    void update_mutable_attributes(
+        const RTPSParticipantAttributes& patt);
+
     /**
      * Update local writer QoS
      * @param rtps_writer Writer to update.
