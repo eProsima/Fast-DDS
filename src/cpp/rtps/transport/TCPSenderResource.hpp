@@ -19,7 +19,6 @@
 #include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include <rtps/transport/ChainingSenderResource.hpp>
-#include <rtps/transport/TCPChannelResource.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
