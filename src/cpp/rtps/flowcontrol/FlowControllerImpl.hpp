@@ -379,15 +379,13 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
         current_sent_bytes_ += bytes;
     }
 
-    DataExceedsLimitationResult data_exceeds_limitation(
+    bool data_exceeds_limitation(
             CacheChange_t&,
             uint32_t size_to_add,
             uint32_t pending_to_send,
             RTPSMessageSenderInterface&) override
     {
-        return sent_bytes_limitation_ <= (current_sent_bytes_ + size_to_add + pending_to_send) ?
-               DataExceedsLimitationResult::EXCEEDS_LIMITATION :
-               DataExceedsLimitationResult::NO_EXCEEDED;
+        return sent_bytes_limitation_ <= (current_sent_bytes_ + size_to_add + pending_to_send);
     }
 
     int32_t max_bytes_per_period = 0;

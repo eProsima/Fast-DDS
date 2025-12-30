@@ -45,15 +45,17 @@ struct CacheChange_t;
 struct CacheChangeWriterInfo_t
 {
     //!Number of DATA / DATA_FRAG submessages sent to the transport (only used in Writers)
-    size_t num_sent_submessages = 0;
+    size_t num_sent_submessages {0};
     //! Used to link with previous node in a list. Used by FlowControllerImpl.
     //! Cannot be cached because there are several comparisons without locking.
-    CacheChange_t* volatile previous = nullptr;
+    CacheChange_t* volatile previous {nullptr};
     //! Used to link with next node in a list. Used by FlowControllerImpl.
     //! Cannot be cached because there are several comparisons without locking.
-    CacheChange_t* volatile next = nullptr;
+    CacheChange_t* volatile next {nullptr};
     //! Used to know if the object is already in a list.
     std::atomic_bool is_linked {false};
+    //! Last fragment number sent.
+    FragmentNumber_t last_fragment_sent {0};
 };
 
 /*!

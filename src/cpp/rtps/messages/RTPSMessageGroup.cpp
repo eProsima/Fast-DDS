@@ -575,7 +575,7 @@ bool RTPSMessageGroup::add_data(
     // Check preconditions. If fail flush and reset.
     check_and_maybe_flush();
 
-    if (nullptr != limitation_ && DataExceedsLimitationResult::NO_EXCEEDED !=
+    if (nullptr != limitation_ &&
             limitation_->data_exceeds_limitation(change, change.serializedPayload.length
             + info_ts_message_length
             + data_submessage_header_length
@@ -587,8 +587,6 @@ bool RTPSMessageGroup::add_data(
 #endif  // FASTDDS_STATISTICS
             , pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
     {
-        CDRMessage::initCDRMsg(submessage_msg_);
-        //flush_and_reset();
         throw limit_exceeded();
     }
 
@@ -709,32 +707,19 @@ bool RTPSMessageGroup::add_data_frag(
             change.serializedPayload.length - fragment_start;
 
     // Check limitation
-    if (nullptr != limitation_)
-    {
-        auto result = limitation_->data_exceeds_limitation(change, fragment_size
-                        + info_ts_message_length
-                        + data_frag_submessage_header_length
+    if (nullptr != limitation_ &&
+            limitation_->data_exceeds_limitation(change, fragment_size
+            + info_ts_message_length
+            + data_frag_submessage_header_length
 #if HAVE_SECURITY
-                        + participant_->calculate_extra_size_for_rtps_message()
+            + participant_->calculate_extra_size_for_rtps_message()
 #endif  // HAVE_SECURITY
 #ifdef FASTDDS_STATISTICS
-                        + eprosima::fastdds::statistics::rtps::statistics_submessage_length
+            + eprosima::fastdds::statistics::rtps::statistics_submessage_length
 #endif  // FASTDDS_STATISTICS
-                        , pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_);
-        if (DataExceedsLimitationResult::NO_EXCEEDED != result)
-        {
-            //flush_and_reset();
-            CDRMessage::initCDRMsg(submessage_msg_);
-
-            if (result == DataExceedsLimitationResult::EXCEEDS_LIMITATION_BUT_ARE_READERS_DISABLED)
-            {
-                return true; // Continue sending next fragments.
-            }
-            else
-            {
-                throw limit_exceeded();
-            }
-        }
+            , pending_buffer_.size + buffers_bytes_ + pending_padding_, *sender_))
+    {
+        throw limit_exceeded();
     }
 
     // Check preconditions. If fail flush and reset.
