@@ -635,8 +635,12 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
     DeliveryRetCode ret_code {DeliveryRetCode::DELIVERED};
     uint32_t n_fragments {change->getFragmentCount()};
     FragmentNumber_t min_unsent_fragment {0};
-    FragmentNumber_t last_unsent_fragment {0};
     bool need_reactivate_periodic_heartbeat {false};
+
+    if (n_fragments > 0 && change->writer_info.last_fragment_sent >= n_fragments)
+    {
+        change->writer_info.last_fragment_sent = 0;
+    }
 
     while (DeliveryRetCode::DELIVERED == ret_code &&
             min_unsent_fragment != n_fragments + 1)
@@ -663,9 +667,9 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
             }
 
             if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq, get_seq_num_min(),
-                    last_unsent_fragment, need_reactivate_periodic_heartbeat) &&
+                    change->writer_info.last_fragment_sent, need_reactivate_periodic_heartbeat) &&
                     (0 == n_fragments ||
-                    (last_unsent_fragment < next_unsent_frag &&
+                    (change->writer_info.last_fragment_sent < next_unsent_frag &&
                     min_unsent_fragment >= next_unsent_frag)))
             {
                 if (min_unsent_fragment > next_unsent_frag)
@@ -718,7 +722,6 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 (*remote_reader)->active(false);
             }
         }
-        last_unsent_fragment = min_unsent_fragment;
 
         bool should_send_global_gap = SequenceNumber_t::unknown() != gap_seq_for_all;
 
@@ -750,6 +753,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                             {
                                 if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
                                 {
+                                    change->writer_info.last_fragment_sent =  min_unsent_fragment;
                                     for (auto remote_reader = first_relevant_reader;
                                             remote_reader != matched_remote_readers_.end();
                                             ++remote_reader)
@@ -852,27 +856,36 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 {
                                     if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
                                     {
-                                        bool allFragmentsSent = false;
-                                        (*remote_reader)->mark_fragment_as_sent_for_change(
-                                            change->sequenceNumber,
-                                            min_unsent_fragment,
-                                            allFragmentsSent);
-
-                                        if (allFragmentsSent)
+                                        change->writer_info.last_fragment_sent =  min_unsent_fragment;
+                                        // TODO(richiware). Do only with congestion control
+                                        LocatorSelectorEntry* entry =
+                                                locator_selector.locator_selector.get_entry_by_guid(
+                                            (*remote_reader)->guid());
+                                        assert(nullptr != entry);
+                                        if (entry && entry->allowed_to_send)
                                         {
-                                            if (!(*remote_reader)->is_reliable())
+                                            bool allFragmentsSent = false;
+                                            (*remote_reader)->mark_fragment_as_sent_for_change(
+                                                change->sequenceNumber,
+                                                min_unsent_fragment,
+                                                allFragmentsSent);
+
+                                            if (allFragmentsSent)
                                             {
-                                                (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
+                                                if (!(*remote_reader)->is_reliable())
+                                                {
+                                                    (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
+                                                }
+                                                else
+                                                {
+                                                    (*remote_reader)->from_unsent_to_status(
+                                                        change->sequenceNumber,
+                                                        UNDERWAY,
+                                                        true);
+                                                }
                                             }
-                                            else
-                                            {
-                                                (*remote_reader)->from_unsent_to_status(
-                                                    change->sequenceNumber,
-                                                    UNDERWAY,
-                                                    true);
-                                            }
+                                            add_statistics_sent_submessage(change, (*remote_reader)->locators_size());
                                         }
-                                        add_statistics_sent_submessage(change, (*remote_reader)->locators_size());
                                     }
                                     else
                                     {
@@ -884,18 +897,26 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                             {
                                 if (group.add_data(*change, (*remote_reader)->expects_inline_qos()))
                                 {
-                                    if (!(*remote_reader)->is_reliable())
+                                    // TODO(richiware). Do only with congestion control
+                                    LocatorSelectorEntry* entry =
+                                            locator_selector.locator_selector.get_entry_by_guid(
+                                        (*remote_reader)->guid());
+                                    assert(nullptr != entry);
+                                    if (entry && entry->allowed_to_send)
                                     {
-                                        (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
+                                        if (!(*remote_reader)->is_reliable())
+                                        {
+                                            (*remote_reader)->acked_changes_set(change->sequenceNumber + 1);
+                                        }
+                                        else
+                                        {
+                                            (*remote_reader)->from_unsent_to_status(
+                                                change->sequenceNumber,
+                                                UNDERWAY,
+                                                true);
+                                        }
+                                        add_statistics_sent_submessage(change, (*remote_reader)->locators_size());
                                     }
-                                    else
-                                    {
-                                        (*remote_reader)->from_unsent_to_status(
-                                            change->sequenceNumber,
-                                            UNDERWAY,
-                                            true);
-                                    }
-                                    add_statistics_sent_submessage(change, (*remote_reader)->locators_size());
                                 }
                                 else
                                 {

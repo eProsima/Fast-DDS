@@ -298,6 +298,7 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             change->writer_info.previous = nullptr;
             change->writer_info.next = nullptr;
             change->writer_info.num_sent_submessages = 0;
+            change->writer_info.last_fragment_sent = 0;
             change->vendor_id = c_VendorId_eProsima;
 
             // related sample identity

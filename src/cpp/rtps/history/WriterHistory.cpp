@@ -66,6 +66,7 @@ static CacheChange_t* initialize_change(
     reserved_change->writer_info.previous = nullptr;
     reserved_change->writer_info.next = nullptr;
     reserved_change->writer_info.num_sent_submessages = 0;
+    reserved_change->writer_info.last_fragment_sent = 0;
     reserved_change->vendor_id = c_VendorId_eProsima;
     return reserved_change;
 }
@@ -176,6 +177,7 @@ bool WriterHistory::prepare_and_add_change(
         a_change->sourceTimestamp = wparams.source_timestamp();
     }
     a_change->writer_info.num_sent_submessages = 0;
+    a_change->writer_info.last_fragment_sent = 0;
 
     a_change->write_params = wparams;
     // Updated sample and related sample identities on the user's write params
