@@ -194,6 +194,6 @@ target_link_libraries(PDPTests
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS}
-    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+    $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
 
 gtest_discover_tests(PDPTests)
