@@ -95,7 +95,10 @@ DataReaderHistory::DataReaderHistory(
     else
     {
         resource_limited_qos_.max_instances = 1;
-        resource_limited_qos_.max_samples_per_instance = resource_limited_qos_.max_samples;
+        resource_limited_qos_.max_samples_per_instance = std::min(
+            resource_limited_qos_.max_samples_per_instance,
+            resource_limited_qos_.max_samples
+            );
         key_changes_allocation_.initial = resource_limited_qos_.allocated_samples;
         key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
 
@@ -274,7 +277,8 @@ bool DataReaderHistory::received_change_keep_last(
     if (find_key(a_change->instanceHandle, vit))
     {
         DataReaderInstance::ChangeCollection& instance_changes = vit->second->cache_changes;
-        if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
+        auto effective_depth = std::min(history_qos_.depth, resource_limited_qos_.max_samples_per_instance);
+        if (instance_changes.size() < static_cast<size_t>(effective_depth))
         {
             ret_value = true;
         }
@@ -816,7 +820,8 @@ bool DataReaderHistory::completed_change_keep_last(
 {
     bool ret_value = false;
     DataReaderInstance::ChangeCollection& instance_changes = instance.cache_changes;
-    if (instance_changes.size() < static_cast<size_t>(history_qos_.depth))
+    auto effective_depth = std::min(history_qos_.depth, resource_limited_qos_.max_samples_per_instance);
+    if (instance_changes.size() < static_cast<size_t>(effective_depth))
     {
         ret_value = true;
     }

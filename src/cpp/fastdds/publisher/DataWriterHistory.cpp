@@ -48,7 +48,7 @@ HistoryAttributes DataWriterHistory::to_history_attributes(
 
     if (history_qos.kind != KEEP_ALL_HISTORY_QOS)
     {
-        max_samples = history_qos.depth;
+        max_samples = std::min(history_qos.depth, resource_limits_qos.max_samples_per_instance);
         if (topic_kind != NO_KEY)
         {
             max_samples *= resource_limits_qos.max_instances;
