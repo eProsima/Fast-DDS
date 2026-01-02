@@ -115,6 +115,7 @@ public:
     {
         if (last_state_.size() == entries_.size() && initial_allow_to_send_ && !force_reset_)
         {
+            // Resuse the last state instead of recreating it.
             for (size_t count {0}; count < entries_.size(); ++count)
             {
                 if (last_state_.at(count).second != (entries_.at(count)->allowed_to_send ? 1 : 0))
@@ -525,8 +526,16 @@ public:
         return iterator(*this, iterator::Position::End);
     }
 
-    //! Initial allow to send processing.
-    bool initial_allow_to_send_ {true};
+    void initial_allow_to_send(
+            bool value)
+    {
+        initial_allow_to_send_ = value;
+    }
+
+    bool initial_allow_to_send() const
+    {
+        return initial_allow_to_send_;
+    }
 
 private:
 
@@ -537,6 +546,10 @@ private:
     //! Enabling state when reset was called.
     ResourceLimitedVector<std::pair<int, int>> last_state_;
 
+    //! Whether it is the initial state of all allow_to_send flags.
+    bool initial_allow_to_send_ {true};
+
+    //! Whether a reset is forced due to changes in the entries.
     bool force_reset_ {false};
 };
 
