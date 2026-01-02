@@ -124,6 +124,13 @@ public:
     bool change_is_acked(
             const SequenceNumber_t& seq_num) const;
 
+    /**
+     * Check if a specific change is marked to be sent to this reader.
+     *
+     * @param [in]  seq_num Sequence number of the change to be checked.
+     *
+     * @return true if the change is marked to be sent. False otherwise.
+     */
     bool change_is_unsent(
             const SequenceNumber_t& seq_num) const;
 

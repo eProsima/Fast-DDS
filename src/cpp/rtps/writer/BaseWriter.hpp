@@ -349,7 +349,9 @@ public:
 
     virtual ~BaseWriter();
 
-    virtual void reschedule_unsent_changes()
+    virtual void reschedule_unsent_changes(
+            const GUID_t&,
+            uint32_t )
     {
     }
 

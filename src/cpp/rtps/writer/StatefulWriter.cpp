@@ -2346,24 +2346,38 @@ void StatefulWriter::add_gaps_for_holes_in_history(
     }
 }
 
-void StatefulWriter::reschedule_unsent_changes()
+void StatefulWriter::reschedule_unsent_changes(
+        const GUID_t& reader_guid,
+        uint32_t allowed_bytes)
 {
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
 
-    //TODO(richiware) take into account num bytes allowed to resend
-    for (History::iterator cit = history_->changesBegin(); cit != history_->changesEnd(); ++cit)
-    {
-        for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [&](ReaderProxy* reader)
+    for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+            [&](ReaderProxy* reader)
+            {
+                if (reader->guid() == reader_guid)
                 {
-                    if (reader->change_is_unsent((*cit)->sequenceNumber))
+                    for (History::iterator cit = history_->changesBegin(); cit != history_->changesEnd(); ++cit)
                     {
-                        flow_controller_->add_old_sample(this, *cit);
-                        return true;
+                        if (reader->change_is_unsent((*cit)->sequenceNumber))
+                        {
+                            uint32_t change_size = (*cit)->getFragmentCount() == 0 ? (*cit)->serializedPayload.length :
+                            (*cit)->getFragmentSize();
+
+                            if (change_size > allowed_bytes)
+                            {
+                                break;
+                            }
+
+                            flow_controller_->add_old_sample(this, *cit);
+                            allowed_bytes -= change_size;
+                        }
                     }
-                    return false;
-                });
-    }
+                    return true;
+                }
+                return false;
+            }
+            );
 }
 
 }  // namespace rtps
