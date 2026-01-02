@@ -35,6 +35,8 @@
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
@@ -3417,6 +3419,27 @@ dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
 const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
 {
     return m_att;
+}
+
+void RTPSParticipantImpl::notify_reader_discovery(
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info)
+{
+    RTPSParticipantListener* listener = getListener();
+    notify_reader_discovery(reason, info, listener);
+}
+
+void RTPSParticipantImpl::notify_reader_discovery(
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info,
+        RTPSParticipantListener* listener)
+{
+    if (listener)
+    {
+        RTPSParticipant* participant = getUserRTPSParticipant();
+        bool should_be_ignored = false;
+        listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+    }
 }
 
 } /* namespace rtps */

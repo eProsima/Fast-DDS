@@ -46,6 +46,7 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
 
 #include <fastdds/types.hpp>
@@ -549,6 +550,15 @@ public:
     {
         return initialized_;
     }
+
+    virtual void notify_reader_discovery(
+            ReaderDiscoveryStatus reason,
+            const SubscriptionBuiltinTopicData& info);
+
+    virtual void notify_reader_discovery(
+            ReaderDiscoveryStatus reason,
+            const SubscriptionBuiltinTopicData& info,
+            RTPSParticipantListener* listener);
 
 protected:
 

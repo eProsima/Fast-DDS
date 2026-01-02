@@ -825,15 +825,7 @@ bool PDP::removeReaderProxyData(
             {
                 ReaderProxyData* pR = rit->second;
                 mp_EDP->unpairReaderProxy(pit->guid, reader_guid);
-
-                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                if (listener)
-                {
-                    RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    bool should_be_ignored = false;
-                    auto reason = ReaderDiscoveryStatus::REMOVED_READER;
-                    listener->on_reader_discovery(participant, reason, *pR, should_be_ignored);
-                }
+                mp_RTPSParticipant->notify_reader_discovery(ReaderDiscoveryStatus::REMOVED_READER, *pR);
 
 #ifdef FASTDDS_STATISTICS
                 auto proxy_observer = get_proxy_observer();
@@ -968,15 +960,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                     return nullptr;
                 }
 
-                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                if (listener)
-                {
-                    RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    bool should_be_ignored = false;
-                    auto reason = ReaderDiscoveryStatus::CHANGED_QOS_READER;
-                    listener->on_reader_discovery(participant, reason, *ret_val, should_be_ignored);
-                }
-
+                mp_RTPSParticipant->notify_reader_discovery(ReaderDiscoveryStatus::CHANGED_QOS_READER, *ret_val);
                 return ret_val;
             }
 
@@ -1022,15 +1006,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                 return nullptr;
             }
 
-            RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-            if (listener)
-            {
-                RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                bool should_be_ignored = false;
-                auto reason = ReaderDiscoveryStatus::DISCOVERED_READER;
-                listener->on_reader_discovery(participant, reason, *ret_val, should_be_ignored);
-            }
-
+            mp_RTPSParticipant->notify_reader_discovery(ReaderDiscoveryStatus::DISCOVERED_READER, *ret_val);
             return ret_val;
         }
     }
@@ -1343,14 +1319,7 @@ void PDP::actions_on_remote_participant_removed(
             if (reader_guid != c_Guid_Unknown)
             {
                 mp_EDP->unpairReaderProxy(partGUID, reader_guid);
-
-                if (listener)
-                {
-                    RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    bool should_be_ignored = false;
-                    auto status = ReaderDiscoveryStatus::REMOVED_READER;
-                    listener->on_reader_discovery(participant, status, *rit, should_be_ignored);
-                }
+                mp_RTPSParticipant->notify_reader_discovery(ReaderDiscoveryStatus::REMOVED_READER, *rit, listener);
             }
         }
         for (auto pit : *pdata->m_writers)
