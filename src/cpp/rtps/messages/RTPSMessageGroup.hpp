@@ -239,6 +239,11 @@ public:
         limitation_ = limitation;
     }
 
+    bool has_limitation() const
+    {
+        return nullptr != limitation_;
+    }
+
     uint32_t current_buffer_bytes() const
     {
         return buffers_bytes_;
