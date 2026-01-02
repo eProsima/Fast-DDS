@@ -341,7 +341,9 @@ public:
     void perform_nack_supression(
             const GUID_t& reader_guid);
 
-    void reschedule_unsent_changes() override;
+    void reschedule_unsent_changes(
+            const GUID_t& reader_guid,
+            uint32_t allowed_bytes) override;
 
 protected:
 

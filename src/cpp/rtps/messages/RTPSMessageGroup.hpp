@@ -375,8 +375,10 @@ private:
     // Fixed padding to be used whenever needed
     const octet padding_[3] = {0, 0, 0};
 
+    //! Pointer to limitation policy.
     IRTPSMessageGroupLimitation* limitation_ {nullptr};
 
+    //! Indicates whether the message group contains data messages.
     bool message_contains_data {false};
 };
 

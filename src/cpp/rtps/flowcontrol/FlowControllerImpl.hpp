@@ -1443,7 +1443,7 @@ protected:
 
                     if (ret)
                     {
-                        sched.trigger_bandwidth_limit_reset(in_lock);
+                        trigger_bandwidth_limit_reset(in_lock);
                     }
                     sched.add_interested_changes_to_queue_nts();
                 }
@@ -1534,6 +1534,12 @@ protected:
 
             async_mode.group.sender(nullptr, nullptr);
         }
+    }
+
+    virtual void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::TimedMutex>& lock)
+    {
+        sched.trigger_bandwidth_limit_reset(lock);
     }
 
     template<typename PubMode = PublishMode>
