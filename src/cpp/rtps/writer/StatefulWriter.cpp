@@ -760,12 +760,15 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                     {
                                         if ((*remote_reader)->active())
                                         {
-                                            // TODO(richiware). Do only with congestion control
-                                            LocatorSelectorEntry* entry =
-                                                    locator_selector.locator_selector.get_entry_by_guid(
-                                                (*remote_reader)->guid());
-                                            assert(nullptr != entry);
-                                            if (entry && entry->allowed_to_send)
+                                            LocatorSelectorEntry* entry {nullptr};
+
+                                            if (group.has_limitation())
+                                            {
+                                                entry = locator_selector.locator_selector.get_entry_by_guid(
+                                                    (*remote_reader)->guid());
+                                                assert(nullptr != entry);
+                                            }
+                                            if (!entry || entry->allowed_to_send)
                                             {
                                                 bool allFragmentsSent = false;
                                                 (*remote_reader)->mark_fragment_as_sent_for_change(
@@ -808,12 +811,15 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                 {
                                     if ((*remote_reader)->active())
                                     {
-                                        // TODO(richiware). Do only with congestion control
-                                        LocatorSelectorEntry* entry =
-                                                locator_selector.locator_selector.get_entry_by_guid(
-                                            (*remote_reader)->guid());
-                                        assert(nullptr != entry);
-                                        if (entry && entry->allowed_to_send)
+                                        LocatorSelectorEntry* entry {nullptr};
+
+                                        if (group.has_limitation())
+                                        {
+                                            entry = locator_selector.locator_selector.get_entry_by_guid(
+                                                (*remote_reader)->guid());
+                                            assert(nullptr != entry);
+                                        }
+                                        if (!entry || entry->allowed_to_send)
                                         {
                                             if (!(*remote_reader)->is_reliable())
                                             {
@@ -857,12 +863,15 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                     if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
                                     {
                                         change->writer_info.last_fragment_sent =  min_unsent_fragment;
-                                        // TODO(richiware). Do only with congestion control
-                                        LocatorSelectorEntry* entry =
-                                                locator_selector.locator_selector.get_entry_by_guid(
-                                            (*remote_reader)->guid());
-                                        assert(nullptr != entry);
-                                        if (entry && entry->allowed_to_send)
+                                        LocatorSelectorEntry* entry {nullptr};
+
+                                        if (group.has_limitation())
+                                        {
+                                            entry = locator_selector.locator_selector.get_entry_by_guid(
+                                                (*remote_reader)->guid());
+                                            assert(nullptr != entry);
+                                        }
+                                        if (!entry || entry->allowed_to_send)
                                         {
                                             bool allFragmentsSent = false;
                                             (*remote_reader)->mark_fragment_as_sent_for_change(
@@ -897,12 +906,15 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                             {
                                 if (group.add_data(*change, (*remote_reader)->expects_inline_qos()))
                                 {
-                                    // TODO(richiware). Do only with congestion control
-                                    LocatorSelectorEntry* entry =
-                                            locator_selector.locator_selector.get_entry_by_guid(
-                                        (*remote_reader)->guid());
-                                    assert(nullptr != entry);
-                                    if (entry && entry->allowed_to_send)
+                                    LocatorSelectorEntry* entry {nullptr};
+
+                                    if (group.has_limitation())
+                                    {
+                                        entry = locator_selector.locator_selector.get_entry_by_guid(
+                                            (*remote_reader)->guid());
+                                        assert(nullptr != entry);
+                                    }
+                                    if (!entry || entry->allowed_to_send)
                                     {
                                         if (!(*remote_reader)->is_reliable())
                                         {
