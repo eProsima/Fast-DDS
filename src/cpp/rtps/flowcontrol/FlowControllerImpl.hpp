@@ -467,7 +467,8 @@ struct FlowControllerFifoSchedule
     {
     }
 
-    void trigger_bandwidth_limit_reset() const
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::RecursiveTimedMutex>&) const
     {
     }
 
@@ -611,7 +612,8 @@ struct FlowControllerRoundRobinSchedule
     {
     }
 
-    void trigger_bandwidth_limit_reset() const
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::RecursiveTimedMutex>&) const
     {
     }
 
@@ -735,7 +737,8 @@ struct FlowControllerHighPrioritySchedule
     {
     }
 
-    void trigger_bandwidth_limit_reset() const
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::RecursiveTimedMutex>&) const
     {
     }
 
@@ -955,7 +958,8 @@ struct FlowControllerPriorityWithReservationSchedule
         bandwidth_limit_ = limit;
     }
 
-    void trigger_bandwidth_limit_reset()
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::RecursiveTimedMutex>&)
     {
         for (auto& writer : writers_queue_)
         {
@@ -1439,7 +1443,7 @@ protected:
 
                     if (ret)
                     {
-                        sched.trigger_bandwidth_limit_reset();
+                        sched.trigger_bandwidth_limit_reset(in_lock);
                     }
                     sched.add_interested_changes_to_queue_nts();
                 }
