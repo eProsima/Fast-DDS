@@ -864,15 +864,7 @@ bool PDP::removeWriterProxyData(
             {
                 WriterProxyData* pW = wit->second;
                 mp_EDP->unpairWriterProxy(pit->guid, writer_guid, false);
-
-                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                if (listener)
-                {
-                    RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    bool should_be_ignored = false;
-                    auto status = WriterDiscoveryStatus::REMOVED_WRITER;
-                    listener->on_writer_discovery(participant, status, *pW, should_be_ignored);
-                }
+                mp_RTPSParticipant->notify_writer_discovery(WriterDiscoveryStatus::REMOVED_WRITER, *pW);
 
 #ifdef FASTDDS_STATISTICS
                 auto proxy_observer = get_proxy_observer();
@@ -1046,15 +1038,7 @@ WriterProxyData* PDP::addWriterProxyData(
                     return nullptr;
                 }
 
-                RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-                if (listener)
-                {
-                    RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    bool should_be_ignored = false;
-                    auto status = WriterDiscoveryStatus::CHANGED_QOS_WRITER;
-                    listener->on_writer_discovery(participant, status, *ret_val, should_be_ignored);
-                }
-
+                mp_RTPSParticipant->notify_writer_discovery(WriterDiscoveryStatus::CHANGED_QOS_WRITER, *ret_val);
                 return ret_val;
             }
 
@@ -1099,15 +1083,7 @@ WriterProxyData* PDP::addWriterProxyData(
                 return nullptr;
             }
 
-            RTPSParticipantListener* listener = mp_RTPSParticipant->getListener();
-            if (listener)
-            {
-                RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                bool should_be_ignored = false;
-                auto status = WriterDiscoveryStatus::DISCOVERED_WRITER;
-                listener->on_writer_discovery(participant, status, *ret_val, should_be_ignored);
-            }
-
+            mp_RTPSParticipant->notify_writer_discovery(WriterDiscoveryStatus::DISCOVERED_WRITER, *ret_val);
             return ret_val;
         }
     }
@@ -1331,13 +1307,7 @@ void PDP::actions_on_remote_participant_removed(
                 mp_EDP->unpairWriterProxy(partGUID, writer_guid,
                         reason == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT);
 
-                if (listener)
-                {
-                    RTPSParticipant* participant = mp_RTPSParticipant->getUserRTPSParticipant();
-                    bool should_be_ignored = false;
-                    auto status = WriterDiscoveryStatus::REMOVED_WRITER;
-                    listener->on_writer_discovery(participant, status, *wit, should_be_ignored);
-                }
+                mp_RTPSParticipant->notify_writer_discovery(WriterDiscoveryStatus::REMOVED_WRITER, *wit, listener);
             }
         }
     }

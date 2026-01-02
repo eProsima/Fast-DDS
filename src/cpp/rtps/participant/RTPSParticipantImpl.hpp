@@ -48,6 +48,7 @@
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/transport/SenderResource.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 
 #include <fastdds/types.hpp>
 #include <fastdds/utils/TypePropagation.hpp>
@@ -558,6 +559,15 @@ public:
     virtual void notify_reader_discovery(
             ReaderDiscoveryStatus reason,
             const SubscriptionBuiltinTopicData& info,
+            RTPSParticipantListener* listener);
+
+    virtual void notify_writer_discovery(
+            WriterDiscoveryStatus reason,
+            const PublicationBuiltinTopicData& info);
+
+    virtual void notify_writer_discovery(
+            WriterDiscoveryStatus reason,
+            const PublicationBuiltinTopicData& info,
             RTPSParticipantListener* listener);
 
 protected:

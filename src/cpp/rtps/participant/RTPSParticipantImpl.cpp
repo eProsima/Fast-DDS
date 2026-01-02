@@ -42,6 +42,7 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <fastdds/utils/TypePropagation.hpp>
@@ -3439,6 +3440,27 @@ void RTPSParticipantImpl::notify_reader_discovery(
         RTPSParticipant* participant = getUserRTPSParticipant();
         bool should_be_ignored = false;
         listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+    }
+}
+
+void RTPSParticipantImpl::notify_writer_discovery(
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info)
+{
+    RTPSParticipantListener* listener = getListener();
+    notify_writer_discovery(reason, info, listener);
+}
+
+void RTPSParticipantImpl::notify_writer_discovery(
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info,
+        RTPSParticipantListener* listener)
+{
+    if (listener)
+    {
+        RTPSParticipant* participant = getUserRTPSParticipant();
+        bool should_be_ignored = false;
+        listener->on_writer_discovery(participant, reason, info, should_be_ignored);
     }
 }
 
