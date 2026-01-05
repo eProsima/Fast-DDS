@@ -147,6 +147,7 @@ void ReaderProxy::start(
     {
         initial_heartbeat_event_->restart_timer();
     }
+    std::cout << "frist_irrelevant_removed_: " << first_irrelevant_removed_ << std::endl;
 
     EPROSIMA_LOG_INFO(RTPS_READER_PROXY, "Reader Proxy started");
 }
@@ -247,6 +248,7 @@ void ReaderProxy::add_change(
                 {
                     first_irrelevant_removed_ = seq_num;
                     last_irrelevant_removed_ = seq_num;
+                    std::cout << "set first_irrelevant_removed_ to " << first_irrelevant_removed_ << std::endl;
                 }
                 else if  (seq_num == last_irrelevant_removed_ + 1)
                 {
