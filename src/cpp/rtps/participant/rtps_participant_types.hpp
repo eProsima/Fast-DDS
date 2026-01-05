@@ -5,9 +5,11 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace rtps {
 
-using RTPSParticipantImplType = fastdds::rtps::RTPSParticipantImpl;
+using RTPSParticipantImplType = RTPSParticipantImpl;
 
+} // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
