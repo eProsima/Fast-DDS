@@ -692,6 +692,31 @@ protected:
     std::set<GUID_t> ignored_readers_;
     //! Protect ignored entities collection concurrent access
     mutable shared_mutex ignored_mtx_;
+    //! Participant Mutex
+    mutable std::mutex mutex_;
+
+    //! Will this participant use intraprocess only?
+    bool is_intraprocess_only_;
+
+#ifdef FASTDDS_STATISTICS
+    std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
+    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
+    std::atomic<const fastdds::statistics::rtps::IConnectionsObserver*> conns_observer_;
+#endif // ifdef FASTDDS_STATISTICS
+
+    /*
+     * Flow controller factory.
+     */
+    FlowControllerFactoryType flow_controller_factory_;
+
+#if HAVE_SECURITY
+    security::ParticipantSecurityAttributes security_attributes_;
+#endif // if HAVE_SECURITY
+
+    //! Indicates whether the participant has shared-memory transport
+    bool has_shm_transport_;
+
+    bool match_local_endpoints_ = true;
 
 private:
 
@@ -793,30 +818,6 @@ private:
     void normalize_endpoint_locators(
             EndpointAttributes& endpoint_att);
 
-    //! Participant Mutex
-    mutable std::mutex mutex_;
-
-    //!Will this participant use intraprocess only?
-    bool is_intraprocess_only_;
-
-#ifdef FASTDDS_STATISTICS
-    std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
-    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
-    std::atomic<const fastdds::statistics::rtps::IConnectionsObserver*> conns_observer_;
-#endif // ifdef FASTDDS_STATISTICS
-
-    /*
-     * Flow controller factory.
-     */
-    FlowControllerFactoryType flow_controller_factory_;
-
-#if HAVE_SECURITY
-    security::ParticipantSecurityAttributes security_attributes_;
-#endif // if HAVE_SECURITY
-
-    //! Indicates whether the participant has shared-memory transport
-    bool has_shm_transport_;
-
     /**
      * Get persistence service from factory, using endpoint attributes (or participant
      * attributes if endpoint does not define a persistence service config)
@@ -884,8 +885,6 @@ private:
      */
     void get_default_unicast_locators(
             RTPSParticipantAttributes& att);
-
-    bool match_local_endpoints_ = true;
 
     bool should_match_local_endpoints(
             const RTPSParticipantAttributes& att);
