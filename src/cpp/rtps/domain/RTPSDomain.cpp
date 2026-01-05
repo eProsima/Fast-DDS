@@ -37,15 +37,15 @@
 #include <fastdds/utils/IPLocator.hpp>
 #include <fastdds/utils/md5.hpp>
 
-#include <fastdds/rtps_participant_types.hpp>
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/common/GuidUtils.hpp>
+#include <rtps/domain/IDomainImpl.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/network/utils/external_locators.hpp>
+#include <rtps/participant/rtps_participant_types.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
-#include <rtps/domain/IDomainImpl.hpp>
-#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/transport/TCPv4Transport.h>
 #include <rtps/transport/TCPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
