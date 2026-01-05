@@ -552,19 +552,57 @@ public:
         return initialized_;
     }
 
+    /**
+     * @brief Notify reader discovery event.
+     *
+     * Will be called when a remote reader is discovered, updated or removed.
+     * Will call the user listener if set.
+     *
+     * @param reason Discovery reason.
+     * @param info Information about the discovered reader.
+     */
     virtual void notify_reader_discovery(
             ReaderDiscoveryStatus reason,
             const SubscriptionBuiltinTopicData& info);
 
+    /**
+     * @brief Notify reader discovery event.
+     *
+     * Will be called when a remote reader is discovered, updated or removed.
+     * Will call the specified listener.
+     *
+     * @param reason Discovery reason.
+     * @param info Information about the discovered reader.
+     * @param listener Listener to be notified.
+     */
     virtual void notify_reader_discovery(
             ReaderDiscoveryStatus reason,
             const SubscriptionBuiltinTopicData& info,
             RTPSParticipantListener* listener);
 
+    /**
+     * @brief Notify writer discovery event.
+     *
+     * Will be called when a remote writer is discovered, updated or removed.
+     * Will call the user listener if set.
+     *
+     * @param reason Discovery reason.
+     * @param info Information about the discovered writer.
+     */
     virtual void notify_writer_discovery(
             WriterDiscoveryStatus reason,
             const PublicationBuiltinTopicData& info);
 
+    /**
+     * @brief Notify writer discovery event.
+     *
+     * Will be called when a remote writer is discovered, updated or removed.
+     * Will call the specified listener.
+     *
+     * @param reason Discovery reason.
+     * @param info Information about the discovered writer.
+     * @param listener Listener to be notified.
+     */
     virtual void notify_writer_discovery(
             WriterDiscoveryStatus reason,
             const PublicationBuiltinTopicData& info,
