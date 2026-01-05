@@ -903,7 +903,7 @@ public:
      * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
      * @return True if the Writer was correctly created.
      */
-    bool createWriter(
+    virtual bool createWriter(
             RTPSWriter** Writer,
             WriterAttributes& param,
             WriterHistory* hist,
@@ -923,7 +923,7 @@ public:
      *
      * @return True if the Writer was correctly created.
      */
-    bool create_writer(
+    virtual bool create_writer(
             RTPSWriter** Writer,
             WriterAttributes& watt,
             WriterHistory* hist,
@@ -942,7 +942,7 @@ public:
      * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
-    bool createReader(
+    virtual bool createReader(
             RTPSReader** Reader,
             ReaderAttributes& param,
             ReaderHistory* hist,
@@ -963,7 +963,7 @@ public:
      * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
-    bool createReader(
+    virtual bool createReader(
             RTPSReader** Reader,
             ReaderAttributes& param,
             const std::shared_ptr<IPayloadPool>& payload_pool,
