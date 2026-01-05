@@ -435,6 +435,26 @@ public:
 
     MOCK_METHOD(dds::utils::TypePropagation, type_propagation, (), (const));
 
+    // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
+    MOCK_METHOD(void, notify_reader_discovery, (
+            ReaderDiscoveryStatus reason,
+            const SubscriptionBuiltinTopicData& info));
+
+    MOCK_METHOD(void, notify_reader_discovery, (
+            ReaderDiscoveryStatus reason,
+            const SubscriptionBuiltinTopicData& info,
+            RTPSParticipantListener* listener));
+
+    MOCK_METHOD(void, notify_writer_discovery, (
+            WriterDiscoveryStatus reason,
+            const PublicationBuiltinTopicData& info));
+
+    MOCK_METHOD(void, notify_writer_discovery, (
+            WriterDiscoveryStatus reason,
+            const PublicationBuiltinTopicData& info,
+            RTPSParticipantListener* listener));
+    // *INDENT-ON*
+
 private:
 
     MockParticipantListener listener_;
