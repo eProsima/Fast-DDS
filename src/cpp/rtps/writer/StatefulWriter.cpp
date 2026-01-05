@@ -637,6 +637,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
     FragmentNumber_t min_unsent_fragment {0};
     bool need_reactivate_periodic_heartbeat {false};
 
+    // If all fragments were sent, start again from fragment 1.
     if (n_fragments > 0 && change->writer_info.last_fragment_sent >= n_fragments)
     {
         change->writer_info.last_fragment_sent = 0;
@@ -1963,6 +1964,8 @@ void StatefulWriter::perform_nack_response()
                         {
                             // This labmda is called if the ChangeForReader_t pass from REQUESTED to UNSENT.
                             assert(nullptr != change.getChange());
+                            // Reset fragment info to resend from the beginning
+                            change.getChange()->writer_info.last_fragment_sent = 0;
                             flow_controller_->add_old_sample(this, change.getChange());
                         }
                         );
