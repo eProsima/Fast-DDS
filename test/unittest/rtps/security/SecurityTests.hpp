@@ -157,7 +157,7 @@ public:
         , stateless_reader_(nullptr)
         , volatile_writer_(nullptr)
         , volatile_reader_(nullptr)
-        , manager_(&participant_, plugin_factory_)
+        , manager_(&participant_, g_security_default_values_.pattr, plugin_factory_)
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {
