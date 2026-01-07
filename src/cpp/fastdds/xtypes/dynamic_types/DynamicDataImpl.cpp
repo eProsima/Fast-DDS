@@ -6539,7 +6539,7 @@ bool DynamicDataImpl::deserialize(
                                 traits<DynamicData>::narrow<DynamicDataImpl>(DynamicDataFactory::get_instance()
                                         ->create_data(
                                     member_impl->get_descriptor().type()));
-                                value_.emplace(it->first, member_data);
+                                value_.emplace(member_impl->get_id(), member_data);
                             }
 
                             dcdr >> member_data;
