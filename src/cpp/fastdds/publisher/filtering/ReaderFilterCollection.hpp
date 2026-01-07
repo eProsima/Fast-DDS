@@ -152,6 +152,12 @@ public:
         }
     }
 
+    void update_filter_info(
+            DataWriterFilteredChange& change) const
+    {
+        update_filter_info(change, fastdds::rtps::SampleIdentity::unknown());
+    }
+
     /**
      * Remove filtering information for all readers using certain factory.
      * Called when a custom filter factory is removed.

@@ -1112,6 +1112,16 @@ bool StatefulWriter::matched_reader_add_edp(
         return true;
     }
 
+    if (nullptr != listener_)
+    {
+        // call the listener without locks taken
+        guard_locator_selector_async.unlock();
+        guard_locator_selector_general.unlock();
+        guard.unlock();
+
+        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid, &rdata);
+    }
+
     bool is_reliable = rp->is_reliable();
     if (is_reliable)
     {
@@ -1134,6 +1144,16 @@ bool StatefulWriter::matched_reader_add_edp(
                 {
                     for (History::iterator cit = history_->changesBegin(); cit != history_->changesEnd(); ++cit)
                     {
+                        // TODO: update readers to filter (should have already added the new reader's filter to the collection (currently done in discovered reader callback))
+                        // CacheChange_t* ch = *cit;
+                        // reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(ch),
+                        //         related_sample_identity);
+
+                        if (change_updater_)
+                        {
+                            change_updater_(**cit);
+                        }
+
                         // Holes are managed when deliver_sample(), sending GAP messages.
                         if (rp->rtps_is_relevant(*cit))
                         {
@@ -1198,15 +1218,15 @@ bool StatefulWriter::matched_reader_add_edp(
                                                    << rdata.remote_locators.multicast.size() <<
             "(m) locators");
 
-    if (nullptr != listener_)
-    {
-        // call the listener without locks taken
-        guard_locator_selector_async.unlock();
-        guard_locator_selector_general.unlock();
-        guard.unlock();
+    // if (nullptr != listener_)
+    // {
+    //     // call the listener without locks taken
+    //     guard_locator_selector_async.unlock();
+    //     guard_locator_selector_general.unlock();
+    //     guard.unlock();
 
-        listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid, &rdata);
-    }
+    //     listener_->on_reader_discovery(this, ReaderDiscoveryStatus::DISCOVERED_READER, rdata.guid, &rdata);
+    // }
 
 #ifdef FASTDDS_STATISTICS
     // notify monitor service so that the connectionlist for this entity

@@ -22,6 +22,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -68,6 +69,8 @@ class BaseWriter
 
 public:
 
+    using ChangeUpdater = std::function<void(CacheChange_t&)>;
+
     //vvvvvvvvvvvvvvvvvvvvv [Exported API] vvvvvvvvvvvvvvvvvvvvv
 
     bool matched_reader_add(
@@ -86,6 +89,12 @@ public:
             const WriterAttributes& att) override;
 
     virtual void local_actions_on_writer_removed();
+
+    void set_change_updater(
+            ChangeUpdater cb)
+    {
+        change_updater_ = std::move(cb);
+    }
 
 #ifdef FASTDDS_STATISTICS
 
@@ -403,6 +412,8 @@ protected:
     dds::Duration_t liveliness_announcement_period_;
     /// The transport priority of this writer
     std::atomic<int32_t> transport_priority_;
+
+    ChangeUpdater change_updater_;
 
 private:
 

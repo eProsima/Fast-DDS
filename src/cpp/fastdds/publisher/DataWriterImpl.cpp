@@ -436,6 +436,22 @@ ReturnCode_t DataWriterImpl::enable()
     // IReaderDataFilter interface
     writer_->reader_data_filter(this);
 
+    // TODO: set here (add setter to BaseWriter) writer_ callback in which this is passed by reference so that caches can be updated from StatefulWriter
+    // Could set it only if filtering is enabled and/or if transient local durability is set
+    // TODO: important that the reader filters are updated before iterating over the history
+    // TODO: overload update_filter_info without related_sample_identity
+    // TODO: change logic so that instead of only passing the change and the
+    // TODO: add tests
+
+    if (reader_filters_)
+    {
+        auto change_updater = [this](CacheChange_t& ch)
+                {
+                    reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(ch));
+                };
+        writer_->set_change_updater(std::move(change_updater));
+    }
+
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_->rebuild_instances();
 
