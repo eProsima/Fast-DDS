@@ -171,7 +171,8 @@ public:
 
         for (size_t i = 0; i < entries_.size(); ++i)
         {
-            if (last_state_.at(i).first != (entries_.at(i)->enabled ? 1 : 0))
+            if (last_state_.at(i).first != (entries_.at(i)->enabled ? 1 : 0) ||
+                    last_state_.at(i).second != (entries_.at(i)->allowed_to_send ? 1 : 0))
             {
                 return true;
             }
