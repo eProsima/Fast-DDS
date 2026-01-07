@@ -1324,12 +1324,12 @@ static void create_writers_for_instance_test(
 }
 
 /**
- * Create two disabled data writer objects, one for a non-keyed topic, and another one for a keyed topic.
+ * Create a disabled data writer object for a keyed topic.
  *
  * @param [out] instance_datawriter  Pointer to the data writer created for the keyed topic.
  * @param [out] keyed_type_support   Optionally written with the type support of the keyed topic.
  */
-static void create_writers_for_non_empty_payload_instance_test(
+static void create_writer_for_non_empty_payload_instance_test(
         DataWriter*& instance_datawriter,
         TypeSupport* keyed_type_support = nullptr)
 {
