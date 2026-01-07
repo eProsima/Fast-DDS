@@ -1035,9 +1035,6 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         payload.data = nullptr;
         payload.payload_owner = nullptr;
         bool should_serialize = (change_kind == ALIVE) || !handle.isDefined();
-        // NOTE: The above condition could be replaced with the following. always_serialize_payloads_ could be used
-        // to enforce serialization of payloads if it is decided not to allow zero-sized payloads.
-        // bool should_serialize = (change_kind == ALIVE) || always_serialize_payloads_ || !handle.isDefined();
         if (payload_size == 0 && should_serialize)
         {
             // Payload was not provided but the conditions force serialization.
