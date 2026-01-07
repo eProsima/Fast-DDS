@@ -645,7 +645,7 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
 }
 
 ResponseCode RTCPMessageManager::processKeepAliveResponse(
-        std::shared_ptr<TCPChannelResource>& channel,
+        std::shared_ptr<TCPChannelResource>& /*channel*/,
         ResponseCode respCode,
         const TCPTransactionId& transaction_id)
 {
@@ -654,7 +654,6 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(
         switch (respCode)
         {
             case RETCODE_OK:
-                channel->waiting_for_keep_alive_ = false;
                 break;
             case RETCODE_UNKNOWN_LOCATOR:
                 return RETCODE_UNKNOWN_LOCATOR;

@@ -96,7 +96,6 @@ protected:
     asio::ssl::context ssl_context_;
 #endif // if TLS_FOUND
     eprosima::thread io_context_thread_;
-    eprosima::thread io_context_timers_thread_;
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
@@ -111,8 +110,6 @@ protected:
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
-
-    asio::steady_timer keep_alive_event_;
 
     std::map<Locator, std::shared_ptr<TCPAcceptor>> acceptors_;
 
@@ -496,8 +493,6 @@ public:
     virtual const TCPTransportDescriptor* configuration() const = 0;
 
     virtual TCPTransportDescriptor* configuration() = 0;
-
-    void keep_alive();
 
     void update_network_interfaces() override;
 
