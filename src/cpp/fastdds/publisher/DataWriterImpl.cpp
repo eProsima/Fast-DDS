@@ -1035,14 +1035,6 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         payload.data = nullptr;
         payload.payload_owner = nullptr;
         bool should_serialize = (change_kind == ALIVE) || !handle.isDefined();
-        if (payload_size == 0 && should_serialize)
-        {
-            // Payload was not provided but the conditions force serialization.
-            // Request cannot be fulfilled.
-            EPROSIMA_LOG_WARNING(DATA_WRITER, "Cannot serialize data with size 0");
-            return RETCODE_BAD_PARAMETER;
-        }
-
         if (should_serialize)
         {
             // Request payload from pool and proceed with serialization
