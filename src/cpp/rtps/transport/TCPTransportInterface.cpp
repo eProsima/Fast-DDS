@@ -197,11 +197,11 @@ void TCPTransportInterface::clean()
                     delete_channels.push_back(channel.first);
                 }
             }
-        }
 
-        for (auto& delete_channel : delete_channels)
-        {
-            channel_resources_.erase(delete_channel);
+            for (auto& delete_channel : delete_channels)
+            {
+                channel_resources_.erase(delete_channel);
+            }
         }
 
         for (auto& channel : channels)
