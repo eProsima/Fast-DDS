@@ -1495,7 +1495,7 @@ TEST(DataWriterTests, UnregisterInstanceWithPayload)
     // Create disabled DataWriters
     TypeSupport instance_type;
     DataWriter* instance_datawriter;
-    create_writers_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
 
     // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
     ASSERT_EQ(RETCODE_OK, instance_datawriter->enable());
@@ -1601,7 +1601,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestampAndPayload)
     // Create disabled DataWriters
     TypeSupport instance_type;
     DataWriter* instance_datawriter;
-    create_writers_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
 
     eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
@@ -1708,7 +1708,7 @@ TEST(DataWriterTests, DisposeWithPayload)
     // Create disabled DataWriters
     TypeSupport instance_type_with_payload;
     DataWriter* instance_datawriter_with_payload;
-    create_writers_for_non_empty_payload_instance_test(instance_datawriter_with_payload, &instance_type_with_payload);
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter_with_payload, &instance_type_with_payload);
 
     // 1. Calling dispose with an invalid sample returns RETCODE_BAD_PARAMETER
     ASSERT_EQ(RETCODE_OK, instance_datawriter_with_payload->enable());
@@ -1808,7 +1808,7 @@ TEST(DataWriterTests, DisposeWithTimestampAndPayload)
     // Create disabled DataWriters
     TypeSupport instance_type;
     DataWriter* instance_datawriter;
-    create_writers_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
 
     eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
