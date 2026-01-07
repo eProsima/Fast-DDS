@@ -188,6 +188,8 @@ protected:
 
     virtual void clean(); // Must be called on childs destructors!
 
+    virtual void configure_keep_alive();
+
     virtual void endpoint_to_locator(
             const asio::ip::tcp::endpoint& endpoint,
             Locator& locator) const = 0;

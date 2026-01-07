@@ -245,6 +245,14 @@ void TCPTransportInterface::clean()
     }
 }
 
+void TCPTransportInterface::configure_keep_alive()
+{
+    if (0 < configuration()->keep_alive_frequency_ms)
+    {
+        EPROSIMA_LOG_WARNING(RTCP, "Keep alive feature only available in Fast DDS Pro.");
+    }
+}
+
 Locator TCPTransportInterface::remote_endpoint_to_locator(
         const std::shared_ptr<TCPChannelResource>& channel) const
 {
@@ -569,10 +577,7 @@ bool TCPTransportInterface::init(
             };
     io_context_thread_ = create_thread(ioContextFunction, configuration()->accept_thread, "dds.tcp_accept");
 
-    if (0 < configuration()->keep_alive_frequency_ms)
-    {
-        EPROSIMA_LOG_WARNING(RTCP, "Keep alive feature only available in Fast DDS Pro.");
-    }
+    configure_keep_alive();
 
     return true;
 }
