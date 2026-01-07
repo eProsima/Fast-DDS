@@ -1034,7 +1034,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         payload.max_size = 0;
         payload.data = nullptr;
         payload.payload_owner = nullptr;
-        bool should_serialize = (change_kind == ALIVE) || !handle.isDefined();
+        bool should_serialize = (change_kind == ALIVE);
         if (should_serialize)
         {
             // Request payload from pool and proceed with serialization
@@ -1051,7 +1051,13 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                 return RETCODE_ERROR;
             }
         }
+        else
+        {
+            // If not serializable (UNREGISTER or DISPOSE), the handle must be defined
+            assert(handle.isDefined());
+        }
     }
+
 
     // create_change seeds the next per-instance deadline and reschedules the timer for the next sample
     CacheChange_t* ch = history_->create_change(change_kind, handle);
