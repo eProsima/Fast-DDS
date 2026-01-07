@@ -709,6 +709,216 @@ TEST(DDSContentFilter, OnlyFilterAliveChanges)
     ASSERT_EQ(reader.get_sample_lost_status().total_count, 0);
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * @test DataWriter Sample prefilter feature
+ *
+ * This test asserts that prefiltering with an active content filter works correctly.
+ * It creates a ContentFilteredTopic an expression that only accepts samples with index <= 6.
+ * On its side, the prefilter is set to only accept samples with 4 < index < 8
+ */
+TEST_P(DDSContentFilter, filter_with_prefilter)
+{
+    // TODO(Mario-DL): Remove when multiple filtering readers case is fixed for data-sharing
+    if (enable_datasharing)
+    {
+        GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
+    }
+
+    struct CustomUserWriteData : public rtps::WriteParams::UserWriteData
+    {
+        CustomUserWriteData(
+                const uint16_t& upper_bound_idx,
+                const uint16_t& lower_bound_idx )
+            : upper_bound_idx_(upper_bound_idx)
+            , lower_bound_idx_(lower_bound_idx)
+        {
+        }
+
+        uint16_t upper_bound_idx_;
+        uint16_t lower_bound_idx_;
+    };
+
+    struct CustomPreFilter : public eprosima::fastdds::dds::IContentFilter
+    {
+        ~CustomPreFilter() override = default;
+
+        //! Custom filter for the HelloWorld example
+        bool evaluate(
+                const SerializedPayload& payload,
+                const FilterSampleInfo& filter_sample_info,
+                const rtps::GUID_t&) const override
+        {
+            HelloWorldPubSubType hello_world_type_support;
+            HelloWorld hello_world_sample;
+            hello_world_type_support.deserialize(*const_cast<SerializedPayload*>(&payload), &hello_world_sample);
+
+            bool sample_should_be_sent = true;
+
+            auto custom_write_data =
+                    std::static_pointer_cast<CustomUserWriteData>(filter_sample_info.user_write_data);
+
+            // Filter out samples
+            if (hello_world_sample.index() > custom_write_data->upper_bound_idx_ ||
+                    hello_world_sample.index() < custom_write_data->lower_bound_idx_)
+            {
+                sample_should_be_sent = false;
+            }
+            return sample_should_be_sent;
+        }
+
+    };
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index <= %0", {"6"}, true, false, false);
+
+    // Initialize writer and the filtered reader
+    TestState state;
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // wait for discovery between writer and filtered reader
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Set a prefilter on the filtered reader
+    ASSERT_EQ(writer.set_sample_prefilter(
+                std::make_shared<CustomPreFilter>()),
+            eprosima::fastdds::dds::RETCODE_OK);
+
+    // Set a user write data on the writer to filter out samples 4 < index < 8
+    rtps::WriteParams write_params;
+    write_params.user_write_data(std::make_shared<CustomUserWriteData>(
+                (uint16_t)8u, (uint16_t)4u));
+
+    auto data = default_helloworld_data_generator();
+
+    reader.startReception(data);
+
+    writer.send(data, 50, &write_params);
+
+    // Reader should have received 3 samples
+    ASSERT_EQ(reader.block_for_all(std::chrono::seconds(1)), 3u);
+}
+
+/*!
+ * @test Regression test for https://eprosima.easyredmine.com/issues/23919
+ * This test checks GAP messages are sent correctly when there is one reader with a content filter.
+ * The idea is, in the middle of a GAP sequence, a heartbet period message is sent.
+ */
+TEST_P(DDSContentFilter, CorrectGAPSendingOneReader)
+{
+    int32_t total_count {0};
+    // Set up the reader with a content filter for index 1, 2, and 6
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index = 1 OR index = 2 OR index = 6", {}, true, false,
+            false);
+    reader
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .sample_lost_status_functor([&total_count](const SampleLostStatus& status)
+            {
+                total_count = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Set up the writer
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(100000000)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Send 10 samples
+    auto data = default_helloworld_data_generator();
+
+    decltype(data) expected_data;
+    expected_data.push_back(*data.begin()); // index 1
+    expected_data.push_back(*std::next(data.begin())); // index 2
+    expected_data.push_back(*std::next(data.begin(), 5)); // index 6
+
+    reader.startReception(expected_data);
+
+    writer.send(data, 50);
+
+    // Wait for reception and check
+    reader.block_for_all();
+    ASSERT_EQ(0, total_count);
+}
+
+/*!
+ * @test Regression test for https://eprosima.easyredmine.com/issues/23919
+ * This test checks GAP messages are sent correctly when there is two readers with a content filter.
+ */
+TEST_P(DDSContentFilter, CorrectGAPSendingTwoReader)
+{
+    int32_t total_count {0};
+    int32_t total_count_2 {0};
+    // Set up the reader with a content filter for index 1, 2, and 6
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index = 1 OR index = 2 OR index = 6", {}, true, false,
+            false);
+    reader
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .sample_lost_status_functor([&total_count](const SampleLostStatus& status)
+            {
+                total_count = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    PubSubReader<HelloWorldPubSubType> reader_2(TEST_TOPIC_NAME, "index = 3 OR index = 10", {}, true, false,
+            false);
+    reader_2
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .sample_lost_status_functor([&total_count_2](const SampleLostStatus& status)
+            {
+                total_count_2 = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Set up the writer
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer
+            .heartbeat_period_seconds(0)
+            .heartbeat_period_nanosec(100000000)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    reader.wait_discovery();
+    reader_2.wait_discovery();
+    writer.wait_discovery(2);
+
+    // Send 10 samples
+    auto data = default_helloworld_data_generator();
+
+    decltype(data) expected_data;
+    expected_data.push_back(*data.begin()); // index 1
+    expected_data.push_back(*std::next(data.begin())); // index 2
+    expected_data.push_back(*std::next(data.begin(), 5)); // index 6
+
+    decltype(data) expected_data_2;
+    expected_data_2.push_back(*std::next(data.begin(), 2)); // index 3
+    expected_data_2.push_back(*std::next(data.begin(), 9)); // index 9
+
+    reader.startReception(expected_data);
+    reader_2.startReception(expected_data_2);
+
+    writer.send(data, 50);
+
+    // Wait for reception and check
+    reader.block_for_all();
+    reader_2.block_for_all();
+    ASSERT_EQ(0, total_count);
+    ASSERT_EQ(0, total_count_2);
+}
+
+>>>>>>> 062258c8 (Fix GAP messages are not sent when there is no Reader requesting the DATA (#6181))
 /*
  * Regression test for https://eprosima.easyredmine.com/issues/23265
  *
