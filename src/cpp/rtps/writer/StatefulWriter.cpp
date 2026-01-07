@@ -636,21 +636,16 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
     uint32_t n_fragments {change->getFragmentCount()};
     FragmentNumber_t min_unsent_fragment {0};
     bool need_reactivate_periodic_heartbeat {false};
-
-    // If all fragments were sent, start again from fragment 1.
-    if (n_fragments > 0 && change->writer_info.last_fragment_sent >= n_fragments)
-    {
-        change->writer_info.last_fragment_sent = 0;
-    }
+    bool all_fragments_sent {true};
 
     while (DeliveryRetCode::DELIVERED == ret_code &&
             min_unsent_fragment != n_fragments + 1)
     {
-        SequenceNumber_t gap_seq_for_all = SequenceNumber_t::unknown();
+        SequenceNumber_t gap_seq_for_all {SequenceNumber_t::unknown()};
         locator_selector.locator_selector.reset(false);
-        auto first_relevant_reader = matched_remote_readers_.begin();
-        bool inline_qos = false;
-        bool should_be_sent = false;
+        auto first_relevant_reader {matched_remote_readers_.begin()};
+        bool inline_qos {false};
+        bool should_be_sent {false};
         min_unsent_fragment = n_fragments + 1;
 
         for (auto remote_reader = first_relevant_reader; remote_reader != matched_remote_readers_.end();
@@ -771,13 +766,12 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                             }
                                             if (!entry || entry->allowed_to_send)
                                             {
-                                                bool allFragmentsSent = false;
                                                 (*remote_reader)->mark_fragment_as_sent_for_change(
                                                     change->sequenceNumber,
                                                     min_unsent_fragment,
-                                                    allFragmentsSent);
+                                                    all_fragments_sent);
 
-                                                if (allFragmentsSent)
+                                                if (all_fragments_sent)
                                                 {
                                                     if (!(*remote_reader)->is_reliable())
                                                     {
@@ -874,13 +868,12 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                                         }
                                         if (!entry || entry->allowed_to_send)
                                         {
-                                            bool allFragmentsSent = false;
                                             (*remote_reader)->mark_fragment_as_sent_for_change(
                                                 change->sequenceNumber,
                                                 min_unsent_fragment,
-                                                allFragmentsSent);
+                                                all_fragments_sent);
 
-                                            if (allFragmentsSent)
+                                            if (all_fragments_sent)
                                             {
                                                 if (!(*remote_reader)->is_reliable())
                                                 {
@@ -946,6 +939,10 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                 on_sample_datas(change->write_params.sample_identity(), change->writer_info.num_sent_submessages);
                 on_data_sent();
             }
+            else if (min_unsent_fragment == n_fragments + 1 && !all_fragments_sent)
+            {
+                ret_code = DeliveryRetCode::NOT_DELIVERED;
+            }
         }
         catch (const RTPSMessageGroup::timeout&)
         {
@@ -977,6 +974,12 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         // Restore in case a exception was launched by RTPSMessageGroup.
         group.sender(this, &locator_selector);
 
+    }
+
+    // If all fragments were sent, start again from fragment 1.
+    if (min_unsent_fragment == n_fragments + 1)
+    {
+        change->writer_info.last_fragment_sent = 0;
     }
 
     if (need_reactivate_periodic_heartbeat)
@@ -1964,8 +1967,6 @@ void StatefulWriter::perform_nack_response()
                         {
                             // This labmda is called if the ChangeForReader_t pass from REQUESTED to UNSENT.
                             assert(nullptr != change.getChange());
-                            // Reset fragment info to resend from the beginning
-                            change.getChange()->writer_info.last_fragment_sent = 0;
                             flow_controller_->add_old_sample(this, change.getChange());
                         }
                         );
