@@ -35,11 +35,14 @@
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/participant/RTPSParticipantListener.hpp>
+#include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
+#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <fastdds/utils/TypePropagation.hpp>
@@ -1272,11 +1275,12 @@ bool RTPSParticipantImpl::create_writer(
                     if (persistence != nullptr)
                     {
                         writer = new StatefulPersistentWriter(this, guid, watt,
-                                        flow_controller, hist, listen, nullptr, persistence);
+                                        flow_controller, hist, listen, stateful_writer_listener_, persistence);
                     }
                     else
                     {
-                        writer = new StatefulWriter(this, guid, watt, flow_controller, hist, listen, nullptr);
+                        writer = new StatefulWriter(this, guid, watt,
+                                        flow_controller, hist, listen, stateful_writer_listener_);
                     }
                 }
                 else
@@ -3416,6 +3420,48 @@ dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
 const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
 {
     return m_att;
+}
+
+void RTPSParticipantImpl::notify_reader_discovery(
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info)
+{
+    RTPSParticipantListener* listener = getListener();
+    notify_reader_discovery(reason, info, listener);
+}
+
+void RTPSParticipantImpl::notify_reader_discovery(
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info,
+        RTPSParticipantListener* listener)
+{
+    if (listener)
+    {
+        RTPSParticipant* participant = getUserRTPSParticipant();
+        bool should_be_ignored = false;
+        listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+    }
+}
+
+void RTPSParticipantImpl::notify_writer_discovery(
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info)
+{
+    RTPSParticipantListener* listener = getListener();
+    notify_writer_discovery(reason, info, listener);
+}
+
+void RTPSParticipantImpl::notify_writer_discovery(
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info,
+        RTPSParticipantListener* listener)
+{
+    if (listener)
+    {
+        RTPSParticipant* participant = getUserRTPSParticipant();
+        bool should_be_ignored = false;
+        listener->on_writer_discovery(participant, reason, info, should_be_ignored);
+    }
 }
 
 } /* namespace rtps */
