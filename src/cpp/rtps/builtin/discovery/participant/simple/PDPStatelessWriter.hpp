@@ -20,6 +20,7 @@
 #define FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_SIMPLE__PDPSTATELESSWRITER_HPP
 
 #include <chrono>
+#include <mutex>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -144,6 +145,8 @@ private:
     mutable ResourceLimitedVector<GUID_t> interested_readers_;
     //! Whether we have set that all destinations are interested
     mutable bool should_reach_all_destinations_ = false;
+    //! Mutex to protect attributes of this class
+    mutable std::mutex interested_readers_mutex_;
 
 };
 
