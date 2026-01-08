@@ -242,9 +242,15 @@ public:
 
     virtual ~TCPTransportInterface();
 
-    //! Stores the binding between the given locator and the given TCP socket. Server side.
-    ResponseCode bind_socket(
-            std::shared_ptr<TCPChannelResource>&);
+    /**
+     * Stores the binding between the given locator and the given TCP socket. Server side.
+     *
+     * @param [in]  channel TCP channel resource to bind.
+     * @param [out] existing_channel If not null, will be set to the existing channel with the same locator.
+     */
+    virtual ResponseCode bind_socket(
+            std::shared_ptr<TCPChannelResource>& channel,
+            std::shared_ptr<TCPChannelResource>* existing_channel = nullptr);
 
     //! Removes the listening socket for the specified port.
     bool CloseInputChannel(

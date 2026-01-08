@@ -288,7 +288,8 @@ Locator TCPTransportInterface::local_endpoint_to_locator(
 }
 
 ResponseCode TCPTransportInterface::bind_socket(
-        std::shared_ptr<TCPChannelResource>& channel)
+        std::shared_ptr<TCPChannelResource>& channel,
+        std::shared_ptr<TCPChannelResource>* existing_channel)
 {
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
@@ -306,6 +307,10 @@ ResponseCode TCPTransportInterface::bind_socket(
         {
             // There is an existing channel that can be used. Force the Client to close unnecessary socket
             ret = RETCODE_SERVER_ERROR;
+            if (existing_channel != nullptr)
+            {
+                *existing_channel = insert_ret.first->second;
+            }
         }
         else
         {
