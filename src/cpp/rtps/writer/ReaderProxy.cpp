@@ -177,6 +177,8 @@ void ReaderProxy::stop()
     next_expected_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
+
+    reset_irrelevant_removed();
 }
 
 void ReaderProxy::disable_timers()
