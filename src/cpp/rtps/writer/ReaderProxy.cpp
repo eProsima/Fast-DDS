@@ -147,7 +147,6 @@ void ReaderProxy::start(
     {
         initial_heartbeat_event_->restart_timer();
     }
-    std::cout << "frist_irrelevant_removed_: " << first_irrelevant_removed_ << std::endl;
 
     EPROSIMA_LOG_INFO(RTPS_READER_PROXY, "Reader Proxy started");
 }
@@ -178,6 +177,9 @@ void ReaderProxy::stop()
     next_expected_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
+
+    first_irrelevant_removed_ = SequenceNumber_t::unknown();
+    last_irrelevant_removed_ = SequenceNumber_t::unknown();
 }
 
 void ReaderProxy::disable_timers()
@@ -248,7 +250,6 @@ void ReaderProxy::add_change(
                 {
                     first_irrelevant_removed_ = seq_num;
                     last_irrelevant_removed_ = seq_num;
-                    std::cout << "set first_irrelevant_removed_ to " << first_irrelevant_removed_ << std::endl;
                 }
                 else if  (seq_num == last_irrelevant_removed_ + 1)
                 {
@@ -354,14 +355,17 @@ bool ReaderProxy::change_is_unsent(
                         SequenceNumber_t::unknown() != gap_seq)
                 {
                     // Check if the hole is due to irrelevant changes removed without informing the reader
-                    if (gap_seq == first_irrelevant_removed_)
+                    if (first_irrelevant_removed_ <= gap_seq )
                     {
-                        first_irrelevant_removed_ = SequenceNumber_t::unknown();
-                        last_irrelevant_removed_ = SequenceNumber_t::unknown();
-                    }
-                    else if (gap_seq < last_irrelevant_removed_)
-                    {
-                        last_irrelevant_removed_ = gap_seq - 1;
+                        if (gap_seq == first_irrelevant_removed_)
+                        {
+                            first_irrelevant_removed_ = SequenceNumber_t::unknown();
+                            last_irrelevant_removed_ = SequenceNumber_t::unknown();
+                        }
+                        else if (gap_seq < last_irrelevant_removed_)
+                        {
+                            last_irrelevant_removed_ = gap_seq - 1;
+                        }
                     }
                 }
             }
@@ -483,14 +487,17 @@ bool ReaderProxy::requested_changes_set(
                         if (SequenceNumber_t::unknown() != first_irrelevant_removed_)
                         {
                             // Check if the hole is due to irrelevant changes removed without informing the reader
-                            if (sit == first_irrelevant_removed_)
+                            if (first_irrelevant_removed_ <= sit )
                             {
-                                first_irrelevant_removed_ = SequenceNumber_t::unknown();
-                                last_irrelevant_removed_ = SequenceNumber_t::unknown();
-                            }
-                            else if (sit < last_irrelevant_removed_)
-                            {
-                                last_irrelevant_removed_ = sit - 1;
+                                if (sit == first_irrelevant_removed_)
+                                {
+                                    first_irrelevant_removed_ = SequenceNumber_t::unknown();
+                                    last_irrelevant_removed_ = SequenceNumber_t::unknown();
+                                }
+                                else if (sit < last_irrelevant_removed_)
+                                {
+                                    last_irrelevant_removed_ = sit - 1;
+                                }
                             }
                         }
                     }
