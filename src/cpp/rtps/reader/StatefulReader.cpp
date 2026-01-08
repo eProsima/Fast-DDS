@@ -642,7 +642,21 @@ bool StatefulReader::processDataMsg(
                 }
                 datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
             }
+<<<<<<< HEAD
             else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
+=======
+            else if (change->serializedPayload.length == 0 && change->kind != ChangeKind_t::ALIVE &&
+                    change->instanceHandle.isDefined())
+            {
+                // A UNREGISTER or DISPOSE status change was sent without payload, but calling get_payload with size 0 might fail
+                // depending on the configured payload pool. However, those operations are still valid if and only if instanceHandle
+                // is defined so they are handled in this special case
+                // These conditions were already checked in change_is_relevant_for_filter, but it makes sense to have a proper case
+                // here
+                change_to_add->serializedPayload.length = 0;
+            }
+            else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
+>>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))
             {
                 change->payload_owner(payload_owner);
             }
@@ -661,7 +675,14 @@ bool StatefulReader::processDataMsg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
+<<<<<<< HEAD
                 change_to_add->payload_owner()->release_payload(*change_to_add);
+=======
+                if (change_to_add->serializedPayload.payload_owner)
+                {
+                    change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
+                }
+>>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))
                 change_pool_->release_cache(change_to_add);
                 return false;
             }
