@@ -61,18 +61,10 @@ public:
 
 };
 
-<<<<<<< HEAD
-} // namespace detail
-} //namespace security
-} //namespace rtps
-} //namespace fastrtps
-} //namespace eprosima
-=======
 }  // namespace detail
 }  // namespace security
 }  // namespace rtps
-}  // namespace fastdds
+}  // namespace fastrtps
 }  // namespace eprosima
->>>>>>> f5aaab565 (Improve Open SSL includes (#6240))
 
 #endif  // _SECURITY_ARTIFACTPROVIDERS_FILEPROVIDER_HPP_
