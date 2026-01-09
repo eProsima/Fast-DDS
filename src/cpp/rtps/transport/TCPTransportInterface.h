@@ -188,6 +188,9 @@ protected:
 
     virtual void clean(); // Must be called on childs destructors!
 
+    /**
+     * Configures the keep-alive mechanism for TCP connections.
+     */
     virtual void configure_keep_alive();
 
     virtual void endpoint_to_locator(
