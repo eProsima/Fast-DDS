@@ -349,7 +349,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         }
 
         // In order to avoid overflow on the calculations, we limit the maximum payload size
-        constexpr uint32_t MAX_PAYLOAD_SIZE = std::numeric_limits<uint32_t>::max() - 4u - 3u;
+        constexpr uint32_t MAX_PAYLOAD_SIZE = (std::numeric_limits<uint32_t>::max)() - 4u - 3u;
         if (payload_size > MAX_PAYLOAD_SIZE)
         {
             return false;
