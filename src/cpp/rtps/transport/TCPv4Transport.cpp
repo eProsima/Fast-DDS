@@ -80,7 +80,7 @@ static asio::ip::address_v4::bytes_type locator_to_native(
 
 TCPv4Transport::TCPv4Transport(
         const TCPv4TransportDescriptor& descriptor)
-    : TCPTransportInterface(LOCATOR_KIND_TCPv4)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv4)
     , configuration_(descriptor)
 {
     // Copy descriptor's netmask filter configuration
@@ -211,7 +211,7 @@ TCPv4Transport::TCPv4Transport(
 }
 
 TCPv4Transport::TCPv4Transport()
-    : TCPTransportInterface(LOCATOR_KIND_TCPv4)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv4)
 {
 }
 

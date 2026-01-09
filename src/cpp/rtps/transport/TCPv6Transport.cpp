@@ -83,7 +83,7 @@ static asio::ip::address_v6::bytes_type locator_to_native(
 
 TCPv6Transport::TCPv6Transport(
         const TCPv6TransportDescriptor& descriptor)
-    : TCPTransportInterface(LOCATOR_KIND_TCPv6)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv6)
     , configuration_(descriptor)
 {
     // Copy descriptor's netmask filter configuration
@@ -216,7 +216,7 @@ TCPv6Transport::TCPv6Transport(
 }
 
 TCPv6Transport::TCPv6Transport()
-    : TCPTransportInterface(LOCATOR_KIND_TCPv6)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv6)
 {
 }
 

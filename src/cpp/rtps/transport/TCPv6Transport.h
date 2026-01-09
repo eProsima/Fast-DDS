@@ -23,8 +23,8 @@
 
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
-#include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/transport/types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -44,7 +44,7 @@ namespace rtps {
  *       after each establishment.
  * @ingroup TRANSPORT_MODULE
  */
-class TCPv6Transport : public TCPTransportInterface
+class TCPv6Transport : public TCPTransportInterface_t
 {
 
 protected:
