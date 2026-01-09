@@ -239,6 +239,11 @@ public:
         limitation_ = limitation;
     }
 
+    bool has_limitation() const
+    {
+        return nullptr != limitation_;
+    }
+
     uint32_t current_buffer_bytes() const
     {
         return buffers_bytes_;
@@ -375,7 +380,11 @@ private:
     // Fixed padding to be used whenever needed
     const octet padding_[3] = {0, 0, 0};
 
+    //! Pointer to limitation policy.
     IRTPSMessageGroupLimitation* limitation_ {nullptr};
+
+    //! Indicates whether the message group contains data messages.
+    bool message_contains_data {false};
 };
 
 } // namespace rtps

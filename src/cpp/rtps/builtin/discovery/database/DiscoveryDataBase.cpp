@@ -687,6 +687,7 @@ void DiscoveryDataBase::create_virtual_endpoints_(
     virtual_writer_change->writer_info.previous = nullptr;
     virtual_writer_change->writer_info.next = nullptr;
     virtual_writer_change->writer_info.num_sent_submessages = 0;
+    virtual_writer_change->writer_info.last_fragment_sent = 0;
     // Create the virtual writer
     create_writers_from_change_(virtual_writer_change, virtual_topic_);
 
@@ -713,6 +714,7 @@ void DiscoveryDataBase::create_virtual_endpoints_(
     virtual_reader_change->writer_info.previous = nullptr;
     virtual_reader_change->writer_info.next = nullptr;
     virtual_reader_change->writer_info.num_sent_submessages = 0;
+    virtual_writer_change->writer_info.last_fragment_sent = 0;
     // Create the virtual reader
     create_readers_from_change_(virtual_reader_change, virtual_topic_);
 }

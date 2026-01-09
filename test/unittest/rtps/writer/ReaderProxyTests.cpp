@@ -202,7 +202,7 @@ static FragmentNumber_t mark_next_fragment_sent(
     SequenceNumber_t gap_seq;
     SequenceNumber_t min_seq;
     bool need_reactivate_periodic_heartbeat;
-    rproxy.change_is_unsent(sequence_number, next_fragment, gap_seq, min_seq, need_reactivate_periodic_heartbeat);
+    rproxy.change_is_unsent(sequence_number, next_fragment, gap_seq, min_seq, 0, need_reactivate_periodic_heartbeat);
     if (next_fragment != expected_fragment)
     {
         return next_fragment;
