@@ -1,8 +1,8 @@
 repositories:
     foonathan_memory_vendor:
         type: git
-        url: https://github.com/eProsima/foonathan_memory_vendor.git
-        version: master
+        url: https://github.com/mosfet80/foonathan_memory_vendor.git
+        version: patch-1
     fastcdr:
         type: git
         url: https://github.com/eProsima/Fast-CDR.git
