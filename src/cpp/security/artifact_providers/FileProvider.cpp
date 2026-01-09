@@ -18,6 +18,9 @@
 
 #include <security/artifact_providers/FileProvider.hpp>
 
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+
 #include <cassert>
 #include <cstring>
 #include <iostream>
