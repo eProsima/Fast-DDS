@@ -64,7 +64,7 @@ public:
 }  // namespace detail
 }  // namespace security
 }  // namespace rtps
-}  // namespace fastdds
+}  // namespace fastrtps
 }  // namespace eprosima
 
 #endif  // _SECURITY_ARTIFACTPROVIDERS_FILEPROVIDER_HPP_
