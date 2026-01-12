@@ -15,6 +15,12 @@
 #ifndef _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 
+#include <atomic>
+#include <condition_variable>
+#include <map>
+#include <mutex>
+#include <vector>
+
 #include <asio.hpp>
 #include <fastdds/rtps/common/Locator.hpp>
 #include <fastdds/rtps/transport/NetworkBuffer.hpp>
