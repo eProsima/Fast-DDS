@@ -2,6 +2,7 @@ name: Fast DDS Linters CI
 
 on:
   pull_request:
+    workflow_dispatch:
     types: [opened, synchronize]
 
 concurrency:
