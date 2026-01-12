@@ -1,6 +1,7 @@
 name: Fast DDS Linters CI
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
 
@@ -11,7 +12,7 @@ concurrency:
 jobs:
   uncrustify:
     name: uncrustify
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
     steps:
     - name: Run Uncrustify Linter
