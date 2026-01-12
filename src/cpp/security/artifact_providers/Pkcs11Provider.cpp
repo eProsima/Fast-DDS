@@ -26,6 +26,17 @@
 #include <security/artifact_providers/Pkcs11Provider.hpp>
 
 #include <iostream>
+#include <string>
+
+#include <openssl/conf.h>
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#include <openssl/types.h>
+
+#if !defined(OPENSSL_NO_ENGINE)
+#include <openssl/engine.h>
+#include <openssl/ui.h>
+#endif // !defined(OPENSSL_NO_ENGINE)
 
 #include <fastdds/dds/log/Log.hpp>
 #include <utils/SystemInfo.hpp>
@@ -41,6 +52,8 @@ namespace fastdds {
 namespace rtps {
 namespace security {
 namespace detail {
+
+#if !defined(OPENSSL_NO_ENGINE)
 
 constexpr const char* FASTDDS_PKCS11_PIN = "FASTDDS_PKCS11_PIN";
 constexpr const char* PKCS11_ENGINE_ID = "pkcs11";
@@ -79,8 +92,15 @@ static int ui_close(
     return UI_method_get_closer(UI_OpenSSL())(ui);
 }
 
+#endif  // !defined(OPENSSL_NO_ENGINE)
+
 Pkcs11Provider::Pkcs11Provider()
 {
+#if defined(OPENSSL_NO_ENGINE)
+    has_initialization_error_ = true;
+    initialization_exception_ =
+            _SecurityException_(std::string("Cannot retrieve 'pkcs11' engine because 'OPENSSL_NO_ENGINE' is defined"));
+#else
     SSL_load_error_strings();                /* readable error messages */
     SSL_library_init();                      /* initialize library */
 
@@ -123,10 +143,12 @@ Pkcs11Provider::Pkcs11Provider()
         ENGINE_free(pkcs11_);
         return;
     }
+#endif // defined(OPENSSL_NO_ENGINE)
 }
 
 Pkcs11Provider::~Pkcs11Provider()
 {
+#if !defined(OPENSSL_NO_ENGINE)
     ENGINE_finish(pkcs11_);
     ENGINE_free(pkcs11_);
 
@@ -134,6 +156,7 @@ Pkcs11Provider::~Pkcs11Provider()
     {
         UI_destroy_method(ui_method_);
     }
+#endif  // !defined(OPENSSL_NO_ENGINE)
 }
 
 EVP_PKEY* Pkcs11Provider::load_private_key(
@@ -142,6 +165,12 @@ EVP_PKEY* Pkcs11Provider::load_private_key(
         const std::string& /*password*/,
         SecurityException& exception)
 {
+#if defined(OPENSSL_NO_ENGINE)
+    static_cast<void>(certificate);
+    static_cast<void>(pkey);
+    exception = initialization_exception_;
+    return nullptr;
+#else
     if (has_initialization_error_)
     {
         exception = initialization_exception_;
@@ -165,6 +194,7 @@ EVP_PKEY* Pkcs11Provider::load_private_key(
     }
 
     return returnedValue;
+#endif  // defined(OPENSSL_NO_ENGINE)
 }
 
 } // namespace detail
