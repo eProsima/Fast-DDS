@@ -704,4 +704,7 @@ target_link_libraries(StatelessReaderTests
     ${THIRDPARTY_BOOST_LINK_LIBS}
     eProsima_atomic
     )
+if (APPLE)
+    target_link_libraries(StatelessReaderTests ${PRIVACY} "-framework CoreFoundation" "-framework IOKit")
+endif()
 gtest_discover_tests(StatelessReaderTests)
