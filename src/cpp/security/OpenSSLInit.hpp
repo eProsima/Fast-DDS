@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdint>
 #include <memory>
 
-#include <openssl/evp.h>
-#include <openssl/engine.h>
-#include <openssl/rand.h>
-#include <openssl/err.h>
+#include <openssl/crypto.h>
 
 namespace eprosima {
 namespace fastdds {
