@@ -43,7 +43,8 @@ trap cleanup EXIT
 # Force to build without cache to ensure all changes are included
 "${DOCKER}" compose \
   --project-name "${PROJECT_NAME}_build" \
-  -f "${COMPOSE_FILE}" build --no-cache
+  -f "${COMPOSE_FILE}" build --no-cache \
+  >/dev/null
 
 "${DOCKER}" compose \
   --project-name "${PROJECT_NAME}" \
