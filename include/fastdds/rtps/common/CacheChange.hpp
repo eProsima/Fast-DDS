@@ -301,17 +301,16 @@ struct FASTDDS_EXPORTED_API CacheChange_t
             return false;
         }
 
-        // validate lengths
-        if (last_fragment_index < fragment_count_)
-        {
-            if (incoming_data.length < incoming_length)
-            {
-                return false;
-            }
-        }
-        else
+        // Update incoming length for last fragment
+        if (last_fragment_index == fragment_count_)
         {
             incoming_length = serializedPayload.length - original_offset;
+        }
+
+        // Validate lengths
+        if (incoming_data.length < incoming_length)
+        {
+            return false;
         }
 
         if (original_offset + incoming_length > serializedPayload.length)
