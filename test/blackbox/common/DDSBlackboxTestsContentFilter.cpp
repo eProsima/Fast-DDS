@@ -950,8 +950,8 @@ TEST(DDSContentFilter, filter_other_type_name)
 /*
  * Regression test for https://eprosima.easyredmine.com/issues/24038
  *
- * This test checks that a DDSSQL content filter can be created with a type name that is different from the one
- * in the generated type support.
+ * This test checks that reusing a ReaderProxy object when a new DataReader is matched does not lead to incorrect
+ * behaviour due to poorly initialised data.
  */
 TEST(DDSContentFilter, reusing_reader_proxy)
 {
