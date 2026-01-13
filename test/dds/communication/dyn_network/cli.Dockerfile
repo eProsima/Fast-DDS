@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG ubuntu_version=22.04
+ARG ubuntu_version=24.04
 FROM ubuntu:$ubuntu_version AS ubuntu-cli
 
 # Needed for a dependency that forces to set timezone
@@ -25,4 +25,4 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install apt dependencies
 RUN apt-get update && apt-get install --yes python3 python3-pip libtinyxml2-dev && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install psutil
+RUN pip3 install psutil --break-system-packages
