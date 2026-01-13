@@ -23,6 +23,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install apt dependencies
-RUN apt-get update && apt-get install --yes python3 python3-pip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install --yes python3 python3-pip libtinyxml2-dev && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install psutil
