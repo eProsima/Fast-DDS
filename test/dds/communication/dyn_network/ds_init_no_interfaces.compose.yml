@@ -26,6 +26,8 @@ services:
       # Load also fastdds libraries to run the CLI
       LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@:$LD_LIBRARY_PATH
       SERVER_IP: 127.0.0.1
+      EXAMPLE_DIR: @EXAMPLE_DIR_COMPOSE@
+      INSTALL_DIR: @CMAKE_INSTALL_PREFIX_DIR@
     working_dir: @PROJECT_BINARY_DIR_HOST@/test/dds/communication
     command: @SHELL_EXECUTABLE@ -c "@SHELL_EXECUTABLE@ dyn_network/launch_ds_no_interfaces.bash"
     network_mode: none

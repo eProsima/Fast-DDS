@@ -16,26 +16,22 @@
 
 set -e
 
-PREFIX="@CMAKE_INSTALL_PREFIX@"
-EXAMPLE_DIR="@PROJECT_BINARY_DIR@/test/dds/communication"
-export EXAMPLE_DIR
-
 echo "[INFO] Starting discovery server"
-"$PREFIX/bin/fastdds" discovery -l 0.0.0.0 &
+"${INSTALL_DIR}/bin/fastdds" discovery -l 0.0.0.0 &
 SERVER_PID=$!
 
 
 # Publisher
 echo "[INFO] Starting publisher"
-"$EXAMPLE_DIR/DDSCommunicationPublisher" \
-  --xmlfile "$EXAMPLE_DIR/ds_client.xml" \
+"${EXAMPLE_DIR}/DDSCommunicationPublisher" \
+  --xmlfile "${EXAMPLE_DIR}/ds_client.xml" \
   --wait 1 --samples 10 --loops 1 --seed 0 --magic T &
 PUB_PID=$!
 
 # Subscriber
 echo "[INFO] Starting subscriber"
-"$EXAMPLE_DIR/DDSCommunicationSubscriber" \
-  --xmlfile "$EXAMPLE_DIR/ds_client.xml" \
+"${EXAMPLE_DIR}/DDSCommunicationSubscriber" \
+  --xmlfile "${EXAMPLE_DIR}/ds_client.xml" \
   --samples 10 --seed 0 --magic T --rescan 2 &
 SUB_PID=$!
 
