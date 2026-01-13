@@ -161,10 +161,10 @@ TCPv4Transport::TCPv4Transport(
                     else
                     {
                         EPROSIMA_LOG_WARNING(TRANSPORT_TCPV4,
-                                "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name
-                                                              << " as its netmask filter configuration (" << netmask_filter << ") is incompatible"
-                                                              << " with descriptor's (" << descriptor.netmask_filter <<
-                                ").");
+                                "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name <<
+                                " as its netmask filter configuration (" << netmask_filter <<
+                                ") is incompatible" << " with descriptor's (" <<
+                                descriptor.netmask_filter << ").");
                     }
                 }
             }
