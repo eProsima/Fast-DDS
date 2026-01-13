@@ -1504,8 +1504,8 @@ bool TCPTransportInterface::send(
                 // Logical port might be under negotiation. Wait a little and check again. This prevents from
                 // losing first messages.
                 scoped_lock.unlock();
-                bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port, std::chrono::milliseconds(
-                                    configuration()->tcp_negotiation_timeout));
+                bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port,
+                                std::chrono::milliseconds(configuration()->tcp_negotiation_timeout));
                 if (!logical_port_opened)
                 {
                     return success;
