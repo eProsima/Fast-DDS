@@ -100,9 +100,9 @@ public:
 private:
 
     TCPChannelResourceSecure(
-            const TCPChannelResource_t&) = delete;
+            const TCPChannelResourceSecure&) = delete;
     TCPChannelResourceSecure& operator =(
-            const TCPChannelResource_t&) = delete;
+            const TCPChannelResourceSecure&) = delete;
 
     asio::io_context& context_;
     asio::ssl::context& ssl_context_;
