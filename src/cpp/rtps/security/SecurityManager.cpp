@@ -46,8 +46,7 @@
 #include <rtps/security/accesscontrol/SecurityMaskUtilities.h>
 #include <rtps/security/authentication/Authentication.h>
 #include <rtps/security/exceptions/SecurityException.h>
-#include <rtps/writer/StatefulWriter.hpp>
-#include <rtps/writer/StatelessWriter.hpp>
+#include <rtps/writer/BaseWriter.hpp>
 #include <security/OpenSSLInit.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_WRITER (1 << 20)
@@ -1140,7 +1139,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
             participant_stateless_message_writer_entity_id, true))
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
-        participant_stateless_message_writer_ = dynamic_cast<StatelessWriter*>(wout);
+        participant_stateless_message_writer_ = dynamic_cast<BaseWriter*>(wout);
         auth_source_guid = participant_stateless_message_writer_->getGuid();
 
         return true;
@@ -1293,7 +1292,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
             this, participant_volatile_message_secure_writer_entity_id, true))
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
-        participant_volatile_message_secure_writer_ = dynamic_cast<StatefulWriter*>(wout);
+        participant_volatile_message_secure_writer_ = dynamic_cast<BaseWriter*>(wout);
         return true;
     }
 

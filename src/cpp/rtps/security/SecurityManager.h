@@ -47,9 +47,8 @@ namespace rtps {
 
 class RTPSParticipantImpl;
 class RTPSWriter;
-class StatelessWriter;
+class BaseWriter;
 class StatelessReader;
-class StatefulWriter;
 class StatefulReader;
 class WriterHistory;
 class ReaderHistory;
@@ -804,11 +803,11 @@ private:
             const SecurityException& exception) const;
 
     RTPSParticipantImpl* participant_ = nullptr;
-    StatelessWriter* participant_stateless_message_writer_ = nullptr;
+    BaseWriter* participant_stateless_message_writer_ = nullptr;
     WriterHistory* participant_stateless_message_writer_history_ = nullptr;
     StatelessReader* participant_stateless_message_reader_ = nullptr;
     ReaderHistory* participant_stateless_message_reader_history_ = nullptr;
-    StatefulWriter* participant_volatile_message_secure_writer_ = nullptr;
+    BaseWriter* participant_volatile_message_secure_writer_ = nullptr;
     WriterHistory* participant_volatile_message_secure_writer_history_ = nullptr;
     StatefulReader* participant_volatile_message_secure_reader_ = nullptr;
     ReaderHistory* participant_volatile_message_secure_reader_history_ = nullptr;
