@@ -70,7 +70,6 @@
 #include <rtps/writer/StatefulPersistentWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
 #include <rtps/writer/StatelessPersistentWriter.hpp>
-#include <rtps/writer/StatelessWriter.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>
@@ -1270,34 +1269,19 @@ bool RTPSParticipantImpl::create_writer(
             {
                 BaseWriter* writer = nullptr;
 
-                if (is_reliable)
+                if (entityId == c_EntityId_SPDPWriter)
                 {
-                    if (persistence != nullptr)
-                    {
-                        writer = new StatefulPersistentWriter(this, guid, watt,
-                                        flow_controller, hist, listen, stateful_writer_listener_, persistence);
-                    }
-                    else
-                    {
-                        writer = new StatefulWriter(this, guid, watt,
-                                        flow_controller, hist, listen, stateful_writer_listener_);
-                    }
+                    writer = new PDPStatelessWriter(this, guid, watt, flow_controller, hist, listen);
+                }
+                else if (persistence != nullptr)
+                {
+                    writer = new StatefulPersistentWriter(this, guid, watt,
+                                    flow_controller, hist, listen, stateful_writer_listener_, persistence);
                 }
                 else
                 {
-                    if (entityId == c_EntityId_SPDPWriter)
-                    {
-                        writer = new PDPStatelessWriter(this, guid, watt, flow_controller, hist, listen);
-                    }
-                    else if (persistence != nullptr)
-                    {
-                        writer = new StatelessPersistentWriter(this, guid, watt,
-                                        flow_controller, hist, listen, persistence);
-                    }
-                    else
-                    {
-                        writer = new StatelessWriter(this, guid, watt, flow_controller, hist, listen);
-                    }
+                    writer = new StatefulWriter(this, guid, watt,
+                                    flow_controller, hist, listen, stateful_writer_listener_);
                 }
 
                 return writer;
