@@ -14,8 +14,12 @@
 
 message(STATUS "Configuring docker based communication tests")
 
-option(USE_OUTSIDE_DOCKER "Run docker against a host daemon (Docker-outside-of-Docker)." OFF)
+if(NOT DEFINED CACHE{USE_OUTSIDE_DOCKER})
+  option(USE_OUTSIDE_DOCKER "Run docker against a host daemon (Docker-outside-of-Docker)." OFF)
+endif()
 set(DOCKER_HOST_IP "" CACHE STRING "Docker host IP to use.")
+set(FASTDDS_DOCKER_EXTRA_VOLUMES "" CACHE STRING
+    "Extra docker-compose volume lines to inject into docker tests (YAML lines including leading '-')")
 
 # Find docker
 find_program(DOCKER_EXECUTABLE docker)

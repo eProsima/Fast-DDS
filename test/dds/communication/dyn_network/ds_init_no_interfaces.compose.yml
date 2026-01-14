@@ -22,6 +22,7 @@ services:
       @PROJECT_BINARY_VOLUME@
       @fastcdr_LIB_DIR_VOLUME@
       @CMAKE_INSTALL_PREFIX_VOLUME@
+      @FASTDDS_DOCKER_EXTRA_VOLUMES@
     environment:
       # Load also fastdds libraries to run the CLI
       LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@:$LD_LIBRARY_PATH
