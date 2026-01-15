@@ -160,7 +160,8 @@ public:
         {
             case communication_type::INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case communication_type::DATASHARING:
                 enable_datasharing = true;
@@ -182,7 +183,8 @@ public:
         {
             case communication_type::INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case communication_type::DATASHARING:
                 break;
@@ -784,7 +786,7 @@ TEST_P(DDSContentFilter, CorrectGAPSendingTwoReader)
             {
                 total_count_2 = status.total_count;
             }).init();
-    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(reader_2.isInitialized());
 
     // Set up the writer
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -851,6 +853,97 @@ TEST(DDSContentFilter, filter_other_type_name)
     // Delete all entities
     ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(dds::DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
+}
+
+
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/24038
+ *
+ * This test checks that reusing a ReaderProxy object when a new DataReader is matched does not lead to incorrect
+ * behaviour due to poorly initialised data.
+ */
+TEST(DDSContentFilter, reusing_reader_proxy)
+{
+    int32_t total_count {0};
+    int32_t total_count_2 {0};
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index = 1 OR index = 2 OR index = 6", {}, true, false,
+            false);
+    reader
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .sample_lost_status_functor([&total_count](const SampleLostStatus& status)
+            {
+                total_count = status.total_count;
+            }).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    // Set up the writer
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer
+            .add_user_transport_to_pparams(udp_transport)
+            .disable_builtin_transport()
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_depth(10)
+    //.heartbeat_period_seconds(100)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Send 10 samples
+    auto data = default_helloworld_data_generator();
+
+    decltype(data) expected_data;
+    expected_data.push_back(*data.begin()); // index 1
+    expected_data.push_back(*std::next(data.begin())); // index 2
+    expected_data.push_back(*std::next(data.begin(), 5)); // index 6
+    decltype(data) expected_data_2;
+    expected_data_2.push_back(*std::next(data.begin(), 8)); // index 9
+    expected_data_2.push_back(*std::next(data.begin(), 2)); // index 3
+    expected_data_2.push_back(*std::next(data.begin(), 3)); // index 4
+
+    reader.startReception(expected_data);
+
+    writer.send(data, 50);
+
+    // Wait for reception and check
+    reader.block_for_all();
+    ASSERT_EQ(0, total_count);
+
+    reader.destroy();
+
+    data = default_helloworld_data_generator(4);
+
+    writer.send(data, 50);
+
+    PubSubReader<HelloWorldPubSubType> reader_2(TEST_TOPIC_NAME, "index = 3 OR index = 4 OR index = 9", {}, true, false,
+            false);
+    reader_2
+            .reliability(RELIABLE_RELIABILITY_QOS)
+            .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+            .sample_lost_status_functor([&total_count_2](const SampleLostStatus& status)
+            {
+                total_count_2 += status.total_count;
+            }).init();
+    ASSERT_TRUE(reader_2.isInitialized());
+
+
+    reader_2.wait_discovery();
+    writer.wait_discovery();
+
+    data = default_helloworld_data_generator(1);
+
+    writer.send(data, 50);
+
+    reader_2.startReception(expected_data_2);
+
+    // Wait for reception and check
+    reader_2.block_for_all();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
