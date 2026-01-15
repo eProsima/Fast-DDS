@@ -775,7 +775,7 @@ IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
     return &dds_sql_filter_factory_;
 }
 
-const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
+InstanceHandle_t DomainParticipantImpl::get_instance_handle() const
 {
     return handle_;
 }

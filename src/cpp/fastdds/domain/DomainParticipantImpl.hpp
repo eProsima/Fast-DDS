@@ -653,7 +653,7 @@ public:
     const rpc::ServiceTypeSupport find_service_type(
             const std::string& service_name) const;
 
-    const InstanceHandle_t& get_instance_handle() const;
+    InstanceHandle_t get_instance_handle() const;
 
     // From here legacy RTPS methods.
 
