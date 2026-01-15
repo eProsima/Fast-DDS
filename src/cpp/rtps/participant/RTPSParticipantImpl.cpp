@@ -1624,9 +1624,7 @@ void RTPSParticipantImpl::update_attributes(
 
             if (local_interfaces_changed)
             {
-                createSenderResources(temp_atts.builtin.metatrafficMulticastLocatorList);
-                createSenderResources(temp_atts.builtin.metatrafficUnicastLocatorList);
-                createSenderResources(temp_atts.defaultUnicastLocatorList);
+                createSenderResources(temp_atts.builtin.initialPeersList);
             }
 
             // Update remote servers list
