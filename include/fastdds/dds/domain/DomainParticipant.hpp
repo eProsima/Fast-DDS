@@ -1159,7 +1159,7 @@ public:
      *
      * @return InstanceHandle of this DomainParticipant.
      */
-    FASTDDS_EXPORTED_API const InstanceHandle_t& get_instance_handle() const;
+    FASTDDS_EXPORTED_API InstanceHandle_t get_instance_handle() const;
 
     // From here legacy RTPS methods.
 
