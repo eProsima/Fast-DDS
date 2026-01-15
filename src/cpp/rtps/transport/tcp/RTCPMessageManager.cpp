@@ -369,7 +369,7 @@ TCPTransactionId RTCPMessageManager::sendKeepAliveRequest(
 {
     SerializedPayload_t payload(static_cast<uint32_t>(KeepAliveRequest_t::getBufferCdrSerializedSize(request)));
     request.serialize(&payload);
-    EPROSIMA_LOG_INFO(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
+    EPROSIMA_LOG_WARNING(RTCP_MSG, "Send [KEEP_ALIVE_REQUEST]");
     TCPTransactionId id = getTransactionId();
     sendData(channel, KEEP_ALIVE_REQUEST, id, &payload, RETCODE_VOID);
     return id;

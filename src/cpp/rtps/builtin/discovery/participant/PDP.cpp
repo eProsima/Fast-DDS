@@ -739,6 +739,37 @@ void PDP::notify_and_maybe_ignore_new_participant(
     }
 }
 
+void PDP::notify_and_maybe_ignore_updated_participant(
+        ParticipantProxyData* pdata,
+        bool& should_be_ignored)
+{
+    should_be_ignored = false;
+
+    EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "Updated participant "
+            << pdata->guid << " at "
+            << "MTTLoc: " << pdata->metatraffic_locators
+            << " DefLoc:" << pdata->default_locators);
+
+    RTPSParticipantListener* listener = getRTPSParticipant()->getListener();
+    if (listener)
+    {
+        {
+            std::lock_guard<std::mutex> cb_lock(callback_mtx_);
+
+            listener->on_participant_discovery(
+                getRTPSParticipant()->getUserRTPSParticipant(),
+                ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT,
+                *pdata,
+                should_be_ignored);
+        }
+
+        if (should_be_ignored)
+        {
+            getRTPSParticipant()->ignore_participant(pdata->guid.guidPrefix);
+        }
+    }
+}
+
 bool PDP::has_reader_proxy_data(
         const GUID_t& reader)
 {

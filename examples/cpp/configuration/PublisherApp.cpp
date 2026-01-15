@@ -58,6 +58,7 @@ PublisherApp::PublisherApp(
     , stop_(false)
     , wait_(config.wait)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     // Set up the data type with initial values
     configuration_.index(0);
     memcpy(configuration_.message().data(), "Configuration", strlen("Configuration") + 1);

@@ -532,10 +532,18 @@ bool PDPSimple::create_dcps_participant_secure_endpoints()
 #endif  // HAVE_SECURITY
 
 void PDPSimple::assignRemoteEndpoints(
-        ParticipantProxyData* pdata)
+        ParticipantProxyData* pdata,
+        bool updated_participant)
 {
     bool ignored = false;
-    notify_and_maybe_ignore_new_participant(pdata, ignored);
+    if (updated_participant)
+    {
+        notify_and_maybe_ignore_updated_participant(pdata, ignored);
+    }
+    else
+    {
+        notify_and_maybe_ignore_new_participant(pdata, ignored);
+    }
     if (!ignored)
     {
 #if HAVE_SECURITY
@@ -555,6 +563,9 @@ void PDPSimple::assignRemoteEndpoints(
         {
             // This participant is not secure.
             // Match PDP and other builtin endpoints.
+            // if (!updated_participant)
+            // {
+            // }
             match_pdp_remote_endpoints(*pdata, false, false);
             assign_low_level_remote_endpoints(*pdata, false);
         }

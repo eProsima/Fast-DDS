@@ -55,6 +55,7 @@ SubscriberApp::SubscriberApp(
     , received_samples_(0)
     , samples_(config.samples)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     // Create the participant
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("Configuration_sub_participant");

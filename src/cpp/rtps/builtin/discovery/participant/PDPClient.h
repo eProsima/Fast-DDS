@@ -121,7 +121,8 @@ public:
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
     void assignRemoteEndpoints(
-            ParticipantProxyData* pdata) override;
+            ParticipantProxyData* pdata,
+            bool updated_participant = false) override;
     void removeRemoteEndpoints(
             ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
