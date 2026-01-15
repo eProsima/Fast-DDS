@@ -1269,7 +1269,7 @@ bool RTPSParticipantImpl::create_writer(
             {
                 BaseWriter* writer = nullptr;
 
-                if (entityId == c_EntityId_SPDPWriter)
+                if (!is_reliable && (c_EntityId_SPDPWriter == entityId))
                 {
                     writer = new PDPStatelessWriter(this, guid, watt, flow_controller, hist, listen);
                 }
