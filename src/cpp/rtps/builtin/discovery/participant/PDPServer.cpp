@@ -606,7 +606,8 @@ void PDPServer::match_reliable_pdp_endpoints(
 }
 
 void PDPServer::assignRemoteEndpoints(
-        ParticipantProxyData* pdata)
+        ParticipantProxyData* pdata,
+        bool /*updated_participant*/)
 {
     std::string part_type;
     {

@@ -97,7 +97,8 @@ public:
      * @param pdata Pointer to the ParticipantProxyData object.
      */
     void assignRemoteEndpoints(
-            ParticipantProxyData* pdata) override;
+            ParticipantProxyData* pdata,
+            bool updated_participant = false) override;
 
     /**
      * Remove remote endpoints from the participant discovery protocol

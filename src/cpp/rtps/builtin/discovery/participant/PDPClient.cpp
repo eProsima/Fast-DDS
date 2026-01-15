@@ -419,7 +419,8 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 }
 
 void PDPClient::assignRemoteEndpoints(
-        ParticipantProxyData* pdata)
+        ParticipantProxyData* pdata,
+        bool /*updated_participant*/)
 {
     bool ignored = false;
     notify_and_maybe_ignore_new_participant(pdata, ignored);

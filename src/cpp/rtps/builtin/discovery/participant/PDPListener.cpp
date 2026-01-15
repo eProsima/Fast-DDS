@@ -191,8 +191,6 @@ void PDPListener::process_alive_data(
         RTPSReader* reader,
         std::unique_lock<std::recursive_mutex>& lock)
 {
-    GUID_t participant_guid = new_data.guid;
-
     if (old_data == nullptr)
     {
         // Create a new one when not found
@@ -226,8 +224,34 @@ void PDPListener::process_alive_data(
     }
     else
     {
+        auto old_metatraffic_locators = old_data->metatraffic_locators;
+        auto old_default_locators = old_data->default_locators;
+
         old_data->update_data(new_data);
         old_data->is_alive = true;
+
+        bool locators_changed = false;
+        for (const Locator_t& locator : old_data->metatraffic_locators.unicast)
+        {
+            if (std::find(old_metatraffic_locators.unicast.begin(),
+                    old_metatraffic_locators.unicast.end(), locator) ==
+                    old_metatraffic_locators.unicast.end())
+            {
+                locators_changed = true;
+                break;
+            }
+        }
+        for (const Locator_t& locator : old_data->default_locators.unicast)
+        {
+            if (std::find(old_default_locators.unicast.begin(),
+                    old_default_locators.unicast.end(), locator) ==
+                    old_default_locators.unicast.end())
+            {
+                locators_changed = true;
+                break;
+            }
+        }
+        ParticipantProxyData old_data_copy(*old_data);
 
         reader->getMutex().unlock();
 
@@ -246,24 +270,16 @@ void PDPListener::process_alive_data(
 
         lock.unlock();
 
-        RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
-        if (listener != nullptr)
+        // If locators have changed, reassign remote endpoints which notifies and maybe ignores updated participant
+        if (locators_changed)
+        {
+            parent_pdp_->assignRemoteEndpoints(&old_data_copy, true);
+        }
+        // If not, just notify and maybe ignore updated participant
+        else
         {
             bool should_be_ignored = false;
-
-            {
-                std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-
-                listener->on_participant_discovery(
-                    parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                    ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT,
-                    old_proxy_data_copy,
-                    should_be_ignored);
-            }
-            if (should_be_ignored)
-            {
-                parent_pdp_->getRTPSParticipant()->ignore_participant(participant_guid.guidPrefix);
-            }
+            parent_pdp_->notify_and_maybe_ignore_updated_participant(old_data, should_be_ignored);
         }
     }
 

@@ -151,7 +151,8 @@ public:
      * @param pdata Pointer to the RTPSParticipantProxyData object.
      */
     void assignRemoteEndpoints(
-            fastdds::rtps::ParticipantProxyData* pdata) override;
+            fastdds::rtps::ParticipantProxyData* pdata,
+            bool updated_participant = false) override;
     void removeRemoteEndpoints(
             fastdds::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
