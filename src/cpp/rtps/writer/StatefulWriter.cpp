@@ -1193,10 +1193,12 @@ bool StatefulWriter::matched_reader_add_edp(
         rp->acked_changes_set(history_->next_sequence_number());
     }
 
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
-                                                   << rdata.remote_locators.unicast.size() << "(u)-"
-                                                   << rdata.remote_locators.multicast.size() <<
-            "(m) locators");
+    EPROSIMA_LOG_INFO(
+        RTPS_WRITER,
+        "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with " <<
+                        rdata.remote_locators.get_unicast().size() << "(u)-" <<
+                        rdata.remote_locators.get_multicast().size() << "(m) locators");
+
 
     if (nullptr != listener_)
     {

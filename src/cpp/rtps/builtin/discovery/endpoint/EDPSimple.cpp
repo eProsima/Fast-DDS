@@ -756,7 +756,7 @@ void EDPSimple::assignRemoteEndpoints(
     uint32_t endp = pdata.m_available_builtin_endpoints;
     uint32_t auxendp;
     bool use_multicast_locators = !mp_PDP->getRTPSParticipant()->get_attributes().builtin.avoid_builtin_multicast ||
-            pdata.metatraffic_locators.unicast.empty();
+            pdata.metatraffic_locators.get_unicast().empty();
 
     auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
 

@@ -83,6 +83,76 @@ struct RemoteLocatorList
     }
 
     /**
+     * Get the unicast locators list.
+     *
+     * @return Reference to the unicast locators list.
+     */
+    const ResourceLimitedVector<Locator_t>& get_unicast() const
+    {
+        return unicast;
+    }
+
+    /**
+     * Get the multicast locators list.
+     *
+     * @return Reference to the multicast locators list.
+     */
+    const ResourceLimitedVector<Locator_t>& get_multicast() const
+    {
+        return multicast;
+    }
+
+    /**
+     * Check equality between two RemoteLocatorList Unicast list objects without considering order
+     * and assuming no duplicates exist.
+     *
+     * @param other RemoteLocatorList to compare with.
+     * @return true if both Unicast lists contains the same locators. False otherwise.
+     */
+    bool is_unicast_list_equal_to(
+            const RemoteLocatorList& other) const
+    {
+        if (unicast.size() != other.unicast.size())
+        {
+            return false;
+        }
+
+        for (const Locator_t& loc : unicast)
+        {
+            if (std::find(other.unicast.begin(), other.unicast.end(), loc) == other.unicast.end())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check equality between two RemoteLocatorList Multicast list objects without considering order
+     * and assuming no duplicates exist.
+     *
+     * @param other RemoteLocatorList to compare with.
+     * @return true if both Multicast lists contains the same locators. False otherwise.
+     */
+    bool is_multicast_list_equal_to(
+            const RemoteLocatorList& other) const
+    {
+        if (multicast.size() != other.multicast.size())
+        {
+            return false;
+        }
+
+        for (const Locator_t& loc : multicast)
+        {
+            if (std::find(other.multicast.begin(), other.multicast.end(), loc) == other.multicast.end())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Adds a locator to the unicast list.
      *
      * If the locator already exists in the unicast list, or the maximum number of unicast locators has been reached,
@@ -233,6 +303,14 @@ inline std::istream& operator >>(
     }
 
     return input;
+}
+
+inline bool operator ==(
+        const RemoteLocatorList& left,
+        const RemoteLocatorList& right)
+{
+    return left.is_unicast_list_equal_to(right) &&
+           left.is_multicast_list_equal_to(right);
 }
 
 } // namespace rtps

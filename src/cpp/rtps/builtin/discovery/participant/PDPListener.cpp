@@ -230,27 +230,9 @@ void PDPListener::process_alive_data(
         old_data->update_data(new_data);
         old_data->is_alive = true;
 
-        bool locators_changed = false;
-        for (const Locator_t& locator : old_data->metatraffic_locators.unicast)
-        {
-            if (std::find(old_metatraffic_locators.unicast.begin(),
-                    old_metatraffic_locators.unicast.end(), locator) ==
-                    old_metatraffic_locators.unicast.end())
-            {
-                locators_changed = true;
-                break;
-            }
-        }
-        for (const Locator_t& locator : old_data->default_locators.unicast)
-        {
-            if (std::find(old_default_locators.unicast.begin(),
-                    old_default_locators.unicast.end(), locator) ==
-                    old_default_locators.unicast.end())
-            {
-                locators_changed = true;
-                break;
-            }
-        }
+        bool locators_changed =
+                !(old_data->metatraffic_locators.is_unicast_list_equal_to(old_metatraffic_locators)) ||
+                !(old_data->default_locators.is_unicast_list_equal_to(old_default_locators));
         ParticipantProxyData old_data_copy(*old_data);
 
         reader->getMutex().unlock();

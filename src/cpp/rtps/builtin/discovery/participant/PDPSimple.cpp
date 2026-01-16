@@ -207,8 +207,8 @@ ParticipantProxyData* PDPSimple::createParticipantProxyData(
     bool is_same_process = local.is_on_same_process_as(remote);
 
     // Discard participants on different process when they don't have metatraffic locators
-    if (participant_data.metatraffic_locators.multicast.empty() &&
-            participant_data.metatraffic_locators.unicast.empty() &&
+    if (participant_data.metatraffic_locators.get_multicast().empty() &&
+            participant_data.metatraffic_locators.get_unicast().empty() &&
             !is_same_process)
     {
         return nullptr;
@@ -661,7 +661,7 @@ void PDPSimple::match_pdp_remote_endpoints(
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     bool use_multicast_locators = !mp_RTPSParticipant->get_attributes().builtin.avoid_builtin_multicast ||
-            pdata.metatraffic_locators.unicast.empty();
+            pdata.metatraffic_locators.get_unicast().empty();
     const uint32_t endp = pdata.m_available_builtin_endpoints;
 
     // Default to values for non-secure endpoints

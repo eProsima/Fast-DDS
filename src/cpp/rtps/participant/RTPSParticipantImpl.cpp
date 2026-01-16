@@ -2072,7 +2072,7 @@ void RTPSParticipantImpl::createSenderResources(
 {
     using network::external_locators::filter_remote_locators;
 
-    LocatorSelectorEntry entry(locator_list.unicast.size(), locator_list.multicast.size());
+    LocatorSelectorEntry entry(locator_list.get_unicast().size(), locator_list.get_multicast().size());
     entry.multicast = locator_list.multicast;
     entry.unicast = locator_list.unicast;
     filter_remote_locators(entry, param.external_unicast_locators, param.ignore_non_matching_locators);
@@ -3306,28 +3306,28 @@ RTPSParticipantImpl::get_entity_connections(
             connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
 
             std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;
-            statistic_locators.reserve((*pit)->metatraffic_locators.multicast.size() +
-                    (*pit)->metatraffic_locators.unicast.size());
+            statistic_locators.reserve((*pit)->metatraffic_locators.get_multicast().size() +
+                    (*pit)->metatraffic_locators.get_unicast().size());
 
-            std::for_each((*pit)->metatraffic_locators.multicast.begin(), (*pit)->metatraffic_locators.multicast.end(),
+            std::for_each((*pit)->metatraffic_locators.get_multicast().begin(), (*pit)->metatraffic_locators.get_multicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
-            std::for_each((*pit)->metatraffic_locators.unicast.begin(), (*pit)->metatraffic_locators.unicast.end(),
+            std::for_each((*pit)->metatraffic_locators.get_unicast().begin(), (*pit)->metatraffic_locators.get_unicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
-            std::for_each((*pit)->default_locators.multicast.begin(), (*pit)->default_locators.multicast.end(),
+            std::for_each((*pit)->default_locators.get_multicast().begin(), (*pit)->default_locators.get_multicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
-            std::for_each((*pit)->default_locators.unicast.begin(), (*pit)->default_locators.unicast.end(),
+            std::for_each((*pit)->default_locators.get_unicast().begin(), (*pit)->default_locators.get_unicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));

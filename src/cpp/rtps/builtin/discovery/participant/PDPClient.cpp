@@ -436,11 +436,11 @@ void PDPClient::assignRemoteEndpoints(
                 EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->guid.guidPrefix << "] matched.");
                 RemoteServerAttributes server;
                 server.guidPrefix = pdata->guid.guidPrefix;
-                for (const Locator_t& locator : pdata->metatraffic_locators.multicast)
+                for (const Locator_t& locator : pdata->metatraffic_locators.get_multicast())
                 {
                     server.metatrafficMulticastLocatorList.push_back(locator);
                 }
-                for (const Locator_t& locator : pdata->metatraffic_locators.unicast)
+                for (const Locator_t& locator : pdata->metatraffic_locators.get_unicast())
                 {
                     server.metatrafficUnicastLocatorList.push_back(locator);
                 }
@@ -486,11 +486,11 @@ void PDPClient::notifyAboveRemoteEndpoints(
             EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Secure Server [" << pdata.guid.guidPrefix << "] matched.");
             RemoteServerAttributes server;
             server.guidPrefix = pdata.guid.guidPrefix;
-            for (const Locator_t& locator : pdata.metatraffic_locators.multicast)
+            for (const Locator_t& locator : pdata.metatraffic_locators.get_multicast())
             {
                 server.metatrafficMulticastLocatorList.push_back(locator);
             }
-            for (const Locator_t& locator : pdata.metatraffic_locators.unicast)
+            for (const Locator_t& locator : pdata.metatraffic_locators.get_unicast())
             {
                 server.metatrafficUnicastLocatorList.push_back(locator);
             }

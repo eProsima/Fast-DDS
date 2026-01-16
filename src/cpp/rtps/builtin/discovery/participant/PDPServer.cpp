@@ -286,7 +286,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
 
                     remote_readers.emplace_back(participant_data.guid.guidPrefix, c_EntityId_SPDPReader);
 
-                    for (auto& locator : participant_data.metatraffic_locators.unicast)
+                    for (auto& locator : participant_data.metatraffic_locators.get_unicast())
                     {
                         locators.push_back(locator);
                     }
@@ -531,7 +531,7 @@ void PDPServer::match_reliable_pdp_endpoints(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_available_builtin_endpoints;
     bool use_multicast_locators = !mp_RTPSParticipant->get_attributes().builtin.avoid_builtin_multicast ||
-            pdata.metatraffic_locators.unicast.empty();
+            pdata.metatraffic_locators.get_unicast().empty();
 
     // Only SERVER and CLIENT participants will be received. All builtin must be there
     uint32_t auxendp = endp &
@@ -1636,7 +1636,7 @@ void PDPServer::send_own_pdp(
 
     remote_readers.emplace_back(pdata->guid.guidPrefix, c_EntityId_SPDPReader);
 
-    for (auto& locator : pdata->metatraffic_locators.unicast)
+    for (auto& locator : pdata->metatraffic_locators.get_unicast())
     {
         locators.push_back(locator);
     }

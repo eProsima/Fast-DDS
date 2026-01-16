@@ -417,7 +417,7 @@ void PDP::initializeParticipantProxyData(
     participant_data->metatraffic_locators.multicast.clear();
     if (announce_locators)
     {
-        if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+        if (!m_discovery.avoid_builtin_multicast || participant_data->metatraffic_locators.get_unicast().empty())
         {
             for (const Locator_t& loc: mp_builtin->m_metatrafficMulticastLocatorList)
             {
@@ -1376,11 +1376,11 @@ void PDP::actions_on_remote_participant_removed(
 
         // Delete from sender resource list (TCP only)
         LocatorList_t remote_participant_locators;
-        for (auto& remote_participant_default_locator : pdata->default_locators.unicast)
+        for (auto& remote_participant_default_locator : pdata->default_locators.get_unicast())
         {
             remote_participant_locators.push_back(remote_participant_default_locator);
         }
-        for (auto& remote_participant_metatraffic_locator : pdata->metatraffic_locators.unicast)
+        for (auto& remote_participant_metatraffic_locator : pdata->metatraffic_locators.get_unicast())
         {
             remote_participant_locators.push_back(remote_participant_metatraffic_locator);
         }
@@ -1619,12 +1619,12 @@ static void set_builtin_endpoint_locators(
     {
         // Locators are copied from the local participant metatraffic locators
         endpoint.unicastLocatorList.clear();
-        for (const Locator_t& loc : part_data->metatraffic_locators.unicast)
+        for (const Locator_t& loc : part_data->metatraffic_locators.get_unicast())
         {
             endpoint.unicastLocatorList.push_back(loc);
         }
         endpoint.multicastLocatorList.clear();
-        for (const Locator_t& loc : part_data->metatraffic_locators.multicast)
+        for (const Locator_t& loc : part_data->metatraffic_locators.get_multicast())
         {
             endpoint.multicastLocatorList.push_back(loc);
         }
@@ -1766,7 +1766,7 @@ void PDP::local_participant_attributes_update_nts(
         {
             participant_data->metatraffic_locators.add_unicast_locator(locator);
         }
-        if (!new_atts.builtin.avoid_builtin_multicast || participant_data->metatraffic_locators.unicast.empty())
+        if (!new_atts.builtin.avoid_builtin_multicast || participant_data->metatraffic_locators.get_unicast().empty())
         {
             for (const auto& locator : new_atts.builtin.metatrafficMulticastLocatorList)
             {
