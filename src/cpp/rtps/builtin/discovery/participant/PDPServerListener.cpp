@@ -272,17 +272,29 @@ void PDPServerListener::on_new_cache_change_added(
             // Updated participant information case
             else
             {
+                auto old_metatraffic_locators = pdata->metatraffic_locators;
+                auto old_default_locators = pdata->default_locators;
+
                 // Update proxy
                 pdata->update_data(participant_data);
                 pdata->is_alive = true;
-                // Realease PDP mutex
+
+                bool locators_changed =
+                        !(pdata->metatraffic_locators.is_unicast_list_equal_to(old_metatraffic_locators)) ||
+                        !(pdata->default_locators.is_unicast_list_equal_to(old_default_locators));
+                ParticipantProxyData pdata_copy(*pdata);
+                // Release PDP mutex
                 lock.unlock();
 
                 // TODO: pending client liveliness management here
                 // Included form symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
                 if (pdp_server()->updateInfoMatchesEDP() && is_local)
                 {
-                    pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata, true);
+                    pdp_server()->mp_EDP->assignRemoteEndpoints(pdata_copy, true);
+                }
+                if (locators_changed)
+                {
+                    parent_pdp_->assignRemoteEndpoints(&pdata_copy, true);
                 }
             }
 

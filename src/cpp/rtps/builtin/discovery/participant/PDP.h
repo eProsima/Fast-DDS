@@ -295,7 +295,7 @@ public:
      */
     virtual void assignRemoteEndpoints(
             ParticipantProxyData* pdata,
-            bool updated_participant = false) = 0;
+            bool updated_participant) = 0;
 
     /**
      * Override to match additional endpoints to PDP. Like EDP or WLP.

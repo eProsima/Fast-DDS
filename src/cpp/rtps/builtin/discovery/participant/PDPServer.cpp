@@ -607,7 +607,7 @@ void PDPServer::match_reliable_pdp_endpoints(
 
 void PDPServer::assignRemoteEndpoints(
         ParticipantProxyData* pdata,
-        bool /*updated_participant*/)
+        bool updated_participant)
 {
     std::string part_type;
     {
@@ -617,8 +617,11 @@ void PDPServer::assignRemoteEndpoints(
         part_type = check_participant_type(pdata->properties);
         if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
         {
-            // Update DisvoveryDataBase
-            discovery_db_.add_server(pdata->guid.guidPrefix);
+            if (!updated_participant)
+            {
+                // Update DisvoveryDataBase
+                discovery_db_.add_server(pdata->guid.guidPrefix);
+            }
 
 #if HAVE_SECURITY
             if (!should_protect_discovery())
@@ -641,7 +644,7 @@ void PDPServer::assignRemoteEndpoints(
     }
 
     // Send the Data(p) to the client
-    if (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT)
+    if (!updated_participant && (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT))
     {
         send_own_pdp(pdata);
     }

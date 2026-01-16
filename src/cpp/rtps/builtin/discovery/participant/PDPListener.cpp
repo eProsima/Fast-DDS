@@ -214,7 +214,7 @@ void PDPListener::process_alive_data(
             // participant is discovered in the middle of BuiltinProtocols::initBuiltinProtocols, which will
             // create the first DATA(p) upon finishing, thus triggering the sent to all fixed and matched
             // readers anyways.
-            parent_pdp_->assignRemoteEndpoints(&old_data_copy);
+            parent_pdp_->assignRemoteEndpoints(&old_data_copy, false);
         }
         else
         {
