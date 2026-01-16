@@ -106,6 +106,7 @@ bool TypeLookupServiceSubscriber::setup_subscriber(
     //CREATE THE TOPIC
     std::ostringstream topic_name;
     topic_name << type_name << "_" << asio::ip::host_name() << "_" << domain_id_;
+    std::cout << "Creating topic for type: " << type_name << " with name " << topic_name.str() << std::endl;
     Topic* topic = participant_->create_topic(topic_name.str(), new_type.type_sup_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (topic == nullptr)
     {

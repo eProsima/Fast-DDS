@@ -173,6 +173,9 @@ void ReaderProxy::stop()
     next_expected_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
+
+    first_irrelevant_removed_ = SequenceNumber_t::unknown();
+    last_irrelevant_removed_ = SequenceNumber_t::unknown();
 }
 
 void ReaderProxy::disable_timers()
@@ -227,17 +230,32 @@ void ReaderProxy::add_change(
         const ChangeForReader_t& change,
         bool is_relevant)
 {
-    assert(change.getSequenceNumber() > changes_low_mark_);
+    SequenceNumber_t seq_num {change.getSequenceNumber()};
+    assert(seq_num > changes_low_mark_);
     assert(changes_for_reader_.empty() ? true :
-            change.getSequenceNumber() > changes_for_reader_.back().getSequenceNumber());
+            seq_num > changes_for_reader_.back().getSequenceNumber());
 
     // Irrelevant changes are not added to the collection
     if (!is_relevant)
     {
-        if ( !is_reliable_ &&
-                changes_low_mark_ + 1 == change.getSequenceNumber())
+        if (is_reliable_)
         {
-            changes_low_mark_ = change.getSequenceNumber();
+            if (!is_local_reader())
+            {
+                if (SequenceNumber_t::unknown() == first_irrelevant_removed_)
+                {
+                    first_irrelevant_removed_ = seq_num;
+                    last_irrelevant_removed_ = seq_num;
+                }
+                else if  (seq_num == last_irrelevant_removed_ + 1)
+                {
+                    last_irrelevant_removed_ = seq_num;
+                }
+            }
+        }
+        else if (changes_low_mark_ + 1 == seq_num)
+        {
+            changes_low_mark_ = seq_num;
         }
         return;
     }
@@ -245,7 +263,7 @@ void ReaderProxy::add_change(
     if (changes_for_reader_.push_back(change) == nullptr)
     {
         // This should never happen
-        EPROSIMA_LOG_ERROR(RTPS_READER_PROXY, "Error adding change " << change.getSequenceNumber()
+        EPROSIMA_LOG_ERROR(RTPS_READER_PROXY, "Error adding change " << seq_num
                                                                      << " to reader proxy " << guid());
         eprosima::fastdds::dds::Log::Flush();
         assert(false);
@@ -281,7 +299,7 @@ bool ReaderProxy::change_is_unsent(
         FragmentNumber_t& next_unsent_frag,
         SequenceNumber_t& gap_seq,
         const SequenceNumber_t& min_seq,
-        bool& need_reactivate_periodic_heartbeat) const
+        bool& need_reactivate_periodic_heartbeat)
 {
     if (seq_num <= changes_low_mark_ || changes_for_reader_.empty())
     {
@@ -326,6 +344,24 @@ bool ReaderProxy::change_is_unsent(
                     else
                     {
                         gap_seq = SequenceNumber_t::unknown();
+                    }
+                }
+
+                if (SequenceNumber_t::unknown() != first_irrelevant_removed_ &&
+                        SequenceNumber_t::unknown() != gap_seq)
+                {
+                    // Check if the hole is due to irrelevant changes removed without informing the reader
+                    if (first_irrelevant_removed_ <= gap_seq )
+                    {
+                        if (gap_seq == first_irrelevant_removed_)
+                        {
+                            first_irrelevant_removed_ = SequenceNumber_t::unknown();
+                            last_irrelevant_removed_ = SequenceNumber_t::unknown();
+                        }
+                        else if (gap_seq < last_irrelevant_removed_)
+                        {
+                            last_irrelevant_removed_ = gap_seq - 1;
+                        }
                     }
                 }
             }
@@ -436,6 +472,23 @@ bool ReaderProxy::requested_changes_set(
                     else if ((sit >= min_seq_in_history) && (sit > changes_low_mark_))
                     {
                         gap_builder.add(sit);
+
+                        if (SequenceNumber_t::unknown() != first_irrelevant_removed_)
+                        {
+                            // Check if the hole is due to irrelevant changes removed without informing the reader
+                            if (first_irrelevant_removed_ <= sit )
+                            {
+                                if (sit == first_irrelevant_removed_)
+                                {
+                                    first_irrelevant_removed_ = SequenceNumber_t::unknown();
+                                    last_irrelevant_removed_ = SequenceNumber_t::unknown();
+                                }
+                                else if (sit < last_irrelevant_removed_)
+                                {
+                                    last_irrelevant_removed_ = sit - 1;
+                                }
+                            }
+                        }
                     }
                 });
     }
