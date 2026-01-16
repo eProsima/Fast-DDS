@@ -708,17 +708,12 @@ void PDP::resetParticipantAnnouncement()
     }
 }
 
-void PDP::notify_and_maybe_ignore_new_participant(
+void PDP::notify_and_maybe_ignore_status_participant(
         ParticipantProxyData* pdata,
-        bool& should_be_ignored)
+        bool& should_be_ignored,
+        ParticipantDiscoveryStatus status)
 {
     should_be_ignored = false;
-
-    EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "New participant "
-            << pdata->guid << " at "
-            << "MTTLoc: " << pdata->metatraffic_locators
-            << " DefLoc:" << pdata->default_locators);
-
     RTPSParticipantListener* listener = getRTPSParticipant()->getListener();
     if (listener)
     {
@@ -727,7 +722,7 @@ void PDP::notify_and_maybe_ignore_new_participant(
 
             listener->on_participant_discovery(
                 getRTPSParticipant()->getUserRTPSParticipant(),
-                ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT,
+                status,
                 *pdata,
                 should_be_ignored);
         }
@@ -739,35 +734,35 @@ void PDP::notify_and_maybe_ignore_new_participant(
     }
 }
 
+void PDP::notify_and_maybe_ignore_new_participant(
+        ParticipantProxyData* pdata,
+        bool& should_be_ignored)
+{
+    EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "New participant "
+            << pdata->guid << " at "
+            << "MTTLoc: " << pdata->metatraffic_locators
+            << " DefLoc:" << pdata->default_locators);
+
+    notify_and_maybe_ignore_status_participant(
+        pdata,
+        should_be_ignored,
+        ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT);
+}
+
 void PDP::notify_and_maybe_ignore_updated_participant(
         ParticipantProxyData* pdata,
         bool& should_be_ignored)
 {
-    should_be_ignored = false;
 
     EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "Updated participant "
             << pdata->guid << " at "
             << "MTTLoc: " << pdata->metatraffic_locators
             << " DefLoc:" << pdata->default_locators);
 
-    RTPSParticipantListener* listener = getRTPSParticipant()->getListener();
-    if (listener)
-    {
-        {
-            std::lock_guard<std::mutex> cb_lock(callback_mtx_);
-
-            listener->on_participant_discovery(
-                getRTPSParticipant()->getUserRTPSParticipant(),
-                ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT,
-                *pdata,
-                should_be_ignored);
-        }
-
-        if (should_be_ignored)
-        {
-            getRTPSParticipant()->ignore_participant(pdata->guid.guidPrefix);
-        }
-    }
+    notify_and_maybe_ignore_status_participant(
+        pdata,
+        should_be_ignored,
+        ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT);
 }
 
 bool PDP::has_reader_proxy_data(

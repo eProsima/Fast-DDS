@@ -622,10 +622,34 @@ protected:
      */
     virtual void update_builtin_locators() = 0;
 
+    /**
+     * Notify the listener about a participant status change and check if it should be ignored.
+     *
+     * @param [in]      pdata Pointer to the ParticipantProxyData object.
+     * @param [in, out] should_be_ignored Output parameter indicating if the participant should be ignored.
+     * @param [in]      status The status of the participant discovery.
+     */
+    void notify_and_maybe_ignore_status_participant(
+            ParticipantProxyData* pdata,
+            bool& should_be_ignored,
+            ParticipantDiscoveryStatus status);
+
+    /**
+     * Notify the listener about a new participant and check if it should be ignored.
+     *
+     * @param [in]      pdata Pointer to the ParticipantProxyData object.
+     * @param [in, out] should_be_ignored Output parameter indicating if the participant should be ignored.
+     */
     void notify_and_maybe_ignore_new_participant(
             ParticipantProxyData* pdata,
             bool& should_be_ignored);
 
+    /**
+     * Notify the listener about a QOS modification and check if it should be ignored.
+     *
+     * @param [in]      pdata Pointer to the ParticipantProxyData object.
+     * @param [in, out] should_be_ignored Output parameter indicating if the participant should be ignored.
+     */
     void notify_and_maybe_ignore_updated_participant(
             ParticipantProxyData* pdata,
             bool& should_be_ignored);
