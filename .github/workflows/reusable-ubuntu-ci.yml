@@ -60,7 +60,7 @@ on:
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
-  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
+  colcon-build-default-cmake-args: '--debug-find -DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
   fastdds-python-branch: 'main'
   fastdds-docs-branch: 'master'
   shapes-demo-branch: 'master'
