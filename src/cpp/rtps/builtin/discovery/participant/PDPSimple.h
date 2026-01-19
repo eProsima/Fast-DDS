@@ -95,10 +95,11 @@ public:
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls
      * the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the ParticipantProxyData object.
+     * @param updated_participant Whether the participant is new or updated.
      */
     void assignRemoteEndpoints(
             ParticipantProxyData* pdata,
-            bool updated_participant = false) override;
+            bool updated_participant) override;
 
     /**
      * Remove remote endpoints from the participant discovery protocol

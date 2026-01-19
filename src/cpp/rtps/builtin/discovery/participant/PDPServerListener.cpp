@@ -258,7 +258,7 @@ void PDPServerListener::on_new_cache_change_added(
                 // DATA acknowledgement. Non-local SERVERs will also be connected
                 if (pdata && (is_local || (!is_client && participant_type_str != ParticipantType::SUPER_CLIENT)))
                 {
-                    pdp_server()->assignRemoteEndpoints(pdata);
+                    pdp_server()->assignRemoteEndpoints(pdata, false);
                 }
             }
             // Case ParticipantProxyData already exists but was known remotely and now must be local
@@ -267,7 +267,7 @@ void PDPServerListener::on_new_cache_change_added(
                 // Realease PDP mutex
                 lock.unlock();
 
-                pdp_server()->assignRemoteEndpoints(pdata);
+                pdp_server()->assignRemoteEndpoints(pdata, false);
             }
             // Updated participant information case
             else

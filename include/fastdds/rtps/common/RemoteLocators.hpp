@@ -202,7 +202,7 @@ struct RemoteLocatorList
     ResourceLimitedVector<Locator_t> multicast;
 };
 
-/*
+/**
  * multicast max_size , multicast size , unicast max_size , unicast size ( locator[0] , locator[1] , ... )
  */
 inline std::ostream& operator <<(
@@ -305,6 +305,9 @@ inline std::istream& operator >>(
     return input;
 }
 
+/**
+ * Equality operator between two RemoteLocatorList objects.
+ */
 inline bool operator ==(
         const RemoteLocatorList& left,
         const RemoteLocatorList& right)

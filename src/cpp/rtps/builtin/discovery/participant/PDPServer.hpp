@@ -152,7 +152,7 @@ public:
      */
     void assignRemoteEndpoints(
             fastdds::rtps::ParticipantProxyData* pdata,
-            bool updated_participant = false) override;
+            bool updated_participant) override;
     void removeRemoteEndpoints(
             fastdds::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(

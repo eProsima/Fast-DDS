@@ -122,7 +122,7 @@ public:
      */
     void assignRemoteEndpoints(
             ParticipantProxyData* pdata,
-            bool updated_participant = false) override;
+            bool updated_participant) override;
     void removeRemoteEndpoints(
             ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
