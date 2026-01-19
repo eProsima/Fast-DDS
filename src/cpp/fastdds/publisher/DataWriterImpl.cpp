@@ -2124,11 +2124,10 @@ ReturnCode_t DataWriterImpl::check_qos(
             qos.resource_limits().max_samples_per_instance > 0 &&
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" << qos.resource_limits().max_samples_per_instance <<
-                "'. Consistency rule: depth <= max_samples_per_instance." <<
-                " Effectively using max_samples_per_instance as depth.");
+        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK,
+                "HISTORY DEPTH '" << qos.history().depth << "' is higher than max_samples_per_instance " <<
+                "'" << qos.resource_limits().max_samples_per_instance << "'.");
+        return RETCODE_INCONSISTENT_POLICY;
     }
     return RETCODE_OK;
 }
