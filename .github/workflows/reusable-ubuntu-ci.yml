@@ -99,6 +99,11 @@ jobs:
           sudo rm -rf /opt/microsoft/powershell || true
           which pwsh || true
 
+      - name: Disable PowerShell detection for colcon (persist)
+        shell: bash
+        run: |
+          echo "PSModulePath=" >> "$GITHUB_ENV"
+
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
 
