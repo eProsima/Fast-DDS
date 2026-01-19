@@ -3309,19 +3309,22 @@ RTPSParticipantImpl::get_entity_connections(
             statistic_locators.reserve((*pit)->metatraffic_locators.get_multicast().size() +
                     (*pit)->metatraffic_locators.get_unicast().size());
 
-            std::for_each((*pit)->metatraffic_locators.get_multicast().begin(), (*pit)->metatraffic_locators.get_multicast().end(),
+            std::for_each((*pit)->metatraffic_locators.get_multicast().begin(),
+                    (*pit)->metatraffic_locators.get_multicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
-            std::for_each((*pit)->metatraffic_locators.get_unicast().begin(), (*pit)->metatraffic_locators.get_unicast().end(),
+            std::for_each((*pit)->metatraffic_locators.get_unicast().begin(),
+                    (*pit)->metatraffic_locators.get_unicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
                     });
 
-            std::for_each((*pit)->default_locators.get_multicast().begin(), (*pit)->default_locators.get_multicast().end(),
+            std::for_each((*pit)->default_locators.get_multicast().begin(),
+                    (*pit)->default_locators.get_multicast().end(),
                     [&statistic_locators](const Locator_t& locator)
                     {
                         statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));

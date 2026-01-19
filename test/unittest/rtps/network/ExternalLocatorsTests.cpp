@@ -372,7 +372,11 @@ struct ExternalAddress
             const std::string& address,
             uint32_t metatraffic_port,
             uint32_t user_port)
-        : ExternalAddress(address, 24, metatraffic_port, user_port)
+        : ExternalAddress(
+                address,
+                24,
+                metatraffic_port,
+                user_port)
     {
     }
 
