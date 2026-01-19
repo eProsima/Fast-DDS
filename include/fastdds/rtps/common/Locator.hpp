@@ -372,7 +372,8 @@ inline std::ostream& operator <<(
     // Stream port
     if (loc.kind == LOCATOR_KIND_TCPv4 || loc.kind == LOCATOR_KIND_TCPv6)
     {
-        output << "]:" << std::to_string(IPLocator::getPhysicalPort(loc)) << "-" << std::to_string(IPLocator::getLogicalPort(
+        output << "]:" << std::to_string(IPLocator::getPhysicalPort(loc)) << "-" <<
+            std::to_string(IPLocator::getLogicalPort(
                     loc));
     }
     else
