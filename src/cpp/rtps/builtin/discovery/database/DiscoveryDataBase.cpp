@@ -1779,7 +1779,8 @@ LocatorList DiscoveryDataBase::participant_metatraffic_locators(
     auto part_it = participants_.find(participant_guid_prefix);
     if (part_it != participants_.end())
     {
-        for (auto locator : part_it->second.metatraffic_locators().get_unicast())
+        RemoteLocatorList metatraffic_locators = part_it->second.metatraffic_locators();
+        for (auto locator : metatraffic_locators.get_unicast())
         {
             locators.push_back(locator);
         }
