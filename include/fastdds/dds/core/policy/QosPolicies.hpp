@@ -1729,27 +1729,27 @@ public:
      * @brief Specifies the maximum number of data-samples the DataWriter (or DataReader) can manage across all the
      * instances associated with it. Represents the maximum samples the middleware can store for any one DataWriter
      * (or DataReader). <br>
-     * Value less or equal to 0 means infinite resources. By default, 5000.
+     * Value less or equal to 0 means infinite resources. By default, LENGTH_UNLIMITED.
      *
      * @warning It is inconsistent if `max_samples < (max_instances * max_samples_per_instance)`.
      */
     int32_t max_samples;
     /**
      * @brief Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
-     * Value less or equal to 0 means infinite resources. By default, 10.
+     * Value less or equal to 0 means infinite resources. By default, LENGTH_UNLIMITED.
      *
      * @warning It is inconsistent if `(max_instances * max_samples_per_instance) > max_samples`.
      */
     int32_t max_instances;
     /**
      * @brief Represents the maximum number of samples of any one instance a DataWriter(or DataReader) can manage. <br>
-     * Value less or equal to 0 means infinite resources. By default, 400.
+     * Value less or equal to 0 means infinite resources. By default, LENGTH_UNLIMITED.
      *
      * @warning It is inconsistent if `(max_instances * max_samples_per_instance) > max_samples`.
      */
     int32_t max_samples_per_instance;
     /**
-     * @brief Number of samples currently allocated. <br>
+     * @brief Number of samples initially allocated. <br>
      * By default, 100.
      */
     int32_t allocated_samples;
@@ -1765,9 +1765,9 @@ public:
     FASTDDS_EXPORTED_API ResourceLimitsQosPolicy()
         : Parameter_t(PID_RESOURCE_LIMITS, 4 * 5)
         , QosPolicy(false)
-        , max_samples(5000)
-        , max_instances(10)
-        , max_samples_per_instance(400)
+        , max_samples(LENGTH_UNLIMITED)
+        , max_instances(LENGTH_UNLIMITED)
+        , max_samples_per_instance(LENGTH_UNLIMITED)
         , allocated_samples(100)
         , extra_samples(1)
     {
