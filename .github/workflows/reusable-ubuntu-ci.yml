@@ -88,6 +88,17 @@ jobs:
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
 
+      - name: Remove powershell
+        shell: bash
+        run: |
+          set -euxo pipefail
+
+          which pwsh || true
+          sudo apt-get purge -y powershell || true
+          sudo apt-get autoremove -y
+          sudo rm -rf /opt/microsoft/powershell || true
+          which pwsh || true
+
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
 
