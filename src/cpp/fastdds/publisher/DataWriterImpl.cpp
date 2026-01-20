@@ -2149,19 +2149,19 @@ ReturnCode_t DataWriterImpl::check_qos(
 ReturnCode_t DataWriterImpl::check_allocation_consistency(
         const DataWriterQos& qos)
 {
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
     if ((qos.resource_limits().max_samples > 0) &&
             (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be greater than max_instances * max_samples_per_instance");
-        return RETCODE_INCONSISTENT_POLICY;
-    }
-    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
-            (qos.resource_limits().max_samples > 0))
-    {
-        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
-                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
         return RETCODE_INCONSISTENT_POLICY;
     }
     return RETCODE_OK;

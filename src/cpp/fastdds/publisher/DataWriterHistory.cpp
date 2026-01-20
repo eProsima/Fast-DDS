@@ -27,6 +27,7 @@
 #include <fastdds/rtps/common/Time_t.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/history/HistoryAttributesExtension.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 
 namespace eprosima {
@@ -51,10 +52,17 @@ HistoryAttributes DataWriterHistory::to_history_attributes(
         max_samples = history_qos.depth;
         if (topic_kind != NO_KEY)
         {
-            max_samples *= resource_limits_qos.max_instances;
+            if (0 < resource_limits_qos.max_instances)
+            {
+                max_samples *= resource_limits_qos.max_instances;
+            }
+            else
+            {
+                max_samples = LENGTH_UNLIMITED;
+            }
         }
 
-        initial_samples = std::min(initial_samples, max_samples);
+        initial_samples = get_min_max_samples(initial_samples, max_samples);
     }
 
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);

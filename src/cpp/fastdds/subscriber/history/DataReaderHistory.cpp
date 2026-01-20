@@ -96,9 +96,16 @@ DataReaderHistory::DataReaderHistory(
     {
         resource_limited_qos_.max_instances = 1;
         resource_limited_qos_.max_samples_per_instance = resource_limited_qos_.max_samples;
-        key_changes_allocation_.initial = resource_limited_qos_.allocated_samples;
-        key_changes_allocation_.maximum = resource_limited_qos_.max_samples;
 
+        if (0 < resource_limited_qos_.allocated_samples)
+        {
+            key_changes_allocation_.initial = resource_limited_qos_.allocated_samples;
+        }
+
+        if (resource_limited_qos_.max_samples_per_instance < std::numeric_limits<int32_t>::max())
+        {
+            key_changes_allocation_.maximum = resource_limited_qos_.max_samples_per_instance;
+        }
         instances_.emplace(c_InstanceHandle_Unknown,
                 std::make_shared<DataReaderInstance>(key_changes_allocation_, key_writers_allocation_));
         data_available_instances_[c_InstanceHandle_Unknown] = instances_[c_InstanceHandle_Unknown];

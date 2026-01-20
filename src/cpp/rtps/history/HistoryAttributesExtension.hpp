@@ -49,6 +49,21 @@ static inline ResourceLimitedContainerConfig resource_limits_from_history(
         };
 }
 
+/**
+ * Get the minimum value between two sample counts, considering that <= 0 means unlimited.
+ *
+ * @param a First sample count.
+ * @param b Second sample count.
+ *
+ * @return Minimum sample count.
+ */
+static constexpr int32_t get_min_max_samples(
+        int32_t a,
+        int32_t b)
+{
+    return (0 < a && 0 < b) ? (a < b ? a : b) : (0 < a ? a : b);
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
