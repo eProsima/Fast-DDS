@@ -88,21 +88,21 @@ jobs:
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
 
-      - name: Remove powershell
-        shell: bash
-        run: |
-          set -euxo pipefail
+      # - name: Remove powershell
+      #   shell: bash
+      #   run: |
+      #     set -euxo pipefail
 
-          which pwsh || true
-          sudo apt-get purge -y powershell || true
-          sudo apt-get autoremove -y
-          sudo rm -rf /opt/microsoft/powershell || true
-          which pwsh || true
+      #     which pwsh || true
+      #     sudo apt-get purge -y powershell || true
+      #     sudo apt-get autoremove -y
+      #     sudo rm -rf /opt/microsoft/powershell || true
+      #     which pwsh || true
 
-      - name: Disable PowerShell detection for colcon (persist)
-        shell: bash
-        run: |
-          echo "PSModulePath=" >> "$GITHUB_ENV"
+      # - name: Disable PowerShell detection for colcon (persist)
+      #   shell: bash
+      #   run: |
+      #     echo "PSModulePath=" >> "$GITHUB_ENV"
 
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -132,7 +132,7 @@ jobs:
           upgrade: false
 
       - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@fix/powershell_error
 
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
