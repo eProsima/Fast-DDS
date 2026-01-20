@@ -132,7 +132,7 @@ jobs:
           upgrade: false
 
       - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@fix/powershell_error
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@fix/docs
 
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
@@ -172,7 +172,7 @@ jobs:
       # we disable the compilation of the tools here and enable it in the Fast DDS test job.
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -259,7 +259,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -270,7 +270,7 @@ jobs:
 
       - name: Colcon test
         id: test
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -354,7 +354,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select fastdds_python
@@ -427,7 +427,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -438,7 +438,7 @@ jobs:
 
       - name: Colcon test
         id: python_test
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -537,7 +537,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -549,7 +549,7 @@ jobs:
       - name: Colcon test
         id: docs_test
         if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -646,7 +646,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -725,7 +725,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -737,7 +737,7 @@ jobs:
       - name: Colcon test
         id: discovery_server_test
         if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/discovery_server.meta
           colcon_test_args: ${{ inputs.colcon-args }}
@@ -816,7 +816,7 @@ jobs:
           ref: 1.4.0
 
       - name: OSRF testing tools build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select osrf_testing_tools_cpp
@@ -826,7 +826,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Profilling tests build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-up-to fastdds
@@ -843,7 +843,7 @@ jobs:
 
       - name: No security colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -858,7 +858,7 @@ jobs:
           rm -rf build install log
 
       - name: No statistics colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -874,7 +874,7 @@ jobs:
 
       # No .metas file, so FASTDDS_ENFORCE_LOG_INFO is set OFF by default. Missed important args are manually included
       - name: No enforcing log info colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ''
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -889,7 +889,7 @@ jobs:
           rm -rf build install log
 
       - name: No shared libs colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}
@@ -904,7 +904,7 @@ jobs:
           rm -rf build install log
 
       - name: Null dereference colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: '${{ inputs.colcon-args }} --packages-up-to fastdds'
@@ -920,7 +920,7 @@ jobs:
           rm -rf build install log
 
       - name: Vanilla colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -931,7 +931,7 @@ jobs:
           rm -rf build install log
 
       - name: No TLS colcon build
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }}

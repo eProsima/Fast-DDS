@@ -134,7 +134,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -212,7 +212,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -225,7 +225,7 @@ jobs:
       - name: Colcon test
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
@@ -314,7 +314,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -327,7 +327,7 @@ jobs:
       - name: Colcon test
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
@@ -448,7 +448,7 @@ jobs:
 
       - name: Colcon build
         continue-on-error: false
-        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@fix/docs
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/tsan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
@@ -461,7 +461,7 @@ jobs:
       - name: Colcon test
         id: test
         continue-on-error: true
-        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@fix/docs
         with:
           colcon_args_default: ''
           colcon_test_args: ${{ inputs.colcon_test_args }}
