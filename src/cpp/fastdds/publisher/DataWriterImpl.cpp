@@ -338,6 +338,20 @@ ReturnCode_t DataWriterImpl::enable()
             datasharing.add_domain_id(utils::default_domain_id());
         }
         w_att.endpoint.set_data_sharing_configuration(datasharing);
+
+        // Update pool config for KEEP_ALL when max_samples is infinite
+        if ((0 == pool_config_.maximum_size) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
+        {
+            // Override infinite with old default value for max_samples + extra samples
+            pool_config_.maximum_size = 5000;
+            if (0 < qos_.resource_limits().extra_samples)
+            {
+                pool_config_.maximum_size += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
+            }
+            EPROSIMA_LOG_ERROR(DATA_WRITER,
+                    "DataWriter with KEEP_ALL history and infinite max_samples is not compatible with DataSharing. "
+                    "Setting max_samples to " << pool_config_.maximum_size);
+        }
     }
     else
     {
