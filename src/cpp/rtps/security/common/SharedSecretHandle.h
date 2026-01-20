@@ -21,6 +21,7 @@
 #include <rtps/security/common/Handle.h>
 
 #include <vector>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
