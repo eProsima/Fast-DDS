@@ -49,9 +49,10 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
+namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::dds;
 using ::testing::_;
 
 class FooType
@@ -278,8 +279,8 @@ public:
     {
         return []()->uint32_t
                {
-                // This has to be > 0 in order to activate another branch in the code
-                return 100;
+                   // This has to be > 0 in order to activate another branch in the code
+                   return 100;
                };
     }
 
@@ -1371,7 +1372,7 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestampAndPayload)
     DataWriter* instance_datawriter;
     create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
 
-    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
+    eprosima::fastrtps::Time_t ts{ 0, 1 };
 
     // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
@@ -1497,7 +1498,7 @@ TEST(DataWriterTests, DisposeWithPayload)
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
-    instance_type_with_payload.getKey(&data, &handle);
+    instance_type_with_payload.get_key(&data, &handle);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
     // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
@@ -1599,7 +1600,7 @@ TEST(DataWriterTests, DisposeWithTimestampAndPayload)
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.getKey(&data, &handle);
+    instance_type.get_key(&data, &handle);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps

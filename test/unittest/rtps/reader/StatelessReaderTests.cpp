@@ -16,27 +16,26 @@
 #include <gtest/gtest.h>
 
 // Header for the unit we are testing
-#include <rtps/reader/StatelessReader.hpp>
+#include <fastdds/rtps/reader/StatelessReader.h>
 
-#include <fastdds/config.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 
-#include <fastdds/rtps/RTPSDomain.hpp>
-#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
-#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/builtin/data/TopicDescription.hpp>
-#include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/rtps/history/ReaderHistory.hpp>
-#include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/reader/RTPSReader.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <rtps/builtin/data/WriterProxyData.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #ifdef FASTDDS_STATISTICS
 
@@ -52,14 +51,17 @@ void register_types_type_objects()
 
 namespace eprosima {
 
-namespace fastdds {
-namespace dds {
+namespace fastrtps {
+namespace rtps {
 
 const InstanceHandle_t HANDLE_NIL;
 
-} // namespace dds
+} // namespace rtps
 
 namespace rtps {
+
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::dds;
 
 /* Regression test for: https://github.com/eProsima/Fast-DDS/pull/6217
    Test that checks that non empty changes (dispose, unregister, ...) with empty
@@ -92,11 +94,12 @@ TEST(StatelessReaderTests, EmptyPayloadUnregisterDisposeProcessing)
     ASSERT_NE(writer, nullptr);
 
     // Register both endpoints
-    TopicDescription topic_desc;
-    topic_desc.type_name = "string";
-    topic_desc.topic_name = "topic";
-    part->register_reader(reader, topic_desc, fastdds::dds::ReaderQos());
-    part->register_writer(writer, topic_desc, fastdds::dds::WriterQos());
+    TopicAttributes topic_desc;
+    topic_desc.topicKind = rtps::WITH_KEY;
+    topic_desc.topicName = "topic";
+    topic_desc.topicDataType = "string";
+    part->registerReader(reader, topic_desc, fastdds::dds::ReaderQos());
+    part->registerWriter(writer, topic_desc, fastdds::dds::WriterQos());
 
     // After registration, the writer should be matched
     auto writer_guid = writer->getGuid();
@@ -110,19 +113,19 @@ TEST(StatelessReaderTests, EmptyPayloadUnregisterDisposeProcessing)
     // Alive change is not actually processed, but the method returns true because
     // the sample is considered non relevant
     change.kind = ChangeKind_t::ALIVE;
-    EXPECT_TRUE(uut->process_data_msg(&change));
+    EXPECT_TRUE(uut->processDataMsg(&change));
     change.sequenceNumber++;
     // Dispose is processed
     change.kind = ChangeKind_t::NOT_ALIVE_DISPOSED;
-    EXPECT_TRUE(uut->process_data_msg(&change));
+    EXPECT_TRUE(uut->processDataMsg(&change));
     change.sequenceNumber++;
     // Unregistered is processed
     change.kind = ChangeKind_t::NOT_ALIVE_UNREGISTERED;
-    EXPECT_TRUE(uut->process_data_msg(&change));
+    EXPECT_TRUE(uut->processDataMsg(&change));
     change.sequenceNumber++;
     // Diposed and unregistered is processed
     change.kind = ChangeKind_t::NOT_ALIVE_DISPOSED_UNREGISTERED;
-    EXPECT_TRUE(uut->process_data_msg(&change));
+    EXPECT_TRUE(uut->processDataMsg(&change));
     change.sequenceNumber++;
 
     // Destroy the writer
