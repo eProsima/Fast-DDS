@@ -177,8 +177,6 @@ target_link_libraries(WriterProxyAcknackTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(WriterProxyAcknackTests)
-<<<<<<< HEAD
-=======
 
 ###########################################################################
 # StatefulReaderTests
@@ -705,4 +703,3 @@ target_link_libraries(StatelessReaderTests
     eProsima_atomic
     )
 gtest_discover_tests(StatelessReaderTests)
->>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))

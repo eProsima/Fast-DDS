@@ -642,9 +642,6 @@ bool StatefulReader::processDataMsg(
                 }
                 datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
             }
-<<<<<<< HEAD
-            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
-=======
             else if (change->serializedPayload.length == 0 && change->kind != ChangeKind_t::ALIVE &&
                     change->instanceHandle.isDefined())
             {
@@ -655,8 +652,7 @@ bool StatefulReader::processDataMsg(
                 // here
                 change_to_add->serializedPayload.length = 0;
             }
-            else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
->>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))
+            else if (payload_pool_->get_payload(change->serializedPayload, payload_owner, *change_to_add))
             {
                 change->payload_owner(payload_owner);
             }
@@ -675,14 +671,10 @@ bool StatefulReader::processDataMsg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
-<<<<<<< HEAD
-                change_to_add->payload_owner()->release_payload(*change_to_add);
-=======
-                if (change_to_add->serializedPayload.payload_owner)
+                if (change_to_add->payload_owner())
                 {
-                    change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
+                    change_to_add->payload_owner()->release_payload(*change_to_add);
                 }
->>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))
                 change_pool_->release_cache(change_to_add);
                 return false;
             }

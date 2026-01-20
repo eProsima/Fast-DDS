@@ -261,18 +261,7 @@ public:
             fastrtps::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
-<<<<<<< HEAD
         ihandle->value[0] = 1;
-=======
-        return true;
-    }
-
-    bool compute_key(
-            const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
-            bool /*force_md5*/) override
-    {
-        ihandle.value[0] = 1;
         return true;
     }
 
@@ -283,12 +272,15 @@ class NonEmptyPayloadInstanceTopicDataTypeMock : public InstanceTopicDataTypeMoc
 {
 public:
 
-    uint32_t calculate_serialized_size(
-            const void* const /*data*/,
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
-        // This has to be > 0 in order to activate another branch in the code
-        return 100;
+        return []()->uint32_t
+               {
+                // This has to be > 0 in order to activate another branch in the code
+                return 100;
+               };
     }
 
 };
@@ -302,28 +294,18 @@ public:
     ComputeKeyFalseDefinedInstanceDataTypeMock()
         : InstanceTopicDataTypeMock()
     {
-        max_serialized_type_size = 4u;
-        is_compute_key_provided = true;
-        set_name("unknowninstancefootype");
+        m_typeSize = 4u;
+        m_isGetKeyDefined = false;
+        setName("unknowninstancefootype");
     }
 
-    bool compute_key(
-            fastdds::rtps::SerializedPayload_t& /*payload*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
         // Setting instance as valid
-        ihandle.value[0] = 1;
-        return false;
-    }
-
-    bool compute_key(
-            const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
-            bool /*force_md5*/) override
-    {
-        // Setting instance as valid
-        ihandle.value[0] = 1;
+        ihandle->value[0] = 1;
         return false;
     }
 
@@ -339,28 +321,18 @@ public:
     ComputeKeyTrueDefinedInstanceDataTypeMock()
         : InstanceTopicDataTypeMock()
     {
-        max_serialized_type_size = 4u;
-        is_compute_key_provided = true;
-        set_name("unknowninstancefootype");
+        m_typeSize = 4u;
+        m_isGetKeyDefined = true;
+        setName("unknowninstancefootype");
     }
 
-    bool compute_key(
-            fastdds::rtps::SerializedPayload_t& /*payload*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
+    bool getKey(
+            void*  /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
         // Setting instance as valid
-        ihandle.value[0] = 1;
-        return true;
-    }
-
-    bool compute_key(
-            const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
-            bool /*force_md5*/) override
-    {
-        // Setting instance as valid
-        ihandle.value[0] = 1;
+        ihandle->value[0] = 1;
         return true;
     }
 
@@ -376,28 +348,18 @@ public:
     ComputeKeyFalseUndefinedInstanceDataTypeMock()
         : InstanceTopicDataTypeMock()
     {
-        max_serialized_type_size = 4u;
-        is_compute_key_provided = true;
-        set_name("unknowninstancefootype");
+        m_typeSize = 4u;
+        m_isGetKeyDefined = false;
+        setName("unknowninstancefootype");
     }
 
-    bool compute_key(
-            fastdds::rtps::SerializedPayload_t& /*payload*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
+    bool getKey(
+            void*  /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
         // Setting instance as invalid
-        ihandle.clear();
-        return false;
-    }
-
-    bool compute_key(
-            const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
-            bool /*force_md5*/) override
-    {
-        // Setting instance as invalid
-        ihandle.clear();
+        ihandle->clear();
         return false;
     }
 
@@ -413,29 +375,18 @@ public:
     ComputeKeyTrueUndefinedInstanceDataTypeMock()
         : InstanceTopicDataTypeMock()
     {
-        max_serialized_type_size = 4u;
-        is_compute_key_provided = true;
-        set_name("unknowninstancefootype");
+        m_typeSize = 4u;
+        m_isGetKeyDefined = true;
+        setName("unknowninstancefootype");
     }
 
-    bool compute_key(
-            fastdds::rtps::SerializedPayload_t& /*payload*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
             bool /*force_md5*/) override
     {
         // Setting instance as invalid
-        ihandle.clear();
-        return true;
-    }
-
-    bool compute_key(
-            const void* const /*data*/,
-            fastdds::rtps::InstanceHandle_t& ihandle,
-            bool /*force_md5*/) override
-    {
-        // Setting instance as invalid
-        ihandle.clear();
->>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))
+        ihandle->clear();
         return true;
     }
 
@@ -1315,27 +1266,27 @@ TEST(DataWriterTests, UnregisterInstanceWithPayload)
     create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
 
     // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->enable());
-    EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->unregister_instance(nullptr, handle));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->unregister_instance(nullptr, handle));
 
 #if !defined(NDEBUG)
     // 4. Calling unregister_instance with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance(&data,
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance(&data,
             instance_datawriter->get_instance_handle()));
 #endif // NDEBUG
 
-    // 5. Calling unregister_instance with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance(&data, handle));
+    // 5. Calling unregister_instance with a key not yet registered returns ReturnCode_t::RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance(&data, handle));
 
-    // 6. Calling unregister_instance with a valid key returns RETCODE_OK
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
-    EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
+    // 6. Calling unregister_instance with a valid key returns ReturnCode_t::RETCODE_OK
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
 
-    // 7. Calling unregister_instance with a valid InstanceHandle also returns RETCODE_OK
+    // 7. Calling unregister_instance with a valid InstanceHandle also returns ReturnCode_t::RETCODE_OK
     data.message("HelloWorld_1");
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
-    instance_type->compute_key(&data, handle);
-    EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
+    instance_type->getKey(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
 
     // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
     // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
@@ -1423,37 +1374,37 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestampAndPayload)
     eprosima::fastdds::dds::Time_t ts{ 0, 1 };
 
     // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->enable());
-    EXPECT_EQ(RETCODE_BAD_PARAMETER,
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(nullptr, handle, ts));
 
 #if !defined(NDEBUG)
     // 4. Calling unregister_instance with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance_w_timestamp(&data,
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance_w_timestamp(&data,
             instance_datawriter->get_instance_handle(), ts));
 #endif // NDEBUG
 
     // 5. Calling unregister_instance with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET,
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
-    // 6. Calling unregister_instance with a valid key returns RETCODE_OK
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    // 6. Calling unregister_instance with a valid key returns ReturnCode_t::RETCODE_OK
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
-    // 7. Calling unregister_instance with a valid InstanceHandle also returns RETCODE_OK
+    // 7. Calling unregister_instance with a valid InstanceHandle also returns ReturnCode_t::RETCODE_OK
     data.message("HelloWorld_1");
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.compute_key(&data, handle);
-    EXPECT_EQ(RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    instance_type.get_key(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    ts = eprosima::fastdds::dds::c_TimeInfinite;
-    EXPECT_EQ(RETCODE_BAD_PARAMETER,
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    ts = eprosima::fastrtps::c_TimeInfinite;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
-    ts = eprosima::fastdds::dds::c_TimeInvalid;
-    EXPECT_EQ(RETCODE_BAD_PARAMETER,
+    ts = eprosima::fastrtps::c_TimeInvalid;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
             instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
 
     // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
@@ -1528,27 +1479,26 @@ TEST(DataWriterTests, DisposeWithPayload)
     create_writer_for_non_empty_payload_instance_test(instance_datawriter_with_payload, &instance_type_with_payload);
 
     // 1. Calling dispose with an invalid sample returns RETCODE_BAD_PARAMETER
-    ASSERT_EQ(RETCODE_OK, instance_datawriter_with_payload->enable());
-    EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter_with_payload->dispose(nullptr, handle));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter_with_payload->dispose(nullptr, handle));
 
 #if !defined(NDEBUG)
     // 4. Calling dispose with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter_with_payload->dispose(&data,
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter_with_payload->dispose(&data,
             instance_datawriter_with_payload->get_instance_handle()));
 #endif // NDEBUG
 
     // 5. Calling dispose with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter_with_payload->dispose(&data, handle));
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter_with_payload->dispose(&data, handle));
 
     // 6. Calling dispose with a valid key returns RETCODE_OK
-    ASSERT_EQ(RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
-    EXPECT_EQ(RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
-
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
-    ASSERT_EQ(RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
-    instance_type_with_payload.compute_key(&data, handle);
-    EXPECT_EQ(RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
+    instance_type_with_payload.getKey(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
     // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
 }
@@ -1627,37 +1577,37 @@ TEST(DataWriterTests, DisposeWithTimestampAndPayload)
     DataWriter* instance_datawriter;
     create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
 
-    eprosima::fastdds::dds::Time_t ts{ 0, 1 };
+    eprosima::fastrtps::Time_t ts{ 0, 1 };
 
     // 3. Calling dispose with an invalid sample returns RETCODE_BAD_PARAMETER
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->enable());
-    EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(nullptr, handle, ts));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(nullptr, handle, ts));
 
 #if !defined(NDEBUG)
     // 4. Calling dispose with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data,
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data,
             instance_datawriter->get_instance_handle(), ts));
 #endif // NDEBUG
 
     // 5. Calling dispose with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
-    EXPECT_EQ(RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // 6. Calling dispose with a valid key returns RETCODE_OK
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    EXPECT_EQ(RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
     data.message("HelloWorld_1");
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    instance_type.compute_key(&data, handle);
-    EXPECT_EQ(RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    instance_type.getKey(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // 8. Check invalid timestamps
-    ASSERT_EQ(RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
-    ts = eprosima::fastdds::dds::c_TimeInfinite;
-    EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
-    ts = eprosima::fastdds::dds::c_TimeInvalid;
-    EXPECT_EQ(RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    ts = eprosima::fastrtps::c_TimeInfinite;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+    ts = eprosima::fastrtps::c_TimeInvalid;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
 
     // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
     // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).

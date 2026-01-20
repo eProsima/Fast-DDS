@@ -974,47 +974,32 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-<<<<<<< HEAD
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
-        {
-            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
-        }
-
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload, data_representation_))
-        {
-            EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
-            return_payload_to_pool(payload);
-            return ReturnCode_t::RETCODE_ERROR;
-=======
-        uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
-            data, data_representation_);
         // Initialize payload to null state
-        payload.length = 0;
-        payload.max_size = 0;
-        payload.data = nullptr;
+        payload.payload.length = 0;
+        payload.payload.max_size = 0;
+        payload.payload.data = nullptr;
         payload.payload_owner = nullptr;
         bool should_serialize = (change_kind == ALIVE);
         if (should_serialize)
         {
             // Request payload from pool and proceed with serialization
-            if (!get_free_payload_from_pool(payload_size, payload))
+            if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
             {
                 // ALIVE changes need a payload and serialization
-                return RETCODE_OUT_OF_RESOURCES;
+                return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
             }
 
-            if (!type_->serialize(data, payload, data_representation_))
+            if (!type_->serialize(data, &payload.payload, data_representation_))
             {
                 EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
-                payload_pool_->release_payload(payload);
-                return RETCODE_ERROR;
+                return_payload_to_pool(payload);
+                return ReturnCode_t::RETCODE_ERROR;
             }
         }
         else
         {
             // If not serializable (UNREGISTER or DISPOSE), the handle must be defined
             assert(handle.isDefined());
->>>>>>> 47bfac03a (Allow empty payloads in dispose/unregister operations (#6217))
         }
     }
 
