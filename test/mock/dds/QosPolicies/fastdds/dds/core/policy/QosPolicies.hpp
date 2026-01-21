@@ -955,9 +955,9 @@ public:
 
 /**
  * Class ResourceLimitsQosPolicy, defines the ResourceLimits for the Writer or the Reader.
- * max_samples: Default value 5000.
- * max_instances: Default value 10.
- * max_samples_per_instance: Default value 400.
+ * max_samples: Default value LENGTH_UNLIMITED.
+ * max_instances: Default value LENGTH_UNLIMITED.
+ * max_samples_per_instance: Default value LENGTH_UNLIMITED.
  * allocated_samples: Default value 100.
  */
 class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
@@ -973,9 +973,9 @@ public:
     FASTDDS_EXPORTED_API ResourceLimitsQosPolicy()
         : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
         , QosPolicy(false)
-        , max_samples(5000)
-        , max_instances(10)
-        , max_samples_per_instance(400)
+        , max_samples(LENGTH_UNLIMITED)
+        , max_instances(LENGTH_UNLIMITED)
+        , max_samples_per_instance(LENGTH_UNLIMITED)
         , allocated_samples(100)
     {
     }
