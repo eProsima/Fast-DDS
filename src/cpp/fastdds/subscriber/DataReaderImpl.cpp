@@ -1623,7 +1623,7 @@ ReturnCode_t DataReaderImpl::check_qos(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "HISTORY DEPTH '" << qos.history().depth <<
                 "' is inconsistent with max_samples_per_instance: '" <<
-                            qos.resource_limits().max_samples_per_instance <<
+                qos.resource_limits().max_samples_per_instance <<
                 "'. Consistency rule: depth <= max_samples_per_instance." <<
                 " Effectively using max_samples_per_instance as depth.");
     }
