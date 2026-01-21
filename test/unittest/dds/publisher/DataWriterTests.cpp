@@ -274,6 +274,12 @@ class NonEmptyPayloadInstanceTopicDataTypeMock : public InstanceTopicDataTypeMoc
 public:
 
     std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override
+    {
+        return InstanceTopicDataTypeMock::getSerializedSizeProvider(data);
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
             void* /*data*/,
             DataRepresentationId_t /*data_representation*/) override
     {
