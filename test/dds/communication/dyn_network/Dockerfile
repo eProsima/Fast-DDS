@@ -38,22 +38,4 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install apt dependencies
 RUN apt-get update && apt-get install --yes python3 python3-pip && rm -rf /var/lib/apt/lists/*
 
-<<<<<<< HEAD:test/dds/communication/dyn_network/Dockerfile
 RUN pip3 install psutil
-=======
-# Install required python modules
-RUN rm /usr/lib/python*/EXTERNALLY-MANAGED && \
-    pip3 install \
-    colcon-common-extensions \
-    vcstool
-
-# Install apt dependencies
-RUN apt-get update && apt-get install --yes --no-install-recommends \
-    # Fast DDS dependencies
-    libssl-dev \
-    libasio-dev \
-    libtinyxml2-dev \
-    openssl
-
-ENTRYPOINT ["/bin/bash", "-c", "cd && colcon build --event-handlers=console_direct+ --cmake-args -DSECURITY=ON -DFASTDDS_STATISTICS=ON"]
->>>>>>> 8b28dabf3 (Fix build in GCC 15 (#6263)):.github/workflows/docker/ubuntu/alternative_builds/fastdds_gcc_latest.Dockerfile
