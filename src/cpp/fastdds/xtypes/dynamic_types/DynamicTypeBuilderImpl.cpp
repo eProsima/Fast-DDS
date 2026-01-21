@@ -44,7 +44,8 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
     {
         // Get the members of the base type.
         auto base_type =
-                traits<DynamicType>::narrow<DynamicTypeImpl>(type_descriptor_.base_type())->resolve_alias_enclosed_type();
+                traits<DynamicType>::narrow<DynamicTypeImpl>(
+            type_descriptor_.base_type())->resolve_alias_enclosed_type();
         member_ = base_type->member_;
         member_by_name_ = base_type->member_by_name_;
         members_ = base_type->members_;
@@ -430,7 +431,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                     if (new_label == label)
                     {
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Member " << member_impl->member_descriptor_.name().c_str() << " already contains the label " <<
+                                "Member " << member_impl->member_descriptor_.name().c_str() <<
+                                " already contains the label " <<
                                 label);
                         return RETCODE_BAD_PARAMETER;
                     }

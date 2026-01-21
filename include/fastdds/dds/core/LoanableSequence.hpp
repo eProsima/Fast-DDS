@@ -228,6 +228,6 @@ private:
 // Macro to easily declare a LoanableSequence for a data type
 #define FASTDDS_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo>
 #define FASTDDS_CONST_SEQUENCE(FooSeq, Foo) using FooSeq = eprosima::fastdds::dds::LoanableSequence<Foo, \
-                    std::false_type>
+                        std::false_type>
 
 #endif // FASTDDS_DDS_CORE__LOANABLESEQUENCE_HPP
