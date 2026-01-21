@@ -114,8 +114,7 @@ struct RTPS_DllAPI CacheChange_t
     }
 
     CacheChange_t(
-        const CacheChange_t&) = delete;
-
+            const CacheChange_t&) = delete;
     const CacheChange_t& operator =(
             const CacheChange_t&) = delete;
 
@@ -125,8 +124,8 @@ struct RTPS_DllAPI CacheChange_t
      * @param is_untyped Flag to mark the change as untyped.
      */
     CacheChange_t(
-        uint32_t payload_size,
-        bool is_untyped = false)
+            uint32_t payload_size,
+            bool is_untyped = false)
         : serializedPayload(payload_size)
         , is_untyped_(is_untyped)
     {
