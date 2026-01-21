@@ -20,6 +20,7 @@
 
 #include <fastdds/rtps/security/common/Handle.h>
 
+#include <cstdint>
 #include <vector>
 
 namespace eprosima {
