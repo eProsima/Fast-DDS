@@ -115,6 +115,7 @@ struct RTPS_DllAPI CacheChange_t
 
     CacheChange_t(
         const CacheChange_t&) = delete;
+
     const CacheChange_t& operator =(
             const CacheChange_t&) = delete;
 
