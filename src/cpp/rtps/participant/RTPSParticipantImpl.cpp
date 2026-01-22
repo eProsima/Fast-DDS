@@ -264,6 +264,10 @@ Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
     {
         metatraffic_unicast_port_ += delta;
     }
+    else if (default_unicast_port_ == loc.port)
+    {
+        default_unicast_port_ += delta;
+    }
     loc.port += delta;
     return loc;
 }
@@ -646,13 +650,14 @@ void RTPSParticipantImpl::setup_meta_traffic()
 void RTPSParticipantImpl::setup_user_traffic()
 {
     // Creation of user locator and receiver resources
-    //If no default locators are defined we define some.
+    // If no default locators are defined we define some.
     /* The reasoning here is the following.
        If the parameters of the RTPS Participant don't hold default listening locators for the creation
        of Endpoints, we make some for Unicast only.
        If there is at least one listen locator of any kind, we do not create any default ones.
        If there are no sending locators defined, we create default ones for the transports we implement.
      */
+    default_unicast_port_ = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
     if (m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
     {
         //Default Unicast Locators in case they have not been provided
@@ -666,11 +671,10 @@ void RTPSParticipantImpl::setup_user_traffic()
     else
     {
         // Locator with port 0, calculate port.
-        uint32_t unicast_port = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
-                    m_network_Factory.fill_default_locator_port(loc, unicast_port);
+                    m_network_Factory.fill_default_locator_port(loc, default_unicast_port_);
                 });
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 
@@ -2316,7 +2320,7 @@ void RTPSParticipantImpl::normalize_endpoint_locators(
         EndpointAttributes& endpoint_att)
 {
     // Locators with port 0, calculate port.
-    uint32_t unicast_port = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
+    uint32_t unicast_port = default_unicast_port_;
     for (Locator_t& loc : endpoint_att.unicastLocatorList)
     {
         m_network_Factory.fill_default_locator_port(loc, unicast_port);
@@ -2903,8 +2907,7 @@ void RTPSParticipantImpl::get_default_metatraffic_locators(
 void RTPSParticipantImpl::get_default_unicast_locators(
         RTPSParticipantAttributes& att)
 {
-    uint32_t unicast_port = metatraffic_unicast_port_ + att.port.offsetd3 - att.port.offsetd1;
-    m_network_Factory.getDefaultUnicastLocators(att.defaultUnicastLocatorList, unicast_port);
+    m_network_Factory.getDefaultUnicastLocators(att.defaultUnicastLocatorList, default_unicast_port_);
     m_network_Factory.NormalizeLocators(att.defaultUnicastLocatorList);
 }
 
