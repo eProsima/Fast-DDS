@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* ResourceLimitsQosPolicy maximum limits default values changed to LENGTH_UNLIMITED (i.e. infinite).
+
 Version v3.4.0
 --------------
 

@@ -60,7 +60,14 @@ public:
             max_samples = history_qos.depth;
             if (topic_kind != NO_KEY)
             {
-                max_samples *= resource_limits_qos.max_instances;
+                if (0 < resource_limits_qos.max_instances)
+                {
+                    max_samples *= resource_limits_qos.max_instances;
+                }
+                else
+                {
+                    max_samples = std::numeric_limits<int32_t>::max();
+                }
             }
 
             initial_samples = std::min(initial_samples, max_samples);

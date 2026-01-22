@@ -669,61 +669,61 @@ public:
  * Class TClassName, base template for user data qos policies.
  */
 #define TEMPLATE_DATA_QOS_POLICY(TClassName, TPid)                                     \
-    class TClassName : public GenericDataQosPolicy                                         \
-    {                                                                                      \
-    public:                                                                                \
+        class TClassName : public GenericDataQosPolicy                                         \
+        {                                                                                      \
+        public:                                                                                \
                                                                                        \
-        FASTDDS_EXPORTED_API TClassName()                                                           \
-            : GenericDataQosPolicy(TPid)                                                   \
-        {                                                                                  \
-        }                                                                                  \
+            FASTDDS_EXPORTED_API TClassName()                                                           \
+                : GenericDataQosPolicy(TPid)                                                   \
+            {                                                                                  \
+            }                                                                                  \
                                                                                        \
-        FASTDDS_EXPORTED_API TClassName(                                                            \
-            uint16_t in_length)                                                        \
-            : GenericDataQosPolicy(TPid, in_length)                                        \
-        {                                                                                  \
-        }                                                                                  \
+            FASTDDS_EXPORTED_API TClassName(                                                            \
+    uint16_t in_length)                                                        \
+                : GenericDataQosPolicy(TPid, in_length)                                        \
+            {                                                                                  \
+            }                                                                                  \
                                                                                        \
-        /** \
-         * Construct from another TClassName. \
-         * \
-         * The resulting TClassName will have the same size limits \
-         * as the input attribute \
-         * \
-         * @param data data to copy in the newly created object \
-         */                                                                            \
-        FASTDDS_EXPORTED_API TClassName(                                                            \
-            const TClassName& data) = default;                                         \
+            /** \
+             * Construct from another TClassName. \
+             * \
+             * The resulting TClassName will have the same size limits \
+             * as the input attribute \
+             * \
+             * @param data data to copy in the newly created object \
+             */                                                                        \
+            FASTDDS_EXPORTED_API TClassName(                                                            \
+    const TClassName& data) = default;                                         \
                                                                                        \
-        /** \
-         * Construct from underlying collection type. \
-         * \
-         * Useful to easy integration on old APIs where a traditional container was used. \
-         * The resulting TClassName will always be unlimited in size \
-         * \
-         * @param data data to copy in the newly created object \
-         */                                                                            \
-        FASTDDS_EXPORTED_API TClassName(                                                            \
-            const collection_type& data)                                               \
-            : GenericDataQosPolicy(TPid, data)                                             \
-        {                                                                                  \
-        }                                                                                  \
+            /** \
+             * Construct from underlying collection type. \
+             * \
+             * Useful to easy integration on old APIs where a traditional container was used. \
+             * The resulting TClassName will always be unlimited in size \
+             * \
+             * @param data data to copy in the newly created object \
+             */                                                                        \
+            FASTDDS_EXPORTED_API TClassName(                                                            \
+    const collection_type& data)                                               \
+                : GenericDataQosPolicy(TPid, data)                                             \
+            {                                                                                  \
+            }                                                                                  \
                                                                                        \
-        virtual FASTDDS_EXPORTED_API ~TClassName() = default;                                       \
+            virtual FASTDDS_EXPORTED_API ~TClassName() = default;                                       \
                                                                                        \
-        /** \
-         * Copies another TClassName. \
-         * \
-         * The resulting TClassName will have the same size limit \
-         * as the input parameter, so all data in the input will be copied. \
-         * \
-         * @param b object to be copied \
-         * @return reference to the current object. \
-         */                                                                            \
-        TClassName& operator =(                                                            \
-            const TClassName& b) = default;                                            \
+            /** \
+             * Copies another TClassName. \
+             * \
+             * The resulting TClassName will have the same size limit \
+             * as the input parameter, so all data in the input will be copied. \
+             * \
+             * @param b object to be copied \
+             * @return reference to the current object. \
+             */                                                                        \
+            TClassName& operator =(                                                            \
+                const TClassName& b) = default;                                            \
                                                                                        \
-    };
+        };
 
 TEMPLATE_DATA_QOS_POLICY(UserDataQosPolicy, PID_USER_DATA)
 TEMPLATE_DATA_QOS_POLICY(TopicDataQosPolicy, PID_TOPIC_DATA)
@@ -955,9 +955,9 @@ public:
 
 /**
  * Class ResourceLimitsQosPolicy, defines the ResourceLimits for the Writer or the Reader.
- * max_samples: Default value 5000.
- * max_instances: Default value 10.
- * max_samples_per_instance: Default value 400.
+ * max_samples: Default value LENGTH_UNLIMITED.
+ * max_instances: Default value LENGTH_UNLIMITED.
+ * max_samples_per_instance: Default value LENGTH_UNLIMITED.
  * allocated_samples: Default value 100.
  */
 class ResourceLimitsQosPolicy : public Parameter_t, public QosPolicy
@@ -973,9 +973,9 @@ public:
     FASTDDS_EXPORTED_API ResourceLimitsQosPolicy()
         : Parameter_t(PID_RESOURCE_LIMITS, 4 + 4 + 4)
         , QosPolicy(false)
-        , max_samples(5000)
-        , max_instances(10)
-        , max_samples_per_instance(400)
+        , max_samples(LENGTH_UNLIMITED)
+        , max_instances(LENGTH_UNLIMITED)
+        , max_samples_per_instance(LENGTH_UNLIMITED)
         , allocated_samples(100)
     {
     }
