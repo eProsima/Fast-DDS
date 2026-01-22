@@ -714,16 +714,16 @@ TEST_F(DataReaderTests, InvalidQos)
     qos.history().kind = KEEP_LAST_HISTORY_QOS;
     qos.history().depth = 0;
     EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 0 is inconsistent
-    // KEEP LAST 2000 but max_samples_per_instance default (400) is inconsistent but right now it only shows a warning
-    // In the reader, this returns RETCODE_INMUTABLE_POLICY, because the depth cannot be changed on run time.
-    // Because of the implementation, we know de consistency is checked before the inmutability, so by checking the
-    // return against RETCODE_INMUTABLE_POLICY we are testing that the setting are not considered inconsistent yet.
-    // This test will fail whenever we enforce the consistency between depth and max_samples_per_instance.
     qos.history().depth = 2000;
-    EXPECT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader_->set_qos(qos));
+    qos.resource_limits().max_samples = 1000;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 2000 with max_samples 1000 is inconsistent
 
     /* Inmutable QoS */
     const ReturnCode_t inmutable_code = RETCODE_IMMUTABLE_POLICY;
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().depth = 2000;
+    EXPECT_EQ(inmutable_code, data_reader_->set_qos(qos));
 
     qos = DATAREADER_QOS_DEFAULT;
     qos.durability().kind = PERSISTENT_DURABILITY_QOS;
@@ -3681,10 +3681,10 @@ TEST_F(DataReaderTests, UpdateInmutableQos)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
-TEST_F(DataReaderTests, history_depth_max_samples_per_instance_warning)
+TEST_F(DataReaderTests, history_depth_max_samples_per_instance_error)
 {
 
-    /* Setup log so it may catch the expected warning */
+    /* Setup log so it may catch the expected error */
     Log::ClearConsumers();
     MockConsumer* mockConsumer = new MockConsumer("RTPS_QOS_CHECK");
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
@@ -3704,14 +3704,14 @@ TEST_F(DataReaderTests, history_depth_max_samples_per_instance_warning)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    /* Create a datareader with the QoS that should generate a warning */
+    /* Create a datareader with the QoS that should generate an error */
     DataReaderQos qos;
     qos.history().depth = 10;
     qos.resource_limits().max_samples_per_instance = 5;
     DataReader* datareader_1 = subscriber->create_datareader(topic, qos);
-    ASSERT_NE(datareader_1, nullptr);
+    ASSERT_EQ(datareader_1, nullptr);
 
-    /* Check that the config generated a warning */
+    /* Check that the config generated an error */
     auto wait_for_log_entries =
             [&mockConsumer](const uint32_t amount, const uint32_t retries, const uint32_t wait_ms) -> size_t
             {
