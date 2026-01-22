@@ -51,11 +51,7 @@ void register_types_type_objects()
 namespace eprosima {
 
 namespace fastrtps {
-namespace rtps {
 
-const InstanceHandle_t HANDLE_NIL;
-
-} // namespace rtps
 namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
