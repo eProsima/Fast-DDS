@@ -915,6 +915,8 @@ TEST(DDSContentFilter, reusing_reader_proxy)
     int32_t total_count {0};
     int32_t total_count_2 {0};
 
+    registerHelloWorldTypes();
+
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, "index = 1 OR index = 2 OR index = 6", {}, true, false,
             false);
     reader
