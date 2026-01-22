@@ -242,7 +242,7 @@ TEST(DSEasyMode, easy_discovery_mode_env_discovery_info)
 
     for (auto& writer : writers)
     {
-        // Writers shall also all the other participants
+        // Writers shall discover all the other participants (CLIENT)
         ASSERT_LE(writer->get_participants_matched(), num_writers + 1u);
     }
 
