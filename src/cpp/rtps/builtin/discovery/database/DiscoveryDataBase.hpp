@@ -397,7 +397,7 @@ protected:
 
     void match_new_server_(
             eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix,
-            bool is_superclient);
+            bool is_client_or_super_client);
 
     void create_virtual_endpoints_(
             eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix);
