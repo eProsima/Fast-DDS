@@ -604,7 +604,7 @@ void DiscoveryDataBase::create_participant_from_change_(
 
 void DiscoveryDataBase::match_new_server_(
         eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix,
-        bool is_superclient)
+        bool is_client_or_super_client)
 {
     // Send Our DATA(p) to the new participant.
     // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
@@ -613,7 +613,7 @@ void DiscoveryDataBase::match_new_server_(
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
 
-    if (!is_superclient)
+    if (!is_client_or_super_client)
     {
         // To obtain a mesh topology with servers, we need to:
         // - Make all known servers relevant to the new server
@@ -765,7 +765,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
         if (change_guid.guidPrefix != server_guid_prefix_ && ret.first->second.is_local())
         {
             // Match new server and create virtual endpoints
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client() || change_data.is_superclient());
         }
     }
     else
@@ -808,7 +808,7 @@ void DiscoveryDataBase::update_participant_from_change_(
             // Match new server and create virtual endpoints
             // NOTE: match after having updated the change, so virtual endpoints are not discarded for having
             // an associated unalive participant
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client() || change_data.is_superclient());
         }
 
         // Treat as a new participant found
@@ -833,7 +833,7 @@ void DiscoveryDataBase::update_participant_from_change_(
         update_change_and_unmatch_(ch, participant_info);
 
         // NOTE: match after having updated the change in order to send the new Data(P)
-        match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+        match_new_server_(change_guid.guidPrefix, change_data.is_client() || change_data.is_superclient());
 
         // Treat as a new participant found
         new_updates_++;
