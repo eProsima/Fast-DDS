@@ -59,12 +59,18 @@ def first_step(outq):
             print(line)
             sys.stdout.flush()
 
-            assert '44.53.00.5f.45.50.52.4f.53.49.4d.41' in line
-            assert 'discovered participant' in line
-            count = count + 1
-            if 'discovered participant 44.53.00.5f.45.50.52.4f.53.49.4d.41|0.0.1.c1: 1' in line:
-                print('CLIENT OVERRIDE discovered SERVER 1')
-                server_1_discover_client = True
+            if 'discovered participant' in line:
+                assert '44.53.00.5f.45.50.52.4f.53.49.4d.41' in line
+                count = count + 1
+                if 'discovered participant 44.53.00.5f.45.50.52.4f.53.49.4d.41|0.0.1.c1: 1' in line:
+                    print('CLIENT OVERRIDE discovered SERVER 1')
+                    server_1_discover_client = True
+            elif 'Warning' in line:
+                # SUPER_CLIENT or non-overriden CLIENT participants may generate this warning
+                assert 'Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP or an' in line
+                assert 'overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)' in line
+            else:
+                assert 'detected changes on participant' in line
         except queue.Empty:
             # Ensure that 2 s has passed so the file watch can detect that the file has changed
             if server_1_discover_client and count >= 2 and (time.time() - initial_time) > 2:

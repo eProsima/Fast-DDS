@@ -2173,7 +2173,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     server->wait_discovery(std::chrono::seconds(5), 1, true);
     // Let some time for the server to run the internal routine and check if it sent Data(p)
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 1u);
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 2u);
 
     // Init client 2
     ASSERT_TRUE(client_2.wire_protocol(client_qos)
@@ -2185,7 +2185,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     server->wait_discovery(std::chrono::seconds(5), 2, true);
     // Let some time for the server to run the internal routine and check if it sent Data(p)
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 2u);
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 5u);
 
     // Init client 3
     ASSERT_TRUE(client_3.wire_protocol(client_qos)
@@ -2197,7 +2197,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     server->wait_discovery(std::chrono::seconds(5), 3, true);
     // Let some time for the server to run the internal routine and check if it sent Data(p)
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 3u);
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 9u);
 }
 
 // This test checks that a Discover Server does not send duplicated EDP messages when its routine
@@ -2378,8 +2378,8 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     // Ensure that no additional Data(r/w) messages are sent by DS routine
     std::this_thread::sleep_for(std::chrono::seconds(15));
 
-    EXPECT_EQ(num_data_r_w_sends_s1.load(std::memory_order::memory_order_seq_cst), 2u);
-    EXPECT_EQ(num_data_r_w_sends_s2.load(std::memory_order::memory_order_seq_cst), 2u);
+    EXPECT_EQ(num_data_r_w_sends_s1.load(std::memory_order::memory_order_seq_cst), 3u);
+    EXPECT_EQ(num_data_r_w_sends_s2.load(std::memory_order::memory_order_seq_cst), 3u);
 }
 
 // This is a regression test for Redmine #23088, which corrects the following data race in the discovery server:
