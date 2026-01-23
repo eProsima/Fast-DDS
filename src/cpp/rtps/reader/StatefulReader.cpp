@@ -624,8 +624,9 @@ bool StatefulReader::process_data_msg(
             if (!change_pool_->reserve_cache(change_to_add))
             {
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
-                        IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
-                        m_guid );
+                        IDSTRING
+                        "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
+                        << m_guid );
                 return false;
             }
 
@@ -649,6 +650,16 @@ bool StatefulReader::process_data_msg(
                 }
                 datasharing_pool->get_datasharing_change(change->serializedPayload, *change_to_add);
             }
+            else if (change->serializedPayload.length == 0 && change->kind != ChangeKind_t::ALIVE &&
+                    change->instanceHandle.isDefined())
+            {
+                // A UNREGISTER or DISPOSE status change was sent without payload, but calling get_payload with size 0 might fail
+                // depending on the configured payload pool. However, those operations are still valid if and only if instanceHandle
+                // is defined so they are handled in this special case
+                // These conditions were already checked in change_is_relevant_for_filter, but it makes sense to have a proper case
+                // here
+                change_to_add->serializedPayload.length = 0;
+            }
             else if (payload_pool_->get_payload(change->serializedPayload, change_to_add->serializedPayload))
             {
                 if (change->serializedPayload.payload_owner == nullptr)
@@ -671,7 +682,10 @@ bool StatefulReader::process_data_msg(
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
-                change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
+                if (change_to_add->serializedPayload.payload_owner)
+                {
+                    change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
+                }
                 change_pool_->release_cache(change_to_add);
                 return false;
             }
@@ -1109,8 +1123,9 @@ bool StatefulReader::change_received(
                     }
                 }
 
-                EPROSIMA_LOG_INFO(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                                       << a_change->sequenceNumber <<
+                EPROSIMA_LOG_INFO(RTPS_READER,
+                        "Change received from " << a_change->writerGUID << " with sequence number: " <<
+                        a_change->sequenceNumber <<
                         " skipped. Higher sequence numbers have been received.");
                 return false;
             }
