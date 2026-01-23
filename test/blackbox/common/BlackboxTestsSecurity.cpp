@@ -49,6 +49,12 @@ enum communication_type
     DATASHARING
 };
 
+enum reliability
+{
+    TEST_BEST_EFFORT,
+    TEST_RELIABLE
+};
+
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
 {
@@ -135,14 +141,72 @@ static void fill_sub_auth(
     }
 }
 
-class Security : public testing::TestWithParam<communication_type>
+static void CommonPermissionsConfigure(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy sub_property_policy(extra_properties);
+    fill_sub_auth(sub_property_policy);
+    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+    reader.property_policy(sub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy pub_property_policy(extra_properties);
+
+    fill_pub_auth(pub_property_policy);
+    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+    writer.property_policy(pub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties = PropertyPolicy())
+{
+    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
+}
+
+class Security : public testing::TestWithParam<std::tuple<communication_type, reliability>>
 {
 public:
 
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+
+        auto& communication_mode =  std::get<0>(GetParam());
+        auto& reliability = std::get<1>(GetParam());
+
+        switch (communication_mode)
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -155,13 +219,24 @@ public:
             default:
                 break;
         }
+
+        switch (reliability)
+        {
+            case TEST_BEST_EFFORT:
+                reliability_ = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+                break;
+            case TEST_RELIABLE:
+                reliability_ = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+                break;
+        }
     }
 
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
+            // Only need to tear down transports
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
@@ -175,6 +250,40 @@ public:
         }
     }
 
+    eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_;
+
+    void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file)
+    {
+        CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
+
+        reader.history_depth(10).reliability(reliability_).init();
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.history_depth(10).init();
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.wait_authorized();
+        writer.wait_authorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+    }
 };
 
 class SecurityPkcs : public ::testing::Test
@@ -2904,93 +3013,6 @@ TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
     }
 }
 
-static void CommonPermissionsConfigure(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties)
-{
-    PropertyPolicy sub_property_policy(extra_properties);
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
-
-    reader.property_policy(sub_property_policy);
-}
-
-static void CommonPermissionsConfigure(
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties)
-{
-    PropertyPolicy pub_property_policy(extra_properties);
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
-
-    writer.property_policy(pub_property_policy);
-}
-
-static void CommonPermissionsConfigure(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties = PropertyPolicy())
-{
-    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
-    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
-}
-
-static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file)
-{
-    CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
-
-    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.history_depth(10).init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
 // Regression test of Refs #16168, Github #3102.
 TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validation_no_deadlock)
 {
@@ -4874,22 +4896,42 @@ TEST(Security, DatagramInjectionOnReader_23836)
 
 GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+        ::testing::Combine(
+            ::testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+            ::testing::Values(TEST_BEST_EFFORT, TEST_RELIABLE)
+        ),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
-            switch (info.param)
+            const auto& communication_mode = std::get<0>(info.param);
+            const auto& reliability_mode = std::get<1>(info.param);
+            std::string test_name = "";
+
+            switch (communication_mode)
             {
                 case INTRAPROCESS:
-                    return "Intraprocess";
+                    test_name += "Intraprocess";
                     break;
                 case DATASHARING:
-                    return "Datasharing";
+                    test_name += "Datasharing";
                     break;
                 case TRANSPORT:
                 default:
-                    return "Transport";
+                    test_name += "Transport";
             }
 
+            switch (reliability_mode)
+            {
+                    case TEST_BEST_EFFORT:
+                    test_name += "_BestEffort";
+                    break;
+                    case TEST_RELIABLE:
+                    test_name += "_Reliable";
+                    break;
+                    default:
+                    break;
+            }
+
+            return test_name;
         });
 
 
