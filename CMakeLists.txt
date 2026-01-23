@@ -15,7 +15,7 @@
 ###############################################################################
 # CMake build rules for Fast DDS
 ###############################################################################
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.28)
 
 # Set CMAKE_BUILD_TYPE to Release by default.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -178,12 +178,7 @@ endif()
 string(FIND ${CMAKE_CXX_FLAGS} "-fsanitize=thread" SANITIZER_THREAD)
 if (${SANITIZER_THREAD} EQUAL -1)
     message(STATUS "Setting warnings as errors...")
-    if(MSVC OR MSVC_IDE)
-        add_compile_options(/WX)
-    else()
-        set(CMAKE_CXX_FLAGS
-            "${CMAKE_CXX_FLAGS} -Werror")
-    endif()
+    set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 endif()
 
 ###############################################################################
