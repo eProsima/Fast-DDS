@@ -1,0 +1,19 @@
+{
+    "description" : "Test that an additional call to set_qos() does not break communication if only the defaultUnicastLocatorList is not configured",
+    "participants" : [
+        {
+            "kind" : "publisher",
+            "xmlfile" : "custom_metatraffic_but_default_default_pub.xml",
+            "samples" : "60",
+            "seed" : "261"
+        },
+        {
+            "kind" : "subscriber",
+            "samples" : "40",
+            "xmlfile" : "custom_metatraffic_but_default_default_sub.xml",
+            "rescan" : "5",
+            "seed" : "261",
+            "sleep_before_exec" : "2"
+        }
+    ]
+}
