@@ -4936,6 +4936,798 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
 }
 
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+}
+
 TEST(Security, MaliciousHeartbeatIgnore)
 {
     PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_MaliciousHeartbeatIgnore");
