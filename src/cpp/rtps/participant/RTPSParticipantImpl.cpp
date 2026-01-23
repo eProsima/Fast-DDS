@@ -147,7 +147,8 @@ static void set_builtin_transports_from_env_var(
                         "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6,
                         "P2P", BuiltinTransports::P2P))
                 {
-                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                            "Wrong value '" << env_value << "' for environment variable '" <<
                             env_var_name << "'. Leaving as DEFAULT");
                 }
                 // Max_msg_size parser
@@ -462,8 +463,8 @@ bool RTPSParticipantImpl::setup_transports()
                     {
                         EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                                 "Participant " << m_att.getName() << " with GUID " << m_guid <<
-                                " tries to create a TCP client for discovery server without providing a proper listening port." <<
-                                " No TCP participants will be able to connect to this participant, but it will be able make connections.");
+                                " tries to create a TCP client without providing a proper listening port." <<
+                                " No incomming connections will be accepted, only outgoing connections.");
                     }
                     std::for_each(m_att.builtin.discovery_config.m_DiscoveryServers.begin(),
                             m_att.builtin.discovery_config.m_DiscoveryServers.end(), [&](Locator_t& locator)
@@ -1269,8 +1270,8 @@ bool RTPSParticipantImpl::create_writer(
     }
 
     auto callback = [hist, listen, entityId, this]
-                (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
-                    IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
+            (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
+            IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
             {
                 BaseWriter* writer = nullptr;
 
@@ -1319,8 +1320,8 @@ bool RTPSParticipantImpl::createReader(
         bool enable)
 {
     auto callback = [hist, listen, this]
-                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-                    bool is_reliable) -> BaseReader*
+            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+            bool is_reliable) -> BaseReader*
             {
                 if (is_reliable)
                 {
@@ -1365,8 +1366,8 @@ bool RTPSParticipantImpl::createReader(
     }
 
     auto callback = [hist, listen, &payload_pool, this]
-                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-                    bool is_reliable) -> BaseReader*
+            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+            bool is_reliable) -> BaseReader*
             {
                 if (is_reliable)
                 {
@@ -2881,7 +2882,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
                 "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
 }
