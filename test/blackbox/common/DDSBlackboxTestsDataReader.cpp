@@ -42,7 +42,7 @@ using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
 #define INCOMPATIBLE_TEST_TOPIC_NAME std::string( \
-        std::string("incompatible_") + TEST_TOPIC_NAME)
+            std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
 enum communication_type
@@ -59,11 +59,12 @@ public:
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
+        auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_shared_instance();
         switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                factory->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -77,11 +78,12 @@ public:
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
+        auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_shared_instance();
         switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                factory->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
