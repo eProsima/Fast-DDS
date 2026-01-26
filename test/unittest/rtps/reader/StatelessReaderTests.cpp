@@ -50,9 +50,7 @@ void register_types_type_objects()
 #endif  // FASTDDS_STATISTICS
 
 namespace eprosima {
-
 namespace fastrtps {
-
 namespace rtps {
 
 using namespace eprosima::fastrtps::rtps;
