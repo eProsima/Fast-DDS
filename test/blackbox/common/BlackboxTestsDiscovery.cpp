@@ -2380,8 +2380,8 @@ TEST_P(Discovery, discovery_server_edp_messages_sent)
     // Ensure that no additional Data(r/w) messages are sent by DS routine
     std::this_thread::sleep_for(std::chrono::seconds(15));
 
-    EXPECT_EQ(num_data_r_w_sends_s1.load(std::memory_order::memory_order_seq_cst), 3u);
-    EXPECT_EQ(num_data_r_w_sends_s2.load(std::memory_order::memory_order_seq_cst), 3u);
+    EXPECT_EQ(num_data_r_w_sends_s1.load(std::memory_order::memory_order_seq_cst), 2u);
+    EXPECT_EQ(num_data_r_w_sends_s2.load(std::memory_order::memory_order_seq_cst), 2u);
 }
 
 // This is a regression test for Redmine #23088, which corrects the following data race in the discovery server:

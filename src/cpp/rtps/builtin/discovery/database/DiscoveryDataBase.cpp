@@ -803,12 +803,12 @@ void DiscoveryDataBase::update_participant_from_change_(
         update_change_and_unmatch_(ch, participant_info);
 
         // If it is local and server we have to create virtual endpoints, except for our own server
-        if (change_guid.guidPrefix != server_guid_prefix_ && change_data.is_local())
+        if (change_guid.guidPrefix != server_guid_prefix_ && !change_data.is_client() && change_data.is_local())
         {
             // Match new server and create virtual endpoints
             // NOTE: match after having updated the change, so virtual endpoints are not discarded for having
             // an associated unalive participant
-            match_new_server_(change_guid.guidPrefix, change_data.is_client() || change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
         }
 
         // Treat as a new participant found
@@ -832,8 +832,13 @@ void DiscoveryDataBase::update_participant_from_change_(
         // Update change
         update_change_and_unmatch_(ch, participant_info);
 
-        // NOTE: match after having updated the change in order to send the new Data(P)
-        match_new_server_(change_guid.guidPrefix, change_data.is_client() || change_data.is_superclient());
+        // If the participant changes to server local, virtual endpoints must be added
+        // If it is local and server the only possibility is it was a remote server and it must be converted to local
+        if (!change_data.is_client())
+        {
+            // NOTE: match after having updated the change in order to send the new Data(P)
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+        }
 
         // Treat as a new participant found
         new_updates_++;
