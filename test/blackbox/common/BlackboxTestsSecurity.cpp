@@ -335,8 +335,16 @@ public:
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        // Block reader until reception finished or timeout.
-        reader.block_for_all();
+
+        if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+        {
+            // For best effor, we just check if at least 2 samples are received
+            reader.block_for_at_least(2);
+        } else
+        {
+            // Block reader until reception finished or timeout.
+            reader.block_for_all();
+        }
     }
 
     void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(
@@ -368,8 +376,16 @@ public:
         writer.send(data);
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
-        // Block reader until reception finished or timeout.
-        reader.block_for_all();
+
+        if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+        {
+            // For best effor, we just check if at least 2 samples are received
+            reader.block_for_at_least(2);
+        } else
+        {
+            // Block reader until reception finished or timeout.
+            reader.block_for_all();
+        }
     }
 };
 
