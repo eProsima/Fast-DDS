@@ -3948,366 +3948,245 @@ TEST_F(DataReaderTests, set_related_datawriter)
     DomainParticipantFactory::get_instance()->delete_participant(another_participant);
 }
 
-TEST_F(DataReaderTests, history_depth_vs_max_samples_per_instance)
+// Test parameter structure
+struct HistoryDepthTestParams
 {
-    static constexpr int32_t depth = 10;
-    static constexpr int32_t max_samples_per_instance = 5;
-    static constexpr int32_t num_samples_to_write = 12;
-    static constexpr int32_t expected_samples = 5;
+    std::string test_name;
+    bool use_keyed_type;
+    HistoryQosPolicyKind history_kind;
+    int32_t depth;
+    int32_t max_samples;
+    int32_t max_samples_per_instance;
+    int32_t num_samples_to_write;
+    int32_t expected_samples;
+    std::string description;
+};
 
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    writer_qos.history().depth = depth;
-    writer_qos.resource_limits().max_samples = 1000;
-    writer_qos.resource_limits().max_instances = 10;
-    writer_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    reader_qos.history().depth = depth;
-    reader_qos.resource_limits().max_samples = 1000;
-    reader_qos.resource_limits().max_instances = 10;
-    reader_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    create_instance_handles();
-    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
-
-    FooType data;
-    data.index(0);
-
-    // Write more samples than max_samples_per_instance
-    for (int32_t i = 0; i < num_samples_to_write; ++i)
+class HistoryDepthParameterizedTest : 
+    public DataReaderTests,
+    public ::testing::WithParamInterface<HistoryDepthTestParams>
+{
+protected:
+    void SetUp() override
     {
-        data.message()[0] = static_cast<char>('0' + i);
-        data.message()[1] = '\0';
-        ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, handle_ok_));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    FooSeq data_seq;
-    SampleInfoSeq info_seq;
-    ASSERT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-    int valid_samples = 0;
-    for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
-    {
-        if (info_seq[i].valid_data)
+        DataReaderTests::SetUp();
+        
+        // Override type based on parameter
+        if (!GetParam().use_keyed_type)
         {
-            valid_samples++;
+            type_.reset(new FooBoundedTypeSupport());
         }
     }
 
-    ASSERT_EQ(expected_samples, valid_samples)
-        << "Expected max_samples_per_instance (" << expected_samples
-        << ") samples, not depth (" << depth << ")";
-
-    ASSERT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
-}
-
-TEST_F(DataReaderTests, history_depth_vs_max_samples_unlimited)
-{
-    static constexpr int32_t depth = 10;
-    static constexpr int32_t max_samples = -1;
-    static constexpr int32_t max_samples_per_instance = -1;
-    static constexpr int32_t num_samples_to_write = 12;
-    static constexpr int32_t expected_samples = 10;
-
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    writer_qos.history().depth = depth;
-    writer_qos.resource_limits().max_samples = max_samples;
-    writer_qos.resource_limits().max_instances = 10;
-    writer_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    reader_qos.history().depth = depth;
-    reader_qos.resource_limits().max_samples = max_samples;
-    reader_qos.resource_limits().max_instances = 10;
-    reader_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    create_instance_handles();
-    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
-
-    FooType data;
-    data.index(0);
-
-    // Write more samples than depth
-    for (int32_t i = 0; i < num_samples_to_write; ++i)
+    void RunHistoryDepthTest()
     {
-        data.message()[0] = static_cast<char>('0' + i);
-        data.message()[1] = '\0';
-        ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, handle_ok_));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        const auto& params = GetParam();
+
+        // Configure writer QoS
+        DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+        writer_qos.history().kind = params.history_kind;
+        writer_qos.history().depth = params.depth;
+        writer_qos.resource_limits().max_samples = params.max_samples;
+        writer_qos.resource_limits().max_instances = params.use_keyed_type ? 10 : 1;
+        writer_qos.resource_limits().max_samples_per_instance = params.max_samples_per_instance;
+        writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+        // Configure reader QoS
+        DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+        reader_qos.history().kind = params.history_kind;
+        reader_qos.history().depth = params.depth;
+        reader_qos.resource_limits().max_samples = params.max_samples;
+        reader_qos.resource_limits().max_instances = params.use_keyed_type ? 10 : 1;
+        reader_qos.resource_limits().max_samples_per_instance = params.max_samples_per_instance;
+        reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+        // Create entities (handles for keyed types)
+        if (params.use_keyed_type)
+        {
+            create_instance_handles();
+        }
+        create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
+
+        // Write samples
+        if (params.use_keyed_type)
+        {
+            WriteSamplesKeyed(params.num_samples_to_write);
+        }
+        else
+        {
+            WriteSamplesNoKey(params.num_samples_to_write);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        // Verify expected samples
+        int valid_samples = TakeSamplesAndCount(params.use_keyed_type);
+        
+        ASSERT_EQ(params.expected_samples, valid_samples) 
+            << params.description;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    FooSeq data_seq;
-    SampleInfoSeq info_seq;
-    ASSERT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-    int valid_samples = 0;
-    for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
+private:
+    void WriteSamplesKeyed(int32_t num_samples)
     {
-        if (info_seq[i].valid_data)
+        FooType data;
+        data.index(0);
+
+        for (int32_t i = 0; i < num_samples; ++i)
         {
-            valid_samples++;
+            data.message()[0] = static_cast<char>('0' + i);
+            data.message()[1] = '\0';
+            ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, handle_ok_));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 
-    ASSERT_EQ(expected_samples, valid_samples)
-        << "Expected depth (" << expected_samples
-        << ") samples, not num_samples_to_write (" << num_samples_to_write << ")";
-
-    ASSERT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
-}
-
-TEST_F(DataReaderTests, history_depth_vs_max_samples_per_instance_no_key)
-{
-    static constexpr int32_t depth = 10;
-    static constexpr int32_t max_samples_per_instance = 5;
-    static constexpr int32_t max_samples = 8;
-    static constexpr int32_t num_samples_to_write = 12;
-    static constexpr int32_t expected_samples = 8; // max_samples overrides max_samples_per_instance
-
-    type_.reset(new FooBoundedTypeSupport());
-
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    writer_qos.history().depth = depth;
-    writer_qos.resource_limits().max_samples = max_samples;
-    writer_qos.resource_limits().max_instances = 1;
-    writer_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    reader_qos.history().depth = depth;
-    reader_qos.resource_limits().max_samples = max_samples;
-    reader_qos.resource_limits().max_instances = 1;
-    reader_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
-
-    FooBoundedType data;
-
-    // Write more samples than max_samples
-    for (int32_t i = 0; i < num_samples_to_write; ++i)
+    void WriteSamplesNoKey(int32_t num_samples)
     {
-        data.index(i);
-        ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+        FooBoundedType data;
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    FooBoundedSeq data_seq;
-    SampleInfoSeq info_seq;
-    ASSERT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-    int valid_samples = 0;
-    for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
-    {
-        if (info_seq[i].valid_data)
+        for (int32_t i = 0; i < num_samples; ++i)
         {
-            valid_samples++;
+            data.index(i);
+            ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 
-    ASSERT_EQ(expected_samples, valid_samples)
-        << "NO_KEY topic should respect max_samples (" << expected_samples
-        << ") not max_samples_per_instance (" << max_samples_per_instance << ") or depth (" << depth << ")";
-
-    ASSERT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
-}
-
-TEST_F(DataReaderTests, history_depth_vs_max_samples_unlimited_no_key)
-{
-    static constexpr int32_t depth = 10;
-    static constexpr int32_t max_samples_per_instance = -1;
-    static constexpr int32_t max_samples = -1;
-    static constexpr int32_t num_samples_to_write = 12;
-    static constexpr int32_t expected_samples = 10;
-
-    type_.reset(new FooBoundedTypeSupport());
-
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    writer_qos.history().depth = depth;
-    writer_qos.resource_limits().max_samples = max_samples;
-    writer_qos.resource_limits().max_instances = 1;
-    writer_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.history().kind = KEEP_LAST_HISTORY_QOS;
-    reader_qos.history().depth = depth;
-    reader_qos.resource_limits().max_samples = max_samples;
-    reader_qos.resource_limits().max_instances = 1;
-    reader_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
-
-    FooBoundedType data;
-
-    // Write more samples than depth
-    for (int32_t i = 0; i < num_samples_to_write; ++i)
+    int TakeSamplesAndCount(bool use_keyed_type)
     {
-        data.index(i);
-        ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+        int valid_samples = 0;
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    FooBoundedSeq data_seq;
-    SampleInfoSeq info_seq;
-    ASSERT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-    int valid_samples = 0;
-    for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
-    {
-        if (info_seq[i].valid_data)
+        if (use_keyed_type)
         {
-            valid_samples++;
+            FooSeq data_seq;
+            SampleInfoSeq info_seq;
+            EXPECT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
+            
+            for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
+            {
+                if (info_seq[i].valid_data)
+                {
+                    valid_samples++;
+                }
+            }
+            
+            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
         }
-    }
-
-    ASSERT_EQ(expected_samples, valid_samples)
-        << "Expected depth (" << expected_samples
-        << ") not num_samples_to_write (" << num_samples_to_write << ")";
-
-    ASSERT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
-}
-
-TEST_F(DataReaderTests, history_depth_vs_max_samples_unlimited_depth_no_key)
-{
-    static constexpr int32_t depth = -1;
-    static constexpr int32_t max_samples_per_instance = -1;
-    static constexpr int32_t max_samples = -1;
-    static constexpr int32_t num_samples_to_write = 12;
-    static constexpr int32_t expected_samples = 12;
-
-    type_.reset(new FooBoundedTypeSupport());
-
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    writer_qos.history().depth = depth;
-    writer_qos.resource_limits().max_samples = max_samples;
-    writer_qos.resource_limits().max_instances = 1;
-    writer_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    reader_qos.history().depth = depth;
-    reader_qos.resource_limits().max_samples = max_samples;
-    reader_qos.resource_limits().max_instances = 1;
-    reader_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
-
-    FooBoundedType data;
-
-    // Write samples
-    for (int32_t i = 0; i < num_samples_to_write; ++i)
-    {
-        data.index(i);
-        ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    FooBoundedSeq data_seq;
-    SampleInfoSeq info_seq;
-    ASSERT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-    int valid_samples = 0;
-    for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
-    {
-        if (info_seq[i].valid_data)
+        else
         {
-            valid_samples++;
+            FooBoundedSeq data_seq;
+            SampleInfoSeq info_seq;
+            EXPECT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
+            
+            for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
+            {
+                if (info_seq[i].valid_data)
+                {
+                    valid_samples++;
+                }
+            }
+            
+            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
         }
+
+        return valid_samples;
     }
+};
 
-    ASSERT_EQ(expected_samples, valid_samples)
-        << "Expected num_samples_to_write (" << expected_samples << ")";
-
-    ASSERT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
-}
-
-TEST_F(DataReaderTests, history_depth_vs_max_samples_unlimited_depth_max_samples_no_key)
+// Parameterized test
+TEST_P(HistoryDepthParameterizedTest, VerifyHistoryBehavior)
 {
-    static constexpr int32_t depth = -1;
-    static constexpr int32_t max_samples_per_instance = 5;
-    static constexpr int32_t max_samples = 10;
-    static constexpr int32_t num_samples_to_write = 12;
-    static constexpr int32_t expected_samples = 10;
-
-    type_.reset(new FooBoundedTypeSupport());
-
-    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
-    writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    writer_qos.history().depth = depth;
-    writer_qos.resource_limits().max_samples = max_samples;
-    writer_qos.resource_limits().max_instances = 1;
-    writer_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    reader_qos.history().depth = depth;
-    reader_qos.resource_limits().max_samples = max_samples;
-    reader_qos.resource_limits().max_instances = 1;
-    reader_qos.resource_limits().max_samples_per_instance = max_samples_per_instance;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
-
-    FooBoundedType data;
-
-    // Write more samples than max_samples
-    for (int32_t i = 0; i < num_samples_to_write; ++i)
-    {
-        data.index(i);
-        ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    FooBoundedSeq data_seq;
-    SampleInfoSeq info_seq;
-    ASSERT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-    int valid_samples = 0;
-    for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
-    {
-        if (info_seq[i].valid_data)
-        {
-            valid_samples++;
-        }
-    }
-
-    ASSERT_EQ(expected_samples, valid_samples)
-        << "Expected max_samples (" << expected_samples
-        << ") not max_samples_per_instance (" << max_samples_per_instance << ")";
-
-    ASSERT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
+    RunHistoryDepthTest();
 }
 
+// Test parameters
+INSTANTIATE_TEST_SUITE_P(
+    HistoryDepthTests,
+    HistoryDepthParameterizedTest,
+    ::testing::Values(
+        // Keyed type: max_samples_per_instance takes precedence over depth
+        HistoryDepthTestParams{
+            "KeyedType_MaxSamplesPerInstance",
+            true,  // use_keyed_type
+            KEEP_LAST_HISTORY_QOS,
+            100,   // depth
+            400,   // max_samples
+            5,     // max_samples_per_instance
+            120,   // num_samples_to_write
+            5,     // expected_samples
+            "Expected max_samples_per_instance (5) samples, not depth (100)"
+        },
+        
+        // Keyed type: unlimited resources, depth takes precedence
+        HistoryDepthTestParams{
+            "KeyedType_UnlimitedResources",
+            true,  // use_keyed_type
+            KEEP_LAST_HISTORY_QOS,
+            10,    // depth
+            -1,    // max_samples (unlimited)
+            -1,    // max_samples_per_instance (unlimited)
+            12,    // num_samples_to_write
+            10,    // expected_samples
+            "Expected depth (10) samples, not num_samples_to_write (12)"
+        },
+        
+        // No-key type: max_samples overrides max_samples_per_instance
+        HistoryDepthTestParams{
+            "NoKeyType_MaxSamplesOverride",
+            false, // use_keyed_type
+            KEEP_LAST_HISTORY_QOS,
+            10,    // depth
+            8,     // max_samples
+            5,     // max_samples_per_instance
+            12,    // num_samples_to_write
+            8,     // expected_samples
+            "NO_KEY topic should respect max_samples (8) not max_samples_per_instance (5) or depth (10)"
+        },
+        
+        // No-key type: unlimited resources, depth takes precedence
+        HistoryDepthTestParams{
+            "NoKeyType_UnlimitedResources",
+            false, // use_keyed_type
+            KEEP_LAST_HISTORY_QOS,
+            10,    // depth
+            -1,    // max_samples (unlimited)
+            -1,    // max_samples_per_instance (unlimited)
+            12,    // num_samples_to_write
+            10,    // expected_samples
+            "Expected depth (10) not num_samples_to_write (12)"
+        },
+        
+        // No-key type: KEEP_ALL with unlimited depth
+        HistoryDepthTestParams{
+            "NoKeyType_KeepAllUnlimited",
+            false, // use_keyed_type
+            KEEP_ALL_HISTORY_QOS,
+            -1,    // depth (unlimited for KEEP_ALL)
+            -1,    // max_samples (unlimited)
+            -1,    // max_samples_per_instance (unlimited)
+            12,    // num_samples_to_write
+            12,    // expected_samples
+            "Expected num_samples_to_write (12)"
+        },
+        
+        // No-key type: KEEP_ALL with limited max_samples
+        HistoryDepthTestParams{
+            "NoKeyType_KeepAllLimitedMaxSamples",
+            false, // use_keyed_type
+            KEEP_ALL_HISTORY_QOS,
+            -1,    // depth (unlimited for KEEP_ALL)
+            10,    // max_samples
+            5,     // max_samples_per_instance
+            12,    // num_samples_to_write
+            10,    // expected_samples
+            "Expected max_samples (10) not max_samples_per_instance (5)"
+        }
+    ),
+    [](const testing::TestParamInfo<HistoryDepthTestParams>& info) {
+        return info.param.test_name;
+    }
+);
 
 int main(
         int argc,
