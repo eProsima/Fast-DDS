@@ -1,5 +1,5 @@
-Forthcoming
------------
+Version v3.3.1
+--------------
 
 * Support aliases in Content Filtered Topic.
 
