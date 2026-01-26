@@ -49,10 +49,9 @@
 
 namespace eprosima {
 namespace fastdds {
-namespace rtps {
+namespace dds {
 
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastdds::dds;
 using ::testing::_;
 
 class FooType
