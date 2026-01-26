@@ -264,7 +264,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -293,7 +294,8 @@ public:
             // Only need to tear down transports
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -307,9 +309,9 @@ public:
     eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_;
 
     void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file)
+            PubSubReader<HelloWorldPubSubType>& reader,
+            PubSubWriter<HelloWorldPubSubType>& writer,
+            const std::string& governance_file)
     {
         CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
@@ -340,7 +342,8 @@ public:
         {
             // For best effor, we just check if at least 2 samples are received
             reader.block_for_at_least(2);
-        } else
+        }
+        else
         {
             // Block reader until reception finished or timeout.
             reader.block_for_all();
@@ -348,9 +351,9 @@ public:
     }
 
     void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(
-    PubSubReader<Data1mbPubSubType>& reader,
-    PubSubWriter<Data1mbPubSubType>& writer,
-    const std::string& governance_file)
+            PubSubReader<Data1mbPubSubType>& reader,
+            PubSubWriter<Data1mbPubSubType>& writer,
+            const std::string& governance_file)
     {
         CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
@@ -381,12 +384,14 @@ public:
         {
             // For best effor, we just check if at least 2 samples are received
             reader.block_for_at_least(2);
-        } else
+        }
+        else
         {
             // Block reader until reception finished or timeout.
             reader.block_for_all();
         }
     }
+
 };
 
 class SecurityPkcs : public ::testing::Test
@@ -421,7 +426,8 @@ public:
                 "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
 #else // We are running something with sh
         ASSERT_EQ(0,
-                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
+                std::system (
+                    "softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
 #endif // _WIN32
         serial_stream << std::ifstream("softhsm_serial").rdbuf();
         std::remove ("softhsm_serial");
@@ -1506,7 +1512,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
     //!Lambda for configuring publisher participant qos and security properties
     auto secure_participant_pub_configurator = [&governance_file,
                     &permissions_file](const std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>& part,
-                    const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& transport_interface)
+            const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& transport_interface)
             {
                 part->lease_duration(3, 1);
                 part->disable_builtin_transport().add_user_transport_to_pparams(transport_interface);
@@ -1536,7 +1542,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
     //!Lambda for configuring subscriber participant qos and security properties
     auto secure_participant_sub_configurator = [&governance_file,
                     &permissions_file](const std::shared_ptr<PubSubReader<HelloWorldPubSubType>>& part,
-                    const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& transport_interface)
+            const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& transport_interface)
             {
                 part->lease_duration(3, 1);
                 part->disable_builtin_transport().add_user_transport_to_pparams(transport_interface);
@@ -1846,7 +1852,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 // *INDENT-OFF*
@@ -1861,7 +1868,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1877,7 +1885,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1893,7 +1902,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1909,7 +1919,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1925,7 +1936,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1941,7 +1953,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1957,7 +1970,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1973,7 +1987,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -1989,7 +2004,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2005,7 +2021,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2021,7 +2038,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2037,7 +2055,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2053,7 +2072,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2069,7 +2089,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2085,7 +2106,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2101,7 +2123,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2117,7 +2140,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2133,7 +2157,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2150,7 +2175,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2166,7 +2192,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2182,7 +2209,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2198,7 +2226,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 // *INDENT-OFF*
@@ -2213,7 +2242,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2229,7 +2259,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2245,7 +2276,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2261,7 +2293,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2277,7 +2310,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2293,7 +2327,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2309,7 +2344,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2325,7 +2361,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2342,7 +2379,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2358,7 +2396,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2374,7 +2413,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2390,7 +2430,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2406,7 +2447,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2422,7 +2464,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2438,7 +2481,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2454,7 +2498,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2470,7 +2515,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2486,7 +2532,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2502,7 +2549,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2518,7 +2566,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2535,7 +2584,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2551,7 +2601,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2567,7 +2618,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2583,7 +2635,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2600,7 +2653,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2616,7 +2670,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2632,7 +2687,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2648,7 +2704,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2664,7 +2721,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2680,7 +2738,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2696,7 +2755,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2712,7 +2772,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2728,7 +2789,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2744,7 +2806,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2760,7 +2823,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2776,7 +2840,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2792,7 +2857,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2808,7 +2874,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2824,7 +2891,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2840,7 +2908,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2856,7 +2925,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2872,7 +2942,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2888,7 +2959,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2904,7 +2976,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2920,7 +2993,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2936,7 +3010,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2952,7 +3027,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2968,7 +3044,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -2984,7 +3061,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3000,7 +3078,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3016,7 +3095,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3032,7 +3112,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3048,7 +3129,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3064,7 +3146,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3080,7 +3163,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3096,7 +3180,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3112,7 +3197,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3128,7 +3214,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3144,7 +3231,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3160,7 +3248,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3176,7 +3265,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3192,7 +3282,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3208,7 +3299,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3224,7 +3316,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3240,7 +3333,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3256,7 +3350,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3272,7 +3367,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3288,7 +3384,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3304,7 +3401,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3320,7 +3418,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3336,7 +3435,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3352,7 +3452,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3368,7 +3469,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3384,7 +3486,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3400,7 +3503,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3416,7 +3520,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3432,7 +3537,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3448,7 +3554,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3464,7 +3571,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3480,7 +3588,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3496,7 +3605,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3512,7 +3622,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3528,7 +3639,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3544,7 +3656,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3560,7 +3673,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3576,7 +3690,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3592,7 +3707,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3608,7 +3724,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3624,7 +3741,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3640,7 +3758,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3656,7 +3775,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3672,7 +3792,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3688,7 +3809,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3704,7 +3826,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3720,7 +3843,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3736,7 +3860,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3752,7 +3877,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3768,7 +3894,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3784,7 +3911,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3800,7 +3928,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3816,7 +3945,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3832,7 +3962,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3848,7 +3979,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3864,7 +3996,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3880,7 +4013,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3896,7 +4030,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3912,7 +4047,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3928,7 +4064,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3944,7 +4081,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3960,7 +4098,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3976,7 +4115,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -3992,7 +4132,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4008,7 +4149,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4024,7 +4166,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4040,7 +4183,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4056,7 +4200,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4072,7 +4217,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4088,7 +4234,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4104,7 +4251,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4120,7 +4268,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4136,7 +4285,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4152,7 +4302,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4168,7 +4319,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4184,7 +4336,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4200,7 +4353,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4216,7 +4370,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4232,7 +4387,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4248,7 +4404,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4264,7 +4421,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4280,7 +4438,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4296,7 +4455,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4312,7 +4472,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4328,7 +4489,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4344,7 +4506,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4360,7 +4523,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4376,7 +4540,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4392,7 +4557,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4408,7 +4574,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4424,7 +4591,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4440,7 +4608,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4456,7 +4625,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4472,7 +4642,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4488,7 +4659,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4504,7 +4676,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4520,7 +4693,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4536,7 +4710,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4552,7 +4727,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4568,7 +4744,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4584,7 +4761,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4600,7 +4778,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4616,7 +4795,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4632,7 +4812,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4648,7 +4829,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4664,7 +4846,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4680,7 +4863,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4696,7 +4880,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4712,7 +4897,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4728,7 +4914,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4744,7 +4931,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4760,7 +4948,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4776,7 +4965,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4792,7 +4982,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4808,7 +4999,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4824,7 +5016,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4840,7 +5033,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4856,7 +5050,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4872,7 +5067,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4888,7 +5084,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4904,7 +5101,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4920,7 +5118,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4936,7 +5135,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4952,7 +5152,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4968,7 +5169,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -4984,7 +5186,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5000,7 +5203,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5016,7 +5220,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5032,7 +5237,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5048,7 +5254,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5064,7 +5271,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5080,7 +5288,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5096,7 +5305,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5112,7 +5322,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5128,7 +5339,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5144,7 +5356,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5160,7 +5373,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5176,7 +5390,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5192,7 +5407,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5208,7 +5424,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5224,7 +5441,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5240,7 +5458,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5256,7 +5475,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5272,7 +5492,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -5288,7 +5509,8 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDi
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_TOPIC_NAME);
-    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data, writer_large_data, governance_file);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 
@@ -6136,7 +6358,7 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
         ::testing::Combine(
             ::testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
             ::testing::Values(TEST_BEST_EFFORT, TEST_RELIABLE)
-        ),
+            ),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
             const auto& communication_mode = std::get<0>(info.param);
@@ -6158,13 +6380,13 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
 
             switch (reliability_mode)
             {
-                    case TEST_BEST_EFFORT:
+                case TEST_BEST_EFFORT:
                     test_name += "_BestEffort";
                     break;
-                    case TEST_RELIABLE:
+                case TEST_RELIABLE:
                     test_name += "_Reliable";
                     break;
-                    default:
+                default:
                     break;
             }
 
