@@ -306,7 +306,7 @@ struct ReadTakeCommand
         info.source_timestamp = current_time;
         info.reception_timestamp = current_time;
         info.instance_handle = instance_handle;
-        info.publication_handle = HANDLE_NIL;
+        info.publication_handle = InstanceHandle_t{};
 
         info.sample_identity = rtps::SampleIdentity{};
         info.related_sample_identity = rtps::SampleIdentity{};
