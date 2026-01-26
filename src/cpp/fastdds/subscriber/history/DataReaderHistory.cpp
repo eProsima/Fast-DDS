@@ -382,6 +382,13 @@ bool DataReaderHistory::get_first_untaken_info(
             ReadTakeCommand::generate_info(info, *(it.second), instance_change);
             return true;
         }
+
+        if (it.second->has_state_notification_sample)
+        {
+            // Generate SampleInfo for state notification sample
+            ReadTakeCommand::generate_instance_info(info, it.first, *(it.second));
+            return true;
+        }
     }
 
     return false;
