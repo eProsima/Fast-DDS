@@ -1548,6 +1548,12 @@ TEST_P(DDSDataReader, return_sample_when_writer_disappears)
         EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
         EXPECT_EQ(listener.get_data_available_count(), 1u);
 
+        fdds::SampleInfo untaken_info;
+        EXPECT_EQ(data_reader.get_first_untaken_info(&untaken_info), fdds::RETCODE_OK);
+
+        EXPECT_TRUE(untaken_info.valid_data);
+        EXPECT_EQ(untaken_info.instance_state, fdds::ALIVE_INSTANCE_STATE);
+
         fdds::SampleInfo info;
         KeyedHelloWorldPubSubType::type sample;
         EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
@@ -1569,11 +1575,18 @@ TEST_P(DDSDataReader, return_sample_when_writer_disappears)
 
     // Verify expectations
     {
-        fdds::SampleInfo info;
-        KeyedHelloWorldPubSubType::type sample;
-
         EXPECT_TRUE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
         EXPECT_EQ(listener.get_data_available_count(), 2u);
+
+        fdds::SampleInfo untaken_info;
+        EXPECT_EQ(data_reader.get_first_untaken_info(&untaken_info), fdds::RETCODE_OK);
+
+        EXPECT_FALSE(untaken_info.valid_data);
+        EXPECT_EQ(untaken_info.instance_handle, instance_handle);
+        EXPECT_EQ(untaken_info.instance_state, fdds::NOT_ALIVE_NO_WRITERS_INSTANCE_STATE);
+
+        fdds::SampleInfo info;
+        KeyedHelloWorldPubSubType::type sample;
 
         EXPECT_EQ(data_reader.take_next_sample(&sample, &info), fdds::RETCODE_OK);
         EXPECT_FALSE(data_reader.get_status_changes().is_active(fdds::StatusMask::data_available()));
