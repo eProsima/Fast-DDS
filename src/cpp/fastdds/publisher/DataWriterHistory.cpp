@@ -62,7 +62,10 @@ HistoryAttributes DataWriterHistory::to_history_attributes(
             }
         }
 
-        initial_samples = get_min_max_samples(initial_samples, max_samples);
+        if (0 < initial_samples)
+        {
+            initial_samples = get_min_max_samples(initial_samples, max_samples);
+        }
     }
 
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
