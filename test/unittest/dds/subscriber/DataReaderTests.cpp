@@ -4008,21 +4008,22 @@ protected:
         }
         create_entities(nullptr, reader_qos, SUBSCRIBER_QOS_DEFAULT, writer_qos);
 
-        // Write samples
+        // Write samples, wait for some time, and take them from the reader.
+        int valid_samples = 0;
         if (params.use_keyed_type)
         {
             WriteSamplesKeyed(params.num_samples_to_write);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            valid_samples = TakeSamplesAndCount<FooSeq>();
         }
         else
         {
             WriteSamplesNoKey(params.num_samples_to_write);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            valid_samples = TakeSamplesAndCount<FooBoundedSeq>();
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
         // Verify expected samples
-        int valid_samples = TakeSamplesAndCount(params.use_keyed_type);
-
         ASSERT_EQ(params.expected_samples, valid_samples)
             << params.description;
     }
@@ -4034,12 +4035,29 @@ private:
     {
         FooType data;
         data.index(0);
-
+        int samples_written = 0;
         for (int32_t i = 0; i < num_samples; ++i)
         {
             data.message()[0] = static_cast<char>('0' + i);
             data.message()[1] = '\0';
-            ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, handle_ok_));
+            ReturnCode_t ret = data_writer_->write(&data, handle_ok_);
+            if (ret == RETCODE_OK)
+            {
+                samples_written++;
+            }
+            else if (ret == RETCODE_TIMEOUT)
+            {
+                // With KEEP_ALL, this is expected after reaching the limit
+                EXPECT_EQ(KEEP_ALL_HISTORY_QOS, GetParam().history_kind)
+                    << "Unexpected TIMEOUT with KEEP_LAST";
+                EXPECT_GE(samples_written, GetParam().max_samples_per_instance)
+                    << "TIMEOUT before reaching max_samples_per_instance";
+                break; // Stop trying to write more
+            }
+            else
+            {
+                FAIL() << "Unexpected return code: " << ret;
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
@@ -4057,44 +4075,21 @@ private:
         }
     }
 
-    int TakeSamplesAndCount(
-            bool use_keyed_type)
+    template <typename SeqType>
+    int TakeSamplesAndCount()
     {
         int valid_samples = 0;
-
-        if (use_keyed_type)
+        SeqType data_seq;
+        SampleInfoSeq info_seq;
+        EXPECT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
+        for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
         {
-            FooSeq data_seq;
-            SampleInfoSeq info_seq;
-            EXPECT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-            for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
+            if (info_seq[i].valid_data)
             {
-                if (info_seq[i].valid_data)
-                {
-                    valid_samples++;
-                }
+                valid_samples++;
             }
-
-            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
         }
-        else
-        {
-            FooBoundedSeq data_seq;
-            SampleInfoSeq info_seq;
-            EXPECT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
-
-            for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
-            {
-                if (info_seq[i].valid_data)
-                {
-                    valid_samples++;
-                }
-            }
-
-            EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
-        }
-
+        EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
         return valid_samples;
     }
 
@@ -4163,6 +4158,33 @@ INSTANTIATE_TEST_SUITE_P(
     12,            // num_samples_to_write
     10,            // expected_samples
     "Expected depth (10) not num_samples_to_write (12)"
+},
+
+        // Keyed type: max_samples_per_instance takes precedence over depth
+        HistoryDepthTestParams{
+    "KeyedType_KeepAllMaxSamplesPerInstance",
+    true,          // use_keyed_type
+    KEEP_ALL_HISTORY_QOS,
+    -1,            // depth
+    400,           // max_samples
+    5,             // max_samples_per_instance
+    12,            // num_samples_to_write
+    5,             // expected_samples
+    "Expected max_samples_per_instance (5)"
+},
+
+
+        // Keyed type: unlimited resources
+        HistoryDepthTestParams{
+    "KeyedType_KeepAllUnlimitedResources",
+    true,          // use_keyed_type
+    KEEP_ALL_HISTORY_QOS,
+    -1,            // depth
+    -1,            // max_samples (unlimited)
+    -1,            // max_samples_per_instance (unlimited)
+    12,            // num_samples_to_write
+    12,            // expected_samples
+    "Expected num_samples_to_write (12)"
 },
 
         // No-key type: KEEP_ALL with unlimited depth
