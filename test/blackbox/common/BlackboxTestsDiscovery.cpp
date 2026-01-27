@@ -1023,7 +1023,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 }
 
 //! Auxiliar method for discovering participants tests
-template <typename ParticipantConfigurator>
+template<typename ParticipantConfigurator>
 static void discoverParticipantsTest(
         bool avoid_multicast,
         size_t n_participants,
