@@ -1257,7 +1257,7 @@ History::iterator PDPServer::process_change_acknowledgement(
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
                     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
                                                                           <<
-                                        " from history as it has been acked for everyone");
+                            " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
