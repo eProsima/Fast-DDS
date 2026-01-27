@@ -556,6 +556,8 @@ private:
     RTPSParticipantAttributes m_att;
     //! Metatraffic unicast port used by default on this participant
     uint32_t metatraffic_unicast_port_ = 0;
+    //! Default unicast port used by default on this participant
+    uint32_t default_unicast_port_ = 0;
     //!Guid of the RTPSParticipant.
     GUID_t m_guid;
     //! String containing the RTPSParticipant Guid.

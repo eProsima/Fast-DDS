@@ -116,6 +116,7 @@ list(APPEND TEST_DEFINITIONS
     mix_zero_copy_communication
     close_TCP_client
     simple_data_sharing_stress
+    custom_metatraffic_but_empty_default
     )
 
 
@@ -130,6 +131,8 @@ list(APPEND XML_CONFIGURATION_FILES
     liveliness_assertion_profile.xml
     liveliness_assertion.360_profile.xml
     shm_communication_subscriber_dies_while_processing_message_profile.xml
+    custom_metatraffic_but_empty_default_pub.xml
+    custom_metatraffic_but_empty_default_sub.xml
     )
 
 list(APPEND PYTHON_FILES

@@ -367,6 +367,10 @@ Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
     {
         metatraffic_unicast_port_ += delta;
     }
+    else if (default_unicast_port_ == loc.port)
+    {
+        default_unicast_port_ += delta;
+    }
     loc.port += delta;
     return loc;
 }
@@ -663,6 +667,222 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 {
 }
 
+<<<<<<< HEAD
+=======
+void RTPSParticipantImpl::setup_guids(
+        const GuidPrefix_t& persistence_guid)
+{
+    if (c_GuidPrefix_Unknown != persistence_guid)
+    {
+        m_persistence_guid = GUID_t(persistence_guid, c_EntityId_RTPSParticipant);
+    }
+
+    // BACKUP servers guid is its persistence one
+    if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
+    {
+        m_persistence_guid = m_guid;
+    }
+
+    // Store the Guid in string format.
+    std::stringstream guid_sstr;
+    guid_sstr << m_guid;
+    guid_str_ = guid_sstr.str();
+}
+
+bool RTPSParticipantImpl::setup_transports()
+{
+    // Setup builtin transports
+    if (m_att.useBuiltinTransports)
+    {
+        set_builtin_transports_from_env_var(m_att);
+    }
+
+    // Client-server discovery protocol requires that every TCP transport has a listening port
+    switch (m_att.builtin.discovery_config.discoveryProtocol)
+    {
+        case DiscoveryProtocol::BACKUP:
+        case DiscoveryProtocol::SERVER:
+            // Verify if listening ports are provided
+            for (auto& transportDescriptor : m_att.userTransports)
+            {
+                TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+                if (pT)
+                {
+                    if (pT->listening_ports.empty())
+                    {
+                        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                                "Participant " << m_att.getName() << " with GUID " << m_guid <<
+                                " tries to create a TCP server for discovery server without providing a proper listening port.");
+                        return false;
+                    }
+                    if (!m_att.builtin.metatrafficUnicastLocatorList.empty())
+                    {
+                        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
+                                m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                                {
+                                    // TCP DS default logical port is the same as the physical one
+                                    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
+                                    {
+                                        if (IPLocator::getLogicalPort(locator) == 0)
+                                        {
+                                            IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                        }
+                                    }
+                                });
+                    }
+                    std::for_each(m_att.builtin.discovery_config.m_DiscoveryServers.begin(),
+                            m_att.builtin.discovery_config.m_DiscoveryServers.end(), [&](Locator_t& locator)
+                            {
+                                // TCP DS default logical port is the same as the physical one
+                                if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
+                                {
+                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    {
+                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                    }
+                                }
+                            });
+                }
+            }
+            break;
+        case DiscoveryProtocol::CLIENT:
+        case DiscoveryProtocol::SUPER_CLIENT:
+            // Verify if listening ports are provided
+            for (auto& transportDescriptor : m_att.userTransports)
+            {
+                TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+                if (pT)
+                {
+                    if (pT->listening_ports.empty())
+                    {
+                        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                                "Participant " << m_att.getName() << " with GUID " << m_guid <<
+                                " tries to create a TCP client without providing a proper listening port." <<
+                                " No incomming connections will be accepted, only outgoing connections.");
+                    }
+                    std::for_each(m_att.builtin.discovery_config.m_DiscoveryServers.begin(),
+                            m_att.builtin.discovery_config.m_DiscoveryServers.end(), [&](Locator_t& locator)
+                            {
+                                // TCP DS default logical port is the same as the physical one
+                                if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
+                                {
+                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    {
+                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                    }
+                                }
+                            });
+                }
+            }
+        default:
+            break;
+    }
+
+    // User defined transports
+    for (const auto& transportDescriptor : m_att.userTransports)
+    {
+        bool register_transport = true;
+
+        // Lock user's transport descriptor since it could be modified during registration
+        transportDescriptor->lock();
+
+        auto socket_descriptor =
+                std::dynamic_pointer_cast<SocketTransportDescriptor>(transportDescriptor);
+        NetmaskFilterKind socket_descriptor_netmask_filter{};
+        if (socket_descriptor != nullptr)
+        {
+            // Copy original netmask filter value to restore it after registration
+            socket_descriptor_netmask_filter = socket_descriptor->netmask_filter;
+            if (!network::netmask_filter::validate_and_transform(socket_descriptor->netmask_filter,
+                    m_att.netmaskFilter))
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                        "User transport failed to register. Provided descriptor's netmask filter ("
+                        << socket_descriptor->netmask_filter << ") is incompatible with participant's ("
+                        << m_att.netmaskFilter << ").");
+                register_transport = false;
+            }
+        }
+        auto max_message_size = transportDescriptor->max_message_size();
+        if (!is_max_message_size_big_enough(max_message_size))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                    "User transport failed to register. Maximum message size needs to be equal or higher than "
+                    "the PDP package size.");
+            register_transport = false;
+        }
+
+        bool transport_registered = register_transport && m_network_Factory.RegisterTransport(
+            transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag);
+
+        if (socket_descriptor != nullptr)
+        {
+            // Restore original netmask filter value prior to unlock
+            socket_descriptor->netmask_filter = socket_descriptor_netmask_filter;
+        }
+
+        transportDescriptor->unlock();
+
+        if (transport_registered)
+        {
+            has_shm_transport_ |=
+                    (nullptr != dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get()));
+        }
+        else
+        {
+            // SHM transport could be disabled
+            if ((nullptr != dynamic_cast<SharedMemTransportDescriptor*>(transportDescriptor.get())))
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                        "Unable to Register SHM Transport. SHM Transport is not supported in"
+                        " the current platform.");
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                        "User transport failed to register.");
+            }
+
+        }
+    }
+
+    if (!networkFactoryHasRegisteredTransports())
+    {
+        return false;
+    }
+
+    // Check netmask filtering preconditions
+    std::vector<TransportNetmaskFilterInfo> netmask_filter_info =
+            m_network_Factory.netmask_filter_info();
+    std::string error_msg;
+    if (!network::netmask_filter::check_preconditions(netmask_filter_info,
+            m_att.ignore_non_matching_locators,
+            error_msg) ||
+            !network::netmask_filter::check_preconditions(netmask_filter_info,
+            m_att.builtin.metatraffic_external_unicast_locators,
+            error_msg) ||
+            !network::netmask_filter::check_preconditions(netmask_filter_info,
+            m_att.default_external_unicast_locators, error_msg))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, error_msg);
+        return false;
+    }
+
+    // Copy NetworkFactory network_configuration to participant attributes prior to proxy creation
+    // NOTE: all transports already registered before
+    m_att.builtin.network_configuration = m_network_Factory.network_configuration();
+
+    return true;
+}
+
+void RTPSParticipantImpl::setup_timed_events()
+{
+    uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
+    const ThreadSettings& thr_config = m_att.timed_events_thread;
+    mp_event_thr.init_thread(thr_config, "dds.ev.%u", id_for_thread);
+}
+
+>>>>>>> 74adc61e7 (Fix wrong update of default locators (#6273))
 void RTPSParticipantImpl::setup_meta_traffic()
 {
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
@@ -726,13 +946,14 @@ void RTPSParticipantImpl::setup_meta_traffic()
 void RTPSParticipantImpl::setup_user_traffic()
 {
     // Creation of user locator and receiver resources
-    //If no default locators are defined we define some.
+    // If no default locators are defined we define some.
     /* The reasoning here is the following.
        If the parameters of the RTPS Participant don't hold default listening locators for the creation
        of Endpoints, we make some for Unicast only.
        If there is at least one listen locator of any kind, we do not create any default ones.
        If there are no sending locators defined, we create default ones for the transports we implement.
      */
+    default_unicast_port_ = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
     if (m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
     {
         //Default Unicast Locators in case they have not been provided
@@ -746,11 +967,10 @@ void RTPSParticipantImpl::setup_user_traffic()
     else
     {
         // Locator with port 0, calculate port.
-        uint32_t unicast_port = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
-                    m_network_Factory.fill_default_locator_port(loc, unicast_port);
+                    m_network_Factory.fill_default_locator_port(loc, default_unicast_port_);
                 });
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 
@@ -1408,9 +1628,27 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
+<<<<<<< HEAD
     auto callback = [hist, listen, entityId, &payload_pool, this]
                 (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
                     IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+=======
+    if (!hist->get_payload_pool())
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "WriterHistory needs a payload pool to create an RTPSWriter");
+        return false;
+    }
+
+    if (!hist->get_change_pool())
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "WriterHistory needs a change pool to create an RTPSWriter");
+        return false;
+    }
+
+    auto callback = [hist, listen, entityId, this]
+            (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
+            IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
+>>>>>>> 74adc61e7 (Fix wrong update of default locators (#6273))
             {
                 if (is_reliable)
                 {
@@ -1507,8 +1745,13 @@ bool RTPSParticipantImpl::createReader(
         bool enable)
 {
     auto callback = [hist, listen, this]
+<<<<<<< HEAD
                 (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
                     bool is_reliable) -> RTPSReader*
+=======
+            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+            bool is_reliable) -> BaseReader*
+>>>>>>> 74adc61e7 (Fix wrong update of default locators (#6273))
             {
                 if (is_reliable)
                 {
@@ -1553,8 +1796,13 @@ bool RTPSParticipantImpl::createReader(
     }
 
     auto callback = [hist, listen, &payload_pool, this]
+<<<<<<< HEAD
                 (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
                     bool is_reliable) -> RTPSReader*
+=======
+            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+            bool is_reliable) -> BaseReader*
+>>>>>>> 74adc61e7 (Fix wrong update of default locators (#6273))
             {
                 if (is_reliable)
                 {
@@ -2500,7 +2748,7 @@ void RTPSParticipantImpl::normalize_endpoint_locators(
         EndpointAttributes& endpoint_att)
 {
     // Locators with port 0, calculate port.
-    uint32_t unicast_port = metatraffic_unicast_port_ + m_att.port.offsetd3 - m_att.port.offsetd1;
+    uint32_t unicast_port = default_unicast_port_;
     for (Locator_t& loc : endpoint_att.unicastLocatorList)
     {
         m_network_Factory.fill_default_locator_port(loc, unicast_port);
@@ -3096,8 +3344,7 @@ void RTPSParticipantImpl::get_default_unicast_locators()
 void RTPSParticipantImpl::get_default_unicast_locators(
         RTPSParticipantAttributes& att)
 {
-    uint32_t unicast_port = metatraffic_unicast_port_ + att.port.offsetd3 - att.port.offsetd1;
-    m_network_Factory.getDefaultUnicastLocators(att.defaultUnicastLocatorList, unicast_port);
+    m_network_Factory.getDefaultUnicastLocators(att.defaultUnicastLocatorList, default_unicast_port_);
     m_network_Factory.NormalizeLocators(att.defaultUnicastLocatorList);
 }
 
