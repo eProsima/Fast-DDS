@@ -148,14 +148,14 @@ class RTPSParticipantImpl
         MessageReceiver* mp_receiver;                  //Associated Readers/Writers inside of MessageReceiver
 
         ReceiverControlBlock(
-                std::shared_ptr<ReceiverResource>& rec)
+            std::shared_ptr<ReceiverResource>& rec)
             : Receiver(rec)
             , mp_receiver(nullptr)
         {
         }
 
         ReceiverControlBlock(
-                ReceiverControlBlock&& origen)
+            ReceiverControlBlock && origen)
             : Receiver(origen.Receiver)
             , mp_receiver(origen.mp_receiver)
         {
@@ -174,7 +174,7 @@ class RTPSParticipantImpl
     private:
 
         ReceiverControlBlock(
-                const ReceiverControlBlock&) = delete;
+            const ReceiverControlBlock&) = delete;
         const ReceiverControlBlock& operator =(
                 const ReceiverControlBlock&) = delete;
 
@@ -515,7 +515,7 @@ public:
     std::unique_ptr<RTPSMessageGroup_t> get_send_buffer(
             const std::chrono::steady_clock::time_point& max_blocking_time);
     void return_send_buffer(
-            std::unique_ptr <RTPSMessageGroup_t>&& buffer);
+            std::unique_ptr<RTPSMessageGroup_t>&& buffer);
 
     uint32_t get_domain_id() const;
 
@@ -1143,7 +1143,7 @@ public:
      */
     std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const;
 
-    template <EndpointKind_t kind, octet no_key, octet with_key>
+    template<EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t& entity_id,
             std::atomic<uint32_t>& id_count,

@@ -922,7 +922,7 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     delete mp_mutex;
 }
 
-template <EndpointKind_t kind, octet no_key, octet with_key>
+template<EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         const EntityId_t& entity_id,
         std::atomic<uint32_t>& id_counter,
@@ -1204,7 +1204,7 @@ bool RTPSParticipantImpl::create_writer(
     return true;
 }
 
-template <typename Functor>
+template<typename Functor>
 bool RTPSParticipantImpl::create_reader(
         RTPSReader** reader_out,
         ReaderAttributes& param,
@@ -1364,8 +1364,8 @@ bool RTPSParticipantImpl::createWriter(
         bool isBuiltin)
 {
     auto callback = [hist, listen, this]
-                (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
-                    IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+            (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
+            IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
                 if (is_reliable)
                 {
@@ -1413,8 +1413,8 @@ bool RTPSParticipantImpl::createWriter(
     }
 
     auto callback = [hist, listen, entityId, &payload_pool, this]
-                (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
-                    IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+            (const GUID_t& guid, WriterAttributes& param, fastdds::rtps::FlowController* flow_controller,
+            IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
                 if (is_reliable)
                 {
@@ -1468,8 +1468,8 @@ bool RTPSParticipantImpl::create_writer(
     }
 
     auto callback = [hist, listen, &payload_pool, &change_pool, this]
-                (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
-                    IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
+            (const GUID_t& guid, WriterAttributes& watt, fastdds::rtps::FlowController* flow_controller,
+            IPersistenceService* persistence, bool is_reliable) -> RTPSWriter*
             {
                 if (is_reliable)
                 {
@@ -1511,8 +1511,8 @@ bool RTPSParticipantImpl::createReader(
         bool enable)
 {
     auto callback = [hist, listen, this]
-                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-                    bool is_reliable) -> RTPSReader*
+            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+            bool is_reliable) -> RTPSReader*
             {
                 if (is_reliable)
                 {
@@ -1557,8 +1557,8 @@ bool RTPSParticipantImpl::createReader(
     }
 
     auto callback = [hist, listen, &payload_pool, this]
-                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-                    bool is_reliable) -> RTPSReader*
+            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+            bool is_reliable) -> RTPSReader*
             {
                 if (is_reliable)
                 {
@@ -2620,11 +2620,11 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 #endif // if HAVE_SECURITY
 
     return (std::min)(
-                {
-                    max_output_message_size_,
-                    m_network_Factory.get_max_message_size_between_transports(),
-                    max_receiver_buffer_size
-                });
+        {
+            max_output_message_size_,
+            m_network_Factory.get_max_message_size_between_transports(),
+            max_receiver_buffer_size
+        });
 }
 
 uint32_t RTPSParticipantImpl::getMaxDataSize()
@@ -2844,7 +2844,7 @@ std::unique_ptr<RTPSMessageGroup_t> RTPSParticipantImpl::get_send_buffer(
 }
 
 void RTPSParticipantImpl::return_send_buffer(
-        std::unique_ptr <RTPSMessageGroup_t>&& buffer)
+        std::unique_ptr<RTPSMessageGroup_t>&& buffer)
 {
     send_buffers_->return_buffer(std::move(buffer));
 }
