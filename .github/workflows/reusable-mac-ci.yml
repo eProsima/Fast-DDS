@@ -70,7 +70,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install brew dependencies
         uses: eProsima/eProsima-CI/macos/install_brew_packages@v0
@@ -180,7 +180,7 @@ jobs:
         if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install brew dependencies
         if: ${{ inputs.run-tests == true }}
