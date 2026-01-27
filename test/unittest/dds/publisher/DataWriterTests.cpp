@@ -267,6 +267,137 @@ public:
 
 };
 
+// Class to check dispose or unregister operations with non empty payload
+class NonEmptyPayloadInstanceTopicDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override
+    {
+        return InstanceTopicDataTypeMock::getSerializedSizeProvider(data);
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/,
+            DataRepresentationId_t /*data_representation*/) override
+    {
+        return []()->uint32_t
+               {
+                   // This has to be > 0 in order to activate another branch in the code
+                   return 100;
+               };
+    }
+
+};
+
+class ComputeKeyFalseDefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyFalseDefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        m_typeSize = 4u;
+        m_isGetKeyDefined = false;
+        setName("unknowninstancefootype");
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle->value[0] = 1;
+        return false;
+    }
+
+};
+
+
+class ComputeKeyTrueDefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyTrueDefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        m_typeSize = 4u;
+        m_isGetKeyDefined = true;
+        setName("unknowninstancefootype");
+    }
+
+    bool getKey(
+            void*  /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as valid
+        ihandle->value[0] = 1;
+        return true;
+    }
+
+};
+
+
+class ComputeKeyFalseUndefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyFalseUndefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        m_typeSize = 4u;
+        m_isGetKeyDefined = false;
+        setName("unknowninstancefootype");
+    }
+
+    bool getKey(
+            void*  /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as invalid
+        ihandle->clear();
+        return false;
+    }
+
+};
+
+
+class ComputeKeyTrueUndefinedInstanceDataTypeMock : public InstanceTopicDataTypeMock
+{
+public:
+
+    typedef FooType type;
+
+    ComputeKeyTrueUndefinedInstanceDataTypeMock()
+        : InstanceTopicDataTypeMock()
+    {
+        m_typeSize = 4u;
+        m_isGetKeyDefined = true;
+        setName("unknowninstancefootype");
+    }
+
+    bool getKey(
+            void* /*data*/,
+            fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool /*force_md5*/) override
+    {
+        // Setting instance as invalid
+        ihandle->clear();
+        return true;
+    }
+
+};
+
 class BoundedTopicDataTypeMock : public TopicDataType
 {
 public:
@@ -967,6 +1098,49 @@ static void create_writers_for_instance_test(
 }
 
 /**
+ * Create a disabled data writer object for a keyed topic.
+ *
+ * @param [out] instance_datawriter  Pointer to the data writer created for the keyed topic.
+ * @param [out] keyed_type_support   Optionally written with the type support of the keyed topic.
+ */
+static void create_writer_for_non_empty_payload_instance_test(
+        DataWriter*& instance_datawriter,
+        TypeSupport* keyed_type_support = nullptr)
+{
+    // Create participant
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, participant);
+
+    // Create publisher
+    PublisherQos pqos = PUBLISHER_QOS_DEFAULT;
+    pqos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pqos);
+    ASSERT_NE(nullptr, publisher);
+
+    // Register types and topics
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+    TypeSupport instance_type(new NonEmptyPayloadInstanceTopicDataTypeMock());
+    instance_type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+    Topic* instance_topic = participant->create_topic("instancefootopic", instance_type.get_type_name(),
+                    TOPIC_QOS_DEFAULT);
+    ASSERT_NE(instance_topic, nullptr);
+
+    // Create disabled DataWriters
+    instance_datawriter = publisher->create_datawriter(instance_topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, instance_datawriter);
+
+    if (nullptr != keyed_type_support)
+    {
+        *keyed_type_support = instance_type;
+    }
+}
+
+/**
  * This test checks register_instance API
  */
 TEST(DataWriterTests, RegisterInstance)
@@ -1035,7 +1209,7 @@ TEST(DataWriterTests, RegisterInstanceWithTimestamp)
 /**
  * This test checks unregister_instance API
  */
-TEST(DataWriterTests, UnregisterInstance)
+TEST(DataWriterTests, UnregisterInstanceWithoutPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1083,9 +1257,51 @@ TEST(DataWriterTests, UnregisterInstance)
 }
 
 /**
+ * This test checks unregister_instance API
+ */
+TEST(DataWriterTests, UnregisterInstanceWithPayload)
+{
+    // Test parameters
+    InstanceHandle_t handle;
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create disabled DataWriters
+    TypeSupport instance_type;
+    DataWriter* instance_datawriter;
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
+
+    // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->unregister_instance(nullptr, handle));
+
+#if !defined(NDEBUG)
+    // 4. Calling unregister_instance with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance(&data,
+            instance_datawriter->get_instance_handle()));
+#endif // NDEBUG
+
+    // 5. Calling unregister_instance with a key not yet registered returns ReturnCode_t::RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance(&data, handle));
+
+    // 6. Calling unregister_instance with a valid key returns ReturnCode_t::RETCODE_OK
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
+
+    // 7. Calling unregister_instance with a valid InstanceHandle also returns ReturnCode_t::RETCODE_OK
+    data.message("HelloWorld_1");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write(&data, HANDLE_NIL));
+    instance_type->getKey(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance(&data, handle));
+
+    // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
+    // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
+}
+
+/**
  * This test checks unregister_instance_w_timestamp API
  */
-TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
+TEST(DataWriterTests, UnregisterInstanceWithTimestampAndNoPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1147,9 +1363,65 @@ TEST(DataWriterTests, UnregisterInstanceWithTimestamp)
 }
 
 /**
- * This test checks dispose API
+ * This test checks unregister_instance_w_timestamp API
  */
-TEST(DataWriterTests, Dispose)
+TEST(DataWriterTests, UnregisterInstanceWithTimestampAndPayload)
+{
+    // Test parameters
+    InstanceHandle_t handle;
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create disabled DataWriters
+    TypeSupport instance_type;
+    DataWriter* instance_datawriter;
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
+
+    eprosima::fastrtps::Time_t ts{ 0, 1 };
+
+    // 3. Calling unregister_instance with an invalid sample returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            instance_datawriter->unregister_instance_w_timestamp(nullptr, handle, ts));
+
+#if !defined(NDEBUG)
+    // 4. Calling unregister_instance with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->unregister_instance_w_timestamp(&data,
+            instance_datawriter->get_instance_handle(), ts));
+#endif // NDEBUG
+
+    // 5. Calling unregister_instance with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+            instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+
+    // 6. Calling unregister_instance with a valid key returns ReturnCode_t::RETCODE_OK
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+
+    // 7. Calling unregister_instance with a valid InstanceHandle also returns ReturnCode_t::RETCODE_OK
+    data.message("HelloWorld_1");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    instance_type.get_key(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+
+    // 8. Check invalid timestamps
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    ts = eprosima::fastrtps::c_TimeInfinite;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+    ts = eprosima::fastrtps::c_TimeInvalid;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            instance_datawriter->unregister_instance_w_timestamp(&data, handle, ts));
+
+    // TODO(jlbueno) There are other possible errors sending the unregister message: RETCODE_OUT_OF_RESOURCES,
+    // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
+}
+
+/**
+ * This test checks dispose API when a 0 size payload is sent.
+ * NOTE: InstanceFooType method calculate_serialized_size always returns 0.
+ */
+TEST(DataWriterTests, DisposeWithoutPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1197,9 +1469,50 @@ TEST(DataWriterTests, Dispose)
 }
 
 /**
+ * This test checks dispose API when a non-zero size payload is sent.
+ * NOTE: NonEmptyPayloadInstanceFooType method calculate_serialized_size always returns a non-zero value.
+ */
+TEST(DataWriterTests, DisposeWithPayload)
+{
+    // Test parameters
+    InstanceHandle_t handle;
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create disabled DataWriters
+    TypeSupport instance_type_with_payload;
+    DataWriter* instance_datawriter_with_payload;
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter_with_payload, &instance_type_with_payload);
+
+    // 1. Calling dispose with an invalid sample returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter_with_payload->dispose(nullptr, handle));
+
+#if !defined(NDEBUG)
+    // 4. Calling dispose with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter_with_payload->dispose(&data,
+            instance_datawriter_with_payload->get_instance_handle()));
+#endif // NDEBUG
+
+    // 5. Calling dispose with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter_with_payload->dispose(&data, handle));
+
+    // 6. Calling dispose with a valid key returns RETCODE_OK
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
+    // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
+    data.message("HelloWorld_1");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->write(&data, HANDLE_NIL));
+    instance_type_with_payload.get_key(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter_with_payload->dispose(&data, handle));
+    // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
+    // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
+}
+
+/**
  * This test checks dispose_w_timestamp API
  */
-TEST(DataWriterTests, DisposeWithTimestamp)
+TEST(DataWriterTests, DisposeWithTimestampAndNoPayload)
 {
     // Test parameters
     InstanceHandle_t handle;
@@ -1229,6 +1542,57 @@ TEST(DataWriterTests, DisposeWithTimestamp)
     // 4. Calling dispose with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
     EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data,
             datawriter->get_instance_handle(), ts));
+#endif // NDEBUG
+
+    // 5. Calling dispose with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+
+    // 6. Calling dispose with a valid key returns RETCODE_OK
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+
+    // 7. Calling dispose with a valid InstanceHandle also returns RETCODE_OK
+    data.message("HelloWorld_1");
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    instance_type.get_key(&data, &handle);
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+
+    // 8. Check invalid timestamps
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->write_w_timestamp(&data, HANDLE_NIL, ts));
+    ts = eprosima::fastrtps::c_TimeInfinite;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+    ts = eprosima::fastrtps::c_TimeInvalid;
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(&data, handle, ts));
+
+    // TODO(jlbueno) There are other possible errors sending the dispose message: RETCODE_OUT_OF_RESOURCES,
+    // RETCODE_ERROR, and RETCODE_TIMEOUT (only if HAVE_STRICT_REALTIME has been defined).
+}
+
+/**
+ * This test checks dispose_w_timestamp API
+ */
+TEST(DataWriterTests, DisposeWithTimestampAndPayload)
+{
+    // Test parameters
+    InstanceHandle_t handle;
+    InstanceFooType data;
+    data.message("HelloWorld");
+
+    // Create disabled DataWriters
+    TypeSupport instance_type;
+    DataWriter* instance_datawriter;
+    create_writer_for_non_empty_payload_instance_test(instance_datawriter, &instance_type);
+
+    eprosima::fastrtps::Time_t ts{ 0, 1 };
+
+    // 3. Calling dispose with an invalid sample returns RETCODE_BAD_PARAMETER
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, instance_datawriter->enable());
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER, instance_datawriter->dispose_w_timestamp(nullptr, handle, ts));
+
+#if !defined(NDEBUG)
+    // 4. Calling dispose with an inconsistent handle returns RETCODE_PRECONDITION_NOT_MET
+    EXPECT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, instance_datawriter->dispose_w_timestamp(&data,
+            instance_datawriter->get_instance_handle(), ts));
 #endif // NDEBUG
 
     // 5. Calling dispose with a key not yet registered returns RETCODE_PRECONDITION_NOT_MET

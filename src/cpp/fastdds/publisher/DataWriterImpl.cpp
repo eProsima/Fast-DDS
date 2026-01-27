@@ -974,16 +974,32 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
+        // Initialize payload to null state
+        payload.payload.length = 0;
+        payload.payload.max_size = 0;
+        payload.payload.data = nullptr;
+        payload.payload_owner = nullptr;
+        bool should_serialize = (change_kind == ALIVE);
+        if (should_serialize)
         {
-            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
-        }
+            // Request payload from pool and proceed with serialization
+            if (!get_free_payload_from_pool(type_->getSerializedSizeProvider(data), payload))
+            {
+                // ALIVE changes need a payload and serialization
+                return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+            }
 
-        if ((ALIVE == change_kind) && !type_->serialize(data, &payload.payload, data_representation_))
+            if (!type_->serialize(data, &payload.payload, data_representation_))
+            {
+                EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
+                return_payload_to_pool(payload);
+                return ReturnCode_t::RETCODE_ERROR;
+            }
+        }
+        else
         {
-            EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
-            return_payload_to_pool(payload);
-            return ReturnCode_t::RETCODE_ERROR;
+            // If not serializable (UNREGISTER or DISPOSE), the handle must be defined
+            assert(handle.isDefined());
         }
     }
 
@@ -1945,7 +1961,8 @@ ReturnCode_t DataWriterImpl::check_qos(
     {
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" << qos.resource_limits().max_samples_per_instance <<
+                "' is inconsistent with max_samples_per_instance: '" <<
+                qos.resource_limits().max_samples_per_instance <<
                 "'. Consistency rule: depth <= max_samples_per_instance." <<
                 " Effectively using max_samples_per_instance as depth.");
     }
