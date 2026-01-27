@@ -280,6 +280,40 @@ struct ReadTakeCommand
         }
     }
 
+    /**
+     * @brief Generate SampleInfo for an instance without data.
+     *
+     * @param[out]  info             SampleInfo to fill.
+     * @param[in]   instance_handle  Handle of the instance.
+     * @param[in]   instance         DataReaderInstance information.
+     */
+    static void generate_instance_info(
+            SampleInfo& info,
+            const InstanceHandle_t& instance_handle,
+            const DataReaderInstance& instance)
+    {
+        fastdds::rtps::Time_t current_time;
+        fastdds::rtps::Time_t::now(current_time);
+
+        info.sample_state = NOT_READ_SAMPLE_STATE;
+        info.instance_state = instance.instance_state;
+        info.view_state = instance.view_state;
+        info.disposed_generation_count = instance.disposed_generation_count;
+        info.no_writers_generation_count = instance.no_writers_generation_count;
+        info.sample_rank = 0;
+        info.generation_rank = 0;
+        info.absolute_generation_rank = 0;
+        info.source_timestamp = current_time;
+        info.reception_timestamp = current_time;
+        info.instance_handle = instance_handle;
+        info.publication_handle = InstanceHandle_t{};
+
+        info.sample_identity = rtps::SampleIdentity{};
+        info.related_sample_identity = rtps::SampleIdentity{};
+
+        info.valid_data = false;
+    }
+
 private:
 
     const TypeSupport& type_;
@@ -418,26 +452,7 @@ private:
         }
         else
         {
-            fastdds::rtps::Time_t current_time;
-            fastdds::rtps::Time_t::now(current_time);
-
-            info.sample_state = NOT_READ_SAMPLE_STATE;
-            info.instance_state = instance.instance_state;
-            info.view_state = instance.view_state;
-            info.disposed_generation_count = instance.disposed_generation_count;
-            info.no_writers_generation_count = instance.no_writers_generation_count;
-            info.sample_rank = 0;
-            info.generation_rank = 0;
-            info.absolute_generation_rank = 0;
-            info.source_timestamp = current_time;
-            info.reception_timestamp = current_time;
-            info.instance_handle = instance_->first;
-            info.publication_handle = HANDLE_NIL;
-
-            info.sample_identity = rtps::SampleIdentity{};
-            info.related_sample_identity = rtps::SampleIdentity{};
-
-            info.valid_data = false;
+            generate_instance_info(info, instance_->first, instance);
         }
     }
 
