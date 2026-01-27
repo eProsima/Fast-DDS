@@ -191,7 +191,6 @@ void PDPServerListener::on_new_cache_change_added(
                             change.get(),
                             ddb::DiscoveryParticipantChangeData(
                                 participant_data.metatraffic_locators,
-                                false,
                                 is_local,
                                 is_client || participant_type_str == ParticipantType::SUPER_CLIENT)))
                 {

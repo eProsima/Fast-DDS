@@ -83,7 +83,6 @@ void from_json(
                 <guid_prefix>:<is_acked>
             }
             "metatraffic_locators":{<metatraffic_locators>}
-            "is_client":<is_client>,
             "is_local":<is_local>
         }
     },
