@@ -64,7 +64,10 @@ public:
             const size_t max_unicast_locators,
             const size_t max_multicast_locators,
             const fastdds::rtps::ContentFilterProperty::AllocationConfiguration& content_filterlimits = {})
-        : ReaderProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits(),
+        : ReaderProxyData(
+                max_unicast_locators,
+                max_multicast_locators,
+                VariableLengthDataLimits(),
                 content_filterlimits)
     {
 

@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 
 #define TEST_FRIENDS \
-    FRIEND_TEST(WriterProxyAcknackTests, AcknackBackoff);
+        FRIEND_TEST(WriterProxyAcknackTests, AcknackBackoff);
 
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 

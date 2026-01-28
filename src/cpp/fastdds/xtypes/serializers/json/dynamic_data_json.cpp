@@ -1098,7 +1098,7 @@ ReturnCode_t json_serialize_bitmask_member(
     return ret;
 }
 
-template <typename T>
+template<typename T>
 void json_insert(
         const std::string& key,
         const T& value,

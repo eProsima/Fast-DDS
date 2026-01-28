@@ -36,7 +36,8 @@ extern "C" int LLVMFuzzerTestOneInput(
         return EXIT_FAILURE;
     }
 
-    fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(reinterpret_cast<const char*>(data), size);
+    fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(
+        reinterpret_cast<const char*>(data), size);
 
     return 0;
 }

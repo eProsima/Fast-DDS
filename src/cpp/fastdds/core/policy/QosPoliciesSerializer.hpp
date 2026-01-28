@@ -33,7 +33,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-template <typename QosPolicy>
+template<typename QosPolicy>
 class QosPoliciesSerializer
 {
 public:
@@ -243,7 +243,7 @@ inline bool QosPoliciesSerializer<DeadlineQosPolicy>::read_content_from_cdr_mess
     return valid;
 }
 
-template <>
+template<>
 inline bool QosPoliciesSerializer<LatencyBudgetQosPolicy>::add_content_to_cdr_message(
         const LatencyBudgetQosPolicy& qos_policy,
         rtps::CDRMessage_t* cdr_message)
@@ -2297,10 +2297,12 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::read_content_from_cdr_
                             (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.discoveryProtocol);
             // use_simple_edp
             valid &= rtps::CDRMessage::readOctet(cdr_message,
-                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol);
+                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.
+                                    use_SIMPLE_EndpointDiscoveryProtocol);
             // use_static_edp
             valid &= rtps::CDRMessage::readOctet(cdr_message,
-                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol);
+                            (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.
+                                    use_STATIC_EndpointDiscoveryProtocol);
             cdr_message->pos += 1; //padding
             // lease_duration
             valid &= rtps::CDRMessage::read_duration_t(cdr_message,
@@ -2321,17 +2323,21 @@ inline bool QosPoliciesSerializer<WireProtocolConfigQos>::read_content_from_cdr_
             {
                 // use_PublicationWriterANDSubscriptionReader
                 valid &= rtps::CDRMessage::readOctet(cdr_message,
-                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader);
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        use_PublicationWriterANDSubscriptionReader);
                 // use_PublicationReaderANDSubscriptionWriter
                 valid &= rtps::CDRMessage::readOctet(cdr_message,
-                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter);
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        use_PublicationReaderANDSubscriptionWriter);
 #if HAVE_SECURITY
                 // enable_builtin_secure_publications_writer_and_subscriptions_reader
                 valid &= rtps::CDRMessage::readOctet(cdr_message,
-                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.enable_builtin_secure_publications_writer_and_subscriptions_reader);
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        enable_builtin_secure_publications_writer_and_subscriptions_reader);
                 // enable_builtin_secure_subscriptions_writer_and_publications_reader
                 valid &= rtps::CDRMessage::readOctet(cdr_message,
-                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.enable_builtin_secure_subscriptions_writer_and_publications_reader);
+                                (fastdds::rtps::octet*)&qos_policy.builtin.discovery_config.m_simpleEDP.
+                                        enable_builtin_secure_subscriptions_writer_and_publications_reader);
 #else
                 cdr_message->pos += 2; // padding
 #endif // if HAVE_SECURITY

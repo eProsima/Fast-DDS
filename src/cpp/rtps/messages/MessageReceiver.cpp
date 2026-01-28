@@ -875,7 +875,8 @@ bool MessageReceiver::proc_Submsg_Data(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
+            EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
+                    IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
                     "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
             ch.serializedPayload.data = nullptr;
             ch.inline_qos.data = nullptr;
@@ -1042,7 +1043,8 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
+                IDSTRING "Serialized Payload value invalid or larger than maximum allowed size "
                 "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
         ch.serializedPayload.data = nullptr;
         ch.inline_qos.data = nullptr;
