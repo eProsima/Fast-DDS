@@ -406,7 +406,7 @@ private:
             }
 
             AuthenticationInfo(
-                    AuthenticationInfo && auth) noexcept
+                    AuthenticationInfo&& auth) noexcept
                 : identity_handle_(std::move(auth.identity_handle_))
                 , handshake_handle_(std::move(auth.handshake_handle_))
                 , auth_status_(auth.auth_status_)
@@ -438,7 +438,7 @@ private:
         private:
 
             AuthenticationInfo(
-                        const AuthenticationInfo& auth) = delete;
+                    const AuthenticationInfo& auth) = delete;
         };
 
     public:
