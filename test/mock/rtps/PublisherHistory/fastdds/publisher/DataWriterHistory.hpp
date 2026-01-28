@@ -34,6 +34,8 @@
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
 
+#include <rtps/history/HistoryAttributesExtension.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
