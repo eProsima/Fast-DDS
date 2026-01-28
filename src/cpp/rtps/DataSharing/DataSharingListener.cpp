@@ -86,7 +86,8 @@ void DataSharingListener::run()
             // If there were matching/unmatching, we may not have finished our last loop
         }
         while (is_running_.load() &&
-        (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
+                (notification_->notification_->new_data.load() ||
+                writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
 
@@ -172,8 +173,9 @@ void DataSharingListener::process_new_data ()
             {
                 if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber > last_sequence + 1)
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
-                                                              << " detected on datasharing writer " << pool->writer());
+                    EPROSIMA_LOG_WARNING(RTPS_READER,
+                            "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
+                                    << " detected on datasharing writer " << pool->writer());
                     reader_->process_gap_msg(pool->writer(), last_sequence + 1,
                             SequenceNumberSet_t(ch.sequenceNumber), c_VendorId_eProsima);
                 }

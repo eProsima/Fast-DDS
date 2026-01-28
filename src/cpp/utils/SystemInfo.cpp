@@ -54,7 +54,7 @@ SystemInfo::SystemInfo()
     defined(_POSIX_SOURCE) || defined(__unix__)
     tzset();
 #endif // if (_POSIX_C_SOURCE >= 1) || defined(_XOPEN_SOURCE) || defined(_BSD_SOURCE) || defined(_SVID_SOURCE) ||
-       // defined(_POSIX_SOURCE) || defined(__unix__)
+    // defined(_POSIX_SOURCE) || defined(__unix__)
 
     update_interfaces();
 }

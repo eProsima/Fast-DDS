@@ -26,7 +26,7 @@ namespace fastdds {
 namespace dds {
 namespace rpc {
 
-template <typename T>
+template<typename T>
 using RpcFuture = std::future<T>;
 
 }  // namespace rpc

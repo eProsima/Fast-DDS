@@ -32,7 +32,7 @@
  *   than strictly necessary but will avoid access violation exceptions.
  */
 
-template <typename K, typename V>
+template<typename K, typename V>
 struct map_node_size : foonathan::memory::map_node_size<std::pair<size_t, typename std::map<K, V>::value_type>>
 {
 };

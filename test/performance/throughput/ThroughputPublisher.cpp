@@ -79,7 +79,8 @@ void ThroughputPublisher::CommandReaderListener::on_subscription_matched(
     if (1 == info.current_count)
     {
         EPROSIMA_LOG_INFO(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Sub Matched "
-                                                     << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 <<
+                                                     << info.total_count << "/" <<
+                throughput_publisher_.subscribers_ * 2 <<
                 C_DEF);
     }
 
@@ -97,7 +98,8 @@ void ThroughputPublisher::CommandWriterListener::on_publication_matched(
     if (1 == info.current_count)
     {
         EPROSIMA_LOG_INFO(THROUGHPUTPUBLISHER, C_RED << "Pub: COMMAND Pub Matched "
-                                                     << info.total_count << "/" << throughput_publisher_.subscribers_ * 2 <<
+                                                     << info.total_count << "/" <<
+                throughput_publisher_.subscribers_ * 2 <<
                 C_DEF);
     }
 

@@ -43,19 +43,19 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
 // Keep change information on local variables to check consistency later
 #define PREVENT_PDP_DEADLOCK(reader, change, pdp)                         \
-    GUID_t writer_guid = (change)->writerGUID;                            \
-    SequenceNumber_t seq_num = (change)->sequenceNumber;                  \
-    (reader)->getMutex().unlock();                                        \
-    std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
-    (reader)->getMutex().lock();                                          \
+        GUID_t writer_guid = (change)->writerGUID;                            \
+        SequenceNumber_t seq_num = (change)->sequenceNumber;                  \
+        (reader)->getMutex().unlock();                                        \
+        std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
+        (reader)->getMutex().lock();                                          \
                                                                           \
-    if ((ALIVE != (change)->kind) ||                                      \
-            (seq_num != (change)->sequenceNumber) ||                      \
-            (writer_guid != (change)->writerGUID))                        \
-    {                                                                     \
-        return;                                                           \
-    }                                                                     \
-    (void)seq_num
+        if ((ALIVE != (change)->kind) ||                                      \
+                (seq_num != (change)->sequenceNumber) ||                      \
+                (writer_guid != (change)->writerGUID))                        \
+        {                                                                     \
+            return;                                                           \
+        }                                                                     \
+        (void)seq_num
 
 namespace eprosima {
 namespace fastdds {
@@ -86,8 +86,8 @@ void EDPBasePUBListener::add_writer_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
                 [reader, change, edp, &network, writer_added_callback]
-                    (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
-                        eprosima::fastdds::rtps::WriterProxyData* temp_writer_data)
+                (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
+                eprosima::fastdds::rtps::WriterProxyData* temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
                     auto copy_data_fun = [&request_ret_status, &temp_writer_data, &network](
@@ -231,8 +231,8 @@ void EDPBaseSUBListener::add_reader_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
                 [reader, change, edp, &network, reader_added_callback]
-                    (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
-                        eprosima::fastdds::rtps::ReaderProxyData* temp_reader_data)
+                (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
+                eprosima::fastdds::rtps::ReaderProxyData* temp_reader_data)
                 {
                     //LOAD INFORMATION IN DESTINATION READER PROXY DATA
                     auto copy_data_fun = [&request_ret_status, &temp_reader_data, &network](

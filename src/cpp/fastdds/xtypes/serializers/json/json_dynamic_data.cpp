@@ -116,7 +116,8 @@ ReturnCode_t json_deserialize_aggregate(
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Error encountered while deserializing " << kind_str << ": size is " << j.size() << ", "
-                                                         << "but the expected number of members is " << data->enclosing_type()->get_member_count() <<
+                                                         << "but the expected number of members is " <<
+                            data->enclosing_type()->get_member_count() <<
                 ".");
         return RETCODE_BAD_PARAMETER;
     }

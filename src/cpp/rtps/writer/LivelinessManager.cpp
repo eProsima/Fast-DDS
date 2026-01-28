@@ -122,9 +122,9 @@ bool LivelinessManager::remove_writer(
                         {
                             writer_status = writer.status;
                             return writer.guid == guid &&
-                            writer.kind == kind &&
-                            writer.lease_duration == lease_duration &&
-                            --writer.count == 0;
+                                   writer.kind == kind &&
+                                   writer.lease_duration == lease_duration &&
+                                   --writer.count == 0;
                         });
     }
 

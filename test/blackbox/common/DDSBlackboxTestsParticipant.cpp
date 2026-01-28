@@ -32,7 +32,7 @@
 
 auto check_qos_in_data_p =
         [](eprosima::fastdds::rtps::CDRMessage_t& msg, std::atomic<uint8_t>& qos_found,
-                std::vector<uint16_t>& expected_qos_pids)
+        std::vector<uint16_t>& expected_qos_pids)
         {
             uint32_t qos_size = 0;
             uint32_t original_pos = msg.pos;

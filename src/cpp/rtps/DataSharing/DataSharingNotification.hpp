@@ -134,7 +134,7 @@ protected:
             const GUID_t& reader_guid,
             const std::string& shared_dir = std::string());
 
-    template <typename T>
+    template<typename T>
     bool create_and_init_shared_segment_notification(
             const GUID_t& reader_guid,
             const std::string& shared_dir)
@@ -184,7 +184,7 @@ protected:
         return true;
     }
 
-    template <typename T>
+    template<typename T>
     bool open_and_init_shared_segment_notification(
             const GUID_t& reader_guid,
             const std::string& shared_dir)

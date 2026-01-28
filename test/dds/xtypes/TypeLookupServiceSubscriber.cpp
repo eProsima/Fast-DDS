@@ -151,7 +151,7 @@ bool TypeLookupServiceSubscriber::create_known_type(
     }
 }
 
-template <typename Type, typename TypePubSubType>
+template<typename Type, typename TypePubSubType>
 bool TypeLookupServiceSubscriber::create_known_type_impl(
         const std::string& type)
 {
@@ -171,7 +171,7 @@ bool TypeLookupServiceSubscriber::create_known_type_impl(
     return true;
 }
 
-template <typename Type>
+template<typename Type>
 bool TypeLookupServiceSubscriber::process_type_impl(
         DataReader* reader)
 {

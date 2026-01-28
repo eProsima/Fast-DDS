@@ -709,7 +709,8 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " <<
                     "LogicalPort: " << IPLocator::getLogicalPort(
                         request.transportLocator())
-                                                                             << ", Physical remote: " << IPLocator::getPhysicalPort(
+                                                                             << ", Physical remote: " <<
+                                IPLocator::getPhysicalPort(
                         request.transportLocator()));
 
             responseCode = processBindConnectionRequest(channel, request, controlHeader.transaction_id(), myLocator);

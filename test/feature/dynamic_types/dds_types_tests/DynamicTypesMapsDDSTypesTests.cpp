@@ -545,14 +545,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -614,14 +615,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -683,14 +685,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -752,14 +755,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -821,14 +825,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -890,14 +895,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -959,14 +965,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1028,14 +1035,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1097,14 +1105,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1166,14 +1175,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1235,14 +1245,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1304,14 +1315,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1373,14 +1385,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -1442,14 +1455,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1512,14 +1526,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1582,13 +1597,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1651,13 +1667,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1720,13 +1737,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1789,13 +1807,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1858,13 +1877,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1927,13 +1947,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -1996,13 +2017,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -2065,13 +2087,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -2159,13 +2182,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -2248,13 +2272,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -2334,13 +2359,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -2439,14 +2465,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2508,14 +2535,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2577,14 +2605,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2646,14 +2675,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2715,14 +2745,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2784,14 +2815,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2853,14 +2885,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2922,14 +2955,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -2991,14 +3025,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -3060,14 +3095,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -3129,14 +3165,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -3198,14 +3235,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -3267,14 +3305,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -3336,14 +3375,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3406,14 +3446,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3476,13 +3517,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3545,13 +3587,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3614,13 +3657,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3684,13 +3728,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3753,13 +3798,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3822,13 +3868,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3891,13 +3938,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -3960,13 +4008,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -4054,13 +4103,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -4143,13 +4193,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -4229,13 +4280,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -4334,14 +4386,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4403,14 +4456,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4472,14 +4526,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4541,14 +4596,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4610,14 +4666,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongLongValue)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4679,14 +4736,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4748,14 +4806,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4817,14 +4876,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4886,14 +4946,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongDoubleValue)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -4955,14 +5016,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -5024,14 +5086,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -5093,14 +5156,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -5162,14 +5226,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -5231,14 +5296,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5301,14 +5367,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5371,13 +5438,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5440,13 +5508,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5509,13 +5578,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5578,13 +5648,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5647,13 +5718,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5716,13 +5788,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5785,13 +5858,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5854,13 +5928,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -5948,13 +6023,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -6037,13 +6113,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -6123,13 +6200,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -6228,14 +6306,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6297,14 +6376,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6366,14 +6446,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6435,14 +6516,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6504,14 +6586,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6573,14 +6656,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6642,14 +6726,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6711,14 +6796,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6780,14 +6866,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6849,14 +6936,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6918,14 +7006,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -6987,14 +7076,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -7056,14 +7146,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -7125,14 +7216,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7195,14 +7287,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7265,13 +7358,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7334,13 +7428,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7403,13 +7498,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7472,13 +7568,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7541,13 +7638,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7610,13 +7708,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7679,13 +7778,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7748,13 +7848,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7842,13 +7943,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -7931,13 +8033,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -8017,13 +8120,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -8122,14 +8226,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8191,14 +8296,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8260,14 +8366,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8329,14 +8436,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8398,14 +8506,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8467,14 +8576,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8536,14 +8646,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8605,14 +8716,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8674,14 +8786,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8743,14 +8856,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8812,14 +8926,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8881,14 +8996,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -8950,14 +9066,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -9019,14 +9136,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9089,14 +9207,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9159,13 +9278,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9228,13 +9348,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9297,13 +9418,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9366,13 +9488,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9435,13 +9558,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9504,13 +9628,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9573,13 +9698,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9642,13 +9768,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9736,13 +9863,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9825,13 +9953,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -9911,13 +10040,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -10016,14 +10146,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10085,14 +10216,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10154,14 +10286,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10223,14 +10356,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10292,14 +10426,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10361,14 +10496,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10430,14 +10566,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10499,14 +10636,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongLongValueDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10568,14 +10706,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10637,14 +10776,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10706,14 +10846,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10775,14 +10916,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10844,14 +10986,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -10913,14 +11056,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -10983,14 +11127,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11053,13 +11198,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11122,13 +11268,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11191,13 +11338,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11260,13 +11408,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11329,13 +11478,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11398,13 +11548,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11467,13 +11618,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11536,13 +11688,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11630,13 +11783,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11719,13 +11873,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11805,13 +11960,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -11910,15 +12066,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -11979,15 +12136,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12048,15 +12206,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12117,15 +12276,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12186,15 +12346,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12255,15 +12416,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12324,15 +12486,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12393,15 +12556,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12462,15 +12626,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12531,15 +12696,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12600,15 +12766,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12669,15 +12836,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12738,15 +12906,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -12807,15 +12976,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -12877,15 +13047,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -12947,13 +13118,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_inneraliasboundedstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_bounded_string_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13016,13 +13188,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_inneraliasboundedwstringhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_bounded_wstring_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13085,13 +13258,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_innerenumhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_enum_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13154,13 +13328,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_innerbitmaskhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_bitmask_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13223,13 +13398,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_inneraliashelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13292,13 +13468,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_inneraliasarrayhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_array_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13361,13 +13538,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_inneraliassequencehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_sequence_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13430,13 +13608,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_inneraliasmaphelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_map_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13525,13 +13704,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_innerunionhelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_union_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13615,13 +13795,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_innerstructurehelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_struct_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13702,13 +13883,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_innerbitsethelper_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_bitset_helper(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
@@ -13810,14 +13992,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_short_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_short_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -13878,14 +14061,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_ushort_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_ushort_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -13946,14 +14130,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_long_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_long_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14014,14 +14199,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_ulong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_ulong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14082,14 +14268,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_longlong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_longlong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14150,14 +14337,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_ulonglong_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_ulonglong_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14218,14 +14406,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_float_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_float_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT32),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14286,14 +14475,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_double_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_double_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT64),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14354,14 +14544,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_longdouble_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_longdouble_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_FLOAT128),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14422,14 +14613,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_boolean_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_boolean_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14490,14 +14682,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_octet_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_octet_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BYTE),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14558,14 +14751,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_char_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_char_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14626,14 +14820,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_wchar_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_wchar_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR16),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
@@ -14694,14 +14889,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_string_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_string_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -14763,14 +14959,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_wstring_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_inneraliasboundedstringhelper_wstring_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
-                DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -14832,7 +15029,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_inneraliasboundedstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -14904,7 +15102,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_inneraliasboundedwstringhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -14976,7 +15175,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_innerenumhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15045,7 +15245,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_innerbitmaskhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15115,7 +15316,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_inneraliashelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15184,7 +15386,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_inneraliasarrayhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15254,7 +15457,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_inneraliassequencehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15306,7 +15510,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it =
-                    struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().find(map_element.first);
+                    struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().find(
+                map_element.first);
             ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
@@ -15325,7 +15530,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_inneraliasmaphelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15421,7 +15627,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_innerunionhelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15511,7 +15718,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_innerstructurehelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15599,7 +15807,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inneraliasboundedstringhelper_innerbitsethelper_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -15704,31 +15913,32 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bounded_small_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_small_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 1)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_unbounded_string_long_bounded_small_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 5)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_long_unbounded_string_bounded_small_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 5)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
@@ -15860,31 +16070,32 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bounded_large_map_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_large_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 41925)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_unbounded_string_long_bounded_large_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
                 255)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_long_unbounded_string_bounded_large_map);
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
-                DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32),
+                DynamicTypeBuilderFactory::get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 255)->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));

@@ -125,7 +125,9 @@ public:
 
     RTPSWithRegistrationReader(
             const std::string& topic_name)
-        : RTPSWithRegistrationReader(topic_name, nullptr)
+        : RTPSWithRegistrationReader(
+                topic_name,
+                nullptr)
     {
     }
 

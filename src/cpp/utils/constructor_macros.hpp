@@ -21,14 +21,14 @@
 
 #ifndef FASTDDS_COPY_OPERATIONS
 #define FASTDDS_COPY_OPERATIONS(ClassName, access) \
-    ClassName(const ClassName&) = access; \
-    ClassName& operator = (const ClassName&) = access
+        ClassName(const ClassName&) = access; \
+        ClassName& operator = (const ClassName&) = access
 #endif // !FASTDDS_COPY_OPERATIONS
 
 #ifndef FASTDDS_MOVE_OPERATIONS
 #define FASTDDS_MOVE_OPERATIONS(ClassName, access) \
-    ClassName(ClassName &&) = access; \
-    ClassName& operator = (ClassName &&) = access
+        ClassName(ClassName &&) = access; \
+        ClassName& operator = (ClassName &&) = access
 #endif // !FASTDDS_COPY_OPERATIONS
 
 #ifndef FASTDDS_DEFAULT_COPY

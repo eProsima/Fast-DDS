@@ -105,7 +105,7 @@ private:
     std::thread processing_thread_;
     eprosima::fastdds::dds::GuardCondition stop_processing_thread_;
 
-    std::function <void(
+    std::function<void(
                 eprosima::fastdds::dds::rpc::RequestInfo& info,
                 eprosima::fastdds::dds::rpc::Replier* replier,
                 const void* const request

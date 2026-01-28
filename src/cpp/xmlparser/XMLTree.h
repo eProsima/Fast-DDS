@@ -119,7 +119,7 @@ private:
     std::vector<std::unique_ptr<BaseNode>> children;
 };
 
-template <class T>
+template<class T>
 class DataNode : public BaseNode
 {
 public:
@@ -157,7 +157,7 @@ private:
     std::unique_ptr<T> data_;
 };
 
-template <class T>
+template<class T>
 DataNode<T>::DataNode(
         NodeType type)
     : BaseNode(type)
@@ -166,7 +166,7 @@ DataNode<T>::DataNode(
 {
 }
 
-template <class T>
+template<class T>
 DataNode<T>::DataNode(
         NodeType type,
         std::unique_ptr<T> data)
@@ -176,31 +176,31 @@ DataNode<T>::DataNode(
 {
 }
 
-template <class T>
+template<class T>
 DataNode<T>::~DataNode()
 {
 }
 
-template <class T>
+template<class T>
 T* DataNode<T>::get() const
 {
     return data_.get();
 }
 
-template <class T>
+template<class T>
 std::unique_ptr<T> DataNode<T>::getData()
 {
     return std::move(data_);
 }
 
-template <class T>
+template<class T>
 void DataNode<T>::setData(
         std::unique_ptr<T> data)
 {
     data_ = std::move(data);
 }
 
-template <class T>
+template<class T>
 void DataNode<T>::addAttribute(
         const std::string& name,
         const std::string& value)
@@ -208,7 +208,7 @@ void DataNode<T>::addAttribute(
     attributes_[name] = value;
 }
 
-template <class T>
+template<class T>
 const std::map<std::string, std::string>& DataNode<T>::getAttributes()
 {
     return attributes_;

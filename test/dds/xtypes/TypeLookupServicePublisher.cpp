@@ -144,7 +144,7 @@ bool TypeLookupServicePublisher::create_known_type(
     }
 }
 
-template <typename Type, typename TypePubSubType>
+template<typename Type, typename TypePubSubType>
 bool TypeLookupServicePublisher::create_known_type_impl(
         const std::string& type)
 {

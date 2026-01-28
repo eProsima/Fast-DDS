@@ -804,7 +804,7 @@ bool CDRMessage::add_string(
     bool valid = CDRMessage::addUInt32(msg, str_siz);
     valid &= CDRMessage::addData(msg, (unsigned char*) in_str, str_siz);
     octet oc = '\0';
-    for (; str_siz& 3; ++str_siz)
+    for (; str_siz & 3; ++str_siz)
     {
         valid &= CDRMessage::addOctet(msg, oc);
     }

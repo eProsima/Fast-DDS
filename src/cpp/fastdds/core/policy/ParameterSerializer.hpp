@@ -30,7 +30,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-template <typename Parameter>
+template<typename Parameter>
 class ParameterSerializer
 {
 public:

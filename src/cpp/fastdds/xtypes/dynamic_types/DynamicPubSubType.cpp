@@ -239,7 +239,7 @@ bool DynamicPubSubType::serialize(
     }
     ser.set_encoding_flag(get_fastcdr_encoding_flag(type_impl->get_descriptor().extensibility_kind(),
             fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION == data_representation?
-            eprosima::fastcdr::CdrVersion:: XCDRv1 :
+            eprosima::fastcdr::CdrVersion::XCDRv1 :
             eprosima::fastcdr::CdrVersion::XCDRv2));
 
     try

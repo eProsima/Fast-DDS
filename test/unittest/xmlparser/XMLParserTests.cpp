@@ -1349,7 +1349,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>" + parameters.first + "</type>\
+                        <type>"
+                    + parameters.first + "</type>\
                         <" + field + "><bad_element></bad_element></" + field +
                     ">\
                     </transport_descriptor>\
@@ -1367,7 +1368,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
                     "\
                     <transport_descriptor>\
                         <transport_id>TransportId1</transport_id>\
-                        <type>" + parameters.first +
+                        <type>"
+                    + parameters.first +
                     "</type>\
                         <listening_ports>\
                             <port>not_an_int</port>\

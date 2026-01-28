@@ -46,7 +46,8 @@ public:
     }
 
     StatefulWriter()
-        : StatefulWriter(nullptr)
+        : StatefulWriter(
+                nullptr)
     {
     }
 

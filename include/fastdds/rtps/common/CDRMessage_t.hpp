@@ -51,7 +51,8 @@ struct FASTDDS_EXPORTED_API CDRMessage_t final
 {
     // TODO(Miguel C): Deprecate when not used in mocks
     CDRMessage_t()
-        : CDRMessage_t(RTPSMESSAGE_DEFAULT_SIZE)
+        : CDRMessage_t(
+                RTPSMESSAGE_DEFAULT_SIZE)
     {
     }
 

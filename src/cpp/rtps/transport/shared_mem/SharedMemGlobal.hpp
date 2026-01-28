@@ -1172,7 +1172,8 @@ private:
                     port_node->is_opened_for_reading |= (open_mode != Port::OpenMode::Write);
 
                     EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                                   << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                                                                   << port_node->port_id << " (" <<
+                                        port_node->uuid.to_string() <<
                             ") Opened" << Port::open_mode_to_string(open_mode));
                 }
             }
