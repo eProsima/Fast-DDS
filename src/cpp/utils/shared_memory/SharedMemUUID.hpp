@@ -114,7 +114,7 @@ private:
 
 };
 
-template <size_t SIZE>
+template<size_t SIZE>
 class UUID
 {
 public:
@@ -187,7 +187,7 @@ private:
 } // namespace eprosima
 
 namespace std {
-template <>
+template<>
 struct hash<eprosima::fastdds::rtps::UUID<8>>
 {
     std::size_t operator ()(

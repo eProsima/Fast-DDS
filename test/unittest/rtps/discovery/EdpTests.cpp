@@ -177,7 +177,7 @@ protected:
         EXPECT_TRUE(incompatible_qos.none());
     }
 
-    template <typename T>
+    template<typename T>
     struct QosTestingCase
     {
         T offered_qos;

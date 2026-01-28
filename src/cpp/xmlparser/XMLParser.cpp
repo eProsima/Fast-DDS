@@ -1955,8 +1955,9 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             if (stderr_threshold_property_count > 1)
                             {
                                 // Continue with the next property if `stderr_threshold` had been already specified.
-                                EPROSIMA_LOG_ERROR(XMLParser, classStr << " only supports one occurrence of 'stderr_threshold'."
-                                                                       << " Only the first one is applied.");
+                                EPROSIMA_LOG_ERROR(XMLParser,
+                                        classStr << " only supports one occurrence of 'stderr_threshold'."
+                                                 << " Only the first one is applied.");
                                 property = property->NextSiblingElement(PROPERTY);
                                 ret = XMLP_ret::XML_NOK;
                                 continue;
@@ -2136,7 +2137,7 @@ XMLP_ret XMLParser::loadXML(
     return parseXML(xmlDoc, root);
 }
 
-template <typename T>
+template<typename T>
 void XMLParser::addAllAttributes(
         tinyxml2::XMLElement* p_profile,
         DataNode<T>& node)

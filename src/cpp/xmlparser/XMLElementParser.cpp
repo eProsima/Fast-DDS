@@ -2343,7 +2343,8 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
-                                                                                  << " domain IDs but also define " << domain_ids.size() <<
+                                                                                  << " domain IDs but also define " <<
+                            domain_ids.size() <<
                 " domain IDs");
         return XMLP_ret::XML_ERROR;
     }
@@ -2844,7 +2845,8 @@ XMLP_ret XMLParser::getXMLDuration(
 
         if (elem->FirstChildElement() != nullptr)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "If a dds::Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "If a dds::Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
                     " <nanosec> subelements.");
             return XMLP_ret::XML_ERROR;
         }

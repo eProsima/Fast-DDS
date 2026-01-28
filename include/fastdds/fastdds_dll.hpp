@@ -26,7 +26,8 @@
 #if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) \
     && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
 #define FASTDDS_STATIC_LINK
-#endif // if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
+#endif \
+    // if !defined(FASTDDS_DYN_LINK) && !defined(FASTDDS_STATIC_LINK) && !defined(EPROSIMA_ALL_DYN_LINK) && !defined(EPROSIMA_ALL_STATIC_LINK)
 
 #if defined(EPROSIMA_ALL_DYN_LINK) && !defined(FASTDDS_DYN_LINK)
 #define FASTDDS_DYN_LINK

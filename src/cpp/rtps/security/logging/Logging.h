@@ -165,7 +165,7 @@ protected:
             BuiltinLoggingType& builtin_msg,
             SecurityException& exception) const;
 
-    template <typename Stream>
+    template<typename Stream>
     bool compose_header(
             Stream& header,
             const BuiltinLoggingType& builtin_msg,
@@ -194,7 +194,7 @@ private:
     std::string domain_id_str_;
 };
 
-template <typename Stream>
+template<typename Stream>
 bool Logging::compose_header(
         Stream& header,
         const BuiltinLoggingType& builtin_msg,
@@ -238,48 +238,48 @@ bool Logging::compose_header(
 #define __FASTDDS_EXPAND(x) x
 
 #define __FASTDDS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, EXCEPTION) \
-    do {                                                              \
-        auto logger = get_logger();                                   \
-        if (logger){                                                  \
-            logger->log(LEVEL,                                        \
-                    MESSAGE,                                          \
-                    std::string(CLASS ",") + __func__,                \
-                    EXCEPTION);                                       \
-        }                                                             \
-        else {                                                        \
-            switch (LEVEL){                                           \
-                case LoggingLevel::EMERGENCY_LEVEL:                   \
-                case LoggingLevel::ALERT_LEVEL:                       \
-                case LoggingLevel::CRITICAL_LEVEL:                    \
-                case LoggingLevel::ERROR_LEVEL:                       \
-                    EPROSIMA_LOG_ERROR(SECURITY, MESSAGE);            \
-                    break;                                            \
-                case LoggingLevel::WARNING_LEVEL:                     \
-                    EPROSIMA_LOG_WARNING(SECURITY, MESSAGE);          \
-                    break;                                            \
-                case LoggingLevel::NOTICE_LEVEL:                      \
-                case LoggingLevel::INFORMATIONAL_LEVEL:               \
-                case LoggingLevel::DEBUG_LEVEL:                       \
-                    EPROSIMA_LOG_INFO(SECURITY, MESSAGE);             \
-                    break;                                            \
-            }                                                         \
-        }                                                             \
-    } while (0);
+        do {                                                              \
+            auto logger = get_logger();                                   \
+            if (logger){                                                  \
+                logger->log(LEVEL,                                        \
+                        MESSAGE,                                          \
+                        std::string(CLASS ",") + __func__,                \
+                        EXCEPTION);                                       \
+            }                                                             \
+            else {                                                        \
+                switch (LEVEL){                                           \
+                    case LoggingLevel::EMERGENCY_LEVEL:                   \
+                    case LoggingLevel::ALERT_LEVEL:                       \
+                    case LoggingLevel::CRITICAL_LEVEL:                    \
+                    case LoggingLevel::ERROR_LEVEL:                       \
+                        EPROSIMA_LOG_ERROR(SECURITY, MESSAGE);            \
+                        break;                                            \
+                    case LoggingLevel::WARNING_LEVEL:                     \
+                        EPROSIMA_LOG_WARNING(SECURITY, MESSAGE);          \
+                        break;                                            \
+                    case LoggingLevel::NOTICE_LEVEL:                      \
+                    case LoggingLevel::INFORMATIONAL_LEVEL:               \
+                    case LoggingLevel::DEBUG_LEVEL:                       \
+                        EPROSIMA_LOG_INFO(SECURITY, MESSAGE);             \
+                        break;                                            \
+                }                                                         \
+            }                                                             \
+        } while (0);
 
 #define __FASTDDS_SECURITY_LOGGING_EX(LEVEL, CLASS, MESSAGE)             \
-    do {                                                                  \
-        eprosima::fastdds::rtps::security::SecurityException lexception; \
-        __FASTDDS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, lexception);   \
-    } while (0);
+        do {                                                                  \
+            eprosima::fastdds::rtps::security::SecurityException lexception; \
+            __FASTDDS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, lexception);   \
+        } while (0);
 
 #define __FASTDDS_MACRO_SELECTOR(_1, _2, _3, _4, NAME, ...) NAME
 
 #define SECURITY_LOGGING(...)                   \
-    __FASTDDS_EXPAND(                          \
-        __FASTDDS_MACRO_SELECTOR(__VA_ARGS__,  \
-        __FASTDDS_SECURITY_LOGGING,            \
-        __FASTDDS_SECURITY_LOGGING_EX,         \
-        _UNUSED)(__VA_ARGS__))
+        __FASTDDS_EXPAND(                          \
+            __FASTDDS_MACRO_SELECTOR(__VA_ARGS__,  \
+            __FASTDDS_SECURITY_LOGGING,            \
+            __FASTDDS_SECURITY_LOGGING_EX,         \
+            _UNUSED)(__VA_ARGS__))
 
 #define EMERGENCY_SECURITY_LOGGING(...)     SECURITY_LOGGING(LoggingLevel::EMERGENCY_LEVEL, __VA_ARGS__)
 #define ALERT_SECURITY_LOGGING(...)         SECURITY_LOGGING(LoggingLevel::ALERT_LEVEL, __VA_ARGS__)

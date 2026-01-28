@@ -1217,7 +1217,7 @@ static bool dimensionsToLabels(
     return def;
 }
 
-DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
+DynamicType::_ref_type XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root)
 {
     /*

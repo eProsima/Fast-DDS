@@ -18,10 +18,10 @@
 #include <gtest/gtest.h>
 
 #define TEST_FRIENDS \
-    FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
-    FRIEND_TEST(WriterProxyTests, LostChangesUpdate); \
-    FRIEND_TEST(WriterProxyTests, ReceivedChangeSet); \
-    FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet);
+        FRIEND_TEST(WriterProxyTests, MissingChangesUpdate); \
+        FRIEND_TEST(WriterProxyTests, LostChangesUpdate); \
+        FRIEND_TEST(WriterProxyTests, ReceivedChangeSet); \
+        FRIEND_TEST(WriterProxyTests, IrrelevantChangeSet);
 
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 

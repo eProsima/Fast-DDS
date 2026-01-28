@@ -553,7 +553,8 @@ void StatefulWriter::send_heartbeat_to_all_readers(
             select_all_readers_nts(group, locator_selector_general_);
 
             assert(
-                (SequenceNumber_t::unknown() == get_seq_num_min() && SequenceNumber_t::unknown() == get_seq_num_max()) ||
+                (SequenceNumber_t::unknown() == get_seq_num_min() &&
+                SequenceNumber_t::unknown() == get_seq_num_max()) ||
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
@@ -2105,7 +2106,7 @@ bool StatefulWriter::ack_timer_expired()
             last_sequence_number_++;
         }
         while (!history_->get_change(last_sequence_number_, getGuid(), &change) &&
-        last_sequence_number_ < next_sequence_number());
+                last_sequence_number_ < next_sequence_number());
 
         if (!history_->get_change(
                     last_sequence_number_,

@@ -313,7 +313,7 @@ struct PropertyParser
 
 private:
 
-    template <typename value_t,
+    template<typename value_t,
             typename exception_t>
     inline static value_t parse_value(
             const std::function<value_t(const Property&)>& conversor,

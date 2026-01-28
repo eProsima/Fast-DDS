@@ -948,7 +948,8 @@ void VideoTestSubscriber::printStat(
     output_file_csv <<
         "Samples, Avg stdev, Avg Mean, min Avg, Avg 50 %%, Avg 90 %%, Avg 99 %%, \
         Avg 99.99%%, Avg max, Drop stdev, Drop Mean, min Drop, Drop 50 %%, Drop 90 %%, Drop 99 %%, \
-        Drop 99.99%%, Drop max" << std::endl;
+        Drop 99.99%%, Drop max"
+                    << std::endl;
 
     output_mean_csv << "Avg Mean" << std::endl;
 

@@ -413,7 +413,7 @@ private:
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
-    template <typename T>
+    template<typename T>
     static T consume_integer_argument(
             const std::string& arg_value,
             const std::string& arg_name)

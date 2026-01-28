@@ -37,7 +37,7 @@ namespace parser {
 
 using namespace tao::TAO_PEGTL_NAMESPACE;
 
-struct ParseNode : parse_tree::basic_node< ParseNode >
+struct ParseNode : parse_tree::basic_node<ParseNode>
 {
     // When the node is a literal value, it will hold a pointer to it
     std::unique_ptr<DDSFilterValue> value;

@@ -20,15 +20,15 @@
 #define THREAD_LOGGING_HPP
 
 #define THREAD_EPROSIMA_LOG_ERROR(thread_name, msg)                         \
-    do{                                                                     \
-        if (strcmp(thread_name, "dds.log") == 0)                            \
-        {                                                                   \
-            std::cerr << msg << std::endl;                                  \
-        }                                                                   \
-        else                                                                \
-        {                                                                   \
-            EPROSIMA_LOG_ERROR(SYSTEM, msg);                                \
-        }                                                                   \
-    } while (0)
+        do{                                                                     \
+            if (strcmp(thread_name, "dds.log") == 0)                            \
+            {                                                                   \
+                std::cerr << msg << std::endl;                                  \
+            }                                                                   \
+            else                                                                \
+            {                                                                   \
+                EPROSIMA_LOG_ERROR(SYSTEM, msg);                                \
+            }                                                                   \
+        } while (0)
 
 #endif  // THREAD_LOGGING_HPP

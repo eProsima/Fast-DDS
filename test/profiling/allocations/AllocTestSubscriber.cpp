@@ -40,16 +40,16 @@
 using namespace eprosima::fastdds::dds;
 
 #define CHECK_RETURN_CODE(ret) \
-    if (RETCODE_OK != ret) \
-    { \
-        return false; \
-    }
+        if (RETCODE_OK != ret) \
+        { \
+            return false; \
+        }
 
 #define CHECK_ENTITY_CREATION(entity) \
-    if (nullptr == entity) \
-    { \
-        return false; \
-    }
+        if (nullptr == entity) \
+        { \
+            return false; \
+        }
 
 AllocTestSubscriber::AllocTestSubscriber()
     : type_(new AllocTestTypePubSubType())

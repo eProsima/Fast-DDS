@@ -22,8 +22,8 @@
 
 #ifdef STD_TREE_NODE_TYPE
 
-template <typename T>
-struct tree_node_size : std::integral_constant <size_t, sizeof(STD_TREE_NODE_TYPE <T, void*>)>
+template<typename T>
+struct tree_node_size : std::integral_constant<size_t, sizeof(STD_TREE_NODE_TYPE<T, void*>)>
 {
 };
 

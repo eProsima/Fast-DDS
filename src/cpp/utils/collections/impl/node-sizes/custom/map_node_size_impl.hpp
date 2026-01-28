@@ -21,7 +21,7 @@
 
 #include "tree_node_size_impl.hpp"
 
-template <typename K, typename V>
+template<typename K, typename V>
 struct map_node_size : tree_node_size<typename std::map<K, V>::value_type>
 {
 };

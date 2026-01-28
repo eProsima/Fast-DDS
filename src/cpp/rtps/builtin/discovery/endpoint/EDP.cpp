@@ -887,7 +887,8 @@ bool EDP::valid_matching(
     if (wdata->topic_kind != rdata->topic_kind)
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid << " is publishing in topic "
-                                                                         << rdata->topic_name << "(keyed:" << rdata->topic_kind <<
+                                                                         << rdata->topic_name << "(keyed:" <<
+                            rdata->topic_kind <<
                 "), local writer publishes as keyed: " << wdata->topic_kind);
         reason.set(MatchingFailureMask::inconsistent_topic);
         return false;

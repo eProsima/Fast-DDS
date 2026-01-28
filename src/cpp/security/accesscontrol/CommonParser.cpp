@@ -134,7 +134,8 @@ bool eprosima::fastdds::rtps::security::parse_domain_id_set(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Not valid tag. Expected " << DomainId_str << " or " << DomainIdRange_str <<
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Not valid tag. Expected " << DomainId_str << " or " << DomainIdRange_str <<
                         " tag. Line " << PRINTLINE(
                             node));
                 returned_value = false;
