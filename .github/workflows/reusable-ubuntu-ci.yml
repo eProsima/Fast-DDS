@@ -713,7 +713,7 @@ jobs:
         with:
           repository: osrf/osrf_testing_tools_cpp
           path: src/osrf_testing_tools_cpp
-          ref: 1.5.3
+          ref: 1.5.2
 
       - name: OSRF testing tools build
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
