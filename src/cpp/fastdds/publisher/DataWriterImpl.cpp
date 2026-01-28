@@ -311,6 +311,20 @@ ReturnCode_t DataWriterImpl::enable()
             datasharing.add_domain_id(utils::default_domain_id());
         }
         w_att.endpoint.set_data_sharing_configuration(datasharing);
+
+        // Update pool config for KEEP_ALL when max_samples is infinite
+        if ((0 == pool_config_.maximum_size) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
+        {
+            // Override infinite with old default value for max_samples + extra samples
+            pool_config_.maximum_size = 5000;
+            if (0 < qos_.resource_limits().extra_samples)
+            {
+                pool_config_.maximum_size += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
+            }
+            EPROSIMA_LOG_ERROR(DATA_WRITER,
+                    "DataWriter with KEEP_ALL history and infinite max_samples is not compatible with DataSharing. "
+                    "Setting max_samples to " << pool_config_.maximum_size);
+        }
     }
     else
     {
@@ -1972,6 +1986,13 @@ ReturnCode_t DataWriterImpl::check_qos(
 ReturnCode_t DataWriterImpl::check_allocation_consistency(
         const DataWriterQos& qos)
 {
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
     if ((qos.resource_limits().max_samples > 0) &&
             (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
@@ -1980,6 +2001,7 @@ ReturnCode_t DataWriterImpl::check_allocation_consistency(
                 "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+<<<<<<< HEAD
     if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
             (qos.resource_limits().max_samples > 0))
     {
@@ -1988,6 +2010,9 @@ ReturnCode_t DataWriterImpl::check_allocation_consistency(
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;
+=======
+    return RETCODE_OK;
+>>>>>>> 30b63511d (Fix DataReader history enforcement to respect max_samples_per_instance (#6228))
 }
 
 bool DataWriterImpl::can_qos_be_updated(
