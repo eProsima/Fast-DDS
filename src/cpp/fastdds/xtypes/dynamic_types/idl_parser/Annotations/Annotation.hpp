@@ -87,7 +87,7 @@ public:
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER, "Cannot add member '" << name
                                                                  << "' to annotation '" <<
-                                    annotation_builder_->get_name()
+                    annotation_builder_->get_name()
                                                                  << "': member type is not primitive.");
             return false;
         }
@@ -124,7 +124,7 @@ public:
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER, "Cannot add member '" << member_name
                                                                  << "' to annotation '" <<
-                                    annotation_builder_->get_name()
+                    annotation_builder_->get_name()
                                                                  << "': type '" << type_name << "' is not declared.");
             return false;
         }
@@ -171,7 +171,7 @@ public:
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER, "Unable to add type '" << name
                                                                   <<
-                                    "': a type with the same name but different kind already exists.");
+                    "': a type with the same name but different kind already exists.");
 
             return false;
         }
@@ -541,7 +541,7 @@ protected:
                     EPROSIMA_LOG_ERROR(IDL_PARSER,
                             "Failed to get descriptor for member '" << name
                                                                     << "' in annotation '" <<
-                                            annotation_builder_->get_name() <<
+                            annotation_builder_->get_name() <<
                             "'.");
                     return false;
                 }
@@ -555,7 +555,7 @@ protected:
                     EPROSIMA_LOG_ERROR(IDL_PARSER,
                             "Missing required annotation parameter '" << name
                                                                       << "' in annotation '" <<
-                                            annotation_builder_->get_name() <<
+                            annotation_builder_->get_name() <<
                             "'.");
                     return false;
                 }

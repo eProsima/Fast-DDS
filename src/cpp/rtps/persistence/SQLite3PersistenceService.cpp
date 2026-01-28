@@ -149,7 +149,7 @@ static sqlite3* open_or_create_database(
             {
                 EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
                                                                            <<
-                                    ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                        ". Set property dds.persistence.update_schema to force automatic schema upgrade");
                 sqlite3_close(db);
                 return NULL;
             }

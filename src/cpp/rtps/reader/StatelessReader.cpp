@@ -634,7 +634,7 @@ bool StatelessReader::process_data_msg(
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                         IDSTRING
                         "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
-                                    <<
+                        <<
                         m_guid );
                 return false;
             }

@@ -642,7 +642,7 @@ bool SharedMemTransport::send(
 
     EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
             "(ID:" << std::this_thread::get_id() << ") " << "SharedMemTransport: " << buffer->size() <<
-                        " bytes to port " <<
+            " bytes to port " <<
             remote_locator.port);
 
     return true;

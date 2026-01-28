@@ -2344,7 +2344,7 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
                                                                                   << " domain IDs but also define " <<
-                            domain_ids.size() <<
+                domain_ids.size() <<
                 " domain IDs");
         return XMLP_ret::XML_ERROR;
     }
