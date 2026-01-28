@@ -604,7 +604,7 @@ void DiscoveryDataBase::create_participant_from_change_(
 
 void DiscoveryDataBase::match_new_server_(
         eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix,
-        bool is_superclient)
+        bool is_client)
 {
     // Send Our DATA(p) to the new participant.
     // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
@@ -613,7 +613,7 @@ void DiscoveryDataBase::match_new_server_(
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
 
-    if (!is_superclient)
+    if (!is_client)
     {
         // To obtain a mesh topology with servers, we need to:
         // - Make all known servers relevant to the new server
@@ -622,7 +622,7 @@ void DiscoveryDataBase::match_new_server_(
         // - Send Data(p) of the new server to all other servers
         for (auto& part : participants_)
         {
-            if (part.first != server_guid_prefix_ && !part.second.is_client() && !part.second.is_superclient())
+            if (part.first != server_guid_prefix_ && !part.second.is_client())
             {
                 if (part.first == participant_prefix)
                 {
@@ -722,8 +722,7 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-           participant_info.is_client() == new_change_data.is_client() &&
-           participant_info.is_superclient() == new_change_data.is_superclient());
+           participant_info.is_client() == new_change_data.is_client());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
@@ -762,11 +761,10 @@ void DiscoveryDataBase::create_new_participant_from_change_(
         }
 
         // If it is local and server we have to create virtual endpoints, except for our own server
-        if (change_guid.guidPrefix != server_guid_prefix_ &&
-                !ret.first->second.is_client() && ret.first->second.is_local())
+        if (change_guid.guidPrefix != server_guid_prefix_ && ret.first->second.is_local())
         {
             // Match new server and create virtual endpoints
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client());
         }
     }
     else
@@ -809,7 +807,7 @@ void DiscoveryDataBase::update_participant_from_change_(
             // Match new server and create virtual endpoints
             // NOTE: match after having updated the change, so virtual endpoints are not discarded for having
             // an associated unalive participant
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client());
         }
 
         // Treat as a new participant found
@@ -838,7 +836,7 @@ void DiscoveryDataBase::update_participant_from_change_(
         if (!change_data.is_client())
         {
             // NOTE: match after having updated the change in order to send the new Data(P)
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client());
         }
 
         // Treat as a new participant found
@@ -1199,114 +1197,31 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
-    // virtual              - needs info and give none
-    // local                - needs info and give info
-    // external             - needs none and give info
-    // writer needs info    = add writer participant in reader ack list
-    // writer give info     = add reader participant in writer ack list
-
-    // TODO reduce number of cases. This is more visual, but can be reduce joining them
-    if (writer_info.is_virtual())
+    // Always exchange all information between all participants (no filtering)
+    // Skip only if it's a virtual endpoint matching with another virtual endpoint
+    if (writer_info.is_virtual() && reader_info.is_virtual())
     {
-        // Writer virtual
-
-        // If reader is virtual OR not local, do not exchange info. Servers do not redirect Data(p) of remote clients.
-        // Otherwise, writer needs all the info from this endpoint
-        if (!reader_info.is_virtual() &&
-                (reader_participant_info.is_local() || writer_participant_info.is_superclient()))
-        {
-            // Only if they do not have the info yet
-            if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
-            {
-                reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-            }
-
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
-            {
-                reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-            }
-        }
+        return;
     }
-    else if (writer_participant_info.is_local())
+
+    // Add writer's participant to reader's relevant list
+    if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
     {
-        // Writer local
-
-        if (reader_info.is_virtual())
-        {
-            // Reader virtual
-            // Writer gives info to reader
-            // Only if they do not have the info yet
-            if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
-            {
-                writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-            }
-
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
-            {
-                writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-            }
-        }
-        else if (reader_participant_info.is_local())
-        {
-            // Reader local
-            // Both exchange info
-            // Only if they do not have the info yet
-            if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
-            {
-                writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-            }
-
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
-            {
-                writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-            }
-
-            if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
-            {
-                reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-            }
-
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
-            {
-                reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-            }
-        }
-        else
-        {
-            // Reader external
-            // Reader gives info to writer
-            // Only if they do not have the info yet
-            if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
-            {
-                reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-            }
-
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
-            {
-                reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-            }
-        }
+        reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
     }
-    else
+    if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
     {
-        // Writer external
+        reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+    }
 
-        // If reader is external OR virtual, do not exchange info. Servers do not redirect Data(p) of remote clients.
-        // Otherwise, reader needs all the info from this endpoint
-        if (reader_participant_info.is_local() &&
-                (!reader_info.is_virtual() || reader_participant_info.is_superclient()))
-        {
-            // Only if they do not have the info yet
-            if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
-            {
-                writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-            }
-
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
-            {
-                writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-            }
-        }
+    // Add reader's participant to writer's relevant list
+    if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
+    {
+        writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+    }
+    if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
+    {
+        writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
     }
 }
 

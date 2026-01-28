@@ -84,12 +84,10 @@ static void direct_send(
 
 PDPClient::PDPClient(
         BuiltinProtocols* builtin,
-        const RTPSParticipantAllocationAttributes& allocation,
-        bool super_client)
+        const RTPSParticipantAllocationAttributes& allocation)
     : PDP(builtin, allocation)
     , mp_sync(nullptr)
     , _serverPing(false)
-    , _super_client(super_client)
 {
 }
 

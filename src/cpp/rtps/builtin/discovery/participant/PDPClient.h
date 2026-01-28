@@ -52,8 +52,7 @@ public:
      */
     PDPClient(
             BuiltinProtocols* builtin,
-            const RTPSParticipantAllocationAttributes& allocation,
-            bool super_client = false);
+            const RTPSParticipantAllocationAttributes& allocation);
     ~PDPClient();
 
     void initializeParticipantProxyData(
@@ -271,9 +270,6 @@ private:
 
     //! flag to hightlight we need a server ping announcement
     bool _serverPing;
-
-    //! flag to know this client must use super client participant type
-    bool _super_client;
 
     //! List of real connected servers
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes> connected_servers_;
