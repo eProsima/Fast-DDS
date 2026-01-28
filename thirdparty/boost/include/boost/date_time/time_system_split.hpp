@@ -43,7 +43,7 @@ namespace date_time {
    private:
      BOOST_STATIC_CONSTANT(int_type, ticks_per_day = INT64_C(86400) * config::tick_per_second);
    public:
-# if BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0X581) )
+# if BOOST_WORKAROUND( BOOST_BORLANDC, BOOST_TESTED_AT(0X581) )
     typedef date_time::wrapping_int< split_timedate_system::int_type, split_timedate_system::ticks_per_day> wrap_int_type;
 # else
     typedef date_time::wrapping_int<int_type, ticks_per_day> wrap_int_type;
