@@ -58,7 +58,7 @@ defaults:
 jobs:
   asan_fastdds_build:
     if: ${{ inputs.run_asan_fastdds == true || inputs.run_asan_discovery_server == true }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -78,7 +78,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -153,7 +153,7 @@ jobs:
   asan_fastdds_test:
     if: ${{ inputs.run_asan_fastdds == true }}
     needs: asan_fastdds_build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -172,7 +172,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -253,7 +253,7 @@ jobs:
   asan_discovery_server_test:
     if: ${{ inputs.run_asan_discovery_server == true }}
     needs: asan_fastdds_build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -272,7 +272,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -354,13 +354,9 @@ jobs:
 
   tsan_fastdds_test:
     if: ${{ inputs.run_tsan_fastdds == true }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
-      # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
-      # These issues were fixed in GCC 12 so we upgrade to that version.
-      CC: gcc-12
-      CXX: g++-12
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -380,7 +376,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
