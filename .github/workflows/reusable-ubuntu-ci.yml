@@ -306,7 +306,14 @@ jobs:
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1
+          packages: libasio-dev libtinyxml2-dev libssl-dev
+
+      - name: Install and configure SWIG test # TODO
+        run: |
+          sudo apt-get install -y swig4.1
+          sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
+          sudo update-alternatives --set swig /usr/bin/swig4.1
+          swig -version
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -386,7 +393,14 @@ jobs:
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1
+          packages: libasio-dev libtinyxml2-dev libssl-discovery
+
+      - name: Install and configure SWIG test # TODO
+        run: |
+          sudo apt-get install -y swig4.1
+          sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
+          sudo update-alternatives --set swig /usr/bin/swig4.1
+          swig -version
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -475,7 +489,14 @@ jobs:
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1 doxygen imagemagick plantuml libenchant-2-2
+          packages: libasio-dev libtinyxml2-dev libssl-dev doxygen imagemagick plantuml libenchant-2-2
+
+      - name: Install and configure SWIG test # TODO
+        run: |
+          sudo apt-get install -y swig4.1
+          sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
+          sudo update-alternatives --set swig /usr/bin/swig4.1
+          swig -version
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -694,7 +715,7 @@ jobs:
         with:
           repository: osrf/osrf_testing_tools_cpp
           path: src/osrf_testing_tools_cpp
-          ref: 2.3.0
+          ref: 1.5.3
 
       - name: OSRF testing tools build
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
