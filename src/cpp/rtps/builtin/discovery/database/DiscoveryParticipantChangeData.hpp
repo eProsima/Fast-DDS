@@ -47,26 +47,17 @@ public:
 
     DiscoveryParticipantChangeData(
             RemoteLocatorList metatraffic_locators,
+            bool is_client,
             bool is_local)
         : metatraffic_locators_(metatraffic_locators)
-        , is_superclient_(false)
+        , is_client_(is_client)
         , is_local_(is_local)
     {
     }
 
-    DiscoveryParticipantChangeData(
-            RemoteLocatorList metatraffic_locators,
-            bool is_local,
-            bool is_superclient)
-        : metatraffic_locators_(metatraffic_locators)
-        , is_superclient_(is_superclient)
-        , is_local_(is_local)
+    bool is_client() const
     {
-    }
-
-    bool is_superclient() const
-    {
-        return is_superclient_;
+        return is_client_;
     }
 
     bool is_local() const
@@ -82,7 +73,7 @@ public:
     void to_json(
             nlohmann::json& j) const
     {
-        j["is_superclient"] = is_superclient_;
+        j["is_client"] = is_client_;
         j["is_local"] = is_local_;
         j["metatraffic_locators"] = object_to_string(metatraffic_locators_);
     }
@@ -91,9 +82,11 @@ private:
 
     // The metatraffic locators of from the serialized payload
     RemoteLocatorList metatraffic_locators_;
-    // Wether this participant is a SUPER_CLIENT and needs special treatment
-    // when matching remote endpoints
-    bool is_superclient_ = false;
+    // Whether this participant is a CLIENT/SUPER_CLIENT or a SERVER/BACKUP
+    // This variable affects the discovery filter to applied to each entity:
+    // false => send all data ; true => send all data but needs special
+    // treatment when matching remote endpoints
+    bool is_client_ = false;
     // Whether this participant (CLIENT OR SERVER) is a client of this server
     bool is_local_ = false;
 };

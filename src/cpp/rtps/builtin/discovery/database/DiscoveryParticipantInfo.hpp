@@ -90,9 +90,9 @@ public:
     void remove_writer(
             const GUID_t& guid);
 
-    bool is_superclient() const
+    bool is_client() const
     {
-        return participant_change_data_.is_superclient();
+        return participant_change_data_.is_client();
     }
 
     bool is_local() const

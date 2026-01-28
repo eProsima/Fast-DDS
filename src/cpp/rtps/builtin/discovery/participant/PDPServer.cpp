@@ -897,7 +897,7 @@ void PDPServer::announceParticipantState(
                     // Update the database with our own data
                     if (discovery_db().update(
                                 change,
-                                ddb::DiscoveryParticipantChangeData(metatraffic_locators, true)))
+                                ddb::DiscoveryParticipantChangeData(metatraffic_locators, false, true)))
                     {
                         // Distribute
                         awake_routine_thread();

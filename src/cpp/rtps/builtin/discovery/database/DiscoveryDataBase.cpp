@@ -604,7 +604,7 @@ void DiscoveryDataBase::create_participant_from_change_(
 
 void DiscoveryDataBase::match_new_server_(
         eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix,
-        bool is_super_client)
+        bool is_client)
 {
     // Send Our DATA(p) to the new participant.
     // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
@@ -613,7 +613,7 @@ void DiscoveryDataBase::match_new_server_(
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
 
-    if (!is_super_client)
+    if (!is_client)
     {
         // To obtain a mesh topology with servers, we need to:
         // - Make all known servers relevant to the new server
@@ -622,7 +622,7 @@ void DiscoveryDataBase::match_new_server_(
         // - Send Data(p) of the new server to all other servers
         for (auto& part : participants_)
         {
-            if (part.first != server_guid_prefix_ && !part.second.is_superclient())
+            if (part.first != server_guid_prefix_ && !part.second.is_client())
             {
                 if (part.first == participant_prefix)
                 {
@@ -722,7 +722,7 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-           participant_info.is_superclient() == new_change_data.is_superclient());
+           participant_info.is_client() == new_change_data.is_client());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
@@ -764,7 +764,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
         if (change_guid.guidPrefix != server_guid_prefix_ && ret.first->second.is_local())
         {
             // Match new server and create virtual endpoints
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client());
         }
     }
     else
@@ -802,12 +802,12 @@ void DiscoveryDataBase::update_participant_from_change_(
         update_change_and_unmatch_(ch, participant_info);
 
         // If it is local and server we have to create virtual endpoints, except for our own server
-        if (change_guid.guidPrefix != server_guid_prefix_ && !change_data.is_superclient() && change_data.is_local())
+        if (change_guid.guidPrefix != server_guid_prefix_ && !change_data.is_client() && change_data.is_local())
         {
             // Match new server and create virtual endpoints
             // NOTE: match after having updated the change, so virtual endpoints are not discarded for having
             // an associated unalive participant
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client());
         }
 
         // Treat as a new participant found
@@ -833,10 +833,10 @@ void DiscoveryDataBase::update_participant_from_change_(
 
         // If the participant changes to server local, virtual endpoints must be added
         // If it is local and server the only possibility is it was a remote server and it must be converted to local
-        if (!change_data.is_superclient())
+        if (!change_data.is_client())
         {
             // NOTE: match after having updated the change in order to send the new Data(P)
-            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
+            match_new_server_(change_guid.guidPrefix, change_data.is_client());
         }
 
         // Treat as a new participant found
@@ -2466,6 +2466,7 @@ bool DiscoveryDataBase::from_json(
             // Populate DiscoveryParticipantChangeData
             DiscoveryParticipantChangeData dpcd(
                 rll,
+                it.value()["is_client"].get<bool>(),
                 it.value()["is_local"].get<bool>());
 
             // Populate DiscoveryParticipantInfo

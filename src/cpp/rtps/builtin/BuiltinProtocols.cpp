@@ -119,7 +119,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
 #endif // if HAVE_SQLITE3
 
         case DiscoveryProtocol::SUPER_CLIENT:
-            mp_PDP = new fastdds::rtps::PDPClient(this, allocation, true);
+            mp_PDP = new fastdds::rtps::PDPClient(this, allocation);
             break;
 
         default:
