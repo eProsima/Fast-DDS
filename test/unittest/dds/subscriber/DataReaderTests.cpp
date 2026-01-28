@@ -3901,8 +3901,6 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
-<<<<<<< HEAD
-=======
 TEST_F(DataReaderTests, set_related_datawriter)
 {
     create_entities();
@@ -4221,7 +4219,6 @@ INSTANTIATE_TEST_SUITE_P(
     }
     );
 
->>>>>>> 30b63511 (Fix DataReader history enforcement to respect max_samples_per_instance (#6228))
 int main(
         int argc,
         char** argv)
