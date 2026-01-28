@@ -258,7 +258,7 @@ void PDPServerListener::on_new_cache_change_added(
                 // DATA acknowledgement. Non-local SERVERs will also be connected
                 if (pdata && (is_local || (!is_client && participant_type_str != ParticipantType::SUPER_CLIENT)))
                 {
-                    pdp_server()->assignRemoteEndpoints(pdata);
+                    pdp_server()->assignRemoteEndpoints(pdata, false);
                 }
             }
             // Case ParticipantProxyData already exists but was known remotely and now must be local
@@ -267,22 +267,34 @@ void PDPServerListener::on_new_cache_change_added(
                 // Realease PDP mutex
                 lock.unlock();
 
-                pdp_server()->assignRemoteEndpoints(pdata);
+                pdp_server()->assignRemoteEndpoints(pdata, false);
             }
             // Updated participant information case
             else
             {
+                auto old_metatraffic_locators = pdata->metatraffic_locators;
+                auto old_default_locators = pdata->default_locators;
+
                 // Update proxy
                 pdata->update_data(participant_data);
                 pdata->is_alive = true;
-                // Realease PDP mutex
+
+                bool locators_changed =
+                        !(pdata->metatraffic_locators.is_unicast_list_equal_to(old_metatraffic_locators)) ||
+                        !(pdata->default_locators.is_unicast_list_equal_to(old_default_locators));
+                ParticipantProxyData pdata_copy(*pdata);
+                // Release PDP mutex
                 lock.unlock();
 
                 // TODO: pending client liveliness management here
                 // Included form symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
                 if (pdp_server()->updateInfoMatchesEDP() && is_local)
                 {
-                    pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata, true);
+                    pdp_server()->mp_EDP->assignRemoteEndpoints(pdata_copy, true);
+                }
+                if (locators_changed)
+                {
+                    parent_pdp_->assignRemoteEndpoints(&pdata_copy, true);
                 }
             }
 

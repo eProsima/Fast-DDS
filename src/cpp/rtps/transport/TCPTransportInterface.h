@@ -38,11 +38,10 @@
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <rtps/transport/tcp/RTCPHeader.h>
-#include <rtps/transport/TCPAcceptorBasic.h>
-#include <rtps/transport/TCPChannelResourceBasic.h>
+#include <rtps/transport/TCPAcceptor.h>
+#include <rtps/transport/tcp/TCPControlMessage.h>
 
 #if TLS_FOUND
-#include <rtps/transport/TCPAcceptorSecure.h>
 #include <asio/ssl.hpp>
 #endif // if TLS_FOUND
 
@@ -96,7 +95,6 @@ protected:
     asio::ssl::context ssl_context_;
 #endif // if TLS_FOUND
     eprosima::thread io_context_thread_;
-    eprosima::thread io_context_timers_thread_;
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
@@ -111,8 +109,6 @@ protected:
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
-
-    asio::steady_timer keep_alive_event_;
 
     std::map<Locator, std::shared_ptr<TCPAcceptor>> acceptors_;
 
@@ -178,7 +174,7 @@ protected:
             std::weak_ptr<TCPChannelResource> channel,
             std::weak_ptr<RTCPMessageManager> rtcp_manager);
 
-    bool read_body(
+    virtual bool read_body(
             octet* receive_buffer,
             uint32_t receive_buffer_capacity,
             uint32_t* bytes_received,
@@ -190,7 +186,12 @@ protected:
     virtual void set_send_buffer_size(
             uint32_t size) = 0;
 
-    void clean(); // Must be called on childs destructors!
+    virtual void clean(); // Must be called on childs destructors!
+
+    /**
+     * Configures the keep-alive mechanism for TCP connections.
+     */
+    virtual void configure_keep_alive();
 
     virtual void endpoint_to_locator(
             const asio::ip::tcp::endpoint& endpoint,
@@ -244,9 +245,15 @@ public:
 
     virtual ~TCPTransportInterface();
 
-    //! Stores the binding between the given locator and the given TCP socket. Server side.
-    ResponseCode bind_socket(
-            std::shared_ptr<TCPChannelResource>&);
+    /**
+     * Stores the binding between the given locator and the given TCP socket. Server side.
+     *
+     * @param [in]  channel TCP channel resource to bind.
+     * @param [out] existing_channel If not null, will be set to the existing channel with the same locator.
+     */
+    virtual ResponseCode bind_socket(
+            std::shared_ptr<TCPChannelResource>& channel,
+            std::shared_ptr<TCPChannelResource>* existing_channel = nullptr);
 
     //! Removes the listening socket for the specified port.
     bool CloseInputChannel(
@@ -496,8 +503,6 @@ public:
     virtual const TCPTransportDescriptor* configuration() const = 0;
 
     virtual TCPTransportDescriptor* configuration() = 0;
-
-    void keep_alive();
 
     void update_network_interfaces() override;
 

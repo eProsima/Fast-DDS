@@ -1,4 +1,4 @@
-// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2026 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FASTDDS_TYPES_HPP
-#define FASTDDS_TYPES_HPP
+#ifndef RTPS_TRANSPORT_FASTDDS_TYPES_HPP
+#define RTPS_TRANSPORT_FASTDDS_TYPES_HPP
 
-#include <rtps/flowcontrol/FlowControllerFactory.hpp>
+#include <rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
 namespace fastdds {
+namespace rtps {
 
-using FlowControllerFactoryType = fastdds::rtps::FlowControllerFactory;
+using TCPChannelResource_t = fastdds::rtps::TCPChannelResource;
+using TCPTransportInterface_t = fastdds::rtps::TCPTransportInterface;
 
+} // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_TYPES_HPP
+#endif // RTPS_TRANSPORT_FASTDDS_TYPES_HPP

@@ -21,9 +21,9 @@
 
 #include <thread>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/transport/tcp/RTCPHeader.h>
 #include <rtps/transport/TCPChannelResource.h>
@@ -645,7 +645,7 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortResponse(
 }
 
 ResponseCode RTCPMessageManager::processKeepAliveResponse(
-        std::shared_ptr<TCPChannelResource>& channel,
+        std::shared_ptr<TCPChannelResource>& /*channel*/,
         ResponseCode respCode,
         const TCPTransactionId& transaction_id)
 {
@@ -654,7 +654,6 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(
         switch (respCode)
         {
             case RETCODE_OK:
-                channel->waiting_for_keep_alive_ = false;
                 break;
             case RETCODE_UNKNOWN_LOCATOR:
                 return RETCODE_UNKNOWN_LOCATOR;
@@ -706,11 +705,10 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
             request.deserialize(&payload);
 
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " <<
-                    "LogicalPort: " << IPLocator::getLogicalPort(
-                        request.transportLocator())
-                                                                             << ", Physical remote: " << IPLocator::getPhysicalPort(
-                        request.transportLocator()));
+            EPROSIMA_LOG_INFO(RTCP_MSG,
+                    "Receive [BIND_CONNECTION_REQUEST] " << "LogicalPort: " <<
+                    IPLocator::getLogicalPort(request.transportLocator()) << ", Physical remote: " <<
+                    IPLocator::getPhysicalPort(request.transportLocator()));
 
             responseCode = processBindConnectionRequest(channel, request, controlHeader.transaction_id(), myLocator);
         }

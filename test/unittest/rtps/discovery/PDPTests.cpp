@@ -186,7 +186,8 @@ public:
     }
 
     void assignRemoteEndpoints(
-            ParticipantProxyData* /*pdata*/) override
+            ParticipantProxyData* /*pdata*/,
+            bool /*updated_participant*/) override
     {
         return;
     }

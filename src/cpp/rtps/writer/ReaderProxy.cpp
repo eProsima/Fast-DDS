@@ -121,8 +121,8 @@ void ReaderProxy::start(
 {
     locator_info_.start(
         reader_attributes.guid,
-        reader_attributes.remote_locators.unicast,
-        reader_attributes.remote_locators.multicast,
+        reader_attributes.remote_locators.get_unicast(),
+        reader_attributes.remote_locators.get_multicast(),
         reader_attributes.expects_inline_qos,
         is_datasharing);
 

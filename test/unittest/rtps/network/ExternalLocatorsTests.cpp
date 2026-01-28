@@ -53,13 +53,6 @@ static bool operator == (
     return lhs == right_list;
 }
 
-static bool operator == (
-        const eprosima::fastdds::rtps::RemoteLocatorList& lhs,
-        const eprosima::fastdds::rtps::RemoteLocatorList& rhs)
-{
-    return lhs.multicast == rhs.multicast && lhs.unicast == rhs.unicast;
-}
-
 // -------------------- Adding external locators to ParticipantProxyData --------------------
 
 void single_participant_check(
@@ -379,7 +372,11 @@ struct ExternalAddress
             const std::string& address,
             uint32_t metatraffic_port,
             uint32_t user_port)
-        : ExternalAddress(address, 24, metatraffic_port, user_port)
+        : ExternalAddress(
+                address,
+                24,
+                metatraffic_port,
+                user_port)
     {
     }
 

@@ -214,10 +214,10 @@ uint32_t WriterProxyData::get_serialized_size(
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
     // PID_UNICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators.unicast.size());
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators.get_unicast().size());
 
     // PID_MULTICAST_LOCATOR
-    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators.multicast.size());
+    ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators.get_multicast().size());
 
     // PID_PARTICIPANT_GUID
     ret_val += 4 + PARAMETER_GUID_LENGTH;
@@ -444,7 +444,7 @@ bool WriterProxyData::write_to_cdr_message(
         }
     }
 
-    for (const Locator_t& locator : remote_locators.unicast)
+    for (const Locator_t& locator : remote_locators.get_unicast())
     {
         ParameterLocator_t p(fastdds::dds::PID_UNICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, locator);
         if (!dds::ParameterSerializer<ParameterLocator_t>::add_to_cdr_message(p, msg))
@@ -452,7 +452,7 @@ bool WriterProxyData::write_to_cdr_message(
             return false;
         }
     }
-    for (const Locator_t& locator : remote_locators.multicast)
+    for (const Locator_t& locator : remote_locators.get_multicast())
     {
         ParameterLocator_t p(fastdds::dds::PID_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH, locator);
         if (!dds::ParameterSerializer<ParameterLocator_t>::add_to_cdr_message(p, msg))
@@ -1487,7 +1487,7 @@ void WriterProxyData::setup_locators(
         // Get the transformed remote locators for the WriterProxyData received
         remote_locators.unicast.clear();
         remote_locators.multicast.clear();
-        for (const Locator_t& locator : wdata.remote_locators.unicast)
+        for (const Locator_t& locator : wdata.remote_locators.get_unicast())
         {
             Locator_t temp_locator;
             if (network.transform_remote_locator(locator, temp_locator, m_network_configuration, from_this_host))
@@ -1495,7 +1495,7 @@ void WriterProxyData::setup_locators(
                 ProxyDataFilters::filter_locators(network, remote_locators, temp_locator, true);
             }
         }
-        for (const Locator_t& locator : wdata.remote_locators.multicast)
+        for (const Locator_t& locator : wdata.remote_locators.get_multicast())
         {
             Locator_t temp_locator;
             if (network.transform_remote_locator(locator, temp_locator, m_network_configuration, from_this_host))
@@ -1971,7 +1971,7 @@ void WriterProxyData::set_remote_locators(
     remote_locators.unicast.clear();
     remote_locators.multicast.clear();
 
-    for (const Locator_t& locator : locators.unicast)
+    for (const Locator_t& locator : locators.get_unicast())
     {
         if (network.is_locator_remote_or_allowed(locator, from_this_host))
         {
@@ -1981,7 +1981,7 @@ void WriterProxyData::set_remote_locators(
 
     if (use_multicast_locators)
     {
-        for (const Locator_t& locator : locators.multicast)
+        for (const Locator_t& locator : locators.get_multicast())
         {
             if (network.is_locator_remote_or_allowed(locator, from_this_host))
             {

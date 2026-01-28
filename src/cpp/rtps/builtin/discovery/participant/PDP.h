@@ -291,9 +291,11 @@ public:
     /**
      * This method assigns remote endpoints to the builtin endpoints defined in this protocol. It also calls the corresponding methods in EDP and WLP.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
+     * @param updated_participant Whether the participant is new or updated.
      */
     virtual void assignRemoteEndpoints(
-            ParticipantProxyData* pdata) = 0;
+            ParticipantProxyData* pdata,
+            bool updated_participant) = 0;
 
     /**
      * Override to match additional endpoints to PDP. Like EDP or WLP.
@@ -620,7 +622,35 @@ protected:
      */
     virtual void update_builtin_locators() = 0;
 
+    /**
+     * Notify the listener about a participant status change and check if it should be ignored.
+     *
+     * @param [in]  pdata Pointer to the ParticipantProxyData object.
+     * @param [out] should_be_ignored Output parameter indicating if the participant should be ignored.
+     * @param [in]  status The status of the participant discovery.
+     */
+    void notify_and_maybe_ignore_status_participant(
+            ParticipantProxyData* pdata,
+            bool& should_be_ignored,
+            ParticipantDiscoveryStatus status);
+
+    /**
+     * Notify the listener about a new participant and check if it should be ignored.
+     *
+     * @param [in]  pdata Pointer to the ParticipantProxyData object.
+     * @param [out] should_be_ignored Output parameter indicating if the participant should be ignored.
+     */
     void notify_and_maybe_ignore_new_participant(
+            ParticipantProxyData* pdata,
+            bool& should_be_ignored);
+
+    /**
+     * Notify the listener about a QOS modification and check if it should be ignored.
+     *
+     * @param [in]  pdata Pointer to the ParticipantProxyData object.
+     * @param [out] should_be_ignored Output parameter indicating if the participant should be ignored.
+     */
+    void notify_and_maybe_ignore_updated_participant(
             ParticipantProxyData* pdata,
             bool& should_be_ignored);
 

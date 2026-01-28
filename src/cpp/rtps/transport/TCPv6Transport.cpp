@@ -83,7 +83,7 @@ static asio::ip::address_v6::bytes_type locator_to_native(
 
 TCPv6Transport::TCPv6Transport(
         const TCPv6TransportDescriptor& descriptor)
-    : TCPTransportInterface(LOCATOR_KIND_TCPv6)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv6)
     , configuration_(descriptor)
 {
     // Copy descriptor's netmask filter configuration
@@ -127,7 +127,7 @@ TCPv6Transport::TCPv6Transport(
                         [infoIP](const AllowedNetworkInterface& allowlist_element)
                         {
                             return allowlist_element.name == infoIP.dev ||
-                            compare_ips(allowlist_element.name, infoIP.name);
+                                   compare_ips(allowlist_element.name, infoIP.name);
                         }) != allow_end ))
                 {
                     EPROSIMA_LOG_WARNING(TRANSPORT_TCPV6,
@@ -150,8 +150,7 @@ TCPv6Transport::TCPv6Transport(
                     allow_end,
                     [&infoIP](const AllowedNetworkInterface& allowlist_element)
                     {
-                        return allowlist_element.name == infoIP.dev || compare_ips(allowlist_element.name,
-                        infoIP.name);
+                        return allowlist_element.name == infoIP.dev || compare_ips(allowlist_element.name, infoIP.name);
                     });
                 if (allow_it != allow_end)
                 {
@@ -166,10 +165,10 @@ TCPv6Transport::TCPv6Transport(
                     else
                     {
                         EPROSIMA_LOG_WARNING(TRANSPORT_TCPV6,
-                                "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name
-                                                              << " as its netmask filter configuration (" << netmask_filter << ") is incompatible"
-                                                              << " with descriptor's (" << descriptor.netmask_filter <<
-                                ").");
+                                "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name <<
+                                " as its netmask filter configuration (" << netmask_filter <<
+                                ") is incompatible" << " with descriptor's (" <<
+                                descriptor.netmask_filter << ").");
                     }
                 }
             }
@@ -216,7 +215,7 @@ TCPv6Transport::TCPv6Transport(
 }
 
 TCPv6Transport::TCPv6Transport()
-    : TCPTransportInterface(LOCATOR_KIND_TCPv6)
+    : TCPTransportInterface_t(LOCATOR_KIND_TCPv6)
 {
 }
 

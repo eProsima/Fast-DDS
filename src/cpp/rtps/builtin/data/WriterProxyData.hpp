@@ -98,7 +98,7 @@ public:
 
     bool has_locators() const
     {
-        return !remote_locators.unicast.empty() || !remote_locators.multicast.empty();
+        return !remote_locators.get_unicast().empty() || !remote_locators.get_multicast().empty();
     }
 
     void add_unicast_locator(

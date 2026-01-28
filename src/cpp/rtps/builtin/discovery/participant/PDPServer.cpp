@@ -286,7 +286,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
 
                     remote_readers.emplace_back(participant_data.guid.guidPrefix, c_EntityId_SPDPReader);
 
-                    for (auto& locator : participant_data.metatraffic_locators.unicast)
+                    for (auto& locator : participant_data.metatraffic_locators.get_unicast())
                     {
                         locators.push_back(locator);
                     }
@@ -531,7 +531,7 @@ void PDPServer::match_reliable_pdp_endpoints(
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_available_builtin_endpoints;
     bool use_multicast_locators = !mp_RTPSParticipant->get_attributes().builtin.avoid_builtin_multicast ||
-            pdata.metatraffic_locators.unicast.empty();
+            pdata.metatraffic_locators.get_unicast().empty();
 
     // Only SERVER and CLIENT participants will be received. All builtin must be there
     uint32_t auxendp = endp &
@@ -606,7 +606,8 @@ void PDPServer::match_reliable_pdp_endpoints(
 }
 
 void PDPServer::assignRemoteEndpoints(
-        ParticipantProxyData* pdata)
+        ParticipantProxyData* pdata,
+        bool updated_participant)
 {
     std::string part_type;
     {
@@ -616,8 +617,11 @@ void PDPServer::assignRemoteEndpoints(
         part_type = check_participant_type(pdata->properties);
         if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
         {
-            // Update DisvoveryDataBase
-            discovery_db_.add_server(pdata->guid.guidPrefix);
+            if (!updated_participant)
+            {
+                // Update DisvoveryDataBase
+                discovery_db_.add_server(pdata->guid.guidPrefix);
+            }
 
 #if HAVE_SECURITY
             if (!should_protect_discovery())
@@ -640,7 +644,7 @@ void PDPServer::assignRemoteEndpoints(
     }
 
     // Send the Data(p) to the client
-    if (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT)
+    if (!updated_participant && (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT))
     {
         send_own_pdp(pdata);
     }
@@ -927,7 +931,8 @@ void PDPServer::announceParticipantState(
                     // but the routine thread has not consumed it yet.
                     // This would happen when the routine thread is busy in initializing, i.e. it already has other
                     // DATA(P) to parse before the own one is inserted by update.
-                    EPROSIMA_LOG_WARNING(RTPS_PDP_SERVER, "Local Server DATA(p) uninitialized before local on announcement. "
+                    EPROSIMA_LOG_WARNING(RTPS_PDP_SERVER,
+                            "Local Server DATA(p) uninitialized before local on announcement. "
                             << "It will be sent in next announce iteration.");
                     return;
                 }
@@ -1254,8 +1259,9 @@ History::iterator PDPServer::process_change_acknowledgement(
                 {
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
-                    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
-                                                                          << " from history as it has been acked for everyone");
+                    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                            "Removing change " << c->instanceHandle <<
+                            " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1633,7 +1639,7 @@ void PDPServer::send_own_pdp(
 
     remote_readers.emplace_back(pdata->guid.guidPrefix, c_EntityId_SPDPReader);
 
-    for (auto& locator : pdata->metatraffic_locators.unicast)
+    for (auto& locator : pdata->metatraffic_locators.get_unicast())
     {
         locators.push_back(locator);
     }

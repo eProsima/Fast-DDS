@@ -419,10 +419,18 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 }
 
 void PDPClient::assignRemoteEndpoints(
-        ParticipantProxyData* pdata)
+        ParticipantProxyData* pdata,
+        bool updated_participant)
 {
     bool ignored = false;
-    notify_and_maybe_ignore_new_participant(pdata, ignored);
+    if (updated_participant)
+    {
+        notify_and_maybe_ignore_updated_participant(pdata, ignored);
+    }
+    else
+    {
+        notify_and_maybe_ignore_new_participant(pdata, ignored);
+    }
     if (!ignored)
     {
         {
@@ -431,19 +439,44 @@ void PDPClient::assignRemoteEndpoints(
             std::string part_type = check_participant_type(pdata->properties);
             if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
             {
-                // Add new servers to the connected list
-                EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->guid.guidPrefix << "] matched.");
                 RemoteServerAttributes server;
                 server.guidPrefix = pdata->guid.guidPrefix;
-                for (const Locator_t& locator : pdata->metatraffic_locators.multicast)
+                if (!updated_participant)
                 {
-                    server.metatrafficMulticastLocatorList.push_back(locator);
+                    // Add new servers to the connected list
+                    EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->guid.guidPrefix << "] matched.");
+                    for (const Locator_t& locator : pdata->metatraffic_locators.get_multicast())
+                    {
+                        server.metatrafficMulticastLocatorList.push_back(locator);
+                    }
+                    for (const Locator_t& locator : pdata->metatraffic_locators.get_unicast())
+                    {
+                        server.metatrafficUnicastLocatorList.push_back(locator);
+                    }
+                    connected_servers_.push_back(server);
                 }
-                for (const Locator_t& locator : pdata->metatraffic_locators.unicast)
+                else
                 {
-                    server.metatrafficUnicastLocatorList.push_back(locator);
+                    // Update server locators in the connected list
+                    EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->guid.guidPrefix << "] updated.");
+                    for (auto& connected_server : connected_servers_)
+                    {
+                        if (connected_server.guidPrefix == pdata->guid.guidPrefix)
+                        {
+                            connected_server.metatrafficMulticastLocatorList.clear();
+                            for (const Locator_t& locator : pdata->metatraffic_locators.get_multicast())
+                            {
+                                connected_server.metatrafficMulticastLocatorList.push_back(locator);
+                            }
+                            connected_server.metatrafficUnicastLocatorList.clear();
+                            for (const Locator_t& locator : pdata->metatraffic_locators.get_unicast())
+                            {
+                                connected_server.metatrafficUnicastLocatorList.push_back(locator);
+                            }
+                            break;
+                        }
+                    }
                 }
-                connected_servers_.push_back(server);
 
                 // Match incoming server
 #if HAVE_SECURITY
@@ -485,11 +518,11 @@ void PDPClient::notifyAboveRemoteEndpoints(
             EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Secure Server [" << pdata.guid.guidPrefix << "] matched.");
             RemoteServerAttributes server;
             server.guidPrefix = pdata.guid.guidPrefix;
-            for (const Locator_t& locator : pdata.metatraffic_locators.multicast)
+            for (const Locator_t& locator : pdata.metatraffic_locators.get_multicast())
             {
                 server.metatrafficMulticastLocatorList.push_back(locator);
             }
-            for (const Locator_t& locator : pdata.metatraffic_locators.unicast)
+            for (const Locator_t& locator : pdata.metatraffic_locators.get_unicast())
             {
                 server.metatrafficUnicastLocatorList.push_back(locator);
             }

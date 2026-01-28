@@ -139,8 +139,8 @@ void WriterProxy::start(
     is_on_same_process_ = RTPSDomainImpl::should_intraprocess_between(reader_->getGuid(), attributes.guid);
     ownership_strength_ = attributes.ownership_strength.value;
     liveliness_kind_ = attributes.liveliness.kind;
-    locators_entry_.unicast = attributes.remote_locators.unicast;
-    locators_entry_.multicast = attributes.remote_locators.multicast;
+    locators_entry_.unicast = attributes.remote_locators.get_unicast();
+    locators_entry_.multicast = attributes.remote_locators.get_multicast();
     filter_remote_locators(locators_entry_,
             reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
     is_datasharing_writer_ = is_datasharing;
@@ -161,8 +161,8 @@ void WriterProxy::update(
 
     assert(is_alive_);
     ownership_strength_ = attributes.ownership_strength.value;
-    locators_entry_.unicast = attributes.remote_locators.unicast;
-    locators_entry_.multicast = attributes.remote_locators.multicast;
+    locators_entry_.unicast = attributes.remote_locators.get_unicast();
+    locators_entry_.multicast = attributes.remote_locators.get_multicast();
     filter_remote_locators(locators_entry_,
             reader_->getAttributes().external_unicast_locators, reader_->getAttributes().ignore_non_matching_locators);
 }

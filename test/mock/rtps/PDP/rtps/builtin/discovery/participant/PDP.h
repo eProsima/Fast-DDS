@@ -70,8 +70,9 @@ public:
     MOCK_METHOD0(get_proxy_observer, const fastdds::statistics::rtps::IProxyObserver*());
 #endif // FASTDDS_STATISTICS
 
-    MOCK_METHOD1(assignRemoteEndpoints, void(
-            ParticipantProxyData* pdata));
+    MOCK_METHOD2(assignRemoteEndpoints, void(
+            ParticipantProxyData* pdata,
+            bool updated_participant));
 
     MOCK_METHOD1(removeRemoteEndpoints, void(
             const ParticipantProxyData* pdata));
