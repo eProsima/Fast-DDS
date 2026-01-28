@@ -710,7 +710,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
                     "LogicalPort: " << IPLocator::getLogicalPort(
                         request.transportLocator())
                                                                              << ", Physical remote: " <<
-                                IPLocator::getPhysicalPort(
+                    IPLocator::getPhysicalPort(
                         request.transportLocator()));
 
             responseCode = processBindConnectionRequest(channel, request, controlHeader.transaction_id(), myLocator);

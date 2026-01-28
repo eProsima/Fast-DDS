@@ -168,7 +168,7 @@ TCPv6Transport::TCPv6Transport(
                         EPROSIMA_LOG_WARNING(TRANSPORT_TCPV6,
                                 "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name
                                                               << " as its netmask filter configuration (" <<
-                                            netmask_filter << ") is incompatible"
+                                netmask_filter << ") is incompatible"
                                                               << " with descriptor's (" << descriptor.netmask_filter <<
                                 ").");
                     }

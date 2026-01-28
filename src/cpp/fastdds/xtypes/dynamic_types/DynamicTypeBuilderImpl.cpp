@@ -451,7 +451,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                     {
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
                                 "Member " << member_impl->member_descriptor_.name().c_str() <<
-                                            " already contains the label " <<
+                                " already contains the label " <<
                                 label);
                         return RETCODE_BAD_PARAMETER;
                     }
