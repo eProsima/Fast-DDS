@@ -312,6 +312,7 @@ ReturnCode_t DataWriterImpl::enable()
         }
         w_att.endpoint.set_data_sharing_configuration(datasharing);
 
+        auto pool_config_ = PoolConfig::from_history_attributes(history_.m_att);
         // Update pool config for KEEP_ALL when max_samples is infinite
         if ((0 == pool_config_.maximum_size) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
         {
@@ -1991,7 +1992,7 @@ ReturnCode_t DataWriterImpl::check_allocation_consistency(
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
-        return RETCODE_INCONSISTENT_POLICY;
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     if ((qos.resource_limits().max_samples > 0) &&
             (qos.resource_limits().max_samples <
@@ -2001,18 +2002,8 @@ ReturnCode_t DataWriterImpl::check_allocation_consistency(
                 "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-<<<<<<< HEAD
-    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
-            (qos.resource_limits().max_samples > 0))
-    {
-        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
-                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
-    }
+
     return ReturnCode_t::RETCODE_OK;
-=======
-    return RETCODE_OK;
->>>>>>> 30b63511d (Fix DataReader history enforcement to respect max_samples_per_instance (#6228))
 }
 
 bool DataWriterImpl::can_qos_be_updated(

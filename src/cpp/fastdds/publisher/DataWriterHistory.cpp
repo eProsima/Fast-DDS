@@ -23,17 +23,10 @@
 
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/log/Log.hpp>
-<<<<<<< HEAD
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-=======
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastdds/rtps/common/Time_t.hpp>
-#include <fastdds/rtps/writer/RTPSWriter.hpp>
-
 #include <rtps/history/HistoryAttributesExtension.hpp>
-#include <rtps/writer/BaseWriter.hpp>
->>>>>>> 30b63511d (Fix DataReader history enforcement to respect max_samples_per_instance (#6228))
 
 namespace eprosima {
 namespace fastdds {
@@ -53,24 +46,18 @@ static HistoryAttributes to_history_attributes(
 
     if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
     {
-<<<<<<< HEAD
-        max_samples = topic_att.historyQos.depth;
+        max_samples = get_min_max_samples(topic_att.historyQos.depth,
+                        topic_att.resourceLimitsQos.max_samples_per_instance);
         if (topic_att.getTopicKind() != NO_KEY)
         {
-            max_samples *= topic_att.resourceLimitsQos.max_instances;
-=======
-        max_samples = get_min_max_samples(history_qos.depth, resource_limits_qos.max_samples_per_instance);
-        if (topic_kind != NO_KEY)
-        {
-            if (0 < resource_limits_qos.max_instances)
+            if (0 < topic_att.resourceLimitsQos.max_instances)
             {
-                max_samples *= resource_limits_qos.max_instances;
+                max_samples *= topic_att.resourceLimitsQos.max_instances;
             }
             else
             {
                 max_samples = LENGTH_UNLIMITED;
             }
->>>>>>> 30b63511d (Fix DataReader history enforcement to respect max_samples_per_instance (#6228))
         }
 
         if (0 < initial_samples)

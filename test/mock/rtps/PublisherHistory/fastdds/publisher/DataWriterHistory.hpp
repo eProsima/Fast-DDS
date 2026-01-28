@@ -70,41 +70,6 @@ class DataWriterHistory : public WriterHistory
 {
 public:
 
-<<<<<<< HEAD:test/mock/rtps/PublisherHistory/fastdds/publisher/DataWriterHistory.hpp
-=======
-    static HistoryAttributes to_history_attributes(
-            const HistoryQosPolicy& history_qos,
-            const ResourceLimitsQosPolicy& resource_limits_qos,
-            const rtps::TopicKind_t& topic_kind,
-            uint32_t payloadMaxSize,
-            MemoryManagementPolicy_t mempolicy)
-    {
-        auto initial_samples = resource_limits_qos.allocated_samples;
-        auto max_samples = resource_limits_qos.max_samples;
-        auto extra_samples = resource_limits_qos.extra_samples;
-
-        if (history_qos.kind != KEEP_ALL_HISTORY_QOS)
-        {
-            max_samples = get_min_max_samples(history_qos.depth, resource_limits_qos.max_samples_per_instance);
-            if (topic_kind != NO_KEY)
-            {
-                if (0 < resource_limits_qos.max_instances)
-                {
-                    max_samples *= resource_limits_qos.max_instances;
-                }
-                else
-                {
-                    max_samples = LENGTH_UNLIMITED;
-                }
-            }
-
-            initial_samples = get_min_max_samples(initial_samples, max_samples);
-        }
-
-        return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
-    }
-
->>>>>>> 30b63511d (Fix DataReader history enforcement to respect max_samples_per_instance (#6228)):test/mock/dds/DataWriterHistory/fastdds/publisher/DataWriterHistory.hpp
     DataWriterHistory(
             const TopicAttributes& topic_att,
             uint32_t payloadMaxSize,

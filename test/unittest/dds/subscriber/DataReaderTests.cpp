@@ -3907,55 +3907,6 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
-<<<<<<< HEAD
-=======
-TEST_F(DataReaderTests, set_related_datawriter)
-{
-    create_entities();
-
-    ASSERT_TRUE(data_reader_->is_enabled());
-    ASSERT_EQ(RETCODE_ILLEGAL_OPERATION, data_reader_->set_related_datawriter(data_writer_));
-
-    participant_->delete_contained_entities();
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
-
-    SubscriberQos subscriber_qos;
-    subscriber_qos.entity_factory().autoenable_created_entities = false;
-
-    create_entities(
-        nullptr,
-        DATAREADER_QOS_DEFAULT,
-        subscriber_qos
-        );
-
-    ASSERT_FALSE(data_reader_->is_enabled());
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data_reader_->set_related_datawriter(nullptr));
-
-    auto another_participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant_, nullptr);
-
-    auto another_publisher = another_participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    ASSERT_NE(publisher_, nullptr);
-
-    type_.register_type(another_participant);
-
-    auto another_topic = another_participant->create_topic(topic_name, type_.get_type_name(), TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic_, nullptr);
-
-    auto another_dw = another_publisher->create_datawriter(another_topic, DATAWRITER_QOS_DEFAULT);
-    ASSERT_NE(another_dw, nullptr);
-
-    // Check that the DataReader can not be set to a DataWriter from another participant
-    ASSERT_EQ(RETCODE_PRECONDITION_NOT_MET, data_reader_->set_related_datawriter(another_dw));
-    // Check that setting a DataWriter from the same participant works
-    ASSERT_EQ(RETCODE_OK, data_reader_->set_related_datawriter(data_writer_));
-
-    another_participant->delete_contained_entities();
-    DomainParticipantFactory::get_instance()->delete_participant(another_participant);
-}
-
 // Test parameter structure
 struct HistoryDepthTestParams
 {
@@ -4049,11 +4000,11 @@ private:
             data.message()[0] = static_cast<char>('0' + i);
             data.message()[1] = '\0';
             ReturnCode_t ret = data_writer_->write(&data, handle_ok_);
-            if (ret == RETCODE_OK)
+            if (ret == ReturnCode_t::RETCODE_OK)
             {
                 samples_written++;
             }
-            else if (ret == RETCODE_TIMEOUT)
+            else if (ret == ReturnCode_t::RETCODE_TIMEOUT)
             {
                 // With KEEP_ALL, this is expected after reaching the limit
                 EXPECT_EQ(KEEP_ALL_HISTORY_QOS, GetParam().history_kind)
@@ -4064,7 +4015,7 @@ private:
             }
             else
             {
-                FAIL() << "Unexpected return code: " << ret;
+                FAIL() << "Unexpected return code";
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
@@ -4078,7 +4029,7 @@ private:
         for (int32_t i = 0; i < num_samples; ++i)
         {
             data.index(i);
-            ASSERT_EQ(RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
+            ASSERT_EQ(ReturnCode_t::RETCODE_OK, data_writer_->write(&data, HANDLE_NIL));
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
@@ -4089,7 +4040,7 @@ private:
         int valid_samples = 0;
         SeqType data_seq;
         SampleInfoSeq info_seq;
-        EXPECT_EQ(RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->take(data_seq, info_seq, LENGTH_UNLIMITED));
         for (LoanableCollection::size_type i = 0; i < info_seq.length(); ++i)
         {
             if (info_seq[i].valid_data)
@@ -4097,7 +4048,7 @@ private:
                 valid_samples++;
             }
         }
-        EXPECT_EQ(RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data_seq, info_seq));
         return valid_samples;
     }
 
@@ -4118,108 +4069,108 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(
         // Keyed type: max_samples_per_instance takes precedence over depth
         HistoryDepthTestParams{
-            "KeyedType_MaxSamplesPerInstance",
-            true,  // use_keyed_type
-            KEEP_LAST_HISTORY_QOS,
-            100,   // depth
-            400,   // max_samples
-            5,     // max_samples_per_instance
-            120,   // num_samples_to_write
-            5,     // expected_samples
-            "Expected max_samples_per_instance (5) samples, not depth (100)"
-        },
+    "KeyedType_MaxSamplesPerInstance",
+    true,          // use_keyed_type
+    KEEP_LAST_HISTORY_QOS,
+    100,           // depth
+    400,           // max_samples
+    5,             // max_samples_per_instance
+    120,           // num_samples_to_write
+    5,             // expected_samples
+    "Expected max_samples_per_instance (5) samples, not depth (100)"
+},
 
         // Keyed type: unlimited resources, depth takes precedence
         HistoryDepthTestParams{
-            "KeyedType_UnlimitedResources",
-            true,  // use_keyed_type
-            KEEP_LAST_HISTORY_QOS,
-            10,    // depth
-            -1,    // max_samples (unlimited)
-            -1,    // max_samples_per_instance (unlimited)
-            12,    // num_samples_to_write
-            10,    // expected_samples
-            "Expected depth (10) samples, not num_samples_to_write (12)"
-        },
+    "KeyedType_UnlimitedResources",
+    true,          // use_keyed_type
+    KEEP_LAST_HISTORY_QOS,
+    10,            // depth
+    -1,            // max_samples (unlimited)
+    -1,            // max_samples_per_instance (unlimited)
+    12,            // num_samples_to_write
+    10,            // expected_samples
+    "Expected depth (10) samples, not num_samples_to_write (12)"
+},
 
         // No-key type: max_samples overrides max_samples_per_instance
         HistoryDepthTestParams{
-            "NoKeyType_MaxSamplesOverride",
-            false, // use_keyed_type
-            KEEP_LAST_HISTORY_QOS,
-            10,    // depth
-            8,     // max_samples
-            5,     // max_samples_per_instance
-            12,    // num_samples_to_write
-            8,     // expected_samples
-            "NO_KEY topic should respect max_samples (8) not max_samples_per_instance (5) or depth (10)"
-        },
+    "NoKeyType_MaxSamplesOverride",
+    false,         // use_keyed_type
+    KEEP_LAST_HISTORY_QOS,
+    10,            // depth
+    8,             // max_samples
+    5,             // max_samples_per_instance
+    12,            // num_samples_to_write
+    8,             // expected_samples
+    "NO_KEY topic should respect max_samples (8) not max_samples_per_instance (5) or depth (10)"
+},
 
         // No-key type: unlimited resources, depth takes precedence
         HistoryDepthTestParams{
-            "NoKeyType_UnlimitedResources",
-            false, // use_keyed_type
-            KEEP_LAST_HISTORY_QOS,
-            10,    // depth
-            -1,    // max_samples (unlimited)
-            -1,    // max_samples_per_instance (unlimited)
-            12,    // num_samples_to_write
-            10,    // expected_samples
-            "Expected depth (10) not num_samples_to_write (12)"
-        },
+    "NoKeyType_UnlimitedResources",
+    false,         // use_keyed_type
+    KEEP_LAST_HISTORY_QOS,
+    10,            // depth
+    -1,            // max_samples (unlimited)
+    -1,            // max_samples_per_instance (unlimited)
+    12,            // num_samples_to_write
+    10,            // expected_samples
+    "Expected depth (10) not num_samples_to_write (12)"
+},
 
         // Keyed type: max_samples_per_instance takes precedence over depth
         HistoryDepthTestParams{
-            "KeyedType_KeepAllMaxSamplesPerInstance",
-            true,  // use_keyed_type
-            KEEP_ALL_HISTORY_QOS,
-            -1,    // depth
-            400,   // max_samples
-            5,     // max_samples_per_instance
-            12,    // num_samples_to_write
-            5,     // expected_samples
-            "Expected max_samples_per_instance (5)"
-        },
+    "KeyedType_KeepAllMaxSamplesPerInstance",
+    true,          // use_keyed_type
+    KEEP_ALL_HISTORY_QOS,
+    -1,            // depth
+    400,           // max_samples
+    5,             // max_samples_per_instance
+    12,            // num_samples_to_write
+    5,             // expected_samples
+    "Expected max_samples_per_instance (5)"
+},
 
 
         // Keyed type: unlimited resources
         HistoryDepthTestParams{
-            "KeyedType_KeepAllUnlimitedResources",
-            true,  // use_keyed_type
-            KEEP_ALL_HISTORY_QOS,
-            -1,    // depth
-            -1,    // max_samples (unlimited)
-            -1,    // max_samples_per_instance (unlimited)
-            12,    // num_samples_to_write
-            12,    // expected_samples
-            "Expected num_samples_to_write (12)"
-        },
+    "KeyedType_KeepAllUnlimitedResources",
+    true,          // use_keyed_type
+    KEEP_ALL_HISTORY_QOS,
+    -1,            // depth
+    -1,            // max_samples (unlimited)
+    -1,            // max_samples_per_instance (unlimited)
+    12,            // num_samples_to_write
+    12,            // expected_samples
+    "Expected num_samples_to_write (12)"
+},
 
         // No-key type: KEEP_ALL with unlimited depth
         HistoryDepthTestParams{
-            "NoKeyType_KeepAllUnlimited",
-            false, // use_keyed_type
-            KEEP_ALL_HISTORY_QOS,
-            -1,    // depth (unlimited for KEEP_ALL)
-            -1,    // max_samples (unlimited)
-            -1,    // max_samples_per_instance (unlimited)
-            12,    // num_samples_to_write
-            12,    // expected_samples
-            "Expected num_samples_to_write (12)"
-        },
+    "NoKeyType_KeepAllUnlimited",
+    false,         // use_keyed_type
+    KEEP_ALL_HISTORY_QOS,
+    -1,            // depth (unlimited for KEEP_ALL)
+    -1,            // max_samples (unlimited)
+    -1,            // max_samples_per_instance (unlimited)
+    12,            // num_samples_to_write
+    12,            // expected_samples
+    "Expected num_samples_to_write (12)"
+},
 
         // No-key type: KEEP_ALL with limited max_samples
         HistoryDepthTestParams{
-            "NoKeyType_KeepAllLimitedMaxSamples",
-            false, // use_keyed_type
-            KEEP_ALL_HISTORY_QOS,
-            -1,    // depth (unlimited for KEEP_ALL)
-            10,    // max_samples
-            5,     // max_samples_per_instance
-            12,    // num_samples_to_write
-            10,    // expected_samples
-            "Expected max_samples (10) not max_samples_per_instance (5)"
-        }
+    "NoKeyType_KeepAllLimitedMaxSamples",
+    false,         // use_keyed_type
+    KEEP_ALL_HISTORY_QOS,
+    -1,            // depth (unlimited for KEEP_ALL)
+    10,            // max_samples
+    5,             // max_samples_per_instance
+    12,            // num_samples_to_write
+    10,            // expected_samples
+    "Expected max_samples (10) not max_samples_per_instance (5)"
+}
         ),
     [](const testing::TestParamInfo<HistoryDepthTestParams>& info)
     {
@@ -4227,7 +4178,6 @@ INSTANTIATE_TEST_SUITE_P(
     }
     );
 
->>>>>>> 30b63511d (Fix DataReader history enforcement to respect max_samples_per_instance (#6228))
 int main(
         int argc,
         char** argv)
