@@ -595,7 +595,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Creating ContentFilteredTopic with name " << name
                                                                                    <<
-                            ": related_topic not from this participant");
+                ": related_topic not from this participant");
         return nullptr;
     }
 
