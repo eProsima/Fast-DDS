@@ -931,7 +931,12 @@ bool LatencyTestPublisher::test(
     }
 
     // Drop the first measurement, as it's usually not representative
-    times_.erase(times_.begin());
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (!times_.empty()) {
+            times_.erase(times_.begin());
+        }
+    }
 
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
@@ -1035,12 +1040,17 @@ void LatencyTestPublisher::print_stats(
 void LatencyTestPublisher::export_raw_data(
         uint32_t datasize)
 {
+    std::vector<std::chrono::duration<double, std::micro>> times_copy;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        times_copy = times_;
+    }
+
     std::ofstream data_file;
     data_file.open(raw_data_file_, std::fstream::app);
-    for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
-            ++tit)
+    for (const auto& t : times_copy)
     {
-        data_file << ++raw_sample_count_ << "," << datasize << "," << (*tit).count() << std::endl;
+        data_file << ++raw_sample_count_ << "," << datasize << "," << t.count() << std::endl;
     }
     data_file.close();
 }
