@@ -104,6 +104,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
             return false;
 
         case DiscoveryProtocol::CLIENT:
+        case DiscoveryProtocol::SUPER_CLIENT:
             mp_PDP = new fastdds::rtps::PDPClient(this, allocation);
             break;
 
@@ -117,10 +118,6 @@ bool BuiltinProtocols::initBuiltinProtocols(
             mp_PDP = new fastdds::rtps::PDPServer(this, allocation, DurabilityKind_t::TRANSIENT);
             break;
 #endif // if HAVE_SQLITE3
-
-        case DiscoveryProtocol::SUPER_CLIENT:
-            mp_PDP = new fastdds::rtps::PDPClient(this, allocation);
-            break;
 
         default:
             EPROSIMA_LOG_ERROR(RTPS_PDP, "Unknown DiscoveryProtocol specified.");

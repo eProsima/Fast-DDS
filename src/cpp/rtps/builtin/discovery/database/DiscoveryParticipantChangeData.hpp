@@ -73,7 +73,8 @@ public:
     void to_json(
             nlohmann::json& j) const
     {
-        j["is_client"] = is_client_;
+        j["is_client"] = false;
+        j["is_superclient"] = is_client_;
         j["is_local"] = is_local_;
         j["metatraffic_locators"] = object_to_string(metatraffic_locators_);
     }
