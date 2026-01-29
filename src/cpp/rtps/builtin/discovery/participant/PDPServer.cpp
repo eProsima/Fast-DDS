@@ -1554,8 +1554,8 @@ bool PDPServer::pending_ack()
 
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDP writer history length " << endpoints->writer.history_->getHistorySize());
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
-            "is server " << endpoints->writer.writer_->getGuid() << " acked by all? " <<
-            discovery_db_.server_acked_by_all());
+            "is server " << endpoints->writer.writer_->getGuid() << " acked by all? "
+                         << discovery_db_.server_acked_by_all());
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }

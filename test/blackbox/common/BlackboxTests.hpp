@@ -16,8 +16,8 @@
 #define __BLACKBOX_BLACKBOXTESTS_HPP__
 
 #define TEST_TOPIC_NAME std::string( \
-            ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string( \
-                "_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
+        ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string( \
+            "_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId

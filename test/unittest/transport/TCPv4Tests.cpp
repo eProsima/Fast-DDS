@@ -585,8 +585,8 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports_by_name)
     std::regex filter("RTCP(?!_SEQ)");
     eprosima::fastdds::dds::Log::SetCategoryFilter(filter);
     TCPv4TransportDescriptor recvDescriptor;
-    std::cout << "Adding to whitelist: " << interfaces[0].dev << " " << interfaces[0].name << " " <<
-        interfaces[0].locator << std::endl;
+    std::cout << "Adding to whitelist: " << interfaces[0].dev << " " << interfaces[0].name << " "
+              << interfaces[0].locator << std::endl;
     recvDescriptor.interfaceWhiteList.emplace_back(interfaces[0].dev);
 
     recvDescriptor.add_listener_port(g_default_port);

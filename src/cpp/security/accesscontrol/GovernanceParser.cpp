@@ -218,8 +218,8 @@ bool GovernanceParser::parse_domain_rule(
             if (node->QueryBoolText(&rule.allow_unauthenticated_participants) != tinyxml2::XMLError::XML_SUCCESS)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << AllowUnauthenticatedParticipants_str << " tag. Line " <<
-                        PRINTLINE(
+                        "Expected boolean value in " << AllowUnauthenticatedParticipants_str << " tag. Line "
+                                                     << PRINTLINE(
                             node));
                 return false;
             }

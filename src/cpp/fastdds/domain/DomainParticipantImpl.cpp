@@ -593,8 +593,9 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 
     if (related_topic->get_participant() != get_participant())
     {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Creating ContentFilteredTopic with name " << name <<
-                ": related_topic not from this participant");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Creating ContentFilteredTopic with name " << name
+                                                                                   <<
+                            ": related_topic not from this participant");
         return nullptr;
     }
 
@@ -640,8 +641,8 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
             type.get(), filter_expression.c_str(), filter_parameters, filter_instance))
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT,
-                "Could not create filter of class " << filter_class_name << " for expression \"" <<
-                filter_expression);
+                "Could not create filter of class " << filter_class_name << " for expression \""
+                                                    << filter_expression);
         return nullptr;
     }
 
@@ -1902,8 +1903,8 @@ ReturnCode_t DomainParticipantImpl::register_service_type(
             return RETCODE_OK;
         }
 
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Another service type with the same name '" << service_type_name <<
-                "' is already registered.");
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Another service type with the same name '" << service_type_name
+                                                                                    << "' is already registered.");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -1954,8 +1955,8 @@ ReturnCode_t DomainParticipantImpl::unregister_service_type(
         {
             if (service_it.second->service_type_in_use(service_type_name))
             {
-                EPROSIMA_LOG_ERROR(PARTICIPANT, "Service Type " << service_type_name << " is in use by service " <<
-                        service_it.first);
+                EPROSIMA_LOG_ERROR(PARTICIPANT, "Service Type " << service_type_name << " is in use by service "
+                                                                << service_it.first);
                 return RETCODE_PRECONDITION_NOT_MET;
             }
         }

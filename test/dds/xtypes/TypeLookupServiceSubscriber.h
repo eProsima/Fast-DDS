@@ -59,13 +59,13 @@ struct SubKnownType
 
 // Define a macro to simplify type registration
 #define SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type) \
-        type_creator_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::create_known_type_impl<Type, \
-                        Type ## PubSubType>, \
-                        this, \
-                        std::placeholders::_1); \
-        type_processor_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::process_type_impl<Type>, \
-                        this, \
-                        std::placeholders::_1)
+    type_creator_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::create_known_type_impl<Type, \
+                    Type ## PubSubType>, \
+                    this, \
+                    std::placeholders::_1); \
+    type_processor_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::process_type_impl<Type>, \
+                    this, \
+                    std::placeholders::_1)
 
 class TypeLookupServiceSubscriber
     : public DomainParticipantListener

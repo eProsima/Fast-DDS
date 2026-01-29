@@ -97,8 +97,8 @@ bool EDP::new_reader_proxy_data(
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
-            "Adding " << rtps_reader->getGuid().entityId << " in topic " <<
-            topic.topic_name.to_string());
+            "Adding " << rtps_reader->getGuid().entityId << " in topic "
+                      << topic.topic_name.to_string());
 
     auto init_fun = [this, rtps_reader, &topic, &qos, content_filter](
         ReaderProxyData* rpd,
@@ -243,8 +243,8 @@ dds::ReturnCode_t EDP::new_reader_proxy_data(
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
-            "Adding " << rtps_reader->getGuid().entityId << " in topic " <<
-            topic.topic_name.to_string());
+            "Adding " << rtps_reader->getGuid().entityId << " in topic "
+                      << topic.topic_name.to_string());
 
     auto init_fun = [this, rtps_reader, &topic, &sub_builtin_topic_data, content_filter](
         ReaderProxyData* rpd,
@@ -389,8 +389,8 @@ bool EDP::new_writer_proxy_data(
         const fastdds::dds::WriterQos& qos)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
-            "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
-            topic.topic_name.to_string());
+            "Adding " << rtps_writer->getGuid().entityId << " in topic "
+                      << topic.topic_name.to_string());
 
     auto init_fun = [this, rtps_writer, &topic, &qos](
         WriterProxyData* wpd,
@@ -522,8 +522,8 @@ dds::ReturnCode_t EDP::new_writer_proxy_data(
         bool should_send_opt_qos)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP,
-            "Adding " << rtps_writer->getGuid().entityId << " in topic " <<
-            topic.topic_name.to_string());
+            "Adding " << rtps_writer->getGuid().entityId << " in topic "
+                      << topic.topic_name.to_string());
 
     auto init_fun = [this, rtps_writer, &topic, &pub_builtin_topic_data](
         WriterProxyData* wpd,
@@ -887,9 +887,10 @@ bool EDP::valid_matching(
     if (wdata->topic_kind != rdata->topic_kind)
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS:Remote Reader " << rdata->guid << " is publishing in topic "
-                                                                         << rdata->topic_name << "(keyed:" <<
-                rdata->topic_kind <<
-                "), local writer publishes as keyed: " << wdata->topic_kind);
+                                                                         << rdata->topic_name << "(keyed:"
+                                                                         << rdata->topic_kind
+                                                                         << "), local writer publishes as keyed: "
+                                                                         << wdata->topic_kind);
         reason.set(MatchingFailureMask::inconsistent_topic);
         return false;
     }
@@ -906,8 +907,8 @@ bool EDP::valid_matching(
     //Means our writer is BE but the reader wants RE
     {
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topic_name << "):Remote Reader "
-                                                                   << rdata->guid <<
-                " is Reliable and local writer is BE ");
+                                                                   << rdata->guid
+                                                                   << " is Reliable and local writer is BE ");
         incompatible_qos.set(fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     }
 
@@ -915,8 +916,9 @@ bool EDP::valid_matching(
     {
         // TODO (MCC) Change log message
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topic_name << "):RemoteReader "
-                                                                   << rdata->guid <<
-                " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
+                                                                   << rdata->guid
+                                                                   <<
+                            " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
         incompatible_qos.set(fastdds::dds::DURABILITY_QOS_POLICY_ID);
     }
 
@@ -1142,8 +1144,8 @@ bool EDP::pairingReader(
                 {
                     static_cast<void>(reader_guid);  // Void cast to force usage if we don't have LOG_INFOs
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
-                            "WP:" << wdatait->guid << " match R:" << reader_guid << ". RLoc:" <<
-                            wdatait->remote_locators);
+                            "WP:" << wdatait->guid << " match R:" << reader_guid << ". RLoc:"
+                                  << wdatait->remote_locators);
                     //MATCHED AND ADDED CORRECTLY:
                     if (reader->get_listener() != nullptr)
                     {
@@ -1235,8 +1237,8 @@ bool EDP::pairingWriter(
                 if (writer->matched_reader_add_edp(*rdatait))
                 {
                     EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
-                            "RP:" << rdatait->guid << " match W:" << writer_guid << ". WLoc:" <<
-                            rdatait->remote_locators);
+                            "RP:" << rdatait->guid << " match W:" << writer_guid << ". WLoc:"
+                                  << rdatait->remote_locators);
                     //MATCHED AND ADDED CORRECTLY:
                     if (writer->get_listener() != nullptr)
                     {
@@ -1311,8 +1313,8 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                         if (w.matched_reader_add_edp(*rdata))
                         {
                             EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
-                            "RP:" << rdata->guid << " match W:" << w.getGuid() << ". RLoc:" <<
-                                rdata->remote_locators);
+                            "RP:" << rdata->guid << " match W:" << w.getGuid() << ". RLoc:"
+                                  << rdata->remote_locators);
                             //MATCHED AND ADDED CORRECTLY:
                             if (w.get_listener() != nullptr)
                             {
@@ -1504,8 +1506,8 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                         if (r.matched_writer_add_edp(*wdata))
                         {
                             EPROSIMA_LOG_INFO(RTPS_EDP_MATCH,
-                            "WP:" << wdata->guid << " match R:" << r.getGuid() << ". WLoc:" <<
-                                wdata->remote_locators);
+                            "WP:" << wdata->guid << " match R:" << r.getGuid() << ". WLoc:"
+                                  << wdata->remote_locators);
                             //MATCHED AND ADDED CORRECTLY:
                             if (r.get_listener() != nullptr)
                             {

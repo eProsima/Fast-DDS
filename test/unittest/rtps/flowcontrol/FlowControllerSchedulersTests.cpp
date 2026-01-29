@@ -86,11 +86,11 @@ protected:
 };
 
 #define INIT_CACHE_CHANGE(change, writer, seq) \
-        change.writerGUID = writer.getGuid(); \
-        change.writer_info.previous = nullptr; \
-        change.writer_info.next = nullptr; \
-        change.sequenceNumber.low = uint32_t(seq); \
-        change.serializedPayload.length = 10000;
+    change.writerGUID = writer.getGuid(); \
+    change.writer_info.previous = nullptr; \
+    change.writer_info.next = nullptr; \
+    change.sequenceNumber.low = uint32_t(seq); \
+    change.serializedPayload.length = 10000;
 
 TEST_F(FlowControllerSchedulers, Fifo)
 {

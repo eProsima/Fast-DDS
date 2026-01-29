@@ -78,8 +78,8 @@ ReturnCode_t json_serialize_aggregate(
     if (RETCODE_OK != ret)
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while serializing " << kind_str <<
-                " to JSON: get_all_members failed.");
+                "Error encountered while serializing " << kind_str
+                                                       << " to JSON: get_all_members failed.");
         return ret;
     }
 
@@ -89,8 +89,8 @@ ReturnCode_t json_serialize_aggregate(
         if (RETCODE_OK != (ret = json_serialize_member(data, it.second, output, format)))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing " << kind_str << " member '" << it.second->get_name() <<
-                    "' to JSON.");
+                    "Error encountered while serializing " << kind_str << " member '" << it.second->get_name()
+                                                           << "' to JSON.");
             return ret;
         }
     }
@@ -193,8 +193,8 @@ ReturnCode_t json_serialize_member(
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing member to JSON: unexpected kind " << member_kind <<
-                    " found.");
+                    "Error encountered while serializing member to JSON: unexpected kind " << member_kind
+                                                                                           << " found.");
             return RETCODE_BAD_PARAMETER;
     }
 }
@@ -555,8 +555,8 @@ ReturnCode_t json_serialize_basic_member(
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing basic member to JSON: unexpected kind " << member_kind <<
-                    " found.");
+                    "Error encountered while serializing basic member to JSON: unexpected kind " << member_kind
+                                                                                                 << " found.");
             return RETCODE_BAD_PARAMETER;
     }
 }
@@ -646,8 +646,8 @@ ReturnCode_t json_serialize_enum_member(
     else
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while serializing TK_ENUM member to JSON: unexpected enclosing kind " <<
-                enclosing_kind << " found.");
+                "Error encountered while serializing TK_ENUM member to JSON: unexpected enclosing kind "
+                << enclosing_kind << " found.");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -753,8 +753,8 @@ ReturnCode_t json_serialize_aggregate_member(
     if (RETCODE_OK != (ret = json_serialize_aggregate(data, j_struct, format)))
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while serializing " << kind_str <<
-                " member to JSON: json_serialize_aggregate failed.");
+                "Error encountered while serializing " << kind_str
+                                                       << " member to JSON: json_serialize_aggregate failed.");
         return ret;
     }
 
@@ -790,8 +790,8 @@ ReturnCode_t json_serialize_union_member(
         else if (RETCODE_OK != (ret = json_serialize_member(data, active_type_member, j_union, format)))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing union member '" << active_type_member->get_name() <<
-                    "' to JSON.");
+                    "Error encountered while serializing union member '" << active_type_member->get_name()
+                                                                         << "' to JSON.");
         }
         else
         {

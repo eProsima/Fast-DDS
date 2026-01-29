@@ -34,7 +34,7 @@
 using namespace eprosima::fastdds::rtps;
 
 #define INCOMPATIBLE_TEST_TOPIC_NAME std::string( \
-            std::string("incompatible_") + TEST_TOPIC_NAME)
+        std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
 enum communication_type

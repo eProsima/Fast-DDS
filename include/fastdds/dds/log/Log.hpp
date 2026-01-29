@@ -288,25 +288,25 @@ protected:
 #if !HAVE_LOG_NO_ERROR
 
 #define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)                                                                             \
-        do {                                                                                                               \
-            std::stringstream fastdds_log_ss_tmp__;                                                                        \
-            fastdds_log_ss_tmp__ << msg;                                                                                   \
-            eprosima::fastdds::dds::Log::QueueLog(                                                                         \
-                fastdds_log_ss_tmp__.str(), eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat},      \
-                eprosima::fastdds::dds::Log::Kind::Error);                                                                 \
-        } while (0)
+    do {                                                                                                               \
+        std::stringstream fastdds_log_ss_tmp__;                                                                        \
+        fastdds_log_ss_tmp__ << msg;                                                                                   \
+        eprosima::fastdds::dds::Log::QueueLog(                                                                         \
+            fastdds_log_ss_tmp__.str(), eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat},      \
+            eprosima::fastdds::dds::Log::Kind::Error);                                                                 \
+    } while (0)
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
 #define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)                      \
-        do {                                                        \
-            auto fastdds_log_lambda_tmp__ = [&]()                   \
-                    {                                               \
-                        std::stringstream fastdds_log_ss_tmp__;     \
-                        fastdds_log_ss_tmp__ << msg;                \
-                    };                                              \
-            (void)fastdds_log_lambda_tmp__;                         \
-        } while (0)
+    do {                                                        \
+        auto fastdds_log_lambda_tmp__ = [&]()                   \
+                {                                               \
+                    std::stringstream fastdds_log_ss_tmp__;     \
+                    fastdds_log_ss_tmp__ << msg;                \
+                };                                              \
+        (void)fastdds_log_lambda_tmp__;                         \
+    } while (0)
 #else
 
 #define EPROSIMA_LOG_ERROR_IMPL_(cat, msg)
@@ -319,29 +319,29 @@ protected:
 #if !HAVE_LOG_NO_WARNING
 
 #define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)                                                                          \
-        do {                                                                                                              \
-            if (eprosima::fastdds::dds::Log::GetVerbosity() >= eprosima::fastdds::dds::Log::Kind::Warning)                \
-            {                                                                                                             \
-                std::stringstream fastdds_log_ss_tmp__;                                                                   \
-                fastdds_log_ss_tmp__ << msg;                                                                              \
-                eprosima::fastdds::dds::Log::QueueLog(                                                                    \
-                    fastdds_log_ss_tmp__.str(), \
-                    eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
-                    eprosima::fastdds::dds::Log::Kind::Warning);                                                          \
-            }                                                                                                             \
-        } while (0)
+    do {                                                                                                              \
+        if (eprosima::fastdds::dds::Log::GetVerbosity() >= eprosima::fastdds::dds::Log::Kind::Warning)                \
+        {                                                                                                             \
+            std::stringstream fastdds_log_ss_tmp__;                                                                   \
+            fastdds_log_ss_tmp__ << msg;                                                                              \
+            eprosima::fastdds::dds::Log::QueueLog(                                                                    \
+                fastdds_log_ss_tmp__.str(), \
+                eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
+                eprosima::fastdds::dds::Log::Kind::Warning);                                                          \
+        }                                                                                                             \
+    } while (0)
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
 #define EPROSIMA_LOG_WARNING_IMPL_(cat, msg)                    \
-        do {                                                        \
-            auto fastdds_log_lambda_tmp__ = [&]()                   \
-                    {                                               \
-                        std::stringstream fastdds_log_ss_tmp__;     \
-                        fastdds_log_ss_tmp__ << msg;                \
-                    };                                              \
-            (void)fastdds_log_lambda_tmp__;                         \
-        } while (0)
+    do {                                                        \
+        auto fastdds_log_lambda_tmp__ = [&]()                   \
+                {                                               \
+                    std::stringstream fastdds_log_ss_tmp__;     \
+                    fastdds_log_ss_tmp__ << msg;                \
+                };                                              \
+        (void)fastdds_log_lambda_tmp__;                         \
+    } while (0)
 
 #else
 
@@ -359,29 +359,29 @@ protected:
     !defined(NDEBUG))))
 
 #define EPROSIMA_LOG_INFO_IMPL_(cat, msg)                                                                             \
-        do {                                                                                                              \
-            if (eprosima::fastdds::dds::Log::GetVerbosity() >= eprosima::fastdds::dds::Log::Kind::Info)                   \
-            {                                                                                                             \
-                std::stringstream fastdds_log_ss_tmp__;                                                                   \
-                fastdds_log_ss_tmp__ << msg;                                                                              \
-                eprosima::fastdds::dds::Log::QueueLog(                                                                    \
-                    fastdds_log_ss_tmp__.str(), \
-                    eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
-                    eprosima::fastdds::dds::Log::Kind::Info);                                                             \
-            }                                                                                                             \
-        } while (0)
+    do {                                                                                                              \
+        if (eprosima::fastdds::dds::Log::GetVerbosity() >= eprosima::fastdds::dds::Log::Kind::Info)                   \
+        {                                                                                                             \
+            std::stringstream fastdds_log_ss_tmp__;                                                                   \
+            fastdds_log_ss_tmp__ << msg;                                                                              \
+            eprosima::fastdds::dds::Log::QueueLog(                                                                    \
+                fastdds_log_ss_tmp__.str(), \
+                eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
+                eprosima::fastdds::dds::Log::Kind::Info);                                                             \
+        }                                                                                                             \
+    } while (0)
 
 #elif (__INTERNALDEBUG || _INTERNALDEBUG)
 
 #define EPROSIMA_LOG_INFO_IMPL_(cat, msg)                       \
-        do {                                                    \
-            auto fastdds_log_lambda_tmp__ = [&]()               \
-                    {                                           \
-                        std::stringstream fastdds_log_ss_tmp__; \
-                        fastdds_log_ss_tmp__ << msg;            \
-                    };                                          \
-            (void)fastdds_log_lambda_tmp__;                     \
-        } while (0)
+    do {                                                    \
+        auto fastdds_log_lambda_tmp__ = [&]()               \
+                {                                           \
+                    std::stringstream fastdds_log_ss_tmp__; \
+                    fastdds_log_ss_tmp__ << msg;            \
+                };                                          \
+        (void)fastdds_log_lambda_tmp__;                     \
+    } while (0)
 
 #else
 

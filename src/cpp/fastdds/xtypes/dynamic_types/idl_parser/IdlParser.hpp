@@ -491,43 +491,43 @@ struct action<semicolon>
 };
 
 #define load_type_action(Rule, id) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& /*in*/, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& /*in*/, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& /*operands*/) \
+            std::string type{#id \
+            }; \
+            if (type == "sequence") \
             { \
-                std::string type{#id \
-                }; \
-                if (type == "sequence") \
+                state["type"] = type; \
+                state.erase("parsing_sequence"); \
+                if (state.count("arithmetic_expr")) \
                 { \
-                    state["type"] = type; \
-                    state.erase("parsing_sequence"); \
-                    if (state.count("arithmetic_expr")) \
-                    { \
-                        state.erase("arithmetic_expr"); \
-                    } \
-                } \
-                else if (state.count("parsing_sequence") && (state["parsing_sequence"] == "true")) \
-                { \
-                    state["element_type"] = type; \
-                    state["arithmetic_expr"] = ""; \
-                } \
-                else if (type == "string" || type == "wstring") \
-                { \
-                    state["type"] = type; \
-                    state.erase("parsing_string"); \
-                } \
-                else \
-                { \
-                    state["type"] = type; \
+                    state.erase("arithmetic_expr"); \
                 } \
             } \
-        };
+            else if (state.count("parsing_sequence") && (state["parsing_sequence"] == "true")) \
+            { \
+                state["element_type"] = type; \
+                state["arithmetic_expr"] = ""; \
+            } \
+            else if (type == "string" || type == "wstring") \
+            { \
+                state["type"] = type; \
+                state.erase("parsing_string"); \
+            } \
+            else \
+            { \
+                state["type"] = type; \
+            } \
+        } \
+    };
 
 load_type_action(boolean_type, boolean)
 load_type_action(signed_tiny_int, int8)
@@ -798,45 +798,45 @@ struct action<open_ang_bracket>
 };
 
 #define load_stringsize_action(Rule, id) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& /*in*/, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& /*in*/, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& operands) \
+            DynamicData::_ref_type xdata; \
+            if (!operands.empty()) \
             { \
-                DynamicData::_ref_type xdata; \
+                xdata = operands.back(); \
+                operands.pop_back(); \
                 if (!operands.empty()) \
                 { \
-                    xdata = operands.back(); \
-                    operands.pop_back(); \
-                    if (!operands.empty()) \
-                    { \
-                        EPROSIMA_LOG_ERROR(IDLPARSER, "Finished string size parsing with non-empty operands stack."); \
-                        throw std::runtime_error("Finished string size parsing with non-empty operands stack."); \
-                    } \
- \
-                    int64_t value; \
-                    xdata->get_int64_value(value, MEMBER_ID_INVALID); \
-                    if (value <= 0) \
-                    { \
-                        EPROSIMA_LOG_ERROR(IDLPARSER, "String size is non-positive: " << value); \
-                        throw std::runtime_error("String size is non-positive: " + std::to_string(value)); \
-                    } \
-                    state[#id] = std::to_string(value); \
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "Finished string size parsing with non-empty operands stack."); \
+                    throw std::runtime_error("Finished string size parsing with non-empty operands stack."); \
                 } \
-                else \
+ \
+                int64_t value; \
+                xdata->get_int64_value(value, MEMBER_ID_INVALID); \
+                if (value <= 0) \
                 { \
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Empty operands stack while parsing string size"); \
-                    throw std::runtime_error("Empty operands stack while parsing string size"); \
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "String size is non-positive: " << value); \
+                    throw std::runtime_error("String size is non-positive: " + std::to_string(value)); \
                 } \
- \
-                state.erase("arithmetic_expr"); \
+                state[#id] = std::to_string(value); \
             } \
-        };
+            else \
+            { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Empty operands stack while parsing string size"); \
+                throw std::runtime_error("Empty operands stack while parsing string size"); \
+            } \
+ \
+            state.erase("arithmetic_expr"); \
+        } \
+    };
 
 load_stringsize_action(string_size, string_size)
 load_stringsize_action(wstring_size, wstring_size)
@@ -988,55 +988,55 @@ struct action<boolean_literal>
 };
 
 #define load_literal_action(Rule, id, type, type_kind, set_value) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& in, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& operands) \
+            if (state.count("arithmetic_expr")) \
             { \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
-                } \
- \
-                std::istringstream ss(in.string()); \
-                type value; \
-                if (std::string{#id} == "octal") \
-                { \
-                    ss >> std::oct >> value; \
-                } \
-                else if (std::string{#id} == "hexa") \
-                { \
-                    ss >> std::hex >> value; \
-                } \
-                else \
-                { \
-                    ss >> value; \
-                } \
- \
-                DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
-                DynamicType::_ref_type xtype; \
-                if (std::string{#id} != "string") \
-                { \
-                    xtype = factory->get_primitive_type(type_kind); \
-                } \
-                else \
-                { \
-                    xtype = factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build(); \
-                } \
-                DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
-                xdata->set_value(MEMBER_ID_INVALID, value); \
- \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    operands.push_back(xdata); \
-                } \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
-        };
+ \
+            std::istringstream ss(in.string()); \
+            type value; \
+            if (std::string{#id} == "octal") \
+            { \
+                ss >> std::oct >> value; \
+            } \
+            else if (std::string{#id} == "hexa") \
+            { \
+                ss >> std::hex >> value; \
+            } \
+            else \
+            { \
+                ss >> value; \
+            } \
+ \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+            DynamicType::_ref_type xtype; \
+            if (std::string{#id} != "string") \
+            { \
+                xtype = factory->get_primitive_type(type_kind); \
+            } \
+            else \
+            { \
+                xtype = factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build(); \
+            } \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+            xdata->set_value(MEMBER_ID_INVALID, value); \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                operands.push_back(xdata); \
+            } \
+        } \
+    };
 
 load_literal_action(dec_literal, decimal, int64_t, TK_INT64, set_int64_value)
 load_literal_action(oct_literal, octal, int64_t, TK_INT64, set_int64_value)
@@ -1046,41 +1046,41 @@ load_literal_action(fixed_pt_literal, fixed, long double, TK_FLOAT128, set_float
 load_literal_action(string_literal, string, std::string, TK_STRING8, set_string_value)
 
 #define load_character_action(Rule, id, type, type_kind, set_value, offset) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& in, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& operands) \
+            if (state.count("arithmetic_expr")) \
             { \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
-                } \
- \
-                const std::string content = in.string().substr(offset, in.string().size() - (offset + 1)); \
-                if (content.empty() || (content.size() < 1)) \
-                { \
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid character literal: " << content); \
-                    throw std::runtime_error("Invalid character literal: " + content); \
-                } \
- \
-                type value = static_cast<type>(content[0]); \
- \
-                DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
-                DynamicType::_ref_type xtype = factory->get_primitive_type(type_kind); \
-                DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
-                xdata->set_value(MEMBER_ID_INVALID, value); \
- \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    operands.push_back(xdata); \
-                } \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
-        };
+ \
+            const std::string content = in.string().substr(offset, in.string().size() - (offset + 1)); \
+            if (content.empty() || (content.size() < 1)) \
+            { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid character literal: " << content); \
+                throw std::runtime_error("Invalid character literal: " + content); \
+            } \
+ \
+            type value = static_cast<type>(content[0]); \
+ \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+            DynamicType::_ref_type xtype = factory->get_primitive_type(type_kind); \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+            xdata->set_value(MEMBER_ID_INVALID, value); \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                operands.push_back(xdata); \
+            } \
+        } \
+    };
 
 load_character_action(character_literal, char8, char, TK_CHAR8, set_char8_value, 1)
 load_character_action(wide_character_literal, char16, wchar_t, TK_CHAR16, set_char16_value, 2)
@@ -1117,155 +1117,155 @@ struct action<wide_string_literal>
 };
 
 #define float_op_action(Rule, id, operation) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& /*in*/, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& /*in*/, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& operands) \
+            if (state.count("arithmetic_expr")) \
             { \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
-                } \
- \
-                /* calculate the result */ \
-                auto it = operands.rbegin(); \
-                DynamicData::_ref_type s1 = *it++, s2 = *it; \
-                DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
- \
-                TypeKind pt = promotion_type(s1, s2); \
-                DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
-                DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
- \
-                if (TK_INT64 == pt) \
-                { \
-                    int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
-                    xdata->set_int64_value(MEMBER_ID_INVALID, value); \
-                } \
-                else if (TK_FLOAT128 == pt) \
-                { \
-                    long double value = promote<long double>(s2) operation promote<long double>(s1); \
-                    xdata->set_float128_value(MEMBER_ID_INVALID, value); \
-                } \
-                else \
-                { \
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
-                    throw std::runtime_error("Invalid arguments for operation " #operation ); \
-                } \
- \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    /* update the stack */ \
-                    operands.pop_back(); \
-                    operands.pop_back(); \
-                    operands.push_back(xdata); \
-                } \
- \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
-        };
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            DynamicData::_ref_type s1 = *it++, s2 = *it; \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+ \
+            if (TK_INT64 == pt) \
+            { \
+                int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
+                xdata->set_int64_value(MEMBER_ID_INVALID, value); \
+            } \
+            else if (TK_FLOAT128 == pt) \
+            { \
+                long double value = promote<long double>(s2) operation promote<long double>(s1); \
+                xdata->set_float128_value(MEMBER_ID_INVALID, value); \
+            } \
+            else \
+            { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
+                throw std::runtime_error("Invalid arguments for operation " #operation ); \
+            } \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                /* update the stack */ \
+                operands.pop_back(); \
+                operands.pop_back(); \
+                operands.push_back(xdata); \
+            } \
+ \
+        } \
+    };
 
 #define int_op_action(Rule, id, operation) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& /*in*/, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& /*in*/, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& operands) \
+            if (state.count("arithmetic_expr")) \
             { \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
-                } \
- \
-                /* calculate the result */ \
-                auto it = operands.rbegin(); \
-                DynamicData::_ref_type s1 = *it++, s2 = *it; \
-                DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
- \
-                TypeKind pt = promotion_type(s1, s2); \
-                DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
-                DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
- \
-                if (TK_INT64 == pt) \
-                { \
-                    int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
-                    xdata->set_int64_value(MEMBER_ID_INVALID, value); \
-                } \
-                else \
-                { \
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
-                    throw std::runtime_error("Invalid arguments for operation " #operation ); \
-                } \
- \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    /* update the stack */ \
-                    operands.pop_back(); \
-                    operands.pop_back(); \
-                    operands.push_back(xdata); \
-                } \
- \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
-        };
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            DynamicData::_ref_type s1 = *it++, s2 = *it; \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+ \
+            if (TK_INT64 == pt) \
+            { \
+                int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
+                xdata->set_int64_value(MEMBER_ID_INVALID, value); \
+            } \
+            else \
+            { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
+                throw std::runtime_error("Invalid arguments for operation " #operation ); \
+            } \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                /* update the stack */ \
+                operands.pop_back(); \
+                operands.pop_back(); \
+                operands.push_back(xdata); \
+            } \
+ \
+        } \
+    };
 
 #define bool_op_action(Rule, id, operation, logical_op) \
-        template<> \
-        struct action<Rule> \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& /*in*/, \
+            Context* /*ctx*/, \
+            std::map<std::string, std::string>& state, \
+            std::vector<traits<DynamicData>::ref_type>& operands) \
         { \
-            template<typename Input> \
-            static void apply( \
-                const Input& /*in*/, \
-                Context* /*ctx*/, \
-                std::map<std::string, std::string>& state, \
-                std::vector<traits<DynamicData>::ref_type>& operands) \
+            if (state.count("arithmetic_expr")) \
             { \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
-                } \
- \
-                /* calculate the result */ \
-                auto it = operands.rbegin(); \
-                DynamicData::_ref_type s1 = *it++, s2 = *it; \
-                DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
- \
-                TypeKind pt = promotion_type(s1, s2); \
-                DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
-                DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
- \
-                if (TK_INT64 == pt) \
-                { \
-                    int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
-                    xdata->set_int64_value(MEMBER_ID_INVALID, value); \
-                } \
-                else if (TK_BOOLEAN == pt) \
-                { \
-                    bool value = promote<bool>(s2) logical_op promote<bool>(s1); \
-                    xdata->set_boolean_value(MEMBER_ID_INVALID, value); \
-                } \
-                else \
-                { \
-                    EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
-                    throw std::runtime_error("Invalid arguments for operation " #operation ); \
-                } \
- \
-                if (state.count("arithmetic_expr")) \
-                { \
-                    /* update the stack */ \
-                    operands.pop_back(); \
-                    operands.pop_back(); \
-                    operands.push_back(xdata); \
-                } \
- \
+                state["arithmetic_expr"] += (state["arithmetic_expr"].empty() ? "" : ";") + std::string{#id}; \
             } \
-        };
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            DynamicData::_ref_type s1 = *it++, s2 = *it; \
+            DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()}; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+            DynamicType::_ref_type xtype {factory->get_primitive_type(pt)}; \
+            DynamicData::_ref_type xdata {DynamicDataFactory::get_instance()->create_data(xtype)}; \
+ \
+            if (TK_INT64 == pt) \
+            { \
+                int64_t value = promote<int64_t>(s2) operation promote<int64_t>(s1); \
+                xdata->set_int64_value(MEMBER_ID_INVALID, value); \
+            } \
+            else if (TK_BOOLEAN == pt) \
+            { \
+                bool value = promote<bool>(s2) logical_op promote<bool>(s1); \
+                xdata->set_boolean_value(MEMBER_ID_INVALID, value); \
+            } \
+            else \
+            { \
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid arguments for operation " << #operation); \
+                throw std::runtime_error("Invalid arguments for operation " #operation ); \
+            } \
+ \
+            if (state.count("arithmetic_expr")) \
+            { \
+                /* update the stack */ \
+                operands.pop_back(); \
+                operands.pop_back(); \
+                operands.push_back(xdata); \
+            } \
+ \
+        } \
+    };
 
 bool_op_action(or_exec, or, |, ||)
 bool_op_action(xor_exec, xor, ^, !=)
