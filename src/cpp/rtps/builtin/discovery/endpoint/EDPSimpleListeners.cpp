@@ -43,19 +43,19 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
 // Keep change information on local variables to check consistency later
 #define PREVENT_PDP_DEADLOCK(reader, change, pdp)                         \
-        GUID_t writer_guid = (change)->writerGUID;                            \
-        SequenceNumber_t seq_num = (change)->sequenceNumber;                  \
-        (reader)->getMutex().unlock();                                        \
-        std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
-        (reader)->getMutex().lock();                                          \
+    GUID_t writer_guid = (change)->writerGUID;                            \
+    SequenceNumber_t seq_num = (change)->sequenceNumber;                  \
+    (reader)->getMutex().unlock();                                        \
+    std::unique_lock<std::recursive_mutex> lock(*((pdp)->getMutex()));    \
+    (reader)->getMutex().lock();                                          \
                                                                           \
-        if ((ALIVE != (change)->kind) ||                                      \
-                (seq_num != (change)->sequenceNumber) ||                      \
-                (writer_guid != (change)->writerGUID))                        \
-        {                                                                     \
-            return;                                                           \
-        }                                                                     \
-        (void)seq_num
+    if ((ALIVE != (change)->kind) ||                                      \
+            (seq_num != (change)->sequenceNumber) ||                      \
+            (writer_guid != (change)->writerGUID))                        \
+    {                                                                     \
+        return;                                                           \
+    }                                                                     \
+    (void)seq_num
 
 namespace eprosima {
 namespace fastdds {
@@ -98,8 +98,8 @@ void EDPBasePUBListener::add_writer_from_change(
                                 if (updating && !data->is_update_allowed(*temp_writer_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
-                                            "Received incompatible update for WriterQos. writer_guid = " <<
-                                            data->guid);
+                                            "Received incompatible update for WriterQos. writer_guid = "
+                                            << data->guid);
                                 }
                                 *data = *temp_writer_data;
                                 data->setup_locators(*temp_writer_data, network, participant_data);
@@ -243,8 +243,8 @@ void EDPBaseSUBListener::add_reader_from_change(
                                 if (updating && !data->is_update_allowed(*temp_reader_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
-                                            "Received incompatible update for ReaderQos. reader_guid = " <<
-                                            data->guid);
+                                            "Received incompatible update for ReaderQos. reader_guid = "
+                                            << data->guid);
                                 }
                                 *data = *temp_reader_data;
                                 data->setup_locators(*temp_reader_data, network, participant_data);

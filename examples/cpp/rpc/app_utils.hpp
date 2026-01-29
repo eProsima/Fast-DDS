@@ -74,19 +74,19 @@ struct Timestamp
 
 #ifndef NDEGUB
 #define client_server_debug(context, message) \
-        std::cout << C_B_WHITE << Timestamp::now() << C_B_BLUE << " [DEBUG] " << C_B_WHITE \
-                  << "[" << context << "] " << C_DEF << message << std::endl
+    std::cout << C_B_WHITE << Timestamp::now() << C_B_BLUE << " [DEBUG] " << C_B_WHITE \
+              << "[" << context << "] " << C_DEF << message << std::endl
 #else
 #define client_server_debug(context, message)
 #endif // ifdef NDEGUB
 
 #define client_server_info(context, message) \
-        std::cout << C_B_WHITE << Timestamp::now() << C_B_GREEN << " [INFO] " << C_B_WHITE \
-                  << "[" << context << "] " << C_DEF << message << std::endl
+    std::cout << C_B_WHITE << Timestamp::now() << C_B_GREEN << " [INFO] " << C_B_WHITE \
+              << "[" << context << "] " << C_DEF << message << std::endl
 
 #define client_server_error(context, message) \
-        std::cerr << C_B_WHITE << Timestamp::now() << C_B_RED << " [ERROR] " << C_B_WHITE \
-                  << "[" << context << "] " << C_DEF << message << std::endl
+    std::cerr << C_B_WHITE << Timestamp::now() << C_B_RED << " [ERROR] " << C_B_WHITE \
+              << "[" << context << "] " << C_DEF << message << std::endl
 
 } // namespace rpc
 } // namespace examples

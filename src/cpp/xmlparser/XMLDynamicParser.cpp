@@ -1317,8 +1317,8 @@ DynamicType::_ref_type XMLParser::parseXMLMemberDynamicType(
             else
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Error parsing sequence element type: Cannot recognize inner content of member: " <<
-                        memberType);
+                        "Error parsing sequence element type: Cannot recognize inner content of member: "
+                        << memberType);
                 return {};
             }
         }
@@ -1337,16 +1337,16 @@ DynamicType::_ref_type XMLParser::parseXMLMemberDynamicType(
                 else
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Error parsing sequence element type: Cannot recognize inner content of member: " <<
-                            memberType);
+                            "Error parsing sequence element type: Cannot recognize inner content of member: "
+                            << memberType);
                     return {};
                 }
             }
             else
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Error parsing sequence element type: Cannot recognize inner content of member: " <<
-                        memberType);
+                        "Error parsing sequence element type: Cannot recognize inner content of member: "
+                        << memberType);
                 return {};
             }
         }
@@ -1441,8 +1441,11 @@ DynamicType::_ref_type XMLParser::parseXMLMemberDynamicType(
             if (!inner_builder)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Error parsing map member type: `create_map_type` failed for key=`" << key_type <<
-                        "`, value=`" << value_type << "`, length=`" << length << "`.");
+                        "Error parsing map member type: `create_map_type` failed for key=`" << key_type
+                                                                                            << "`, value=`"
+                                                                                            << value_type
+                                                                                            << "`, length=`"
+                                                                                            << length << "`.");
                 return {};
             }
             std::vector<uint32_t> bounds;

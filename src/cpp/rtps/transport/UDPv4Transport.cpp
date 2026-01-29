@@ -194,10 +194,10 @@ UDPv4Transport::UDPv4Transport(
                     {
                         EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
                                 "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name
-                                                              << " as its netmask filter configuration (" <<
-                                netmask_filter << ") is incompatible"
-                                                              << " with descriptor's (" << descriptor.netmask_filter <<
-                                ").");
+                                                              << " as its netmask filter configuration ("
+                                                              << netmask_filter << ") is incompatible"
+                                                              << " with descriptor's (" << descriptor.netmask_filter
+                                                              << ").");
                     }
                 }
             }
@@ -492,8 +492,8 @@ bool UDPv4Transport::OpenInputChannel(
                 {
                     (void)e;
                     EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
-                            "UDPTransport Error binding " << locatorAddressStr << " at port: (" <<
-                            IPLocator::getPhysicalPort(
+                            "UDPTransport Error binding " << locatorAddressStr << " at port: ("
+                                                          << IPLocator::getPhysicalPort(
                                 locator) << ")"
                                                           << " with msg: " << e.what());
                 }

@@ -221,9 +221,11 @@ uint32_t BaseWriter::calculate_max_payload_size(
     if ((overhead + min_fragment_size) > max_data_size)
     {
         auto min_datagram_length = overhead + min_fragment_size + 1 + (datagram_length - max_data_size);
-        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Datagram length '" << datagram_length << "' is too small." <<
-                "At least " << min_datagram_length << " bytes are needed to send a message. Fixing fragments to " <<
-                min_fragment_size << " bytes.");
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Datagram length '" << datagram_length << "' is too small."
+                                                            << "At least " << min_datagram_length
+                                                            <<
+                            " bytes are needed to send a message. Fixing fragments to "
+                                                            << min_fragment_size << " bytes.");
         return min_fragment_size;
     }
 

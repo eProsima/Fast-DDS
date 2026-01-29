@@ -168,8 +168,8 @@ void ReaderApp::on_new_cache_change_added(
     {
         if (deserialize_payload(change->serializedPayload, data_))
         {
-            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << " RECEIVED" <<
-                std::endl;
+            std::cout << "Message: " << data_->message() << " with index " <<  data_->index() << " RECEIVED"
+                      << std::endl;
             samples_received_++;
         }
         else

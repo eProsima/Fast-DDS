@@ -40,13 +40,13 @@ struct PoolConfig : public BasicPoolConfig
     PoolConfig() = default;
 
     constexpr PoolConfig(
-            MemoryManagementPolicy_t policy,
-            uint32_t payload_size,
-            uint32_t ini_size,
-            uint32_t max_size) noexcept
+        MemoryManagementPolicy_t policy,
+        uint32_t payload_size,
+        uint32_t ini_size,
+        uint32_t max_size) noexcept
         : BasicPoolConfig {policy, payload_size}
-        , initial_size(ini_size)
-        , maximum_size(max_size)
+    , initial_size(ini_size)
+    , maximum_size(max_size)
     {
     }
 

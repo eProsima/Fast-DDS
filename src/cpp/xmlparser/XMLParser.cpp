@@ -777,8 +777,8 @@ XMLP_ret XMLParser::parseXMLAllowlist(
                 catch (const std::invalid_argument& e)
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Failed to parse 'allowlist' element. Invalid value found in 'netmask_filter' : " <<
-                            e.what());
+                            "Failed to parse 'allowlist' element. Invalid value found in 'netmask_filter' : "
+                            << e.what());
                     return XMLP_ret::XML_ERROR;
                 }
             }

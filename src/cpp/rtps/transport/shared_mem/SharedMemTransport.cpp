@@ -173,8 +173,8 @@ bool SharedMemTransport::is_locator_reachable(
             (void)e;
 
             EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
-                    "Local SHM locator '" << locator <<
-                    "' is not reachable; discarding. Reason: " << e.what());
+                    "Local SHM locator '" << locator
+                                          << "' is not reachable; discarding. Reason: " << e.what());
             is_reachable = false;
         }
     }
@@ -641,9 +641,9 @@ bool SharedMemTransport::send(
     }
 
     EPROSIMA_LOG_INFO(RTPS_MSG_OUT,
-            "(ID:" << std::this_thread::get_id() << ") " << "SharedMemTransport: " << buffer->size() <<
-            " bytes to port " <<
-            remote_locator.port);
+            "(ID:" << std::this_thread::get_id() << ") " << "SharedMemTransport: " << buffer->size()
+                   << " bytes to port "
+                   << remote_locator.port);
 
     return true;
 }

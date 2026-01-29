@@ -1069,8 +1069,8 @@ bool TCPTransportInterface::OpenInputChannel(
             }
 
             EPROSIMA_LOG_INFO(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(
-                        locator) << "; logical: " << \
-                    IPLocator::getLogicalPort(locator) << ")");
+                        locator) << "; logical: " \
+                                                                    << IPLocator::getLogicalPort(locator) << ")");
         }
     }
     return success;
@@ -1596,8 +1596,9 @@ bool TCPTransportInterface::send(
 
                 if (sent != static_cast<uint32_t>(TCPHeader::size() + total_bytes) || ec)
                 {
-                    EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
-                            TCPHeader::size() + total_bytes << " b): " << ec.message());
+                    EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of "
+                                                                                << TCPHeader::size() + total_bytes
+                                                                                << " b): " << ec.message());
                     success = false;
                 }
                 else

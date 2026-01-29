@@ -48,7 +48,7 @@ struct PluginParticipantSecurityAttributes
     }
 
     explicit PluginParticipantSecurityAttributes(
-            const PluginParticipantSecurityAttributesMask mask)
+        const PluginParticipantSecurityAttributesMask mask)
         : is_rtps_encrypted((mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED) != 0)
         , is_discovery_encrypted(
             (mask & PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_BUILTIN_IS_DISCOVERY_ENCRYPTED) != 0)
@@ -126,7 +126,7 @@ struct ParticipantSecurityAttributes
     }
 
     explicit ParticipantSecurityAttributes(
-            const ParticipantSecurityAttributesMask mask)
+        const ParticipantSecurityAttributesMask mask)
         : allow_unauthenticated_participants(false)
         , is_access_protected(true)
         , is_rtps_protected((mask & PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_PROTECTED) != 0)

@@ -116,9 +116,9 @@ ReturnCode_t json_deserialize_aggregate(
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
                 "Error encountered while deserializing " << kind_str << ": size is " << j.size() << ", "
-                                                         << "but the expected number of members is " <<
-                data->enclosing_type()->get_member_count() <<
-                ".");
+                                                         << "but the expected number of members is "
+                                                         << data->enclosing_type()->get_member_count()
+                                                         << ".");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -129,8 +129,8 @@ ReturnCode_t json_deserialize_aggregate(
         if (RETCODE_OK != (ret = data->enclosing_type()->get_member_by_name(type_member, it.key())))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while deserializing " << kind_str << " member '" << it.key() <<
-                    "' from JSON: get_member_by_name failed.");
+                    "Error encountered while deserializing " << kind_str << " member '" << it.key()
+                                                             << "' from JSON: get_member_by_name failed.");
             break;
         }
 
@@ -234,8 +234,8 @@ ReturnCode_t json_deserialize_member(
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while deserializing member: unexpected kind " << member_kind <<
-                    " found.");
+                    "Error encountered while deserializing member: unexpected kind " << member_kind
+                                                                                     << " found.");
             return RETCODE_BAD_PARAMETER;
     }
 }
@@ -643,8 +643,8 @@ ReturnCode_t json_deserialize_basic_member(
         }
         default:
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while deserializing basic member to JSON: unexpected kind " << member_kind <<
-                    " found.");
+                    "Error encountered while deserializing basic member to JSON: unexpected kind " << member_kind
+                                                                                                   << " found.");
             return RETCODE_BAD_PARAMETER;
     }
 }
@@ -758,8 +758,8 @@ ReturnCode_t json_deserialize_enum_member(
                     else
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                                "Error encountered while deserializing TK_ENUM member: unexpected enclosing kind " <<
-                                enclosing_kind << " found.");
+                                "Error encountered while deserializing TK_ENUM member: unexpected enclosing kind "
+                                << enclosing_kind << " found.");
                         return RETCODE_BAD_PARAMETER;
                     }
                     is_value_set = true;
@@ -774,8 +774,8 @@ ReturnCode_t json_deserialize_enum_member(
             else
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while deserializing TK_ENUM member: unexpected key '" << it.key() <<
-                        "' found.");
+                        "Error encountered while deserializing TK_ENUM member: unexpected key '" << it.key()
+                                                                                                 << "' found.");
                 return RETCODE_BAD_PARAMETER;
             }
         }
@@ -861,8 +861,8 @@ ReturnCode_t json_deserialize_enum_member(
     else
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while deserializing TK_ENUM member from JSON: unexpected enclosing kind " <<
-                enclosing_kind << " found.");
+                "Error encountered while deserializing TK_ENUM member from JSON: unexpected enclosing kind "
+                << enclosing_kind << " found.");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -936,8 +936,8 @@ ReturnCode_t json_deserialize_union(
     if (RETCODE_OK != (ret = data->enclosing_type()->get_member_by_name(type_member, key)))
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while deserializing union member '" << key <<
-                "' from JSON: get_member_by_name failed.");
+                "Error encountered while deserializing union member '" << key
+                                                                       << "' from JSON: get_member_by_name failed.");
     }
     else if (RETCODE_OK != (ret = json_deserialize_member(value, type_member, format, data)))
     {
@@ -970,8 +970,9 @@ ReturnCode_t json_deserialize_collection(
         if (j.size() > descriptor.bound()[0])
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while deserializing collection member: size " << j.size() <<
-                    " does not match bound " << descriptor.bound()[0] << ".");
+                    "Error encountered while deserializing collection member: size " << j.size()
+                                                                                     << " does not match bound "
+                                                                                     << descriptor.bound()[0] << ".");
             return RETCODE_BAD_PARAMETER;
         }
 
@@ -1192,8 +1193,8 @@ ReturnCode_t json_deserialize_bitmask(
             else
             {
                 EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                        "Error encountered while deserializing bitmask member: unexpected key '" << it.key() <<
-                        "' found.");
+                        "Error encountered while deserializing bitmask member: unexpected key '" << it.key()
+                                                                                                 << "' found.");
                 return RETCODE_BAD_PARAMETER;
             }
         }
@@ -1240,8 +1241,8 @@ ReturnCode_t json_deserialize_bitmask(
         if (j_binary.size() > true_bound)
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while deserializing bitmask member from JSON: binary value '" <<
-                    j_binary << "' does not match bound " << bound << ".");
+                    "Error encountered while deserializing bitmask member from JSON: binary value '"
+                    << j_binary << "' does not match bound " << bound << ".");
             return RETCODE_BAD_PARAMETER;
         }
         try

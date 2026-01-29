@@ -20,7 +20,7 @@
 
 #define log_str(x) #x
 #define macro_print(mname) std::cout << #mname << " = " << \
-            (std::string(#mname) == log_str(mname) ? "" : log_str(mname)) << std::endl
+        (std::string(#mname) == log_str(mname) ? "" : log_str(mname)) << std::endl
 
 /* WARNING - This test will fail with any LOG_NO_ CMake option set different than default configuration
  * Check all log levels are active in debug mode, or INFO is not active in Release mode */

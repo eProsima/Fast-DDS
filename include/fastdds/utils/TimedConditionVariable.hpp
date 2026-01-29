@@ -44,8 +44,8 @@
 #include <pthread.h>
 
 #define CV_INIT_(x) pthread_condattr_init(&cv_attr_); \
-        pthread_condattr_setclock(&cv_attr_, CLOCK_MONOTONIC); \
-        pthread_cond_init(x, &cv_attr_);
+    pthread_condattr_setclock(&cv_attr_, CLOCK_MONOTONIC); \
+    pthread_cond_init(x, &cv_attr_);
 #define CV_WAIT_(cv, x) pthread_cond_wait(&cv, x)
 #define CV_TIMEDWAIT_(cv, x, y) pthread_cond_timedwait(&cv, x, y)
 #define CV_SIGNAL_(cv) pthread_cond_signal(&cv)

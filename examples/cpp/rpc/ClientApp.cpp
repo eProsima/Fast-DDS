@@ -113,9 +113,9 @@ OperationStatus RepresentationLimits::execute()
 
             // Print the results
             client_server_info("ClientApp",
-                    "Representation limits received: min_value = " << representation_limits_.min_value <<
-                    ", max_value = " <<
-                    representation_limits_.max_value);
+                    "Representation limits received: min_value = " << representation_limits_.min_value
+                                                                   << ", max_value = "
+                                                                   << representation_limits_.max_value);
 
             return OperationStatus::SUCCESS;
         }
