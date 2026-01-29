@@ -1526,10 +1526,13 @@ void PDP::set_external_participant_properties_(
     // Set participant type property
     // TODO: This could be done somewhere else that makes more sense.
     std::stringstream participant_type;
-    if (part_attributes.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT) {
+    if (part_attributes.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT)
+    {
         // Announce CLIENT as SUPER_CLIENT for backwards compatibility
         participant_type << DiscoveryProtocol::SUPER_CLIENT;
-    } else {
+    }
+    else
+    {
         participant_type << part_attributes.builtin.discovery_config.discoveryProtocol;
     }
     auto ptype = participant_type.str();
