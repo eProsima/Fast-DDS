@@ -658,7 +658,7 @@ bool MessageReceiver::readSubmessageHeader(
     {
         EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "SubMsg of invalid length (" << length
                                                                                 <<
-                            ") with current msg position/length (" << msg->pos << "/" << msg->length << ")");
+                ") with current msg position/length (" << msg->pos << "/" << msg->length << ")");
         return false;
     }
 

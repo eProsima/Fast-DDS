@@ -1408,7 +1408,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     std::ofstream file(filename);
     file
         <<
-                        "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783\"}";
+        "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783\"}";
     file.close();
 
     // Wait long enough for the file watch callback

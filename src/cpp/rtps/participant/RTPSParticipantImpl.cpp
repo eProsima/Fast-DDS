@@ -419,7 +419,7 @@ bool RTPSParticipantImpl::setup_transports()
                         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                                 "Participant " << m_att.getName() << " with GUID " << m_guid
                                                <<
-                                        " tries to create a TCP server for discovery server without providing a proper listening port.");
+                                " tries to create a TCP server for discovery server without providing a proper listening port.");
                         return false;
                     }
                     if (!m_att.builtin.metatrafficUnicastLocatorList.empty())
@@ -465,9 +465,9 @@ bool RTPSParticipantImpl::setup_transports()
                         EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
                                 "Participant " << m_att.getName() << " with GUID " << m_guid
                                                <<
-                                        " tries to create a TCP client without providing a proper listening port."
+                                " tries to create a TCP client without providing a proper listening port."
                                                <<
-                                        " No incomming connections will be accepted, only outgoing connections.");
+                                " No incomming connections will be accepted, only outgoing connections.");
                     }
                     std::for_each(m_att.builtin.discovery_config.m_DiscoveryServers.begin(),
                             m_att.builtin.discovery_config.m_DiscoveryServers.end(), [&](Locator_t& locator)

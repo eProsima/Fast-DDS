@@ -918,7 +918,7 @@ bool EDP::valid_matching(
         EPROSIMA_LOG_WARNING(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << rdata->topic_name << "):RemoteReader "
                                                                    << rdata->guid
                                                                    <<
-                            " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
+                " has TRANSIENT_LOCAL DURABILITY and we offer VOLATILE");
         incompatible_qos.set(fastdds::dds::DURABILITY_QOS_POLICY_ID);
     }
 
