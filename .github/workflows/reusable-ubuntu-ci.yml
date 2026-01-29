@@ -661,6 +661,10 @@ jobs:
   fastdds_alternative_builds:
     needs: fastdds_build
     runs-on: ${{ inputs.os-image }}
+    env:
+      # TODO
+      CC: gcc-11
+      cxx: g++-11
     strategy:
       fail-fast: false
       matrix:
@@ -689,7 +693,7 @@ jobs:
       - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev
+          packages: libasio-dev libtinyxml2-dev libssl-dev g++-11
           update: false
           upgrade: false
 
@@ -713,7 +717,7 @@ jobs:
         with:
           repository: osrf/osrf_testing_tools_cpp
           path: src/osrf_testing_tools_cpp
-          ref: 1.5.2
+          ref: 2.3.0
 
       - name: OSRF testing tools build
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
