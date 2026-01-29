@@ -429,7 +429,8 @@ std::pair<bool, bool> PDPServerListener::check_server_discovery_conditions(
                                                              << participant_type_str);
             ret.first = false;
         }
-        else if (participant_type_str != ParticipantType::CLIENT)
+        else if (participant_type_str != ParticipantType::CLIENT &&
+                participant_type_str != ParticipantType::SUPER_CLIENT)
         {
             EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
                                                            << participant_type_str);
