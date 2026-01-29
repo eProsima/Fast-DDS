@@ -933,7 +933,8 @@ bool LatencyTestPublisher::test(
     // Drop the first measurement, as it's usually not representative
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        if (!times_.empty()) {
+        if (!times_.empty())
+        {
             times_.erase(times_.begin());
         }
     }
