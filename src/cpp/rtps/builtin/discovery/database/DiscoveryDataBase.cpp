@@ -1197,32 +1197,64 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
-    // Always exchange all information between all participants (no filtering)
-    // Skip only if it's a virtual endpoint matching with another virtual endpoint
-    if ((writer_info.is_virtual() && reader_info.is_virtual()) ||
-            (writer_info.is_external() && reader_info.is_external()))
+    // virtual              - needs info and give none
+    // local                - needs info and give info
+    // external             - needs none and give info
+    // writer needs info    = add writer participant in reader ack list
+    // writer give info     = add reader participant in writer ack list
+
+    // Servers do not redirect Data(p) between remote clients,
+    // so we skip matching when both endpoints are virtual
+    if (writer_info.is_virtual() && reader_info.is_virtual())
     {
         return;
     }
 
-    // Add writer's participant to reader's relevant list
-    if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
+    // Classify writer and reader types
+    const bool writer_is_virtual = writer_info.is_virtual();
+    const bool writer_is_local = !writer_is_virtual && writer_participant_info.is_local();
+    const bool writer_is_external = !writer_is_virtual && !writer_is_local;
+
+    const bool reader_is_virtual = reader_info.is_virtual();
+    const bool reader_is_local = !reader_is_virtual && reader_participant_info.is_local();
+    const bool reader_is_external = !reader_is_virtual && !reader_is_local;
+
+    // Determine info exchange based on endpoint types:
+    // - Local endpoints both need and give info
+    // - Virtual endpoints only need info (never give)
+    // - External endpoints only give info (never need)
+    // Additionally, servers do not redirect between remote clients,
+    // so external endpoints only exchange with local endpoints
+    const bool writer_needs_info = writer_is_virtual || writer_is_local;
+    const bool writer_gives_info = writer_is_local || (writer_is_external && reader_is_local);
+
+    const bool reader_needs_info = reader_is_virtual || reader_is_local;
+    const bool reader_gives_info = reader_is_local || (reader_is_external && writer_is_local);
+
+    // Writer needs info from reader: add writer's guid prefix to reader's ack lists
+    if (writer_needs_info && reader_gives_info)
     {
-        reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-    }
-    if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
-    {
-        reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+        if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
+        {
+            reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+        }
+        if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
+        {
+            reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+        }
     }
 
-    // Add reader's participant to writer's relevant list
-    if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
+    // Reader needs info from writer: add reader's guid prefix to writer's ack lists
+    if (reader_needs_info && writer_gives_info)
     {
-        writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-    }
-    if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
-    {
-        writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+        if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
+        {
+            writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+        }
+        if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
+        {
+            writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+        }
     }
 }
 
