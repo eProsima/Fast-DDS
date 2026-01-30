@@ -1199,7 +1199,8 @@ void DiscoveryDataBase::match_writer_reader_(
 
     // Always exchange all information between all participants (no filtering)
     // Skip only if it's a virtual endpoint matching with another virtual endpoint
-    if (writer_info.is_virtual() && reader_info.is_virtual())
+    if ((writer_info.is_virtual() && reader_info.is_virtual()) ||
+            (writer_info.is_external() && reader_info.is_external()))
     {
         return;
     }
