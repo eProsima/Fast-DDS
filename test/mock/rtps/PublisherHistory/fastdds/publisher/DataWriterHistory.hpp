@@ -54,13 +54,20 @@ static HistoryAttributes to_history_attributes(
 
     if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
     {
-        max_samples = topic_att.historyQos.depth;
+        max_samples = get_min_max_samples(topic_att.historyQos.depth, topic_att.resourceLimitsQos.max_samples_per_instance);
         if (topic_att.getTopicKind() != NO_KEY)
         {
-            max_samples *= topic_att.resourceLimitsQos.max_instances;
+            if (0 < topic_att.resourceLimitsQos.max_instances)
+            {
+                max_samples *= topic_att.resourceLimitsQos.max_instances;
+            }
+            else
+            {
+                max_samples = LENGTH_UNLIMITED;
+            }
         }
 
-        initial_samples = std::min(initial_samples, max_samples);
+        initial_samples = get_min_max_samples(initial_samples, max_samples);
     }
 
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
