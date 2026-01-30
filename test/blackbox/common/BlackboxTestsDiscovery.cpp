@@ -65,7 +65,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -83,7 +84,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -1021,7 +1023,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 }
 
 //! Auxiliar method for discovering participants tests
-template <typename ParticipantConfigurator>
+template<typename ParticipantConfigurator>
 static void discoverParticipantsTest(
         bool avoid_multicast,
         size_t n_participants,
@@ -2173,7 +2175,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     server->wait_discovery(std::chrono::seconds(5), 1, true);
     // Let some time for the server to run the internal routine and check if it sent Data(p)
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 1u);
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 2u);
 
     // Init client 2
     ASSERT_TRUE(client_2.wire_protocol(client_qos)
@@ -2185,7 +2187,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     server->wait_discovery(std::chrono::seconds(5), 2, true);
     // Let some time for the server to run the internal routine and check if it sent Data(p)
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 2u);
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 5u);
 
     // Init client 3
     ASSERT_TRUE(client_3.wire_protocol(client_qos)
@@ -2197,7 +2199,7 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
     server->wait_discovery(std::chrono::seconds(5), 3, true);
     // Let some time for the server to run the internal routine and check if it sent Data(p)
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 3u);
+    EXPECT_EQ(num_data_p_sends.load(std::memory_order::memory_order_seq_cst), 9u);
 }
 
 // This test checks that a Discover Server does not send duplicated EDP messages when its routine

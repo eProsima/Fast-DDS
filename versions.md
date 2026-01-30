@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * ResourceLimitsQosPolicy maximum limits default values changed to LENGTH_UNLIMITED (i.e. infinite).
+* Discovery Server CLIENT participants now behave like SUPER_CLIENT participants.
 
 Version v3.4.0
 --------------
