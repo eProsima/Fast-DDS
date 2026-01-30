@@ -54,7 +54,8 @@ static HistoryAttributes to_history_attributes(
 
     if (topic_att.historyQos.kind != KEEP_ALL_HISTORY_QOS)
     {
-        max_samples = get_min_max_samples(topic_att.historyQos.depth, topic_att.resourceLimitsQos.max_samples_per_instance);
+        max_samples = get_min_max_samples(topic_att.historyQos.depth,
+                        topic_att.resourceLimitsQos.max_samples_per_instance);
         if (topic_att.getTopicKind() != NO_KEY)
         {
             if (0 < topic_att.resourceLimitsQos.max_instances)
