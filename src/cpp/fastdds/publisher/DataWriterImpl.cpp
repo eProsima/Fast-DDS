@@ -313,17 +313,17 @@ ReturnCode_t DataWriterImpl::enable()
         w_att.endpoint.set_data_sharing_configuration(datasharing);
 
         // Update pool config for KEEP_ALL when max_samples is infinite
-        if ((0 == history_.m_att.payloadMaxSize) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
+        if ((0 >= history_.m_att.maximumReservedCaches) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
         {
             // Override infinite with old default value for max_samples + extra samples
-            history_.m_att.payloadMaxSize = 5000;
+            history_.m_att.maximumReservedCaches = 5000;
             if (0 < qos_.resource_limits().extra_samples)
             {
-                history_.m_att.payloadMaxSize += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
+                history_.m_att.maximumReservedCaches += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
             }
             EPROSIMA_LOG_ERROR(DATA_WRITER,
                     "DataWriter with KEEP_ALL history and infinite max_samples is not compatible with DataSharing. "
-                    "Setting max_samples to " << history_.m_att.payloadMaxSize);
+                    "Setting max_samples to " << history_.m_att.maximumReservedCaches);
         }
     }
     else
