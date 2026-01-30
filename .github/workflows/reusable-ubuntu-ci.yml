@@ -664,7 +664,7 @@ jobs:
     env:
       # TODO
       CC: gcc-11
-      cxx: g++-11
+      CXX: g++-11
     strategy:
       fail-fast: false
       matrix:

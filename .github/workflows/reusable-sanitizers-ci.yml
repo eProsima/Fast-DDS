@@ -257,7 +257,7 @@ jobs:
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
       # TODO
       CC: gcc-12
-      cxx: g++-12
+      CXX: g++-12
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
