@@ -17,8 +17,15 @@
                 <publish>
                     <topics>
                         <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
                     </topics>
                 </publish>
+                <subscribe>
+                    <topics>
+                        <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
+                    </topics>
+                </subscribe>
             </allow_rule>
             <default>DENY</default>
         </grant>
@@ -35,9 +42,16 @@
                         <max>230</max>
                     </id_range>
                 </domains>
+                <publish>
+                    <topics>
+                        <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
+                    </topics>
+                </publish>
                 <subscribe>
                     <topics>
                         <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
                     </topics>
                 </subscribe>
             </allow_rule>
