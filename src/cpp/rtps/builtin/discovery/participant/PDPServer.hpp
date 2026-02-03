@@ -158,16 +158,6 @@ public:
             const fastdds::rtps::ParticipantProxyData& pdata,
             bool notify_secure_endpoints) override;
 
-#if HAVE_SECURITY
-    bool pairing_remote_writer_with_local_reader_after_security(
-            const fastdds::rtps::GUID_t& local_reader,
-            const fastdds::rtps::WriterProxyData& remote_writer_data) override;
-
-    bool pairing_remote_reader_with_local_writer_after_security(
-            const fastdds::rtps::GUID_t& local_reader,
-            const fastdds::rtps::ReaderProxyData& remote_reader_data) override;
-#endif // HAVE_SECURITY
-
     //! Get filename for writer persistence database file
     std::string get_writer_persistence_file_name() const;
 
@@ -322,18 +312,6 @@ protected:
 private:
 
     using PDP::announceParticipantState;
-
-#if HAVE_SECURITY
-    /**
-     * Returns whether discovery should be secured
-     */
-    bool should_protect_discovery();
-
-    /**
-     * Performs creation of secured DS PDP endpoints
-     */
-    bool create_secure_ds_pdp_endpoints();
-#endif  // HAVE_SECURITY
 
     /**
      * Performs creation of standard DS PDP endpoints
