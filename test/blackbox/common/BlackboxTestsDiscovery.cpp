@@ -2218,10 +2218,10 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
 
     // Define a specific port for client_1's metatraffic
     uint32_t client_1_metatraffic_port = global_port + 10;
-    
+
     // Declare a test transport that will count messages sent from server_2 to client_1
     std::atomic<size_t> num_messages_to_client_1{ 0 };
-    
+
     auto test_transport_server_2 = std::make_shared<test_UDPv4TransportDescriptor>();
     test_transport_server_2->locator_filter_ = [&](
         const eprosima::fastdds::rtps::Locator& destination, int32_t)
@@ -2229,7 +2229,7 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
                 // Check if destination port matches client_1's metatraffic port
                 if (destination.port == client_1_metatraffic_port)
                 {
-                    std::cout << "Message from server_2 to client_1 detected on port " 
+                    std::cout << "Message from server_2 to client_1 detected on port "
                               << destination.port << std::endl;
                     num_messages_to_client_1.fetch_add(1u, std::memory_order_seq_cst);
                 }

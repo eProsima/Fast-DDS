@@ -1231,7 +1231,7 @@ void DiscoveryDataBase::match_writer_reader_(
     const bool writer_gives_info = writer_is_local || (writer_is_external && reader_is_local);
 
     const bool reader_needs_info = reader_is_virtual || reader_is_local;
-    const bool reader_gives_info = reader_is_local || (reader_is_external && writer_is_local);
+    const bool reader_gives_info = !reader_is_virtual && (reader_is_local || (reader_is_external && writer_is_local));
 
     // Writer needs info from reader: add writer's guid prefix to reader's ack lists
     if (writer_needs_info && reader_gives_info)
