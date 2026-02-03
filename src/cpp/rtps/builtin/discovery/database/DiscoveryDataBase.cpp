@@ -1199,12 +1199,6 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
-    // virtual              - needs info and give none
-    // local                - needs info and give info
-    // external             - needs none and give info
-    // writer needs info    = add writer participant in reader ack list
-    // writer give info     = add reader participant in writer ack list
-
     // Servers do not redirect Data(p) between remote clients,
     // so we skip matching when both endpoints are virtual
     if (writer_info.is_virtual() && reader_info.is_virtual())
