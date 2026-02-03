@@ -172,6 +172,14 @@ async def run_command(test_case, process_args, timeout):
 
 
 async def execute_commands(test_case, commands):
+    """
+    Execute a list of commands asynchronously.
+
+    :param[in]  test_case  Name of the test case.
+    :param[in]  commands   List of commands to be executed.
+
+    :return Sum of the return codes of each command.
+    """
     tasks = []
     async with asyncio.TaskGroup() as tg:
         for command in commands:
@@ -181,10 +189,24 @@ async def execute_commands(test_case, commands):
     return sum([proc.result() for proc in tasks])
 
 async def execute_commands_with_sem(test_case, commands, sem):
+    """
+    Execute commands using a semaphore to limit parallel executions.
+
+   :param[in]  test_case  Name of the test case.
+   :param[in]  commands   List of commands to be executed.
+   :param[in]  sem        Semaphore to limit parallel executions.
+    """
     async with sem:
         return await execute_commands(test_case, commands)
 
 async def execute_test_cases(test_cases):
+    """
+    Execute all test cases, retrying failed ones up to 3 times.
+
+    :param[in]  test_cases  List of test cases to be executed.
+
+    :return Tuple (total test value, list of successful cases, list of failling cases)
+    """
     total_test_value = 0
     successful_cases = []
     failling_cases = []
@@ -229,6 +251,7 @@ async def execute_test_cases(test_cases):
             await asyncio.sleep(2)
             total_test_value = 0
 
+    # If there are still pending cases, they are considered failling
     for test_case in pending_cases:
         failling_cases.append(f"Test {test_case.get('TestCase')}")
 
