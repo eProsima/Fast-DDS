@@ -109,10 +109,10 @@ struct Attribute
     Attribute() = default;
 
     Attribute(
-        const DistinguishedName& name);
+            const DistinguishedName& name);
 
     Attribute(
-        const char* name);
+            const char* name);
 
     bool is_set() const noexcept;
 
