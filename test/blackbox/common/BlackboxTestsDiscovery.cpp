@@ -2246,8 +2246,6 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
     WireProtocolConfigQos server_wp_qos_1;
     server_wp_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     server_wp_qos_1.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
-    server_wp_qos_1.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    server_wp_qos_1.builtin.discovery_config.leaseDuration_announcementperiod = { 3600, 0 };
     server_wp_qos_1.builtin.discovery_config.initial_announcements.count = 1;
 
     server_1->wire_protocol(server_wp_qos_1)
@@ -2266,8 +2264,6 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
     WireProtocolConfigQos server_wp_qos_2;
     server_wp_qos_2.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
     server_wp_qos_2.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
-    server_wp_qos_2.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    server_wp_qos_2.builtin.discovery_config.leaseDuration_announcementperiod = { 3600, 0 };
     server_wp_qos_2.builtin.discovery_config.initial_announcements.count = 1;
     // Federate server 2 with server 1
     server_wp_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_1);
@@ -2298,8 +2294,6 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
     WireProtocolConfigQos client_1_qos;
     client_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     client_1_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_1);
-    client_1_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    client_1_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 3600, 0 };
     client_1_qos.builtin.discovery_config.initial_announcements.count = 1;
     client_1_qos.builtin.metatrafficUnicastLocatorList.push_back(client_1_metatraffic_locator);
 
@@ -2324,8 +2318,6 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
     WireProtocolConfigQos client_2_qos;
     client_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
     client_2_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server_2);
-    client_2_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
-    client_2_qos.builtin.discovery_config.leaseDuration_announcementperiod = { 3600, 0 };
     client_2_qos.builtin.discovery_config.initial_announcements.count = 1;
 
     client_2.set_wire_protocol_qos(client_2_qos)
