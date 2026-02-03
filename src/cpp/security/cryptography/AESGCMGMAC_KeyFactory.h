@@ -39,7 +39,7 @@ namespace {
 struct ParticipantCryptoHandleDeleter
 {
     ParticipantCryptoHandleDeleter(
-        AESGCMGMAC_KeyFactory & factory);
+            AESGCMGMAC_KeyFactory& factory);
 
     void operator ()(
             AESGCMGMAC_ParticipantCryptoHandle* pk);
