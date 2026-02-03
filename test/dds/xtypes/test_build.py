@@ -191,24 +191,46 @@ async def execute_test_cases(test_cases):
 
     # Limit parallel executions to half of CPU cores
     sem = asyncio.Semaphore(os.cpu_count() // 2 or 6)
-    tasks = []
-    idx = 0
-    async with asyncio.TaskGroup() as tg:
-        for test_case in test_cases:
-            # Define commands for each test case
-            commands = define_commands(args.app, [test_case], idx)
-            # Execute the commands in parallel
-            tasks.append(tg.create_task(execute_commands_with_sem(test_case['TestCase'], commands, sem)))
-            idx += 1
 
-    # Collect results
-    for test_case, task in zip(test_cases, tasks):
-        test_value = task.result()
-        total_test_value += test_value
-        if test_value == 0:
-            successful_cases.append(f"Test {test_case.get('TestCase')}")
-        else:
-            failling_cases.append(f"Test {test_case.get('TestCase')}")
+    pending_cases = test_cases.copy()
+    max_test_runs = 3
+    while pending_cases and max_test_runs > 0:
+        tasks = []
+        idx = 0
+        async with asyncio.TaskGroup() as tg:
+            for test_case in pending_cases:
+                # Define commands for each test case
+                commands = define_commands(args.app, [test_case], idx)
+                # Execute the commands in parallel
+                tasks.append(tg.create_task(execute_commands_with_sem(test_case['TestCase'], commands, sem)))
+                idx += 1
+
+        next_pending_cases = []
+        max_test_runs -= 1
+
+        # Collect results
+        for test_case, task in zip(pending_cases, tasks):
+            test_value = task.result()
+            total_test_value += test_value
+            if test_value == 0:
+                successful_cases.append(f"Test {test_case.get('TestCase')}")
+            else:
+                next_pending_cases.append(test_case)
+
+        # If there are pending cases, they will be retried
+        pending_cases = next_pending_cases
+        if pending_cases.__len__() > 0 and max_test_runs > 0:
+            # Inform about cases to be retried
+            logger.info("----------- RETRYING CASES -----------")
+            for failed_test in pending_cases:
+                logger.info(f"Test {failed_test.get('TestCase')}")
+
+            # Wait a bit before retrying
+            await asyncio.sleep(2)
+            total_test_value = 0
+
+    for test_case in pending_cases:
+        failling_cases.append(f"Test {test_case.get('TestCase')}")
 
     return total_test_value, successful_cases, failling_cases
 
