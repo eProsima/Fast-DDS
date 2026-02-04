@@ -119,10 +119,6 @@ if(SECURITY)
         ${CMAKE_CURRENT_BINARY_DIR}/governance_allow_unauth_all_disabled_access_none.smime COPYONLY)
     configure_file(${FASTDDS_BASIC_DIR}/test/certs/permissions_helloworld_securehelloworld.smime
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_secure_ds_disabled.py
-        ${CMAKE_CURRENT_BINARY_DIR}/test_secure_ds_disabled.py COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_profile.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_profile.xml COPYONLY)
 
     if(PYTHONINTERP_FOUND)
 
