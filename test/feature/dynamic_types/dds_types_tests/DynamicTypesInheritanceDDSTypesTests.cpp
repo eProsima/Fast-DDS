@@ -71,7 +71,8 @@ DynamicType::_ref_type create_inner_struct_helper_child()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_structure_helper_child_struct_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_struct_helper());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_child_longlong);
@@ -93,7 +94,8 @@ DynamicType::_ref_type create_inner_struct_helper_child_child()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_structure_helper_child_child_struct_name);
     type_descriptor->base_type(create_inner_struct_helper_child());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
 
@@ -117,7 +119,8 @@ DynamicType::_ref_type create_inner_struct_helper_empty_child()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_structure_helper_empty_child_struct_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_struct_helper());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     return type_builder->build();
 }
@@ -128,7 +131,8 @@ DynamicType::_ref_type create_inner_struct_helper_empty_child_child()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_structure_helper_empty_child_child_struct_name);
     type_descriptor->base_type(create_inner_struct_helper_empty_child());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char);
@@ -145,7 +149,8 @@ DynamicType::_ref_type create_inner_empty_struct_helper_child()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_empty_structure_helper_child_struct_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_empty_struct_helper());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_child_longlong);
@@ -167,7 +172,8 @@ DynamicType::_ref_type create_struct_alias_inheritance_struct()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_inheritance_struct_struct_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_struct_helper_alias());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(new_member);
@@ -185,7 +191,8 @@ DynamicType::_ref_type create_inner_bitset_helper_child()
     type_descriptor->name(inner_bitset_helper_child_bitset_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_bitset_helper());
     type_descriptor->bound({17});
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type bitset_member {traits<MemberDescriptor>::make_shared()};
     bitset_member->name(child_w);
@@ -204,7 +211,8 @@ DynamicType::_ref_type create_inner_bitset_helper_child_child()
     type_descriptor->name(inner_bitset_helper_child_child_bitset_name);
     type_descriptor->base_type(create_inner_bitset_helper_child());
     type_descriptor->bound({14});
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type bitset_member {traits<MemberDescriptor>::make_shared()};
     bitset_member->name(childchild_z);
@@ -223,7 +231,8 @@ DynamicType::_ref_type create_bitset_alias_inheritance_bitset()
     type_descriptor->name(bitset_alias_inheritance_bitset_bitset_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_bitset_helper_alias());
     type_descriptor->bound({10});
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type bitset_member {traits<MemberDescriptor>::make_shared()};
     bitset_member->name(new_bitfield);
@@ -560,7 +569,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructuresInheritanceStruct)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(structures_inheritance_struct_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_InnerStructureHelperChild);
@@ -840,7 +850,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bitsets_child_inheritance_struct_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_InnerBitsetHelperChild);

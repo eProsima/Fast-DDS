@@ -111,8 +111,8 @@ ReturnCode_t dyn_type_to_tree(
             if (RETCODE_OK != ret)
             {
                 EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
-                        "Error getting member descriptor of member " << member->get_name() <<
-                        " of " << node << ".");
+                        "Error getting member descriptor of member " << member->get_name()
+                                                                     << " of " << node << ".");
                 return ret;
             }
 
@@ -122,8 +122,8 @@ ReturnCode_t dyn_type_to_tree(
             if (RETCODE_OK != ret)
             {
                 EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
-                        "Error building tree of member " << member->get_name() <<
-                        " of " << node << ".");
+                        "Error building tree of member " << member->get_name()
+                                                         << " of " << node << ".");
                 return ret;
             }
 
@@ -214,8 +214,8 @@ ReturnCode_t dyn_type_to_tree(
                 if (RETCODE_OK != ret)
                 {
                     EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
-                            "Error getting member descriptor of member " << member->get_name() <<
-                            " of " << node << ".");
+                            "Error getting member descriptor of member " << member->get_name()
+                                                                         << " of " << node << ".");
                     return ret;
                 }
 
@@ -225,8 +225,8 @@ ReturnCode_t dyn_type_to_tree(
                 if (RETCODE_OK != ret)
                 {
                     EPROSIMA_LOG_ERROR(DYNAMIC_TYPE_IDL,
-                            "Error building tree of member " << member->get_name() <<
-                            " of " << node << ".");
+                            "Error building tree of member " << member->get_name()
+                                                             << " of " << node << ".");
                     return ret;
                 }
 

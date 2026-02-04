@@ -60,10 +60,10 @@ struct PubKnownType
 
 // Define a macro to simplify type registration
     #define PUBLISHER_TYPE_CREATOR_FUNCTION(Type) \
-    type_creator_functions_[#Type] = std::bind(&TypeLookupServicePublisher::create_known_type_impl<Type, \
-                    Type ## PubSubType>, \
-                    this, \
-                    std::placeholders::_1)
+        type_creator_functions_[#Type] = std::bind(&TypeLookupServicePublisher::create_known_type_impl<Type, \
+                        Type ## PubSubType>, \
+                        this, \
+                        std::placeholders::_1)
 
 
 class TypeLookupServicePublisher
@@ -108,7 +108,7 @@ private:
     bool create_known_type(
             const std::string& type);
 
-    template <typename Type, typename TypePubSubType>
+    template<typename Type, typename TypePubSubType>
     bool create_known_type_impl(
             const std::string& type);
 

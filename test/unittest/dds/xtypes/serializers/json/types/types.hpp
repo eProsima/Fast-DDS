@@ -30,21 +30,21 @@ enum class DataTypeKind
     COMPREHENSIVE_TYPE,
 };
 
-template <DataTypeKind Data>
+template<DataTypeKind Data>
 eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type create_dynamic_type();
 
-template <DataTypeKind Data>
+template<DataTypeKind Data>
 eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type create_dynamic_data(
         const eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type& dynamic_type,
         bool filled,
         const unsigned int& index = 0);
 
-template <DataTypeKind Data>
+template<DataTypeKind Data>
 eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type fill_dyn_data(
         eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type& dyn_data,
         const unsigned int& index);
 
-template <DataTypeKind Data>
+template<DataTypeKind Data>
 std::string get_expected_json(
         const eprosima::fastdds::dds::DynamicDataJsonFormat& format,
         bool filled,

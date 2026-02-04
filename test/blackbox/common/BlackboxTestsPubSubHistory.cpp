@@ -50,7 +50,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -80,7 +81,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -1179,7 +1181,8 @@ TEST_P(PubSubHistory, WriterUnmatchClearsHistory)
     PubSubWriter<HelloWorldPubSubType> writer2(TEST_TOPIC_NAME);
 
     //Reader with limited history size
-    reader.history_depth(2).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
+    reader.history_depth(2).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(
+        mem_policy_).init();
     ASSERT_TRUE(reader.isInitialized());
 
     writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).mem_policy(mem_policy_).init();

@@ -2963,7 +2963,8 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         case TK_CHAR16:
             if (type_id._d() != value._d())
             {
-                throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+                throw InvalidArgumentError(
+                          "Given annotation parameter value is inconsistent with given TypeIdentifier");
             }
             break;
         // String
@@ -2971,7 +2972,8 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         case TI_STRING8_LARGE:
             if (value._d() != TK_STRING8)
             {
-                throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+                throw InvalidArgumentError(
+                          "Given annotation parameter value is inconsistent with given TypeIdentifier");
             }
             break;
         // Wstring
@@ -2979,7 +2981,8 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         case TI_STRING16_LARGE:
             if (value._d() != TK_STRING16)
             {
-                throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+                throw InvalidArgumentError(
+                          "Given annotation parameter value is inconsistent with given TypeIdentifier");
             }
             break;
         // Enum & Alias

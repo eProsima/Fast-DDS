@@ -2343,8 +2343,9 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
     if (max_domains != 0 && domain_ids.size() > static_cast<uint32_t>(max_domains))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'data_sharing' defines a maximum of " << max_domains
-                                                                                  << " domain IDs but also define " << domain_ids.size() <<
-                " domain IDs");
+                                                                                  << " domain IDs but also define "
+                                                                                  << domain_ids.size()
+                                                                                  << " domain IDs");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -2844,7 +2845,8 @@ XMLP_ret XMLParser::getXMLDuration(
 
         if (elem->FirstChildElement() != nullptr)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "If a dds::Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "If a dds::Duration_t type element is defined as DURATION_INFINITY it cannot have <sec> or"
                     " <nanosec> subelements.");
             return XMLP_ret::XML_ERROR;
         }
@@ -3365,8 +3367,8 @@ static XMLP_ret process_unsigned_attribute(
         }
 
         EPROSIMA_LOG_ERROR(XMLPARSER,
-                "Wrong value '" << attribute->Value() << "' for attribute '" << name << "' on '" <<
-                elem->Name() << "'");
+                "Wrong value '" << attribute->Value() << "' for attribute '" << name << "' on '"
+                                << elem->Name() << "'");
         return XMLP_ret::XML_ERROR;
     }
 
@@ -4549,16 +4551,16 @@ XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
             catch (std::invalid_argument& except)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Found wrong value " << attrib->Value() << " for port attribute. " <<
-                        except.what());
+                        "Found wrong value " << attrib->Value() << " for port attribute. "
+                                             << except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }
             catch (const std::out_of_range& except)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Value of the port attribute " << attrib->Value() << " out of range. " <<
-                        except.what());
+                        "Value of the port attribute " << attrib->Value() << " out of range. "
+                                                       << except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }
@@ -4749,8 +4751,8 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             catch (std::invalid_argument& except)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Found wrong value " << attrib->Value() << " for max_msg_size attribute. " <<
-                        except.what());
+                        "Found wrong value " << attrib->Value() << " for max_msg_size attribute. "
+                                             << except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }
@@ -4781,8 +4783,8 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             catch (std::invalid_argument& except)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Found wrong value " << attrib->Value() << " for sockets_size attribute. " <<
-                        except.what());
+                        "Found wrong value " << attrib->Value() << " for sockets_size attribute. "
+                                             << except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }
@@ -4806,8 +4808,8 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             catch (std::invalid_argument& except)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Found wrong value " << attrib->Value() << " for non_blocking attribute. " <<
-                        except.what());
+                        "Found wrong value " << attrib->Value() << " for non_blocking attribute. "
+                                             << except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }
@@ -4836,8 +4838,8 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             catch (std::exception& except)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Found wrong value " << attrib->Value() << " for tcp_negotiation_timeout attribute. " <<
-                        except.what());
+                        "Found wrong value " << attrib->Value() << " for tcp_negotiation_timeout attribute. "
+                                             << except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }

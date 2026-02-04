@@ -98,8 +98,8 @@ TEST(TypePropagationTests, to_type_propagation)
         const std::string& property_value = test_case.first.second;
         const TypePropagation type_propagation = test_case.second;
 
-        std::cout << "Checking test_case: ('" << property_name << "', '" << property_value << "') -> '" <<
-            type_propagation << "'" << std::endl;
+        std::cout << "Checking test_case: ('" << property_name << "', '" << property_value << "') -> '"
+                  << type_propagation << "'" << std::endl;
         to_type_propagation_test(property_name, property_value, type_propagation);
     }
 }

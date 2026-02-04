@@ -54,7 +54,8 @@ protected:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -71,9 +72,9 @@ protected:
         std::ostringstream ss;
         std::string test_case_name(info->test_case_name());
         std::string test_name(info->name());
-        ss <<
-            test_case_name.replace(test_case_name.find_first_of('/'), 1, "_") << "_" <<
-            test_name.replace(test_name.find_first_of('/'), 1, "_")  << "_" << GET_PID() << ".db";
+        ss
+            << test_case_name.replace(test_case_name.find_first_of('/'), 1, "_") << "_"
+            << test_name.replace(test_name.find_first_of('/'), 1, "_")  << "_" << GET_PID() << ".db";
         db_file_name_ = ss.str();
 
     }
@@ -85,7 +86,8 @@ protected:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;

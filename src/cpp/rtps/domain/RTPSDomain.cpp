@@ -735,7 +735,8 @@ bool RTPSDomainImpl::client_server_environment_attributes_override(
         else
         {
             // There is already a profile with the given name. Do not overwrite it
-            EPROSIMA_LOG_WARNING(RTPS_DOMAIN, "An XML profile for 'service' was found. When using ROS2_EASY_MODE, please ensure"
+            EPROSIMA_LOG_WARNING(RTPS_DOMAIN,
+                    "An XML profile for 'service' was found. When using ROS2_EASY_MODE, please ensure"
                     " the max_blocking_time is configured with a value higher than the default.");
         }
     }

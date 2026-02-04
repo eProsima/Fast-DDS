@@ -145,14 +145,14 @@ void SubscriberApp::on_data_available(
             if (it_f != fast_writer_guid.end())
             {
                 fast_messages++;
-                std::cout << "Sample RECEIVED from FAST writer with id " << *it_f << ", index=" << msg.index() <<
-                    std::endl;
+                std::cout << "Sample RECEIVED from FAST writer with id " << *it_f << ", index=" << msg.index()
+                          << std::endl;
             }
             else if (it_s != slow_writer_guid.end())
             {
                 slow_messages++;
-                std::cout << "Sample RECEIVED from SLOW writer with id " << *it_s << ", index=" << msg.index() <<
-                    std::endl;
+                std::cout << "Sample RECEIVED from SLOW writer with id " << *it_s << ", index=" << msg.index()
+                          << std::endl;
             }
 
             if ((samples_ > 0) && (fast_messages >= samples_) && (slow_messages >= samples_))

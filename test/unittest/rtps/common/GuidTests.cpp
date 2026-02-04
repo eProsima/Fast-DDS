@@ -119,23 +119,23 @@ TEST(GuidTests, minor_opertor)
             if (i == j)
             {
                 // [i] == [j] so false
-                ASSERT_FALSE(result) <<
-                    "[" << i << "] " << manually_sorted_guids[i] << " < " <<
-                    "[" << j << "] " << manually_sorted_guids[j];
+                ASSERT_FALSE(result)
+                    << "[" << i << "] " << manually_sorted_guids[i] << " < "
+                    << "[" << j << "] " << manually_sorted_guids[j];
             }
             else if (i < j)
             {
                 // [i] < [j] so true
-                ASSERT_TRUE(result) <<
-                    "[" << i << "] " << manually_sorted_guids[i] << " < " <<
-                    "[" << j << "] " << manually_sorted_guids[j];
+                ASSERT_TRUE(result)
+                    << "[" << i << "] " << manually_sorted_guids[i] << " < "
+                    << "[" << j << "] " << manually_sorted_guids[j];
             }
             else
             {
                 // [i] > [j] so false
-                ASSERT_FALSE(result) <<
-                    "[" << i << "] " << manually_sorted_guids[i] << " < " <<
-                    "[" << j << "] " << manually_sorted_guids[j];
+                ASSERT_FALSE(result)
+                    << "[" << i << "] " << manually_sorted_guids[i] << " < "
+                    << "[" << j << "] " << manually_sorted_guids[j];
             }
         }
     }

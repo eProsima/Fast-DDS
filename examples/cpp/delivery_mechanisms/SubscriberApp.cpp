@@ -257,8 +257,8 @@ void SubscriberApp::on_data_available(
                 const DeliveryMechanisms& delivery_mechanisms_ = delivery_mechanisms_sequence[i];
 
                 received_samples_++;
-                std::cout << "Sample: '" << delivery_mechanisms_.message().data() << "' with index: '" <<
-                    delivery_mechanisms_.index() << "' RECEIVED" << std::endl;
+                std::cout << "Sample: '" << delivery_mechanisms_.message().data() << "' with index: '"
+                          << delivery_mechanisms_.index() << "' RECEIVED" << std::endl;
                 if ((samples_ > 0) && (received_samples_ >= samples_))
                 {
                     stop();

@@ -216,23 +216,23 @@ void SubscriberModule::on_participant_discovery(
 {
     if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " discovered participant " << info.guid << std::endl;
+        std::cout << "Subscriber participant "            //participant->getGuid() <<
+                  << " discovered participant " << info.guid << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
     {
-        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " detected changes on participant " << info.guid << std::endl;
+        std::cout << "Subscriber participant "            //participant->getGuid() <<
+                  << " detected changes on participant " << info.guid << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT)
     {
-        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " removed participant " << info.guid << std::endl;
+        std::cout << "Subscriber participant "            //participant->getGuid() <<
+                  << " removed participant " << info.guid << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
     {
-        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " dropped participant " << info.guid << std::endl;
+        std::cout << "Subscriber participant "            //participant->getGuid() <<
+                  << " dropped participant " << info.guid << std::endl;
     }
 }
 
@@ -243,13 +243,13 @@ void SubscriberModule::onParticipantAuthentication(
 {
     if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
     {
-        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " authorized participant " << info.guid << std::endl;
+        std::cout << "Subscriber participant "            //participant->getGuid() <<
+                  << " authorized participant " << info.guid << std::endl;
     }
     else
     {
-        std::cout << "Subscriber participant " <<         //participant->getGuid() <<
-            " unauthorized participant " << info.guid << std::endl;
+        std::cout << "Subscriber participant "            //participant->getGuid() <<
+                  << " unauthorized participant " << info.guid << std::endl;
     }
 }
 
@@ -296,8 +296,8 @@ void SubscriberModule::on_data_available(
             {
                 FixedSized& data = l_sample[0];
 
-                std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                    info.sample_identity.sequence_number() << "): index(" << data.index() << ")" << std::endl;
+                std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - "
+                          << info.sample_identity.sequence_number() << "): index(" << data.index() << ")" << std::endl;
 
 
                 if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
@@ -320,8 +320,9 @@ void SubscriberModule::on_data_available(
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << sample.index() << ")" << std::endl;
+                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - "
+                              << info.sample_identity.sequence_number() << "): index(" << sample.index() << ")"
+                              << std::endl;
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();
@@ -337,8 +338,9 @@ void SubscriberModule::on_data_available(
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
+                    std::cout << "Received sample (" << info.sample_identity.writer_guid() << " - "
+                              << info.sample_identity.sequence_number() << "): index(" << sample.index()
+                              << "), message("
                               << sample.message() << ")" << std::endl;
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {

@@ -48,7 +48,7 @@ namespace fastdds {
 namespace xmlparser {
 
 class BaseNode;
-template <class T> class DataNode;
+template<class T> class DataNode;
 
 typedef std::unique_ptr<BaseNode>              up_base_node_t;
 typedef std::vector<up_base_node_t>            up_base_node_vector_t;
@@ -382,7 +382,7 @@ protected:
             tinyxml2::XMLElement* node,
             DataNode<fastdds::xmlparser::ReplierAttributes>& replier_node);
 
-    template <typename T>
+    template<typename T>
     static void addAllAttributes(
             tinyxml2::XMLElement* p_profile,
             DataNode<T>& node);

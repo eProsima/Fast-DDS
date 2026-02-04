@@ -99,8 +99,8 @@ protected:
                 IDL_PARSER,
                 "Failed to convert value '" << parameters.at(
                     IDL_VALUE_TAG)
-                                            << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "': " <<
-                    e.what());
+                                            << "' for annotation '" << IDL_BUILTIN_ANN_ID_TAG << "': "
+                                            << e.what());
             return false;
         }
 

@@ -76,11 +76,11 @@ protected:
         int32_t pid = static_cast<int32_t>(GET_PID());
         uint8_t* bytes = reinterpret_cast<uint8_t*>(&pid);
         std::stringstream gp;
-        gp << std::hex <<
-            std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[0]) << "." <<
-            std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[1]) << "." <<
-            std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[2]) << "." <<
-            std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[3]);
+        gp << std::hex
+           << std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[0]) << "."
+           << std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[1]) << "."
+           << std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[2]) << "."
+           << std::setfill('0') << std::setw(2) << static_cast<uint16_t>(bytes[3]);
         return gp.str();
     }
 
@@ -151,29 +151,29 @@ TEST_P(PersistenceGuid, SetPersistenceGuidThroughRTPSLayer)
     std::stringstream command;
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
-    command << "python check_guid.py \"" << persistence_db <<
-        "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
+    command << "python check_guid.py \"" << persistence_db
+            << "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
     int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    command << "python check_guid.py \"" << persistence_db <<
-        "\" \"readers\" \"77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65\"";
+    command << "python check_guid.py \"" << persistence_db
+            << "\" \"readers\" \"77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65\"";
     int result2 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result2, 1);
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
-    command << "python3 check_guid.py '" << persistence_db <<
-        "' 'writers_histories' '77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64'";
+    command << "python3 check_guid.py '" << persistence_db
+            << "' 'writers_histories' '77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64'";
     int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    command << "python3 check_guid.py '" << persistence_db <<
-        "' 'readers' '77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65'";
+    command << "python3 check_guid.py '" << persistence_db
+            << "' 'readers' '77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65'";
     int result2 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ((result2 >> 8), 1);
@@ -255,57 +255,57 @@ TEST_P(PersistenceGuid, CheckPrevalenceBetweenManualAndPropertyConfiguration)
     std::stringstream command;
 #ifdef WIN32
     // Check if there is one entry in the writers database table with the stated persistence guid
-    command << "python check_guid.py \"" << persistence_db <<
-        "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
+    command << "python check_guid.py \"" << persistence_db
+            << "\" \"writers_histories\" \"77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64\"";
     int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
-    command << "python check_guid.py \"" << persistence_db <<
-        "\" \"writers_histories\" \"00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.1\"";
+    command << "python check_guid.py \"" << persistence_db
+            << "\" \"writers_histories\" \"00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.1\"";
     result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result1, 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    command << "python check_guid.py \"" << persistence_db <<
-        "\" \"readers\" \"77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65\"";
+    command << "python check_guid.py \"" << persistence_db
+            << "\" \"readers\" \"77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65\"";
     int result2 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result2, 0);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    command << "python check_guid.py \"" << persistence_db <<
-        "\" \"readers\" \"00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.2\"";
+    command << "python check_guid.py \"" << persistence_db
+            << "\" \"readers\" \"00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.2\"";
     result2 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ(result2, 1);
 #else
     // Check if there is one entry in the writers database table with the stated persistence guid
-    command << "python3 check_guid.py '" << persistence_db <<
-        "' 'writers_histories' '77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64'";
+    command << "python3 check_guid.py '" << persistence_db
+            << "' 'writers_histories' '77.72.69.74.65.72.5f.70." << guidprefix_4 << "|67.75.69.64'";
     int result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ((result1 >> 8), 0);
 
     // Check if there is one entry in the writers database table with the stated persistence guid
-    command << "python3 check_guid.py '" << persistence_db <<
-        "' 'writers_histories' '00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.1'";
+    command << "python3 check_guid.py '" << persistence_db
+            << "' 'writers_histories' '00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.1'";
     result1 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ((result1 >> 8), 1);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    command << "python3 check_guid.py '" << persistence_db <<
-        "' 'readers' '77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65'";
+    command << "python3 check_guid.py '" << persistence_db
+            << "' 'readers' '77.65.61.64.65.72.5f.70." << guidprefix_4 << "|68.76.70.65'";
     int result2 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ((result2 >> 8), 0);
 
     // Check if there is one entry in the readers database table with the stated persistence guid
-    command << "python3 check_guid.py '" << persistence_db <<
-        "' 'readers' '00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.2'";
+    command << "python3 check_guid.py '" << persistence_db
+            << "' 'readers' '00.00.00.00.00.00.00.00." << guidprefix_4 << "|0.0.0.2'";
     result2 = system(command.str().c_str());
     command.str("");
     ASSERT_EQ((result2 >> 8), 1);

@@ -184,7 +184,7 @@ typedef struct TestCommandType
     }
 
     TestCommandType(
-            TESTCOMMAND com)
+        TESTCOMMAND com)
         : m_command(com)
     {
     }

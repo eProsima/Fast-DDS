@@ -188,7 +188,8 @@ TEST(SHM, IgnoreNonExistentSegment)
                                 .asynchronously(eprosima::fastdds::dds::SYNCHRONOUS_PUBLISH_MODE)
                                 .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
                                 .disable_builtin_transport()
-                                .add_user_transport_to_pparams(std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>())
+                                .add_user_transport_to_pparams(
+                            std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>())
                                 .init();
                         ASSERT_TRUE(late_writer.isInitialized());
                     }

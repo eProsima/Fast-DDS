@@ -84,8 +84,8 @@ protected:
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "Missing required parameter '" << IDL_VALUE_TAG
-                                                   << "' for annotation '" << IDL_BUILTIN_ANN_DEFAULT_TAG <<
-                    "'.");
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_DEFAULT_TAG
+                                                   << "'.");
             return false;
         }
 

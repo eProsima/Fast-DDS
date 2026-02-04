@@ -122,11 +122,11 @@ private:
     bool create_known_type(
             const std::string& type);
 
-    template <typename Type, typename TypePubSubType>
+    template<typename Type, typename TypePubSubType>
     bool create_known_type_impl(
             const std::string& type);
 
-    template <typename Type>
+    template<typename Type>
     bool process_type_impl(
             DataReader* reader);
 
