@@ -500,6 +500,8 @@ protected:
 
     uint32_t fixed_payload_size_ = 0u;
 
+    fastrtps::rtps::PoolConfig pool_config_ {};
+
     std::shared_ptr<IPayloadPool> payload_pool_;
 
     bool is_custom_payload_pool_ = false;

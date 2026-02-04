@@ -1578,10 +1578,11 @@ ReturnCode_t DataReaderImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" << qos.resource_limits().max_samples_per_instance <<
-                "'. Consistency rule: depth <= max_samples_per_instance." <<
-                " Effectively using max_samples_per_instance as depth.");
+                "HISTORY DEPTH '" << qos.history().depth
+                                  << "' is inconsistent with max_samples_per_instance: '"
+                                  << qos.resource_limits().max_samples_per_instance
+                                  << "'. Consistency rule: depth <= max_samples_per_instance."
+                                  << " Effectively using max_samples_per_instance as depth.");
     }
     return ReturnCode_t::RETCODE_OK;
 }
@@ -1589,19 +1590,19 @@ ReturnCode_t DataReaderImpl::check_qos(
 ReturnCode_t DataReaderImpl::check_allocation_consistency(
         const DataReaderQos& qos)
 {
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     if ((qos.resource_limits().max_samples > 0) &&
             (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
     {
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
                 "max_samples should be greater than max_instances * max_samples_per_instance");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
-    }
-    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
-            (qos.resource_limits().max_samples > 0))
-    {
-        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
-                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
     return ReturnCode_t::RETCODE_OK;

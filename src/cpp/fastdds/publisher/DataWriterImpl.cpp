@@ -237,6 +237,15 @@ ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
 
+    pool_config_ = PoolConfig::from_history_attributes(history_.m_att);
+    // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
+    // grow, we translate the policy into bare PREALLOCATED
+    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
+            (type_->is_bounded() || type_->is_plain(data_representation_)))
+    {
+        pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
+    }
+
     WriterAttributes w_att;
     w_att.throughputController = qos_.throughput_controller();
     w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
@@ -311,6 +320,20 @@ ReturnCode_t DataWriterImpl::enable()
             datasharing.add_domain_id(utils::default_domain_id());
         }
         w_att.endpoint.set_data_sharing_configuration(datasharing);
+
+        // Update pool config for KEEP_ALL when max_samples is infinite
+        if ((0 >= pool_config_.maximum_size) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
+        {
+            // Override infinite with old default value for max_samples + extra samples
+            pool_config_.maximum_size = 5000;
+            if (0 < qos_.resource_limits().extra_samples)
+            {
+                pool_config_.maximum_size += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
+            }
+            EPROSIMA_LOG_ERROR(DATA_WRITER,
+                    "DataWriter with KEEP_ALL history and infinite max_samples is not compatible with DataSharing. "
+                    "Setting max_samples to " << pool_config_.maximum_size);
+        }
     }
     else
     {
@@ -1960,11 +1983,11 @@ ReturnCode_t DataWriterImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" <<
-                qos.resource_limits().max_samples_per_instance <<
-                "'. Consistency rule: depth <= max_samples_per_instance." <<
-                " Effectively using max_samples_per_instance as depth.");
+                "HISTORY DEPTH '" << qos.history().depth
+                                  << "' is inconsistent with max_samples_per_instance: '"
+                                  << qos.resource_limits().max_samples_per_instance
+                                  << "'. Consistency rule: depth <= max_samples_per_instance."
+                                  << " Effectively using max_samples_per_instance as depth.");
     }
     return ReturnCode_t::RETCODE_OK;
 }
@@ -1972,6 +1995,13 @@ ReturnCode_t DataWriterImpl::check_qos(
 ReturnCode_t DataWriterImpl::check_allocation_consistency(
         const DataWriterQos& qos)
 {
+    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
+            (qos.resource_limits().max_samples > 0))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
+                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     if ((qos.resource_limits().max_samples > 0) &&
             (qos.resource_limits().max_samples <
             (qos.resource_limits().max_instances * qos.resource_limits().max_samples_per_instance)))
@@ -1980,13 +2010,7 @@ ReturnCode_t DataWriterImpl::check_allocation_consistency(
                 "max_samples should be greater than max_instances * max_samples_per_instance");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
-    if ((qos.resource_limits().max_instances <= 0 || qos.resource_limits().max_samples_per_instance <= 0) &&
-            (qos.resource_limits().max_samples > 0))
-    {
-        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK,
-                "max_samples should be infinite when max_instances or max_samples_per_instance are infinite");
-        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
-    }
+
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -2079,42 +2103,33 @@ DataWriterListener* DataWriterImpl::get_listener_for(
 
 std::shared_ptr<IChangePool> DataWriterImpl::get_change_pool() const
 {
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
     if (reader_filters_)
     {
         return std::make_shared<DataWriterFilteredChangePool>(
-            config, qos_.writer_resource_limits().reader_filters_allocation);
+            pool_config_, qos_.writer_resource_limits().reader_filters_allocation);
     }
 
-    return std::make_shared<fastrtps::rtps::CacheChangePool>(config);
+    return std::make_shared<fastrtps::rtps::CacheChangePool>(pool_config_);
 }
 
 std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
 {
     if (!payload_pool_)
     {
-        // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
-        // grow, we translate the policy into bare PREALLOCATED
-        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
-                (type_->is_bounded() || type_->is_plain(data_representation_)))
-        {
-            history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
-        }
-
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
         // Avoid calling the serialization size functors on PREALLOCATED mode
-        fixed_payload_size_ = config.memory_policy == PREALLOCATED_MEMORY_MODE ? config.payload_initial_size : 0u;
+        fixed_payload_size_ = pool_config_.memory_policy ==
+                PREALLOCATED_MEMORY_MODE ? pool_config_.payload_initial_size : 0u;
 
         // Get payload pool reference and allocate space for our history
         if (is_data_sharing_compatible_)
         {
-            payload_pool_ = DataSharingPayloadPool::get_writer_pool(config);
+            payload_pool_ = DataSharingPayloadPool::get_writer_pool(pool_config_);
         }
         else
         {
-            payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), config);
-            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(config, false))
+            payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_name(), pool_config_);
+            if (!std::static_pointer_cast<ITopicPayloadPool>(payload_pool_)->reserve_history(pool_config_, false))
             {
                 payload_pool_.reset();
             }
@@ -2123,7 +2138,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         // Prepare loans collection for plain types only
         if (type_->is_plain(data_representation_))
         {
-            loans_.reset(new LoanCollection(config));
+            loans_.reset(new LoanCollection(pool_config_));
         }
     }
 
@@ -2144,9 +2159,8 @@ bool DataWriterImpl::release_payload_pool()
     }
     else
     {
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
         auto topic_pool = std::static_pointer_cast<ITopicPayloadPool>(payload_pool_);
-        result = topic_pool->release_history(config, false);
+        result = topic_pool->release_history(pool_config_, false);
     }
 
     payload_pool_.reset();
@@ -2208,8 +2222,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with " <<
-                        (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with "
+                        << (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
@@ -2238,8 +2252,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because " <<
-                        (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because "
+                        << (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
                 return ReturnCode_t::RETCODE_OK;
             }
 
