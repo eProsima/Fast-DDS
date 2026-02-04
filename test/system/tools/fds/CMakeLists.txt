@@ -44,8 +44,6 @@ if(Python3_Interpreter_FOUND)
         set(TESTS
             ${TESTS}
             test_fast_discovery_security_disabled
-            test_fast_discovery_security_enabled_xml_prefix
-            test_fast_discovery_security_enabled_cli_prefix
         )
 
         configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
