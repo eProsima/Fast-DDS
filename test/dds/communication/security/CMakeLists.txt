@@ -70,6 +70,7 @@ list(APPEND XML_CONFIGURATION_FILES
         secure_submsg_crypto_besteffort_sub_profile.xml
         simple_secure_allow_unauthenticated_pub_profile.xml
         simple_allow_unauthenticated_sub_profile.xml
+        secure_simple_ds_server_profile.xml
     )
 
 list(APPEND PYTHON_FILES
@@ -118,6 +119,10 @@ if(SECURITY)
         ${CMAKE_CURRENT_BINARY_DIR}/governance_allow_unauth_all_disabled_access_none.smime COPYONLY)
     configure_file(${FASTDDS_BASIC_DIR}/test/certs/permissions_helloworld_securehelloworld.smime
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_secure_ds_disabled.py
+        ${CMAKE_CURRENT_BINARY_DIR}/test_secure_ds_disabled.py COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_profile.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_profile.xml COPYONLY)
 
     if(PYTHONINTERP_FOUND)
 
@@ -209,6 +214,22 @@ if(SECURITY)
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME SecureDiscoverServerDisabled
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/test_secure_ds_disabled.py
+            --ds-server $<TARGET_FILE:fast-discovery-server>
+            --xml-ds secure_simple_ds_server_profile.xml
+            --server-id 0
+            --timeout 5)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerDisabled PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerDisabled APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
 
