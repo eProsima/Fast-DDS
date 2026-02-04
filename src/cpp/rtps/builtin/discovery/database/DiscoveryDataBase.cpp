@@ -1199,8 +1199,7 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
-    // Servers do not redirect Data(p) between remote clients,
-    // so we skip matching when both endpoints are virtual
+    // Virtual endpoints do not exchange info
     if (writer_info.is_virtual() && reader_info.is_virtual())
     {
         return;
@@ -1804,10 +1803,9 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     auto remote_server_it = db_->participants_.find(*it);
                     if (remote_server_it == db_->participants_.end())
                     {
-                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Change " << change_->instanceHandle
-                                                                        << "check as acked for "
-                                                                        << reader_proxy->guid()
-                                                                        << " as it has not answered pinging yet");
+                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE,
+                                "Change " << change_->instanceHandle << "check as acked for " << reader_proxy->guid()
+                                          << " as it has not answered pinging yet");
                         return;
                     }
 

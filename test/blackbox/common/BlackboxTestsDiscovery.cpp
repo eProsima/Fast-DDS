@@ -2205,15 +2205,8 @@ TEST_P(Discovery, discovery_server_pdp_messages_sent)
 // This test checks that a client connected to a Discovery Server does not receive
 // discovery information about clients connected to a different server from a server
 // different than their own.
-TEST_P(Discovery, discovery_server_no_external_to_external_relay)
+TEST(Discovery, discovery_server_no_external_to_external_relay)
 {
-    // Skip test in intraprocess and datasharing mode
-    if (TRANSPORT != GetParam())
-    {
-        GTEST_SKIP() << "Only makes sense on TRANSPORT";
-        return;
-    }
-
     using namespace eprosima::fastdds::dds;
 
     // Define a specific port for client_1's metatraffic
@@ -2280,8 +2273,8 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
     server_2->wait_discovery(std::chrono::seconds(5), 1, true);
 
     // Record baseline message count after server federation
-    std::this_thread::sleep_for(std::chrono::seconds(1));
     size_t baseline_count = num_messages_to_client_1.load(std::memory_order_seq_cst);
+    ASSERT_EQ(baseline_count, 0u); // No messages should ever be sent from server2 to client1
 
     // Create client 1 connected ONLY to server 1 with a specific metatraffic port
     PubSubWriter<HelloWorldPubSubType> client_1(TEST_TOPIC_NAME);
@@ -2303,14 +2296,12 @@ TEST_P(Discovery, discovery_server_no_external_to_external_relay)
 
     ASSERT_TRUE(client_1.isInitialized());
 
-    std::cout << "Client 1 metatraffic port set to: " << client_1_metatraffic_port << std::endl;
-
     // Wait for server_1 to discover client_1
     server_1->wait_discovery(std::chrono::seconds(5), 2, true);  // server_2 + client_1
 
     // Record message count after client_1 connects
-    std::this_thread::sleep_for(std::chrono::seconds(2));
     size_t messages_after_client_1 = num_messages_to_client_1.load(std::memory_order_seq_cst);
+    ASSERT_EQ(messages_after_client_1, 0u); // No messages should ever be sent from server2 to client1
 
     // Create client 2 connected ONLY to server 2
     PubSubReader<HelloWorldPubSubType> client_2(TEST_TOPIC_NAME);
