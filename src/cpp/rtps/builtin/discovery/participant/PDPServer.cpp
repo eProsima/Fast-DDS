@@ -37,7 +37,6 @@
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
-#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 #include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
@@ -219,8 +218,32 @@ void PDPServer::update_builtin_locators()
 
 bool PDPServer::createPDPEndpoints()
 {
+#if HAVE_SECURITY
+    if (should_protect_discovery())
+    {
+        return create_secure_ds_pdp_endpoints();
+    }
+#endif  // HAVE_SECURITY
+
     return create_ds_pdp_endpoints();
 }
+
+#if HAVE_SECURITY
+bool PDPServer::should_protect_discovery()
+{
+    return mp_RTPSParticipant->is_secure() && mp_RTPSParticipant->security_attributes().is_discovery_protected;
+}
+
+bool PDPServer::create_secure_ds_pdp_endpoints()
+{
+    EPROSIMA_LOG_ERROR(RTPS_PDP_CLIENT,
+        "Discovery Server with security is not available in Fast DDS community edition. "
+        "This feature is only available in Fast DDS Pro.");
+
+    return false;
+}
+
+#endif  // HAVE_SECURITY
 
 bool PDPServer::create_ds_pdp_endpoints()
 {

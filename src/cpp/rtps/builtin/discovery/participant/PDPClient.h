@@ -23,7 +23,6 @@
 
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
-#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
@@ -178,6 +177,17 @@ private:
 
     using PDP::announceParticipantState;
 
+#if HAVE_SECURITY
+    /**
+     * Returns whether discovery should be secured
+     */
+    bool should_protect_discovery();
+
+    /**
+     * Creation of secured DS PDP endpoints is only available in Fast DDS Pro
+     */
+    bool create_secure_ds_pdp_endpoints();
+#endif  // HAVE_SECURITY
     /**
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take
@@ -220,16 +230,6 @@ private:
     bool create_ds_pdp_reliable_endpoints(
             DiscoveryServerPDPEndpoints& endpoints,
             bool is_discovery_protected);
-
-    /**
-     * Performs creation of DS best-effort PDP reader.
-     *
-     * @param [in,out]  endpoints  Container where the created resources should be kept.
-     *
-     * @return whether the reader was successfully created.
-     */
-    bool create_ds_pdp_best_effort_reader(
-            DiscoveryServerPDPEndpointsSecure& endpoints);
 
     /**
      * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.
