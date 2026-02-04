@@ -1207,12 +1207,12 @@ void DiscoveryDataBase::match_writer_reader_(
 
     // Classify writer and reader types
     const bool writer_is_virtual = writer_info.is_virtual();
-    const bool writer_is_local = !writer_is_virtual && writer_participant_info.is_local();
-    const bool writer_is_external_not_virtual = !writer_is_virtual && !writer_is_local;
+    const bool writer_is_local_not_virtual = !writer_is_virtual && writer_participant_info.is_local();
+    const bool writer_is_external_not_virtual = !writer_is_virtual && !writer_is_local_not_virtual;
 
     const bool reader_is_virtual = reader_info.is_virtual();
-    const bool reader_is_local = !reader_is_virtual && reader_participant_info.is_local();
-    const bool reader_is_external_not_virtual = !reader_is_virtual && !reader_is_local;
+    const bool reader_is_local_not_virtual = !reader_is_virtual && reader_participant_info.is_local();
+    const bool reader_is_external_not_virtual = !reader_is_virtual && !reader_is_local_not_virtual;
 
     // Determine info exchange based on endpoint types:
     // - Local endpoints both need and give info
@@ -1220,11 +1220,13 @@ void DiscoveryDataBase::match_writer_reader_(
     // - External endpoints only give info (never need)
     // Additionally, servers do not redirect between remote clients,
     // so external endpoints only exchange with local endpoints
-    const bool writer_needs_info = writer_is_virtual || writer_is_local;
-    const bool writer_gives_info = writer_is_local || (writer_is_external_not_virtual && reader_is_local);
+    const bool writer_needs_info = writer_is_virtual || writer_is_local_not_virtual;
+    const bool writer_gives_info = writer_is_local_not_virtual ||
+            (writer_is_external_not_virtual && reader_is_local_not_virtual);
 
-    const bool reader_needs_info = reader_is_virtual || reader_is_local;
-    const bool reader_gives_info = reader_is_local || (reader_is_external_not_virtual && writer_is_local);
+    const bool reader_needs_info = reader_is_virtual || reader_is_local_not_virtual;
+    const bool reader_gives_info = reader_is_local_not_virtual ||
+            (reader_is_external_not_virtual && writer_is_local_not_virtual);
 
     // Writer needs info from reader: add writer's guid prefix to reader's ack lists
     if (writer_needs_info && reader_gives_info)
