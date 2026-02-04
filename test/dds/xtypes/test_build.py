@@ -80,14 +80,14 @@ def read_json(file_name):
     return structure_dic
 
 
-def define_args(participant):
+def define_args(participant, idx):
     """Use dictionary to get command args for each participant."""
     args = []
     args.extend([f"kind={participant.get('kind')}"])
     args.extend([f"samples={participant.get('samples', 10)}"])
     args.extend([f"timeout={participant.get('timeout', 10)}"])
     args.extend([f"expected_matches={participant.get('expected_matches', 1)}"])
-    args.extend([f"seed={str(os.getpid())}"])
+    args.extend([f"seed={str(os.getpid() + idx)}"])
     args.extend([f"builtin_flow_controller_bytes={participant.get('builtin_flow_controller_bytes', 0)}"])
 
     # Check if 'known_types' key exists and is a list
@@ -99,12 +99,12 @@ def define_args(participant):
     return args
 
 
-def define_commands(executable_path, test_cases):
+def define_commands(executable_path, test_cases, idx):
     """Create commands for each participant adding executable to args."""
     all_commands = []
     for test_case in test_cases:
         # For each test case, create commands for all participants
-        commands = [[executable_path] + define_args(participant) for participant in test_case['participants']]
+        commands = [[executable_path] + define_args(participant, idx) for participant in test_case['participants']]
         all_commands.extend(commands)
 
     return all_commands
@@ -172,6 +172,14 @@ async def run_command(test_case, process_args, timeout):
 
 
 async def execute_commands(test_case, commands):
+    """
+    Execute a list of commands asynchronously.
+
+    :param[in]  test_case  Name of the test case.
+    :param[in]  commands   List of commands to be executed.
+
+    :return Sum of the return codes of each command.
+    """
     tasks = []
     async with asyncio.TaskGroup() as tg:
         for command in commands:
@@ -179,6 +187,75 @@ async def execute_commands(test_case, commands):
             await asyncio.sleep(0.3) # Avoid errors with SharedMemory starting all commands at same time
 
     return sum([proc.result() for proc in tasks])
+
+async def execute_commands_with_sem(test_case, commands, sem):
+    """
+    Execute commands using a semaphore to limit parallel executions.
+
+   :param[in]  test_case  Name of the test case.
+   :param[in]  commands   List of commands to be executed.
+   :param[in]  sem        Semaphore to limit parallel executions.
+    """
+    async with sem:
+        return await execute_commands(test_case, commands)
+
+async def execute_test_cases(test_cases):
+    """
+    Execute all test cases, retrying failed ones up to 3 times.
+
+    :param[in]  test_cases  List of test cases to be executed.
+
+    :return Tuple (total test value, list of successful cases, list of failling cases)
+    """
+    total_test_value = 0
+    successful_cases = []
+    failling_cases = []
+
+    # Limit parallel executions to half of CPU cores
+    sem = asyncio.Semaphore(os.cpu_count() // 2 or 6)
+
+    pending_cases = test_cases.copy()
+    max_test_runs = 3
+    while pending_cases and max_test_runs > 0:
+        tasks = []
+        idx = 0
+        async with asyncio.TaskGroup() as tg:
+            for test_case in pending_cases:
+                # Define commands for each test case
+                commands = define_commands(args.app, [test_case], idx)
+                # Execute the commands in parallel
+                tasks.append(tg.create_task(execute_commands_with_sem(test_case['TestCase'], commands, sem)))
+                idx += 1
+
+        next_pending_cases = []
+        max_test_runs -= 1
+
+        # Collect results
+        for test_case, task in zip(pending_cases, tasks):
+            test_value = task.result()
+            total_test_value += test_value
+            if test_value == 0:
+                successful_cases.append(f"Test {test_case.get('TestCase')}")
+            else:
+                next_pending_cases.append(test_case)
+
+        # If there are pending cases, they will be retried
+        pending_cases = next_pending_cases
+        if pending_cases.__len__() > 0 and max_test_runs > 0:
+            # Inform about cases to be retried
+            logger.info("----------- RETRYING CASES -----------")
+            for failed_test in pending_cases:
+                logger.info(f"Test {failed_test.get('TestCase')}")
+
+            # Wait a bit before retrying
+            await asyncio.sleep(2)
+            total_test_value = 0
+
+    # If there are still pending cases, they are considered failling
+    for test_case in pending_cases:
+        failling_cases.append(f"Test {test_case.get('TestCase')}")
+
+    return total_test_value, successful_cases, failling_cases
 
 
 if __name__ == '__main__':
@@ -205,20 +282,7 @@ if __name__ == '__main__':
     # Read test cases from the provided JSON file
     test_cases = read_json(args.file[0])['test_cases']
 
-    total_test_value = 0
-    successful_cases = []
-    failling_cases = []
-
-    for test_case in test_cases:
-        # Define commands for each test case
-        commands = define_commands(args.app, [test_case])
-        # Execute the commands and get the return value
-        test_value = asyncio.run(execute_commands(test_case['TestCase'], commands))
-        total_test_value += test_value
-        if test_value == 0:
-            successful_cases.append(f"Test {test_case.get('TestCase')}")
-        else:
-            failling_cases.append(f"Test {test_case.get('TestCase')}")
+    total_test_value, successful_cases, failling_cases = asyncio.run(execute_test_cases(test_cases))
 
     # Print the results
     if successful_cases.__len__() > 0:
