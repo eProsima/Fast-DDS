@@ -76,6 +76,7 @@ list(APPEND XML_CONFIGURATION_FILES
 list(APPEND PYTHON_FILES
     simple_communication
     multiple_subs_secure_crypto_communication
+    test_secure_ds_disabled
     )
 
 # XML files
