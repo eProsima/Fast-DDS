@@ -200,8 +200,8 @@ bool PDPClient::createPDPEndpoints()
     if (mp_RTPSParticipant->is_secure())
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_CLIENT,
-            "Discovery Server with security is not available in Fast DDS community edition. "
-            "This feature is only available in Fast DDS Pro.");
+                "Discovery Server with security is not available in Fast DDS community edition. "
+                "This feature is only available in Fast DDS Pro.");
         return false;
     }
 #endif  // HAVE_SECURITY
