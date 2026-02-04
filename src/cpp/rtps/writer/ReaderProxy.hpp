@@ -128,6 +128,16 @@ public:
      * Check if a specific change is marked to be sent to this reader.
      *
      * @param [in]  seq_num Sequence number of the change to be checked.
+     *
+     * @return true if the change is marked to be sent. False otherwise.
+     */
+    bool change_is_unsent(
+            const SequenceNumber_t& seq_num) const;
+
+    /**
+     * Check if a specific change is marked to be sent to this reader.
+     *
+     * @param [in]  seq_num Sequence number of the change to be checked.
      * @param [out] next_unsent_frag Return next fragment to be sent.
      * @param [out] gap_seq Return, when it is its first delivery (should be relevant seq_num), the sequence number of
      * the first sequence of the gap [first, seq_num). Otherwise return SequenceNumber_t::unknown().
@@ -142,6 +152,7 @@ public:
             FragmentNumber_t& next_unsent_frag,
             SequenceNumber_t& gap_seq,
             const SequenceNumber_t& min_seq,
+            const FragmentNumber_t& min_frag,
             bool& need_reactivate_periodic_heartbeat);
 
     /**

@@ -122,7 +122,7 @@ public:
             uint64_t new_qos_size = static_cast<uint64_t>(qos_size) + 4 + static_cast<uint64_t>(plength);
             new_qos_size = (new_qos_size + 3) & ~3; // Align to 4 byte boundary
             uint64_t new_pos = static_cast<uint64_t>(original_pos) + new_qos_size;
-            constexpr uint64_t max_uint32 = static_cast<uint64_t>(std::numeric_limits<uint32_t>::max());
+            constexpr uint64_t max_uint32 = static_cast<uint64_t>((std::numeric_limits<uint32_t>::max)());
             if ((new_qos_size > max_uint32) || (new_pos > max_uint32))
             {
                 return false;

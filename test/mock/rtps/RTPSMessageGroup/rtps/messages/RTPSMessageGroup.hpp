@@ -24,6 +24,8 @@
 
 #include <gmock/gmock.h>
 
+#include <rtps/messages/IRTPSMessageGroupLimitation.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -31,7 +33,6 @@ namespace rtps {
 class RTPSParticipantImpl;
 class Endpoint;
 class RTPSMessageSenderInterface;
-class IRTPSMessageGroupLimitation;
 
 class RTPSMessageGroup
 {
@@ -67,15 +68,19 @@ public:
 
     void sender(
             Endpoint*,
-            const RTPSMessageSenderInterface*) const
+            RTPSMessageSenderInterface* sender)
     {
+        sender_ = sender;
     }
 
     void set_limitation(
-            IRTPSMessageGroupLimitation*)
+            IRTPSMessageGroupLimitation* limitation)
     {
+        limitation_ = limitation;
     }
 
+    IRTPSMessageGroupLimitation* limitation_ {nullptr};
+    RTPSMessageSenderInterface* sender_ {nullptr};
 };
 
 } // namespace rtps

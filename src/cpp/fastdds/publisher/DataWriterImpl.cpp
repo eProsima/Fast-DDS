@@ -1106,7 +1106,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
         }
 
         if (qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != dds::c_TimeInfinite &&
-                deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max())
+                deadline_missed_status_.total_count < (std::numeric_limits<uint32_t>::max)())
         {
             if (!history_->set_next_deadline(
                         handle,
@@ -1597,7 +1597,7 @@ bool DataWriterImpl::deadline_timer_reschedule()
 
     assert(qos_.deadline().period != dds::c_TimeInfinite);
     assert(deadline_timer_ != nullptr);
-    assert(deadline_missed_status_.total_count < std::numeric_limits<uint32_t>::max());
+    assert(deadline_missed_status_.total_count < (std::numeric_limits<uint32_t>::max)());
 
     steady_clock::time_point next_deadline_us;
     if (!history_->get_next_deadline(timer_owner_, next_deadline_us))
@@ -1625,14 +1625,14 @@ void DataWriterImpl::configure_deadline_timer_()
                 return deadline_missed();
             },
             // Park timer with a huge interval (prevents spurious callbacks); we'll arm/cancel explicitly
-            std::numeric_limits<double>::max()
+            (std::numeric_limits<double>::max)()
             );
     }
 
     // Handle "infinite" and "zero" outside the callback
     if (qos_.deadline().period == dds::c_TimeInfinite)
     {
-        deadline_duration_us_ = std::chrono::duration<double, std::micro>::max();
+        deadline_duration_us_ = (std::chrono::duration<double, std::micro>::max)();
         deadline_timer_->cancel_timer();
         return;
     }
@@ -1644,8 +1644,8 @@ void DataWriterImpl::configure_deadline_timer_()
     {
         deadline_timer_->cancel_timer();
 
-        deadline_missed_status_.total_count = std::numeric_limits<uint32_t>::max();
-        deadline_missed_status_.total_count_change = std::numeric_limits<uint32_t>::max();
+        deadline_missed_status_.total_count = (std::numeric_limits<uint32_t>::max)();
+        deadline_missed_status_.total_count_change = (std::numeric_limits<uint32_t>::max)();
         EPROSIMA_LOG_WARNING(
             DATA_WRITER,
             "Deadline period is 0, it will be ignored from now on.");
@@ -1687,7 +1687,7 @@ bool DataWriterImpl::deadline_missed()
     notify_deadline_missed_nts_();
 
     // If we just reached the max -> log ONCE, stop timer, and bail.
-    if (deadline_missed_status_.total_count == std::numeric_limits<uint32_t>::max())
+    if (deadline_missed_status_.total_count == (std::numeric_limits<uint32_t>::max)())
     {
         EPROSIMA_LOG_WARNING(DATA_WRITER,
                 "Maximum number of deadline missed messages reached. Stopping deadline timer.");
