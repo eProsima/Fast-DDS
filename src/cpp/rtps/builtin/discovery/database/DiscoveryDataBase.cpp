@@ -1222,7 +1222,7 @@ void DiscoveryDataBase::match_writer_reader_(
     // Additionally, servers do not redirect between remote clients,
     // so external endpoints only exchange with local endpoints
     const bool writer_needs_info = writer_is_virtual || writer_is_local;
-    const bool writer_gives_info = writer_is_local || (writer_is_external && reader_is_local);
+    const bool writer_gives_info = !writer_is_virtual && (writer_is_local || (writer_is_external && reader_is_local));
 
     const bool reader_needs_info = reader_is_virtual || reader_is_local;
     const bool reader_gives_info = !reader_is_virtual && (reader_is_local || (reader_is_external && writer_is_local));
