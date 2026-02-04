@@ -313,18 +313,6 @@ private:
 
     using PDP::announceParticipantState;
 
-#if HAVE_SECURITY
-    /**
-     * Returns whether discovery should be secured
-     */
-    bool should_protect_discovery();
-
-    /**
-     * Creation of secured DS PDP endpoints is only available in Fast DDS Pro
-     */
-    bool create_secure_ds_pdp_endpoints();
-#endif  // HAVE_SECURITY
-
     /**
      * Performs creation of standard DS PDP endpoints
      */

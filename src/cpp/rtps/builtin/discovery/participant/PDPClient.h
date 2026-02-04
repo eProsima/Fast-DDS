@@ -177,17 +177,6 @@ private:
 
     using PDP::announceParticipantState;
 
-#if HAVE_SECURITY
-    /**
-     * Returns whether discovery should be secured
-     */
-    bool should_protect_discovery();
-
-    /**
-     * Creation of secured DS PDP endpoints is only available in Fast DDS Pro
-     */
-    bool create_secure_ds_pdp_endpoints();
-#endif  // HAVE_SECURITY
     /**
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
      * not thread safe (nts) in the sense that it does not take the PDP mutex. It does however take

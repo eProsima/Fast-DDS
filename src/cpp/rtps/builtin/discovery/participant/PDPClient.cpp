@@ -197,31 +197,17 @@ void PDPClient::update_builtin_locators()
 bool PDPClient::createPDPEndpoints()
 {
 #if HAVE_SECURITY
-    if (should_protect_discovery())
+    if (mp_RTPSParticipant->is_secure())
     {
-        return create_secure_ds_pdp_endpoints();
+        EPROSIMA_LOG_ERROR(RTPS_PDP_CLIENT,
+            "Discovery Server with security is not available in Fast DDS community edition. "
+            "This feature is only available in Fast DDS Pro.");
+        return false;
     }
 #endif  // HAVE_SECURITY
 
     return create_ds_pdp_endpoints();
 }
-
-#if HAVE_SECURITY
-bool PDPClient::should_protect_discovery()
-{
-    return mp_RTPSParticipant->is_secure() && mp_RTPSParticipant->security_attributes().is_discovery_protected;
-}
-
-bool PDPClient::create_secure_ds_pdp_endpoints()
-{
-    EPROSIMA_LOG_ERROR(RTPS_PDP_CLIENT,
-            "Discovery Server with security is not available in Fast DDS community edition. "
-            "This feature is only available in Fast DDS Pro.");
-
-    return false;
-}
-
-#endif  // HAVE_SECURITY
 
 bool PDPClient::create_ds_pdp_endpoints()
 {
