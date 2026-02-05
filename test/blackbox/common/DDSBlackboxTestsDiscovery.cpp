@@ -2050,9 +2050,9 @@ TEST(DDSDiscovery, client_server_participants_with_different_domain_ids_discover
     client_domain_3.init();
     EXPECT_TRUE(client_domain_3.isInitialized());
 
-    server_domain_1.wait_discovery(std::chrono::seconds(2));
-    client_domain_2.wait_discovery(std::chrono::seconds(2));
-    client_domain_3.wait_discovery(std::chrono::seconds(2));
+    server_domain_1.wait_discovery(std::chrono::seconds(5));
+    client_domain_2.wait_discovery(2, std::chrono::seconds(5));
+    client_domain_3.wait_discovery(std::chrono::seconds(5));
 
     ASSERT_TRUE(client_domain_2.is_matched());
     ASSERT_TRUE(client_domain_3.is_matched());
