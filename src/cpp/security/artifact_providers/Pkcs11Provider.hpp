@@ -21,7 +21,13 @@
 
 #include <string>
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#include <openssl/engine.h>
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+#else
 #include <openssl/types.h>
+#endif // if OPENSSL_VERSION_NUMBER < 0x30000000L
 
 #include <rtps/security/exceptions/SecurityException.h>
 
