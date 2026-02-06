@@ -504,15 +504,17 @@ void DiscoveryDataBase::process_pdp_data_queue()
         if (data_queue_info.change()->kind == eprosima::fastdds::rtps::ALIVE)
         {
             // Update participants map
-            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(p) of entity " << data_queue_info.change()->instanceHandle <<
-                    " received from: " << data_queue_info.change()->writerGUID);
+            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(p) of entity " << data_queue_info.change()->instanceHandle
+                                                                       << " received from: "
+                                                                       << data_queue_info.change()->writerGUID);
             create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
-            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(Up) of entity " << data_queue_info.change()->instanceHandle <<
-                    " received from: " << data_queue_info.change()->writerGUID);
+            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(Up) of entity " << data_queue_info.change()->instanceHandle
+                                                                        << " received from: "
+                                                                        << data_queue_info.change()->writerGUID);
             process_dispose_participant_(data_queue_info.change());
         }
     }
@@ -1197,31 +1199,59 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
-    // Always exchange all information between all participants (no filtering)
-    // Skip only if it's a virtual endpoint matching with another virtual endpoint
+    // Virtual endpoints do not exchange info
     if (writer_info.is_virtual() && reader_info.is_virtual())
     {
         return;
     }
 
-    // Add writer's participant to reader's relevant list
-    if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
+    // Classify writer and reader types
+    const bool writer_is_virtual = writer_info.is_virtual();
+    const bool writer_is_local_not_virtual = !writer_is_virtual && writer_participant_info.is_local();
+    const bool writer_is_external_not_virtual = !writer_is_virtual && !writer_is_local_not_virtual;
+
+    const bool reader_is_virtual = reader_info.is_virtual();
+    const bool reader_is_local_not_virtual = !reader_is_virtual && reader_participant_info.is_local();
+    const bool reader_is_external_not_virtual = !reader_is_virtual && !reader_is_local_not_virtual;
+
+    // Determine info exchange based on endpoint types:
+    // - Local endpoints both need and give info
+    // - Virtual endpoints only need info (never give)
+    // - External endpoints only give info (never need)
+    // Additionally, servers do not redirect between remote clients,
+    // so external endpoints only exchange with local endpoints
+    const bool writer_needs_info = writer_is_virtual || writer_is_local_not_virtual;
+    const bool writer_gives_info = writer_is_local_not_virtual ||
+            (writer_is_external_not_virtual && reader_is_local_not_virtual);
+
+    const bool reader_needs_info = reader_is_virtual || reader_is_local_not_virtual;
+    const bool reader_gives_info = reader_is_local_not_virtual ||
+            (reader_is_external_not_virtual && writer_is_local_not_virtual);
+
+    // Writer needs info from reader: add writer's guid prefix to reader's ack lists
+    if (writer_needs_info && reader_gives_info)
     {
-        reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
-    }
-    if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
-    {
-        reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+        if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
+        {
+            reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+        }
+        if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
+        {
+            reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+        }
     }
 
-    // Add reader's participant to writer's relevant list
-    if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
+    // Reader needs info from writer: add reader's guid prefix to writer's ack lists
+    if (reader_needs_info && writer_gives_info)
     {
-        writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
-    }
-    if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
-    {
-        writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+        if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
+        {
+            writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+        }
+        if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
+        {
+            writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
+        }
     }
 }
 
@@ -1775,8 +1805,9 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     auto remote_server_it = db_->participants_.find(*it);
                     if (remote_server_it == db_->participants_.end())
                     {
-                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
-                                "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
+                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE,
+                                "Change " << change_->instanceHandle << "check as acked for " << reader_proxy->guid()
+                                          << " as it has not answered pinging yet");
                         return;
                     }
 
@@ -2544,8 +2575,8 @@ bool DiscoveryDataBase::from_json(
             }
 
             EPROSIMA_LOG_INFO(DISCOVERY_DATABASE,
-                    "Writer " << guid_aux << " created with instance handle " <<
-                    wit.first->second.change()->instanceHandle);
+                    "Writer " << guid_aux << " created with instance handle "
+                              << wit.first->second.change()->instanceHandle);
 
             if (change->kind != fastdds::rtps::ALIVE)
             {
