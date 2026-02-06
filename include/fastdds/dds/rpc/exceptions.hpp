@@ -19,15 +19,6 @@
 #ifndef FASTDDS_DDS_RPC__EXCEPTIONS_HPP
 #define FASTDDS_DDS_RPC__EXCEPTIONS_HPP
 
-#include <fastdds/dds/rpc/exceptions/RemoteInvalidArgumentError.hpp>
-#include <fastdds/dds/rpc/exceptions/RemoteOutOfResourcesError.hpp>
-#include <fastdds/dds/rpc/exceptions/RemoteUnknownExceptionError.hpp>
-#include <fastdds/dds/rpc/exceptions/RemoteUnknownOperationError.hpp>
-#include <fastdds/dds/rpc/exceptions/RemoteUnsupportedError.hpp>
-#include <fastdds/dds/rpc/exceptions/RpcBrokenPipeException.hpp>
-#include <fastdds/dds/rpc/exceptions/RpcException.hpp>
-#include <fastdds/dds/rpc/exceptions/RpcFeedCancelledException.hpp>
-#include <fastdds/dds/rpc/exceptions/RpcOperationError.hpp>
-#include <fastdds/dds/rpc/exceptions/RpcTimeoutException.hpp>
+// TODO (ecuestaf): Removed all the includes here, consider also removing the whole file.
 
 #endif  // FASTDDS_DDS_RPC__EXCEPTIONS_HPP
