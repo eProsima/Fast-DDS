@@ -132,10 +132,8 @@ def run(args):
             # Check for expected security-related error message
             security_keywords = [
                 'security',
-                'disabled',
                 'pro',
-                'not available',
-                'not supported',
+                'only available',
                 'discovery server with security',
                 'fast dds pro'
             ]
