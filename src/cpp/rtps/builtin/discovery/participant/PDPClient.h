@@ -23,7 +23,6 @@
 
 #include <rtps/attributes/ServerAttributes.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
-#include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/messages/RTPSMessageGroup.hpp>
@@ -137,16 +136,6 @@ public:
             const GUID_t& participant_guid,
             ParticipantDiscoveryStatus reason) override;
 
-#if HAVE_SECURITY
-    bool pairing_remote_writer_with_local_reader_after_security(
-            const GUID_t& local_reader,
-            const WriterProxyData& remote_writer_data) override;
-
-    bool pairing_remote_reader_with_local_writer_after_security(
-            const GUID_t& local_reader,
-            const ReaderProxyData& remote_reader_data) override;
-#endif // HAVE_SECURITY
-
     /*
      * Update the list of remote servers
      */
@@ -214,19 +203,6 @@ private:
             const eprosima::fastdds::rtps::GuidPrefix_t& prefix_override,
             bool from_this_host);
 
-#if HAVE_SECURITY
-    /**
-     * Returns whether discovery should be secured
-     */
-    bool should_protect_discovery();
-
-    /**
-     * Performs creation of secured DS PDP endpoints
-     */
-    bool create_secure_ds_pdp_endpoints();
-
-#endif  // HAVE_SECURITY
-
     /**
      * Performs creation of standard DS PDP endpoints
      */
@@ -243,16 +219,6 @@ private:
     bool create_ds_pdp_reliable_endpoints(
             DiscoveryServerPDPEndpoints& endpoints,
             bool is_discovery_protected);
-
-    /**
-     * Performs creation of DS best-effort PDP reader.
-     *
-     * @param [in,out]  endpoints  Container where the created resources should be kept.
-     *
-     * @return whether the reader was successfully created.
-     */
-    bool create_ds_pdp_best_effort_reader(
-            DiscoveryServerPDPEndpointsSecure& endpoints);
 
     /**
      * Provides the functionality of notifyAboveRemoteEndpoints without being an override of that method.

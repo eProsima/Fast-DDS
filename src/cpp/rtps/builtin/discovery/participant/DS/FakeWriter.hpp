@@ -40,9 +40,6 @@ public:
         : Endpoint(participant, { participant->getGuid().guidPrefix, entity_id }, {})
     {
         m_att.endpointKind = EndpointKind_t::WRITER;
-#if HAVE_SECURITY
-        participant->set_endpoint_rtps_protection_supports(this, false);
-#endif // HAVE_SECURITY
     }
 
     virtual ~FakeWriter() override = default;
