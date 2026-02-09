@@ -1,7 +1,36 @@
-Forthcoming
------------
+Version 2.14.6
+--------------
 
-* Support aliases in Content Filtered Topic.
+* Allow to send empty payloads in dispose/unregister ops
+* Reset irrelevant sequence numbers interval in proxy readers
+* Improve Open SSL includes
+* Verify Safe DDS signature
+* Replace logWarning with EPROSIMA_LOG_WARNING
+* Improvements on compute_key generated code
+* Improvements in message receiver
+* Improve some tests
+* Protect PDPStatelessWriter attributes
+* Avoid casting GUID_t into InstanceHandle_t
+* Protect DataReaderInstance alive_writers attribute
+* Avoid `PROJECT_SOURCE_DIR` and `make_unique` when building blackbox tests
+* Fix wrong namespace when indicating CDR version
+* Allow empty partition list to match against `"*"`
+* Apply Uncrustify to 2.14.x
+* Avoid sending duplicated ACKs in DataSharing
+* Send heartbeat when wait_for_all_acked is called
+* Handle maximum deadline misses case
+* Solve TCP disconnect while incomplete read deadlock
+* Remote writers considered volatile by default
+* Change non_blocking_send threshold to sendBufferSize
+* Regenerated types using fastddsgen 3.3.1
+* Use binary search in `find_change_nts`
+* Support aliases in Content Filtered Topic
+* Update fallback branches to use environment variables
+* Add missing field to xsd
+* Avoid setting thread affinity of 0 in mac
+* Revert "Return sample notifying changes on instance state"
+* Fix doxygen documentation for `iHandle2GUID`
+* Improve resilience against clock adjustments
 
 Version 2.14.5
 --------------
