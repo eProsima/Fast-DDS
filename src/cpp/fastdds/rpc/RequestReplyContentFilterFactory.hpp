@@ -31,43 +31,22 @@ class RequestReplyContentFilterFactory : public IContentFilterFactory
 {
 public:
 
-    constexpr static const char* FILTER_NAME = "__BUILTIN_REQUEST_REPLY_CONTENT_FILTER__";
-
     ReturnCode_t create_content_filter(
-            const char* filter_class_name,
-            const char* type_name,
-            const TopicDataType* data_type,
-            const char* filter_expression,
-            const ParameterSeq& filter_parameters,
-            IContentFilter*& filter_instance) override
+            const char* /*filter_class_name*/,
+            const char* /*type_name*/,
+            const TopicDataType* /*data_type*/,
+            const char* /*filter_expression*/,
+            const ParameterSeq& /*filter_parameters*/,
+            IContentFilter*& /*filter_instance*/) override
     {
-        static_cast<void>(type_name);
-        static_cast<void>(data_type);
-        static_cast<void>(filter_expression);
-        static_cast<void>(filter_parameters);
-
-        if (0 != strcmp(filter_class_name, FILTER_NAME))
-        {
-            return RETCODE_BAD_PARAMETER;
-        }
-
-        filter_instance = &filter_instance_;
-
-        return RETCODE_OK;
+        return RETCODE_UNSUPPORTED;
     }
 
     ReturnCode_t delete_content_filter(
-            const char* filter_class_name,
-            IContentFilter* filter_instance) override
+            const char* /*filter_class_name*/,
+            IContentFilter* /*filter_instance*/) override
     {
-        static_cast<void>(filter_instance);
-
-        if (0 != strcmp(filter_class_name, FILTER_NAME))
-        {
-            return RETCODE_BAD_PARAMETER;
-        }
-
-        return RETCODE_OK;
+        return RETCODE_UNSUPPORTED;
     }
 
 private:

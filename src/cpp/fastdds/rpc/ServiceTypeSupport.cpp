@@ -21,10 +21,10 @@ namespace dds {
 namespace rpc {
 
 ReturnCode_t ServiceTypeSupport::register_service_type(
-        DomainParticipant* participant,
-        std::string service_type_name) const
+        DomainParticipant* /*participant*/,
+        std::string /*service_type_name*/) const
 {
-    return participant->register_service_type(*this, service_type_name);
+    return RETCODE_UNSUPPORTED;
 }
 
 } // namespace rpc

@@ -211,7 +211,8 @@ private:
     std::atomic<bool> matched_status_changed_;
     std::condition_variable cv_;
     std::mutex mtx_;
-
+    // TODO (ecuesta): This probably breaks ABI compatibility
+    std::string placeholder_name_;
 };
 
 } // namespace rpc
