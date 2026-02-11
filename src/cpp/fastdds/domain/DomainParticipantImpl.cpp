@@ -71,10 +71,6 @@
 #include <xmlparser/attributes/TopicAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
-#include "../rpc/ReplierImpl.hpp"
-#include "../rpc/RequesterImpl.hpp"
-#include "../rpc/ServiceImpl.hpp"
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
