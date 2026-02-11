@@ -134,9 +134,6 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/print_functions.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/common/DatagramInjectionTransport.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/TCPReqRepHelloWorldRequester.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/TCPReqRepHelloWorldReplier.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/TCPReqRepHelloWorldService.cpp
     )
 
 file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/common/DDSBlackboxTests*.cpp")
@@ -191,9 +188,6 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_B
 if(FASTDDS_PIM_API_TESTS)
     set(BLACKBOXTESTS_FASTDDS_PIM_SOURCE
         ${DDS_BLACKBOXTESTS_SOURCE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/ReqRepHelloWorldRequester.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/ReqRepHelloWorldReplier.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/api/dds-pim/ReqRepHelloWorldService.cpp
         )
 
     if (FASTDDS_STATISTICS)
