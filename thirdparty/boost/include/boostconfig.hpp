@@ -19,7 +19,7 @@
 
 #define BOOST_DATE_TIME_NO_LIB
 #define BOOST_INTERPROCESS_ENABLE_TIMEOUT_WHEN_LOCKING
-#define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 1000
+#define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 10000
 
 // We have patched part of the boost code, protecting all changes with this define
 #define BOOST_FASTDDS_PATCHES
@@ -30,7 +30,7 @@
 
 #ifdef ANDROID
 #define BOOST_INTERPROCESS_SHARED_DIR_PATH "/data/local/tmp"
-#endif
+#endif // ifdef ANDROID
 
 #define BOOST_INTERPROCESS_ATEXIT(f) eprosima::detail::BoostAtExitRegistry::get_instance()->at_exit_register((f))
 
@@ -51,6 +51,11 @@
 #endif  // BOOST_INTERPROCESS_FORCE_GENERIC_EMULATION
 
 #endif // _MSC_VER_
+
+// Boost 1.87 introduces ABI breaking: segment_manager nows uses a new implementation that supports overaligned types
+// and fixes some existing bugs. You can obtain the pre-Boost 1.87 ABI #defining BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI
+// to 1 before including Boost.Interprocess headers.
+#define BOOST_INTERPROCESS_SEGMENT_MANAGER_ABI 1
 
 /**
  * This singleton class performs some necesary system dependent initializations

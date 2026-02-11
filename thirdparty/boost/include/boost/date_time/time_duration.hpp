@@ -63,11 +63,6 @@ namespace date_time {
                   fractional_seconds_type frac_sec_in = 0) :
       ticks_(rep_type::to_tick_count(hours_in,minutes_in,seconds_in,frac_sec_in))
     {}
-    // copy constructor required for dividable<>
-    //! Construct from another time_duration (Copy constructor)
-    BOOST_CXX14_CONSTEXPR time_duration(const time_duration<T, rep_type>& other)
-      : ticks_(other.ticks_)
-    {}
     //! Construct from special_values
     BOOST_CXX14_CONSTEXPR time_duration(special_values sv) : ticks_(impl_type::from_special(sv))
     {}

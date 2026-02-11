@@ -23,7 +23,6 @@
 #include <boost/interprocess/detail/workaround.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/interprocess/detail/os_thread_functions.hpp>
-#include <boost/interprocess/detail/posix_time_types_wrk.hpp>
 #include <boost/interprocess/sync/detail/common_algorithms.hpp>
 #include <boost/interprocess/sync/detail/locks.hpp>
 #include <boost/cstdint.hpp>
@@ -44,7 +43,7 @@ class spin_semaphore
    void post();
    void wait();
    bool try_wait();
-   bool timed_wait(const boost::posix_time::ptime &abs_time);
+   template<class TimePoint> bool timed_wait(const TimePoint &abs_time);
 
 //   int get_count() const;
    private:
@@ -74,7 +73,8 @@ inline bool spin_semaphore::try_wait()
    return ipcdetail::atomic_add_unless32(&m_count, boost::uint32_t(-1), boost::uint32_t(0));
 }
 
-inline bool spin_semaphore::timed_wait(const boost::posix_time::ptime &abs_time)
+template<class TimePoint>
+inline bool spin_semaphore::timed_wait(const TimePoint &abs_time)
 {
    ipcdetail::lock_to_wait<spin_semaphore> lw(*this);
    return ipcdetail::try_based_timed_lock(lw, abs_time);

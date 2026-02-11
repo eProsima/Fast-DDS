@@ -23,8 +23,12 @@
 #elif defined(BOOST_GNU_STDLIB) && defined(_GLIBCXX_BEGIN_NAMESPACE)  //GCC >= 4.2
    #define BOOST_MOVE_STD_NS_BEG _GLIBCXX_BEGIN_NAMESPACE(std)
    #define BOOST_MOVE_STD_NS_END _GLIBCXX_END_NAMESPACE
-#else
-   #define BOOST_MOVE_STD_NS_BEG namespace std{
-   #define BOOST_MOVE_STD_NS_END }
+#elif defined(BOOST_DINKUMWARE_STDLIB)
+   #define BOOST_MOVE_STD_NS_BEG _STD_BEGIN
+   #define BOOST_MOVE_STD_NS_END _STD_END
 #endif
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1915)
+   #pragma warning (push)
+   #pragma warning (disable : 4643) // Forward declaring 'X' in namespace std is not permitted by the C++ Standard
+#endif
