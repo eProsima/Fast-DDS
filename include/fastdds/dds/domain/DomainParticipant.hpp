@@ -405,9 +405,9 @@ public:
      * @return Pointer to the created service. nullptr in error case.
      */
     FASTDDS_EXPORTED_API rpc::Service* create_service(
-        const std::string& service_name,
-        const std::string& service_type_name,
-        ReturnCode_t& ret_code);
+            const std::string& service_name,
+            const std::string& service_type_name,
+            ReturnCode_t& ret_code);
 
     /**
      * Create a RPC service.
@@ -429,7 +429,8 @@ public:
      * @return Pointer to the service object if found, nullptr if not found.
      */
     FASTDDS_EXPORTED_API rpc::Service* find_service(
-            const std::string& service_name, ReturnCode_t& ret_code) const;
+            const std::string& service_name,
+            ReturnCode_t& ret_code) const;
 
     /**
      * Find a RPC service by name

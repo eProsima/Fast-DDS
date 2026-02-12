@@ -41,49 +41,49 @@ void register_RpcException_type_identifier(
         TypeIdentifierPair& /*type_ids_RpcException*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RpcBrokenPipeException_type_identifier(
         TypeIdentifierPair& /*type_ids_RpcBrokenPipeException*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RpcStatusCode_type_identifier(
         TypeIdentifierPair& /*type_ids_RpcStatusCode*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RpcFeedCancelledException_type_identifier(
         TypeIdentifierPair& /*type_ids_RpcFeedCancelledException*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RpcOperationError_type_identifier(
         TypeIdentifierPair& /*type_ids_RpcOperationError*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RemoteExceptionCode_t_type_identifier(
         TypeIdentifierPair& /*type_ids_RemoteExceptionCode_t*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RpcRemoteException_type_identifier(
         TypeIdentifierPair& /*type_ids_RpcRemoteException*/)
 {
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                    "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 void register_RpcTimeoutException_type_identifier(
@@ -91,7 +91,7 @@ void register_RpcTimeoutException_type_identifier(
 {
 
     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                "RPC is not supported in this Fast DDS version");
+            "RPC is not supported in this Fast DDS version");
 }
 
 } // namespace rpc
