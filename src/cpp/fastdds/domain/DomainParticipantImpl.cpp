@@ -865,15 +865,12 @@ ReturnCode_t DomainParticipantImpl::ignore_participant(
            RETCODE_BAD_PARAMETER;
 }
 
-/* TODO
-   bool DomainParticipantImpl::ignore_topic(
+bool DomainParticipantImpl::ignore_topic(
         const InstanceHandle_t& handle)
-   {
-    (void)handle;
-    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
+{
+    static_cast<void>(handle);
     return false;
-   }
- */
+}
 
 bool DomainParticipantImpl::ignore_publication(
         const InstanceHandle_t& handle)
