@@ -31,7 +31,6 @@
 #include <fastdds/utils/QosConverters.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/log/LogResources.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/domain/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
@@ -55,7 +54,6 @@ DomainParticipantFactory::DomainParticipantFactory()
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
     , topic_pool_(rtps::TopicPayloadPoolRegistry::instance())
     , rtps_domain_(rtps::RTPSDomainImpl::get_instance())
-    , log_resources_(detail::get_log_resources())
 {
 }
 
@@ -90,12 +88,11 @@ DomainParticipantFactory* DomainParticipantFactory::get_instance()
 std::shared_ptr<DomainParticipantFactory> DomainParticipantFactory::get_shared_instance()
 {
     // Note we need a custom deleter, since the destructor is protected.
-    static std::shared_ptr<DomainParticipantFactory> instance(
-        new DomainParticipantFactory(),
-        [](DomainParticipantFactory* p)
-        {
-            delete p;
-        });
+    static std::shared_ptr<DomainParticipantFactory> instance(new DomainParticipantFactory(),
+            [](DomainParticipantFactory* p)
+            {
+                delete p;
+            });
     return instance;
 }
 
@@ -125,8 +122,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
         {
             for (PartVectorIt pit = vit->second.begin(); pit != vit->second.end();)
             {
-                if ((*pit)->get_participant() == part
-                        || (*pit)->get_participant()->guid() == part->guid())
+                if ((*pit)->get_participant() == part || (*pit)->get_participant()->guid() == part->guid())
                 {
                     (*pit)->disable();
                     delete (*pit);
@@ -163,8 +159,8 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 #ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listener);
 #else
-    statistics::dds::DomainParticipantImpl* dom_part_impl =
-            new statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
+    statistics::dds::DomainParticipantImpl* dom_part_impl = new statistics::dds::DomainParticipantImpl(dom_part, did,
+                    pqos, listener);
 #endif // FASTDDS_STATISTICS
 
     if (fastdds::rtps::GUID_t::unknown() != dom_part_impl->guid())

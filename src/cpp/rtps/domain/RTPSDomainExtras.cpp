@@ -27,7 +27,7 @@ namespace rtps {
 
 std::shared_ptr<IDomainImpl> RTPSDomainImpl::get_instance()
 {
-    static std::shared_ptr<RTPSDomainImpl> instance = std::make_shared<RTPSDomainImpl>();
+    static std::shared_ptr<IDomainImpl> instance {std::make_shared<RTPSDomainImpl>()};
     return instance;
 }
 

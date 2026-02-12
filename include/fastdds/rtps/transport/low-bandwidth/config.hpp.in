@@ -1,0 +1,25 @@
+/* Copyright(C) 2025, Proyectos y Sistemas de Mantenimiento SL(eProsima)
+ *
+ * This program is commercial software licensed under the terms of the
+ * eProsima Software License Agreement Rev 03 (the "License")
+ *
+ * You may obtain a copy of the License at
+ * https://www.eprosima.com/licenses/LICENSE-REV03
+ */
+
+#ifndef FASTDDS_RTPS_TRANSPORT_LOWBANDWIDTH_CONFIG_HPP
+#define FASTDDS_RTPS_TRANSPORT_LOWBANDWIDTH_CONFIG_HPP
+
+#include <fastdds/config.hpp>
+
+// ZLIB
+#ifndef HAVE_ZLIB
+#define HAVE_ZLIB @HAVE_ZLIB@
+#endif // ifndef HAVE_ZLIB
+
+// BZIP2
+#ifndef HAVE_BZIP2
+#define HAVE_BZIP2 @HAVE_BZIP2@
+#endif // ifndef HAVE_BZIP2
+
+#endif // FASTDDS_RTPS_TRANSPORT_LOWBANDWIDTH_CONFIG_HPP

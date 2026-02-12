@@ -14,6 +14,52 @@
 
 include(CheckCXXSourceCompiles)
 
+#{{{ Configuration low-bandwidth transports
+option(ZLIB_REQUIRED "Make ZLib dependency required" OFF)
+find_package(ZLIB)
+if (NOT ZLIB_FOUND)
+    find_package(PkgConfig)
+    pkg_search_module(ZLIB zlib IMPORTED_TARGET)
+    if (ZLIB_FOUND)
+        add_library(ZLIB::ZLIB ALIAS PkgConfig::ZLIB)
+    endif()
+endif()
+if(ZLIB_FOUND)
+    set(HAVE_ZLIB 1)
+else()
+    if (ZLIB_REQUIRED)
+        message(FATAL_ERROR "ZLib library not found! and it is required")
+    else()
+        set(HAVE_ZLIB 0)
+    endif()
+endif()
+
+# Configure BZIP2
+option(BZIP2_REQUIRED "Make BZip2 dependency required" OFF)
+find_package(BZip2)
+if(NOT BZIP2_FOUND)
+    find_package(PkgConfig)
+    pkg_search_module(BZip2 bzip2 IMPORTED_TARGET)
+    set(BZIP2_FOUND ${BZip2_FOUND})
+    if (BZIP2_FOUND)
+        add_library(BZip2::BZip2 ALIAS PkgConfig::BZip2)
+    endif()
+endif()
+if(BZIP2_FOUND)
+    set(HAVE_BZIP2 1)
+else()
+    if (BZIP2_REQUIRED)
+        message(FATAL_ERROR "Bzip2 library not found! and it is required")
+    else()
+        set(HAVE_BZIP2 0)
+    endif()
+endif()
+
+# Generate the proper configure file
+configure_file(${PROJECT_SOURCE_DIR}/include/fastdds/rtps/transport/low-bandwidth/config.hpp.in
+    ${PROJECT_BINARY_DIR}/include/fastdds/rtps/transport/low-bandwidth/config.hpp)
+#}}}
+
 # Set source files
 if(WIN32)
 
@@ -28,18 +74,12 @@ add_definitions(-DNOMINMAX)
 
 endif(WIN32)
 
-set(FASTDDS_DIR ${PROJECT_SOURCE_DIR})
-set(FASTDDS_SOURCE_DIR .)
+# Include source files
 include(source.cmake)
 
 foreach(MODULE_DIR ${${PROJECT_NAME}_module_dirs})
     add_subdirectory(${MODULE_DIR})
 endforeach()
-
-list(APPEND ${PROJECT_NAME}_source_files
-    rtps/domain/RTPSDomainExtras.cpp
-    xmlparser/XMLParserExtras.cpp
-	)
 
 # Option to enable strict real-time. In this case, several API functions have a real-time behaviour.
 # * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
@@ -143,6 +183,8 @@ target_compile_definitions(${PROJECT_NAME}
     $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
     $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
+    $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${ZLIB_FOUND}>>:ZLIB_DLL>
+    $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${BZIP2_FOUND}>>:BZ_IMPORT>
     INTERFACE
     $<$<BOOL:${WIN32}>:${PROJECT_NAME_UPPER}_NO_LIB>
     PUBLIC
@@ -177,6 +219,12 @@ target_link_libraries(${PROJECT_NAME}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
+    $<$<BOOL:${ZLIB_FOUND}>:ZLIB::ZLIB>
+    $<$<BOOL:${BZIP2_FOUND}>:BZip2::BZip2>
+    )
+
+target_link_directories(${PROJECT_NAME} PRIVATE
+    $<$<BOOL:${BZIP2_FOUND}>:${BZip2_LIBRARY_DIRS}>
     )
 
 if (APPLE)
@@ -282,9 +330,13 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
     PATTERN "*.ipp"
     )
 
-# Install config.hpp header
+# Install config.hpp headers
 install(FILES ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.hpp
     DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}
+    COMPONENT headers
+    )
+install(FILES ${PROJECT_BINARY_DIR}/include/fastdds/rtps/transport/low-bandwidth/config.hpp
+    DESTINATION ${INCLUDE_INSTALL_DIR}/${PROJECT_NAME}/rtps/transport/low-bandwidth
     COMPONENT headers
     )
 
@@ -375,6 +427,12 @@ if (LINK_SSL)
 endif()
 if (TARGET tinyxml2::tinyxml2)
     set(FASTDDS_STATIC_LINK_ONLY_OPT_DEPS "${FASTDDS_STATIC_LINK_ONLY_OPT_DEPS}\nfind_dependency(TinyXml2 REQUIRED)")
+endif()
+if (ZLIB_FOUND)
+    set(FASTDDS_STATIC_LINK_ONLY_OPT_DEPS "${FASTDDS_STATIC_LINK_ONLY_OPT_DEPS}\nfind_package(ZLIB)\nif (NOT ZLIB_FOUND)\n find_package(PkgConfig)\n pkg_search_module(ZLIB zlib IMPORTED_TARGET)\nif (ZLIB_FOUND)\n add_library(ZLIB::ZLIB ALIAS PkgConfig::ZLIB)\nendif()\nendif()")
+endif()
+if (BZIP2_FOUND)
+    set(FASTDDS_STATIC_LINK_ONLY_OPT_DEPS "${FASTDDS_STATIC_LINK_ONLY_OPT_DEPS}\nfind_package(BZip2)\nif(NOT BZIP2_FOUND)\n find_package(PkgConfig)\n pkg_search_module(BZip2 bzip2 IMPORTED_TARGET)\n set(BZIP2_FOUND ${BZip2_FOUND})\nif (BZIP2_FOUND)\n add_library(BZip2::BZip2 ALIAS PkgConfig::BZip2)\nendif()\nendif()")
 endif()
 
 configure_package_config_file(${PROJECT_SOURCE_DIR}/cmake/packaging/Config.cmake.in

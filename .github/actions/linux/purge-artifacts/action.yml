@@ -1,0 +1,26 @@
+name: "purge-artifacts"
+description: "Purge artifacts older than a given number of days in a specified folder (Ubuntu)"
+
+inputs:
+  artifacts-folder-path:
+    description: "Path to the folder where artifacts are stored"
+    required: true
+  days:
+    description: "Number of days to keep artifacts"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install APT dependencies
+      uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+      with:
+        packages: findutils
+        update: false
+        upgrade: false
+
+    - name: Find and delete old artifacts
+      run: |
+        find "${{ inputs.artifacts-folder-path }}" -type f -name "*.tar.zst" -mtime +${{ inputs.days }} -exec rm -f {} \;
+      shell: bash

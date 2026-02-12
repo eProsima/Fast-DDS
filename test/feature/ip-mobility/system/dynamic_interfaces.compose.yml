@@ -1,0 +1,37 @@
+# Copyright (C) 2025, Proyectos y Sistemas de Mantenimiento SL (eProsima)
+#
+# This program is commercial software licensed under the terms of the
+# eProsima Software License Agreement Rev 03 (the "License")
+#
+# You may obtain a copy of the License at
+# https://www.eprosima.com/licenses/LICENSE-REV03
+
+services:
+  publisher:
+    image: ubuntu:22.04
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --wait 1 --samples 10 --loops 1 --seed 0 --magic T"
+
+  subscriber:
+    build:
+        context: .
+        dockerfile: net-tools.Dockerfile
+    image: ubuntu-net-tools:22.04
+    privileged: true
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
+    working_dir: @PROJECT_BINARY_DIR@/test/dds/communication
+    command: @SHELL_EXECUTABLE@ "@PROJECT_BINARY_DIR@/test/feature/ip-mobility/system/launch_subscriber.bash"
+    depends_on:
+      - publisher

@@ -1,0 +1,58 @@
+name: get-artifact
+description: "Get artifacts stored in other jobs (Windows)"
+
+inputs:
+  name:
+    description: "Name of the artifact to get"
+    required: true
+  artifacts-folder-path:
+    description: "Path to the folder where artifacts are stored"
+    required: true
+  destination-folder-path:
+    description: "Path to the folder where the artifact will be extracted"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Normalize folder paths
+      id: normalize-folder-paths
+      shell: pwsh
+      run: |
+        $destPath = "${{ inputs.destination-folder-path }}".TrimEnd('\','/')
+        $artPath  = "${{ inputs.artifacts-folder-path }}".TrimEnd('\','/')
+        Write-Host "Normalized destination path: $destPath"
+        Write-Host "Normalized artifacts path: $artPath"
+        "destination-path=$destPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        "artifacts-path=$artPath"    | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+    - name: Create destination folder path if it does not exist
+      shell: pwsh
+      run: |
+        $destPath = "${{ steps.normalize-folder-paths.outputs.destination-path }}"
+        if (-not (Test-Path $destPath)) {
+          New-Item -ItemType Directory -Path $destPath -Force | Out-Null
+        }
+        Write-Host "Artifact's destination folder path: $destPath"
+
+    - name: Check artifact existence
+      shell: pwsh
+      run: |
+        $artPath = "${{ steps.normalize-folder-paths.outputs.artifacts-path }}"
+        $artifact = Join-Path $artPath "${{ inputs.name }}.zip"
+        if (-not (Test-Path $artifact -PathType Leaf)) {
+          Write-Error "Artifact ${{ inputs.name }} does not exist in path $artPath"
+          exit 1
+        }
+        Write-Host "Artifact ${{ inputs.name }} found in path $artPath"
+
+    - name: Uncompress artifact
+      shell: pwsh
+      run: |
+        $artPath = "${{ steps.normalize-folder-paths.outputs.artifacts-path }}"
+        $destPath = "${{ steps.normalize-folder-paths.outputs.destination-path }}"
+        $zipPath = Join-Path $artPath "${{ inputs.name }}.zip"
+
+        Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $destPath, $true)
+        Write-Host "Artifact ${{ inputs.name }} uncompressed to $destPath"

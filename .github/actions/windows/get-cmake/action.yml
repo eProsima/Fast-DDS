@@ -1,0 +1,41 @@
+name: get-cmake
+description: "Get cmake 3.28.3 (Windows)"
+
+inputs:
+  version:
+    description: "CMake version to be installed"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install version 3.28.3 of CMake
+      id: install-cmake
+      run: |
+        $erroractionpreference = "stop"
+
+        $version = "3.28.3"
+        $sha256sum = "cac7916f7e1e73a25de857704c94fd5b72ba9fe2f055356b5602d2f960e50e5b"
+        $filename = "cmake-$version-windows-x86_64"
+        $tarball = "$filename.zip"
+
+        $outdir = "c://cmake"
+        New-Item -ItemType Directory -Force -Path $outdir
+        if (-not (Test-Path -Path "$outdir\cmake-$version"))
+        {
+          $ProgressPreference = 'SilentlyContinue'
+          Invoke-WebRequest -Uri "https://github.com/Kitware/CMake/releases/download/v$version/$tarball" -OutFile "$outdir\$tarball"
+          $hash = Get-FileHash "$outdir\$tarball" -Algorithm SHA256
+          if ($hash.Hash -ne $sha256sum) {
+              exit 1
+          }
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::ExtractToDirectory("$outdir\$tarball", "$outdir")
+          Move-Item -Path "$outdir\$filename" -Destination "$outdir\cmake-$version"
+          Remove-Item "$outdir\$tarball"
+        }
+
+        "PATH=c://cmake/cmake-$version/bin;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      shell: pwsh

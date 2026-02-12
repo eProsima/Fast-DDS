@@ -30,6 +30,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
 #include <rtps/domain/IDomainImpl.hpp>
+#include <rtps/network/IPChangeMonitor.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
 #include <rtps/writer/BaseWriter.hpp>
@@ -46,6 +47,12 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
+namespace detail {
+struct LogResources;
+} // namespace detail
+} // namespace dds
+
 namespace rtps {
 
 /**
@@ -54,10 +61,11 @@ namespace rtps {
  */
 class RTPSDomainImpl : public IDomainImpl
 {
-
 public:
 
-    ~RTPSDomainImpl() override = default;
+    RTPSDomainImpl();
+
+    ~RTPSDomainImpl() override;
 
     typedef std::pair<RTPSParticipant*, RTPSParticipantImpl*> t_p_RTPSParticipant;
 
@@ -160,7 +168,7 @@ public:
             uint32_t domain_id,
             const std::string& easy_mode_ip) override;
 
-protected:
+private:
 
     /**
      * @brief Get Id to create a RTPSParticipant.
@@ -216,6 +224,12 @@ protected:
     fastdds::rtps::ThreadSettings callback_thread_config_;
 
     eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
+
+    std::unique_ptr<IPChangeMonitorAPI> ip_change_monitor_;
+
+    bool first_participant_created_;
+
+    std::shared_ptr<dds::detail::LogResources> log_resources_;
 
 };
 

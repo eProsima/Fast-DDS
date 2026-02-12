@@ -218,17 +218,14 @@ struct LogResources
 
         for (int i = 0; i < 2; ++i)
         {
-            cv_.wait(guard,
-                    [&]()
+            cv_.wait(guard, [&]()
                     {
                         /* We must avoid:
                          + the two calls be processed without an intermediate Run() loop
                            (by using last_loop sequence number and checking if the foreground queue is empty)
                          + deadlock by absence of Run() loop activity (by using BothEmpty() call)
                          */
-                        return !logging_ ||
-                        logs_.BothEmpty() ||
-                        (last_loop != current_loop_ && logs_.Empty());
+                        return !logging_ || logs_.BothEmpty() || (last_loop != current_loop_ && logs_.Empty());
                     });
 
             last_loop = current_loop_;
@@ -308,8 +305,7 @@ private:
 
         while (logging_)
         {
-            cv_.wait(guard,
-                    [&]()
+            cv_.wait(guard, [&]()
                     {
                         return !logging_ || work_;
                     });
@@ -527,10 +523,8 @@ void LogConsumer::print_header(
         const Log::Entry& entry,
         bool color) const
 {
-    std::string c_b_color = (!color) ? "" :
-            (entry.kind == Log::Kind::Error) ? C_B_RED :
-            (entry.kind == Log::Kind::Warning) ? C_B_YELLOW :
-            (entry.kind == Log::Kind::Info) ? C_B_GREEN : "";
+    std::string c_b_color = (!color) ? "" :(entry.kind == Log::Kind::Error) ? C_B_RED :(entry.kind ==
+            Log::Kind::Warning) ? C_B_YELLOW :(entry.kind == Log::Kind::Info) ? C_B_GREEN : "";
 
     std::string white = (color) ? C_B_WHITE : "";
 

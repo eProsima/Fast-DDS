@@ -2,4 +2,4 @@ repositories:
     googletest-distribution:
         type: git
         url: https://github.com/google/googletest.git
-        version: release-1.11.0
+        version: v1.14.0

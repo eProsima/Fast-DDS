@@ -1,0 +1,105 @@
+name: store-artifact
+description: "Store artifacts in a given path to be used in other jobs (Windows/Linux/macOS)"
+
+inputs:
+  name:
+    description: 'Name of the artifact'
+    required: true
+  artifact-path:
+    description: |
+      One or more directory paths to be stored as an artifact.
+      Multiline is supported: put one directory per line.
+    required: true
+  destination-folder-path:
+    description: 'Destination folder inside the runner to store the artifact'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Normalize destination path
+      id: normalize-destination-path
+      shell: pwsh
+      run: |
+        $destPath = "${{ inputs.destination-folder-path }}"
+        # Remove trailing backslash or slash
+        $destPath = $destPath.TrimEnd('\','/')
+        Write-Host "Normalized destination path: $destPath"
+        echo "destination-path=$destPath" >> $env:GITHUB_OUTPUT
+
+    - name: Create destination folder path if it does not exist
+      shell: pwsh
+      run: |
+        $destPath = "${{ steps.normalize-destination-path.outputs.destination-path }}"
+        if (-not (Test-Path $destPath)) {
+          New-Item -ItemType Directory -Path $destPath -Force | Out-Null
+        }
+        Write-Host "Artifact's destination folder path: $destPath"
+
+    - name: Stage and compress directories
+      shell: pwsh
+      run: |
+        $destPath = "${{ steps.normalize-destination-path.outputs.destination-path }}"
+        $zipPath  = Join-Path $destPath "${{ inputs.name }}.zip"
+        $stageDir = Join-Path $destPath "_stage_${{ inputs.name }}"
+
+        if (-not (Test-Path $destPath)) {
+          Write-Error "Destination path '$destPath' does not exist"
+          exit 1
+        }
+
+        # Read multiline input safely (one path per line)
+        $rawPaths = @'
+        ${{ inputs.artifact-path }}
+        '@
+
+        $paths = $rawPaths -split "(`r`n|`n|`r)" | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "" }
+
+        if ($paths.Count -eq 0) {
+          Write-Error "No paths provided in 'artifact-path'."
+          exit 1
+        }
+
+        # Prepare staging directory
+        if (Test-Path $stageDir) {
+          Remove-Item -Recurse -Force $stageDir
+        }
+        New-Item -ItemType Directory -Path $stageDir -Force | Out-Null
+
+        Write-Host "Staging directories into: $stageDir"
+        foreach ($p in $paths) {
+          if (Test-Path -LiteralPath $p -PathType Container) {
+            $leaf = Split-Path -Path $p -Leaf
+            if ([string]::IsNullOrWhiteSpace($leaf)) {
+              # Fallback just in case
+              $leaf = "dir"
+            }
+            $target = Join-Path $stageDir $leaf
+
+            Write-Host " - Adding directory: $p  ->  $target"
+            Copy-Item -LiteralPath $p -Destination $target -Recurse -Force
+          }
+          elseif (Test-Path -LiteralPath $p -PathType Leaf) {
+            Write-Error "Path '$p' is a file. This action only supports directories."
+            exit 1
+          }
+          else {
+            Write-Error "Artifact path '$p' does not exist"
+            exit 1
+          }
+        }
+
+        # Create zip
+        if (Test-Path $zipPath) {
+          Remove-Item -Force $zipPath
+        }
+
+        Write-Host "Compressing staged content into: $zipPath"
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($stageDir, $zipPath)
+
+        Write-Host "Artifact '${{ inputs.name }}' compressed to $zipPath"
+
+        # Optional cleanup of staging
+        Remove-Item -Recurse -Force $stageDir

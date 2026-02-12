@@ -1,0 +1,55 @@
+name: get-ccache
+description: "Get ccache (Windows)"
+
+inputs:
+  ccache-folder:
+    description: "Path to the folder where ccache cache is located"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install latest version of CCache
+      id: install-latest-ccache
+      run: |
+
+        $erroractionpreference = "stop"
+
+        $content = (Invoke-WebRequest -Uri "https://api.github.com/repos/ccache/ccache/releases" -UseBasicParsing | ConvertFrom-Json)
+        $tag = $content[0].tag_name
+        $name = $content[0].name
+        $filename = "ccache-$name-windows-x86_64"
+        $tarball = "$filename.zip"
+
+        $outdir = "c://ccache-bin"
+        New-Item -ItemType Directory -Force -Path $outdir
+        if (Test-Path -Path "$outdir\ccache")
+        {
+          Remove-Item -Force -Recurse "$outdir\ccache"
+        }
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri "https://github.com/ccache/ccache/releases/download/$tag/$tarball" -OutFile "$outdir\$tarball"
+
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("$outdir\$tarball", "$outdir")
+        Move-Item -Path "$outdir\$filename" -Destination "$outdir\ccache"
+        Remove-Item "$outdir\$tarball"
+      shell: pwsh
+
+    - name: Add CCache to PATH variable to env context
+      id: add-ccache-path-env
+      run: |
+        "PATH=c://ccache-bin/ccache/bin;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+        "CCACHE_BASEDIR=${{ github.workspace }}" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+        "CCACHE_DIR=${{ inputs.ccache-folder }}" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      shell: pwsh
+
+    - name: Check CCache
+      id: check-ccache-version
+      run: |
+        ccache --version
+        ccache --zero-stats
+        ccache --show-stats
+      shell: pwsh
+

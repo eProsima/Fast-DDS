@@ -29,6 +29,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/log/LogResources.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
@@ -41,6 +42,8 @@
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/domain/IDomainImpl.hpp>
 #include <rtps/domain/RTPSDomainImpl.hpp>
+#include <rtps/network/IPChangeMonitor.hpp>
+#include <rtps/network/IPChangeMonitorImpl.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/rtps_participant_types.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
@@ -57,25 +60,21 @@
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
+#ifdef FASTDDS_CHECK_LICENSE
+#include <rtps/license/LicenseCheckImpl.hpp>
+#endif // ifdef FASTDDS_CHECK_LICENSE
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
 const char* EASY_MODE_SERVICE_PROFILE =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-        "<dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">\n"
-        "    <profiles>\n"
-        "        <data_writer profile_name=\"service\">\n"
-        "            <qos>\n"
-        "                <reliability>\n"
-        "                    <max_blocking_time>\n"
-        "                        <sec>1</sec>\n"
-        "                        <nanosec>0</nanosec>\n"
-        "                    </max_blocking_time>\n"
-        "                </reliability>\n"
-        "            </qos>\n"
-        "        </data_writer>\n"
-        "    </profiles>\n"
+        "<dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles\">\n" "    <profiles>\n"
+        "        <data_writer profile_name=\"service\">\n" "            <qos>\n" "                <reliability>\n"
+        "                    <max_blocking_time>\n" "                        <sec>1</sec>\n"
+        "                        <nanosec>0</nanosec>\n" "                    </max_blocking_time>\n"
+        "                </reliability>\n" "            </qos>\n" "        </data_writer>\n" "    </profiles>\n"
         "</dds>\n";
 
 template<typename _Descriptor>
@@ -178,6 +177,43 @@ bool RTPSDomain::removeRTPSParticipant(
     return false;
 }
 
+RTPSDomainImpl::RTPSDomainImpl()
+    : log_resources_(dds::detail::get_log_resources())
+{
+    auto on_ip_changes_fn = [this]()
+            {
+                // Update cached network interfaces
+                if (!SystemInfo::update_interfaces())
+                {
+                    EPROSIMA_LOG_WARNING(RTPS_DOMAIN,
+                            "Failed to update cached network interfaces upon IP change notification");
+                }
+
+                // This function will be called when an IP change is detected
+                // Traverse all participants and call update_attributes on each one to refresh their locators
+                std::lock_guard<std::mutex> guard(m_mutex);
+                for (auto& participant_pair : m_RTPSParticipants)
+                {
+                    RTPSParticipantImpl* participant_impl = participant_pair.second;
+                    if (participant_impl != nullptr)
+                    {
+                        auto attributes = participant_impl->get_attributes();
+                        participant_impl->update_attributes(attributes);
+                    }
+                }
+            };
+
+    // Create the IP changes monitor
+    ip_change_monitor_.reset(new IPChangeMonitor<decltype(on_ip_changes_fn)>(std::move(on_ip_changes_fn)));
+
+    first_participant_created_ = false;
+}
+
+RTPSDomainImpl::~RTPSDomainImpl()
+{
+    stop_all();
+}
+
 void RTPSDomainImpl::stop_all()
 {
     std::unique_lock<std::mutex> lock(m_mutex);
@@ -199,6 +235,9 @@ void RTPSDomainImpl::stop_all()
 
     xmlparser::XMLProfileManager::DeleteInstance();
 
+    // Stop IP change monitoring
+    ip_change_monitor_->stop_monitoring();
+
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
@@ -211,6 +250,17 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
 {
     RTPSParticipantAttributes PParam = attrs;
 
+#ifdef FASTDDS_CHECK_LICENSE
+    {
+        std::lock_guard<std::mutex> license_lock(m_mutex);
+        if (!check_license(first_participant_created_))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Invalid license");
+            return nullptr;
+        }
+    }
+#endif // ifdef FASTDDS_CHECK_LICENSE
+
     // Only the first time, initialize environment file watch if the corresponding environment variable is set
     if (!file_watch_handle_)
     {
@@ -219,9 +269,8 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
         {
             std::lock_guard<std::mutex> guard(m_mutex);
             // Create filewatch
-            file_watch_handle_ = SystemInfo::watch_file(
-                filename, std::bind(&RTPSDomainImpl::file_watch_callback, this),
-                watch_thread_config_, callback_thread_config_);
+            file_watch_handle_ = SystemInfo::watch_file(filename, std::bind(&RTPSDomainImpl::file_watch_callback, this),
+                            watch_thread_config_, callback_thread_config_);
         }
         else if (!filename.empty())
         {
@@ -292,11 +341,10 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
     // Above constructors create the sender resources. If a given listening port cannot be allocated an iterative
     // mechanism will allocate another by default. Change the default listening port is unacceptable for
     // discovery server Participant.
-    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER
-            || PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
-            && pimpl->did_mutation_took_place_on_meta(
-                PParam.builtin.metatrafficMulticastLocatorList,
-                PParam.builtin.metatrafficUnicastLocatorList))
+    if ((PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
+            PParam.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP) &&
+            pimpl->did_mutation_took_place_on_meta(PParam.builtin.metatrafficMulticastLocatorList,
+            PParam.builtin.metatrafficUnicastLocatorList))
     {
         if (PParam.builtin.metatrafficMulticastLocatorList.empty() &&
                 PParam.builtin.metatrafficUnicastLocatorList.empty())
@@ -329,8 +377,7 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
     }
 
     // Check the environment file in case it was modified during participant creation leading to a missed callback.
-    if ((PParam.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT) &&
-            file_watch_handle_)
+    if ((PParam.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT) && file_watch_handle_)
     {
         pimpl->environment_file_has_changed();
     }
@@ -340,6 +387,12 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
         // Start protocols
         pimpl->enable();
     }
+
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        ip_change_monitor_->start_monitoring();
+    }
+
     return p;
 }
 
@@ -398,6 +451,7 @@ RTPSParticipant* RTPSDomainImpl::create_client_server_participant(
 bool RTPSDomainImpl::remove_participant(
         RTPSParticipant* p)
 {
+    bool ret_value {false};
     std::unique_lock<std::mutex> lock(m_mutex);
     for (auto it = m_RTPSParticipants.begin(); it != m_RTPSParticipants.end(); ++it)
     {
@@ -410,11 +464,23 @@ bool RTPSDomainImpl::remove_participant(
             m_RTPSParticipantIDs[participant_id].reserved = false;
             lock.unlock();
             removeRTPSParticipant_nts(participant);
-            return true;
+            lock.lock();
+            ret_value = true;
+            break;
         }
     }
-    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant not recognized");
-    return false;
+
+    if (!ret_value)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant not recognized");
+    }
+
+    if (m_RTPSParticipants.empty())
+    {
+        ip_change_monitor_->stop_monitoring();
+    }
+
+    return ret_value;
 }
 
 void RTPSDomainImpl::removeRTPSParticipant_nts(
@@ -599,8 +665,8 @@ bool RTPSDomainImpl::client_server_environment_attributes_override(
     // Check the specified discovery protocol: if other than simple it has priority over ros environment variable
     if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SIMPLE)
     {
-        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Detected non simple discovery protocol attributes."
-                << " Ignoring auto default client-server setup.");
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN,
+                "Detected non simple discovery protocol attributes." << " Ignoring auto default client-server setup.");
         return false;
     }
 
@@ -619,8 +685,10 @@ bool RTPSDomainImpl::client_server_environment_attributes_override(
     {
         if (!ros_easy_mode_ip_env.empty())
         {
-            EPROSIMA_LOG_WARNING(RTPSDOMAIN, "Easy mode IP is configured both in RTPSParticipantAttributes and "
-                    << ROS2_EASY_MODE_URI << " environment variable, ignoring the latter.");
+            EPROSIMA_LOG_WARNING(RTPSDOMAIN,
+                    "Easy mode IP is configured both in RTPSParticipantAttributes and " << ROS2_EASY_MODE_URI
+                                                                                        <<
+                    " environment variable, ignoring the latter.");
         }
         client_att.easy_mode_ip = att.easy_mode_ip;
     }
@@ -673,7 +741,8 @@ bool RTPSDomainImpl::client_server_environment_attributes_override(
             client_att.userTransports.push_back(std::move(descriptor));
         }
 
-        EPROSIMA_LOG_INFO(RTPS_DOMAIN, "Detected auto client-server environment variable."
+        EPROSIMA_LOG_INFO(RTPS_DOMAIN,
+                "Detected auto client-server environment variable."
                 << "Trying to create client with the default server setup: "
                 << client_att.builtin.discovery_config.m_DiscoveryServers);
 
@@ -735,7 +804,8 @@ bool RTPSDomainImpl::client_server_environment_attributes_override(
         else
         {
             // There is already a profile with the given name. Do not overwrite it
-            EPROSIMA_LOG_WARNING(RTPS_DOMAIN, "An XML profile for 'service' was found. When using ROS2_EASY_MODE, please ensure"
+            EPROSIMA_LOG_WARNING(RTPS_DOMAIN,
+                    "An XML profile for 'service' was found. When using ROS2_EASY_MODE, please ensure"
                     " the max_blocking_time is configured with a value higher than the default.");
         }
     }

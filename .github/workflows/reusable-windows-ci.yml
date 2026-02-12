@@ -3,6 +3,10 @@ name: Fast DDS Windows CI reusable workflow
 on:
   workflow_call:
     inputs:
+      runner:
+        description: 'The runner to use for the workflow'
+        required: true
+        type: string
       label:
         description: 'ID associated to the workflow. Must univocally identify artifacts.'
         required: true
@@ -15,12 +19,17 @@ on:
         description: 'Extra arguments for cmake cli'
         required: false
         type: string
+      cmake-config:
+        description: 'CMake configuration to use'
+        required: false
+        type: string
+        default: 'RelWithDebInfo'
       ctest-args:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
-      fastdds_branch:
-        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+      fastdds-pro-branch:
+        description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
         required: true
         type: string
       fastcdr_branch:
@@ -28,47 +37,48 @@ on:
         required: false
         type: string
         default: 'master'
-      cmake-config:
-        description: 'CMake configuration to use'
-        required: false
-        type: string
-        default: 'RelWithDebInfo'
       run-tests:
         description: 'Run test suite of Fast DDS'
         required: false
         type: boolean
         default: true
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: true
+      vs-toolset:
+        description: 'Visual Studio toolset to use'
+        required: false
+        type: string
+        default: 'v143'
 
 defaults:
   run:
     shell: pwsh
 
 jobs:
-  fastdds_build:
-    runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        vs-toolset:
-          - 'v142'
-          - 'v143'
+  fastdds_pro_build:
+    runs-on:
+      - ${{ inputs.runner }}
+      - windows
+      - x64
     steps:
-      - name: Sync eProsima/Fast-DDS repository
+
+      - name: Sync eProsima/Fast-DDS-Pro repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastdds
           submodules: true
-          ref: ${{ inputs.fastdds_branch }}
+          ref: ${{ inputs.fastdds_pro_branch }}
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Get minimum supported version of CMake
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
-        with:
-          cmakeVersion: '3.22.6'
+        uses: ./src/fastdds/.github/actions/windows/get-cmake
 
       - name: Install OpenSSL
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
@@ -81,14 +91,38 @@ jobs:
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            if (Test-Path -Path $Env:ProgramW6432\OpenSSL\*.dll)
+            {
+              "$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
+            else
+            {
+              "$Env:ProgramW6432\OpenSSL\bin" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
           }
           elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            if (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win\*.dll)
+            {
+              "$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
+            else
+            {
+              "$Env:ProgramW6432\OpenSSL-Win\bin" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
           }
           elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            if (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64\*.dll)
+            {
+              "$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
+            else
+            {
+              "$Env:ProgramW6432\OpenSSL-Win64\bin" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
           }
           else
           {
@@ -102,7 +136,10 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
-          packages: vcstool xmlschema psutil
+          packages: |
+            psutil
+            vcstool
+            xmlschema
 
       - name: Get Fast CDR branch
         id: get_fastcdr_branch
@@ -118,14 +155,14 @@ jobs:
           path: ${{ github.workspace }}/src/fastcdr
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
-      - name: Fetch Fast DDS dependencies
+      - name: Fetch Fast DDS Pro dependencies
         uses: eProsima/eProsima-CI/windows/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}\src\fastdds\fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
-      - name: Fetch Fast DDS CI dependencies
+      - name: Fetch Fast DDS Pro CI dependencies
         uses: eProsima/eProsima-CI/windows/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.repos
@@ -138,30 +175,39 @@ jobs:
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
+          colcon_build_args: --merge-install ${{ inputs.colcon-args }}
           # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
-          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DCOMPILE_EXAMPLES=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
+          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ inputs.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DCOMPILE_EXAMPLES=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
           cmake_build_type: ${{ inputs.cmake-config }}
           workspace: ${{ github.workspace }}
 
-      - name: Upload build artifacts
+      - name: Store build artifacts
+        uses: ./src/fastdds/.github/actions/windows/store-artifact
         if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
-          path: ${{ github.workspace }}
+          name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
+          artifact-path: |
+            build
+            install
+          destination-folder-path: c:\github_artifacts
 
-  fastdds_test:
-    needs: fastdds_build
-    name: fastdds_test (${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }}), ${{ matrix.vs-toolset }}
-    runs-on: windows-2022
+      # This is necessary because any files created by this container will be owned by root and unable to be deleted by the runner user
+      - name: Clean workspace
+        run: |
+          Get-ChildItem -Path "${{ github.workspace }}" | Where-Object { $_.Name -ne "src" } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        if: ${{ always() }}
+
+  fastdds_pro_test:
+    needs: fastdds_pro_build
+    name: fastdds_test (${{ inputs.cmake-config }}, ${{ matrix.test_filter }}, ${{ inputs.vs-toolset }})
+    runs-on:
+      - ${{ inputs.runner }}
+      - windows
+      - x64
     strategy:
       fail-fast: false
       matrix:
-        vs-toolset:
-          - 'v142'
-          - 'v143'
         cmake_build_type:
           - ${{ inputs.cmake-config }}
         test_filter:
@@ -176,13 +222,26 @@ jobs:
         filter_expression_unittests_I:
           - 'DDSSQLFilterValue'
 
+    if: ${{ inputs.run-tests == true }}
     steps:
-      - name: Download build artifacts
-        if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/external/download-artifact@v0
+
+      - name: Add FASTDDSHOME variable to env context
+        run: |
+          "FASTDDSHOME=${{ github.workspace }}\src\fastdds\.github\license" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+      - name: Sync eProsima/Fast-DDS-Pro repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
-          path: ${{ github.workspace }}
+          path: src/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds_pro_branch }}
+
+      - name: Get build artifacts
+        uses: ./src/fastdds/.github/actions/windows/get-artifact
+        with:
+          name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
+          artifacts-folder-path: c:\github_artifacts
+          destination-folder-path: ${{ github.workspace }}
 
       - name: Update known hosts file for DNS resolver testing
         if: ${{ inputs.run-tests == true }}
@@ -213,38 +272,56 @@ jobs:
           gc $hostfile
 
       - name: Install Fix Python version
-        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Get minimum supported version of CMake
-        if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/external/get-cmake@v0
-        with:
-          cmakeVersion: '3.22.6'
+        uses: ./src/fastdds/.github/actions/windows/get-cmake
 
       - name: Install OpenSSL
-        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
         with:
           version: '3.1.1'
 
       - name: Update OpenSSL environment variables
-        if: ${{ inputs.run-tests == true }}
         run: |
           # Update the environment
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            if (Test-Path -Path $Env:ProgramW6432\OpenSSL\*.dll)
+            {
+              "$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
+            else
+            {
+              "$Env:ProgramW6432\OpenSSL\bin" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
           }
           elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            if (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win\*.dll)
+            {
+              "$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
+            else
+            {
+              "$Env:ProgramW6432\OpenSSL-Win\bin" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
           }
           elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            if (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64\*.dll)
+            {
+              "$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
+            else
+            {
+              "$Env:ProgramW6432\OpenSSL-Win64\bin" | Out-File $Env:GITHUB_PATH -Append -Encoding OEM
+            }
           }
           else
           {
@@ -253,36 +330,25 @@ jobs:
           }
 
       - name: Install colcon
-        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Install Python dependencies
-        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
-          packages: vcstool xmlschema psutil
+          packages: |
+            psutil
+            vcstool
+            xmlschema
 
-      #Build Windows examples testing docker image
-      - name: Build with example testing
-        if: ${{ inputs.run-tests == true && matrix.test_filter == 'examples' }}
-        continue-on-error: false
-        uses: eProsima/eProsima-CI/windows/colcon_build@v0
-        with:
-          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
-          # The following Fast DDS CMake options need to be specified here instead of in the meta files
-          # because they vary from platform to platform
-          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DFASTDDS_EXAMPLE_TESTS=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
-          cmake_build_type: ${{ inputs.cmake-config }}
-          workspace: ${{ github.workspace }}
+      - name: Clean interprocess directory
+        run: del -Force -Recurse c:\ProgramData\eprosima\fastdds_interprocess\*
 
       - name: Test
-        if: ${{ inputs.run-tests == true }}
         id: test
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
-          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args: --merge-install ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: >
             ${{ inputs.ctest-args }}
@@ -292,6 +358,7 @@ jobs:
                 format('-E "{0}|{1}|{2}"', matrix.filter_expression_blackbox, matrix.filter_expression_examples, matrix.filter_expression_unittests_I) }}
           packages_names: fastdds
           workspace: ${{ github.workspace }}
+          workspace_dependencies: ${{ github.workspace }}/install
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
       - name: Test summary
@@ -303,3 +370,9 @@ jobs:
           show_failed: 'True'
           show_disabled: 'False'
           show_skipped: 'False'
+
+      # This is necessary because any files created by this container will be owned by root and unable to be deleted by the runner user
+      - name: Clean workspace
+        run: |
+          Get-ChildItem -Path "${{ github.workspace }}" | Where-Object { $_.Name -ne "src" } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        if: ${{ always() }}

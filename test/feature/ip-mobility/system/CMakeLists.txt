@@ -1,0 +1,57 @@
+# Copyright (C) 2025, Proyectos y Sistemas de Mantenimiento SL (eProsima)
+#
+# This program is commercial software licensed under the terms of the
+# eProsima Software License Agreement Rev 03 (the "License")
+#
+# You may obtain a copy of the License at
+# https://www.eprosima.com/licenses/LICENSE-REV03
+
+# Find docker
+find_program(DOCKER_EXECUTABLE docker)
+if(NOT DOCKER_EXECUTABLE)
+    message(WARNING "Docker executable not found. dds.communication.dynamic_interfaces test won't be compiled.")
+    return()
+endif()
+
+set(SHELL_EXECUTABLE "")
+set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "")
+set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH "")
+
+# Linux configurations
+if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
+    # Find bash
+    find_program(BASH_EXECUTABLE bash)
+    if(NOT BASH_EXECUTABLE)
+        message(WARNING "bash executable not found. dds.communication.dynamic_interfaces test won't be compiled.")
+        return()
+    endif()
+
+    set(SHELL_EXECUTABLE ${BASH_EXECUTABLE})
+
+# Windows configurations
+elseif(WIN32)
+    # We don't know which docker image to use for Windows yet
+    message(WARNING "Windows not supported yet. dds.communication.dynamic_interfaces test won't be compiled.")
+    return()
+# Unsupported platform
+else()
+    message(WARNING "Unsupported platform. dds.communication.dynamic_interfaces test won't be compiled.")
+    return()
+endif()
+
+# Configure TinyXML2 library path if installed in user library path
+if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
+    get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
+    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
+    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
+endif()
+
+configure_file(net-tools.Dockerfile
+			   ${CMAKE_CURRENT_BINARY_DIR}/net-tools.Dockerfile @ONLY)
+configure_file(dynamic_interfaces.compose.yml
+			   ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml @ONLY)
+configure_file(launch_subscriber.bash
+			   ${CMAKE_CURRENT_BINARY_DIR}/launch_subscriber.bash @ONLY)
+add_test(NAME feature.ip_mobility.interface_bringup
+		 COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/dynamic_interfaces.compose.yml up
+		 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

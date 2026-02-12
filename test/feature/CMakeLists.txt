@@ -14,3 +14,5 @@
 
 add_subdirectory(dynamic_types)
 add_subdirectory(idl_parser)
+add_subdirectory(ip-mobility)
+add_subdirectory(transport/low-bandwidth)

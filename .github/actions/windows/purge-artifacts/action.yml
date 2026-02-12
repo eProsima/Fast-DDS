@@ -1,0 +1,36 @@
+name: "purge-artifacts"
+description: "Purge artifacts older than a given number of days in a specified folder (Windows)"
+
+inputs:
+  artifacts-folder-path:
+    description: "Path to the folder where artifacts are stored"
+    required: true
+  days:
+    description: "Number of days to keep artifacts"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Find and delete old artifacts
+      shell: pwsh
+      run: |
+        $artPath = "${{ inputs.artifacts-folder-path }}"
+        $days    = [int]"${{ inputs.days }}"
+
+        if (-not (Test-Path $artPath)) {
+          Write-Host "Artifacts folder $artPath does not exist, skipping purge."
+          exit 0
+        }
+
+        $cutoff = (Get-Date).AddDays(-$days)
+
+        Get-ChildItem -Path $artPath -Recurse -Include *.zip |
+          Where-Object { $_.LastWriteTime -lt $cutoff } |
+          ForEach-Object {
+            Write-Host "Deleting old artifact: $($_.FullName)"
+            Remove-Item $_.FullName -Force
+          }
+
+        Write-Host "Purge complete. Artifacts older than $days days removed from $artPath."

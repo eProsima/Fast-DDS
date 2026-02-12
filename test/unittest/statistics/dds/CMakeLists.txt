@@ -321,8 +321,9 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLEndpointParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
+
+        ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
         )
 
     set(STATISTICS_DOMAINPARTICIPANT_STATUS_QUERYABLE_TESTS_SOURCE
@@ -510,8 +511,9 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLEndpointParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
+
+        ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
         )
 
     # SHM Transport

@@ -52,20 +52,19 @@ bool HelloWorldPubSubType::serialize(
         SerializedPayload_t& payload,
         DataRepresentationId_t data_representation)
 {
-    const ::HelloWorld* p_type =
-            static_cast<const ::HelloWorld*>(data);
+    const ::HelloWorld* p_type = static_cast<const ::HelloWorld*>(data);
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
+            data_representation ==
+            DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?eprosima::fastcdr::CdrVersion::XCDRv1 :
+            eprosima::fastcdr::CdrVersion::XCDRv2);
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    ser.set_encoding_flag(
-        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+    ser.set_encoding_flag(data_representation ==
+            DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
 
     try
     {
@@ -92,8 +91,7 @@ bool HelloWorldPubSubType::deserialize(
     try
     {
         // Convert DATA to pointer of your type
-        ::HelloWorld* p_type =
-                static_cast<::HelloWorld*>(data);
+        ::HelloWorld* p_type = static_cast<::HelloWorld*>(data);
 
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
@@ -122,12 +120,11 @@ uint32_t HelloWorldPubSubType::calculate_serialized_size(
 {
     try
     {
-        eprosima::fastcdr::CdrSizeCalculator calculator(
-            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-            eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::CdrSizeCalculator calculator(data_representation ==
+                DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?eprosima::fastcdr::CdrVersion::XCDRv1 :
+                eprosima::fastcdr::CdrVersion::XCDRv2);
         size_t current_alignment {0};
-        const ::HelloWorld* p_type =
-                static_cast<const ::HelloWorld*>(data);
+        const ::HelloWorld* p_type = static_cast<const ::HelloWorld*>(data);
         auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
         return static_cast<uint32_t>(calc_size) + 4u /*encapsulation*/;
     }

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ###############################################################################
-# CMake build rules for Fast DDS
+# CMake build rules for Fast DDS Pro
 ###############################################################################
 cmake_minimum_required(VERSION 3.20)
 
@@ -26,17 +26,53 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Set FASTDDS_LICENSE_ENABLE to AUTO by default.
+set(FASTDDS_LICENSE_ENABLE "AUTO" CACHE STRING "Enable license verification: ON, OFF, or AUTO")
+set_property(CACHE FASTDDS_LICENSE_ENABLE PROPERTY STRINGS "ON;OFF;AUTO")
+
+# Validate the given value
+set(fastdds_license_enable_vals "ON;OFF;AUTO")
+
+list(FIND fastdds_license_enable_vals "${FASTDDS_LICENSE_ENABLE}" license_enable_ret)
+if(license_enable_ret EQUAL -1)
+    message(FATAL_ERROR "FASTDDS_LICENSE_ENABLE must be one of the following values:
+        ON, OFF, AUTO (got: ${FASTDDS_LICENSE_ENABLE})")
+endif()
+
+# Helper function to apply the definition to a target
+#    - ON   -> define FASTDDS_CHECK_LICENSE=1
+#    - OFF  -> not define FASTDDS_CHECK_LICENSE
+#    - AUTO -> define FASTDDS_CHECK_LICENSE=1 for non-Release configs only
+if(FASTDDS_LICENSE_ENABLE STREQUAL "ON")
+  add_compile_definitions(FASTDDS_CHECK_LICENSE=1)
+  set(FASTDDS_LICENSE_CHECK_ENABLED TRUE)
+elseif(FASTDDS_LICENSE_ENABLE STREQUAL "AUTO")
+  # enabled in non-Release builds
+  # disabled in Release
+  add_compile_definitions($<$<NOT:$<CONFIG:Release>>:FASTDDS_CHECK_LICENSE=1>)
+  set(FASTDDS_LICENSE_CHECK_ENABLED TRUE)
+endif()
+
+# Option to embed license data into the binaries
+set(FASTDDS_EMBEDDED_LICENSE_DIR "" CACHE PATH
+    "Path to the directory containing eprosima_license.ipp file. If empty, no license will be embedded.")
+if(FASTDDS_EMBEDDED_LICENSE_DIR)
+    if(NOT EXISTS "${FASTDDS_EMBEDDED_LICENSE_DIR}/eprosima_license.ipp")
+        message(FATAL_ERROR "The specified FASTDDS_EMBEDDED_LICENSE_DIR does not contain eprosima_license.ipp file.")
+    endif()
+    add_compile_definitions(FASTDDS_EMBED_LICENSE=1)
+    include_directories(${FASTDDS_EMBEDDED_LICENSE_DIR})
+endif()
+
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastdds VERSION "3.4.1.0" LANGUAGES C CXX)
+project(fastdds VERSION "3.5.0.1" LANGUAGES C CXX)
 
-set(PROJECT_NAME_LARGE "Fast DDS")
+set(PROJECT_NAME_LARGE "Fast DDS Pro")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
 
 message(STATUS "Version: ${PROJECT_VERSION}")
-
-set(FASTDDS_BASIC_DIR ${PROJECT_SOURCE_DIR})
 
 ###############################################################################
 # eProsima build options
@@ -268,7 +304,7 @@ option(SECURITY "Activate security" OFF)
 if(QNX)
     set(OPENSSL_FOUND 1)
 else()
-    if(SECURITY)
+    if(SECURITY OR FASTDDS_LICENSE_CHECK_ENABLED)
         find_package(OpenSSL REQUIRED)
     else()
         find_package(OpenSSL)
@@ -286,13 +322,13 @@ else()
     set(TLS_FOUND 0)
 endif()
 
-if(SECURITY OR TLS_FOUND)
+if(SECURITY OR TLS_FOUND OR FASTDDS_LICENSE_CHECK_ENABLED)
     set(LINK_SSL 1)
 else()
     set(LINK_SSL 0)
 endif()
 
-if(SECURITY AND QNX)
+if(LINK_SSL AND QNX)
     add_library(OpenSSL::SSL INTERFACE IMPORTED)
     add_library(OpenSSL::Crypto INTERFACE IMPORTED)
 
@@ -431,7 +467,6 @@ add_subdirectory(thirdparty/optionparser)
 ###############################################################################
 # Testing options
 ###############################################################################
-enable_testing()
 include(CTest)
 add_subdirectory(test)
 
@@ -583,11 +618,6 @@ endif()
 ###############################################################################
 # Packaging
 ###############################################################################
-# Install licenses
-install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
-    DESTINATION ${LICENSE_INSTALL_DIR}
-    COMPONENT licenses
-    )
 
 # Install xml validators
 install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastdds_profiles.xsd
@@ -606,7 +636,7 @@ if(INSTALL_EXAMPLES)
   # Install examples
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
       DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples
-      COMPONENT ${DATA_INSTALL_DIR}/fastdds/examples
+      COMPONENT examples
       PATTERN "examples/CMakeLists.txt" EXCLUDE
       )
 endif()

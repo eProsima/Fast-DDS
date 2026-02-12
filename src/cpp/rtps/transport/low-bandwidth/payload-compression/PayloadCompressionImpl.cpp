@@ -1,0 +1,240 @@
+/* Copyright(C) 2025, Proyectos y Sistemas de Mantenimiento SL(eProsima)
+ *
+ * This program is commercial software licensed under the terms of the
+ * eProsima Software License Agreement Rev 03 (the "License")
+ *
+ * You may obtain a copy of the License at
+ * https://www.eprosima.com/licenses/LICENSE-REV03
+ */
+
+#include "PayloadCompressionImpl.hpp"
+
+#if HAVE_ZLIB || HAVE_BZIP2
+
+#if HAVE_ZLIB
+#include <zlib.h>
+#endif // HAVE_ZLIB
+
+#if HAVE_BZIP2
+#include <bzlib.h>
+#if _WIN32
+#include <Windows.h>
+typedef int BZ_API (BZCompressFunc)(
+        char*,
+        unsigned int*,
+        char*,
+        unsigned int,
+        int,
+        int,
+        int);
+typedef int BZ_API (BZDecompressFunc)(
+        char*,
+        unsigned int*,
+        char*,
+        unsigned int,
+        int,
+        int);
+#endif // _WIN32
+#endif // HAVE_BZIP2
+
+#include <stdlib.h>
+#include <string.h>
+
+namespace eprosima {
+namespace fastdds {
+namespace rtps {
+
+void PayloadCompression_init()
+{
+#if HAVE_BZIP2 && _WIN32
+    if (!BZ2_bzBuffToBuffCompress || !BZ2_bzBuffToBuffDecompress)
+    {
+        HMODULE bzip2_library = LoadLibrary("libbz2.dll");
+
+        if (!bzip2_library)
+        {
+            bzip2_library = LoadLibrary("bz2.dll");
+        }
+
+        if (!bzip2_library)
+        {
+            bzip2_library = LoadLibrary("bzip2.dll");
+        }
+
+        if (bzip2_library)
+        {
+
+            BZ2_bzBuffToBuffCompress = (BZCompressFunc)GetProcAddress(bzip2_library, "BZ2_bzBuffToBuffCompress");
+            BZ2_bzBuffToBuffDecompress = (BZDecompressFunc)GetProcAddress(bzip2_library, "BZ2_bzBuffToBuffDecompress");
+        }
+    }
+#endif // if HAVE_BZIP2 && _WIN32
+}
+
+uint32_t PayloadCompression_buffer_alloc(
+        fastdds::rtps::octet*& buffer,
+        uint32_t data_len,
+        bool has_auto)
+{
+    uint32_t size = data_len + 1;
+    uint32_t max_size = size;
+    uint32_t num_libs = 0;
+#if HAVE_ZLIB
+    num_libs++;
+    size = compressBound(data_len) + 1;
+    if (size > max_size)
+    {
+        max_size = size;
+    }
+#endif // if HAVE_ZLIB
+
+#if HAVE_BZIP2
+    num_libs++;
+    size = data_len + (uint32_t) (data_len / 100) + 600 + 1;
+    if (size > max_size)
+    {
+        max_size = size;
+    }
+#endif // if HAVE_BZIP2
+
+    buffer = (fastdds::rtps::octet*) malloc(has_auto ? max_size * num_libs : max_size);
+    return max_size;
+}
+
+bool PayloadCompression_compress(
+        fastdds::rtps::octet* dest_buffer,
+        uint32_t& dest_size,
+        const fastdds::rtps::octet* src_buffer,
+        const uint32_t buffer_length,
+        const PayloadCompressionLevel& options)
+{
+    if (options.library == COMPRESS_LIB_AUTO)
+    {
+        fastdds::rtps::octet* aux_buf = &dest_buffer[1];
+        fastdds::rtps::octet* min_buf = nullptr;
+        uint32_t min_compress_size = UINT32_MAX;
+#if HAVE_ZLIB
+        uLongf zlib_size = dest_size - 1;
+        if ((Z_OK == compress2(aux_buf, &zlib_size, src_buffer, buffer_length,
+                options.level)) && (zlib_size < min_compress_size))
+        {
+            min_compress_size = zlib_size;
+            dest_buffer[0] = (fastdds::rtps::octet) 'Z';
+            min_buf = aux_buf;
+            aux_buf = (aux_buf == &dest_buffer[1]) ? &dest_buffer[dest_size] : &dest_buffer[1];
+        }
+#endif // HAVE_ZLIB
+#if HAVE_BZIP2
+#if _WIN32
+        if (BZ2_bzBuffToBuffCompress)
+#endif // _WIN32
+        {
+            unsigned int bzip2_size = dest_size - 1;
+            if ((BZ_OK == BZ2_bzBuffToBuffCompress((char*)aux_buf, &bzip2_size, (char*)src_buffer, buffer_length,
+                    options.level, 0, 0)) && (bzip2_size < min_compress_size))
+            {
+                min_compress_size = bzip2_size;
+                dest_buffer[0] = (fastdds::rtps::octet) 'B';
+                min_buf = aux_buf;
+                aux_buf = (aux_buf == &dest_buffer[1]) ? &dest_buffer[dest_size] : &dest_buffer[1];
+            }
+        }
+#endif // HAVE_BZIP2
+
+        if (min_buf != nullptr)
+        {
+            if (min_buf != &dest_buffer[1])
+            {
+                memcpy(&dest_buffer[1], min_buf, min_compress_size);
+            }
+
+            dest_size = min_compress_size + 1;
+            return true;
+        }
+    }
+#if HAVE_ZLIB
+    else if (options.library == COMPRESS_LIB_ZLIB)
+    {
+        uLongf out_size = dest_size - 1;
+        if (Z_OK == compress2(&dest_buffer[1], &out_size, src_buffer, buffer_length, options.level))
+        {
+            dest_buffer[0] = (fastdds::rtps::octet) 'Z';
+            dest_size = out_size + 1;
+            return true;
+        }
+    }
+#endif // HAVE_ZLIB
+#if HAVE_BZIP2
+    else if (options.library == COMPRESS_LIB_BZIP2)
+    {
+#if _WIN32
+        if (BZ2_bzBuffToBuffCompress)
+#endif // _WIN32
+        {
+            unsigned int out_size = dest_size - 1;
+            if (BZ_OK == BZ2_bzBuffToBuffCompress((char*)&dest_buffer[1], &out_size, (char*)src_buffer, buffer_length,
+                    options.level, 0, 0))
+            {
+                dest_buffer[0] = (fastdds::rtps::octet) 'B';
+                dest_size = out_size + 1;
+                return true;
+            }
+        }
+    }
+#endif // HAVE_BZIP2
+
+    return false;
+}
+
+bool PayloadCompression_uncompress(
+        fastdds::rtps::octet* dest_buffer,
+        uint32_t& dest_size,
+        const fastdds::rtps::octet* src_buffer,
+        const uint32_t src_length)
+{
+    if (src_length <= 0)
+    {
+        return false;
+    }
+
+#if HAVE_ZLIB
+    if (src_buffer[0] == (fastdds::rtps::octet) 'Z')
+    {
+        uLongf out_size = dest_size;
+        if (Z_OK == uncompress(dest_buffer, &out_size, &src_buffer[1], src_length - 1))
+        {
+            dest_size = out_size;
+            return true;
+        }
+
+        return false;
+    }
+#endif // HAVE_ZLIB
+#if HAVE_BZIP2
+#if _WIN32
+    if (BZ2_bzBuffToBuffDecompress)
+#endif // _WIN32
+    {
+        if (src_buffer[0] == (fastdds::rtps::octet) 'B')
+        {
+            unsigned int out_size = dest_size;
+            if (BZ_OK == BZ2_bzBuffToBuffDecompress((char*)dest_buffer, &out_size, (char*)&src_buffer[1],
+                    src_length - 1, 0, 0))
+            {
+                dest_size = out_size;
+                return true;
+            }
+
+            return false;
+        }
+    }
+#endif // HAVE_BZIP2
+
+    return false;
+}
+
+} // namespace rtps
+} // namespace fastdds
+} // namespace eprosima
+
+#endif // if HAVE_ZLIB || HAVE_BZIP2

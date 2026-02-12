@@ -1,0 +1,65 @@
+name: get-artifact
+description: "Get artifacts stored in other jobs (Ubuntu)"
+
+inputs:
+  name:
+    description: "Name of the artifact to get"
+    required: true
+  artifacts-folder-path:
+    description: "Path to the folder where artifacts are stored"
+    required: true
+  destination-folder-path:
+    description: "Path to the folder where the artifact will be extracted"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install APT dependencies
+      uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+      with:
+        packages: zstd
+        update: false
+        upgrade: false
+
+    - name: Normalize folder paths
+      id: normalize-folder-paths
+      run: |
+        # Remove trailing slash if exists
+        DEST_PATH="${{ inputs.destination-folder-path }}"
+        ART_PATH="${{ inputs.artifacts-folder-path }}"
+        if [[ "$DEST_PATH" == */ ]]; then
+          DEST_PATH="${DEST_PATH%/}"
+        fi
+        if [[ "$ART_PATH" == */ ]]; then
+          ART_PATH="${ART_PATH%/}"
+        fi
+        echo "Normalized destination path: $DEST_PATH"
+        echo "Normalized artifacts path: $ART_PATH"
+        echo "destination-path=$DEST_PATH" >> $GITHUB_OUTPUT
+        echo "artifacts-path=$ART_PATH" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Create destination folder path if it does not exist
+      run: |
+        if [ ! -d "${{ steps.normalize-folder-paths.outputs.destination-path }}" ]; then
+          mkdir -p ${{ steps.normalize-folder-paths.outputs.destination-path }}
+        fi
+        echo "Artifact's destination folder path: ${{ steps.normalize-folder-paths.outputs.destination-path }}"
+      shell: bash
+
+    - name: Check artifact existence
+      run: |
+        if [ ! -f "${{ steps.normalize-folder-paths.outputs.artifacts-path }}/${{ inputs.name }}.tar.zst" ]; then
+          echo "Artifact ${{ inputs.name }} does not exist in path ${{ steps.normalize-folder-paths.outputs.artifacts-path }}"
+          exit 1
+        fi
+        echo "Artifact ${{ inputs.name }} found in path ${{ steps.normalize-folder-paths.outputs.artifacts-path }}"
+      shell: bash
+
+    - name: Uncompress artifact
+      run: |
+        tar -I zstd -xf "${{ steps.normalize-folder-paths.outputs.artifacts-path }}/${{ inputs.name }}.tar.zst" -C "${{ steps.normalize-folder-paths.outputs.destination-path }}"
+        echo "Artifact ${{ inputs.name }} uncompressed to ${{ steps.normalize-folder-paths.outputs.destination-path }}"
+      shell: bash

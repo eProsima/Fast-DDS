@@ -1,0 +1,108 @@
+name: store-artifact
+description: "Store artifacts in a given path to be used in other jobs (Ubuntu) using tar.zst"
+
+inputs:
+  name:
+    description: 'Name of the artifact'
+    required: true
+  artifact-path:
+    description: |
+      Paths (directories/files) to be stored as a single artifact.
+      You can provide multiple paths as:
+        - Multiline (recommended)
+        - Comma-separated
+    required: true
+  destination-folder-path:
+    description: 'Destination folder inside the runner to store the artifact'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install APT dependencies
+      uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+      with:
+        packages: zstd
+        update: false
+        upgrade: false
+
+    - name: Normalize destination path
+      id: normalize-destination-path
+      run: |
+        DEST_PATH="${{ inputs.destination-folder-path }}"
+        if [[ "$DEST_PATH" == */ ]]; then
+          DEST_PATH="${DEST_PATH%/}"
+        fi
+        echo "Normalized destination path: $DEST_PATH"
+        echo "destination-path=$DEST_PATH" >> "$GITHUB_OUTPUT"
+      shell: bash
+
+    - name: Create destination folder path if it does not exist
+      run: |
+        DEST="${{ steps.normalize-destination-path.outputs.destination-path }}"
+        if [ ! -d "$DEST" ]; then
+          mkdir -p "$DEST"
+        fi
+        echo "Artifact's destination folder path: $DEST"
+      shell: bash
+
+    - name: Compress files (tar.zst)
+      run: |
+        set -euo pipefail
+
+        DEST="${{ steps.normalize-destination-path.outputs.destination-path }}"
+        OUTFILE="${DEST}/${{ inputs.name }}.tar.zst"
+
+        if [ ! -d "$DEST" ]; then
+          echo "Destination path '$DEST' does not exist"
+          exit 1
+        fi
+
+        if [ -f "$OUTFILE" ]; then
+          echo "Artifact '${{ inputs.name }}' already exists in destination path '$DEST'"
+          exit 1
+        fi
+
+        # Accept multiline and/or comma-separated lists
+        RAW_PATHS="${{ inputs.artifact-path }}"
+        RAW_PATHS="${RAW_PATHS//,/$'\n'}"
+
+        # Read non-empty lines
+        mapfile -t PATHS < <(printf '%s\n' "$RAW_PATHS" | sed '/^[[:space:]]*$/d')
+
+        if [ "${#PATHS[@]}" -eq 0 ]; then
+          echo "No artifact paths provided in input 'artifact-path'"
+          exit 1
+        fi
+
+        # Trim whitespace, validate, and build list
+        CLEAN_PATHS=()
+        for P in "${PATHS[@]}"; do
+          P="$(echo "$P" | xargs)"  # trim
+          [ -n "$P" ] || continue
+
+          if [ ! -e "$P" ]; then
+            echo "Artifact path '$P' does not exist"
+            exit 1
+          fi
+
+          # This keeps the directory itself if it's a directory (tar will include dir + contents)
+          CLEAN_PATHS+=("$P")
+        done
+
+        if [ "${#CLEAN_PATHS[@]}" -eq 0 ]; then
+          echo "No valid artifact paths after cleaning input"
+          exit 1
+        fi
+
+        echo "Creating artifact: $OUTFILE"
+        echo "Including paths:"
+        printf ' - %s\n' "${CLEAN_PATHS[@]}"
+
+        # PAX format helps retain high-resolution timestamps when available.
+        # zstd -T0 uses all cores; you can adjust compression level if you want.
+        tar --format=pax -I 'zstd -T0' -cf "$OUTFILE" "${CLEAN_PATHS[@]}"
+
+        echo "Artifact '${{ inputs.name }}' compressed to '$OUTFILE'"
+      shell: bash

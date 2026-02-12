@@ -4,8 +4,8 @@
 # (This file is almost an identical copy of the original FindGTest.cmake file,
 #  feel free to use it as it is or modify it for your own needs.)
 
-set(THIRDPARTY_BOOST_INCLUDE_DIR 
-    ${CMAKE_CURRENT_LIST_DIR}/../../thirdparty/boost/include
+set(THIRDPARTY_BOOST_INCLUDE_DIR
+    ${PROJECT_SOURCE_DIR}/thirdparty/boost/include
     CACHE 
     FILEPATH
     "Path to thirdparty/boost"
@@ -21,11 +21,11 @@ endif()
 
 try_compile(IS_THIRDPARTY_BOOST_OK
         ${CMAKE_BINARY_DIR}
-         ${THIRDPARTY_BOOST_INCLUDE_DIR}/../test/ThirdpartyBoostCompile_test.cpp
-         CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${THIRDPARTY_BOOST_INCLUDE_DIR};${CMAKE_CURRENT_LIST_DIR}/../../src/cpp"
-         CXX_STANDARD 11
-         LINK_LIBRARIES ${THIRDPARTY_BOOST_LINK_LIBS}
-         OUTPUT_VARIABLE OUT
+        ${PROJECT_SOURCE_DIR}/thirdparty/boost/test/ThirdpartyBoostCompile_test.cpp
+        CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${THIRDPARTY_BOOST_INCLUDE_DIR};${PROJECT_SOURCE_DIR}/src/cpp"
+        CXX_STANDARD 11
+        LINK_LIBRARIES ${THIRDPARTY_BOOST_LINK_LIBS}
+        OUTPUT_VARIABLE OUT
     )
 
 set(IS_THIRDPARTY_BOOST_SUPPORTED ${IS_THIRDPARTY_BOOST_OK})

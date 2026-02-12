@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles" >
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>udp_transport</transport_id>
+                <type>UDPv4</type>
+            </transport_descriptor>
+            <transport_descriptor>
+                <transport_id>compression_transport</transport_id>
+                <type>PAYLOAD_COMPRESSION</type>
+                <low_level_transport>udp_transport</low_level_transport>
+            </transport_descriptor>
+        </transport_descriptors>
+        <participant profile_name="ParticipantTest">
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <property>
+                            <name>rtps.payload_compression.compression_library</name>
+                            <value>AUTOMATIC</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+                <userTransports>
+                    <transport_id>compression_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>

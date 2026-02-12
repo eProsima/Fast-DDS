@@ -1,4 +1,4 @@
-name: Fast DDS Ubuntu CI
+name: Fast DDS Pro Ubuntu CI
 
 on:
   workflow_dispatch:
@@ -19,8 +19,8 @@ on:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
-      fastdds_branch:
-        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+      fastdds_pro_branch:
+        description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
         type: string
         required: true
       security:
@@ -29,7 +29,7 @@ on:
         type: boolean
         default: true
       run-tests:
-        description: 'Run suite of tests of Fast DDS, Fast DDS python, and Fast DDS Discovery Server'
+        description: 'Run suite of tests of Fast DDS Pro'
         required: false
         type: boolean
         default: true
@@ -37,7 +37,7 @@ on:
         description: 'Use CCache to speed up the build'
         required: false
         type: boolean
-        default: false
+        default: true
 
   pull_request:
     types:
@@ -59,14 +59,14 @@ jobs:
     with:
       # It would be desirable to have a matrix of ubuntu OS for this job, but due to the issue opened in this ticket:
       # https://github.com/orgs/community/discussions/128118 , it has been set as a single OS job.
-      os-image: 'ubuntu-22.04'
+      runner: 'self-hosted'
+      docker-image: 'localhost:5000/eprosima/ubuntu-ci:noble'
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
-      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
-      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      fastdds-pro-branch: ${{ inputs.fastdds_pro_branch || github.ref || 'main' }}
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
       run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
-      use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
-      add-label: ${{ (github.event_name == 'pull_request') && (github.event.pull_request.head.repo.full_name == github.repository) && true || false }}
+      use-ccache: ${{ inputs.use-ccache == true || true }}
+    secrets: inherit

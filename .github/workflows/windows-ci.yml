@@ -1,4 +1,4 @@
-name: Fast DDS Windows CI
+name: Fast DDS Pro Windows CI
 
 on:
   workflow_dispatch:
@@ -19,12 +19,17 @@ on:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
-      fastdds_branch:
-        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+      fastdds_pro_branch:
+        description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
         type: string
         required: true
       run-tests:
         description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
+      use-ccache:
+        description: 'Use CCache to speed up the build'
         required: false
         type: boolean
         default: true
@@ -49,9 +54,11 @@ jobs:
             ) }}
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
+      runner: 'self-hosted'
       label: ${{ inputs.label || 'windows-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
-      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      cmake-args: -DSECURITY=ON ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args }}
-      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+      fastdds-pro-branch: ${{ inputs.fastdds_pro_branch || github.ref || 'main' }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
+      use-ccache: ${{ inputs.use-ccache == true || true }}

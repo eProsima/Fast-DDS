@@ -1,0 +1,55 @@
+name: Purge expired artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Manual trigger"
+      days:
+        description: "Retention in days"
+        default: "30"
+        type: string
+
+  schedule:
+    - cron:  '0 18 * * *'
+
+jobs:
+  Purge-Github:
+    name: Purge expired artifacts (Github)
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh extension install andyfeller/gh-artifact-purge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: gh artifact-purge -p -r ${{ github.repository }} ${{ inputs.days || '30' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Purge-Ubuntu:
+    name: Purge expired artifacts (Ubuntu)
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+      - Ubuntu
+    container:
+      image: 'localhost:5000/eprosima/ubuntu-ci:noble'
+      volumes:
+        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+    steps:
+      - uses: eProsima/Fast-DDS-Pro/.github/actions/linux/purge-artifacts@main
+        with:
+          artifacts-folder-path: /tmp/artifacts
+          days: ${{ inputs.days || '30' }}
+
+  Purge-Windows:
+    name: Purge expired artifacts (Windows)
+    runs-on:
+      - self-hosted
+      - windows
+      - x64
+    steps:
+      - uses: eProsima/Fast-DDS-Pro/.github/actions/windows/purge-artifacts@main
+        with:
+          artifacts-folder-path: c:\github_artifacts
+          days: ${{ inputs.days || '30' }}
