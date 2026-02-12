@@ -277,7 +277,8 @@ rpc::Service* DomainParticipant::create_service(
 }
 
 rpc::Service* DomainParticipant::find_service(
-            const std::string& service_name, ReturnCode_t& ret_code) const
+        const std::string& service_name,
+        ReturnCode_t& ret_code) const
 {
     return impl_->find_service(service_name, ret_code);
 }
@@ -295,9 +296,9 @@ ReturnCode_t DomainParticipant::delete_service(
 }
 
 rpc::Requester* DomainParticipant::create_service_requester(
-            rpc::Service* service,
-            const RequesterQos& requester_qos,
-            ReturnCode_t& ret_code)
+        rpc::Service* service,
+        const RequesterQos& requester_qos,
+        ReturnCode_t& ret_code)
 {
     return impl_->create_service_requester(service, requester_qos, ret_code);
 }
@@ -317,9 +318,9 @@ ReturnCode_t DomainParticipant::delete_service_requester(
 }
 
 rpc::Replier* DomainParticipant::create_service_replier(
-            rpc::Service* service,
-            const ReplierQos& replier_qos,
-            ReturnCode_t& ret_code)
+        rpc::Service* service,
+        const ReplierQos& replier_qos,
+        ReturnCode_t& ret_code)
 {
     return impl_->create_service_replier(service, replier_qos, ret_code);
 }

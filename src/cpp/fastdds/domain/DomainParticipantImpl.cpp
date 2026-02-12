@@ -1897,7 +1897,8 @@ rpc::Service* DomainParticipantImpl::create_service(
 }
 
 rpc::Service* DomainParticipantImpl::find_service(
-            const std::string& /*service_name*/, ReturnCode_t& ret_code) const
+        const std::string& /*service_name*/,
+        ReturnCode_t& ret_code) const
 {
     ret_code = RETCODE_UNSUPPORTED;
     return nullptr;
@@ -1923,9 +1924,9 @@ ReturnCode_t DomainParticipantImpl::delete_service(
 }
 
 rpc::Requester* DomainParticipantImpl::create_service_requester(
-            rpc::Service* /*service*/,
-            const RequesterQos& /*requester_qos*/,
-            ReturnCode_t& ret_code)
+        rpc::Service* /*service*/,
+        const RequesterQos& /*requester_qos*/,
+        ReturnCode_t& ret_code)
 {
     ret_code = RETCODE_UNSUPPORTED;
     return nullptr;
@@ -1953,9 +1954,9 @@ ReturnCode_t DomainParticipantImpl::delete_service_requester(
 }
 
 rpc::Replier* DomainParticipantImpl::create_service_replier(
-            rpc::Service* /*service*/,
-            const ReplierQos& /*replier_qos*/,
-            ReturnCode_t& ret_code)
+        rpc::Service* /*service*/,
+        const ReplierQos& /*replier_qos*/,
+        ReturnCode_t& ret_code)
 {
     ret_code = RETCODE_UNSUPPORTED;
     return nullptr;

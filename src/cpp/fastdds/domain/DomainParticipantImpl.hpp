@@ -352,9 +352,9 @@ public:
      * @return Pointer to the created service. nullptr in error case.
      */
     rpc::Service* create_service(
-        const std::string& service_name,
-        const std::string& service_type_name,
-        ReturnCode_t& ret_code);
+            const std::string& service_name,
+            const std::string& service_type_name,
+            ReturnCode_t& ret_code);
 
     /**
      * Create an enabled RPC service.
@@ -376,7 +376,7 @@ public:
     rpc::Service* find_service(
             const std::string& service_name) const;
 
-     /**
+    /**
      * Find a registered RPC service by name
      *
      * @param service_name Name of the service to search for.
@@ -384,7 +384,8 @@ public:
      * @return Pointer to the service object if found, nullptr if not found.
      */
     rpc::Service* find_service(
-            const std::string& service_name, ReturnCode_t& ret_code) const;
+            const std::string& service_name,
+            ReturnCode_t& ret_code) const;
 
     /**
      * Delete a registered RPC service.
