@@ -348,6 +348,19 @@ public:
      *
      * @param service_name Name of the service.
      * @param service_type_name Type name of the service (Request & reply types)
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the created service. nullptr in error case.
+     */
+    rpc::Service* create_service(
+            const std::string& service_name,
+            const std::string& service_type_name,
+            ReturnCode_t& ret_code);
+
+    /**
+     * Create an enabled RPC service.
+     *
+     * @param service_name Name of the service.
+     * @param service_type_name Type name of the service (Request & reply types)
      * @return Pointer to the created service. nullptr in error case.
      */
     rpc::Service* create_service(
@@ -364,6 +377,17 @@ public:
             const std::string& service_name) const;
 
     /**
+     * Find a registered RPC service by name
+     *
+     * @param service_name Name of the service to search for.
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the service object if found, nullptr if not found.
+     */
+    rpc::Service* find_service(
+            const std::string& service_name,
+            ReturnCode_t& ret_code) const;
+
+    /**
      * Delete a registered RPC service.
      *
      * @param service Pointer to the service object to be deleted.
@@ -371,6 +395,18 @@ public:
      */
     ReturnCode_t delete_service(
             const rpc::Service* service);
+
+    /**
+     * Create a RPC Requester in a given Service.
+     * @param service Pointer to a service object where the requester will be created.
+     * @param requester_qos QoS of the requester.
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the created requester. nullptr in error case.
+     */
+    rpc::Requester* create_service_requester(
+            rpc::Service* service,
+            const RequesterQos& requester_qos,
+            ReturnCode_t& ret_code);
 
     /**
      * Create a RPC Requester in a given Service.
@@ -394,6 +430,20 @@ public:
     ReturnCode_t delete_service_requester(
             const std::string& service_name,
             rpc::Requester* requester);
+
+    /**
+     * Create a RPC Replier in a given Service.
+     *
+     * @param service Pointer to a service object where the Replier will be created.
+     * @param requester_qos QoS of the requester.
+     * @param ret_code Return code indicating the result of the operation.
+     *
+     * @return Pointer to the created replier. nullptr in error case.
+     */
+    rpc::Replier* create_service_replier(
+            rpc::Service* service,
+            const ReplierQos& replier_qos,
+            ReturnCode_t& ret_code);
 
     /**
      * Create a RPC Replier in a given Service.
@@ -651,6 +701,10 @@ public:
             const std::string& type_name) const;
 
     const rpc::ServiceTypeSupport find_service_type(
+            const std::string& service_name,
+            ReturnCode_t& ret_code) const;
+
+    const rpc::ServiceTypeSupport find_service_type(
             const std::string& service_name) const;
 
     InstanceHandle_t get_instance_handle() const;
@@ -765,19 +819,6 @@ protected:
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
 
-    //! RPC Service maps
-    std::map<std::string, rpc::ServiceTypeSupport> service_types_;
-    std::map<std::string, rpc::ServiceImpl*> services_;
-    mutable std::mutex mtx_service_types_;
-    mutable std::mutex mtx_services_;
-
-    //! RPC Services publisher and subscriber
-    std::pair<Subscriber*, SubscriberImpl*> services_subscriber_;
-    std::pair<Publisher*, PublisherImpl*> services_publisher_;
-
-    //! RPC Services Reply topic Content Filter Factory
-    rpc::RequestReplyContentFilterFactory req_rep_filter_factory_;
-
     //!Topic map
     std::map<std::string, TopicProxyFactory*> topics_;
     std::map<InstanceHandle_t, Topic*> topics_by_handle_;
@@ -821,7 +862,8 @@ protected:
                     {
                         std::lock_guard<std::mutex> lock(listener_->participant_->mtx_gs_);
                         assert(
-                            listener_ != nullptr && listener_->participant_ != nullptr && listener_->participant_->listener_ != nullptr &&
+                            listener_ != nullptr && listener_->participant_ != nullptr &&
+                            listener_->participant_->listener_ != nullptr &&
                             listener_->participant_->participant_ != nullptr);
                         --listener_->callback_counter_;
                         notify = !listener_->callback_counter_;

@@ -1564,30 +1564,9 @@ ReturnCode_t DataWriterImpl::set_sample_prefilter(
 }
 
 ReturnCode_t DataWriterImpl::set_related_datareader(
-        const DataReader* related_reader)
+        const DataReader* /*related_reader*/)
 {
-    ReturnCode_t ret = RETCODE_ILLEGAL_OPERATION;
-
-    if (nullptr == writer_)
-    {
-        if (nullptr != related_reader &&
-                related_reader->guid() != c_Guid_Unknown)
-        {
-            if (related_reader->guid().guidPrefix == guid_.guidPrefix)
-            {
-                related_datareader_key_ = related_reader->guid();
-                ret = RETCODE_OK;
-            }
-            else
-            {
-                ret = RETCODE_PRECONDITION_NOT_MET;
-            }
-        }
-        else
-        {
-            ret = RETCODE_BAD_PARAMETER;
-        }
-    }
+    ReturnCode_t ret = RETCODE_UNSUPPORTED;
     return ret;
 }
 
@@ -1867,9 +1846,6 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     publisher_->get_participant_impl()->fill_type_information(type_, publication_data.type_information);
     publication_data.representation = qos_.representation();
 
-    // RPC over DDS
-    publication_data.related_datareader_key = related_datareader_key_;
-
     // eProsima extensions
 
     publication_data.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks;
@@ -2139,8 +2115,8 @@ ReturnCode_t DataWriterImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth << "' is higher than max_samples_per_instance " <<
-                "'" << qos.resource_limits().max_samples_per_instance << "'.");
+                "HISTORY DEPTH '" << qos.history().depth << "' is higher than max_samples_per_instance "
+                                  << "'" << qos.resource_limits().max_samples_per_instance << "'.");
         return RETCODE_INCONSISTENT_POLICY;
     }
     return RETCODE_OK;
@@ -2397,8 +2373,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with " <<
-                        (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with "
+                        << (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
                 return RETCODE_BAD_PARAMETER;
             }
 
@@ -2427,8 +2403,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because " <<
-                        (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because "
+                        << (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
                 return RETCODE_OK;
             }
 

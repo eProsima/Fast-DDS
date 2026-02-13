@@ -32,18 +32,10 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/domain/qos/ReplierQos.hpp>
-#include <fastdds/dds/domain/qos/ReplierQos.hpp>
-#include <fastdds/dds/domain/qos/RequesterQos.hpp>
-#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/rpc/Replier.hpp>
-#include <fastdds/dds/rpc/Requester.hpp>
-#include <fastdds/dds/rpc/Service.hpp>
-#include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
@@ -625,7 +617,8 @@ TEST(ParticipantTests, CreateDomainParticipantWithExtendedQosFromProfile)
 
     // Test create_participant_with_profile using the default profile
     DomainParticipant* default_participant =
-            DomainParticipantFactory::get_instance()->create_participant_with_profile("test_default_participant_profile");
+            DomainParticipantFactory::get_instance()->create_participant_with_profile(
+        "test_default_participant_profile");
     ASSERT_NE(default_participant, nullptr);
     ASSERT_EQ(default_participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_extended_qos_from_profile(default_participant, "test_default_participant_profile");
@@ -1081,8 +1074,9 @@ void set_server_qos(
 }
 
 void set_environment_variable(
-        const std::string environment_servers = "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
-        )
+        const std::string environment_servers =
+        "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
+)
 {
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
@@ -1093,7 +1087,7 @@ void set_environment_variable(
 
 void set_easy_mode_environment_variable(
         const std::string ip = "127.0.0.1"
-        )
+)
 {
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::ROS2_EASY_MODE_URI, ip.c_str()));
@@ -1404,7 +1398,8 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     // Modify environment file
 #ifndef __APPLE__
     std::ofstream file(filename);
-    file <<
+    file
+        <<
         "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783\"}";
     file.close();
 
@@ -2552,242 +2547,6 @@ TEST(ParticipantTests, GetDefaultPublisherQosFromXml)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
-TEST(ParticipantTests, GetReplierProfileQos)
-{
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Extract qos from profile
-    ReplierQos qos;
-    EXPECT_EQ(
-        participant->get_replier_qos_from_profile("test_replier_profile", qos),
-        RETCODE_OK);
-
-    // Test return when a non-existent profile is used
-    EXPECT_EQ(
-        participant->get_replier_qos_from_profile("incorrect_profile_name", qos),
-        RETCODE_BAD_PARAMETER);
-
-    // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, GetReplierQosFromXml)
-{
-    const std::string xml_filename("test_xml_profile.xml");
-    const std::string profile_name("test_replier_profile");
-
-    std::string complete_xml = testing::load_file(xml_filename);
-
-    // Disable created auxiliar entities to avoid polluting traffic
-    DomainParticipantFactoryQos factory_qos;
-    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Get QoS given profile name
-    ReplierQos qos;
-    EXPECT_EQ(
-        participant->get_replier_qos_from_xml(complete_xml, qos, profile_name),
-        RETCODE_OK);
-
-    // Get QoS without providing profile name (gets first one found)
-    ReplierQos qos_empty_profile;
-    EXPECT_EQ(
-        participant->get_replier_qos_from_xml(complete_xml, qos_empty_profile),
-        RETCODE_OK);
-
-    // Check they correspond to the same profile
-    // NOTE: test_replier_profile is assumed to be the first replier profile in the XML file
-    EXPECT_EQ(qos, qos_empty_profile);
-
-    // Load profiles from XML file and get QoS given profile name
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
-    ReplierQos qos_from_profile;
-    EXPECT_EQ(
-        participant->get_replier_qos_from_profile(profile_name, qos_from_profile),
-        RETCODE_OK);
-
-    // Check they correspond to the same profile
-    EXPECT_EQ(qos, qos_from_profile);
-
-    // Test return when a non-existent profile is used
-    EXPECT_EQ(
-        participant->get_replier_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
-        RETCODE_BAD_PARAMETER);
-
-    // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, GetDefaultReplierQosFromXml)
-{
-    const std::string xml_filename("test_xml_profile.xml");
-
-    std::string complete_xml = testing::load_file(xml_filename);
-
-    // Disable created auxiliar entities to avoid polluting traffic
-    DomainParticipantFactoryQos factory_qos;
-    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Get default QoS from XML
-    ReplierQos default_qos;
-    EXPECT_EQ(
-        participant->get_default_replier_qos_from_xml(complete_xml, default_qos),
-        RETCODE_OK);
-
-    // NOTE: cannot load profiles file and compare with default value as
-    // DomainParticipant::get_default_replier_qos is currently unavailable. However, we will
-    // instead load the profile we know is the default one and compare with it.
-
-    // Load profiles from XML file and get default QoS (knowing its profile name)
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
-    ReplierQos default_qos_from_profile;
-    EXPECT_EQ(
-        participant->get_replier_qos_from_profile("test_replier_profile",
-        default_qos_from_profile),
-        RETCODE_OK);
-
-    // Check they correspond to the same profile
-    EXPECT_EQ(default_qos, default_qos_from_profile);
-
-    // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, GetRequesterProfileQos)
-{
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Extract qos from profile
-    RequesterQos qos;
-    EXPECT_EQ(
-        participant->get_requester_qos_from_profile("test_requester_profile", qos),
-        RETCODE_OK);
-
-    // Test return when a non-existent profile is used
-    EXPECT_EQ(
-        participant->get_requester_qos_from_profile("incorrect_profile_name", qos),
-        RETCODE_BAD_PARAMETER);
-
-    // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, GetRequesterQosFromXml)
-{
-    const std::string xml_filename("test_xml_profile.xml");
-    const std::string profile_name("test_requester_profile");
-
-    std::string complete_xml = testing::load_file(xml_filename);
-
-    // Disable created auxiliar entities to avoid polluting traffic
-    DomainParticipantFactoryQos factory_qos;
-    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Get QoS given profile name
-    RequesterQos qos;
-    EXPECT_EQ(
-        participant->get_requester_qos_from_xml(complete_xml, qos, profile_name),
-        RETCODE_OK);
-
-    // Get QoS without providing profile name (gets first one found)
-    RequesterQos qos_empty_profile;
-    EXPECT_EQ(
-        participant->get_requester_qos_from_xml(complete_xml, qos_empty_profile),
-        RETCODE_OK);
-
-    // Check they correspond to the same profile
-    // NOTE: test_requester_profile is assumed to be the first requester profile in the XML file
-    EXPECT_EQ(qos, qos_empty_profile);
-
-    // Load profiles from XML file and get QoS given profile name
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
-    RequesterQos qos_from_profile;
-    EXPECT_EQ(
-        participant->get_requester_qos_from_profile(profile_name, qos_from_profile),
-        RETCODE_OK);
-
-    // Check they correspond to the same profile
-    EXPECT_EQ(qos, qos_from_profile);
-
-    // Test return when a non-existent profile is used
-    EXPECT_EQ(
-        participant->get_requester_qos_from_xml(complete_xml, qos, "incorrect_profile_name"),
-        RETCODE_BAD_PARAMETER);
-
-    // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, GetDefaultRequesterQosFromXml)
-{
-    const std::string xml_filename("test_xml_profile.xml");
-
-    std::string complete_xml = testing::load_file(xml_filename);
-
-    // Disable created auxiliar entities to avoid polluting traffic
-    DomainParticipantFactoryQos factory_qos;
-    DomainParticipantFactory::get_instance()->get_qos(factory_qos);
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Get default QoS from XML
-    RequesterQos default_qos;
-    EXPECT_EQ(
-        participant->get_default_requester_qos_from_xml(complete_xml, default_qos),
-        RETCODE_OK);
-
-    // NOTE: cannot load profiles file and compare with default value as
-    // DomainParticipant::get_default_requester_qos is currently unavailable. However, we will
-    // instead load the profile we know is the default one and compare with it.
-
-    // Load profiles from XML file and get default QoS (knowing its profile name)
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_filename);
-    RequesterQos default_qos_from_profile;
-    EXPECT_EQ(
-        participant->get_requester_qos_from_profile("test_requester_profile",
-        default_qos_from_profile),
-        RETCODE_OK);
-
-    // Check they correspond to the same profile
-    EXPECT_EQ(default_qos, default_qos_from_profile);
-
-    // Clean up
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
 TEST(ParticipantTests, DeletePublisher)
 {
     DomainParticipant* participant =
@@ -3184,280 +2943,6 @@ TEST(ParticipantTests, DeleteTopicInUse)
 
     ASSERT_EQ(participant->delete_publisher(publisher), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, CreateService)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_service_type(service_type, "ServiceType");
-
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, CreateServiceNonRegisteredType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    // Error: Service Type not registered in participant
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_EQ(service, nullptr);
-
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, CreateServiceEmptyParams)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_service_type(service_type, "ServiceType");
-
-    // Error: Empty service name
-    rpc::Service* service = participant->create_service("", "ServiceType");
-    ASSERT_EQ(service, nullptr);
-
-    // Error: Empty service type name
-    service = participant->create_service("Service", "");
-    ASSERT_EQ(service, nullptr);
-
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, CreateServiceAlreadyExists)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_service_type(service_type, "ServiceType");
-    participant->register_service_type(service_type, "ServiceType_2");
-
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    // Error: Service already exists
-    rpc::Service* service_duplicated = participant->create_service("Service", "ServiceType");
-    ASSERT_EQ(service_duplicated, nullptr);
-
-    // Error: Service already exists (with a different service type)
-    rpc::Service* service_duplicated_2 = participant->create_service("Service", "ServiceType_2");
-    ASSERT_EQ(service_duplicated_2, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, CreateServiceTopicsAlreadyExist)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_type(type, "ServiceType_Request");
-    participant->register_type(type, "ServiceType_Reply");
-    participant->register_service_type(service_type, "ServiceType");
-
-    Topic* request_topic = participant->create_topic("Service_Request", "ServiceType_Request", TOPIC_QOS_DEFAULT);
-    ASSERT_NE(request_topic, nullptr);
-
-    // Error: Service Request topic already exists
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_EQ(service, nullptr);
-
-    ASSERT_EQ(participant->delete_topic(request_topic), RETCODE_OK);
-
-    Topic* reply_topic = participant->create_topic("Service_Reply", "ServiceType_Reply", TOPIC_QOS_DEFAULT);
-    ASSERT_NE(reply_topic, nullptr);
-
-    // Error: Service Reply topic already exists
-    service = participant->create_service("Service", "ServiceType");
-    ASSERT_EQ(service, nullptr);
-
-    ASSERT_EQ(participant->delete_topic(reply_topic), RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, FindService)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_service_type(service_type, "ServiceType");
-
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-
-    rpc::Service* registered_service = participant->find_service("Service");
-    ASSERT_NE(registered_service, nullptr);
-
-    // Error: No service with that name is active
-    rpc::Service* unregistered_service = participant->find_service("UnregisteredService");
-    ASSERT_EQ(unregistered_service, nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, DeleteService)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant->register_service_type(service_type, "ServiceType");
-
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-    ASSERT_NE(participant->find_service("Service"), nullptr);
-
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-    ASSERT_EQ(participant->find_service("Service"), nullptr);
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, DeleteServiceFromExternalParticipant)
-{
-    DomainParticipant* participant_0 =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    DomainParticipant* participant_1 =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230 + 1, PARTICIPANT_QOS_DEFAULT);
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant_0->register_service_type(service_type, "ServiceType");
-    participant_1->register_service_type(service_type, "ServiceType");
-
-    rpc::Service* service_0 = participant_0->create_service("Service", "ServiceType");
-    ASSERT_NE(service_0, nullptr);
-
-    rpc::Service* service_1 = participant_1->create_service("Service", "ServiceType");
-    ASSERT_NE(service_1, nullptr);
-
-    // Error: Service belongs to another participant
-    ASSERT_EQ(participant_0->delete_service(service_1), RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant_1->delete_service(service_0), RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_NE(participant_0->find_service("Service"), nullptr);
-    ASSERT_NE(participant_1->find_service("Service"), nullptr);
-
-    ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
-    ASSERT_EQ(participant_0->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_0), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
-}
-
-TEST(ParticipantTests, CreateRequesterReplierOnExternalService)
-{
-    DomainParticipant* participant_0 =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    DomainParticipant* participant_1 =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230 + 1, PARTICIPANT_QOS_DEFAULT);
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant_0->register_service_type(service_type, "ServiceType");
-    participant_1->register_service_type(service_type, "ServiceType");
-
-    rpc::Service* service_0 = participant_0->create_service("Service", "ServiceType");
-    ASSERT_NE(service_0, nullptr);
-
-    rpc::Service* service_1 = participant_1->create_service("Service", "ServiceType");
-    ASSERT_NE(service_1, nullptr);
-
-    RequesterQos requester_qos;
-    ReplierQos replier_qos;
-
-    // Error: Trying to create a requester/replier on a service that belongs to another participant
-    ASSERT_EQ(participant_0->create_service_requester(service_1, requester_qos), nullptr);
-    ASSERT_EQ(participant_1->create_service_replier(service_0, replier_qos), nullptr);
-    ASSERT_EQ(participant_0->create_service_replier(service_1, replier_qos), nullptr);
-    ASSERT_EQ(participant_1->create_service_requester(service_0, requester_qos), nullptr);
-
-    ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
-    ASSERT_EQ(participant_0->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_0), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
-}
-
-TEST(ParticipantTests, DeleteRequesterReplierOnExternalService)
-{
-    DomainParticipant* participant_0 =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    DomainParticipant* participant_1 =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230 + 1, PARTICIPANT_QOS_DEFAULT);
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    participant_0->register_service_type(service_type, "ServiceType");
-    participant_1->register_service_type(service_type, "ServiceType");
-
-    rpc::Service* service_0 = participant_0->create_service("Service", "ServiceType");
-    ASSERT_NE(service_0, nullptr);
-
-    rpc::Service* service_1 = participant_1->create_service("Service", "ServiceType");
-    ASSERT_NE(service_1, nullptr);
-
-    RequesterQos requester_qos;
-    ReplierQos replier_qos;
-
-    rpc::Requester* requester_0 = participant_0->create_service_requester(service_0, requester_qos);
-    rpc::Requester* requester_1 = participant_1->create_service_requester(service_1, requester_qos);
-    rpc::Replier* replier_0 = participant_0->create_service_replier(service_0, replier_qos);
-    rpc::Replier* replier_1 = participant_1->create_service_replier(service_1, replier_qos);
-
-    // Error: Trying to delete a requester/replier on a service that belongs to another participant
-    ASSERT_EQ(participant_0->delete_service_requester("Service", requester_1), RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant_1->delete_service_requester("Service", requester_0), RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant_0->delete_service_replier("Service", replier_1), RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant_1->delete_service_replier("Service", replier_0), RETCODE_PRECONDITION_NOT_MET);
-
-    ASSERT_EQ(participant_0->delete_service_requester("Service", requester_0), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_service_requester("Service", requester_1), RETCODE_OK);
-    ASSERT_EQ(participant_0->delete_service_replier("Service", replier_0), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_service_replier("Service", replier_1), RETCODE_OK);
-    ASSERT_EQ(participant_0->delete_service(service_0), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_service(service_1), RETCODE_OK);
-    ASSERT_EQ(participant_0->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(participant_1->delete_contained_entities(), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_0), RETCODE_OK);
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_1), RETCODE_OK);
 }
 
 // Check that the constraints on maximum expression parameter size are honored
@@ -3861,130 +3346,6 @@ TEST(ParticipantTests, RegisterTypeNegativeClauses)
     EXPECT_EQ(type.register_type(participant), RETCODE_BAD_PARAMETER);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, RegisterServiceType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, RegisterServiceTypeInvalid)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    // Case 1: ServiceTypeSupport with empty service type name
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, ""), RETCODE_BAD_PARAMETER);
-
-    // Case 2: ServiceTypeSupport with invalid request type
-    TypeSupport type_invalid = TypeSupport(nullptr);
-    rpc::ServiceTypeSupport service_type_invalid(type_invalid, type);
-    ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_BAD_PARAMETER);
-
-    // Case 3: ServiceTypeSupport with invalid reply type
-    service_type_invalid = rpc::ServiceTypeSupport(type, type_invalid);
-    ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_BAD_PARAMETER);
-
-    // Case 4: Another ServiceTypeSupport already registered with the same name
-    TopicDataTypeMock* data_type = new TopicDataTypeMock();
-    data_type->set_name("bartype");
-    service_type_invalid = rpc::ServiceTypeSupport(TypeSupport(data_type), type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    ASSERT_EQ(participant->register_service_type(service_type_invalid, "ServiceType"), RETCODE_PRECONDITION_NOT_MET);
-
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, FindServiceType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    rpc::ServiceTypeSupport found_service_type = participant->find_service_type("ServiceType");
-    ASSERT_FALSE(found_service_type.empty_types());
-    rpc::ServiceTypeSupport not_found_service_type = participant->find_service_type("UnregisteredServiceType");
-    ASSERT_TRUE(not_found_service_type.empty_types());
-
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, UnregisterServiceType)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-    ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_OK);
-    ASSERT_TRUE((participant->find_service_type("ServiceType")).empty_types());
-    ASSERT_TRUE((participant->find_type("ServiceType_Request")).empty());
-    ASSERT_TRUE((participant->find_type("ServiceType_Reply")).empty());
-
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-TEST(ParticipantTests, UnregisterServiceTypeInvalid)
-{
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    // Case 1: Unregister a service type with empty name
-    ASSERT_EQ(participant->unregister_service_type(""), RETCODE_BAD_PARAMETER);
-
-    // Case 2: Unregister a non-registered service type. Nothing to do
-    ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_OK);
-
-    // Case 3: Unregister a service type used by a service
-    TypeSupport type(new TopicDataTypeMock());
-    rpc::ServiceTypeSupport service_type(type, type);
-    ASSERT_EQ(participant->register_service_type(service_type, "ServiceType"), RETCODE_OK);
-
-    rpc::Service* service = participant->create_service("Service", "ServiceType");
-    ASSERT_NE(service, nullptr);
-    ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_PRECONDITION_NOT_MET);
-    ASSERT_EQ(participant->delete_service(service), RETCODE_OK);
-
-    ASSERT_FALSE((participant->find_service_type("ServiceType")).empty_types());
-    ASSERT_FALSE((participant->find_type("ServiceType_Request")).empty());
-    ASSERT_FALSE((participant->find_type("ServiceType_Reply")).empty());
-
-    // Case 4: Unregister a service type with request/reply types used by another topic
-    Topic* topic = participant->create_topic("footopic", "ServiceType_Request", TOPIC_QOS_DEFAULT);
-    ASSERT_NE(topic, nullptr);
-    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
-    DataReader* reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
-    ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_PRECONDITION_NOT_MET);
-
-    ASSERT_EQ(subscriber->delete_datareader(reader), RETCODE_OK);
-    ASSERT_EQ(participant->delete_subscriber(subscriber), RETCODE_OK);
-    ASSERT_EQ(participant->delete_topic(topic), RETCODE_OK);
-
-    ASSERT_FALSE((participant->find_service_type("ServiceType")).empty_types());
-    ASSERT_FALSE((participant->find_type("ServiceType_Request")).empty());
-
-    // Type not used by any topic/service, unregister it
-    ASSERT_EQ(participant->unregister_service_type("ServiceType"), RETCODE_OK);
-
-    ASSERT_EQ(participant->delete_contained_entities(), RETCODE_OK);
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
@@ -4441,7 +3802,8 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
     traits<TypeDescriptor>::ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name("mystruct");
-    traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
     traits<MemberDescriptor>::ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
     member_descriptor->name("myuint");
