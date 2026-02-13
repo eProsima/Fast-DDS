@@ -18,6 +18,5 @@
 
 #ifndef FASTDDS_DDS_RPC__INTERFACES_HPP
 #define FASTDDS_DDS_RPC__INTERFACES_HPP
-// TODO (ecuestaf): Removed all the includes here, consider also removing the whole file.
 
 #endif  // FASTDDS_DDS_RPC__INTERFACES_HPP
