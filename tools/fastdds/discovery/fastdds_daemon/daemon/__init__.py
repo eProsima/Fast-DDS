@@ -34,7 +34,6 @@ from discovery.fastdds_daemon.helpers import pretty_print_call
 
 from discovery.fastdds_daemon.process_handler.process_handler import ProcessHandler
 
-# TODO (ecuesta): Check what to do with this
 from discovery.fastdds_daemon.xmlrpc_local.local_server import LocalXMLRPCServer
 from discovery.fastdds_daemon.xmlrpc_local.local_server import SimpleXMLRPCRequestHandler
 

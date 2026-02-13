@@ -1564,30 +1564,9 @@ ReturnCode_t DataWriterImpl::set_sample_prefilter(
 }
 
 ReturnCode_t DataWriterImpl::set_related_datareader(
-        const DataReader* related_reader)
+        const DataReader* /*related_reader*/)
 {
-    ReturnCode_t ret = RETCODE_ILLEGAL_OPERATION;
-
-    if (nullptr == writer_)
-    {
-        if (nullptr != related_reader &&
-                related_reader->guid() != c_Guid_Unknown)
-        {
-            if (related_reader->guid().guidPrefix == guid_.guidPrefix)
-            {
-                related_datareader_key_ = related_reader->guid();
-                ret = RETCODE_OK;
-            }
-            else
-            {
-                ret = RETCODE_PRECONDITION_NOT_MET;
-            }
-        }
-        else
-        {
-            ret = RETCODE_BAD_PARAMETER;
-        }
-    }
+    ReturnCode_t ret = RETCODE_UNSUPPORTED;
     return ret;
 }
 
@@ -1866,9 +1845,6 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
     // XTypes 1.3
     publisher_->get_participant_impl()->fill_type_information(type_, publication_data.type_information);
     publication_data.representation = qos_.representation();
-
-    // RPC over DDS
-    publication_data.related_datareader_key = related_datareader_key_;
 
     // eProsima extensions
 
