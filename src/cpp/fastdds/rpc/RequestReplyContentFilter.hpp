@@ -50,8 +50,7 @@ public:
             const FilterSampleInfo& sample_info,
             const GUID_t& reader_guid) const override
     {
-        static_cast<void>(payload);
-        return sample_info.related_sample_identity.writer_guid().guidPrefix == reader_guid.guidPrefix;
+        return true;
     }
 
 };

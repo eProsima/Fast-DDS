@@ -19,6 +19,4 @@
 #ifndef FASTDDS_DDS_RPC__EXCEPTIONS_HPP
 #define FASTDDS_DDS_RPC__EXCEPTIONS_HPP
 
-// TODO (ecuestaf): Removed all the includes here, consider also removing the whole file.
-
 #endif  // FASTDDS_DDS_RPC__EXCEPTIONS_HPP
