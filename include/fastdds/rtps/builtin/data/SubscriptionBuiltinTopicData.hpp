@@ -125,8 +125,6 @@ struct SubscriptionBuiltinTopicData
     /// Type consistency enforcement Qos, NOT implemented in the library.
     dds::TypeConsistencyEnforcementQosPolicy type_consistency;
 
-    // TODO (ecuesta): Remove this? Only the comment? I guess the user should still be aple to implement its own RPC
-    // (this appears multiple times in the code, some of them in private interfaces so removing it would not break ABI)
     // RPC over DDS V1.0
 
     // Related DataWriter Key
