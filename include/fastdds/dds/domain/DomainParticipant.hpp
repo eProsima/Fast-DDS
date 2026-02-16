@@ -1198,7 +1198,7 @@ public:
     /**
      * This method gives access to a registered service type based on its name.
      *
-     * @param service_name Name of the type
+     * @param service_type_name Name of the type
      * @param ret_code Return code indicating the result of the operation.
      * @return ServiceTypeSupport corresponding to the service_type_name
      */
