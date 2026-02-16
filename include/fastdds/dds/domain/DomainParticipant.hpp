@@ -489,7 +489,7 @@ public:
      * Create a RPC Replier in a given Service.
      *
      * @param service Pointer to a service object where the Replier will be created.
-     * @param requester_qos QoS of the requester.
+     * @param replier_qos QoS of the replier.
      * @param ret_code Return code indicating the result of the operation.
      *
      * @return Pointer to the created replier. nullptr in error case.
