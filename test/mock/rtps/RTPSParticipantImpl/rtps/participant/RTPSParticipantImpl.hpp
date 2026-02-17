@@ -337,7 +337,7 @@ public:
     {
     }
 
-    template <EndpointKind_t kind, octet no_key, octet with_key>
+    template<EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t&,
             std::atomic<uint32_t>&,
@@ -369,7 +369,7 @@ public:
 
     MOCK_METHOD0(has_shm_transport, bool());
 
-    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
+    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager * ());
 
     uint32_t getRTPSParticipantID() const
     {

@@ -269,8 +269,9 @@ bool StatefulReader::matched_writer_add_edp(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
-                        ") reached for writer " << m_guid);
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers \
+                                                                                       << ") reached for writer "
+                                                                                       << m_guid);
                 return false;
             }
         }
@@ -624,8 +625,9 @@ bool StatefulReader::process_data_msg(
             if (!change_pool_->reserve_cache(change_to_add))
             {
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
-                        IDSTRING "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: " <<
-                        m_guid );
+                        IDSTRING
+                        "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
+                        << m_guid );
                 return false;
             }
 
@@ -727,8 +729,8 @@ bool StatefulReader::process_data_frag_msg(
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
             EPROSIMA_LOG_INFO(RTPS_MSG_IN,
-                    IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " <<
-                    getGuid().entityId);
+                    IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: "
+                                                       << getGuid().entityId);
 
             size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
             bool will_never_be_accepted = false;
@@ -838,8 +840,10 @@ bool StatefulReader::process_data_frag_msg(
                          */
                         if (fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE == rejection_reason)
                         {
-                            EPROSIMA_LOG_ERROR(RTPS_READER, "Change received from " << work_change->writerGUID << " with sequence number: " <<
-                                    work_change->sequenceNumber << " ignored. Could not compute key in keyed topic.");
+                            EPROSIMA_LOG_ERROR(RTPS_READER,
+                                    "Change received from " << work_change->writerGUID << " with sequence number: "
+                                                            << work_change->sequenceNumber
+                                                            << " ignored. Could not compute key in keyed topic.");
                             pWP->irrelevant_change_set(work_change->sequenceNumber);
                             has_to_notify = true;
                         }
@@ -1133,8 +1137,10 @@ bool StatefulReader::change_received(
                     }
                 }
 
-                EPROSIMA_LOG_INFO(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                                       << a_change->sequenceNumber <<
+                EPROSIMA_LOG_INFO(RTPS_READER,
+                        "Change received from " << a_change->writerGUID << " with sequence number: "
+                                                << a_change->sequenceNumber
+                                                <<
                         " skipped. Higher sequence numbers have been received.");
                 return false;
             }
@@ -1214,8 +1220,10 @@ bool StatefulReader::change_received(
              */
             if (fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE == rejection_reason)
             {
-                EPROSIMA_LOG_ERROR(RTPS_READER, "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                                        << a_change->sequenceNumber <<
+                EPROSIMA_LOG_ERROR(RTPS_READER,
+                        "Change received from " << a_change->writerGUID << " with sequence number: "
+                                                << a_change->sequenceNumber
+                                                <<
                         " ignored. Could not compute key in keyed topic.");
                 prox->irrelevant_change_set(a_change->sequenceNumber);
                 NotifyChanges(prox);
@@ -1359,8 +1367,8 @@ CacheChange_t* StatefulReader::next_untaken_cache()
         else
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                    " because is no longer paired");
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID
+                                       << " because is no longer paired");
             it = history_->remove_change(it);
         }
 
@@ -1408,8 +1416,8 @@ CacheChange_t* StatefulReader::next_unread_cache()
         else
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                    " because is no longer paired");
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID
+                                       << " because is no longer paired");
             it = history_->remove_change(it);
             continue;
         }

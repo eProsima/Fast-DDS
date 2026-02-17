@@ -50,7 +50,7 @@ struct MockProxyQueryable : public IProxyQueryable
 
     MOCK_METHOD2(get_serialized_proxy, bool(
                 const fastdds::rtps::GUID_t& guid,
-                fastdds::rtps::CDRMessage_t* msg));
+                fastdds::rtps::CDRMessage_t * msg));
 };
 
 

@@ -65,7 +65,7 @@ public:
      * @brief push Move an object to the queue.
      * @param item The object to push to the queue.
      */
-    template <typename O>
+    template<typename O>
     void push(
             O&& item)
     {

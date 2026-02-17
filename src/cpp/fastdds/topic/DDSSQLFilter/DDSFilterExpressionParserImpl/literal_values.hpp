@@ -20,11 +20,11 @@
  */
 
 struct literal_value_processor
-    : parse_tree::apply< literal_value_processor >
+    : parse_tree::apply<literal_value_processor>
 {
-    template< typename ... States >
+    template<typename ... States>
     static void transform(
-            std::unique_ptr< ParseNode >& n,
+            std::unique_ptr<ParseNode>& n,
             States&&... /*st*/)
     {
         n->value.reset(new DDSFilterValue());

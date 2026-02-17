@@ -246,7 +246,8 @@ static bool verify_certificate(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_verify_cert_error_string(
+                EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION,
+                        "Invalidation error of certificate  (" << X509_verify_cert_error_string(
                             errorCode) << ")");
             }
         }

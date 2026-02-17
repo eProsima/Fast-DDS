@@ -504,15 +504,17 @@ void DiscoveryDataBase::process_pdp_data_queue()
         if (data_queue_info.change()->kind == eprosima::fastdds::rtps::ALIVE)
         {
             // Update participants map
-            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(p) of entity " << data_queue_info.change()->instanceHandle <<
-                    " received from: " << data_queue_info.change()->writerGUID);
+            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(p) of entity " << data_queue_info.change()->instanceHandle
+                                                                       << " received from: "
+                                                                       << data_queue_info.change()->writerGUID);
             create_participant_from_change_(data_queue_info.change(), data_queue_info.participant_change_data());
         }
         // If the change is a DATA(Up)
         else
         {
-            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(Up) of entity " << data_queue_info.change()->instanceHandle <<
-                    " received from: " << data_queue_info.change()->writerGUID);
+            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "DATA(Up) of entity " << data_queue_info.change()->instanceHandle
+                                                                        << " received from: "
+                                                                        << data_queue_info.change()->writerGUID);
             process_dispose_participant_(data_queue_info.change());
         }
     }
@@ -1803,8 +1805,10 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     auto remote_server_it = db_->participants_.find(*it);
                     if (remote_server_it == db_->participants_.end())
                     {
-                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Change " << change_->instanceHandle <<
-                                "check as acked for " << reader_proxy->guid() << " as it has not answered pinging yet");
+                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Change " << change_->instanceHandle
+                                                                        << "check as acked for "
+                                                                        << reader_proxy->guid()
+                                                                        << " as it has not answered pinging yet");
                         return;
                     }
 
@@ -2572,8 +2576,8 @@ bool DiscoveryDataBase::from_json(
             }
 
             EPROSIMA_LOG_INFO(DISCOVERY_DATABASE,
-                    "Writer " << guid_aux << " created with instance handle " <<
-                    wit.first->second.change()->instanceHandle);
+                    "Writer " << guid_aux << " created with instance handle "
+                              << wit.first->second.change()->instanceHandle);
 
             if (change->kind != fastdds::rtps::ALIVE)
             {

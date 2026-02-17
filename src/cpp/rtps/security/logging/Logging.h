@@ -165,7 +165,7 @@ protected:
             BuiltinLoggingType& builtin_msg,
             SecurityException& exception) const;
 
-    template <typename Stream>
+    template<typename Stream>
     bool compose_header(
             Stream& header,
             const BuiltinLoggingType& builtin_msg,
@@ -194,7 +194,7 @@ private:
     std::string domain_id_str_;
 };
 
-template <typename Stream>
+template<typename Stream>
 bool Logging::compose_header(
         Stream& header,
         const BuiltinLoggingType& builtin_msg,
