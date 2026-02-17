@@ -41,7 +41,7 @@ struct asio_helpers
      *
      * @return true if the buffer size was successfully set, false otherwise.
      */
-    template <typename BufferOptionType, typename SocketType>
+    template<typename BufferOptionType, typename SocketType>
     static inline bool try_setting_buffer_size(
             SocketType& socket,
             const uint32_t initial_buffer_value,
@@ -112,7 +112,7 @@ struct asio_helpers
      *
      * @return true if the buffer size was successfully set, false otherwise.
      */
-    template <typename BufferOptionType, typename SocketType>
+    template<typename BufferOptionType, typename SocketType>
     static inline bool configure_buffer_size(
             SocketType& socket,
             const uint32_t initial_buffer_value,

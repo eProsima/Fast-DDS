@@ -142,9 +142,9 @@ void WaitsetSubscriberApp::run()
                     }
                     else
                     {
-                        std::cout << status_.current_count_change <<
-                            " is not a valid value for SubscriptionMatchedStatus current count change" <<
-                            std::endl;
+                        std::cout << status_.current_count_change
+                                  << " is not a valid value for SubscriptionMatchedStatus current count change"
+                                  << std::endl;
                     }
                 }
                 if (changed_statuses.is_active(StatusMask::data_available()))

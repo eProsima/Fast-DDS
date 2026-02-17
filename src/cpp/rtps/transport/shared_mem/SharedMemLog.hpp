@@ -276,8 +276,8 @@ public:
                          + deadlock by absence of Run() loop activity (by using BothEmpty() call)
                          */
                         return !resources_.logging ||
-                        ( resources_.logs.Empty() &&
-                        ( last_loop != resources_.current_loop || resources_.logs.BothEmpty()));
+                               ( resources_.logs.Empty() &&
+                               ( last_loop != resources_.current_loop || resources_.logs.BothEmpty()));
                     });
 
             last_loop = resources_.current_loop;

@@ -159,7 +159,7 @@ public:
      * @param qos QoS to validate
      * @return True if the parameters are valid, false otherwise
      */
-    template <typename T>
+    template<typename T>
     bool validate_qos(
             const T& qos)
     {

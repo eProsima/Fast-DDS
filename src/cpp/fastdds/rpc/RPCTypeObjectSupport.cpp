@@ -95,7 +95,8 @@ void register_RpcException_type_identifier(
             MemberId member_id_message = 0x00000000;
             bool common_message_ec {false};
             CommonStructMember common_message {TypeObjectUtils::build_common_struct_member(member_id_message,
-                                                       member_flags_message, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                       member_flags_message,
+                                                       TypeObjectUtils::retrieve_complete_type_identifier(
                                                            type_ids_message,
                                                            common_message_ec))};
             if (!common_message_ec)
@@ -324,7 +325,8 @@ void register_RpcFeedCancelledException_type_identifier(
             MemberId member_id_reason = 0x00000001;
             bool common_reason_ec {false};
             CommonStructMember common_reason {TypeObjectUtils::build_common_struct_member(member_id_reason,
-                                                      member_flags_reason, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                      member_flags_reason,
+                                                      TypeObjectUtils::retrieve_complete_type_identifier(
                                                           type_ids_reason,
                                                           common_reason_ec))};
             if (!common_reason_ec)
@@ -638,7 +640,8 @@ void register_RpcRemoteException_type_identifier(
             MemberId member_id_code = 0x00000001;
             bool common_code_ec {false};
             CommonStructMember common_code {TypeObjectUtils::build_common_struct_member(member_id_code,
-                                                    member_flags_code, TypeObjectUtils::retrieve_complete_type_identifier(
+                                                    member_flags_code,
+                                                    TypeObjectUtils::retrieve_complete_type_identifier(
                                                         type_ids_code,
                                                         common_code_ec))};
             if (!common_code_ec)

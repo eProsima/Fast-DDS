@@ -40,7 +40,8 @@ public:
      * Constructor.
      */
     RemoteUnknownOperationError()
-        : RemoteUnknownOperationError("The operation called is unknown")
+        : RemoteUnknownOperationError(
+                "The operation called is unknown")
     {
     }
 

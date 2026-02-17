@@ -32,7 +32,7 @@ class thread
 
 #ifdef _WIN32
     // This method is a generic proxy that serves as the starting address of the thread
-    template <typename CalleeType>
+    template<typename CalleeType>
     static unsigned __stdcall ThreadProxy(
             void* Ptr)
     {
@@ -46,7 +46,7 @@ class thread
 
 #else
     // This method is a generic proxy that serves as the starting address of the thread
-    template <typename CalleeType>
+    template<typename CalleeType>
     static void* ThreadProxy(
             void* Ptr)
     {

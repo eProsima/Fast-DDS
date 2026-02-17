@@ -40,7 +40,8 @@ public:
      * Constructor.
      */
     RemoteInvalidArgumentError()
-        : RemoteInvalidArgumentError("The value of a parameter passed has an illegal value")
+        : RemoteInvalidArgumentError(
+                "The value of a parameter passed has an illegal value")
     {
     }
 

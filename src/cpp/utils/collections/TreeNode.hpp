@@ -28,7 +28,7 @@ namespace collections {
 /**
  * Generic data struct of with an internal value of type \c Info .
  */
-template <typename Info>
+template<typename Info>
 struct Node
 {
 public:
@@ -49,7 +49,7 @@ public:
 /**
  * Class that represents each of the Nodes that form a Tree, including the source and the leaves.
  */
-template <typename Info>
+template<typename Info>
 class TreeNode : public Node<Info>
 {
 public:
@@ -78,7 +78,7 @@ protected:
     std::list<TreeNode> branches_;
 };
 
-template <typename Info>
+template<typename Info>
 inline std::ostream& operator <<(
         std::ostream& output,
         const TreeNode<Info>& node)

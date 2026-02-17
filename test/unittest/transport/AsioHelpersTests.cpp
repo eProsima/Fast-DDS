@@ -35,7 +35,7 @@ using namespace eprosima::fastdds::rtps;
 
 // Regression tests for redmine issue #22210
 
-template <typename BufferOption, typename SocketType, typename Protocol>
+template<typename BufferOption, typename SocketType, typename Protocol>
 void test_buffer_setting(
         int initial_buffer_value,
         int minimum_buffer_value)

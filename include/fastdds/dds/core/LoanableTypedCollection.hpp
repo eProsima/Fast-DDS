@@ -55,7 +55,7 @@ public:
      *
      * @return a reference to the element at position @c n
      */
-    template <typename Enabler = _NonConstEnabler>
+    template<typename Enabler = _NonConstEnabler>
     typename std::enable_if<Enabler::value, T>::type& operator [](
             size_type n)
     {

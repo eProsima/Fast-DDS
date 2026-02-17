@@ -117,7 +117,7 @@ public:
      *
      * This kind of object needs to be locked because could be used outside the writer's mutex.
      */
-    template <class Clock, class Duration>
+    template<class Clock, class Duration>
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {

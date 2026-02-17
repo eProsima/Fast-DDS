@@ -229,8 +229,8 @@ private:
         {
             RosDiscoveryInfoPubSubType::type discovery_info;
             std::stringstream ss;
-            ss << "Publication " << publication->writer()->guid() << " created on topic " <<
-                publication->writer()->get_topic()->get_name();
+            ss << "Publication " << publication->writer()->guid() << " created on topic "
+               << publication->writer()->get_topic()->get_name();
             discovery_info.message(ss.str());
             discovery_info_pub_->writer()->write(&discovery_info);
         }
@@ -243,8 +243,8 @@ private:
         {
             RosDiscoveryInfoPubSubType::type discovery_info;
             std::stringstream ss;
-            ss << "Publication " << publication->writer()->guid() << " deleted on topic " <<
-                publication->writer()->get_topic()->get_name();
+            ss << "Publication " << publication->writer()->guid() << " deleted on topic "
+               << publication->writer()->get_topic()->get_name();
             discovery_info.message(ss.str());
             discovery_info_pub_->writer()->write(&discovery_info);
         }
@@ -257,8 +257,8 @@ private:
         {
             RosDiscoveryInfoPubSubType::type discovery_info;
             std::stringstream ss;
-            ss << "Subscription " << subscription->reader()->guid() << " created on topic " <<
-                subscription->reader()->get_topicdescription()->get_name();
+            ss << "Subscription " << subscription->reader()->guid() << " created on topic "
+               << subscription->reader()->get_topicdescription()->get_name();
             discovery_info.message(ss.str());
             discovery_info_pub_->writer()->write(&discovery_info);
         }
@@ -271,8 +271,8 @@ private:
         {
             RosDiscoveryInfoPubSubType::type discovery_info;
             std::stringstream ss;
-            ss << "Subscription " << subscription->reader()->guid() << " deleted on topic " <<
-                subscription->reader()->get_topicdescription()->get_name();
+            ss << "Subscription " << subscription->reader()->guid() << " deleted on topic "
+               << subscription->reader()->get_topicdescription()->get_name();
             discovery_info.message(ss.str());
             discovery_info_pub_->writer()->write(&discovery_info);
         }

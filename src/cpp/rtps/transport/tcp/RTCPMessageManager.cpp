@@ -446,8 +446,8 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     {
         sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, RETCODE_INCOMPATIBLE_VERSION);
         EPROSIMA_LOG_WARNING(RTCP, "Rejected client due to INCOMPATIBLE_VERSION: Expected: " << c_rtcpProtocolVersion
-                                                                                             << " but received " <<
-                request.protocolVersion());
+                                                                                             << " but received "
+                                                                                             << request.protocolVersion());
         return RETCODE_INCOMPATIBLE_VERSION;
     }
 
@@ -706,10 +706,10 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
             request.deserialize(&payload);
 
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " <<
-                    "LogicalPort: " << IPLocator::getLogicalPort(
+            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] "
+                    << "LogicalPort: " << IPLocator::getLogicalPort(
                         request.transportLocator())
-                                                                             << ", Physical remote: " << IPLocator::getPhysicalPort(
+                    << ", Physical remote: " << IPLocator::getPhysicalPort(
                         request.transportLocator()));
 
             responseCode = processBindConnectionRequest(channel, request, controlHeader.transaction_id(), myLocator);

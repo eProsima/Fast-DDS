@@ -156,7 +156,7 @@ UDPv6Transport::UDPv6Transport(
                         [infoIP](const AllowedNetworkInterface& allowlist_element)
                         {
                             return allowlist_element.name == infoIP.dev ||
-                            compare_ips(allowlist_element.name, infoIP.name);
+                                   compare_ips(allowlist_element.name, infoIP.name);
                         }) != allow_end ))
                 {
                     EPROSIMA_LOG_WARNING(TRANSPORT_UDPV6,
@@ -179,7 +179,7 @@ UDPv6Transport::UDPv6Transport(
                     [&infoIP](const AllowedNetworkInterface& allowlist_element)
                     {
                         return allowlist_element.name == infoIP.dev || compare_ips(allowlist_element.name,
-                        infoIP.name);
+                               infoIP.name);
                     });
                 if (allow_it != allow_end)
                 {
@@ -195,9 +195,10 @@ UDPv6Transport::UDPv6Transport(
                     {
                         EPROSIMA_LOG_WARNING(TRANSPORT_UDPV6,
                                 "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name
-                                                              << " as its netmask filter configuration (" << netmask_filter << ") is incompatible"
-                                                              << " with descriptor's (" << descriptor.netmask_filter <<
-                                ").");
+                                                              << " as its netmask filter configuration ("
+                                                              << netmask_filter << ") is incompatible"
+                                                              << " with descriptor's (" << descriptor.netmask_filter
+                                                              << ").");
                     }
                 }
             }
@@ -492,8 +493,9 @@ bool UDPv6Transport::OpenInputChannel(
                 }
                 catch (asio::system_error const& e)
                 {
-                    EPROSIMA_LOG_WARNING(TRANSPORT_UDPV6, "UDPTransport Error binding " << locatorAddressStr << " at port: (" <<
-                            IPLocator::getPhysicalPort(
+                    EPROSIMA_LOG_WARNING(TRANSPORT_UDPV6,
+                            "UDPTransport Error binding " << locatorAddressStr << " at port: ("
+                                                          << IPLocator::getPhysicalPort(
                                 locator) << ") with msg: " << e.what());
                     (void)e;
                 }

@@ -1272,7 +1272,8 @@ TEST_F(XMLParserTests, getXMLSubscriberAttributes_NegativeClauses)
         xml =
                 "\
                 <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
-                    " + *it + "\
+                    "
+                + *it + "\
                 </subscriber>\
                 ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
@@ -1315,7 +1316,8 @@ TEST_F(XMLParserTests, getXMLPublisherAttributes_NegativeClauses)
         xml =
                 "\
                 <publisher profile_name=\"test_publisher_profile\" is_default_profile=\"true\">\
-                    " + *it + "\
+                    "
+                + *it + "\
                 </publisher>\
                 ";
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));

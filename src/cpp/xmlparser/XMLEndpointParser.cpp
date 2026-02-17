@@ -309,8 +309,8 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             if (rdata->topic_name == EPROSIMA_UNKNOWN_STRING || rdata->type_name == EPROSIMA_UNKNOWN_STRING)
             {
                 EPROSIMA_LOG_ERROR(RTPS_EDP,
-                        "Bad XML file, topic: " << rdata->topic_name << " or typeName: " << rdata->type_name <<
-                        " undefined");
+                        "Bad XML file, topic: " << rdata->topic_name << " or typeName: " << rdata->type_name
+                                                << " undefined");
                 delete(rdata);
                 return XMLP_ret::XML_ERROR;
             }
@@ -598,8 +598,8 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             if (wdata->topic_name == EPROSIMA_UNKNOWN_STRING || wdata->type_name == EPROSIMA_UNKNOWN_STRING)
             {
                 EPROSIMA_LOG_ERROR(RTPS_EDP,
-                        "Bad XML file, topic: " << wdata->topic_name << " or typeName: " << wdata->type_name <<
-                        " undefined");
+                        "Bad XML file, topic: " << wdata->topic_name << " or typeName: " << wdata->type_name
+                                                << " undefined");
                 delete(wdata);
                 return XMLP_ret::XML_ERROR;
             }

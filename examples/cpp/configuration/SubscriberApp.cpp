@@ -196,9 +196,9 @@ void SubscriberApp::on_data_available(
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             received_samples_++;
-            std::cout << "Sample: '" << configuration_.message().data() << "' with index: '" <<
-                configuration_.index() << "' (" << static_cast<int>(configuration_.data().size()) <<
-                " Bytes) RECEIVED" << std::endl;
+            std::cout << "Sample: '" << configuration_.message().data() << "' with index: '"
+                      << configuration_.index() << "' (" << static_cast<int>(configuration_.data().size())
+                      << " Bytes) RECEIVED" << std::endl;
             if ((samples_ > 0) && (received_samples_ >= samples_))
             {
                 stop();

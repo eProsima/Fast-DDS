@@ -87,8 +87,8 @@ protected:
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "Missing required parameter '" << IDL_VALUE_TAG
-                                                   << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG <<
-                    "'.");
+                                                   << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG
+                                                   << "'.");
             return false;
         }
 
@@ -102,8 +102,8 @@ protected:
             EPROSIMA_LOG_ERROR(IDL_PARSER,
                     "Invalid value '" << parameters.at(
                         IDL_VALUE_TAG)
-                                      << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG << "': " <<
-                    e.what());
+                                      << "' for annotation '" << IDL_BUILTIN_ANN_VALUE_TAG << "': "
+                                      << e.what());
             return false;
         }
 

@@ -432,8 +432,8 @@ int main(
 
     if (pub_sub)
     {
-        std::cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" <<
-            std::endl;
+        std::cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples"
+                  << std::endl;
         MemoryTestPublisher memoryPub;
         memoryPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
                 pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);

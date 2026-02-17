@@ -44,7 +44,8 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
     {
         // Get the members of the base type.
         auto base_type =
-                traits<DynamicType>::narrow<DynamicTypeImpl>(type_descriptor_.base_type())->resolve_alias_enclosed_type();
+                traits<DynamicType>::narrow<DynamicTypeImpl>(
+            type_descriptor_.base_type())->resolve_alias_enclosed_type();
         member_ = base_type->member_;
         member_by_name_ = base_type->member_by_name_;
         members_ = base_type->members_;
@@ -438,8 +439,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
-                        "Member " << member_impl->member_descriptor_.name().c_str() <<
-                        " already defined as default_label");
+                        "Member " << member_impl->member_descriptor_.name().c_str()
+                                  << " already defined as default_label");
                 return RETCODE_BAD_PARAMETER;
             }
             for (const int32_t new_label : descriptor_impl->label())
@@ -449,8 +450,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                     if (new_label == label)
                     {
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Member " << member_impl->member_descriptor_.name().c_str() << " already contains the label " <<
-                                label);
+                                "Member " << member_impl->member_descriptor_.name().c_str()
+                                          << " already contains the label "
+                                          << label);
                         return RETCODE_BAD_PARAMETER;
                     }
                 }
@@ -489,8 +491,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
             if (mid == new_member_id)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because it is equal to MemberId(" <<
-                        mid << ")");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because it is equal to MemberId("
+                        << mid << ")");
                 return RETCODE_BAD_PARAMETER;
             }
             else if (mid < new_member_id)
@@ -499,8 +501,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
                 if (new_member_id < mid + bound)
                 {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because is less than MemberId(" <<
-                            mid << ") + Bound(" << bound << ")");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because is less than MemberId("
+                            << mid << ") + Bound(" << bound << ")");
                     return RETCODE_BAD_PARAMETER;
                 }
             }
@@ -556,8 +558,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         {
             if (default_literal_.size() > 0)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "There is already a member annotated as default literal: " <<
-                        default_literal_);
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "There is already a member annotated as default literal: "
+                        << default_literal_);
                 return RETCODE_BAD_PARAMETER;
             }
 
@@ -575,8 +577,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                 if (0 == descriptor->literal_value().compare(member_impl->get_descriptor().literal_value()))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
-                            "Member " << member_impl->member_descriptor_.name().c_str() <<
-                            " has already the value " << member_impl->get_descriptor().literal_value());
+                            "Member " << member_impl->member_descriptor_.name().c_str()
+                                      << " has already the value " << member_impl->get_descriptor().literal_value());
                     return RETCODE_BAD_PARAMETER;
                 }
             }

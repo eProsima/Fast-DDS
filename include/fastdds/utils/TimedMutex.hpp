@@ -83,14 +83,14 @@ public:
         _Mtx_unlock(mutex_);
     }
 
-    template <class Rep, class Period>
+    template<class Rep, class Period>
     bool try_lock_for(
             const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
-    template <class Clock, class Duration>
+    template<class Clock, class Duration>
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
@@ -159,14 +159,14 @@ public:
         return (_Thrd_success == _Mtx_trylock(mutex_));
     }
 
-    template <class Rep, class Period>
+    template<class Rep, class Period>
     bool try_lock_for(
             const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
-    template <class Clock, class Duration>
+    template<class Clock, class Duration>
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
@@ -234,14 +234,14 @@ public:
         pthread_mutex_unlock(&mutex_);
     }
 
-    template <class Rep, class Period>
+    template<class Rep, class Period>
     bool try_lock_for(
             const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
-    template <class Clock, class Duration>
+    template<class Clock, class Duration>
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
@@ -305,14 +305,14 @@ public:
         return (0 == pthread_mutex_trylock(&mutex_));
     }
 
-    template <class Rep, class Period>
+    template<class Rep, class Period>
     bool try_lock_for(
             const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
-    template <class Clock, class Duration>
+    template<class Clock, class Duration>
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {

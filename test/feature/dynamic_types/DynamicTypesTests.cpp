@@ -42,7 +42,7 @@ void encoding_decoding_test(
         DynamicData::_ref_type encoding_data,
         DynamicData::_ref_type decoding_data,
         DataRepresentationId_t encoding
-        )
+)
 {
     TypeSupport pubsubType {new DynamicPubSubType(created_type)};
     uint32_t payloadSize =
@@ -95,7 +95,7 @@ void encoding_decoding_test(
 // Testing the primitive creation APIS
 // and get_primitive_type().
 class DynamicTypesPrimitiveTestsAPIs
-    : public testing::TestWithParam <TypeKind>
+    : public testing::TestWithParam<TypeKind>
 {
 };
 
@@ -592,7 +592,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_create_strings)
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
     // • strings
-    DynamicTypeBuilder::_ref_type created_builder {factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))};
+    DynamicTypeBuilder::_ref_type created_builder {factory->create_string_type(
+                                                       static_cast<uint32_t>(LENGTH_UNLIMITED))};
     ASSERT_TRUE(created_builder);
 
     DynamicType::_ref_type type {created_builder->build()};
@@ -13799,8 +13800,9 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence_of_sequences)
 
     DynamicTypeBuilder::_ref_type xml_type_builder;
     ASSERT_EQ(RETCODE_OK,
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("SequenceSequenceStruct",
-            xml_type_builder));
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(
+                "SequenceSequenceStruct",
+                xml_type_builder));
 
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 

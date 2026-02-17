@@ -156,11 +156,11 @@ ClientSubscriberApp::ClientSubscriberApp(
         throw std::runtime_error("Participant initialization failed");
     }
 
-    std::cout <<
-        "Subscriber Participant " << pqos.name() <<
-        " created with GUID " << participant_->guid() <<
-        " connecting to server <" << server_locator  << "> " <<
-        std::endl;
+    std::cout
+        << "Subscriber Participant " << pqos.name()
+        << " created with GUID " << participant_->guid()
+        << " connecting to server <" << server_locator  << "> "
+        << std::endl;
 
     // Register the type
     type_.register_type(participant_);

@@ -294,8 +294,9 @@ bool BaseReader::reserve_cache(
     if (!CacheChange_t::calculate_required_fragmented_payload_size(payload_size, fragment_size, min_required_size))
     {
         EPROSIMA_LOG_WARNING(RTPS_READER,
-                "Required payload size calculation overflows for payload size '" << payload_size <<
-                "' and fragment size '" << fragment_size << "'");
+                "Required payload size calculation overflows for payload size '" << payload_size
+                                                                                 << "' and fragment size '"
+                                                                                 << fragment_size << "'");
         return false;
     }
 
@@ -304,8 +305,9 @@ bool BaseReader::reserve_cache(
         if (fixed_payload_size_ > 0)
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Fixed payload size '" << fixed_payload_size_ <<
-                    "' is insufficient for fragmentation with fragment size '" << fragment_size << "'");
+                    "Fixed payload size '" << fixed_payload_size_
+                                           << "' is insufficient for fragmentation with fragment size '"
+                                           << fragment_size << "'");
             return false;
         }
         reserve_size = min_required_size;

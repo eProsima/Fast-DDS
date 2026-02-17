@@ -30,7 +30,7 @@ namespace ddb {
 
 using json = nlohmann::json;
 
-template <typename T>
+template<typename T>
 std::string object_to_string(
         const T& t)
 {

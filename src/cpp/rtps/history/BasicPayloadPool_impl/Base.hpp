@@ -55,7 +55,7 @@ public:
 
 };
 
-template <MemoryManagementPolicy_t policy_>
+template<MemoryManagementPolicy_t policy_>
 class Impl : public BaseImpl
 {
 };

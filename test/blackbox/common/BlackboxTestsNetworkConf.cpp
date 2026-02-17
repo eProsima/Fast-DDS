@@ -762,8 +762,8 @@ TEST_P(NetworkConfig, PubGetSendingLocatorsWhitelist)
     descriptor_->m_output_udp_socket = static_cast<uint16_t>(port);
     for (const auto& network_interface : interfaces)
     {
-        std::cout << "Adding interface '" << network_interface.name << "' (" << network_interface.name.size() << ")" <<
-            std::endl;
+        std::cout << "Adding interface '" << network_interface.name << "' (" << network_interface.name.size() << ")"
+                  << std::endl;
         descriptor_->interfaceWhiteList.push_back(network_interface.name);
     }
 

@@ -147,8 +147,8 @@ inline Time_t MilliSecondsWithRandOffset2Time_t(
         double randoff)
 {
     randoff = std::abs(randoff);
-    millisec = millisec + (-randoff) + static_cast <double> (rand()) /
-            ( static_cast <double> (RAND_MAX / (2 * randoff)));
+    millisec = millisec + (-randoff) + static_cast<double> (rand()) /
+            ( static_cast<double> (RAND_MAX / (2 * randoff)));
     return MilliSeconds2Time_t(millisec);
 }
 
@@ -158,8 +158,8 @@ inline Time_t MicroSecondsWithRandOffset2Time_t(
         double randoff)
 {
     randoff = std::abs(randoff);
-    microsec = microsec + (-randoff) + static_cast <double> (rand()) /
-            ( static_cast <double> (RAND_MAX / (2 * randoff)));
+    microsec = microsec + (-randoff) + static_cast<double> (rand()) /
+            ( static_cast<double> (RAND_MAX / (2 * randoff)));
     return MicroSeconds2Time_t(microsec);
 }
 
@@ -169,7 +169,7 @@ inline Time_t SecondsWithRandOffset2Time_t(
         double randoff)
 {
     randoff = std::abs(randoff);
-    sec = sec + (-randoff) + static_cast <double> (rand()) / ( static_cast <double> (RAND_MAX / (2 * randoff)));
+    sec = sec + (-randoff) + static_cast<double> (rand()) / ( static_cast<double> (RAND_MAX / (2 * randoff)));
     return Seconds2Time_t(sec);
 }
 

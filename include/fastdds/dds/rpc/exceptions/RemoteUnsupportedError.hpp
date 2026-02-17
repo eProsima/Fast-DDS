@@ -40,7 +40,8 @@ public:
      * Constructor.
      */
     RemoteUnsupportedError()
-        : RemoteUnsupportedError("Operation is valid but it is unsupported (i.e. is not implemented)")
+        : RemoteUnsupportedError(
+                "Operation is valid but it is unsupported (i.e. is not implemented)")
     {
     }
 
