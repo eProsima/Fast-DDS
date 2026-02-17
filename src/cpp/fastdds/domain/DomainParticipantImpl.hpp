@@ -33,7 +33,6 @@
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include "fastdds/rpc/RequestReplyContentFilterFactory.hpp"
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>

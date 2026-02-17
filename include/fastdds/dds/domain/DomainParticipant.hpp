@@ -422,17 +422,6 @@ public:
             const std::string& service_type_name);
 
     /**
-     * Find a registered RPC service by name
-     *
-     * @param service_name Name of the service to search for.
-     * @param ret_code Return code indicating the result of the operation.
-     * @return Pointer to the service object if found, nullptr if not found.
-     */
-    FASTDDS_EXPORTED_API rpc::Service* find_service(
-            const std::string& service_name,
-            ReturnCode_t& ret_code) const;
-
-    /**
      * Find a RPC service by name
      *
      * @param service_name Name of the service to search for.
@@ -1194,17 +1183,6 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t unregister_service_type(
             const std::string& service_type_name);
-
-    /**
-     * This method gives access to a registered service type based on its name.
-     *
-     * @param service_type_name Name of the type
-     * @param ret_code Return code indicating the result of the operation.
-     * @return ServiceTypeSupport corresponding to the service_type_name
-     */
-    FASTDDS_EXPORTED_API rpc::ServiceTypeSupport find_service_type(
-            const std::string& service_type_name,
-            ReturnCode_t& ret_code) const;
 
     /**
      * This method gives access to a registered service type based on its name.

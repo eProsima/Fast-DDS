@@ -277,13 +277,6 @@ rpc::Service* DomainParticipant::create_service(
 }
 
 rpc::Service* DomainParticipant::find_service(
-        const std::string& service_name,
-        ReturnCode_t& ret_code) const
-{
-    return impl_->find_service(service_name, ret_code);
-}
-
-rpc::Service* DomainParticipant::find_service(
         const std::string& service_name) const
 {
     return impl_->find_service(service_name);
@@ -710,13 +703,6 @@ ReturnCode_t DomainParticipant::unregister_service_type(
         const std::string& service_name)
 {
     return impl_->unregister_service_type(service_name);
-}
-
-rpc::ServiceTypeSupport DomainParticipant::find_service_type(
-        const std::string& service_type_name,
-        ReturnCode_t& ret_code) const
-{
-    return impl_->find_service_type(service_type_name, ret_code);
 }
 
 rpc::ServiceTypeSupport DomainParticipant::find_service_type(
