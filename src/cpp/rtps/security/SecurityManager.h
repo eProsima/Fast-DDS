@@ -394,7 +394,7 @@ private:
             typedef std::unique_ptr<TimedEvent> EventUniquePtr;
 
             AuthenticationInfo(
-                AuthenticationStatus auth_status)
+                    AuthenticationStatus auth_status)
                 : handshake_requests_sent_(0)
                 , identity_handle_(nullptr)
                 , handshake_handle_(nullptr)
@@ -406,7 +406,7 @@ private:
             }
 
             AuthenticationInfo(
-                AuthenticationInfo && auth) noexcept
+                    AuthenticationInfo&& auth) noexcept
                 : identity_handle_(std::move(auth.identity_handle_))
                 , handshake_handle_(std::move(auth.handshake_handle_))
                 , auth_status_(auth.auth_status_)
@@ -438,7 +438,7 @@ private:
         private:
 
             AuthenticationInfo(
-                const AuthenticationInfo& auth) = delete;
+                    const AuthenticationInfo& auth) = delete;
         };
 
     public:
@@ -905,7 +905,7 @@ private:
     struct DatawriterAssociations
     {
         DatawriterAssociations(
-            DatawriterCryptoHandle * wh)
+                DatawriterCryptoHandle * wh)
             : writer_handle(wh)
         {
         }
@@ -918,7 +918,7 @@ private:
     struct DatareaderAssociations
     {
         DatareaderAssociations(
-            DatareaderCryptoHandle * rh)
+                DatareaderCryptoHandle * rh)
             : reader_handle(rh)
         {
         }
