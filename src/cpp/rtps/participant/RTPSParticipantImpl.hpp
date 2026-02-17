@@ -519,7 +519,7 @@ public:
     std::unique_ptr<RTPSMessageGroup_t> get_send_buffer(
             const std::chrono::steady_clock::time_point& max_blocking_time);
     void return_send_buffer(
-            std::unique_ptr<RTPSMessageGroup_t>&& buffer);
+            std::unique_ptr <RTPSMessageGroup_t>&& buffer);
 
     uint32_t get_domain_id() const;
 
@@ -1256,7 +1256,7 @@ public:
             SubscriptionBuiltinTopicData& data,
             const GUID_t& reader_guid) const;
 
-    template<EndpointKind_t kind, octet no_key, octet with_key>
+    template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t& entity_id,
             std::atomic<uint32_t>& id_count,

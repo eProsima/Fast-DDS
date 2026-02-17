@@ -161,8 +161,7 @@ class BuiltinProtocols;
 typedef struct PDPFactory
 {
     // Pointer to the PDP creator
-    PDP* (*CreatePDPInstance)(
-        BuiltinProtocols*);
+    PDP* (*CreatePDPInstance)(BuiltinProtocols*);
     // Pointer to the PDP destructor
     void (* ReleasePDPInstance)(
             PDP*);

@@ -154,11 +154,11 @@ ClientPublisherApp::ClientPublisherApp(
         throw std::runtime_error("Participant initialization failed");
     }
 
-    std::cout
-        << "Publisher Participant " << pqos.name()
-        << " created with GUID " << participant_->guid()
-        << " connecting to server <" << server_locator  << "> "
-        << std::endl;
+    std::cout <<
+        "Publisher Participant " << pqos.name() <<
+        " created with GUID " << participant_->guid() <<
+        " connecting to server <" << server_locator  << "> " <<
+        std::endl;
 
     // Regsiter type
     type_.register_type(participant_);

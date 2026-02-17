@@ -56,8 +56,7 @@ public:
 
     void add_or_update_ack_participant(
             const GuidPrefix_t& guid_p,
-            DiscoveryParticipantsAckStatus::ParticipantState status = DiscoveryParticipantsAckStatus::ParticipantState::
-                    PENDING_SEND)
+            DiscoveryParticipantsAckStatus::ParticipantState status = DiscoveryParticipantsAckStatus::ParticipantState::PENDING_SEND)
     {
         EPROSIMA_LOG_INFO(
             DISCOVERY_DATABASE,

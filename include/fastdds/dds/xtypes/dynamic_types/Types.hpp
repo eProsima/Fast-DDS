@@ -31,7 +31,7 @@ constexpr MemberId MEMBER_ID_INVALID {0x0FFFFFFF};
 class DynamicData;
 
 template<>
-struct traits<DynamicData>: public object_traits<DynamicData>
+struct traits<DynamicData> : public object_traits<DynamicData>
 {
     using base_type = DynamicData;
 };
@@ -39,7 +39,7 @@ struct traits<DynamicData>: public object_traits<DynamicData>
 class DynamicDataFactory;
 
 template<>
-struct traits<DynamicDataFactory>: public object_traits<DynamicDataFactory>
+struct traits<DynamicDataFactory> : public object_traits<DynamicDataFactory>
 {
     using base_type = DynamicDataFactory;
 };
@@ -47,7 +47,7 @@ struct traits<DynamicDataFactory>: public object_traits<DynamicDataFactory>
 class DynamicType;
 
 template<>
-struct traits<DynamicType>: public object_traits<DynamicType>
+struct traits<DynamicType> : public object_traits<DynamicType>
 {
     using base_type = DynamicType;
 };
@@ -55,7 +55,7 @@ struct traits<DynamicType>: public object_traits<DynamicType>
 class DynamicTypeBuilder;
 
 template<>
-struct traits<DynamicTypeBuilder>: public object_traits<DynamicTypeBuilder>
+struct traits<DynamicTypeBuilder> : public object_traits<DynamicTypeBuilder>
 {
     using base_type = DynamicTypeBuilder;
 };
@@ -63,7 +63,7 @@ struct traits<DynamicTypeBuilder>: public object_traits<DynamicTypeBuilder>
 class DynamicTypeBuilderFactory;
 
 template<>
-struct traits<DynamicTypeBuilderFactory>: public object_traits<DynamicTypeBuilderFactory>
+struct traits<DynamicTypeBuilderFactory> : public object_traits<DynamicTypeBuilderFactory>
 {
     using base_type = DynamicTypeBuilderFactory;
 };
@@ -71,7 +71,7 @@ struct traits<DynamicTypeBuilderFactory>: public object_traits<DynamicTypeBuilde
 class DynamicTypeMember;
 
 template<>
-struct traits<DynamicTypeMember>: public object_traits<DynamicTypeMember>
+struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
 {
     using base_type = DynamicTypeMember;
 };

@@ -144,7 +144,7 @@ bool TypeLookupServicePublisher::create_known_type(
     }
 }
 
-template<typename Type, typename TypePubSubType>
+template <typename Type, typename TypePubSubType>
 bool TypeLookupServicePublisher::create_known_type_impl(
         const std::string& type)
 {
@@ -235,8 +235,8 @@ bool TypeLookupServicePublisher::wait_discovery(
 
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServicePublisher discovery Timeout with matched = "
-                  << matched_ << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher discovery Timeout with matched = " <<
+            matched_ << std::endl;
         return false;
     }
     return true;
@@ -264,8 +264,8 @@ bool TypeLookupServicePublisher::run(
                         DynamicDataFactory::get_instance()->create_data(known_type.second.dyn_type_);
                         if (RETCODE_OK != known_type.second.writer_->write(&sample))
                         {
-                            std::cout << "ERROR TypeLookupServicePublisher fails writing sample "
-                                      << current_sample + 1 << std::endl;
+                            std::cout << "ERROR TypeLookupServicePublisher fails writing sample " <<
+                                current_sample + 1 << std::endl;
                             return false;
                         }
                     }
@@ -275,8 +275,8 @@ bool TypeLookupServicePublisher::run(
                         void* sample = known_type.second.type_sup_.create_data();
                         if (RETCODE_OK != known_type.second.writer_->write(sample))
                         {
-                            std::cout << "ERROR TypeLookupServicePublisher fails writing sample "
-                                      << current_sample + 1 << std::endl;
+                            std::cout << "ERROR TypeLookupServicePublisher fails writing sample " <<
+                                current_sample + 1 << std::endl;
                             return false;
                         }
                         known_type.second.type_sup_.delete_data(sample);
@@ -295,8 +295,8 @@ bool TypeLookupServicePublisher::run(
         std::cout << "ERROR TypeLookupServicePublisher" << std::endl;
         if (expected_matches_ != sent_samples_.size())
         {
-            std::cout << "Expected_matches_ = " << expected_matches_
-                      << " Working_writers_ = " << sent_samples_.size() << std::endl;
+            std::cout << "Expected_matches_ = " << expected_matches_ <<
+                " Working_writers_ = " << sent_samples_.size() << std::endl;
         }
 
         for (auto& sent_sample : sent_samples_)

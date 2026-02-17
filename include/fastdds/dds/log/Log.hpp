@@ -325,8 +325,7 @@ protected:
             std::stringstream fastdds_log_ss_tmp__;                                                                   \
             fastdds_log_ss_tmp__ << msg;                                                                              \
             eprosima::fastdds::dds::Log::QueueLog(                                                                    \
-                fastdds_log_ss_tmp__.str(), \
-                eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
+                fastdds_log_ss_tmp__.str(), eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
                 eprosima::fastdds::dds::Log::Kind::Warning);                                                          \
         }                                                                                                             \
     } while (0)
@@ -365,8 +364,7 @@ protected:
             std::stringstream fastdds_log_ss_tmp__;                                                                   \
             fastdds_log_ss_tmp__ << msg;                                                                              \
             eprosima::fastdds::dds::Log::QueueLog(                                                                    \
-                fastdds_log_ss_tmp__.str(), \
-                eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
+                fastdds_log_ss_tmp__.str(), eprosima::fastdds::dds::Log::Context{__FILE__, __LINE__, __func__, #cat}, \
                 eprosima::fastdds::dds::Log::Kind::Info);                                                             \
         }                                                                                                             \
     } while (0)

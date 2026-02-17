@@ -80,7 +80,7 @@ public:
      * this->notify_one() or this->notify_all(), and then reacquires the lock.
      * @throw boost::interprocess::interprocess_exception on error.
      */
-    template<typename L>
+    template <typename L>
     void wait(
             L& lock)
     {
@@ -92,7 +92,7 @@ public:
      * while (!pred()) wait(lock)
      * @throw boost::interprocess::interprocess_exception on error.
      */
-    template<typename L, typename Pr>
+    template <typename L, typename Pr>
     void wait(
             L& lock,
             Pr pred)
@@ -111,7 +111,7 @@ public:
      * @return false if time abs_time is reached, otherwise true.
      * @throw boost::interprocess::interprocess_exception on error.
      */
-    template<typename L>
+    template <typename L>
     bool timed_wait(
             L& lock,
             const boost::posix_time::ptime& abs_time)
@@ -133,7 +133,7 @@ public:
      * }
      * return true;
      */
-    template<typename L, typename Pr>
+    template <typename L, typename Pr>
     bool timed_wait(
             L& lock,
             const boost::posix_time::ptime& abs_time,
@@ -180,7 +180,7 @@ public:
      * @return false if time abs_time is reached, otherwise true.
      * @throw boost::interprocess::interprocess_exception on error.
      */
-    template<typename L>
+    template <typename L>
     bool timed_wait(
             L& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
@@ -196,7 +196,7 @@ public:
      * }
      * return true;
      */
-    template<typename L, typename Pr>
+    template <typename L, typename Pr>
     bool timed_wait(
             L& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,

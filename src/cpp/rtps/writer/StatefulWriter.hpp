@@ -229,7 +229,7 @@ public:
         on_heartbeat(++heartbeat_count_);
     }
 
-    template<typename Function>
+    template <typename Function>
     Function for_each_reader_proxy(
             Function f) const
     {

@@ -139,17 +139,16 @@ bool WriterHistory::prepare_and_add_change(
     if (a_change->writerGUID != mp_writer->getGuid())
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
-                "Change writerGUID " << a_change->writerGUID << " different than Writer GUID "
-                                     << mp_writer->getGuid());
+                "Change writerGUID " << a_change->writerGUID << " different than Writer GUID " <<
+                mp_writer->getGuid());
         return false;
     }
     if ((m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE) && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
-                "Change payload size of '" << a_change->serializedPayload.length
-                                           << "' bytes is larger than the history payload size of '"
-                                           << m_att.payloadMaxSize
-                                           << "' bytes and cannot be resized.");
+                "Change payload size of '" << a_change->serializedPayload.length <<
+                "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
+                "' bytes and cannot be resized.");
         return false;
     }
     if (TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind && !a_change->instanceHandle.isDefined() &&
@@ -242,8 +241,8 @@ bool WriterHistory::matches_change(
     if (outer_change->writerGUID != mp_writer->getGuid())
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
-                "Change writerGUID " << outer_change->writerGUID << " different than Writer GUID "
-                                     << mp_writer->getGuid());
+                "Change writerGUID " << outer_change->writerGUID << " different than Writer GUID " <<
+                mp_writer->getGuid());
         return false;
     }
 

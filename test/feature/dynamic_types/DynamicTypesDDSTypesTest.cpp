@@ -70,8 +70,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_enum_helper()
     TypeDescriptor::_ref_type enum_descriptor {traits<TypeDescriptor>::make_shared()};
     enum_descriptor->kind(TK_ENUM);
     enum_descriptor->name(enum_name);
-    DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    enum_descriptor)};
+    DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(enum_descriptor)};
 
     MemberDescriptor::_ref_type enum_literal_descriptor {traits<MemberDescriptor>::make_shared()};
     enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
@@ -174,8 +173,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_union_helper()
     union_descriptor->name(union_name);
     union_descriptor->discriminator_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
     union_descriptor->is_nested(true);
-    DynamicTypeBuilder::_ref_type union_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                     union_descriptor)};
+    DynamicTypeBuilder::_ref_type union_builder {DynamicTypeBuilderFactory::get_instance()->create_type(union_descriptor)};
 
     MemberDescriptor::_ref_type union_member {traits<MemberDescriptor>::make_shared()};
     union_member->name(union_long_member_name);

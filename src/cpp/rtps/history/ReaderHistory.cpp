@@ -60,10 +60,9 @@ bool ReaderHistory::can_change_be_added_nts(
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && total_payload_size > m_att.payloadMaxSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_READER_HISTORY,
-                "Change payload size of '" << total_payload_size
-                                           << "' bytes is larger than the history payload size of '"
-                                           << m_att.payloadMaxSize
-                                           << "' bytes and cannot be resized.");
+                "Change payload size of '" << total_payload_size <<
+                "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
+                "' bytes and cannot be resized.");
         will_never_be_accepted = true;
         return false;
     }
@@ -99,10 +98,9 @@ bool ReaderHistory::add_change(
     if (m_att.memoryPolicy == PREALLOCATED_MEMORY_MODE && a_change->serializedPayload.length > m_att.payloadMaxSize)
     {
         EPROSIMA_LOG_ERROR(RTPS_READER_HISTORY,
-                "Change payload size of '" << a_change->serializedPayload.length
-                                           << "' bytes is larger than the history payload size of '"
-                                           << m_att.payloadMaxSize
-                                           << "' bytes and cannot be resized.");
+                "Change payload size of '" << a_change->serializedPayload.length <<
+                "' bytes is larger than the history payload size of '" << m_att.payloadMaxSize <<
+                "' bytes and cannot be resized.");
         return false;
     }
     if (a_change->writerGUID == c_Guid_Unknown)

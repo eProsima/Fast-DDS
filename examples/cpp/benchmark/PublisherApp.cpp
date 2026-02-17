@@ -241,8 +241,8 @@ void PublisherApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                    std::cout << "Sample with index: '"
-                              << benchmark_.index() << "' (Array 0 Bytes) RECEIVED" << std::endl;
+                    std::cout << "Sample with index: '" <<
+                        benchmark_.index() << "' (Array 0 Bytes) RECEIVED" << std::endl;
                     if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
@@ -254,8 +254,8 @@ void PublisherApp::on_data_available(
 
                     if ((RETCODE_OK == writer_->write(&benchmark_)) == true)
                     {
-                        std::cout << "Sample with index: '"
-                                  << benchmark_.index() << "' (Array 0 Bytes) SENT" << std::endl;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_.index() << "' (Array 0 Bytes) SENT" << std::endl;
                     }
                 }
             }
@@ -266,10 +266,9 @@ void PublisherApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                    std::cout << "Sample with index: '"
-                              << benchmark_small_.index() << "' (Array  "
-                              << static_cast<int>(benchmark_small_.array().size())
-                              << " Bytes) RECEIVED" << std::endl;
+                    std::cout << "Sample with index: '" <<
+                        benchmark_small_.index() << "' (Array  " << static_cast<int>(benchmark_small_.array().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
                     if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
@@ -281,10 +280,10 @@ void PublisherApp::on_data_available(
 
                     if ((RETCODE_OK == writer_->write(&benchmark_small_)) == true)
                     {
-                        std::cout << "Sample with index: '"
-                                  << benchmark_small_.index() << "' (Array  "
-                                  << static_cast<int>(benchmark_small_.array().size())
-                                  << " Bytes) SENT" << std::endl;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_small_.index() << "' (Array  " <<
+                            static_cast<int>(benchmark_small_.array().size()) <<
+                            " Bytes) SENT" << std::endl;
                     }
                 }
             }
@@ -295,10 +294,10 @@ void PublisherApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                    std::cout << "Sample with index: '"
-                              << benchmark_medium_.index() << "' (Array  "
-                              << static_cast<int>(benchmark_medium_.data().size())
-                              << " Bytes) RECEIVED" << std::endl;
+                    std::cout << "Sample with index: '" <<
+                        benchmark_medium_.index() << "' (Array  " <<
+                        static_cast<int>(benchmark_medium_.data().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
                     if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
@@ -310,10 +309,10 @@ void PublisherApp::on_data_available(
 
                     if ((RETCODE_OK == writer_->write(&benchmark_medium_)) == true)
                     {
-                        std::cout << "Sample with index: '"
-                                  << benchmark_medium_.index() << "' (Array  "
-                                  << static_cast<int>(benchmark_medium_.data().size())
-                                  << " Bytes) SENT" << std::endl;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_medium_.index() << "' (Array  " <<
+                            static_cast<int>(benchmark_medium_.data().size()) <<
+                            " Bytes) SENT" << std::endl;
                     }
                 }
             }
@@ -324,10 +323,9 @@ void PublisherApp::on_data_available(
             {
                 if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                 {
-                    std::cout << "Sample with index: '"
-                              << benchmark_big_.index() << "' (Array  "
-                              << static_cast<int>(benchmark_big_.data().size())
-                              << " Bytes) RECEIVED" << std::endl;
+                    std::cout << "Sample with index: '" <<
+                        benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
+                        " Bytes) RECEIVED" << std::endl;
                     if ((elapsed.count() >= timeout_ && timeout_ != 0) || (count >= samples_ && samples_ != 0))
                     {
                         cv_.notify_one();
@@ -339,10 +337,9 @@ void PublisherApp::on_data_available(
 
                     if ((RETCODE_OK == writer_->write(&benchmark_big_)) == true)
                     {
-                        std::cout << "Sample with index: '"
-                                  << benchmark_big_.index() << "' (Array  "
-                                  << static_cast<int>(benchmark_big_.data().size())
-                                  << " Bytes) SENT" << std::endl;
+                        std::cout << "Sample with index: '" <<
+                            benchmark_big_.index() << "' (Array  " << static_cast<int>(benchmark_big_.data().size()) <<
+                            " Bytes) SENT" << std::endl;
                     }
                 }
             }
@@ -475,8 +472,8 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_small_.index() << "' (Array  "
-                              << static_cast<int>(benchmark_small_.array().size())
+                              << benchmark_small_.index() << "' (Array  " <<
+                        static_cast<int>(benchmark_small_.array().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;
@@ -487,8 +484,8 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_medium_.index() << "' (Array  "
-                              << static_cast<int>(benchmark_medium_.data().size())
+                              << benchmark_medium_.index() << "' (Array  " <<
+                        static_cast<int>(benchmark_medium_.data().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;
@@ -499,8 +496,8 @@ bool PublisherApp::publish()
                 if (ret == true)
                 {
                     std::cout << "First Sample with index: '"
-                              << benchmark_big_.index() << "' (Array  "
-                              << static_cast<int>(benchmark_big_.data().size())
+                              << benchmark_big_.index() << "' (Array  " <<
+                        static_cast<int>(benchmark_big_.data().size())
                               << " Bytes) SENT" << std::endl;
                 }
                 break;

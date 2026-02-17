@@ -86,8 +86,7 @@ void DataSharingListener::run()
             // If there were matching/unmatching, we may not have finished our last loop
         }
         while (is_running_.load() &&
-        (notification_->notification_->new_data.load() ||
-        writer_pools_changed_.load(std::memory_order_relaxed)));
+        (notification_->notification_->new_data.load() || writer_pools_changed_.load(std::memory_order_relaxed)));
     }
 }
 
@@ -173,9 +172,8 @@ void DataSharingListener::process_new_data ()
             {
                 if (last_sequence != c_SequenceNumber_Unknown && ch.sequenceNumber > last_sequence + 1)
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_READER,
-                            "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
-                                    << " detected on datasharing writer " << pool->writer());
+                    EPROSIMA_LOG_WARNING(RTPS_READER, "GAP (" << last_sequence + 1 << " - " << ch.sequenceNumber - 1 << ")"
+                                                              << " detected on datasharing writer " << pool->writer());
                     reader_->process_gap_msg(pool->writer(), last_sequence + 1,
                             SequenceNumberSet_t(ch.sequenceNumber), c_VendorId_eProsima);
                 }
@@ -183,8 +181,8 @@ void DataSharingListener::process_new_data ()
                 if (last_sequence == c_SequenceNumber_Unknown && ch.sequenceNumber > SequenceNumber_t(0, 1))
                 {
                     EPROSIMA_LOG_INFO(RTPS_READER, "First change with SN " << ch.sequenceNumber
-                                                                           << " detected on datasharing writer "
-                                                                           << pool->writer());
+                                                                           << " detected on datasharing writer " <<
+                            pool->writer());
                     reader_->process_gap_msg(pool->writer(), SequenceNumber_t(0, 1),
                             SequenceNumberSet_t(ch.sequenceNumber), c_VendorId_eProsima);
                 }
@@ -238,9 +236,9 @@ bool DataSharingListener::add_datasharing_writer(
                 reader_history_max_samples >= static_cast<int32_t>(pool->history_size()))
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Reader " << reader_->getGuid() << " was configured to have a large history ("
-                              << reader_history_max_samples << " max samples), but the history size used with writer "
-                              << writer_guid << " will be " << pool->history_size() << " max samples.");
+                    "Reader " << reader_->getGuid() << " was configured to have a large history (" <<
+                    reader_history_max_samples << " max samples), but the history size used with writer " <<
+                    writer_guid << " will be " << pool->history_size() << " max samples.");
         }
         writer_pools_.emplace_back(pool, pool->last_liveliness_sequence());
         writer_pools_changed_.store(true);

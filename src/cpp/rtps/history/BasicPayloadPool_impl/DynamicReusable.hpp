@@ -16,7 +16,7 @@
  * @file DynamicReusable.hpp
  */
 
-template<>
-class Impl<DYNAMIC_REUSABLE_MEMORY_MODE>: public BaseImpl
+template <>
+class Impl<DYNAMIC_REUSABLE_MEMORY_MODE> : public BaseImpl
 {
 };

@@ -1621,8 +1621,8 @@ ReturnCode_t DataReaderImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth << "' is higher than max_samples_per_instance "
-                                  << "'" << qos.resource_limits().max_samples_per_instance << "'.");
+                "HISTORY DEPTH '" << qos.history().depth << "' is higher than max_samples_per_instance " <<
+                "'" << qos.resource_limits().max_samples_per_instance << "'.");
         return RETCODE_INCONSISTENT_POLICY;
     }
     return RETCODE_OK;

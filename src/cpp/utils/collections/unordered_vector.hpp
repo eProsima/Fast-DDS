@@ -25,7 +25,7 @@ namespace eprosima {
 namespace utilities {
 namespace collections {
 
-template<
+template <
     typename _Ty,
     typename _Alloc = std::allocator<_Ty>>
 using unordered_vector = eprosima::fastdds::ResourceLimitedVector<

@@ -1139,8 +1139,8 @@ private:
                     {
                         std::stringstream ss;
 
-                        ss << port_node->port_id << " (" << port_node->uuid.to_string()
-                           << ") because it was already locked";
+                        ss << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                            ") because it was already locked";
 
                         err_reason = ss.str();
                         port.reset();
@@ -1156,8 +1156,8 @@ private:
                     {
                         std::stringstream ss;
 
-                        ss << port_node->port_id << " (" << port_node->uuid.to_string()
-                           << ") because it had a ReadExclusive lock";
+                        ss << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                            ") because it had a ReadExclusive lock";
 
                         err_reason = ss.str();
                         port.reset();
@@ -1172,10 +1172,8 @@ private:
                     port_node->is_opened_for_reading |= (open_mode != Port::OpenMode::Write);
 
                     EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, THREADID << "Port "
-                                                                   << port_node->port_id << " ("
-                                                                   << port_node->uuid.to_string()
-                                                                   << ") Opened"
-                                                                   << Port::open_mode_to_string(open_mode));
+                                                                   << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                            ") Opened" << Port::open_mode_to_string(open_mode));
                 }
             }
             catch (std::exception&)

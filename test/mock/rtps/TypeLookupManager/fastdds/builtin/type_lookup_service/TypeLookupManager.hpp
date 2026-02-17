@@ -53,7 +53,7 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeInformation>
 
 };
 
-template<>
+template <>
 struct hash<eprosima::fastdds::dds::SampleIdentity>
 {
     std::size_t operator ()(

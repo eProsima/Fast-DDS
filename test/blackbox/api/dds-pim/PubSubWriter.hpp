@@ -459,8 +459,8 @@ public:
             if (datawriter_ != nullptr)
             {
                 datawriter_guid_ = datawriter_->guid();
-                std::cout << "Created datawriter " << datawriter_guid_ << " for topic "
-                          << topic_name_ << std::endl;
+                std::cout << "Created datawriter " << datawriter_guid_ << " for topic " <<
+                    topic_name_ << std::endl;
 
                 initialized_ = datawriter_->is_enabled();
             }
@@ -2447,8 +2447,8 @@ public:
                 initialized_ = datawriter_->is_enabled();
                 if (initialized_)
                 {
-                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic "
-                              << topic_name_ << std::endl;
+                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
+                        topic_name_ << std::endl;
 
                     // Set the desired status condition mask and start the waitset thread
                     datawriter_->get_statuscondition().set_enabled_statuses(status_mask_);

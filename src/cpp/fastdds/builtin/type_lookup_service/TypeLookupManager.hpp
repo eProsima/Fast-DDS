@@ -52,7 +52,7 @@ struct hash<eprosima::fastdds::dds::xtypes::TypeInformation>
 
 };
 
-template<>
+template <>
 struct hash<eprosima::fastdds::dds::SampleIdentity>
 {
     std::size_t operator ()(
@@ -215,7 +215,7 @@ protected:
      *                      RETCODE_NO_DATA if the type is being discovered.
      *                      RETCODE_ERROR if the request was not sent or the callback was not added correctly.
      */
-    template<typename ProxyType, typename AsyncCallback>
+    template <typename ProxyType, typename AsyncCallback>
     ReturnCode_t check_type_identifier_received(
             typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
             const fastdds::rtps::GUID_t& type_server,
@@ -293,7 +293,7 @@ protected:
      * @param writer_history[in] Pointer to the Writer History.
      * @return true if message was sent, false otherwise.
      */
-    template<typename Type, typename PubSubType>
+    template <typename Type, typename PubSubType>
     bool send_impl(
             Type& msg,
             PubSubType* pubsubtype,
@@ -337,7 +337,7 @@ protected:
      * @param pubsubtype[in] PubSubType of the msg.
      * @return true if message is correct, false otherwise.
      */
-    template<typename Type, typename PubSubType>
+    template <typename Type, typename PubSubType>
     bool receive_impl(
             fastdds::rtps::CacheChange_t& change,
             Type& msg,
@@ -436,12 +436,12 @@ protected:
     std::mutex async_get_types_mutex_;
 
     //! Collection of all the WriterProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
-    std::unordered_map<xtypes::TypeIdentfierWithSize,
+    std::unordered_map < xtypes::TypeIdentfierWithSize,
             std::vector<std::pair<eprosima::fastdds::rtps::WriterProxyData*,
             AsyncGetTypeWriterCallback>>> async_get_type_writer_callbacks_;
 
     //! Collection of all the ReaderProxyData and their callbacks related to a TypeIdentfierWithSize, hashed by its TypeIdentfierWithSize.
-    std::unordered_map<xtypes::TypeIdentfierWithSize,
+    std::unordered_map < xtypes::TypeIdentfierWithSize,
             std::vector<std::pair<eprosima::fastdds::rtps::ReaderProxyData*,
             AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 

@@ -58,8 +58,7 @@ DynamicType::_ref_type create_mutable_short_struct()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_short_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_name);
@@ -75,8 +74,7 @@ DynamicType::_ref_type create_mutable_empty_struct()
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_empty_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     return type_builder->build();
 }
@@ -115,8 +113,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableUShortStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_ushort_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_name);
@@ -155,8 +152,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableLongStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_long_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_name);
@@ -195,8 +191,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableULongStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_ulong_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_name);
@@ -235,8 +230,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableLongLongStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_longlong_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_long_name);
@@ -275,8 +269,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableULongLongStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_ulonglong_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_long_name);
@@ -315,8 +308,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableFloatStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_float_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_float_name);
@@ -355,8 +347,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableDoubleStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_double_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_double_name);
@@ -395,8 +386,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableLongDoubleStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_longdouble_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_double_name);
@@ -435,8 +425,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableBooleanStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_bool_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bool_name);
@@ -475,8 +464,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableOctetStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_byte_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_byte_name);
@@ -515,8 +503,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableCharStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_char_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char_name);
@@ -555,8 +542,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableWCharStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_wchar_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wchar_name);
@@ -595,8 +581,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableUnionStruct)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_union_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_name);
@@ -670,8 +655,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableEmptyInheritanceStruct)
     type_descriptor->name(mutable_emptyinheritance_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
     type_descriptor->base_type(create_mutable_empty_struct());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_str_name);
@@ -712,8 +696,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableInheritanceStruct)
     type_descriptor->name(mutable_inheritance_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
     type_descriptor->base_type(create_mutable_short_struct());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_str_name);
@@ -761,8 +744,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableInheritanceEmptyStruct)
     type_descriptor->name(mutable_inheritanceempty_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
     type_descriptor->base_type(create_mutable_short_struct());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     DynamicType::_ref_type struct_type = type_builder->build();
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
@@ -796,8 +778,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableExtensibilityInheritance)
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(mutable_extensibilityinheritance_struct_name);
     type_descriptor->base_type(create_mutable_short_struct());
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_name);

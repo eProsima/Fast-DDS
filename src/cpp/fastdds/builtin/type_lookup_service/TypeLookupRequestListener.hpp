@@ -38,7 +38,7 @@
 
 namespace std {
 
-template<> struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
+template <> struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifierSeq>
 {
     std::size_t operator ()(
             const eprosima::fastdds::dds::xtypes::TypeIdentifierSeq& k) const

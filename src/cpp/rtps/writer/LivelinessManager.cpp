@@ -272,8 +272,8 @@ bool LivelinessManager::assert_liveliness(
     if (!calculate_next())
     {
         EPROSIMA_LOG_INFO(RTPS_WRITER,
-                "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness "
-                                                           << kind);
+                "Error when restarting liveliness timer: " << writers_.size() << " writers, liveliness " <<
+                kind);
         return false;
     }
 

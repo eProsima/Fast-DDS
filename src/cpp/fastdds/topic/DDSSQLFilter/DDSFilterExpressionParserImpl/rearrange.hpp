@@ -21,7 +21,7 @@
 
 // after a node is stored successfully, you can add an optional transformer like this:
 struct rearrange
-    : parse_tree::apply<rearrange>    // allows bulk selection, see selector<...>
+    : parse_tree::apply< rearrange >  // allows bulk selection, see selector<...>
 {
     // recursively rearrange nodes. the basic principle is:
     //
@@ -38,9 +38,9 @@ struct rearrange
     // if only one child is left for LHS..., replace the SEQ_BASED_RULE with the child directly.
     // otherwise, perform the above transformation, then apply it recursively until LHS...
     // becomes a single child, which then replaces the parent node and the recursion ends.
-    template<typename ... States>
+    template< typename ... States >
     static void transform(
-            std::unique_ptr<ParseNode>& n,
+            std::unique_ptr< ParseNode >& n,
             States&&... st)
     {
         if (n->children.size() == 1)

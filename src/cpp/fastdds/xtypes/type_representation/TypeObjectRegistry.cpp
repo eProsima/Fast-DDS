@@ -1867,8 +1867,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     register_typeobject_w_dynamic_type(type_descriptor.discriminator_type(), discriminator_type_ids);
     bool ec {false};
     CommonDiscriminatorMember common_discriminator {TypeObjectUtils::build_common_discriminator_member(
-                                                        discriminator_flags,
-                                                        TypeObjectUtils::retrieve_complete_type_identifier(
+                                                        discriminator_flags, TypeObjectUtils::retrieve_complete_type_identifier(
                                                             discriminator_type_ids,
                                                             ec))};
 
@@ -2174,8 +2173,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
                                          member_descriptor.is_default_label())};
         // Literal value might be automatically assigned or taken from literal_value (@value annotation)
         CommonEnumeratedLiteral common_literal {TypeObjectUtils::build_common_enumerated_literal(
-                                                    member_descriptor.literal_value().empty() ?
-                                                    member_descriptor.index() :
+                                                    member_descriptor.literal_value().empty() ? member_descriptor.index() :
                                                     std::stol(member_descriptor.literal_value()), flags)};
         CompleteMemberDetail member_detail;
         complete_member_detail(literal, member_detail);

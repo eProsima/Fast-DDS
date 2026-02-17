@@ -51,7 +51,7 @@ public:
     typedef TypeSupport type_support;
     typedef typename type_support::type type;
 
-    using OnReaderDiscoveryFunctor = std::function<void (
+    using OnReaderDiscoveryFunctor = std::function <void (
                         eprosima::fastdds::rtps::ReaderDiscoveryStatus,
                         const eprosima::fastdds::rtps::GUID_t&,
                         const eprosima::fastdds::rtps::SubscriptionBuiltinTopicData*
@@ -110,9 +110,7 @@ public:
 
     RTPSWithRegistrationWriter(
             const std::string& topic_name)
-        : RTPSWithRegistrationWriter(
-            topic_name,
-            nullptr)
+        : RTPSWithRegistrationWriter(topic_name, nullptr)
     {
     }
 

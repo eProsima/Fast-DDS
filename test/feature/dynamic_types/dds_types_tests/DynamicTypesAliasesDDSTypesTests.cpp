@@ -93,8 +93,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt16)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_short_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -138,8 +137,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUint16)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_ushort_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -183,8 +181,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt32)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_long_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -228,8 +225,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUInt32)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_ulong_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -273,8 +269,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt64)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_long_long_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -318,8 +313,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUInt64)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_ulong_long_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -363,8 +357,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasFloat32)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_float_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -408,8 +401,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasFloat64)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_double_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -453,8 +445,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasFloat128)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_long_double_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -498,8 +489,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBool)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_bool_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -543,8 +533,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_octet_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -588,8 +577,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasChar8)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_char_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -633,8 +621,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasChar16)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_wchar_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -678,8 +665,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasString8)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_string_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -724,8 +710,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasString16)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_wstring_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -770,8 +755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasEnum)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_enum_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -816,8 +800,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitmask)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_bitmask_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -862,8 +845,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasAlias)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_alias_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -907,8 +889,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasArray)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_array_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -958,8 +939,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMultiArray)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_multiarray_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1012,8 +992,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasSequence)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_sequence_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1059,8 +1038,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasMap)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_map_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1125,8 +1103,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUnion)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_union_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1182,8 +1159,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasStruct)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_struct_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1240,8 +1216,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_alias_bitset_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
     ASSERT_TRUE(type_builder);
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};

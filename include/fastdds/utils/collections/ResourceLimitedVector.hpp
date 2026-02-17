@@ -49,7 +49,7 @@ namespace fastdds {
  *
  * @ingroup UTILITIES_MODULE
  */
-template<
+template <
     typename _Ty,
     typename _KeepOrderEnabler = std::false_type,
     typename _LimitsConfig = ResourceLimitedContainerConfig,
@@ -314,7 +314,7 @@ public:
      *                      resource limits configuration, the elements exceeding that maximum will be silently
      *                      discarded.
      */
-    template<class InputIterator>
+    template <class InputIterator>
     void assign(
             InputIterator first,
             InputIterator last)
@@ -583,7 +583,7 @@ protected:
      *
      * @param it   Iterator pointing to the item to be removed.
      */
-    template<typename Enabler = _KeepOrderEnabler>
+    template <typename Enabler = _KeepOrderEnabler>
     typename std::enable_if<!Enabler::value, void>::type do_remove(
             iterator it)
     {
@@ -607,7 +607,7 @@ protected:
      *
      * @param it   Iterator pointing to the item to be removed.
      */
-    template<typename Enabler = _KeepOrderEnabler>
+    template <typename Enabler = _KeepOrderEnabler>
     typename std::enable_if<Enabler::value, void>::type do_remove(
             iterator it)
     {

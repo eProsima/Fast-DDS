@@ -51,8 +51,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
-                    library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -70,8 +69,7 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
-                    library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -248,8 +246,7 @@ TEST(SHMUDP, SHM_metatraffic_wrong_config)
     /* Set up log */
     BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
     eprosima::fastdds::dds::Log::ClearConsumers();  // Remove default consumers
-    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(
-                helper_consumer));                                                                                        // Registering a consumer transfer ownership
+    eprosima::fastdds::dds::Log::RegisterConsumer(std::unique_ptr<eprosima::fastdds::dds::LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
     // Filter specific message
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     eprosima::fastdds::dds::Log::SetCategoryFilter(std::regex("RTPS_NETWORK"));

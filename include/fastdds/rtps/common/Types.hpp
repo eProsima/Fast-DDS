@@ -107,13 +107,9 @@ struct FASTDDS_EXPORTED_API ProtocolVersion_t
         :
 #if HAVE_SECURITY
         // As imposed by DDSSEC11-93
-        ProtocolVersion_t(
-            2,
-            3)
+        ProtocolVersion_t(2, 3)
 #else
-        ProtocolVersion_t(
-            2,
-            2)
+        ProtocolVersion_t(2, 2)
 #endif // if HAVE_SECURITY
     {
     }

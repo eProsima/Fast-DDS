@@ -225,8 +225,7 @@ void fill_all_struct(
                 dyn_data_string_unbounded_map->get_member_id_by_name("0"), "string_unbounded_map"), RETCODE_OK);
     EXPECT_EQ(dyn_data->return_loaned_value(dyn_data_string_unbounded_map), RETCODE_OK);
 
-    traits<DynamicData>::ref_type dyn_data_string_alias_unbounded_map =
-            dyn_data->loan_value(dyn_data->get_member_id_by_name(
+    traits<DynamicData>::ref_type dyn_data_string_alias_unbounded_map = dyn_data->loan_value(dyn_data->get_member_id_by_name(
                         "string_alias_unbounded_map"));
     ASSERT_NE(dyn_data_string_alias_unbounded_map, nullptr);
     EXPECT_EQ(dyn_data_string_alias_unbounded_map->set_string_value(
@@ -337,7 +336,7 @@ void fill_dyn_data(
     EXPECT_EQ(dyn_data->return_loaned_value(dyn_data_all_struct), RETCODE_OK);
 }
 
-template<>
+template <>
 traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TYPE>()
 {
     eprosima::fastdds::dds::TypeSupport type(new ComprehensiveTypePubSubType());
@@ -362,7 +361,7 @@ traits<DynamicType>::ref_type create_dynamic_type<DataTypeKind::COMPREHENSIVE_TY
     return dynamic_type;
 }
 
-template<>
+template <>
 traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TYPE>(
         const traits<DynamicType>::ref_type& dynamic_type,
         bool filled,
@@ -385,7 +384,7 @@ traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TY
     return dynamic_data;
 }
 
-template<>
+template <>
 std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
         const DynamicDataJsonFormat& format,
         bool filled,

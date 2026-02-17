@@ -49,8 +49,7 @@
     comment(lib, EPROSIMA_LIB_PREFIX EPROSIMA_STRINGIZE(EPROSIMA_LIB_NAME) EPROSIMA_LIB_DEBUG_TAG "-" EPROSIMA_STRINGIZE(FASTDDS_VERSION_MAJOR) "." EPROSIMA_STRINGIZE(FASTDDS_VERSION_MINOR) ".lib")
     #else
     #error "Some required macros where not defined"
-    #endif \
-    // if defined(EPROSIMA_LIB_NAME) && defined(EPROSIMA_LIB_PREFIX) && defined(EPROSIMA_LIB_DEBUG_TAG) && defined(FASTDDS_VERSION_MAJOR) && defined(FASTDDS_VERSION_MINOR)
+    #endif // if defined(EPROSIMA_LIB_NAME) && defined(EPROSIMA_LIB_PREFIX) && defined(EPROSIMA_LIB_DEBUG_TAG) && defined(FASTDDS_VERSION_MAJOR) && defined(FASTDDS_VERSION_MINOR)
 
 #endif // _MSC_VER
 

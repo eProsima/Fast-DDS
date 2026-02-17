@@ -69,8 +69,7 @@ struct Arg : public option::Arg
             if (strcmp(option.name, "i") == 0)
             {
                 EPROSIMA_LOG_ERROR(CLI, "Error in option '" << option.name << "' value. Remember it "
-                                                            <<
-                        "is optional. It should be a key identifier between 0 and 255.");
+                                                            << "is optional. It should be a key identifier between 0 and 255.");
             }
             else if (strcmp(option.name, "d") == 0)
             {

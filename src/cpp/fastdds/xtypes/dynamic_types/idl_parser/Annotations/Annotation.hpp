@@ -86,8 +86,7 @@ public:
         if (!is_primitive(member_type) && !is_string(member_type))
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER, "Cannot add member '" << name
-                                                                 << "' to annotation '"
-                                                                 << annotation_builder_->get_name()
+                                                                 << "' to annotation '" << annotation_builder_->get_name()
                                                                  << "': member type is not primitive.");
             return false;
         }
@@ -123,8 +122,7 @@ public:
         if (!member_type)
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER, "Cannot add member '" << member_name
-                                                                 << "' to annotation '"
-                                                                 << annotation_builder_->get_name()
+                                                                 << "' to annotation '" << annotation_builder_->get_name()
                                                                  << "': type '" << type_name << "' is not declared.");
             return false;
         }
@@ -170,8 +168,7 @@ public:
         if (existing_type && (existing_type->get_kind() != type->get_kind()))
         {
             EPROSIMA_LOG_ERROR(IDL_PARSER, "Unable to add type '" << name
-                                                                  <<
-                    "': a type with the same name but different kind already exists.");
+                                                                  << "': a type with the same name but different kind already exists.");
 
             return false;
         }
@@ -540,9 +537,8 @@ protected:
                 {
                     EPROSIMA_LOG_ERROR(IDL_PARSER,
                             "Failed to get descriptor for member '" << name
-                                                                    << "' in annotation '"
-                                                                    << annotation_builder_->get_name()
-                                                                    << "'.");
+                                                                    << "' in annotation '" << annotation_builder_->get_name() <<
+                            "'.");
                     return false;
                 }
                 const std::string& default_value = member_descriptor->default_value();
@@ -554,9 +550,8 @@ protected:
                 {
                     EPROSIMA_LOG_ERROR(IDL_PARSER,
                             "Missing required annotation parameter '" << name
-                                                                      << "' in annotation '"
-                                                                      << annotation_builder_->get_name()
-                                                                      << "'.");
+                                                                      << "' in annotation '" << annotation_builder_->get_name() <<
+                            "'.");
                     return false;
                 }
             }

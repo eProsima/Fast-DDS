@@ -21,7 +21,7 @@
 
 #include "list_node_size_impl.hpp"
 
-template<typename K, typename V>
+template <typename K, typename V>
 struct unordered_map_node_size : list_node_size<typename std::unordered_map<K, V>::value_type>
 {
 };

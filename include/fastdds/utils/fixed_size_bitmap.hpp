@@ -48,7 +48,7 @@ namespace fastdds {
 
 using std::uint32_t;
 
-template<class T>
+template <class T>
 struct DiffFunction
 {
     constexpr auto operator () (
@@ -101,9 +101,7 @@ public:
      */
     explicit BitmapRange(
             T base) noexcept
-        : BitmapRange(
-            base,
-            NBITS - 1)
+        : BitmapRange(base, NBITS - 1)
     {
     }
 

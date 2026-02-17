@@ -172,8 +172,7 @@ TEST_F(CryptographyPluginTest, factory_CreateLocalParticipantHandle)
             {
                 return i != 0;
             }));
-    ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(
-                0).receiver_specific_key_id.begin(),
+    ASSERT_FALSE( std::all_of(local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.begin(),
             local_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id.end(), [](uint8_t i)
             {
                 return i == 0;

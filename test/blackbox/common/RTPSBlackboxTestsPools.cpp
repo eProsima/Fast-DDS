@@ -225,7 +225,7 @@ private:
     std::vector<octet*> free_payloads_;
 };
 
-template<class TData, class TType>
+template <class TData, class TType>
 void do_test(
         const std::string& topic_name,
         std::list<TData>& data,

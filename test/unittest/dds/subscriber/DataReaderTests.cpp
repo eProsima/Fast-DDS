@@ -2058,7 +2058,7 @@ TEST_F(DataReaderTests, sample_info)
 
 struct arraybuf : public std::streambuf
 {
-    template<std::size_t Size> arraybuf(
+    template <std::size_t Size> arraybuf(
             std::array<char, Size>& array)
     {
         this->setp(array.data(), array.data() + Size - 1);
@@ -2069,7 +2069,7 @@ struct arraybuf : public std::streambuf
 
 struct oarraystream : virtual arraybuf, std::ostream
 {
-    template<std::size_t Size> oarraystream(
+    template <std::size_t Size> oarraystream(
             std::array<char, Size>& array)
         : arraybuf(array)
         , std::ostream(this)

@@ -56,8 +56,8 @@ void PDPServerListener::on_new_cache_change_added(
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER START ------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
-            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid()
-                                    << " --------------------");
+            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
+            " --------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(pdp_server()->builtin_endpoints_.get());
@@ -358,8 +358,8 @@ void PDPServerListener::on_new_cache_change_added(
     // happens at this point
 
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
-            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid()
-                                    << " --------------------");
+            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
+            " --------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "");
 }

@@ -585,8 +585,8 @@ bool DomainParticipantImpl::find_or_create_topic_and_type(
         if (topic_desc->get_type_name() != type->get_name())
         {
             EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT,
-                    topic_name << " is not using expected type " << type->get_name()
-                               << " and is using instead type " << topic_desc->get_type_name());
+                    topic_name << " is not using expected type " << type->get_name() <<
+                    " and is using instead type " << topic_desc->get_type_name());
             return false;
         }
         else

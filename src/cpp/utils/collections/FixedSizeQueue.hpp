@@ -38,7 +38,7 @@ namespace fastdds {
  *
  * @ingroup UTILITIES_MODULE
  */
-template<
+template <
     typename _Ty,
     typename _Alloc = std::allocator<_Ty>>
 class FixedSizeQueue
@@ -259,9 +259,7 @@ public:
      */
     FixedSizeQueue(
             const FixedSizeQueue& other)
-        : FixedSizeQueue(
-            other.capacity(),
-            other.get_allocator())
+        : FixedSizeQueue(other.capacity(), other.get_allocator())
     {
         for (const_reference item : other)
         {

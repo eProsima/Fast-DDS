@@ -19,7 +19,7 @@
 #ifndef SRC_CPP_UTILS_COLLECTIONS_IMPL_FOONATHAN_UNORDERED_MAP_NODE_SIZE_IMPL_HPP_
 #define SRC_CPP_UTILS_COLLECTIONS_IMPL_FOONATHAN_UNORDERED_MAP_NODE_SIZE_IMPL_HPP_
 
-template<typename K, typename V>
+template <typename K, typename V>
 struct unordered_map_node_size
     : foonathan::memory::unordered_map_node_size<typename std::unordered_map<K, V>::value_type>
 {

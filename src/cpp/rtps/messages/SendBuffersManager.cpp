@@ -116,7 +116,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
 }
 
 void SendBuffersManager::return_buffer(
-        std::unique_ptr<RTPSMessageGroup_t>&& buffer)
+        std::unique_ptr <RTPSMessageGroup_t>&& buffer)
 {
     std::lock_guard<TimedMutex> guard(mutex_);
     pool_.push_back(std::move(buffer));

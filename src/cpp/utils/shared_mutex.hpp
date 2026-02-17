@@ -309,7 +309,7 @@ public:
 
 namespace eprosima {
 
-template<class Mutex>
+template <class Mutex>
 class shared_lock
 {
 public:
@@ -366,7 +366,7 @@ public:
     {
     }
 
-    template<class Clock, class Duration>
+    template <class Clock, class Duration>
     shared_lock(
             mutex_type& m,
             const std::chrono::time_point<Clock, Duration>& abs_time)
@@ -375,7 +375,7 @@ public:
     {
     }
 
-    template<class Rep, class Period>
+    template <class Rep, class Period>
     shared_lock(
             mutex_type& m,
             const std::chrono::duration<Rep, Period>& rel_time)
@@ -433,14 +433,14 @@ public:
 
     void lock();
     bool try_lock();
-    template<class Rep, class Period>
+    template <class Rep, class Period>
     bool try_lock_for(
             const std::chrono::duration<Rep, Period>& rel_time)
     {
         return try_lock_until(std::chrono::steady_clock::now() + rel_time);
     }
 
-    template<class Clock, class Duration>
+    template <class Clock, class Duration>
     bool
     try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time);
@@ -476,7 +476,7 @@ public:
 
 };
 
-template<class Mutex>
+template <class Mutex>
 void
 shared_lock<Mutex>::lock()
 {
@@ -494,7 +494,7 @@ shared_lock<Mutex>::lock()
     owns_ = true;
 }
 
-template<class Mutex>
+template <class Mutex>
 bool
 shared_lock<Mutex>::try_lock()
 {
@@ -512,8 +512,8 @@ shared_lock<Mutex>::try_lock()
     return owns_;
 }
 
-template<class Mutex>
-template<class Clock, class Duration>
+template <class Mutex>
+template <class Clock, class Duration>
 bool
 shared_lock<Mutex>::try_lock_until(
         const std::chrono::time_point<Clock, Duration>& abs_time)
@@ -532,7 +532,7 @@ shared_lock<Mutex>::try_lock_until(
     return owns_;
 }
 
-template<class Mutex>
+template <class Mutex>
 void
 shared_lock<Mutex>::unlock()
 {
@@ -545,7 +545,7 @@ shared_lock<Mutex>::unlock()
     owns_ = false;
 }
 
-template<class Mutex>
+template <class Mutex>
 inline
 void
 swap(

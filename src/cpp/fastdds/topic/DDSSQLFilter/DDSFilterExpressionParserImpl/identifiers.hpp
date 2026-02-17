@@ -27,7 +27,7 @@ struct CurrentIdentifierState
 };
 
 struct identifier_processor
-    : parse_tree::apply<identifier_processor>
+    : parse_tree::apply< identifier_processor >
 {
     template<typename _TSize>
     static constexpr size_t process_bound(
@@ -110,7 +110,7 @@ struct identifier_processor
     }
 
     static void add_member_access(
-            std::unique_ptr<ParseNode>& n,
+            std::unique_ptr< ParseNode >& n,
             CurrentIdentifierState& identifier_state,
             const xtypes::CompleteTypeObject& complete)
     {
@@ -222,9 +222,9 @@ struct identifier_processor
         throw parse_error("type is not primitive", pos);
     }
 
-    template<typename ... States>
+    template< typename ... States >
     static void transform(
-            std::unique_ptr<ParseNode>& n,
+            std::unique_ptr< ParseNode >& n,
             CurrentIdentifierState& state,
             States&&... /*st*/)
     {

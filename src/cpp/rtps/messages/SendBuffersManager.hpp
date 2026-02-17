@@ -83,7 +83,7 @@ public:
      * @param buffer unique pointer to the buffer being returned.
      */
     void return_buffer(
-            std::unique_ptr<RTPSMessageGroup_t>&& buffer);
+            std::unique_ptr <RTPSMessageGroup_t>&& buffer);
 
 private:
 

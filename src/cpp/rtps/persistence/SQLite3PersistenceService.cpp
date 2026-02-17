@@ -148,8 +148,7 @@ static sqlite3* open_or_create_database(
             else
             {
                 EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
-                                                                           <<
-                        ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                                                                           << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
                 sqlite3_close(db);
                 return NULL;
             }
@@ -202,8 +201,7 @@ SQLite3PersistenceService::SQLite3PersistenceService(
     , update_reader_stmt_(NULL)
 {
     // Prepare writer statements
-    sqlite3_prepare_v3(db_,
-            "SELECT seq_num, instance, payload, related_sample_guid, related_sample_seq_num, source_timestamp "
+    sqlite3_prepare_v3(db_, "SELECT seq_num, instance, payload, related_sample_guid, related_sample_seq_num, source_timestamp "
             "FROM writers_histories WHERE guid=?;", -1,
             SQLITE_PREPARE_PERSISTENT,
             &load_writer_stmt_,

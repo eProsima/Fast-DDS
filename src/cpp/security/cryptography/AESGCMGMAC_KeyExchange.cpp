@@ -73,8 +73,7 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
-        std::vector<uint8_t> plaintext =
-                KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(
+        std::vector<uint8_t> plaintext = KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(
                             0));
         prop.value() = plaintext; //  aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
         prop.propagate(true);

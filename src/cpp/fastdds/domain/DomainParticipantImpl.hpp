@@ -821,8 +821,7 @@ protected:
                     {
                         std::lock_guard<std::mutex> lock(listener_->participant_->mtx_gs_);
                         assert(
-                            listener_ != nullptr && listener_->participant_ != nullptr &&
-                            listener_->participant_->listener_ != nullptr &&
+                            listener_ != nullptr && listener_->participant_ != nullptr && listener_->participant_->listener_ != nullptr &&
                             listener_->participant_->participant_ != nullptr);
                         --listener_->callback_counter_;
                         notify = !listener_->callback_counter_;

@@ -39,7 +39,7 @@ namespace fastdds {
  *
  * @ingroup UTILITIES_MODULE
  */
-template<
+template <
     typename _Ty,
     typename _Alloc = std::allocator<_Ty>,
     typename _Collection = std::vector<_Ty, _Alloc>>
@@ -81,7 +81,7 @@ struct ObjectPool final
         return ret;
     }
 
-    template<class ... _Valty>
+    template <class ... _Valty>
     void put(
             _Valty&&... _Val)
     {

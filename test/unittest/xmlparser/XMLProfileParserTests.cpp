@@ -3223,8 +3223,8 @@ TEST_F(XMLProfileParserBasicTests, external_locators_feature)
 
     for (const TestCase& test : test_cases)
     {
-        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length()))
-            << " test_case = [" << test.title << "]";
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 }
@@ -3304,8 +3304,8 @@ TEST_F(XMLProfileParserBasicTests, log_thread_settings_qos)
     EXPECT_CALL(*log_mock, SetThreadConfig()).Times(1);
     for (const TestCase& test : test_cases)
     {
-        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length()))
-            << " test_case = [" << test.title << "]";
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 }
@@ -3637,8 +3637,8 @@ TEST_F(XMLProfileParserBasicTests, domainparticipantfactory)
 
     for (const TestCase& test : test_cases)
     {
-        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length()))
-            << " test_case = [" << test.title << "]";
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
         if (test.result == xmlparser::XMLP_ret::XML_OK)
         {
             using namespace eprosima::fastdds::dds;
@@ -3961,8 +3961,8 @@ TEST_F(XMLProfileParserBasicTests, participant_thread_settings)
 
     for (const TestCase& test : test_cases)
     {
-        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length()))
-            << " test_case = [" << test.title << "]";
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
         if (test.result == xmlparser::XMLP_ret::XML_OK)
         {
             using namespace eprosima::fastdds::dds;
@@ -4126,8 +4126,8 @@ TEST_F(XMLProfileParserBasicTests, datareader_thread_settings)
 
     for (const TestCase& test : test_cases)
     {
-        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length()))
-            << " test_case = [" << test.title << "]";
+        EXPECT_EQ(test.result, xmlparser::XMLProfileManager::loadXMLString(test.xml.c_str(), test.xml.length())) <<
+            " test_case = [" << test.title << "]";
         if (test.result == xmlparser::XMLP_ret::XML_OK)
         {
             xmlparser::SubscriberAttributes profile_attr;

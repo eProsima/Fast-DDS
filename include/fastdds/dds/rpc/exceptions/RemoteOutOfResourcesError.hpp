@@ -40,8 +40,7 @@ public:
      * Constructor.
      */
     RemoteOutOfResourcesError()
-        : RemoteOutOfResourcesError(
-            "The remote service ran out of resources while processing the request")
+        : RemoteOutOfResourcesError("The remote service ran out of resources while processing the request")
     {
     }
 

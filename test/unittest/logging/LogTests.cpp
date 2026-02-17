@@ -347,8 +347,8 @@ TEST_F(LogTests, validate_multithread_flush_calls)
 
                     EPROSIMA_LOG_WARNING(flush_ckecks,
                     "I'm thread " << this_thread::get_id() << " Flushing successful, consumed: "
-                                  << consumed << " commited till flush "
-                                  << commited_before_flush);
+                                  << consumed << " commited till flush " <<
+                        commited_before_flush);
 
                 }));
     }

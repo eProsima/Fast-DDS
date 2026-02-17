@@ -205,11 +205,7 @@ protected:
             efd::DomainId_t did,
             const efd::DomainParticipantQos& qos,
             efd::DomainParticipantListener* listen = nullptr)
-        : efd::DomainParticipantImpl(
-            dp,
-            did,
-            qos,
-            listen)
+        : efd::DomainParticipantImpl(dp, did, qos, listen)
         , builtin_publisher_(nullptr)
         , statistics_listener_(std::make_shared<DomainParticipantStatisticsListener>())
     {

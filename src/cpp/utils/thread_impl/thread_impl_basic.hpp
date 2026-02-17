@@ -26,8 +26,7 @@ public:
     thread(
             int32_t /*stack_size*/,
             _Fn&& _Fx)
-        : std::thread(
-            std::forward<_Fn>(_Fx))
+        : std::thread(std::forward<_Fn>(_Fx))
     {
     }
 

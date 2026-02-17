@@ -60,10 +60,7 @@ public:
     WriterProxyData(
             const size_t max_unicast_locators,
             const size_t max_multicast_locators)
-        : WriterProxyData(
-            max_unicast_locators,
-            max_multicast_locators,
-            VariableLengthDataLimits())
+        : WriterProxyData(max_unicast_locators, max_multicast_locators, VariableLengthDataLimits())
     {
     }
 

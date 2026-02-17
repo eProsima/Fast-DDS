@@ -46,7 +46,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-template<DataTypeKind Data>
+template <DataTypeKind Data>
 void test_generic()
 {
     std::vector<DynamicDataJsonFormat> format_options = {DynamicDataJsonFormat::EPROSIMA, DynamicDataJsonFormat::OMG};
@@ -246,8 +246,7 @@ TEST(DynDataJSONTests, json_deserialize_negative)
                             TypeDescriptor::_ref_type enum_type_descriptor {traits<TypeDescriptor>::make_shared()};
                             enum_type_descriptor->kind(TK_ENUM);
                             enum_type_descriptor->name("MyEnum");
-                            DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->
-                                                                                create_type(
+                            DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                                             enum_type_descriptor)};
 
                             // Add enum literals to the type

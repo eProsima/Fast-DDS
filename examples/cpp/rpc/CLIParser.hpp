@@ -99,8 +99,8 @@ public:
         std::cout << "  -r, --representation-limits                          Computes the representation"  << std::endl;
         std::cout << "                                                       limits of a 32-bit integer"   << std::endl;
         std::cout << "                                                                                   " << std::endl;
-        std::cout << "      --connection-attempts <num>                      Number of attempts to connect"
-                  << std::endl;
+        std::cout << "      --connection-attempts <num>                      Number of attempts to connect" <<
+            std::endl;
         std::cout << "                                                       to a server before failing"   << std::endl;
         std::cout << "                                                       [default: 10]"                << std::endl;
         std::cout << "Server arguments:"                                                                   << std::endl;
@@ -413,7 +413,7 @@ private:
      *
      * @warning This method finishes the execution of the program if the input arguments are invalid
      */
-    template<typename T>
+    template <typename T>
     static T consume_integer_argument(
             const std::string& arg_value,
             const std::string& arg_name)

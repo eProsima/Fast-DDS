@@ -32,7 +32,7 @@
  *   than strictly necessary but will avoid access violation exceptions.
  */
 
-template<typename K>
+template <typename K>
 struct set_node_size : foonathan::memory::set_node_size<std::pair<size_t, typename std::set<K>::value_type>>
 {
 };

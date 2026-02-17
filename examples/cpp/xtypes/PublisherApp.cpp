@@ -241,8 +241,8 @@ DynamicType::_ref_type PublisherApp::create_type(
                 DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld",
                 struct_builder))
         {
-            std::cout
-                << "Error getting dynamic type \"HelloWorld\"." << std::endl;
+            std::cout <<
+                "Error getting dynamic type \"HelloWorld\"." << std::endl;
             return nullptr;
         }
     }

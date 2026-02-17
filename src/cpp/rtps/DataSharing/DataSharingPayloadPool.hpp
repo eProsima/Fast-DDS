@@ -45,7 +45,7 @@ public:
 
     using Segment = fastdds::rtps::SharedSegmentBase;
     using sharable_mutex = Segment::sharable_mutex;
-    template<class M>
+    template <class M>
     using sharable_lock = Segment::sharable_lock<M>;
 
     DataSharingPayloadPool() = default;

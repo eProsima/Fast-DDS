@@ -797,8 +797,8 @@ void ThroughputSubscriber::run()
                       << (double)(command_sample.m_receivedsamples) * 1000000 /
                 command_sample.m_totaltime
                       << std::endl;
-            std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand
-                      << " ends." << std::endl;
+            std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand <<
+                " ends." << std::endl;
             command_writer_->write(&command_sample);
 
             std::cout << "-----------------------------------------------------------------------" << std::endl;

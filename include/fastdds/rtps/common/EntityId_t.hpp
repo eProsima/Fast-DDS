@@ -386,7 +386,7 @@ const EntityId_t monitor_service_status_writer = ENTITYID_MONITOR_SERVICE_WRITER
 } // namespace eprosima
 
 namespace std {
-template<>
+template <>
 struct hash<eprosima::fastdds::rtps::EntityId_t>
 {
     std::size_t operator ()(

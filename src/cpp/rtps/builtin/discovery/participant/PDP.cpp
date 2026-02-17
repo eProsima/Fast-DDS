@@ -192,10 +192,8 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies \
-                                                                                     << ") reached for participant "
-                                                                                     << mp_RTPSParticipant->getGuid()
-                                                                                     << std::endl);
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
+                    ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
             return nullptr;
         }
     }
@@ -977,10 +975,8 @@ ReaderProxyData* PDP::addReaderProxyData(
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies
-                                                                                        << ") reached for participant "
-                                                                                        << mp_RTPSParticipant->getGuid()
-                                                                                        << std::endl);
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies <<
+                            ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
                     return nullptr;
                 }
             }
@@ -1064,10 +1060,8 @@ WriterProxyData* PDP::addWriterProxyData(
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies
-                                                                                        << ") reached for participant "
-                                                                                        << mp_RTPSParticipant->getGuid()
-                                                                                        << std::endl);
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies <<
+                            ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
                     return nullptr;
                 }
             }

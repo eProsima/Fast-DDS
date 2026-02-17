@@ -19,7 +19,7 @@
 #ifndef SRC_CPP_UTILS_COLLECTIONS_IMPL_FOONATHAN_LIST_NODE_SIZE_IMPL_HPP_
 #define SRC_CPP_UTILS_COLLECTIONS_IMPL_FOONATHAN_LIST_NODE_SIZE_IMPL_HPP_
 
-template<typename T>
+template <typename T>
 struct list_node_size : foonathan::memory::list_node_size<typename std::list<T>::value_type>
 {
 };

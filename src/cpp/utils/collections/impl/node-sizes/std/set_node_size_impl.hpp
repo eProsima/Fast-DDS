@@ -21,7 +21,7 @@
 
 #include "tree_node_size_impl.hpp"
 
-template<typename K>
+template <typename K>
 struct set_node_size : tree_node_size<typename std::set<K>::value_type>
 {
 };

@@ -364,7 +364,7 @@ TypeKind TypeLookupManager::get_type_kind_to_propagate() const
     }
 }
 
-template<typename ProxyType, typename AsyncCallback>
+template <typename ProxyType, typename AsyncCallback>
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
         typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
         const fastdds::rtps::GUID_t& type_server,
@@ -730,7 +730,7 @@ bool TypeLookupManager::send(
     return true;
 }
 
-template<typename Type, typename PubSubType>
+template <typename Type, typename PubSubType>
 bool TypeLookupManager::send_impl(
         Type& msg,
         PubSubType* pubsubtype,
@@ -817,7 +817,7 @@ bool TypeLookupManager::receive(
     return true;
 }
 
-template<typename Type, typename PubSubType>
+template <typename Type, typename PubSubType>
 bool TypeLookupManager::receive_impl(
         fastdds::rtps::CacheChange_t& change,
         Type& msg,

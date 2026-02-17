@@ -240,23 +240,23 @@ void PublisherModule::on_participant_discovery(
 {
     if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Publisher participant "    //participant->getGuid() <<
-                  << " discovered participant " << info.guid << std::endl;
+        std::cout << "Publisher participant " << //participant->getGuid() <<
+            " discovered participant " << info.guid << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
     {
-        std::cout << "Publisher participant "    //participant->getGuid() <<
-                  << " detected changes on participant " << info.guid << std::endl;
+        std::cout << "Publisher participant " << //participant->getGuid() <<
+            " detected changes on participant " << info.guid << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT)
     {
-        std::cout << "Publisher participant "    // participant->getGuid() <<
-                  << " removed participant " << info.guid << std::endl;
+        std::cout << "Publisher participant " << // participant->getGuid() <<
+            " removed participant " << info.guid << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
     {
-        std::cout << "Publisher participant "    //participant->getGuid() <<
-                  << " dropped participant " << info.guid << std::endl;
+        std::cout << "Publisher participant " << //participant->getGuid() <<
+            " dropped participant " << info.guid << std::endl;
         if (exit_on_lost_liveliness_)
         {
             run_ = false;
@@ -271,13 +271,13 @@ void PublisherModule::onParticipantAuthentication(
 {
     if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
     {
-        std::cout << "Publisher participant " << participant->guid()
-                  << " authorized participant " << info.guid << std::endl;
+        std::cout << "Publisher participant " << participant->guid() <<
+            " authorized participant " << info.guid << std::endl;
     }
     else
     {
-        std::cout << "Publisher participant " << participant->guid()
-                  << " unauthorized participant " << info.guid << std::endl;
+        std::cout << "Publisher participant " << participant->guid() <<
+            " unauthorized participant " << info.guid << std::endl;
     }
 }
 

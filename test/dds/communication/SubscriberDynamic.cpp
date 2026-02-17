@@ -67,23 +67,23 @@ public:
     {
         if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
         {
-            std::cout << "Subscriber participant "    //participant->getGuid() <<
-                      << " discovered participant " << info.guid << std::endl;
+            std::cout << "Subscriber participant " << //participant->getGuid() <<
+                " discovered participant " << info.guid << std::endl;
         }
         else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
         {
-            std::cout << "Subscriber participant "    //participant->getGuid() <<
-                      << " detected changes on participant " << info.guid << std::endl;
+            std::cout << "Subscriber participant " << //participant->getGuid() <<
+                " detected changes on participant " << info.guid << std::endl;
         }
         else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT)
         {
-            std::cout << "Subscriber participant "    //participant->getGuid() <<
-                      << " removed participant " << info.guid << std::endl;
+            std::cout << "Subscriber participant " << //participant->getGuid() <<
+                " removed participant " << info.guid << std::endl;
         }
         else if (status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
         {
-            std::cout << "Subscriber participant "    //participant->getGuid() <<
-                      << " dropped participant " << info.guid << std::endl;
+            std::cout << "Subscriber participant " << //participant->getGuid() <<
+                " dropped participant " << info.guid << std::endl;
         }
     }
 
@@ -94,13 +94,13 @@ public:
     {
         if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
         {
-            std::cout << "Subscriber participant "    //participant->guid() <<
-                      << " authorized participant " << info.guid << std::endl;
+            std::cout << "Subscriber participant " << //participant->guid() <<
+                " authorized participant " << info.guid << std::endl;
         }
         else
         {
-            std::cout << "Subscriber participant "    //participant->guid() <<
-                      << " unauthorized participant " << info.guid << std::endl;
+            std::cout << "Subscriber participant " << //participant->guid() <<
+                " unauthorized participant " << info.guid << std::endl;
         }
     }
 

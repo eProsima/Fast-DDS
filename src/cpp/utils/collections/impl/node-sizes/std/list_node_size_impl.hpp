@@ -22,8 +22,8 @@
 
 #ifdef STD_LIST_NODE_TYPE
 
-template<typename T>
-struct list_node_size : std::integral_constant<size_t, sizeof(STD_LIST_NODE_TYPE<T, void*>)>
+template <typename T>
+struct list_node_size : std::integral_constant <size_t, sizeof(STD_LIST_NODE_TYPE <T, void*>)>
 {
 };
 

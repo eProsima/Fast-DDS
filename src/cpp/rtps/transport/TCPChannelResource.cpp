@@ -249,8 +249,8 @@ void TCPChannelResource::add_logical_port_response(
     }
     else
     {
-        EPROSIMA_LOG_WARNING(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered "
-                << "(maybe removed" << " while negotiating?).");
+        EPROSIMA_LOG_WARNING(RTCP, "Received add_logical_port_response, but the transaction id wasn't registered " <<
+                "(maybe removed" << " while negotiating?).");
     }
 }
 

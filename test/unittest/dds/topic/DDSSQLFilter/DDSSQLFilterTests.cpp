@@ -648,7 +648,7 @@ public:
 
     static const std::array<std::pair<std::string, std::string>, 6>& ops()
     {
-        static const std::array<std::pair<std::string, std::string>, 6> the_ops =
+        static const std::array < std::pair<std::string, std::string>, 6 > the_ops =
         {
             std::pair<std::string, std::string>{"=",  "eq"},
             std::pair<std::string, std::string>{"<>", "ne"},

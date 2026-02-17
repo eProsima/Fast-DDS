@@ -162,8 +162,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_bitsetstructure_name);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                    type_descriptor)};
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_innerbitsethelper_name);
@@ -280,9 +279,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     EXPECT_EQ(var_innertypedbitsethelper2_data->get_int32_value(test_long_value,
             var_innertypedbitsethelper2_data->get_member_id_by_name(long_bitfield_name)), RETCODE_OK);
     EXPECT_EQ(long_value, test_long_value);
-    EXPECT_EQ(var_innertypedbitsethelper2_data->set_uint32_value(
-                var_innertypedbitsethelper2_data->get_member_id_by_name(
-                    ulong_bitfield_name), ulong_value), RETCODE_OK);
+    EXPECT_EQ(var_innertypedbitsethelper2_data->set_uint32_value(var_innertypedbitsethelper2_data->get_member_id_by_name(
+                ulong_bitfield_name), ulong_value), RETCODE_OK);
     EXPECT_EQ(var_innertypedbitsethelper2_data->get_uint32_value(test_ulong_value,
             var_innertypedbitsethelper2_data->get_member_id_by_name(ulong_bitfield_name)), RETCODE_OK);
     EXPECT_EQ(ulong_value, test_ulong_value);
@@ -301,9 +299,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     DynamicData::_ref_type var_innertypedbitsethelper4_data =
             data->loan_value(data->get_member_id_by_name(var_innertypedbitsethelper4_name));
     ASSERT_TRUE(var_innertypedbitsethelper4_data);
-    EXPECT_EQ(var_innertypedbitsethelper4_data->set_uint64_value(
-                var_innertypedbitsethelper4_data->get_member_id_by_name(
-                    ulong_long_bitfield_name), ulong_long_value), RETCODE_OK);
+    EXPECT_EQ(var_innertypedbitsethelper4_data->set_uint64_value(var_innertypedbitsethelper4_data->get_member_id_by_name(
+                ulong_long_bitfield_name), ulong_long_value), RETCODE_OK);
     EXPECT_EQ(var_innertypedbitsethelper4_data->get_uint64_value(test_ulong_long_value,
             var_innertypedbitsethelper4_data->get_member_id_by_name(ulong_long_bitfield_name)), RETCODE_OK);
     EXPECT_EQ(ulong_long_value, test_ulong_long_value);

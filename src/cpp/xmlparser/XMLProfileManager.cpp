@@ -137,7 +137,7 @@ struct AttributesTraits<ReplierAttributes>
 
 };
 
-template<typename AttributesType>
+template <typename AttributesType>
 XMLP_ret fill_attributes_from_xml(
         const std::string& xml,
         AttributesType& atts,
@@ -245,7 +245,7 @@ XMLP_ret fill_attributes_from_xml(
     return XMLP_ret::XML_ERROR;
 }
 
-template<typename AttributesType>
+template <typename AttributesType>
 XMLP_ret fill_attributes_from_xml(
         const std::string& xml,
         AttributesType& atts,
@@ -264,7 +264,7 @@ XMLP_ret fill_attributes_from_xml(
     return fill_attributes_from_xml(xml, atts, node_filter, fulfill_xsd);
 }
 
-template<typename AttributesType>
+template <typename AttributesType>
 XMLP_ret fill_default_attributes_from_xml(
         const std::string& xml,
         AttributesType& atts,

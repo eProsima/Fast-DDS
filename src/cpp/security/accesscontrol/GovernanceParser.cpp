@@ -123,15 +123,13 @@ bool GovernanceParser::parse_domain_access_rules_node(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER,
-                    "Invalid tag. Expected " << DomainAccessRules_str << " tag. Line " << PRINTLINE(
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid tag. Expected " << DomainAccessRules_str << " tag. Line " << PRINTLINE(
                         node));
         }
     }
     else
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER,
-                "Expected " << DomainAccessRules_str << " tag after root. Line " << PRINTLINEPLUSONE(
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected " << DomainAccessRules_str << " tag after root. Line " << PRINTLINEPLUSONE(
                     root));
     }
 
@@ -217,25 +215,21 @@ bool GovernanceParser::parse_domain_rule(
         {
             if (node->QueryBoolText(&rule.allow_unauthenticated_participants) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << AllowUnauthenticatedParticipants_str << " tag. Line "
-                                                     << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected boolean value in " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
         }
         else
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER,
-                    "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINE(
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINE(
                         node));
             return false;
         }
     }
     else
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER,
-                "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINEPLUSONE(
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINEPLUSONE(
                     old_node));
         return false;
     }
@@ -249,8 +243,7 @@ bool GovernanceParser::parse_domain_rule(
         {
             if (node->QueryBoolText(&rule.enable_join_access_control) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << EnableJoinAccessControl_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected boolean value in " << EnableJoinAccessControl_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -302,16 +295,14 @@ bool GovernanceParser::parse_domain_rule(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Invalid text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(
                                 node));
                     return false;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -363,16 +354,14 @@ bool GovernanceParser::parse_domain_rule(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Invalid text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(
                                 node));
                     return false;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -424,16 +413,14 @@ bool GovernanceParser::parse_domain_rule(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Invalid text in " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid text in " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(
                                 node));
                     return false;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected text in " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected text in " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -566,8 +553,7 @@ bool GovernanceParser::parse_topic_rule(
         {
             if (node->QueryBoolText(&rule.enable_discovery_protection) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << EnableDiscoveryProtection_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected boolean value in " << EnableDiscoveryProtection_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -595,8 +581,7 @@ bool GovernanceParser::parse_topic_rule(
         {
             if (node->QueryBoolText(&rule.enable_liveliness_protection) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected boolean value in " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -610,8 +595,7 @@ bool GovernanceParser::parse_topic_rule(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(XMLPARSER,
-                "Expected " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINEPLUSONE(
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINEPLUSONE(
                     old_node));
         return false;
     }
@@ -625,8 +609,7 @@ bool GovernanceParser::parse_topic_rule(
         {
             if (node->QueryBoolText(&rule.enable_read_access_control) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << EnableReadAccessControl_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected boolean value in " << EnableReadAccessControl_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -654,8 +637,7 @@ bool GovernanceParser::parse_topic_rule(
         {
             if (node->QueryBoolText(&rule.enable_write_access_control) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected boolean value in " << EnableWriteAccessControl_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected boolean value in " << EnableWriteAccessControl_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -707,16 +689,14 @@ bool GovernanceParser::parse_topic_rule(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Invalid text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(
                                 node));
                     return false;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }
@@ -760,16 +740,14 @@ bool GovernanceParser::parse_topic_rule(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(XMLPARSER,
-                            "Invalid text in " << DataProtectionKind_str << " tag. Line " << PRINTLINE(
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid text in " << DataProtectionKind_str << " tag. Line " << PRINTLINE(
                                 node));
                     return false;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Expected text in " << DataProtectionKind_str << " tag. Line " << PRINTLINE(
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected text in " << DataProtectionKind_str << " tag. Line " << PRINTLINE(
                             node));
                 return false;
             }

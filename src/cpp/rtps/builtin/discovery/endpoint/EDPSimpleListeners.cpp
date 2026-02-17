@@ -98,8 +98,8 @@ void EDPBasePUBListener::add_writer_from_change(
                                 if (updating && !data->is_update_allowed(*temp_writer_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
-                                            "Received incompatible update for WriterQos. writer_guid = "
-                                            << data->guid);
+                                            "Received incompatible update for WriterQos. writer_guid = " <<
+                                            data->guid);
                                 }
                                 *data = *temp_writer_data;
                                 data->setup_locators(*temp_writer_data, network, participant_data);
@@ -243,8 +243,8 @@ void EDPBaseSUBListener::add_reader_from_change(
                                 if (updating && !data->is_update_allowed(*temp_reader_data))
                                 {
                                     EPROSIMA_LOG_WARNING(RTPS_EDP,
-                                            "Received incompatible update for ReaderQos. reader_guid = "
-                                            << data->guid);
+                                            "Received incompatible update for ReaderQos. reader_guid = " <<
+                                            data->guid);
                                 }
                                 *data = *temp_reader_data;
                                 data->setup_locators(*temp_reader_data, network, participant_data);

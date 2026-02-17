@@ -793,8 +793,8 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                             else
                             {
                                 EPROSIMA_LOG_ERROR(RTPS_WRITER,
-                                        "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag
-                                                                   << ")");
+                                        "Error sending fragment (" << cache_change->sequenceNumber << ", " << frag <<
+                                        ")");
                                 ret_code = DeliveryRetCode::NOT_DELIVERED;
                             }
                         }

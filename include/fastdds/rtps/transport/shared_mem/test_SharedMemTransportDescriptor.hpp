@@ -47,7 +47,7 @@ typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDesc
     uint32_t* big_buffer_size_send_count_;
     uint32_t* big_buffer_size_recv_count_;
 
-} test_SharedMemTransportDescriptor;
+}test_SharedMemTransportDescriptor;
 
 } // namespace rtps
 } // namespace fastdds

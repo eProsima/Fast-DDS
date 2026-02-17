@@ -102,7 +102,7 @@ std::array<P, N> make_array(
 
 } // namespace
 
-template<class Proxy, std::size_t N = 4>
+template< class Proxy, std::size_t N = 4>
 class ProxyPool
 {
     mutable std::mutex mtx_;

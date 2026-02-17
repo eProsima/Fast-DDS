@@ -32,7 +32,7 @@ namespace rtps {
  * of listeners registered in the buffer in that moment. The Cell will be freed
  * when all listeners have poped the cell.
  */
-template<class T>
+template <class T>
 class MultiProducerConsumerRingBuffer
 {
 public:

@@ -1945,8 +1945,8 @@ SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(
 {
     SecureDataHeader header;
 
-    decoder >> header.transform_identifier.transformation_kind >> header.transform_identifier.transformation_key_id
-    >> header.session_id >> header.initialization_vector_suffix;
+    decoder >> header.transform_identifier.transformation_kind >> header.transform_identifier.transformation_key_id >>
+    header.session_id >> header.initialization_vector_suffix;
 
     return header;
 }

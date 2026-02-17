@@ -523,8 +523,8 @@ int main(
     }
     else if (test_agent == TestAgent::BOTH)
     {
-        std::cout << "Performing intraprocess test with " << subscribers << " subscribers and " << samples
-                  << " samples" << std::endl;
+        std::cout << "Performing intraprocess test with " << subscribers << " subscribers and " << samples <<
+            " samples" << std::endl;
 
         // Initialize publisher
         LatencyTestPublisher latency_publisher;

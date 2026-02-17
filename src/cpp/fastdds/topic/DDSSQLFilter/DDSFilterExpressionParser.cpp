@@ -46,8 +46,8 @@ using namespace xtypes;
 #include "DDSFilterExpressionParserImpl/parameters.hpp"
 
 // select which rules in the grammar will produce parse tree nodes:
-template<typename Rule>
-using selector = parse_tree::selector<
+template< typename Rule >
+using selector = parse_tree::selector <
     Rule,
     literal_value_processor::on<
         true_value,
@@ -56,14 +56,14 @@ using selector = parse_tree::selector<
         integer_value,
         float_value,
         char_value,
-        string_value>,
+        string_value >,
     parameter_processor::on<
         parameter_value>,
     parse_tree::store_content::on<
         string_content,
         integer,
         index_part,
-        identifier>,
+        identifier >,
     parse_tree::remove_content::on<
         eq_op,
         gt_op,
@@ -78,17 +78,17 @@ using selector = parse_tree::selector<
         not_op,
         dot_op,
         between_op,
-        not_between_op>,
+        not_between_op >,
     rearrange::on<
         boolean_value,
         ComparisonPredicate,
         BetweenPredicate,
         Range,
         Condition,
-        FilterExpression>,
+        FilterExpression >,
     identifier_processor::on<
         fieldname_part,
-        fieldname>
+        fieldname >
     >;
 
 std::unique_ptr<ParseNode> parse_filter_expression(
@@ -99,7 +99,7 @@ std::unique_ptr<ParseNode> parse_filter_expression(
     try
     {
         CurrentIdentifierState identifier_state { type_object, {}, {} };
-        return parse_tree::parse<FilterExpressionGrammar, ParseNode, selector>(in, identifier_state);
+        return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in, identifier_state);
     }
     catch (const parse_error& e)
     {
@@ -123,7 +123,7 @@ std::unique_ptr<ParseNode> parse_literal_value(
     try
     {
         CurrentIdentifierState identifier_state{ nullptr, nullptr, {} };
-        return parse_tree::parse<LiteralGrammar, ParseNode, selector>(in, identifier_state);
+        return parse_tree::parse< LiteralGrammar, ParseNode, selector >(in, identifier_state);
     }
     catch (const parse_error& e)
     {

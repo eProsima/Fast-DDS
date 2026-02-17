@@ -83,8 +83,8 @@ int main(
         {
             if (config.pub_config.samples != 0)
             {
-                std::cout << app_name << " running for " << config.pub_config.samples
-                          << " samples. Please press Ctrl+C "
+                std::cout << app_name << " running for " << config.pub_config.samples <<
+                    " samples. Please press Ctrl+C "
                           << "to stop the " << app_name << " at any time." << std::endl;
             }
             else
