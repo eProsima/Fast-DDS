@@ -41,7 +41,7 @@ public:
      */
     RemoteUnsupportedError()
         : RemoteUnsupportedError(
-                "Operation is valid but it is unsupported (i.e. is not implemented)")
+            "Operation is valid but it is unsupported (i.e. is not implemented)")
     {
     }
 

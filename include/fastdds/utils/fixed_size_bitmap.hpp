@@ -102,8 +102,8 @@ public:
     explicit BitmapRange(
             T base) noexcept
         : BitmapRange(
-                base,
-                NBITS - 1)
+            base,
+            NBITS - 1)
     {
     }
 

@@ -2788,9 +2788,9 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             ParticipantProxyData out({});
             EXPECT_NO_THROW(
                 if (!out.read_from_cdr_message(&msg, true, network, false))
-                {
-                    failed_for_data_p.insert(pid);
-                }
+                        {
+                            failed_for_data_p.insert(pid);
+                        }
                 );
         }
 
@@ -2805,9 +2805,9 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             WriterProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
                 if (!out.read_from_cdr_message(&msg))
-                {
-                    failed_for_data_w.insert(pid);
-                }
+                        {
+                            failed_for_data_w.insert(pid);
+                        }
                 );
         }
 
@@ -2822,9 +2822,9 @@ TEST(BuiltinDataSerializationTests, deserialization_of_big_parameters)
             ReaderProxyData out(max_unicast_locators, max_multicast_locators, limits);
             EXPECT_NO_THROW(
                 if (!out.read_from_cdr_message(&msg))
-                {
-                    failed_for_data_r.insert(pid);
-                }
+                        {
+                            failed_for_data_r.insert(pid);
+                        }
                 );
         }
     }

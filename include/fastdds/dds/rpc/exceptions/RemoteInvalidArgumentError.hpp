@@ -41,7 +41,7 @@ public:
      */
     RemoteInvalidArgumentError()
         : RemoteInvalidArgumentError(
-                "The value of a parameter passed has an illegal value")
+            "The value of a parameter passed has an illegal value")
     {
     }
 

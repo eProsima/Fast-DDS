@@ -86,8 +86,8 @@ void EDPBasePUBListener::add_writer_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
                 [reader, change, edp, &network, writer_added_callback]
-                (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
-                eprosima::fastdds::rtps::WriterProxyData* temp_writer_data)
+                    (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
+                        eprosima::fastdds::rtps::WriterProxyData* temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
                     auto copy_data_fun = [&request_ret_status, &temp_writer_data, &network](
@@ -231,8 +231,8 @@ void EDPBaseSUBListener::add_reader_from_change(
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
                 [reader, change, edp, &network, reader_added_callback]
-                (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
-                eprosima::fastdds::rtps::ReaderProxyData* temp_reader_data)
+                    (eprosima::fastdds::dds::ReturnCode_t request_ret_status,
+                        eprosima::fastdds::rtps::ReaderProxyData* temp_reader_data)
                 {
                     //LOAD INFORMATION IN DESTINATION READER PROXY DATA
                     auto copy_data_fun = [&request_ret_status, &temp_reader_data, &network](

@@ -41,7 +41,7 @@ public:
      */
     RemoteUnknownExceptionError()
         : RemoteUnknownExceptionError(
-                "A generic, unspecified exception was raised by the service implementation")
+            "A generic, unspecified exception was raised by the service implementation")
     {
     }
 

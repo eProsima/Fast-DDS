@@ -41,7 +41,7 @@ public:
      */
     RemoteOutOfResourcesError()
         : RemoteOutOfResourcesError(
-                "The remote service ran out of resources while processing the request")
+            "The remote service ran out of resources while processing the request")
     {
     }
 

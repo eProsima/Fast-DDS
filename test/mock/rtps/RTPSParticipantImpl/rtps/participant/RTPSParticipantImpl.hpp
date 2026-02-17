@@ -369,7 +369,7 @@ public:
 
     MOCK_METHOD0(has_shm_transport, bool());
 
-    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager * ());
+    MOCK_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
 
     uint32_t getRTPSParticipantID() const
     {

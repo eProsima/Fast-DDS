@@ -679,7 +679,7 @@ public:
         }                                                                                  \
                                                                                        \
         FASTDDS_EXPORTED_API TClassName(                                                            \
-    uint16_t in_length)                                                        \
+            uint16_t in_length)                                                        \
             : GenericDataQosPolicy(TPid, in_length)                                        \
         {                                                                                  \
         }                                                                                  \
@@ -693,7 +693,7 @@ public:
          * @param data data to copy in the newly created object \
          */                                                                            \
         FASTDDS_EXPORTED_API TClassName(                                                            \
-    const TClassName& data) = default;                                         \
+            const TClassName& data) = default;                                         \
                                                                                        \
         /** \
          * Construct from underlying collection type. \
@@ -704,7 +704,7 @@ public:
          * @param data data to copy in the newly created object \
          */                                                                            \
         FASTDDS_EXPORTED_API TClassName(                                                            \
-    const collection_type& data)                                               \
+            const collection_type& data)                                               \
             : GenericDataQosPolicy(TPid, data)                                             \
         {                                                                                  \
         }                                                                                  \

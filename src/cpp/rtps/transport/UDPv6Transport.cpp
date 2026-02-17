@@ -156,7 +156,7 @@ UDPv6Transport::UDPv6Transport(
                         [infoIP](const AllowedNetworkInterface& allowlist_element)
                         {
                             return allowlist_element.name == infoIP.dev ||
-                                   compare_ips(allowlist_element.name, infoIP.name);
+                            compare_ips(allowlist_element.name, infoIP.name);
                         }) != allow_end ))
                 {
                     EPROSIMA_LOG_WARNING(TRANSPORT_UDPV6,
@@ -179,7 +179,7 @@ UDPv6Transport::UDPv6Transport(
                     [&infoIP](const AllowedNetworkInterface& allowlist_element)
                     {
                         return allowlist_element.name == infoIP.dev || compare_ips(allowlist_element.name,
-                               infoIP.name);
+                        infoIP.name);
                     });
                 if (allow_it != allow_end)
                 {

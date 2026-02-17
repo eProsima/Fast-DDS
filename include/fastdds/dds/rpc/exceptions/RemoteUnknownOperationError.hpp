@@ -41,7 +41,7 @@ public:
      */
     RemoteUnknownOperationError()
         : RemoteUnknownOperationError(
-                "The operation called is unknown")
+            "The operation called is unknown")
     {
     }
 

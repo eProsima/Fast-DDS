@@ -2107,7 +2107,7 @@ bool StatefulWriter::ack_timer_expired()
             last_sequence_number_++;
         }
         while (!history_->get_change(last_sequence_number_, getGuid(), &change) &&
-                last_sequence_number_ < next_sequence_number());
+        last_sequence_number_ < next_sequence_number());
 
         if (!history_->get_change(
                     last_sequence_number_,

@@ -227,8 +227,8 @@ struct LogResources
                          + deadlock by absence of Run() loop activity (by using BothEmpty() call)
                          */
                         return !logging_ ||
-                               logs_.BothEmpty() ||
-                               (last_loop != current_loop_ && logs_.Empty());
+                        logs_.BothEmpty() ||
+                        (last_loop != current_loop_ && logs_.Empty());
                     });
 
             last_loop = current_loop_;

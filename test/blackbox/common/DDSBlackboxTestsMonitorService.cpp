@@ -756,7 +756,7 @@ struct ProxySampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       data.local_entity() == elem.local_entity();
+                                data.local_entity() == elem.local_entity();
                             });
 
             bool msgs_was_expected = false;
@@ -851,7 +851,7 @@ struct ProxySampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       data.local_entity() == elem.local_entity();
+                                data.local_entity() == elem.local_entity();
                             });
 
             std::cout << "Received unregistration of instance "
@@ -989,9 +989,9 @@ struct IncompatibleQoSSampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       (data.local_entity() == elem.local_entity()) &&
-                                       (data.value().incompatible_qos_status().last_policy_id()
-                                       == elem.value().incompatible_qos_status().last_policy_id());
+                                (data.local_entity() == elem.local_entity()) &&
+                                (data.value().incompatible_qos_status().last_policy_id()
+                                == elem.value().incompatible_qos_status().last_policy_id());
                             });
 
             bool msg_was_expected = false;
@@ -1023,9 +1023,9 @@ struct LivelinessLostSampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       (data.local_entity() == elem.local_entity()) &&
-                                       (data.value().liveliness_lost_status().total_count()
-                                       == elem.value().liveliness_lost_status().total_count());
+                                (data.local_entity() == elem.local_entity()) &&
+                                (data.value().liveliness_lost_status().total_count()
+                                == elem.value().liveliness_lost_status().total_count());
                             });
 
             if (assert_on_non_expected_msgs_)
@@ -1062,9 +1062,9 @@ struct LivelinessChangedSampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       (data.local_entity() == elem.local_entity()) &&
-                                       (data.value().liveliness_changed_status().not_alive_count()
-                                       >= elem.value().liveliness_changed_status().not_alive_count());
+                                (data.local_entity() == elem.local_entity()) &&
+                                (data.value().liveliness_changed_status().not_alive_count()
+                                >= elem.value().liveliness_changed_status().not_alive_count());
                             });
 
             std::cout << "Received Liveliness Changed on local_entity "
@@ -1101,9 +1101,9 @@ struct DeadlineMissedSampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       (data.local_entity() == elem.local_entity()) &&
-                                       (data.value().deadline_missed_status().total_count()
-                                       >= elem.value().deadline_missed_status().total_count());
+                                (data.local_entity() == elem.local_entity()) &&
+                                (data.value().deadline_missed_status().total_count()
+                                >= elem.value().deadline_missed_status().total_count());
                             });
 
             std::cout << "Received Deadline Missed on local_entity "
@@ -1135,8 +1135,8 @@ struct SampleLostSampleValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       (data.local_entity() == elem.local_entity()) &&
-                                       (data.value().sample_lost_status().total_count() >= 1);
+                                (data.local_entity() == elem.local_entity()) &&
+                                (data.value().sample_lost_status().total_count() >= 1);
                             });
 
             std::cout << "Received Sample Lost on local_entity "
@@ -1169,10 +1169,10 @@ struct ExtendedIncompatibleQoSValidator : public SampleValidator
                             [&](const MonitorServiceType::type& elem)
                             {
                                 return (data.status_kind() == elem.status_kind()) &&
-                                       (data.local_entity() == elem.local_entity()) &&
-                                       (std::is_permutation(data.value().extended_incompatible_qos_status().begin(),
-                                       data.value().extended_incompatible_qos_status().end(),
-                                       elem.value().extended_incompatible_qos_status().begin()));
+                                (data.local_entity() == elem.local_entity()) &&
+                                (std::is_permutation(data.value().extended_incompatible_qos_status().begin(),
+                                data.value().extended_incompatible_qos_status().end(),
+                                elem.value().extended_incompatible_qos_status().begin()));
                             });
 
             std::cout << "Received Extended Incompatible QoS on local_entity "
@@ -2689,10 +2689,10 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_extended_incompatible_qos)
     add_extended_incompatible_policy(
         expected_msgs,
         w_guid,
-        {
-            {MSPs[1].get_reader_guids().back(), {DURABILITY_QOS_POLICY_ID}},
-            {MSPs[2].get_reader_guids().back(), {LIVELINESS_QOS_POLICY_ID}},
-            {MSPs[3].get_reader_guids().back(), {OWNERSHIP_QOS_POLICY_ID}}});
+    {
+        {MSPs[1].get_reader_guids().back(), {DURABILITY_QOS_POLICY_ID}},
+        {MSPs[2].get_reader_guids().back(), {LIVELINESS_QOS_POLICY_ID}},
+        {MSPs[3].get_reader_guids().back(), {OWNERSHIP_QOS_POLICY_ID}}});
 
     MSC.start_reception(expected_msgs);
 

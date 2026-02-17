@@ -1273,8 +1273,8 @@ bool RTPSParticipantImpl::create_writer(
     }
 
     auto callback = [hist, listen, entityId, this]
-            (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
-            IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
+                (const GUID_t& guid, WriterAttributes& watt, FlowController* flow_controller,
+                    IPersistenceService* persistence, bool is_reliable) -> BaseWriter*
             {
                 BaseWriter* writer = nullptr;
 
@@ -1323,8 +1323,8 @@ bool RTPSParticipantImpl::createReader(
         bool enable)
 {
     auto callback = [hist, listen, this]
-            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-            bool is_reliable) -> BaseReader*
+                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> BaseReader*
             {
                 if (is_reliable)
                 {
@@ -1369,8 +1369,8 @@ bool RTPSParticipantImpl::createReader(
     }
 
     auto callback = [hist, listen, &payload_pool, this]
-            (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
-            bool is_reliable) -> BaseReader*
+                (const GUID_t& guid, ReaderAttributes& param, IPersistenceService* persistence,
+                    bool is_reliable) -> BaseReader*
             {
                 if (is_reliable)
                 {
@@ -2440,11 +2440,11 @@ uint32_t RTPSParticipantImpl::getMaxMessageSize() const
 #endif // if HAVE_SECURITY
 
     return (std::min)(
-        {
-            max_output_message_size_,
-            m_network_Factory.get_max_message_size_between_transports(),
-            max_receiver_buffer_size
-        });
+                {
+                    max_output_message_size_,
+                    m_network_Factory.get_max_message_size_between_transports(),
+                    max_receiver_buffer_size
+                });
 }
 
 uint32_t RTPSParticipantImpl::getMaxDataSize()

@@ -308,7 +308,7 @@ bool PermissionsParser::parse_validity(
 #if _MSC_VER != 1800
         validity
 #endif // if _MSC_VER != 1800
-)
+        )
 {
     assert(root);
 

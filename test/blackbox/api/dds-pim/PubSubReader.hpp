@@ -393,10 +393,10 @@ public:
             bool statistics = false,
             bool read = true)
         : PubSubReader(
-                topic_name,
-                take,
-                statistics,
-                read)
+            topic_name,
+            take,
+            statistics,
+            read)
     {
         filter_expression_ = filter_expression;
         expression_parameters_ = expression_parameters;

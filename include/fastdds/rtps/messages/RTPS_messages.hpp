@@ -118,7 +118,7 @@ inline std::ostream& operator <<(
         const SubmessageHeader_t& sh)
 {
     output << "Submessage Header, ID: " << std::hex << (int)sh.submessageId << std::dec;
-    output << " length: " << (int)sh.submessageLength << " flags " << (bitset<8>) sh.flags;
+    output << " length: " << (int)sh.submessageLength << " flags " << (bitset<8>)sh.flags;
     return output;
 }
 

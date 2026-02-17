@@ -754,8 +754,8 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
 {
     // Lambda to verify servers
     auto verify_servers = [&](const std::vector<MetaInfo_DS>& servers,
-            std::vector<uint16_t> expected_ports,
-            std::vector<uint32_t> expected_domains)
+                    std::vector<uint16_t> expected_ports,
+                    std::vector<uint32_t> expected_domains)
             {
                 for (const MetaInfo_DS& server : servers)
                 {

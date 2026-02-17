@@ -42,7 +42,7 @@ void encoding_decoding_test(
         DynamicData::_ref_type encoding_data,
         DynamicData::_ref_type decoding_data,
         DataRepresentationId_t encoding
-)
+        )
 {
     TypeSupport pubsubType {new DynamicPubSubType(created_type)};
     uint32_t payloadSize =

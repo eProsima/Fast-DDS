@@ -260,8 +260,8 @@ public:
     FixedSizeQueue(
             const FixedSizeQueue& other)
         : FixedSizeQueue(
-                other.capacity(),
-                other.get_allocator())
+            other.capacity(),
+            other.get_allocator())
     {
         for (const_reference item : other)
         {

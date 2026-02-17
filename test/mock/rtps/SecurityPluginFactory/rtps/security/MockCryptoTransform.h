@@ -72,8 +72,8 @@ public:
                 SecurityException &));
 
     MOCK_METHOD7(preprocess_secure_submsg, bool (
-                DatawriterCryptoHandle * *,
-                DatareaderCryptoHandle * *,
+                DatawriterCryptoHandle**,
+                DatareaderCryptoHandle**,
                 SecureSubmessageCategory_t&,
                 const CDRMessage_t&,
                 ParticipantCryptoHandle&,

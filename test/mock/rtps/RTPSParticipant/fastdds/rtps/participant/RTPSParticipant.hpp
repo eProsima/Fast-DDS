@@ -151,7 +151,7 @@ public:
     MOCK_CONST_METHOD0(disable_monitor_service, bool());
 
     MOCK_METHOD0(is_monitor_service_created, bool());
-    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver * (
+    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver* (
                 fastdds::statistics::rtps::IStatusQueryable&));
 
 #endif // FASTDDS_STATISTICS
@@ -186,7 +186,7 @@ public:
         return mp_event_thr;
     }
 
-    MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager * ());
+    MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
 
     MOCK_METHOD3(register_writer, bool(
                 RTPSWriter * Writer,
@@ -206,18 +206,18 @@ public:
                 RTPSReader * Reader,
                 const fastdds::rtps::TopicDescription& topic,
                 const fastdds::dds::ReaderQos& qos,
-                const fastdds::rtps::ContentFilterProperty * content_filter));
+                const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD4(register_reader, dds::ReturnCode_t(
                 RTPSReader * Reader,
                 const fastdds::rtps::TopicDescription& topic,
                 const fastdds::rtps::SubscriptionBuiltinTopicData& sub_builtin_topic_data,
-                const fastdds::rtps::ContentFilterProperty * content_filter));
+                const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD3(update_reader, bool(
                 RTPSReader * Reader,
                 const fastdds::dds::ReaderQos& rqos,
-                const fastdds::rtps::ContentFilterProperty * content_filter));
+                const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD1(ignore_participant, bool(
                 const GuidPrefix_t& participant_guid));

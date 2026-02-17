@@ -111,8 +111,8 @@ public:
     RTPSWithRegistrationWriter(
             const std::string& topic_name)
         : RTPSWithRegistrationWriter(
-                topic_name,
-                nullptr)
+            topic_name,
+            nullptr)
     {
     }
 

@@ -92,7 +92,7 @@ public:
                 AckedFunctor&& r)
         // delegates in copy constructor
             : AckedFunctor(
-                    r)
+                r)
         {
         }
 

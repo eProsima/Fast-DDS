@@ -1084,7 +1084,7 @@ void set_server_qos(
 void set_environment_variable(
         const std::string environment_servers =
         "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
-)
+        )
 {
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
@@ -1095,7 +1095,7 @@ void set_environment_variable(
 
 void set_easy_mode_environment_variable(
         const std::string ip = "127.0.0.1"
-)
+        )
 {
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::ROS2_EASY_MODE_URI, ip.c_str()));

@@ -405,12 +405,12 @@ bool DynamicDataImpl::equals(
                 [&](const decltype(key_to_id_)::value_type& l, const decltype(key_to_id_)::value_type& r)
                 {
                     return 0 == l.first.compare(r.first) &&
-                           1 == value_.count(l.second) &&
-                           1 == other_data->value_.count(r.second) &&
-                           (is_complex_kind(element_kind) ?
-                           std::static_pointer_cast<DynamicDataImpl>(value_.at(l.second))->equals(
-                               std::static_pointer_cast<DynamicDataImpl>(other_data->value_.at(r.second))) :
-                           compare_values(element_kind, value_.at(l.second), other_data->value_.at(r.second)));
+                    1 == value_.count(l.second) &&
+                    1 == other_data->value_.count(r.second) &&
+                    (is_complex_kind(element_kind) ?
+                    std::static_pointer_cast<DynamicDataImpl>(value_.at(l.second))->equals(
+                        std::static_pointer_cast<DynamicDataImpl>(other_data->value_.at(r.second))) :
+                    compare_values(element_kind, value_.at(l.second), other_data->value_.at(r.second)));
                 });
         }
         else if (TK_BITMASK == type_kind)
@@ -6582,7 +6582,7 @@ bool DynamicDataImpl::deserialize(
                             if (!member_impl)
                             {
                                 throw fastcdr::exception::BadParamException(
-                                          "Member not found in DynamicTypeImpl");
+                                    "Member not found in DynamicTypeImpl");
                             }
                             auto it = value_.find(member_impl->get_id());
 
@@ -6620,89 +6620,89 @@ bool DynamicDataImpl::deserialize(
                         switch (mid.id)
                         {
                             case 0:
-                            {
-                                traits<DynamicDataImpl>::ref_type member_data =
-                                std::static_pointer_cast<DynamicDataImpl>(value_.at(
-                                    0));
-                                dcdr >> member_data;
-
-                                // Select member pointed by discriminator.
-                                int64_t discriminator {0};
-                                uint64_t udiscriminator {0};
-                                selected_union_member_ = MEMBER_ID_INVALID;
-                                ReturnCode_t dyn_ret_value = get_int64_value(discriminator, 0);
-                                if (RETCODE_OK != dyn_ret_value)
                                 {
-                                    dyn_ret_value = get_uint64_value(udiscriminator, 0);
-                                    discriminator = static_cast<int64_t>(udiscriminator);
-                                }
+                                    traits<DynamicDataImpl>::ref_type member_data =
+                                    std::static_pointer_cast<DynamicDataImpl>(value_.at(
+                                        0));
+                                    dcdr >> member_data;
 
-                                if (RETCODE_OK == dyn_ret_value)
-                                {
-                                    for (auto member : type->get_all_members_by_index())
+                                    // Select member pointed by discriminator.
+                                    int64_t discriminator {0};
+                                    uint64_t udiscriminator {0};
+                                    selected_union_member_ = MEMBER_ID_INVALID;
+                                    ReturnCode_t dyn_ret_value = get_int64_value(discriminator, 0);
+                                    if (RETCODE_OK != dyn_ret_value)
                                     {
-                                        auto m_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                                                         member)};
+                                        dyn_ret_value = get_uint64_value(udiscriminator, 0);
+                                        discriminator = static_cast<int64_t>(udiscriminator);
+                                    }
 
-                                        if (!m_impl)
+                                    if (RETCODE_OK == dyn_ret_value)
+                                    {
+                                        for (auto member : type->get_all_members_by_index())
                                         {
-                                            ret_value = false;
-                                            continue;
+                                            auto m_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                                                             member)};
+
+                                            if (!m_impl)
+                                            {
+                                                ret_value = false;
+                                                continue;
+                                            }
+
+                                            for (auto label : m_impl->get_descriptor().label())
+                                            {
+                                                if (static_cast<int32_t>(discriminator) == label)
+                                                {
+                                                    selected_union_member_ = m_impl->get_id();
+                                                    break;
+                                                }
+                                            }
                                         }
 
-                                        for (auto label : m_impl->get_descriptor().label())
+                                        if (MEMBER_ID_INVALID == selected_union_member_)
                                         {
-                                            if (static_cast<int32_t>(discriminator) == label)
+                                            selected_union_member_ = type->default_union_member();
+
+                                            // Check again after attempting to assign the default member
+                                            if (MEMBER_ID_INVALID == selected_union_member_)
                                             {
-                                                selected_union_member_ = m_impl->get_id();
-                                                break;
+                                                ret_value = false;
                                             }
                                         }
                                     }
-
+                                    else
+                                    {
+                                        throw fastcdr::exception::BadParamException("Wrong discriminator");
+                                    }
+                                }
+                                break;
+                            default:
+                                {
                                     if (MEMBER_ID_INVALID == selected_union_member_)
                                     {
-                                        selected_union_member_ = type->default_union_member();
-
-                                        // Check again after attempting to assign the default member
-                                        if (MEMBER_ID_INVALID == selected_union_member_)
+                                        // Do nothing
+                                        return false;
+                                    }
+                                    else if (1 == value_.count(selected_union_member_))
+                                    {
+                                        // Check MemberId in mutable case.
+                                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
+                                                              selected_union_member_))};
+                                        dcdr >> member_data;
+                                        // In case it is not MUTABLE, we have to inform fastcdr to stop returning `false`.
+                                        if (ExtensibilityKind::MUTABLE != type->get_descriptor().extensibility_kind())
                                         {
                                             ret_value = false;
                                         }
                                     }
-                                }
-                                else
-                                {
-                                    throw fastcdr::exception::BadParamException("Wrong discriminator");
-                                }
-                            }
-                            break;
-                            default:
-                            {
-                                if (MEMBER_ID_INVALID == selected_union_member_)
-                                {
-                                    // Do nothing
-                                    return false;
-                                }
-                                else if (1 == value_.count(selected_union_member_))
-                                {
-                                    // Check MemberId in mutable case.
-                                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
-                                                          selected_union_member_))};
-                                    dcdr >> member_data;
-                                    // In case it is not MUTABLE, we have to inform fastcdr to stop returning `false`.
-                                    if (ExtensibilityKind::MUTABLE != type->get_descriptor().extensibility_kind())
+                                    else
                                     {
-                                        ret_value = false;
+                                        throw fastcdr::exception::BadParamException(
+                                            "Cannot deserialize union member due to wrong discriminator value");
                                     }
                                 }
-                                else
-                                {
-                                    throw fastcdr::exception::BadParamException(
-                                              "Cannot deserialize union member due to wrong discriminator value");
-                                }
-                            }
-                            break;
+                                break;
                         }
 
                         return ret_value;

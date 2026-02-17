@@ -451,7 +451,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
     test_transport->drop_data_messages_filter_ =
             [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity]
-            (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 // Inside this filter, the two flags passed in register whether both PIDs are included in the msg to be sent.
                 // The legacy value is overwritten in order to send a msg with only the standard PID_RELATED_SAMPLE_IDENTITY as valid parameter,
@@ -582,7 +582,7 @@ TEST(DDSBasic, check_original_writer_field)
 
     test_transport->drop_data_messages_filter_ =
             [&exists_pid_original_writer]
-            (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 bool ret = check_original_writer_field(msg, exists_pid_original_writer);
                 EXPECT_TRUE(ret);
@@ -658,7 +658,7 @@ TEST(DDSBasic, check_unset_original_writer_field)
 
     test_transport->drop_data_messages_filter_ =
             [&exists_pid_original_writer]
-            (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 bool ret = check_original_writer_field(msg, exists_pid_original_writer);
                 EXPECT_FALSE(ret);
@@ -774,7 +774,7 @@ TEST(DDSBasic, PidRpcMoreReplies)
 
     test_transport->drop_data_messages_filter_ =
             [&exists_pid_rpc_more_replies]
-            (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
+                (eprosima::fastdds::rtps::CDRMessage_t& msg)-> bool
             {
                 bool ret = check_rpc_has_more_replies_field(msg, exists_pid_rpc_more_replies);
                 EXPECT_TRUE(ret);

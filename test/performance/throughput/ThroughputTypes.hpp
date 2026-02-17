@@ -221,7 +221,7 @@ typedef struct ThroughputCommandType
     uint64_t m_totaltime = 0;
 
     ThroughputCommandType(
-        e_Command com = DEFAULT)
+            e_Command com = DEFAULT)
         : m_command(com)
     {
     }
