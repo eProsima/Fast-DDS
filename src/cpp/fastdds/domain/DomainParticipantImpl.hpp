@@ -143,6 +143,21 @@ public:
 
     /**
      * Create a Publisher in this Participant.
+     *
+     * @param qos QoS of the Publisher.
+     * @param ret_code Return code of the operation, RETCODE_OK if the publisher is created, RETCODE_ERROR otherwise.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
+     * @return Pointer to the created Publisher.
+     */
+     Publisher* create_publisher(
+            const PublisherQos& qos,
+            ReturnCode_t& ret_code,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Publisher in this Participant.
      * @param qos QoS of the Publisher.
      * @param listenerer Pointer to the listener.
      * @param mask StatusMask
@@ -169,6 +184,21 @@ public:
 
     /**
      * Create a Publisher in this Participant.
+     *
+     * @param profile_name Publisher profile name.
+     * @param ret_code Return code of the operation, RETCODE_OK if the publisher is created, RETCODE_ERROR otherwise.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
+     * @return Pointer to the created Publisher.
+     */
+    Publisher* create_publisher_with_profile(
+            const std::string& profile_name,
+            ReturnCode_t& ret_code,
+            PublisherListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Publisher in this Participant.
      * @param profile_name Publisher profile name.
      * @param listener Pointer to the listener.
      * @param mask StatusMask
@@ -184,6 +214,21 @@ public:
 
     /**
      * Create a Subscriber in this Participant.
+     *
+     * @param qos QoS of the Subscriber.
+     * @param ret_code Return code of the operation, RETCODE_OK if the subscriber is created, RETCODE_ERROR otherwise.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
+     * @return Pointer to the created Subscriber.
+     */
+    Subscriber* create_subscriber(
+            const SubscriberQos& qos,
+            ReturnCode_t& ret_code,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Subscriber in this Participant.
      * @param qos QoS of the Subscriber.
      * @param listener Pointer to the listener.
      * @param mask StatusMask that holds statuses the listener responds to
@@ -191,6 +236,21 @@ public:
      */
     Subscriber* create_subscriber(
             const SubscriberQos& qos,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Subscriber in this Participant.
+     *
+     * @param profile_name Subscriber profile name.
+     * @param ret_code Return code of the operation, RETCODE_OK if the subscriber is created, RETCODE_ERROR otherwise.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
+     * @return Pointer to the created Subscriber.
+     */
+    Subscriber* create_subscriber_with_profile(
+            const std::string& profile_name,
+            ReturnCode_t& ret_code,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
@@ -211,6 +271,25 @@ public:
 
     /**
      * Create a Topic in this Participant.
+     *
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param qos QoS of the Topic.
+     * @param ret_code Return code of the operation, RETCODE_OK if the topic is created, RETCODE_ERROR otherwise.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const TopicQos& qos,
+            ReturnCode_t& ret_code,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Topic in this Participant.
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param qos QoS of the Topic.
@@ -222,6 +301,24 @@ public:
             const std::string& topic_name,
             const std::string& type_name,
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Topic in this Participant.
+     *
+     * @param topic_name Name of the Topic.
+     * @param type_name Data type of the Topic.
+     * @param profile_name Topic profile name.
+     * @param listener Pointer to the listener (default: nullptr)
+     * @param mask StatusMask that holds statuses the listener responds to (default: all)
+     * @return Pointer to the created Topic.
+     */
+    Topic* create_topic_with_profile(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const std::string& profile_name,
+            ReturnCode_t& ret_code,
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 
@@ -274,6 +371,14 @@ public:
 
     ReturnCode_t delete_topic(
             const Topic* topic);
+
+    ContentFilteredTopic* create_contentfilteredtopic(
+            const std::string& name,
+            Topic* related_topic,
+            const std::string& filter_expression,
+            const std::vector<std::string>& expression_parameters,
+            const char* filter_class_name,
+            ReturnCode_t& ret_code);
 
     ContentFilteredTopic* create_contentfilteredtopic(
             const std::string& name,
