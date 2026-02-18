@@ -558,6 +558,20 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         Topic* related_topic,
         const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters,
+        const char* filter_class_name,
+        ReturnCode_t& ret_code)
+{
+    ContentFilteredTopic* topic = create_contentfilteredtopic(name, related_topic, filter_expression,
+            expression_parameters, filter_class_name);
+    ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+    return topic;
+}
+
+ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters,
         const char* filter_class_name)
 {
     if ((nullptr == related_topic) || (nullptr == filter_class_name))
@@ -772,6 +786,17 @@ const fastdds::rtps::GUID_t& DomainParticipantImpl::guid() const
 
 Publisher* DomainParticipantImpl::create_publisher(
         const PublisherQos& qos,
+        ReturnCode_t& ret_code,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    Publisher* pub = create_publisher(qos, listener, mask);
+    ret_code = (pub != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+    return pub;
+}
+
+Publisher* DomainParticipantImpl::create_publisher(
+        const PublisherQos& qos,
         PublisherListener* listener,
         const StatusMask& mask)
 {
@@ -822,6 +847,17 @@ Publisher* DomainParticipantImpl::create_publisher(
         *impl = pubimpl;
     }
 
+    return pub;
+}
+
+Publisher* DomainParticipantImpl::create_publisher_with_profile(
+        const std::string& profile_name,
+        ReturnCode_t& ret_code,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    Publisher* pub = create_publisher_with_profile(profile_name, listener, mask);
+    ret_code = (pub != nullptr) ? RETCODE_OK : RETCODE_ERROR;
     return pub;
 }
 
@@ -1574,6 +1610,17 @@ std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 }
 
 Subscriber* DomainParticipantImpl::create_subscriber(
+            const SubscriberQos& qos,
+            ReturnCode_t& ret_code,
+            SubscriberListener* listener,
+            const StatusMask& mask)
+{
+    Subscriber* subscriber = create_subscriber(qos, listener, mask);
+    ret_code = (subscriber != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+    return subscriber;
+}
+
+Subscriber* DomainParticipantImpl::create_subscriber(
         const SubscriberQos& qos,
         SubscriberListener* listener,
         const StatusMask& mask)
@@ -1618,6 +1665,17 @@ Subscriber* DomainParticipantImpl::create_subscriber(
 
 Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
         const std::string& profile_name,
+        ReturnCode_t& ret_code,
+        SubscriberListener* listener,
+        const StatusMask& mask)
+{
+    Subscriber* subscriber = create_subscriber_with_profile(profile_name, listener, mask);
+    ret_code = (subscriber != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+    return subscriber;
+}
+
+Subscriber* DomainParticipantImpl::create_subscriber_with_profile(
+        const std::string& profile_name,
         SubscriberListener* listener,
         const StatusMask& mask)
 {
@@ -1638,6 +1696,19 @@ SubscriberImpl* DomainParticipantImpl::create_subscriber_impl(
         SubscriberListener* listener)
 {
     return new SubscriberImpl(this, qos, listener);
+}
+
+Topic* DomainParticipantImpl::create_topic(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
+        ReturnCode_t& ret_code,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    Topic *topic = create_topic(topic_name, type_name, qos, listener, mask);
+    ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+    return topic;
 }
 
 Topic* DomainParticipantImpl::create_topic(
@@ -1695,6 +1766,19 @@ Topic* DomainParticipantImpl::create_topic(
 
     cond_topics_.notify_all();
 
+    return topic;
+}
+
+Topic* DomainParticipantImpl::create_topic_with_profile(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const std::string& profile_name,
+        ReturnCode_t& ret_code,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    Topic* topic = create_topic_with_profile(topic_name, type_name, profile_name, listener, mask);
+    ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
     return topic;
 }
 
