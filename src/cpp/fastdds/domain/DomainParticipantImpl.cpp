@@ -864,6 +864,7 @@ ReturnCode_t DomainParticipantImpl::ignore_participant(
            rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? RETCODE_OK :
            RETCODE_BAD_PARAMETER;
 }
+
 /* TODO
    bool DomainParticipantImpl::ignore_topic(
         const InstanceHandle_t& handle)
