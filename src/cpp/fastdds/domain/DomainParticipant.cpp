@@ -259,6 +259,14 @@ Topic* DomainParticipant::find_topic(
 
 rpc::Service* DomainParticipant::create_service(
         const std::string& service_name,
+        const std::string& service_type_name,
+        ReturnCode_t& ret_code)
+{
+    return impl_->create_service(service_name, service_type_name, ret_code);
+}
+
+rpc::Service* DomainParticipant::create_service(
+        const std::string& service_name,
         const std::string& service_type_name)
 {
     // NOTE: According to the RPC Standard annotation, service_name must be <interface_name>_<Service_name>
@@ -282,6 +290,14 @@ ReturnCode_t DomainParticipant::delete_service(
 
 rpc::Requester* DomainParticipant::create_service_requester(
         rpc::Service* service,
+        const RequesterQos& requester_qos,
+        ReturnCode_t& ret_code)
+{
+    return impl_->create_service_requester(service, requester_qos, ret_code);
+}
+
+rpc::Requester* DomainParticipant::create_service_requester(
+        rpc::Service* service,
         const RequesterQos& requester_qos)
 {
     return impl_->create_service_requester(service, requester_qos);
@@ -292,6 +308,14 @@ ReturnCode_t DomainParticipant::delete_service_requester(
         rpc::Requester* requester)
 {
     return impl_->delete_service_requester(service_name, requester);
+}
+
+rpc::Replier* DomainParticipant::create_service_replier(
+        rpc::Service* service,
+        const ReplierQos& replier_qos,
+        ReturnCode_t& ret_code)
+{
+    return impl_->create_service_replier(service, replier_qos, ret_code);
 }
 
 rpc::Replier* DomainParticipant::create_service_replier(

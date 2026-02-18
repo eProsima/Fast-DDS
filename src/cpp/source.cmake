@@ -49,9 +49,6 @@ set(${PROJECT_NAME}_source_files
     ${FASTDDS_SOURCE_DIR}/fastdds/publisher/qos/DataWriterQos.cpp
     ${FASTDDS_SOURCE_DIR}/fastdds/publisher/qos/PublisherQos.cpp
     ${FASTDDS_SOURCE_DIR}/fastdds/publisher/qos/WriterQos.cpp
-    ${FASTDDS_SOURCE_DIR}/fastdds/rpc/ServiceImpl.cpp
-    ${FASTDDS_SOURCE_DIR}/fastdds/rpc/ReplierImpl.cpp
-    ${FASTDDS_SOURCE_DIR}/fastdds/rpc/RequesterImpl.cpp
     ${FASTDDS_SOURCE_DIR}/fastdds/rpc/RPCTypeObjectSupport.cpp
     ${FASTDDS_SOURCE_DIR}/fastdds/rpc/ServiceTypeSupport.cpp
     ${FASTDDS_SOURCE_DIR}/fastdds/subscriber/DataReader.cpp

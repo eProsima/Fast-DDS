@@ -33,7 +33,6 @@
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
 #include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include "fastdds/rpc/RequestReplyContentFilterFactory.hpp"
 #include <fastdds/dds/rpc/ServiceTypeSupport.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
@@ -348,6 +347,19 @@ public:
      *
      * @param service_name Name of the service.
      * @param service_type_name Type name of the service (Request & reply types)
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the created service. nullptr in error case.
+     */
+    rpc::Service* create_service(
+            const std::string& service_name,
+            const std::string& service_type_name,
+            ReturnCode_t& ret_code);
+
+    /**
+     * Create an enabled RPC service.
+     *
+     * @param service_name Name of the service.
+     * @param service_type_name Type name of the service (Request & reply types)
      * @return Pointer to the created service. nullptr in error case.
      */
     rpc::Service* create_service(
@@ -374,6 +386,18 @@ public:
 
     /**
      * Create a RPC Requester in a given Service.
+     * @param service Pointer to a service object where the requester will be created.
+     * @param requester_qos QoS of the requester.
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the created requester. nullptr in error case.
+     */
+    rpc::Requester* create_service_requester(
+            rpc::Service* service,
+            const RequesterQos& requester_qos,
+            ReturnCode_t& ret_code);
+
+    /**
+     * Create a RPC Requester in a given Service.
      *
      * @param service Pointer to a service object where the requester will be created.
      * @param requester_qos QoS of the requester.
@@ -394,6 +418,20 @@ public:
     ReturnCode_t delete_service_requester(
             const std::string& service_name,
             rpc::Requester* requester);
+
+    /**
+     * Create a RPC Replier in a given Service.
+     *
+     * @param service Pointer to a service object where the Replier will be created.
+     * @param requester_qos QoS of the requester.
+     * @param ret_code Return code indicating the result of the operation.
+     *
+     * @return Pointer to the created replier. nullptr in error case.
+     */
+    rpc::Replier* create_service_replier(
+            rpc::Service* service,
+            const ReplierQos& replier_qos,
+            ReturnCode_t& ret_code);
 
     /**
      * Create a RPC Replier in a given Service.
@@ -764,19 +802,6 @@ protected:
     //!TopicDataType map
     std::map<std::string, TypeSupport> types_;
     mutable std::mutex mtx_types_;
-
-    //! RPC Service maps
-    std::map<std::string, rpc::ServiceTypeSupport> service_types_;
-    std::map<std::string, rpc::ServiceImpl*> services_;
-    mutable std::mutex mtx_service_types_;
-    mutable std::mutex mtx_services_;
-
-    //! RPC Services publisher and subscriber
-    std::pair<Subscriber*, SubscriberImpl*> services_subscriber_;
-    std::pair<Publisher*, PublisherImpl*> services_publisher_;
-
-    //! RPC Services Reply topic Content Filter Factory
-    rpc::RequestReplyContentFilterFactory req_rep_filter_factory_;
 
     //!Topic map
     std::map<std::string, TopicProxyFactory*> topics_;
