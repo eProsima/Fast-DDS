@@ -376,17 +376,6 @@ public:
             const std::string& service_name) const;
 
     /**
-     * Find a registered RPC service by name
-     *
-     * @param service_name Name of the service to search for.
-     * @param ret_code Return code indicating the result of the operation.
-     * @return Pointer to the service object if found, nullptr if not found.
-     */
-    rpc::Service* find_service(
-            const std::string& service_name,
-            ReturnCode_t& ret_code) const;
-
-    /**
      * Delete a registered RPC service.
      *
      * @param service Pointer to the service object to be deleted.
@@ -698,10 +687,6 @@ public:
 
     const TypeSupport find_type(
             const std::string& type_name) const;
-
-    const rpc::ServiceTypeSupport find_service_type(
-            const std::string& service_name,
-            ReturnCode_t& ret_code) const;
 
     const rpc::ServiceTypeSupport find_service_type(
             const std::string& service_name) const;

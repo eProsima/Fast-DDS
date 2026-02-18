@@ -2546,7 +2546,6 @@ TEST(ParticipantTests, GetDefaultPublisherQosFromXml)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
-
 TEST(ParticipantTests, GetReplierProfileQos)
 {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
