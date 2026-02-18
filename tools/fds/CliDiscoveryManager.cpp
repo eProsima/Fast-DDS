@@ -786,8 +786,8 @@ int CliDiscoveryManager::fastdds_discovery_server(
                 eprosima::fastdds::rtps::DiscoveryProtocol::BACKUP)
         {
             // Discovery protocol specified in XML is BACKUP, but no GUID was specified
-            EPROSIMA_LOG_ERROR(CLI, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers." <<
-                    "Update the XML file or use the -i argument.");
+            EPROSIMA_LOG_ERROR(CLI, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers."
+                    << "Update the XML file or use the -i argument.");
         }
     }
     else if (pOp->count() != 1)

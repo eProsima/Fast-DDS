@@ -125,7 +125,9 @@ public:
 
     RTPSWithRegistrationReader(
             const std::string& topic_name)
-        : RTPSWithRegistrationReader(topic_name, nullptr)
+        : RTPSWithRegistrationReader(
+                topic_name,
+                nullptr)
     {
     }
 
@@ -544,8 +546,8 @@ public:
         reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
         reader_attr_.endpoint.persistence_guid.entityId = 0x55555555;
 
-        std::cout << "Initializing transient READER " << reader_attr_.endpoint.persistence_guid << " with file " <<
-            filename << std::endl;
+        std::cout << "Initializing transient READER " << reader_attr_.endpoint.persistence_guid << " with file "
+                  << filename << std::endl;
 
         return durability(eprosima::fastdds::rtps::DurabilityKind_t::TRANSIENT)
                        .add_property("dds.persistence.plugin", "builtin.SQLITE3")
@@ -559,8 +561,8 @@ public:
         reader_attr_.endpoint.persistence_guid.guidPrefix = guidPrefix;
         reader_attr_.endpoint.persistence_guid.entityId = 0x55555555;
 
-        std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file " <<
-            filename << std::endl;
+        std::cout << "Initializing persistent READER " << reader_attr_.endpoint.persistence_guid << " with file "
+                  << filename << std::endl;
 
         return durability(eprosima::fastdds::rtps::DurabilityKind_t::PERSISTENT)
                        .add_property("dds.persistence.plugin", "builtin.SQLITE3")

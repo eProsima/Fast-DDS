@@ -1805,9 +1805,10 @@ void DiscoveryDataBase::AckedFunctor::operator () (
                     auto remote_server_it = db_->participants_.find(*it);
                     if (remote_server_it == db_->participants_.end())
                     {
-                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE,
-                                "Change " << change_->instanceHandle << "check as acked for " << reader_proxy->guid()
-                                          << " as it has not answered pinging yet");
+                        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Change " << change_->instanceHandle
+                                                                        << "check as acked for "
+                                                                        << reader_proxy->guid()
+                                                                        << " as it has not answered pinging yet");
                         return;
                     }
 

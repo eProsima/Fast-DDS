@@ -103,7 +103,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(short_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_short_seq);
@@ -142,7 +143,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUShort)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ushort_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ushort_seq);
@@ -181,7 +183,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(long_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_long_seq);
@@ -220,7 +223,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceULong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulong_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulong_seq);
@@ -259,7 +263,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceLongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longlong_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longlong_seq);
@@ -298,7 +303,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceULongLong)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(ulonglong_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_ulonglong_seq);
@@ -337,7 +343,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceFloat)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(float_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_float_seq);
@@ -376,7 +383,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(double_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_double_seq);
@@ -415,7 +423,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceLongDouble)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(longdouble_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_longdouble_seq);
@@ -454,7 +463,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBoolean)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bool_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bool_seq);
@@ -493,7 +503,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceOctet)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(byte_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_byte_seq);
@@ -532,7 +543,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(char_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_char_seq);
@@ -571,7 +583,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceWChar)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(wchar_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wchar_seq);
@@ -610,7 +623,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(string_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_string_seq);
@@ -650,7 +664,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceWString)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(wstring_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_wstring_seq);
@@ -690,7 +705,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStringBounded)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bounded_string_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_string_seq);
@@ -733,7 +749,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceWStringBounded)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bounded_wstring_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bounded_wstring_seq);
@@ -776,7 +793,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceEnum)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(enum_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_enum_seq);
@@ -821,12 +839,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitMask)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bitmask_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitmask_seq);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_bitmask_helper(),
-            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
+                create_inner_bitmask_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -862,7 +882,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceAlias)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(alias_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_alias_seq);
@@ -900,7 +921,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceShortArray)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(array_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_array_seq);
@@ -956,7 +978,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceSequence)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(seq_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_seq_seq);
@@ -1006,7 +1029,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(map_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_map_seq);
@@ -1085,7 +1109,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUnion)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(union_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_union_seq);
@@ -1157,12 +1182,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStructure)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(struct_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_struct_seq);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_struct_helper(),
-            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
+                create_inner_struct_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -1232,12 +1259,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(bitset_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_bitset_seq);
-    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(create_inner_bitset_helper(),
-            static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
+                create_inner_bitset_helper(),
+                static_cast<uint32_t>(static_cast<uint32_t>(LENGTH_UNLIMITED)))->build());
     struct_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type {struct_builder->build()};
@@ -1337,7 +1366,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallSequences)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(small_bounded_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_small_bounded_short_seq);
@@ -1391,7 +1421,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBigSequences)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(large_bounded_seq_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_large_bounded_short_seq);
@@ -1447,7 +1478,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_My_Structure)
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(alias_my_char_name);
     alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8));
-    DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)};
+    DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                     alias_descriptor)};
     ASSERT_TRUE(alias_builder);
     DynamicType::_ref_type alias_type {alias_builder->build()};
     ASSERT_TRUE(alias_type);
@@ -1484,7 +1516,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_My_Structure)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(my_structure_struct_name);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_list);

@@ -172,20 +172,20 @@ ServerApp::ServerApp(
 
     if (config.is_also_client)
     {
-        std::cout <<
-            "Server Participant " << pqos.name() <<
-            " created with GUID " << participant_->guid() <<
-            " listening in address <" << listening_locator  << "> " <<
-            " connected to address <" << connection_locator  << "> " <<
-            std::endl;
+        std::cout
+            << "Server Participant " << pqos.name()
+            << " created with GUID " << participant_->guid()
+            << " listening in address <" << listening_locator  << "> "
+            << " connected to address <" << connection_locator  << "> "
+            << std::endl;
     }
     else
     {
-        std::cout <<
-            "Server Participant " << pqos.name() <<
-            " created with GUID " << participant_->guid() <<
-            " listening in address <" << listening_locator  << "> " <<
-            std::endl;
+        std::cout
+            << "Server Participant " << pqos.name()
+            << " created with GUID " << participant_->guid()
+            << " listening in address <" << listening_locator  << "> "
+            << std::endl;
     }
 }
 

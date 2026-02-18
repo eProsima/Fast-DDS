@@ -39,7 +39,7 @@ typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDesc
 
     FASTDDS_EXPORTED_API test_SharedMemTransportDescriptor();
     FASTDDS_EXPORTED_API test_SharedMemTransportDescriptor(
-            const test_SharedMemTransportDescriptor& t);
+        const test_SharedMemTransportDescriptor& t);
 
     virtual TransportInterface* create_transport() const override;
 
@@ -47,7 +47,7 @@ typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDesc
     uint32_t* big_buffer_size_send_count_;
     uint32_t* big_buffer_size_recv_count_;
 
-}test_SharedMemTransportDescriptor;
+} test_SharedMemTransportDescriptor;
 
 } // namespace rtps
 } // namespace fastdds

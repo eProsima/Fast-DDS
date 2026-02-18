@@ -40,7 +40,8 @@ public:
      * Constructor.
      */
     RemoteUnknownExceptionError()
-        : RemoteUnknownExceptionError("A generic, unspecified exception was raised by the service implementation")
+        : RemoteUnknownExceptionError(
+                "A generic, unspecified exception was raised by the service implementation")
     {
     }
 

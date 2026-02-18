@@ -437,8 +437,8 @@ bool EDPServer::process_disposal(
     // DATA(Uw) or DATA(Ur) cases
     if (discovery_db.is_writer(disposal_change) || discovery_db.is_reader(disposal_change))
     {
-        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER_DISPOSAL, "Disposal is: " <<
-                (discovery_db.is_writer(
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER_DISPOSAL, "Disposal is: "
+                << (discovery_db.is_writer(
                     disposal_change) ? "writer" : "reader") << " handle: " << disposal_change->instanceHandle);
 
         auto builtin_pair = get_builtin_writer_history_pair_by_entity(disposal_change->writerGUID.entityId);

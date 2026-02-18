@@ -98,7 +98,7 @@ public:
         return DataSharingPayloadPool::release_payload(payload);
     }
 
-    template <typename T>
+    template<typename T>
     bool init_shared_segment(
             const GUID_t& writer_guid,
             const std::string& shared_dir)

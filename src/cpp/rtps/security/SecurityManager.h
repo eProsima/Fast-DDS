@@ -905,7 +905,7 @@ private:
     struct DatawriterAssociations
     {
         DatawriterAssociations(
-                DatawriterCryptoHandle* wh)
+                DatawriterCryptoHandle * wh)
             : writer_handle(wh)
         {
         }
@@ -918,7 +918,7 @@ private:
     struct DatareaderAssociations
     {
         DatareaderAssociations(
-                DatareaderCryptoHandle* rh)
+                DatareaderCryptoHandle * rh)
             : reader_handle(rh)
         {
         }
