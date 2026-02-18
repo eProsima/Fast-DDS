@@ -864,13 +864,15 @@ ReturnCode_t DomainParticipantImpl::ignore_participant(
            rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? RETCODE_OK :
            RETCODE_BAD_PARAMETER;
 }
-
-bool DomainParticipantImpl::ignore_topic(
+/* TODO
+   bool DomainParticipantImpl::ignore_topic(
         const InstanceHandle_t& handle)
-{
-    static_cast<void>(handle);
+   {
+    (void)handle;
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
     return false;
-}
+   }
+ */
 
 bool DomainParticipantImpl::ignore_publication(
         const InstanceHandle_t& handle)
@@ -1840,23 +1842,10 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 }
 
 const rpc::ServiceTypeSupport DomainParticipantImpl::find_service_type(
-        const std::string& /*service_name*/,
-        ReturnCode_t& ret_code) const
+        const std::string& /*service_type_name*/) const
 {
-    ret_code = RETCODE_UNSUPPORTED;
-    return rpc::ServiceTypeSupport(TypeSupport(nullptr), TypeSupport(nullptr));
-}
-
-const rpc::ServiceTypeSupport DomainParticipantImpl::find_service_type(
-        const std::string& service_type_name) const
-{
-    ReturnCode_t ret_code;
-    auto service_type = find_service_type(service_type_name, ret_code);
-    if (RETCODE_UNSUPPORTED == ret_code)
-    {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Services are not supported in this Fast DDS version");
-    }
-    return service_type;
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Services are not supported in this Fast DDS version");
+    return rpc::ServiceTypeSupport();
 }
 
 ReturnCode_t DomainParticipantImpl::register_service_type(
@@ -1897,23 +1886,10 @@ rpc::Service* DomainParticipantImpl::create_service(
 }
 
 rpc::Service* DomainParticipantImpl::find_service(
-        const std::string& /*service_name*/,
-        ReturnCode_t& ret_code) const
+        const std::string& /*service_name*/) const
 {
-    ret_code = RETCODE_UNSUPPORTED;
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Services are not supported in this Fast DDS version");
     return nullptr;
-}
-
-rpc::Service* DomainParticipantImpl::find_service(
-        const std::string& service_name) const
-{
-    ReturnCode_t ret_code;
-    auto service = find_service(service_name, ret_code);
-    if (RETCODE_UNSUPPORTED == ret_code)
-    {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Services are not supported in this Fast DDS version");
-    }
-    return service;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_service(
