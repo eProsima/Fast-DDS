@@ -103,6 +103,17 @@ public:
         return unsent_fragments_.min();
     }
 
+    FragmentNumber_t get_next_unsent_fragment(
+            const FragmentNumber_t& min_frag) const
+    {
+        if (unsent_fragments_.empty())
+        {
+            return change_->getFragmentCount() + 1;
+        }
+
+        return unsent_fragments_.min_after(min_frag);
+    }
+
     FragmentNumberSet_t getUnsentFragments() const
     {
         return unsent_fragments_;
@@ -130,15 +141,17 @@ public:
         if (!delivered_ && !unsent_fragments_.empty() && (unsent_fragments_.max() < change_->getFragmentCount()))
         {
             FragmentNumber_t base = unsent_fragments_.base();
-            FragmentNumber_t max = unsent_fragments_.max();
-            assert(!unsent_fragments_.is_set(base));
+            if (!unsent_fragments_.is_set(base))
+            {
+                FragmentNumber_t max = unsent_fragments_.max();
 
-            // Update base to first bit set
-            base = unsent_fragments_.min();
-            unsent_fragments_.base_update(base);
+                // Update base to first bit set
+                base = unsent_fragments_.min();
+                unsent_fragments_.base_update(base);
 
-            // Add all possible fragments
-            unsent_fragments_.add_range(max + 1u, change_->getFragmentCount() + 1u);
+                // Add all possible fragments
+                unsent_fragments_.add_range(max + 1u, change_->getFragmentCount() + 1u);
+            }
         }
     }
 

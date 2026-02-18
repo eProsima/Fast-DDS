@@ -847,6 +847,7 @@ bool PDPServer::remove_remote_participant(
             pC->writer_info.next = nullptr;
             pC->writer_info.previous = nullptr;
             pC->writer_info.num_sent_submessages = 0;
+            pC->writer_info.last_fragment_sent = 0;
 
             // Use this server identity in order to hint clients it's a lease duration demise
             WriteParams& wp = pC->write_params;

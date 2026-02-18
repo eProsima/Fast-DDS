@@ -45,15 +45,17 @@ struct CacheChange_t;
 struct CacheChangeWriterInfo_t
 {
     //!Number of DATA / DATA_FRAG submessages sent to the transport (only used in Writers)
-    size_t num_sent_submessages = 0;
+    size_t num_sent_submessages {0};
     //! Used to link with previous node in a list. Used by FlowControllerImpl.
     //! Cannot be cached because there are several comparisons without locking.
-    CacheChange_t* volatile previous = nullptr;
+    CacheChange_t* volatile previous {nullptr};
     //! Used to link with next node in a list. Used by FlowControllerImpl.
     //! Cannot be cached because there are several comparisons without locking.
-    CacheChange_t* volatile next = nullptr;
+    CacheChange_t* volatile next {nullptr};
     //! Used to know if the object is already in a list.
     std::atomic_bool is_linked {false};
+    //! Last fragment number sent.
+    FragmentNumber_t last_fragment_sent {0};
 };
 
 /*!
@@ -347,7 +349,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
         }
 
         // In order to avoid overflow on the calculations, we limit the maximum payload size
-        constexpr uint32_t MAX_PAYLOAD_SIZE = std::numeric_limits<uint32_t>::max() - 4u - 3u;
+        constexpr uint32_t MAX_PAYLOAD_SIZE = (std::numeric_limits<uint32_t>::max)() - 4u - 3u;
         if (payload_size > MAX_PAYLOAD_SIZE)
         {
             return false;

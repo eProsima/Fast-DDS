@@ -21,31 +21,12 @@
 using namespace eprosima::fastdds::rtps;
 using namespace testing;
 
-struct FlowControllerLimitedAsyncPublishModeMock : public FlowControllerLimitedAsyncPublishMode
-{
-    FlowControllerLimitedAsyncPublishModeMock(
-            RTPSParticipantImpl* participant,
-            const FlowControllerDescriptor* descriptor)
-        : FlowControllerLimitedAsyncPublishMode(participant, descriptor)
-    {
-        publish_mode = this;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode& get_publish_mode()
-    {
-        return *publish_mode;
-    }
-
-    static FlowControllerLimitedAsyncPublishMode* publish_mode;
-};
-FlowControllerLimitedAsyncPublishMode* FlowControllerLimitedAsyncPublishModeMock::publish_mode {nullptr};
-
 TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
-    FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, TypeParam> async(nullptr,
+    FlowControllerImpl<FlowControllerLimitedAsyncPublishMode, TypeParam> async(nullptr,
             &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
@@ -56,12 +37,11 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     // Initialize callback to get info.
     auto send_functor = [&](
         CacheChange_t* change,
-        RTPSMessageGroup&,
+        RTPSMessageGroup& group,
         LocatorSelectorSender& sender,
         const std::chrono::time_point<std::chrono::steady_clock>&)
             {
-                FlowControllerLimitedAsyncPublishModeMock::get_publish_mode().add_sent_bytes_by_group(
-                    change->serializedPayload.length, sender);
+                group.limitation_->add_sent_bytes_by_group(change->serializedPayload.length, sender);
                 this->last_thread_delivering_sample = std::this_thread::get_id();
                 {
                     std::unique_lock<std::mutex> lock(this->changes_delivered_mutex);

@@ -248,6 +248,11 @@ struct FlowControllerAsyncPublishMode
     {
     }
 
+    void prepare_locator_selector(
+            LocatorSelectorSender&)
+    {
+    }
+
     eprosima::thread thread;
 
     std::atomic_bool running {false};
@@ -284,13 +289,13 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             RTPSParticipantImpl* participant,
             const FlowControllerDescriptor* descriptor)
         : FlowControllerAsyncPublishMode(participant, descriptor)
+        , max_bytes_per_period(descriptor->max_bytes_per_period)
+        , period_ms(std::chrono::milliseconds(descriptor->period_ms))
         , sent_bytes_limitation_(static_cast<uint32_t>(descriptor->max_bytes_per_period))
     {
         assert(nullptr != descriptor);
         assert(0 < descriptor->max_bytes_per_period);
 
-        max_bytes_per_period = descriptor->max_bytes_per_period;
-        period_ms = std::chrono::milliseconds(descriptor->period_ms);
         group.set_limitation(this);
     }
 
@@ -313,7 +318,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
 
         }
 
-        bool ret = (max_bytes_per_period - current_sent_bytes_) > size_to_check;
+        bool ret = (sent_bytes_limitation_ - current_sent_bytes_) > size_to_check;
 
         if (!ret)
         {
@@ -380,11 +385,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
             uint32_t pending_to_send,
             RTPSMessageSenderInterface&) override
     {
-        return
-            //   either limitation has already been reached
-            (sent_bytes_limitation_ <= (current_sent_bytes_ + pending_to_send)) ||
-            //   or adding size_to_add will exceed limitation
-            (size_to_add > (sent_bytes_limitation_ - (current_sent_bytes_ + pending_to_send)));
+        return sent_bytes_limitation_ <= (current_sent_bytes_ + size_to_add + pending_to_send);
     }
 
     int32_t max_bytes_per_period = 0;
@@ -466,7 +467,13 @@ struct FlowControllerFifoSchedule
     {
     }
 
-    void trigger_bandwidth_limit_reset() const
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::TimedMutex>&) const
+    {
+    }
+
+    void processing_change_of_writer(
+            BaseWriter* ) const
     {
     }
 
@@ -605,7 +612,13 @@ struct FlowControllerRoundRobinSchedule
     {
     }
 
-    void trigger_bandwidth_limit_reset() const
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::TimedMutex>&) const
+    {
+    }
+
+    void processing_change_of_writer(
+            BaseWriter* ) const
     {
     }
 
@@ -724,7 +737,13 @@ struct FlowControllerHighPrioritySchedule
     {
     }
 
-    void trigger_bandwidth_limit_reset() const
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::TimedMutex>&) const
+    {
+    }
+
+    void processing_change_of_writer(
+            BaseWriter* ) const
     {
     }
 
@@ -939,12 +958,18 @@ struct FlowControllerPriorityWithReservationSchedule
         bandwidth_limit_ = limit;
     }
 
-    void trigger_bandwidth_limit_reset()
+    void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::TimedMutex>&)
     {
         for (auto& writer : writers_queue_)
         {
             std::get<3>(writer.second) = 0;
         }
+    }
+
+    void processing_change_of_writer(
+            BaseWriter* ) const
+    {
     }
 
 private:
@@ -1418,7 +1443,7 @@ protected:
 
                     if (ret)
                     {
-                        sched.trigger_bandwidth_limit_reset();
+                        trigger_bandwidth_limit_reset(in_lock);
                     }
                     sched.add_interested_changes_to_queue_nts();
                 }
@@ -1441,6 +1466,8 @@ protected:
                     current_writer = writer_it->second;
                 }
 
+                sched.processing_change_of_writer(current_writer);
+
                 if (!current_writer->getMutex().try_lock())
                 {
                     break;
@@ -1450,6 +1477,9 @@ protected:
                         current_writer->get_async_locator_selector();
                 async_mode.group.sender(current_writer, &locator_selector);
                 locator_selector.lock();
+
+                // Prepare locator_selector
+                async_mode.prepare_locator_selector(locator_selector);
 
                 // Remove previously from queue, because deliver_sample_nts could call FlowController::remove_sample()
                 // provoking a deadlock.
@@ -1504,6 +1534,12 @@ protected:
 
             async_mode.group.sender(nullptr, nullptr);
         }
+    }
+
+    virtual void trigger_bandwidth_limit_reset(
+            std::unique_lock<fastdds::TimedMutex>& lock)
+    {
+        sched.trigger_bandwidth_limit_reset(lock);
     }
 
     template<typename PubMode = PublishMode>
