@@ -150,7 +150,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
      */
-     Publisher* create_publisher(
+    Publisher* create_publisher(
             const PublisherQos& qos,
             ReturnCode_t& ret_code,
             PublisherListener* listener = nullptr,

@@ -3064,7 +3064,8 @@ TEST(ParticipantTests, CreateTopic)
     ASSERT_TRUE(participant->delete_topic(topic_profile) == RETCODE_OK);
 
     // Alternative API with return code
-    Topic* topic_profile_ret = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile", ret_code);
+    Topic* topic_profile_ret = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile",
+                    ret_code);
     ASSERT_NE(topic_profile_ret, nullptr);
     ASSERT_EQ(ret_code, RETCODE_OK);
     check_topic_with_profile(topic_profile_ret, "test_topic_profile");
@@ -4452,19 +4453,24 @@ TEST(ParticipantTests, ContentFilterInterfaces)
 
         ReturnCode_t ret_code;
         EXPECT_EQ(nullptr,
-                participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS, ret_code));
+                participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS,
+                ret_code));
         EXPECT_EQ(RETCODE_ERROR, ret_code);
         EXPECT_EQ(nullptr,
-                participant->create_contentfilteredtopic("contentfilteredtopic", topic2, "", {}, TEST_FILTER_CLASS, ret_code));
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic2, "", {}, TEST_FILTER_CLASS,
+                ret_code));
         EXPECT_EQ(RETCODE_ERROR, ret_code);
         EXPECT_EQ(nullptr,
-                participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS, ret_code));
+                participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS,
+                ret_code));
         EXPECT_EQ(RETCODE_ERROR, ret_code);
         EXPECT_EQ(nullptr,
-                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS, ret_code));
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS,
+                ret_code));
         EXPECT_EQ(RETCODE_ERROR, ret_code);
         EXPECT_EQ(nullptr,
-                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS, ret_code));
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS,
+                ret_code));
         EXPECT_EQ(RETCODE_ERROR, ret_code);
 
         // Positive test
@@ -4473,7 +4479,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         ASSERT_NE(nullptr, filtered_topic);
         EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
 
-        ContentFilteredTopic* filtered_topic_ret = participant->create_contentfilteredtopic("contentfilteredtopic_ret", topic,
+        ContentFilteredTopic* filtered_topic_ret = participant->create_contentfilteredtopic("contentfilteredtopic_ret",
+                        topic,
                         "", {}, ANOTHER_FILTER_CLASS, ret_code);
         ASSERT_NE(nullptr, filtered_topic_ret);
         EXPECT_EQ(RETCODE_OK, ret_code);

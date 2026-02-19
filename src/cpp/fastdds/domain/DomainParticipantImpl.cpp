@@ -562,7 +562,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         ReturnCode_t& ret_code)
 {
     ContentFilteredTopic* topic = create_contentfilteredtopic(name, related_topic, filter_expression,
-            expression_parameters, filter_class_name);
+                    expression_parameters, filter_class_name);
     ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
     return topic;
 }
@@ -1610,10 +1610,10 @@ std::vector<std::string> DomainParticipantImpl::get_participant_names() const
 }
 
 Subscriber* DomainParticipantImpl::create_subscriber(
-            const SubscriberQos& qos,
-            ReturnCode_t& ret_code,
-            SubscriberListener* listener,
-            const StatusMask& mask)
+        const SubscriberQos& qos,
+        ReturnCode_t& ret_code,
+        SubscriberListener* listener,
+        const StatusMask& mask)
 {
     Subscriber* subscriber = create_subscriber(qos, listener, mask);
     ret_code = (subscriber != nullptr) ? RETCODE_OK : RETCODE_ERROR;
@@ -1706,7 +1706,7 @@ Topic* DomainParticipantImpl::create_topic(
         TopicListener* listener,
         const StatusMask& mask)
 {
-    Topic *topic = create_topic(topic_name, type_name, qos, listener, mask);
+    Topic * topic = create_topic(topic_name, type_name, qos, listener, mask);
     ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
     return topic;
 }
