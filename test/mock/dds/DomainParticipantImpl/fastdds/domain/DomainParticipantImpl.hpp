@@ -164,6 +164,17 @@ public:
 
     Publisher* create_publisher(
             const PublisherQos& qos,
+            ReturnCode_t& ret_code,
+            PublisherListener* listener,
+            const StatusMask& mask)
+    {
+        Publisher* pub = create_publisher(qos, listener, mask);
+        ret_code = (pub != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+        return pub;
+    }
+
+    Publisher* create_publisher(
+            const PublisherQos& qos,
             PublisherListener* listener,
             const StatusMask& mask)
     {
@@ -189,6 +200,17 @@ public:
             *impl = pubimpl;
         }
 
+        return pub;
+    }
+
+    Publisher* create_publisher_with_profile(
+            const std::string& profile_name,
+            ReturnCode_t& ret_code,
+            PublisherListener* listener,
+            const StatusMask& mask)
+    {
+        Publisher* pub = create_publisher_with_profile(profile_name, listener, mask);
+        ret_code = (pub != nullptr) ? RETCODE_OK : RETCODE_ERROR;
         return pub;
     }
 
@@ -224,6 +246,17 @@ public:
 
     Subscriber* create_subscriber(
             const SubscriberQos& qos,
+            ReturnCode_t& ret_code,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all())
+    {
+        Subscriber* sub = create_subscriber(qos, listener, mask);
+        ret_code = (sub != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+        return sub;
+    }
+
+    Subscriber* create_subscriber(
+            const SubscriberQos& qos,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
     {
@@ -234,6 +267,17 @@ public:
         std::lock_guard<std::mutex> lock(mtx_subs_);
         subscribers_[sub] = subimpl;
         sub->enable();
+        return sub;
+    }
+
+    Subscriber* create_subscriber_with_profile(
+            const std::string& profile_name,
+            ReturnCode_t& ret_code,
+            SubscriberListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all())
+    {
+        Subscriber* sub = create_subscriber_with_profile(profile_name, listener, mask);
+        ret_code = (sub != nullptr) ? RETCODE_OK : RETCODE_ERROR;
         return sub;
     }
 
@@ -270,6 +314,19 @@ public:
     Topic* create_topic(
             const std::string& topic_name,
             const std::string& type_name,
+            const TopicQos& qos,
+            ReturnCode_t& ret_code,
+            TopicListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all())
+    {
+        Topic* topic = create_topic(topic_name, type_name, qos, listener, mask);
+        ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
+        return topic;
+    }
+
+    Topic* create_topic(
+            const std::string& topic_name,
+            const std::string& type_name,
             const TopicQos& qos = TOPIC_QOS_DEFAULT,
             TopicListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all())
@@ -294,6 +351,19 @@ public:
         topics_[topic_name] = proxy;
         topics_impl_[topic_name] = topic_impl;
         topic->enable();
+        return topic;
+    }
+
+    Topic* create_topic_with_profile(
+            const std::string& topic_name,
+            const std::string& type_name,
+            const std::string& profile_name,
+            ReturnCode_t& ret_code,
+            TopicListener* listener,
+            const StatusMask& mask)
+    {
+        Topic* topic = create_topic_with_profile(topic_name, type_name, profile_name, listener, mask);
+        ret_code = (topic != nullptr) ? RETCODE_OK : RETCODE_ERROR;
         return topic;
     }
 
@@ -359,6 +429,14 @@ public:
         }
         return RETCODE_ERROR;
     }
+
+    MOCK_METHOD6(create_contentfilteredtopic, ContentFilteredTopic * (
+                const std::string& name,
+                Topic * related_topic,
+                const std::string& filter_expression,
+                const std::vector<std::string>& expression_parameters,
+                const char* filter_class_name,
+                ReturnCode_t & ret_code));
 
     MOCK_METHOD5(create_contentfilteredtopic, ContentFilteredTopic * (
                 const std::string& name,
