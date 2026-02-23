@@ -23,7 +23,7 @@ on:
         description: 'CMake configuration to use'
         required: false
         type: string
-        default: 'RelWithDebInfo'
+        default: 'Release'
       ctest-args:
         description: 'Extra arguments for ctest cli'
         required: false
@@ -141,6 +141,16 @@ jobs:
             vcstool
             xmlschema
 
+      - name: Setup CCache
+        uses: ./src/fastdds/.github/actions/windows/get-ccache
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          ccache-folder: c:\\ccache
+
+      - name: Setup Ninja
+        uses: ./src/fastdds/.github/actions/windows/get-ninja
+        if: ${{ inputs.use-ccache == true }}
+
       - name: Get Fast CDR branch
         id: get_fastcdr_branch
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
@@ -178,9 +188,14 @@ jobs:
           colcon_build_args: --merge-install ${{ inputs.colcon-args }}
           # The following Fast DDS CMake options need to be specified here instead of in the meta files
           # because they vary from platform to platform
-          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ inputs.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DCOMPILE_EXAMPLES=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
+          cmake_args_default: ${{ inputs.cmake-args }} ${{ inputs.use-ccache == true && '-GNinja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_POLICY_DEFAULT_CMP0141=NEW -DCMAKE_MSVC_DEBUG_INFORMATION_FORMAT=Embedded' || format('-T {0}', inputs.vs-toolset)}} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DCOMPILE_EXAMPLES=ON
           cmake_build_type: ${{ inputs.cmake-config }}
           workspace: ${{ github.workspace }}
+
+      - name: Show CCache statistics
+        if: ${{ inputs.use-ccache == true }}
+        run: |
+          ccache --show-stats
 
       - name: Store build artifacts
         uses: ./src/fastdds/.github/actions/windows/store-artifact
@@ -190,7 +205,7 @@ jobs:
           artifact-path: |
             build
             install
-          destination-folder-path: c:\github_artifacts
+          destination-folder-path: c:\github_artifacts\fastdds-pro
 
       # This is necessary because any files created by this container will be owned by root and unable to be deleted by the runner user
       - name: Clean workspace
@@ -222,14 +237,15 @@ jobs:
         filter_expression_unittests_I:
           - 'DDSSQLFilterValue'
 
-    if: ${{ inputs.run-tests == true }}
     steps:
 
       - name: Add FASTDDSHOME variable to env context
+        if: ${{ inputs.run-tests == true }}
         run: |
           "FASTDDSHOME=${{ github.workspace }}\src\fastdds\.github\license" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
       - name: Sync eProsima/Fast-DDS-Pro repository
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastdds
@@ -237,10 +253,11 @@ jobs:
           ref: ${{ inputs.fastdds_pro_branch }}
 
       - name: Get build artifacts
+        if: ${{ inputs.run-tests == true }}
         uses: ./src/fastdds/.github/actions/windows/get-artifact
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
-          artifacts-folder-path: c:\github_artifacts
+          artifacts-folder-path: c:\github_artifacts\fastdds-pro
           destination-folder-path: ${{ github.workspace }}
 
       - name: Update known hosts file for DNS resolver testing
@@ -272,19 +289,23 @@ jobs:
           gc $hostfile
 
       - name: Install Fix Python version
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.12'
 
       - name: Get minimum supported version of CMake
+        if: ${{ inputs.run-tests == true }}
         uses: ./src/fastdds/.github/actions/windows/get-cmake
 
       - name: Install OpenSSL
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
         with:
           version: '3.1.1'
 
       - name: Update OpenSSL environment variables
+        if: ${{ inputs.run-tests == true }}
         run: |
           # Update the environment
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
@@ -330,9 +351,11 @@ jobs:
           }
 
       - name: Install colcon
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Install Python dependencies
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
           packages: |
@@ -341,9 +364,15 @@ jobs:
             xmlschema
 
       - name: Clean interprocess directory
-        run: del -Force -Recurse c:\ProgramData\eprosima\fastdds_interprocess\*
+        if: ${{ inputs.run-tests == true }}
+        run: |
+          if (Test-Path -Path c:\ProgramData\eprosima\fastdds_interprocess)
+          {
+            del -Force -Recurse c:\ProgramData\eprosima\fastdds_interprocess\*
+          }
 
       - name: Test
+        if: ${{ inputs.run-tests == true }}
         id: test
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:

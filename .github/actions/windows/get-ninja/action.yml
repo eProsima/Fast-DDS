@@ -1,0 +1,44 @@
+name: get-ninja
+description: "Get ninja (Windows)"
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install latest version of Ninja
+      id: install-latest-ninja
+      run: |
+
+        $erroractionpreference = "stop"
+
+        $content = (Invoke-WebRequest -Uri "https://api.github.com/repos/ninja-build/ninja/releases/latest" -UseBasicParsing | ConvertFrom-Json)
+        $tag = $content.tag_name
+        $filename = "ninja-win"
+        $tarball = "$filename.zip"
+
+        $outdir = "c:\ninja-bin"
+        New-Item -ItemType Directory -Force -Path $outdir
+        if (Test-Path -Path "$outdir\ninja.exe")
+        {
+          Remove-Item -Force -Recurse "$outdir\ninja.exe"
+        }
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri "https://github.com/ninja-build/ninja/releases/download/$tag/$tarball" -OutFile "$outdir\$tarball"
+
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory("$outdir\$tarball", "$outdir")
+        Remove-Item "$outdir\$tarball"
+      shell: pwsh
+
+    - name: Add Ninja to PATH variable to env context
+      id: add-ninja-path-env
+      run: |
+        "PATH=c:\\ninja-bin;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      shell: pwsh
+
+    - name: Check Ninja
+      id: check-ninja-version
+      run: |
+        ninja --version
+      shell: pwsh
+

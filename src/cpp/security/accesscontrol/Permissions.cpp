@@ -789,14 +789,17 @@ static bool generate_credentials_token(
     {
         try
         {
-            std::ifstream ifs(file.substr(7).c_str());
             Property property;
             property.name("dds.perm.cert");
-            property.value().assign((std::istreambuf_iterator<char>(ifs)),
-                    (std::istreambuf_iterator<char>()));
             property.propagate(true);
+
+            std::ifstream ifs(file.substr(7), std::ios::binary);
+            std::ostringstream oss;
+            oss << ifs.rdbuf();
+            property.value() = oss.str();
+            returned_value = static_cast<bool>(ifs);
+
             token.properties().push_back(std::move(property));
-            returned_value = true;
         }
         catch (std::exception&)
         {

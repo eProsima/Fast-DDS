@@ -18,7 +18,7 @@ jobs:
       - x64
       - Ubuntu
     container:
-      image: 'localhost:5000/eprosima/ubuntu-ci:noble'
+      image: 'ci.intranet.eprosima.com:5000/eprosima/ubuntu-ci:noble'
     if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
     steps:
 

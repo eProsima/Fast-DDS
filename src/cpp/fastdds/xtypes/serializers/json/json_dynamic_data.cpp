@@ -150,23 +150,29 @@ ReturnCode_t json_deserialize_member(
         DynamicDataJsonFormat format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
-    MemberDescriptorImpl& member_desc =
-            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)->get_descriptor();
+    auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)};
 
-    TypeKind parent_kind = member_desc.parent_kind();
-    MemberId member_id;
-    if (TK_BITMASK == parent_kind)
+    if (member_impl)
     {
-        member_id = member_desc.position();
-    }
-    else
-    {
-        member_id = member_desc.id();
+        MemberDescriptorImpl& member_desc {member_impl->get_descriptor()};
+
+        TypeKind parent_kind = member_desc.parent_kind();
+        MemberId member_id;
+        if (TK_BITMASK == parent_kind)
+        {
+            member_id = member_desc.position();
+        }
+        else
+        {
+            member_id = member_desc.id();
+        }
+
+        return json_deserialize_member(j, member_id,
+                       traits<DynamicType>::narrow<DynamicTypeImpl>(
+                           member_desc.type())->resolve_alias_enclosed_type()->get_kind(), format, data);
     }
 
-    return json_deserialize_member(j, member_id,
-                   traits<DynamicType>::narrow<DynamicTypeImpl>(
-                       member_desc.type())->resolve_alias_enclosed_type()->get_kind(), format, data);
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t json_deserialize_member(
@@ -1273,9 +1279,13 @@ ReturnCode_t json_deserialize_bitmask(
                 if (std::find(j_active_bits.begin(), j_active_bits.end(),
                         it.second->get_name().to_string()) != j_active_bits.end())
                 {
-                    MemberDescriptorImpl& member_desc =
-                            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
-                    u64_from_active |= (0x01ull << member_desc.position());
+                    auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)};
+
+                    if (member_impl)
+                    {
+                        MemberDescriptorImpl& member_desc {member_impl->get_descriptor()};
+                        u64_from_active |= (0x01ull << member_desc.position());
+                    }
                 }
             }
         }

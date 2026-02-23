@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Set BUILD_TESTING to OFF by default.
+if(NOT BUILD_TESTING)
+    message(STATUS "Tests not compiled by default")
+    set(BUILD_TESTING OFF CACHE BOOL "Enable testing" FORCE)
+endif()
+
 if (BUILD_TESTING)
     find_package(GTest)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)

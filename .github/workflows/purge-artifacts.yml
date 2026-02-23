@@ -33,9 +33,9 @@ jobs:
       - x64
       - Ubuntu
     container:
-      image: 'localhost:5000/eprosima/ubuntu-ci:noble'
+      image: 'ci.intranet.eprosima.com:5000/eprosima/ubuntu-ci:noble'
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
     steps:
       - uses: eProsima/Fast-DDS-Pro/.github/actions/linux/purge-artifacts@main
         with:
@@ -51,5 +51,5 @@ jobs:
     steps:
       - uses: eProsima/Fast-DDS-Pro/.github/actions/windows/purge-artifacts@main
         with:
-          artifacts-folder-path: c:\github_artifacts
+          artifacts-folder-path: c:\github_artifacts\fastdds-pro
           days: ${{ inputs.days || '30' }}

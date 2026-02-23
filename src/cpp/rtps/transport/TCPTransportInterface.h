@@ -27,7 +27,7 @@
 #include <memory>
 #include <mutex>
 
-#include <asio.hpp>
+#include "../network/asio.hpp"
 #include <asio/steady_timer.hpp>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>

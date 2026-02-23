@@ -40,7 +40,7 @@ runs:
     - name: Add CCache to PATH variable to env context
       id: add-ccache-path-env
       run: |
-        "PATH=c://ccache-bin/ccache/bin;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+        "PATH=c:\\ccache-bin\\ccache;$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
         "CCACHE_BASEDIR=${{ github.workspace }}" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
         "CCACHE_DIR=${{ inputs.ccache-folder }}" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
       shell: pwsh

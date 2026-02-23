@@ -81,7 +81,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     if: ${{ inputs.run-build == true }}
     steps:
@@ -204,7 +204,7 @@ jobs:
       image: ${{ inputs.docker-image }}
       options: --shm-size=2g
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     if: ${{ inputs.run-tests == true }}
     steps:
@@ -292,7 +292,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_test.meta
-          colcon_build_args: ${{ inputs.colcon-args }} --packages-select fastdds
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-select googletest-distribution fastdds
           cmake_args: ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }} ${{ inputs.use-ccache == true && '-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache' || ''}}
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ env.cmake-build-type }}
@@ -344,7 +344,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     if: ${{ inputs.security == true }}
     steps:
@@ -453,7 +453,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     if: ${{ inputs.security == true && inputs.run-tests == true }}
     steps:
@@ -575,7 +575,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     if: ${{ inputs.security == true }}
     steps:
@@ -725,7 +725,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     steps:
 
@@ -833,7 +833,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     steps:
 
@@ -972,7 +972,7 @@ jobs:
     container:
       image: ${{ inputs.docker-image }}
       volumes:
-        - /var/lib/jenkins/.github/artifacts:/tmp/artifacts
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
     steps:
 

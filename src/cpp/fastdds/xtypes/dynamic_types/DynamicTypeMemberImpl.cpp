@@ -80,9 +80,14 @@ ReturnCode_t DynamicTypeMemberImpl::get_verbatim_text(
 bool DynamicTypeMemberImpl::equals(
         traits<DynamicTypeMember>::ref_type other) noexcept
 {
-    bool ret_value = true;
     auto impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(other);
 
+    if (!impl)
+    {
+        return false;
+    }
+
+    bool ret_value {true};
     ret_value &= (annotation_.size() == impl->annotation_.size());
     if (ret_value)
     {

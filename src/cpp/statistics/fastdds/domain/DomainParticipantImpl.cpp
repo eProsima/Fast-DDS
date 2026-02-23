@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include <asio.hpp>
+#include "../../../rtps/network/asio.hpp"
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
@@ -616,18 +616,28 @@ bool DomainParticipantImpl::delete_topic_and_type(
 {
     efd::TopicDescription* topic_desc = lookup_topicdescription(topic_name);
     assert(nullptr != topic_desc);
-    efd::Topic* topic = dynamic_cast<efd::Topic*>(topic_desc);
-    std::string type_name = topic->get_type_name();
-    // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
-    // it should not. It also fails if topic is a nullptr (dynamic_cast failure).
-    if (efd::RETCODE_OK != delete_topic(topic))
+
+    if (topic_desc)
     {
-        return false;
+        efd::Topic* topic = dynamic_cast<efd::Topic*>(topic_desc);
+
+        if (topic)
+        {
+            std::string type_name = topic->get_type_name();
+            // delete_topic can fail if the topic is referenced by any other entity. This case could happen even if
+            // it should not. It also fails if topic is a nullptr (dynamic_cast failure).
+            if (efd::RETCODE_OK != delete_topic(topic))
+            {
+                return false;
+            }
+            // unregister_type failures are of no concern here. It will fail if the type is still in use (something
+            // expected) and if the type_name is empty (which is not going to happen).
+            unregister_type(type_name);
+            return true;
+        }
     }
-    // unregister_type failures are of no concern here. It will fail if the type is still in use (something
-    // expected) and if the type_name is empty (which is not going to happen).
-    unregister_type(type_name);
-    return true;
+
+    return false;
 }
 
 bool DomainParticipantImpl::get_monitoring_status(

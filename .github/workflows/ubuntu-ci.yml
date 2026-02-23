@@ -60,7 +60,7 @@ jobs:
       # It would be desirable to have a matrix of ubuntu OS for this job, but due to the issue opened in this ticket:
       # https://github.com/orgs/community/discussions/128118 , it has been set as a single OS job.
       runner: 'self-hosted'
-      docker-image: 'localhost:5000/eprosima/ubuntu-ci:noble'
+      docker-image: 'ci.intranet.eprosima.com:5000/eprosima/ubuntu-ci:noble'
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
