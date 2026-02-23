@@ -103,25 +103,31 @@ ReturnCode_t json_serialize_member(
         nlohmann::json& output,
         DynamicDataJsonFormat format) noexcept
 {
-    MemberDescriptorImpl& member_desc =
-            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)->get_descriptor();
+    auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)};
 
-    TypeKind parent_kind = member_desc.parent_kind();
-    MemberId member_id;
-
-    if (TK_BITMASK == parent_kind)
+    if (member_impl)
     {
-        member_id = member_desc.position();
-    }
-    else
-    {
-        member_id = member_desc.id();
+        MemberDescriptorImpl& member_desc {member_impl->get_descriptor()};
+
+        TypeKind parent_kind = member_desc.parent_kind();
+        MemberId member_id;
+
+        if (TK_BITMASK == parent_kind)
+        {
+            member_id = member_desc.position();
+        }
+        else
+        {
+            member_id = member_desc.id();
+        }
+
+        return json_serialize_member(data, member_id,
+                       traits<DynamicType>::narrow<DynamicTypeImpl>(
+                           member_desc.type())->resolve_alias_enclosed_type()->get_kind(),
+                       type_member->get_name().to_string(), output, format);
     }
 
-    return json_serialize_member(data, member_id,
-                   traits<DynamicType>::narrow<DynamicTypeImpl>(
-                       member_desc.type())->resolve_alias_enclosed_type()->get_kind(),
-                   type_member->get_name().to_string(), output, format);
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t json_serialize_member(
@@ -671,14 +677,19 @@ ReturnCode_t json_serialize_enum_member(
     ret = RETCODE_BAD_PARAMETER;
     for (const auto& it : all_members)
     {
-        MemberDescriptorImpl& enum_member_desc = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-            it.second)->get_descriptor();
-        if (enum_member_desc.literal_value() == j_value.dump())
+        auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                              it.second)};
+
+        if (member_impl)
         {
-            name = it.first;
-            assert(name == it.second->get_name());
-            ret = RETCODE_OK;
-            break;
+            MemberDescriptorImpl& enum_member_desc {member_impl->get_descriptor()};
+            if (enum_member_desc.literal_value() == j_value.dump())
+            {
+                name = it.first;
+                assert(name == it.second->get_name());
+                ret = RETCODE_OK;
+                break;
+            }
         }
     }
     if (RETCODE_OK == ret)
@@ -1076,12 +1087,15 @@ ReturnCode_t json_serialize_bitmask_member(
         std::vector<std::string> active_bits;
         for (const auto& it : bitmask_members)
         {
-            MemberDescriptorImpl& member_desc =
-                    traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)->get_descriptor();
-
-            if (u64_value & (0x01ull << member_desc.position()))
+            auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it.second)};
+            if (member_impl)
             {
-                active_bits.push_back(it.second->get_name().to_string());
+                MemberDescriptorImpl& member_desc {member_impl->get_descriptor()};
+
+                if (u64_value & (0x01ull << member_desc.position()))
+                {
+                    active_bits.push_back(it.second->get_name().to_string());
+                }
             }
         }
         bitmask_dict["active"] = active_bits;

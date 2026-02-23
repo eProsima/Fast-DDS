@@ -628,8 +628,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         members_.push_back(dyn_member);
     }
-    assert(next_index_ == traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                *members_.rbegin())->get_descriptor().index() + 1);
+    auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(*members_.rbegin());
+    static_cast<void>(member_impl);
+    assert(member_impl && next_index_ == member_impl->get_descriptor().index() + 1);
 
     member_by_name_.emplace(std::make_pair(member_name, dyn_member));
     if (TK_ANNOTATION == type_descriptor_kind ||

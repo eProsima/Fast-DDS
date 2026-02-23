@@ -23,7 +23,7 @@
 #include <chrono>
 #include <string>
 
-#include <asio.hpp>
+#include "../../rtps/network/asio.hpp"
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>

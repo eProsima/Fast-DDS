@@ -352,7 +352,7 @@ bool DynamicDataImpl::equals(
 {
     auto other_data = traits<DynamicData>::narrow<DynamicDataImpl>(other);
 
-    if (type_ && other_data->type_ && type_->equals(other_data->type_))
+    if (type_ && other_data && other_data->type_ && type_->equals(other_data->type_))
     {
         TypeKind type_kind = enclosing_type_->get_kind();
 

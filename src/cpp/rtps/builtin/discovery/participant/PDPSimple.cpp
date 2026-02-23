@@ -21,6 +21,7 @@
 
 #include <mutex>
 
+#include <fastdds/config.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/BuiltinEndpoints.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
@@ -277,7 +278,11 @@ void PDPSimple::announceParticipantState(
         if (mp_RTPSParticipant->is_secure())
         {
             auto secure = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
-            assert(nullptr != secure);
+            assert(secure && secure->secure_writer.history_);
+            if (!secure || !secure->secure_writer.history_)
+            {
+                FASTDDS_UNREACHABLE();   // “cannot happen” invariant
+            }
 
             WriterHistory& history = *(secure->secure_writer.history_);
             PDP::announceParticipantState(history, new_change, dispose, wp);
@@ -285,6 +290,13 @@ void PDPSimple::announceParticipantState(
 #endif // HAVE_SECURITY
 
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
+        assert(endpoints && endpoints->writer.history_);
+
+        if (!endpoints || !endpoints->writer.history_)
+        {
+            FASTDDS_UNREACHABLE();       // “cannot happen” invariant
+        }
+
         WriterHistory& history = *(endpoints->writer.history_);
         PDP::announceParticipantState(history, new_change, dispose, wp);
 

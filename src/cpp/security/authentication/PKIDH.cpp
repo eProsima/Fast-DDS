@@ -2536,7 +2536,11 @@ std::shared_ptr<SecretHandle> PKIDH::get_shared_secret(
     {
         auto secret = get_shared_secret(SharedSecretHandle::nil_handle, exception);
         auto sharedsecret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
-        (*sharedsecret)->data_ = (*handshake->sharedsecret_)->data_;
+
+        if (sharedsecret)
+        {
+            (*sharedsecret)->data_ = (*handshake->sharedsecret_)->data_;
+        }
         return secret;
     }
 

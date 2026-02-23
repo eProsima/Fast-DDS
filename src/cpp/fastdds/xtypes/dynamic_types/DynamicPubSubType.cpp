@@ -319,17 +319,21 @@ void DynamicPubSubType::update_dynamic_type()
     if (TK_STRUCTURE == dynamic_type_->get_kind())
     {
         auto type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type_);
-        for (auto& member : type_impl->get_all_members_by_index())
+
+        if (type_impl)
         {
-            auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
-            if (!member_impl)
+            for (auto& member : type_impl->get_all_members_by_index())
             {
-                continue;
-            }
-            if (member_impl->get_descriptor().is_key())
-            {
-                is_compute_key_provided = true;
-                break;
+                auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+                if (!member_impl)
+                {
+                    continue;
+                }
+                if (member_impl->get_descriptor().is_key())
+                {
+                    is_compute_key_provided = true;
+                    break;
+                }
             }
         }
     }
