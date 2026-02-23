@@ -255,7 +255,10 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
-      # TODO
+      # GCC 13.2 (Ubuntu Noble default) produces several data races warnings
+      # TODO: For now we keep it at GCC 12 until we figure out what to do with them
+      # Although hundreds of tests trigger them, these problems arise from approximately
+      # 150 different places in ~75 files including C++ Standard Library
       CC: gcc-12
       CXX: g++-12
     steps:
