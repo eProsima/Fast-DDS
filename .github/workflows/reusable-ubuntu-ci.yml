@@ -729,7 +729,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }} --packages-up-to fastdds
+          colcon_build_args: ${{ inputs.colcon-args }} --cmake-clean-cache --packages-up-to fastdds
           cmake_args: '-DPROFILING_TESTS=ON ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
