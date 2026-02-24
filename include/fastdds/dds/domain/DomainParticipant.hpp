@@ -187,7 +187,7 @@ public:
      * Create a Publisher in this Participant.
      *
      * @param qos QoS of the Publisher.
-     * @param ret_code Return code of the operation, RETCODE_OK if the publisher is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the publisher is created, RETCODE_ERROR otherwise.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
@@ -215,7 +215,7 @@ public:
      * Create a Publisher in this Participant.
      *
      * @param profile_name Publisher profile name.
-     * @param ret_code Return code of the operation, RETCODE_OK if the publisher is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the publisher is created, RETCODE_ERROR otherwise.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
@@ -253,7 +253,7 @@ public:
      * Create a Subscriber in this Participant.
      *
      * @param qos QoS of the Subscriber.
-     * @param ret_code Return code of the operation, RETCODE_OK if the subscriber is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the subscriber is created, RETCODE_ERROR otherwise.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Subscriber.
@@ -281,7 +281,7 @@ public:
      * Create a Subscriber in this Participant.
      *
      * @param profile_name Subscriber profile name.
-     * @param ret_code Return code of the operation, RETCODE_OK if the subscriber is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the subscriber is created, RETCODE_ERROR otherwise.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Subscriber.
@@ -321,7 +321,7 @@ public:
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param qos QoS of the Topic.
-     * @param ret_code Return code of the operation, RETCODE_OK if the topic is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the topic is created, RETCODE_ERROR otherwise.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Topic.
@@ -357,7 +357,7 @@ public:
      * @param topic_name Name of the Topic.
      * @param type_name Data type of the Topic.
      * @param profile_name Topic profile name.
-     * @param ret_code Return code of the operation, RETCODE_OK if the topic is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the topic is created, RETCODE_ERROR otherwise.
      * @param listener Pointer to the listener (default: nullptr)
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Topic.
@@ -404,7 +404,7 @@ public:
      * @param related_topic Related Topic to being subscribed
      * @param filter_expression Logic expression to create filter
      * @param expression_parameters Parameters to filter content
-     * @param ret_code Return code of the operation, RETCODE_OK if the ContentFilteredTopic is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the ContentFilteredTopic is created, RETCODE_ERROR otherwise.
      * @return Pointer to the created ContentFilteredTopic.
      * @return nullptr if @c related_topic does not belong to this participant.
      * @return nullptr if a topic with the specified @c name has already been created.
@@ -445,7 +445,7 @@ public:
      * @param filter_expression Logic expression to create filter
      * @param expression_parameters Parameters to filter content
      * @param filter_class_name Name of the filter class to use
-     * @param ret_code Return code of the operation, RETCODE_OK if the ContentFilteredTopic is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the ContentFilteredTopic is created, RETCODE_ERROR otherwise.
      *
      * @return Pointer to the created ContentFilteredTopic.
      * @return nullptr if @c related_topic does not belong to this participant.
@@ -502,7 +502,7 @@ public:
      * @param type_name Result type of the MultiTopic
      * @param subscription_expression Logic expression to combine filter
      * @param expression_parameters Parameters to subscription content
-     * @param ret_code Return code of the operation, RETCODE_OK if the MultiTopic is created, RETCODE_ERROR otherwise.
+     * @param [out] ret_code Return code of the operation, RETCODE_OK if the MultiTopic is created, RETCODE_ERROR otherwise.
      * @return Pointer to the created ContentFilteredTopic, nullptr in error case
      */
     FASTDDS_EXPORTED_API MultiTopic* create_multitopic(
@@ -562,7 +562,7 @@ public:
      *
      * @param service_name Name of the service.
      * @param service_type_name Type name of the service (Request & reply types)
-     * @param ret_code Return code indicating the result of the operation.
+     * @param [out] ret_code Return code indicating the result of the operation.
      * @return Pointer to the created service. nullptr in error case.
      */
     FASTDDS_EXPORTED_API rpc::Service* create_service(
@@ -604,7 +604,7 @@ public:
      * Create a RPC Requester in a given Service.
      * @param service Pointer to a service object where the requester will be created.
      * @param requester_qos QoS of the requester.
-     * @param ret_code Return code indicating the result of the operation.
+     * @param [out] ret_code Return code indicating the result of the operation.
      * @return Pointer to the created requester. nullptr in error case.
      */
     FASTDDS_EXPORTED_API rpc::Requester* create_service_requester(
@@ -640,7 +640,7 @@ public:
      *
      * @param service Pointer to a service object where the Replier will be created.
      * @param replier_qos QoS of the replier.
-     * @param ret_code Return code indicating the result of the operation.
+     * @param [out] ret_code Return code indicating the result of the operation.
      *
      * @return Pointer to the created replier. nullptr in error case.
      */
