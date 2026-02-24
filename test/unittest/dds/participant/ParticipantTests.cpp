@@ -2235,7 +2235,7 @@ TEST(ParticipantTests, CreatePublisherWithProfile)
 
     // Alternative API with return code
     ReturnCode_t ret_code;
-    Publisher* publisher_ret = participant->create_publisher(PUBLISHER_QOS_DEFAULT, ret_code);
+    Publisher* publisher_ret = participant->create_publisher_with_profile("test_publisher_profile", ret_code);
     ASSERT_NE(publisher_ret, nullptr);
     ASSERT_EQ(ret_code, RETCODE_OK);
     ASSERT_TRUE(participant->delete_publisher(publisher_ret) == RETCODE_OK);
@@ -4451,6 +4451,7 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS));
 
+        // Negative tests
         ReturnCode_t ret_code;
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS,
