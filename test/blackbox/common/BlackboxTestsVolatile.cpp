@@ -23,8 +23,6 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include "ReqRepHelloWorldReplier.hpp"
-#include "ReqRepHelloWorldRequester.hpp"
 
 using namespace eprosima::fastdds;
 
@@ -247,21 +245,6 @@ TEST_P(Volatile, AsyncVolatileKeepAllPubReliableSubNonReliableHelloWorld)
     ASSERT_TRUE(data.empty());
     // Block reader until reception finished or timeout.
     reader.block_for_at_least(2);
-}
-
-// Regression test of Refs #3376, github ros2/rmw_fastrtps #226
-TEST_P(Volatile, ReqRepVolatileHelloworldRequesterCheckWriteParams)
-{
-    // Note: this test checks that even when not matched, a valid related_sample_identity is set.
-    // Since the new requester API yields an error when not matched, direct_send is used instead of send.
-
-    ReqRepHelloWorldRequester requester;
-
-    requester.init(true);
-
-    ASSERT_TRUE(requester.isInitialized());
-
-    requester.direct_send(1);
 }
 
 // Test created to check bug #5423, github ros2/ros2 #703

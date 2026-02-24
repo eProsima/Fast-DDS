@@ -397,6 +397,19 @@ public:
             const fastdds::dds::Duration_t& timeout);
 
     /**
+     * Create an enabled RPC service.
+     *
+     * @param service_name Name of the service.
+     * @param service_type_name Type name of the service (Request & reply types)
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the created service. nullptr in error case.
+     */
+    FASTDDS_EXPORTED_API rpc::Service* create_service(
+            const std::string& service_name,
+            const std::string& service_type_name,
+            ReturnCode_t& ret_code);
+
+    /**
      * Create a RPC service.
      *
      * @param service_name Name of the service.
@@ -428,6 +441,18 @@ public:
 
     /**
      * Create a RPC Requester in a given Service.
+     * @param service Pointer to a service object where the requester will be created.
+     * @param requester_qos QoS of the requester.
+     * @param ret_code Return code indicating the result of the operation.
+     * @return Pointer to the created requester. nullptr in error case.
+     */
+    FASTDDS_EXPORTED_API rpc::Requester* create_service_requester(
+            rpc::Service* service,
+            const RequesterQos& requester_qos,
+            ReturnCode_t& ret_code);
+
+    /**
+     * Create a RPC Requester in a given Service.
      *
      * @param service Pointer to a service object where the requester will be created.
      * @param requester_qos QoS of the requester.
@@ -448,6 +473,20 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t delete_service_requester(
             const std::string& service_name,
             rpc::Requester* requester);
+
+    /**
+     * Create a RPC Replier in a given Service.
+     *
+     * @param service Pointer to a service object where the Replier will be created.
+     * @param replier_qos QoS of the replier.
+     * @param ret_code Return code indicating the result of the operation.
+     *
+     * @return Pointer to the created replier. nullptr in error case.
+     */
+    FASTDDS_EXPORTED_API rpc::Replier* create_service_replier(
+            rpc::Service* service,
+            const ReplierQos& replier_qos,
+            ReturnCode_t& ret_code);
 
     /**
      * Create a RPC Replier in a given Service. It will override the current service's replier
