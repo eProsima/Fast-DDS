@@ -16,11 +16,6 @@ cmake_minimum_required(VERSION 3.28)
 
 project(fastdds_allocation_test VERSION 1 LANGUAGES CXX)
 
-# Default to C++11
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 11)
-endif()
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
@@ -44,6 +39,11 @@ if (osrf_testing_tools_cpp_FOUND)
         )
 
     add_executable(AllocationTest ${ALLOCTEST_EXAMPLE_SOURCES_CXX} ${ALLOCTEST_EXAMPLE_SOURCES_CPP})
+    set_target_properties(AllocationTest PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO
+    )
     target_link_libraries(AllocationTest fastdds fastcdr foonathan_memory osrf_testing_tools_cpp::memory_tools)
     install(TARGETS AllocationTest
         RUNTIME DESTINATION test/profiling/allocations/${BIN_INSTALL_DIR})
