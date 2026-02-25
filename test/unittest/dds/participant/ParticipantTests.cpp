@@ -2186,10 +2186,18 @@ TEST(ParticipantTests, CreatePublisher)
             DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-
     ASSERT_NE(publisher, nullptr);
 
     ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+
+    // Alternative API with return code
+    ReturnCode_t ret_code;
+    Publisher* publisher_ret = participant->create_publisher(PUBLISHER_QOS_DEFAULT, ret_code);
+    ASSERT_NE(publisher_ret, nullptr);
+    ASSERT_EQ(ret_code, RETCODE_OK);
+
+    ASSERT_TRUE(participant->delete_publisher(publisher_ret) == RETCODE_OK);
+
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
@@ -2224,6 +2232,13 @@ TEST(ParticipantTests, CreatePublisherWithProfile)
     ASSERT_NE(publisher, nullptr);
     check_publisher_with_profile(publisher, "test_publisher_profile");
     ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+
+    // Alternative API with return code
+    ReturnCode_t ret_code;
+    Publisher* publisher_ret = participant->create_publisher_with_profile("test_publisher_profile", ret_code);
+    ASSERT_NE(publisher_ret, nullptr);
+    ASSERT_EQ(ret_code, RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher_ret) == RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
@@ -2263,7 +2278,14 @@ TEST(ParticipantTests, CreateSubscriber)
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
+    // Alternative API with return code
+    ReturnCode_t ret_code;
+    Subscriber* subscriber_ret = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, ret_code);
+    ASSERT_NE(subscriber_ret, nullptr);
+    ASSERT_EQ(ret_code, RETCODE_OK);
+
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber_ret) == RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
@@ -2420,6 +2442,13 @@ TEST(ParticipantTests, CreateSubscriberWithProfile)
     ASSERT_NE(subscriber, nullptr);
     check_subscriber_with_profile(subscriber, "test_subscriber_profile");
     ASSERT_TRUE(participant->delete_subscriber(subscriber) == RETCODE_OK);
+
+    // Alternative API with return code
+    ReturnCode_t ret_code;
+    Subscriber* subscriber_ret = participant->create_subscriber_with_profile("test_subscriber_profile", ret_code);
+    ASSERT_NE(subscriber_ret, nullptr);
+    ASSERT_EQ(ret_code, RETCODE_OK);
+    ASSERT_TRUE(participant->delete_subscriber(subscriber_ret) == RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
@@ -3021,11 +3050,26 @@ TEST(ParticipantTests, CreateTopic)
 
     ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
 
+    // Alternative API with return code
+    ReturnCode_t ret_code;
+    Topic* topic_ret = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT, ret_code);
+    ASSERT_NE(topic_ret, nullptr);
+    ASSERT_EQ(ret_code, RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic_ret) == RETCODE_OK);
+
     // Topic using non-default profile
     Topic* topic_profile = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile");
     ASSERT_NE(topic_profile, nullptr);
     check_topic_with_profile(topic_profile, "test_topic_profile");
     ASSERT_TRUE(participant->delete_topic(topic_profile) == RETCODE_OK);
+
+    // Alternative API with return code
+    Topic* topic_profile_ret = participant->create_topic_with_profile("footopic", "footype", "test_topic_profile",
+                    ret_code);
+    ASSERT_NE(topic_profile_ret, nullptr);
+    ASSERT_EQ(ret_code, RETCODE_OK);
+    check_topic_with_profile(topic_profile_ret, "test_topic_profile");
+    ASSERT_TRUE(participant->delete_topic(topic_profile_ret) == RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
@@ -4243,6 +4287,7 @@ TEST(ParticipantTests, ContentFilterInterfaces)
 {
     static const char* TEST_FILTER_CLASS = "TESTFILTER";
     static const char* OTHER_FILTER_CLASS = "OTHERFILTER";
+    static const char* ANOTHER_FILTER_CLASS = "ANOTHERFILTER";
 
     struct MockFilter : public IContentFilter, public IContentFilterFactory
     {
@@ -4391,6 +4436,8 @@ TEST(ParticipantTests, ContentFilterInterfaces)
                 participant->register_content_filter_factory(TEST_FILTER_CLASS, &test_filter));
         EXPECT_EQ(RETCODE_OK,
                 participant->register_content_filter_factory(OTHER_FILTER_CLASS, &test_filter));
+        EXPECT_EQ(RETCODE_OK,
+                participant->register_content_filter_factory(ANOTHER_FILTER_CLASS, &test_filter));
 
         // Negative tests for custom filtered topic creation
         EXPECT_EQ(nullptr,
@@ -4404,11 +4451,41 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(nullptr,
                 participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS));
 
-        // Possitive test
+        // Negative tests
+        ReturnCode_t ret_code;
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic(topic->get_name(), topic, "", {}, TEST_FILTER_CLASS,
+                ret_code));
+        EXPECT_EQ(RETCODE_ERROR, ret_code);
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic2, "", {}, TEST_FILTER_CLASS,
+                ret_code));
+        EXPECT_EQ(RETCODE_ERROR, ret_code);
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", nullptr, "", {}, TEST_FILTER_CLASS,
+                ret_code));
+        EXPECT_EQ(RETCODE_ERROR, ret_code);
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "", {""}, TEST_FILTER_CLASS,
+                ret_code));
+        EXPECT_EQ(RETCODE_ERROR, ret_code);
+        EXPECT_EQ(nullptr,
+                participant->create_contentfilteredtopic("contentfilteredtopic", topic, "%%", {""}, TEST_FILTER_CLASS,
+                ret_code));
+        EXPECT_EQ(RETCODE_ERROR, ret_code);
+
+        // Positive test
         ContentFilteredTopic* filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic", topic,
                         "", {}, TEST_FILTER_CLASS);
         ASSERT_NE(nullptr, filtered_topic);
         EXPECT_EQ(filtered_topic, participant->lookup_topicdescription("contentfilteredtopic"));
+
+        ContentFilteredTopic* filtered_topic_ret = participant->create_contentfilteredtopic("contentfilteredtopic_ret",
+                        topic,
+                        "", {}, ANOTHER_FILTER_CLASS, ret_code);
+        ASSERT_NE(nullptr, filtered_topic_ret);
+        EXPECT_EQ(RETCODE_OK, ret_code);
+        EXPECT_EQ(filtered_topic_ret, participant->lookup_topicdescription("contentfilteredtopic_ret"));
 
         // Should fail to create same filter twice
         EXPECT_EQ(nullptr,
@@ -4449,12 +4526,17 @@ TEST(ParticipantTests, ContentFilterInterfaces)
         EXPECT_EQ(RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic));
         EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic"));
         EXPECT_EQ(RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic2));
+        EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic2"));
+        EXPECT_EQ(RETCODE_OK, participant->delete_contentfilteredtopic(filtered_topic_ret));
+        EXPECT_EQ(nullptr, participant->lookup_topicdescription("contentfilteredtopic_ret"));
 
         // Unregister filter factories
         EXPECT_EQ(RETCODE_OK,
                 participant->unregister_content_filter_factory(TEST_FILTER_CLASS));
         EXPECT_EQ(RETCODE_OK,
                 participant->unregister_content_filter_factory(OTHER_FILTER_CLASS));
+        EXPECT_EQ(RETCODE_OK,
+                participant->unregister_content_filter_factory(ANOTHER_FILTER_CLASS));
     }
 
     ASSERT_EQ(participant2->delete_topic(topic2), RETCODE_OK);

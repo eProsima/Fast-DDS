@@ -115,10 +115,28 @@ ReturnCode_t DomainParticipant::enable()
 
 Publisher* DomainParticipant::create_publisher(
         const PublisherQos& qos,
+        ReturnCode_t& ret_code,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_publisher(qos, ret_code, listener, mask);
+}
+
+Publisher* DomainParticipant::create_publisher(
+        const PublisherQos& qos,
         PublisherListener* listener,
         const StatusMask& mask)
 {
     return impl_->create_publisher(qos, listener, mask);
+}
+
+Publisher* DomainParticipant::create_publisher_with_profile(
+        const std::string& profile_name,
+        ReturnCode_t& ret_code,
+        PublisherListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_publisher_with_profile(profile_name, ret_code, listener, mask);
 }
 
 Publisher* DomainParticipant::create_publisher_with_profile(
@@ -137,10 +155,28 @@ ReturnCode_t DomainParticipant::delete_publisher(
 
 Subscriber* DomainParticipant::create_subscriber(
         const SubscriberQos& qos,
+        ReturnCode_t& ret_code,
+        SubscriberListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_subscriber(qos, ret_code, listener, mask);
+}
+
+Subscriber* DomainParticipant::create_subscriber(
+        const SubscriberQos& qos,
         SubscriberListener* listener,
         const StatusMask& mask)
 {
     return impl_->create_subscriber(qos, listener, mask);
+}
+
+Subscriber* DomainParticipant::create_subscriber_with_profile(
+        const std::string& profile_name,
+        ReturnCode_t& ret_code,
+        SubscriberListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_subscriber_with_profile(profile_name, ret_code, listener, mask);
 }
 
 Subscriber* DomainParticipant::create_subscriber_with_profile(
@@ -161,10 +197,32 @@ Topic* DomainParticipant::create_topic(
         const std::string& topic_name,
         const std::string& type_name,
         const TopicQos& qos,
+        ReturnCode_t& ret_code,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_topic(topic_name, type_name, qos, ret_code, listener, mask);
+}
+
+Topic* DomainParticipant::create_topic(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const TopicQos& qos,
         TopicListener* listener,
         const StatusMask& mask)
 {
     return impl_->create_topic(topic_name, type_name, qos, listener, mask);
+}
+
+Topic* DomainParticipant::create_topic_with_profile(
+        const std::string& topic_name,
+        const std::string& type_name,
+        const std::string& profile_name,
+        ReturnCode_t& ret_code,
+        TopicListener* listener,
+        const StatusMask& mask)
+{
+    return impl_->create_topic_with_profile(topic_name, type_name, profile_name, ret_code, listener, mask);
 }
 
 Topic* DomainParticipant::create_topic_with_profile(
@@ -187,10 +245,33 @@ ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
         const std::string& name,
         Topic* related_topic,
         const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters,
+        ReturnCode_t& ret_code)
+{
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
+                   FASTDDS_SQLFILTER_NAME, ret_code);
+}
+
+ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
         const std::vector<std::string>& expression_parameters)
 {
     return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
                    FASTDDS_SQLFILTER_NAME);
+}
+
+ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
+        const std::string& name,
+        Topic* related_topic,
+        const std::string& filter_expression,
+        const std::vector<std::string>& expression_parameters,
+        const char* filter_class_name,
+        ReturnCode_t& ret_code)
+{
+    return impl_->create_contentfilteredtopic(name, related_topic, filter_expression, expression_parameters,
+                   filter_class_name, ret_code);
 }
 
 ContentFilteredTopic* DomainParticipant::create_contentfilteredtopic(
@@ -208,6 +289,22 @@ ReturnCode_t DomainParticipant::delete_contentfilteredtopic(
         const ContentFilteredTopic* a_contentfilteredtopic)
 {
     return impl_->delete_contentfilteredtopic(a_contentfilteredtopic);
+}
+
+MultiTopic* DomainParticipant::create_multitopic(
+        const std::string& name,
+        const std::string& type_name,
+        const std::string& subscription_expression,
+        const std::vector<std::string>& expression_parameters,
+        ReturnCode_t& ret_code)
+{
+    static_cast<void> (name);
+    static_cast<void> (type_name);
+    static_cast<void> (subscription_expression);
+    static_cast<void> (expression_parameters);
+    static_cast<void> (ret_code);
+    EPROSIMA_LOG_WARNING(DOMAIN_PARTICIPANT, "create_multitopic method not implemented");
+    return nullptr;
 }
 
 MultiTopic* DomainParticipant::create_multitopic(
