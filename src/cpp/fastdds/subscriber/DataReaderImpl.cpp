@@ -1870,20 +1870,20 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     {
         for (auto data_representation : qos_.representation().m_value)
         {
-            is_plain = is_plain && type_->is_plain(data_representation);
+            is_plain = is_plain && type_->is_plain(type_support_context_, data_representation);
         }
     }
     // If data representation is not defined, consider both XCDR representations
     else
     {
-        is_plain = type_->is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
-                && type_->is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        is_plain = type_->is_plain(type_support_context_, DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
+                && type_->is_plain(type_support_context_, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     }
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
-            (type_->is_bounded() || is_plain))
+            (type_->is_bounded(type_support_context_) || is_plain))
     {
         history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
     }
@@ -1892,7 +1892,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     if (!sample_pool_)
     {
-        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_, is_plain);
+        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_, type_support_context_, is_plain);
     }
     if (!is_custom_payload_pool_)
     {
@@ -1945,7 +1945,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
                 return RETCODE_NOT_ALLOWED_BY_SECURITY;
             }
 #endif // if HAVE_SECURITY
-            if (!type_.is_bounded())
+            if (!type_->is_bounded(type_support_context_))
             {
                 EPROSIMA_LOG_INFO(DATA_READER, "Data sharing cannot be used with unbounded data types");
                 return RETCODE_BAD_PARAMETER;
@@ -1969,7 +1969,7 @@ ReturnCode_t DataReaderImpl::check_datasharing_compatible(
             }
 #endif // if HAVE_SECURITY
 
-            if (!type_.is_bounded())
+            if (!type_->is_bounded(type_support_context_))
             {
                 EPROSIMA_LOG_INFO(DATA_READER, "Data sharing disabled because data type is not bounded");
                 return RETCODE_OK;
@@ -2041,7 +2041,7 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
     InstanceHandle_t handle = HANDLE_NIL;
     if (instance && type_->is_compute_key_provided)
     {
-        if (type_->compute_key(const_cast<void*>(instance), handle, false))
+        if (type_->compute_key(type_support_context_, const_cast<void*>(instance), handle, false))
         {
             if (!history_.is_instance_present(handle) || !handle.isDefined())
             {
@@ -2351,6 +2351,12 @@ ReturnCode_t DataReaderImpl::set_related_datawriter(
         const DataWriter* /*related_writer*/)
 {
     return RETCODE_UNSUPPORTED;
+}
+
+void DataReaderImpl::set_type_support_context(
+        const std::shared_ptr<TopicDataType::Context>& context)
+{
+    type_support_context_ = context;
 }
 
 }  // namespace dds
