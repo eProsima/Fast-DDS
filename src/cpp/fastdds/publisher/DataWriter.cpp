@@ -336,8 +336,13 @@ ReturnCode_t DataWriter::set_related_datareader(
 ReturnCode_t DataWriter::set_type_support_context(
         const std::shared_ptr<TopicDataType::Context>& context)
 {
-    static_cast<void>(context);
-    return RETCODE_UNSUPPORTED;
+    if (enable_)
+    {
+        return RETCODE_ILLEGAL_OPERATION;
+    }
+
+    impl_->set_type_support_context(context);
+    return RETCODE_OK;
 }
 
 } // namespace dds

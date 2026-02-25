@@ -399,6 +399,13 @@ public:
         register_type_object_representation();
     }
 
+    FASTDDS_EXPORTED_API virtual inline uint32_t get_max_serialized_size(
+            const std::shared_ptr<Context>& context)
+    {
+        static_cast<void>(context);
+        return max_serialized_type_size;
+    }
+
     //! Maximum serialized size of the type in bytes.
     //! If the type has unbounded fields, and therefore cannot have a maximum size, use 0.
     uint32_t max_serialized_type_size {0};
