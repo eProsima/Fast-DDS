@@ -66,6 +66,8 @@ public:
         , selections_(entries_allocation)
         , last_state_(entries_allocation)
     {
+        static_cast<void>(initial_allow_to_send_);
+        static_cast<void>(force_reset_);
     }
 
     /**
