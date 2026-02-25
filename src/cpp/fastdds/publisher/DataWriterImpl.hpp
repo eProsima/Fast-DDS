@@ -452,6 +452,16 @@ public:
     ReturnCode_t set_related_datareader(
             const DataReader* related_reader);
 
+    /**
+     * @brief Set the type support context to be used when serializing data for this DataWriter.
+     *
+     * @param context Shared pointer to the type support context to be used for serialization.
+     *
+     * @pre The DataWriter must not be enabled.
+     */
+    void set_type_support_context(
+            const std::shared_ptr<TopicDataType::Context>& context);
+
 protected:
 
     using IChangePool = eprosima::fastdds::rtps::IChangePool;
@@ -574,6 +584,8 @@ protected:
 
     mutable std::mutex filters_mtx_;
     std::shared_ptr<IContentFilter> sample_prefilter_;
+
+    std::shared_ptr<TopicDataType::Context> type_support_context_ {};
 
     ReturnCode_t check_write_preconditions(
             const void* const data,
