@@ -46,6 +46,12 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
+namespace detail {
+struct LogResources;
+} // namespace detail
+} // namespace dds
+
 namespace rtps {
 
 /**
@@ -56,6 +62,8 @@ class RTPSDomainImpl : public IDomainImpl
 {
 
 public:
+
+    RTPSDomainImpl();
 
     ~RTPSDomainImpl() override = default;
 
@@ -160,7 +168,7 @@ public:
             uint32_t domain_id,
             const std::string& easy_mode_ip) override;
 
-protected:
+private:
 
     /**
      * @brief Get Id to create a RTPSParticipant.
@@ -217,6 +225,7 @@ protected:
 
     eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
 
+    std::shared_ptr<dds::detail::LogResources> log_resources_;
 };
 
 } // namespace rtps

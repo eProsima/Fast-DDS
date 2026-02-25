@@ -83,7 +83,7 @@ public:
     virtual bool send(
             const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
-            std::chrono::steady_clock::time_point max_blocking_time_point) const = 0;
+            std::chrono::steady_clock::time_point max_blocking_time_point) = 0;
 
     /*!
      * Lock the object.

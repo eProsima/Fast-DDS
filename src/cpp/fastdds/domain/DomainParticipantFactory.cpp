@@ -31,7 +31,6 @@
 #include <fastdds/utils/QosConverters.hpp>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/log/LogResources.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/domain/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
@@ -55,7 +54,6 @@ DomainParticipantFactory::DomainParticipantFactory()
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
     , topic_pool_(rtps::TopicPayloadPoolRegistry::instance())
     , rtps_domain_(rtps::RTPSDomainImpl::get_instance())
-    , log_resources_(detail::get_log_resources())
 {
 }
 

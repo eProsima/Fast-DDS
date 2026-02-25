@@ -29,6 +29,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastdds/log/LogResources.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
@@ -176,6 +177,11 @@ bool RTPSDomain::removeRTPSParticipant(
     }
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant pointer is null");
     return false;
+}
+
+RTPSDomainImpl::RTPSDomainImpl()
+    : log_resources_(dds::detail::get_log_resources())
+{
 }
 
 void RTPSDomainImpl::stop_all()
