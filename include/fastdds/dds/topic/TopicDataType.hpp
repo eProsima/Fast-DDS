@@ -62,6 +62,17 @@ class TopicDataType
 public:
 
     /**
+     * An interface to provide the user with a context when serializing and deserializing data.
+     *
+     * This context can be used to store specific information of the data type that can be used during serialization and deserialization.
+     * For example, it can be used to store the upper bounds of strings and sequences.
+     */
+    struct FASTDDS_EXPORTED_API Context
+    {
+        virtual ~Context() = default;
+    };
+
+    /**
      * @brief Constructor
      */
     FASTDDS_EXPORTED_API TopicDataType() = default;
@@ -87,6 +98,26 @@ public:
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /**
+     * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method
+     * will call the serialize method in which the topic data representation is not considered.
+     * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
+     *
+     * @param [in] data Pointer to the data
+     * @param [out] payload Pointer to the payload
+     * @param [in] data_representation Representation that should be used to encode the data into the payload.
+     * @return True if correct.
+     */
+    FASTDDS_EXPORTED_API virtual bool serialize(
+            const std::shared_ptr<Context>& context,
+            const void* const data,
+            rtps::SerializedPayload_t& payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+    {
+        static_cast<void>(context);
+        return serialize(data, payload, data_representation);
+    }
+
+    /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
      *
      * @param [in] payload Pointer to the payload
@@ -96,6 +127,22 @@ public:
     FASTDDS_EXPORTED_API virtual bool deserialize(
             rtps::SerializedPayload_t& payload,
             void* data) = 0;
+
+    /**
+     * Deserialize method, it should be implemented by the user, since it is abstract.
+     *
+     * @param [in] payload Pointer to the payload
+     * @param [out] data Pointer to the data
+     * @return True if correct.
+     */
+    FASTDDS_EXPORTED_API virtual bool deserialize(
+            const std::shared_ptr<Context>& context,
+            rtps::SerializedPayload_t& payload,
+            void* data)
+    {
+        static_cast<void>(context);
+        return deserialize(payload, data);
+    }
 
     /*!
      * @brief Calculates the serialized size of the provided data.
@@ -108,6 +155,22 @@ public:
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
+    /*!
+     * @brief Calculates the serialized size of the provided data.
+     *
+     * @param [in] data Pointer to data.
+     * @param [in] data_representation Representation that should be used for calculating the serialized size.
+     * @return Serialized size of the data.
+     */
+    FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size(
+            const std::shared_ptr<Context>& context,
+            const void* const data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation)
+    {
+        static_cast<void>(context);
+        return calculate_serialized_size(data, data_representation);
+    }
+
     /**
      * Create a Data Type.
      *
@@ -116,12 +179,37 @@ public:
     FASTDDS_EXPORTED_API virtual void* create_data() = 0;
 
     /**
+     * Create a Data Type.
+     *
+     * @return Void pointer to the created object.
+     */
+    FASTDDS_EXPORTED_API virtual void* create_data(
+            const std::shared_ptr<Context>& context)
+    {
+        static_cast<void>(context);
+        return create_data();
+    }
+
+    /**
      * Remove a previously created object.
      *
      * @param data Pointer to the created Data.
      */
     FASTDDS_EXPORTED_API virtual void delete_data(
             void* data) = 0;
+
+    /**
+     * Remove a previously created object.
+     *
+     * @param data Pointer to the created Data.
+     */
+    FASTDDS_EXPORTED_API virtual void delete_data(
+            const std::shared_ptr<Context>& context,
+            void* data)
+    {
+        static_cast<void>(context);
+        delete_data(data);
+    }
 
     /**
      * Get the key associated with the data.
@@ -139,6 +227,24 @@ public:
     /**
      * Get the key associated with the data.
      *
+     * @param [in] payload Pointer to the payload containing the data.
+     * @param [out] ihandle Pointer to the Handle.
+     * @param [in] force_md5 Force MD5 checking.
+     * @return True if correct.
+     */
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            const std::shared_ptr<Context>& context,
+            rtps::SerializedPayload_t& payload,
+            rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false)
+    {
+        static_cast<void>(context);
+        return compute_key(payload, ihandle, force_md5);
+    }
+
+    /**
+     * Get the key associated with the data.
+     *
      * @param [in] data Pointer to the data.
      * @param [out] ihandle Pointer to the Handle.
      * @param [in] force_md5 Force MD5 checking.
@@ -148,6 +254,24 @@ public:
             const void* const data,
             rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) = 0;
+
+    /**
+     * Get the key associated with the data.
+     *
+     * @param [in] data Pointer to the data.
+     * @param [out] ihandle Pointer to the Handle.
+     * @param [in] force_md5 Force MD5 checking.
+     * @return True if correct.
+     */
+    FASTDDS_EXPORTED_API virtual bool compute_key(
+            const std::shared_ptr<Context>& context,
+            const void* const data,
+            rtps::InstanceHandle_t& ihandle,
+            bool force_md5 = false)
+    {
+        static_cast<void>(context);
+        return compute_key(data, ihandle, force_md5);
+    }
 
     /**
      * Set topic data type name
@@ -200,12 +324,33 @@ public:
     }
 
     /**
+     * Checks if the type is bounded.
+     */
+    FASTDDS_EXPORTED_API virtual inline bool is_bounded(
+            const std::shared_ptr<Context>& context) const
+    {
+        static_cast<void>(context);
+        return is_bounded();
+    }
+
+    /**
      * Checks if the type is plain when using a specific encoding.
      */
     FASTDDS_EXPORTED_API virtual inline bool is_plain(
             DataRepresentationId_t) const
     {
         return false;
+    }
+
+    /**
+     * Checks if the type is plain when using a specific encoding.
+     */
+    FASTDDS_EXPORTED_API virtual inline bool is_plain(
+            const std::shared_ptr<Context>& context,
+            DataRepresentationId_t representation) const
+    {
+        static_cast<void>(context);
+        return is_plain(representation);
     }
 
     /**
@@ -223,10 +368,35 @@ public:
     }
 
     /**
+     * Construct a sample on a memory location.
+     *
+     * @param memory Pointer to the memory location where the sample should be constructed.
+     *
+     * @return whether this type supports in-place construction or not.
+     */
+    FASTDDS_EXPORTED_API virtual inline bool construct_sample(
+            const std::shared_ptr<Context>& context,
+            void* memory) const
+    {
+        static_cast<void>(context);
+        return construct_sample(memory);
+    }
+
+    /**
      * @brief Register TypeObject type representation
      */
     FASTDDS_EXPORTED_API virtual inline void register_type_object_representation()
     {
+    }
+
+    /**
+     * @brief Register TypeObject type representation
+     */
+    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation(
+            const std::shared_ptr<Context>& context)
+    {
+        static_cast<void>(context);
+        register_type_object_representation();
     }
 
     //! Maximum serialized size of the type in bytes.
