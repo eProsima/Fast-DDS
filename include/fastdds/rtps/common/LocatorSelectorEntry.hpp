@@ -78,6 +78,7 @@ struct LocatorSelectorEntry
         , enabled(false)
         , transport_should_process(false)
     {
+        static_cast<void>(allowed_to_send);
     }
 
     /**
