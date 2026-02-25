@@ -308,7 +308,7 @@ jobs:
         with:
           packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1
 
-      - name: Install and configure SWIG test # TODO
+      - name: Install and configure SWIG test
         run: |
           sudo apt-get install -y swig4.1
           sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
@@ -349,7 +349,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select fastdds_python
-          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}' # TODO
+          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace_dependencies: ${{ github.workspace }}/install
@@ -395,7 +395,7 @@ jobs:
         with:
           packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1
 
-      - name: Install and configure SWIG test # TODO
+      - name: Install and configure SWIG test
         run: |
           sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
           sudo update-alternatives --set swig /usr/bin/swig4.1
@@ -428,7 +428,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}' # TODO
+          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -490,7 +490,7 @@ jobs:
         with:
           packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1 doxygen imagemagick plantuml libenchant-2-2
 
-      - name: Install and configure SWIG test # TODO
+      - name: Install and configure SWIG test
         run: |
           sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
           sudo update-alternatives --set swig /usr/bin/swig4.1
@@ -544,7 +544,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}' # TODO
+          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}

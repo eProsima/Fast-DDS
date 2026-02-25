@@ -252,11 +252,11 @@ jobs:
 
   tsan_fastdds_test:
     if: ${{ inputs.run_tsan_fastdds == true }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
       # GCC 13.2 (Ubuntu Noble default) produces several data races warnings
-      # TODO: For now we keep it at GCC 12 until we figure out what to do with them
+      # TODO: For now we keep it at GCC 12 and ubuntu 22 until we figure out what to do with them
       # Although hundreds of tests trigger them, these problems arise from approximately
       # 150 different places in ~75 files including C++ Standard Library
       CC: gcc-12
@@ -280,7 +280,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.28.6'
+          cmakeVersion: '3.22.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0

@@ -47,8 +47,10 @@ More information about Platforms support and eProsima products compatibility can
 
 Tier 1 compilers and minimum supported versions:
 
-* GCC 13.2
+* GCC 13.2 [^d]
 * Clang 16
 * MSVC v142 (Visual Studio 2019)
 
-# TODO
+[^d]: Using GCC's Thread Sanitizer flags in conjunction with GCC 13 to analyze Fast DDS threaded behavior produces
+false positives on some uninstrumented synchronization calls.
+Fast DDS's Thread Sanitizer Github Action uses GCC 12 and Ubuntu 22 for threading issues testing.
