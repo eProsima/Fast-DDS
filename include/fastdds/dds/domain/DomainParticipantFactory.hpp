@@ -52,10 +52,6 @@ class DomainParticipantListener;
 class DomainParticipant;
 class DomainParticipantImpl;
 
-namespace detail {
-struct LogResources;
-}  // namespace detail
-
 /**
  * Class DomainParticipantFactory
  *
@@ -483,8 +479,6 @@ protected:
     std::shared_ptr<fastdds::rtps::detail::TopicPayloadPoolRegistry> topic_pool_;
 
     std::shared_ptr<fastdds::rtps::IDomainImpl> rtps_domain_;
-
-    std::shared_ptr<detail::LogResources> log_resources_;
 
     /**
      * This mutex guards the access to load the profiles.

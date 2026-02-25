@@ -70,7 +70,7 @@ public:
     }
 
     //! Destructor
-    FASTDDS_EXPORTED_API virtual ~ChainingTransport() = default;
+    FASTDDS_EXPORTED_API ~ChainingTransport() override = default;
 
     /*!
      * Initialize the low-level transport. This method will prepare all the internals of the transport.
