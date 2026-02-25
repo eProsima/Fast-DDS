@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.22) # TODO 3.28
 
 project(fast-discovery-server VERSION 1.0.1 LANGUAGES CXX)
 
