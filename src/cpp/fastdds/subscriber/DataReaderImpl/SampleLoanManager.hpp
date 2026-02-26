@@ -50,6 +50,7 @@ struct SampleLoanManager
     SampleLoanManager(
             const PoolConfig& pool_config,
             const TypeSupport& type,
+            const std::shared_ptr<TopicDataType::Context>& context,
             const bool is_plain)
         : is_plain_(is_plain)
         , limits_(pool_config.initial_size,
@@ -58,13 +59,14 @@ struct SampleLoanManager
         , free_loans_(limits_)
         , used_loans_(limits_)
         , type_(type)
+        , type_support_context_(context)
     {
         for (size_t n = 0; n < limits_.initial; ++n)
         {
             OutstandingLoanItem item;
             if (!is_plain_)
             {
-                item.sample = type_->create_data();
+                item.sample = type_->create_data(type_support_context_);
             }
             free_loans_.push_back(std::move(item));
         }
@@ -76,7 +78,7 @@ struct SampleLoanManager
         {
             for (const OutstandingLoanItem& item : free_loans_)
             {
-                type_->delete_data(item.sample);
+                type_->delete_data(type_support_context_, item.sample);
             }
         }
     }
@@ -110,7 +112,7 @@ struct SampleLoanManager
                 // Create sample if necessary
                 if (!is_plain_)
                 {
-                    item->sample = type_->create_data();
+                    item->sample = type_->create_data(type_support_context_);
                 }
             }
         }
@@ -140,7 +142,7 @@ struct SampleLoanManager
         }
         else
         {
-            type_->deserialize(item->payload, item->sample);
+            type_->deserialize(type_support_context_, item->payload, item->sample);
         }
 
         // Increment reference counter and return sample
@@ -208,6 +210,7 @@ private:
     collection_type free_loans_;
     collection_type used_loans_;
     TypeSupport type_;
+    std::shared_ptr<TopicDataType::Context> type_support_context_;
 
     OutstandingLoanItem* find_by_change(
             CacheChange_t* change)

@@ -430,6 +430,16 @@ public:
     ReturnCode_t set_related_datawriter(
             const DataWriter* related_writer);
 
+    /**
+     * @brief Set the type support context to be used when deserializing data for this DataReader.
+     *
+     * @param context Shared pointer to the type support context to be used for deserialization.
+     *
+     * @pre The DataReader must not be enabled.
+     */
+    void set_type_support_context(
+            const std::shared_ptr<TopicDataType::Context>& context);
+
 protected:
 
     //!Subscriber
@@ -593,6 +603,9 @@ protected:
     // State of the History mask last time it was queried
     // protected with the RTPSReader mutex
     detail::StateFilter last_mask_state_ {};
+
+    // Context to use when calling type support methods
+    std::shared_ptr<TopicDataType::Context> type_support_context_ {};
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,

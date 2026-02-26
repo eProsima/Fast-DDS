@@ -491,6 +491,18 @@ ReturnCode_t DataReader::set_related_datawriter(
     return impl_->set_related_datawriter(related_writer);
 }
 
+ReturnCode_t DataReader::set_type_support_context(
+        const std::shared_ptr<TopicDataType::Context>& context)
+{
+    if (enable_)
+    {
+        return RETCODE_ILLEGAL_OPERATION;
+    }
+
+    impl_->set_type_support_context(context);
+    return RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

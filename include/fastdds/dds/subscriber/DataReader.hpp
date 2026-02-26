@@ -21,6 +21,7 @@
 #define FASTDDS_DDS_SUBSCRIBER__DATAREADER_HPP
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
@@ -37,6 +38,7 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/subscriber/ReadCondition.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include <fastdds/fastdds_dll.hpp>
@@ -1106,6 +1108,18 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t set_related_datawriter(
             const DataWriter* related_writer);
+
+    /**
+     * @brief Set the type support context to be used when deserializing data for this DataReader.
+     *        Cannot be called on an enabled DataReader.
+     *
+     * @param [in] context Shared pointer to the context to be used when serializing data.
+     *
+     * @return RETCODE_OK if the context is set successfully.
+     *         RETCODE_ILLEGAL_OPERATION if this entity is enabled.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_type_support_context(
+            const std::shared_ptr<TopicDataType::Context>& context);
 
 protected:
 
