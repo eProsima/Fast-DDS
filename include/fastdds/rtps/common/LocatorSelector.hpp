@@ -66,6 +66,8 @@ public:
         , selections_(entries_allocation)
         , last_state_(entries_allocation)
     {
+        static_cast<void>(initial_allow_to_send_);
+        static_cast<void>(force_reset_);
     }
 
     /**
@@ -470,6 +472,12 @@ private:
     ResourceLimitedVector<size_t> selections_;
     //! Enabling state when reset was called.
     ResourceLimitedVector<int> last_state_;
+
+    //! Whether it is the initial state of all allow_to_send flags.
+    bool initial_allow_to_send_ {true};
+
+    //! Whether a reset is forced due to changes in the entries.
+    bool force_reset_ {false};
 };
 
 } // namespace rtps

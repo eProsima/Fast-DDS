@@ -78,6 +78,7 @@ struct LocatorSelectorEntry
         , enabled(false)
         , transport_should_process(false)
     {
+        static_cast<void>(allowed_to_send);
     }
 
     /**
@@ -140,6 +141,8 @@ struct LocatorSelectorEntry
     EntryState state;
     //! Indicates whether this entry should be taken into consideration.
     bool enabled;
+    //! Indicates whether this entry is allowed to send data.
+    bool allowed_to_send {true};
     //! A temporary value for each transport to help optimizing some use cases.
     bool transport_should_process;
 };

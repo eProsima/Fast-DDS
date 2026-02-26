@@ -54,6 +54,8 @@ struct CacheChangeWriterInfo_t
     CacheChange_t* volatile next = nullptr;
     //! Used to know if the object is already in a list.
     std::atomic_bool is_linked {false};
+    //! Last fragment number sent.
+    FragmentNumber_t last_fragment_sent {0};
 };
 
 /*!
