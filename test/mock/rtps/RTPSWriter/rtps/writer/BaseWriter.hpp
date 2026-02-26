@@ -193,6 +193,12 @@ public:
         return async_locator_selector_;
     }
 
+    virtual void reschedule_unsent_changes(
+            const GUID_t&,
+            uint32_t)
+    {
+    }
+
     LocatorSelectorSender general_locator_selector_;
 
     LocatorSelectorSender async_locator_selector_;

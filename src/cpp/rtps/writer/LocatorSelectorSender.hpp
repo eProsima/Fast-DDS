@@ -92,7 +92,7 @@ public:
     bool send(
             const std::vector<fastdds::rtps::NetworkBuffer>& buffers,
             const uint32_t& total_bytes,
-            std::chrono::steady_clock::time_point max_blocking_time_point) const override;
+            std::chrono::steady_clock::time_point max_blocking_time_point) override;
 
     /*!
      * Lock the object.

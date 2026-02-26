@@ -105,6 +105,7 @@ void CacheChangePool::return_cache_to_pool(
     ch->sourceTimestamp.seconds(0);
     ch->sourceTimestamp.fraction(0);
     ch->writer_info.num_sent_submessages = 0;
+    ch->writer_info.last_fragment_sent = 0;
     ch->write_params.sample_identity(SampleIdentity::unknown());
     ch->write_params.related_sample_identity(SampleIdentity::unknown());
     ch->setFragmentSize(0);

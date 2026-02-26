@@ -322,6 +322,8 @@ public:
     {
     }
 
+    MOCK_METHOD0(getMaxDataSize, uint32_t());
+
     uint32_t getMaxMessageSize() const
     {
         return 65536;

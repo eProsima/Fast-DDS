@@ -5,9 +5,11 @@
 
 namespace eprosima {
 namespace fastdds {
+namespace rtps {
 
-using FlowControllerFactoryType = fastdds::rtps::FlowControllerFactory;
+using FlowControllerFactory_t = fastdds::rtps::FlowControllerFactory;
 
+} // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 

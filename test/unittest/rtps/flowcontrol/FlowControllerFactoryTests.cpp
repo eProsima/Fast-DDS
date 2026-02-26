@@ -14,6 +14,7 @@
 
 #include <rtps/flowcontrol/FlowControllerFactory.hpp>
 #include <rtps/flowcontrol/FlowControllerImpl.hpp>
+#include <rtps/flowcontrol/GrainedFlowController.hpp>
 
 #include <gtest/gtest.h>
 
@@ -61,6 +62,10 @@ TEST(FlowControllerFactory, get_default_flow_controllers)
     async = dynamic_cast<FlowControllerImpl<FlowControllerAsyncPublishMode,
                     FlowControllerFifoSchedule>*>(flow_controller);
     ASSERT_TRUE(nullptr != async);
+
+    flow_controller = factory.retrieve_flow_controller(grained_flow_controller_name, reliable_async_attributes);
+    GrainedFlowController* grained_flow = dynamic_cast<GrainedFlowController*>(flow_controller);
+    ASSERT_TRUE(nullptr != grained_flow);
 
 }
 

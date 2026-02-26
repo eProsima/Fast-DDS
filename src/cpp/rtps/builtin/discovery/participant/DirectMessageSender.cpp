@@ -100,7 +100,7 @@ const std::vector<GUID_t>& DirectMessageSender::remote_guids() const
 bool DirectMessageSender::send(
         const std::vector<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
         const uint32_t& total_bytes,
-        std::chrono::steady_clock::time_point max_blocking_time_point) const
+        std::chrono::steady_clock::time_point max_blocking_time_point)
 {
     return participant_->sendSync(buffers, total_bytes, participant_->getGuid(),
                    Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point, 0);

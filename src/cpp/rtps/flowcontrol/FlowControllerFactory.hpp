@@ -47,7 +47,7 @@ public:
      *
      * @param flow_controller_descr FlowController descriptor.
      */
-    void register_flow_controller (
+    void register_flow_controller(
             const FlowControllerDescriptor& flow_controller_descr);
 
     /*!

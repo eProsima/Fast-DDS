@@ -141,6 +141,7 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/exceptions/Exception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/flowcontrol/FlowControllerConsts.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/flowcontrol/FlowControllerFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/flowcontrol/GrainedFlowController.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/history/CacheChangePool.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/history/History.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/history/ReaderHistory.cpp
@@ -362,8 +363,8 @@ endif()
 # Payload compression transport
 if(BZIP2_FOUND OR ZLIB_FOUND)
     list(APPEND ${PROJECT_NAME}_source_files
-        rtps/transport/low-bandwidth/payload-compression/PayloadCompressionTransport.cpp
-        rtps/transport/low-bandwidth/payload-compression/PayloadCompressionImpl.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/low-bandwidth/payload-compression/PayloadCompressionTransport.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/low-bandwidth/payload-compression/PayloadCompressionImpl.cpp
     )
 endif()
 
