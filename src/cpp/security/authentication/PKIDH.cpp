@@ -1736,6 +1736,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         {
             exception = _SecurityException_("Cannot find permissions file in permissions credential token");
             EMERGENCY_SECURITY_LOGGING("PKIDH", exception.what());
+            delete handshake_handle_aux;
             return ValidationResult_t::VALIDATION_FAILED;
         }
     }
