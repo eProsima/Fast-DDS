@@ -24,7 +24,7 @@
 #include <set>
 #include <string>
 
-#include <asio.hpp>
+#include "../rtps/network/asio.hpp"
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Types.hpp>

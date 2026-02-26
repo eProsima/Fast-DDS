@@ -20,7 +20,7 @@
 #include <mutex>
 #include <vector>
 
-#include <asio.hpp>
+#include "../network/asio.hpp"
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>

@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
 #define _FASTDDS_UDP_CHANNEL_RESOURCE_INFO_
 
-#include <asio.hpp>
+#include "../network/asio.hpp"
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.hpp>

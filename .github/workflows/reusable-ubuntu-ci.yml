@@ -106,13 +106,13 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
           packages: libasio-dev libtinyxml2-dev libssl-dev
-          update: false
+          update: true
           upgrade: false
 
       - name: Install colcon
@@ -198,7 +198,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -301,12 +301,19 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.24.4'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig
+          packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1
+
+      - name: Install and configure SWIG test
+        run: |
+          sudo apt-get install -y swig4.1
+          sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
+          sudo update-alternatives --set swig /usr/bin/swig4.1
+          swig -version
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -342,7 +349,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select fastdds_python
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace_dependencies: ${{ github.workspace }}/install
@@ -381,12 +388,18 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.24.4'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig
+          packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1
+
+      - name: Install and configure SWIG test
+        run: |
+          sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
+          sudo update-alternatives --set swig /usr/bin/swig4.1
+          swig -version
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -415,7 +428,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -470,12 +483,18 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.24.4'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: libasio-dev libtinyxml2-dev libssl-dev swig doxygen imagemagick plantuml libenchant-2-2
+          packages: libasio-dev libtinyxml2-dev libssl-dev swig4.1 doxygen imagemagick plantuml libenchant-2-2
+
+      - name: Install and configure SWIG test
+        run: |
+          sudo update-alternatives --install /usr/bin/swig swig /usr/bin/swig4.1 100
+          sudo update-alternatives --set swig /usr/bin/swig4.1
+          swig -version
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -525,7 +544,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ github.workspace }}/src/fastdds/.github/workflows/config/documentation.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: '${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
+          cmake_args: '-DSWIG_EXECUTABLE=/usr/bin/swig4.1 ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }}'
           cmake_args_default: ''
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
@@ -580,7 +599,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -665,13 +684,13 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.6'
 
       - name: Install apt dependencies
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
           packages: libasio-dev libtinyxml2-dev libssl-dev
-          update: false
+          update: true
           upgrade: false
 
       - name: Install colcon
@@ -694,7 +713,7 @@ jobs:
         with:
           repository: osrf/osrf_testing_tools_cpp
           path: src/osrf_testing_tools_cpp
-          ref: 1.4.0
+          ref: 2.3.0
 
       - name: OSRF testing tools build
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
@@ -710,7 +729,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_build.meta
-          colcon_build_args: ${{ inputs.colcon-args }} --packages-up-to fastdds
+          colcon_build_args: ${{ inputs.colcon-args }} --cmake-clean-cache --packages-up-to fastdds
           cmake_args: '-DPROFILING_TESTS=ON ${{ inputs.cmake-args }}'
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}

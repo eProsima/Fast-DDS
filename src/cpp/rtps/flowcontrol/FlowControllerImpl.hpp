@@ -671,9 +671,15 @@ struct FlowControllerHighPrioritySchedule
     void unregister_writer(
             BaseWriter* writer)
     {
-        auto it = priorities_.find(writer);
-        assert(it != priorities_.end());
-        priorities_.erase(it);
+        if (writer)
+        {
+            auto it = priorities_.find(writer);
+            assert(it != priorities_.end());
+            if (it != priorities_.end())
+            {
+                priorities_.erase(it);
+            }
+        }
     }
 
     void work_done() const

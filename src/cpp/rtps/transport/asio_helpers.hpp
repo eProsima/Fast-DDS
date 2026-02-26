@@ -17,7 +17,7 @@
 
 #include <cstdint>
 
-#include <asio.hpp>
+#include "../network/asio.hpp"
 
 namespace eprosima {
 namespace fastdds {

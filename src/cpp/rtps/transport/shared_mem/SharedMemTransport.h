@@ -22,7 +22,7 @@
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
 #include <map>
-#include <asio.hpp>
+#include "../../network/asio.hpp"
 
 namespace eprosima {
 namespace fastdds {

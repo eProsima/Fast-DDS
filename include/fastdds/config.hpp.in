@@ -125,4 +125,13 @@
             (FASTDDS_VERSION_MAJOR == major && FASTDDS_VERSION_MINOR < minor),  \
             "TODO before version " #major "." #minor " : " #msg)
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#  define FASTDDS_UNREACHABLE() __assume(0)
+#elif defined(__GNUC__) || defined(__clang__)
+#  define FASTDDS_UNREACHABLE() __builtin_unreachable()
+#else
+#  include <cstdlib>
+#  define FASTDDS_UNREACHABLE() std::abort()
+#endif // if defined(_MSC_VER) && !defined(__clang__)
+
 #endif // FASTDDS__CONFIG_H
