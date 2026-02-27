@@ -2227,11 +2227,13 @@ bool DataWriterImpl::can_qos_be_updated(
 DataWriterListener* DataWriterImpl::get_listener_for(
         const StatusMask& status)
 {
-    std::lock_guard<std::mutex> scoped_lock(listener_mutex_);
-    if (listener_ != nullptr &&
-            user_datawriter_->get_status_mask().is_active(status))
     {
-        return listener_;
+        std::lock_guard<std::mutex> scoped_lock(listener_mutex_);
+        if (listener_ != nullptr &&
+                user_datawriter_->get_status_mask().is_active(status))
+        {
+            return listener_;
+        }
     }
     return publisher_->get_listener_for(status);
 }
