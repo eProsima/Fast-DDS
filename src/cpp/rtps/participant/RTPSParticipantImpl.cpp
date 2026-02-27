@@ -291,7 +291,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , internal_metatraffic_locators_(false)
     , internal_default_locators_(false)
 #if HAVE_SECURITY
-    , m_security_manager(this, *this)
+    , m_security_manager(this, PParam, *this)
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
@@ -1671,7 +1671,7 @@ void RTPSParticipantImpl::update_attributes(
     // Update the attributes data member
     {
         std::lock_guard<std::mutex> _(mutex_);
-        m_att = temp_atts;
+        update_mutable_attributes(temp_atts);
     }
 
     if (update_pdp)
@@ -1679,6 +1679,17 @@ void RTPSParticipantImpl::update_attributes(
         // Send DATA(P)
         pdp->announceParticipantState(true);
     }
+}
+
+void RTPSParticipantImpl::update_mutable_attributes(
+        const RTPSParticipantAttributes& patt)
+{
+    // NTS
+    m_att.userData = patt.userData;
+    m_att.builtin.metatrafficUnicastLocatorList = patt.builtin.metatrafficUnicastLocatorList;
+    m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
+    m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
+    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
 }
 
 bool RTPSParticipantImpl::update_writer(
@@ -2872,7 +2883,11 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
 
 void RTPSParticipantImpl::environment_file_has_changed()
 {
-    RTPSParticipantAttributes patt = m_att;
+    RTPSParticipantAttributes patt;
+    {
+        std::lock_guard<std::mutex> _(mutex_);
+        patt = m_att;
+    }
     // Only if it is a server/backup or a client override
     if (DiscoveryProtocol::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
             DiscoveryProtocol::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
@@ -3427,6 +3442,7 @@ dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
 
 const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
 {
+    std::lock_guard<std::mutex> _(mutex_);
     return m_att;
 }
 
