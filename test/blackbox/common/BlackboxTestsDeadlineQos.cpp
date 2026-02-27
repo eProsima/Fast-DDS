@@ -324,7 +324,8 @@ TEST_P(DeadlineQos, KeyedTopicBestEffortReaderVolatileWriterSetDeadline)
 TEST_P(DeadlineQos, ZeroDeadlinePeriodWriter)
 {
     auto observer = std::make_shared<eprosima::fastdds::testing::LogCounterObserver>(/*store=*/ false);
-    auto consumer = std::make_unique<eprosima::fastdds::testing::LogCounterConsumer>(observer);
+    std::unique_ptr<eprosima::fastdds::testing::LogCounterConsumer> consumer;
+    consumer.reset(new eprosima::fastdds::testing::LogCounterConsumer(observer));
 
     fastlog::ClearConsumers();
     fastlog::RegisterConsumer(std::move(consumer));
@@ -420,7 +421,8 @@ TEST_P(DeadlineQos, ZeroDeadlinePeriodReader)
     ASSERT_TRUE(writer.isInitialized());
 
     auto observer = std::make_shared<eprosima::fastdds::testing::LogCounterObserver>(/*store=*/ false);
-    auto consumer = std::make_unique<eprosima::fastdds::testing::LogCounterConsumer>(observer);
+    std::unique_ptr<eprosima::fastdds::testing::LogCounterConsumer> consumer;
+    consumer.reset(new eprosima::fastdds::testing::LogCounterConsumer(observer));
 
     fastlog::ClearConsumers();
     fastlog::RegisterConsumer(std::move(consumer));
