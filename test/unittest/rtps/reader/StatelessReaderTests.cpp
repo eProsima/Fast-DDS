@@ -1,4 +1,4 @@
-// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2025 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 #include <gtest/gtest.h>
 
 // Header for the unit we are testing
-#include <rtps/reader/StatefulReader.hpp>
+#include <rtps/reader/StatelessReader.hpp>
 
 #include <fastdds/config.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
@@ -61,62 +61,11 @@ const InstanceHandle_t HANDLE_NIL;
 
 namespace rtps {
 
-/* Regression Test for improving gaps processing
- * https://github.com/eProsima/Fast-DDS/pull/3343
- */
-TEST(StatefulReaderTests, RTPSCorrectGAPProcessing)
-{
-    RTPSParticipantAttributes part_attrs;
-    RTPSParticipant* part = RTPSDomain::createParticipant(0, false, part_attrs, nullptr);
-
-    HistoryAttributes hatt{};
-    ReaderHistory reader_history(hatt);
-    WriterHistory writer_history(hatt);
-
-    ReaderAttributes reader_att{};
-    reader_att.endpoint.endpointKind = READER;
-    reader_att.endpoint.reliabilityKind = RELIABLE;
-    reader_att.endpoint.durabilityKind = TRANSIENT_LOCAL;
-
-    RTPSReader* reader = RTPSDomain::createRTPSReader(part, reader_att, &reader_history, nullptr);
-    StatefulReader* uut = dynamic_cast<StatefulReader*>(reader);
-    ASSERT_NE(uut, nullptr);
-
-    WriterAttributes writer_att{};
-    writer_att.endpoint.endpointKind = WRITER;
-    writer_att.endpoint.reliabilityKind = RELIABLE;
-    writer_att.endpoint.durabilityKind = TRANSIENT_LOCAL;
-
-    RTPSWriter* writer = RTPSDomain::createRTPSWriter(part, writer_att, &writer_history, nullptr);
-    ASSERT_NE(writer, nullptr);
-
-    // Register both endpoints
-    TopicDescription topic_desc;
-    topic_desc.type_name = "string";
-    topic_desc.topic_name = "topic";
-    part->register_reader(reader, topic_desc, fastdds::dds::ReaderQos());
-    part->register_writer(writer, topic_desc, fastdds::dds::WriterQos());
-
-    // After registration, the writer should be matched
-    auto writer_guid = writer->getGuid();
-    EXPECT_TRUE(uut->matched_writer_is_matched(writer_guid));
-
-    // Send a wrong GAP
-    SequenceNumberSet_t seq_set(SequenceNumber_t(0, 0));
-    ASSERT_NO_FATAL_FAILURE(uut->process_gap_msg(writer_guid, {0, 0}, seq_set));
-
-    // Destroy the writer
-    RTPSDomain::removeRTPSWriter(writer);
-
-    // Destroy the reader
-    RTPSDomain::removeRTPSReader(reader);
-}
-
 /* Regression test for: https://github.com/eProsima/Fast-DDS/pull/6217
    Test that checks that non empty changes (dispose, unregister, ...) with empty
    payloads are processed.
  */
-TEST(StatefulReaderTests, EmptyPayloadUnregisterDisposeProcessing)
+TEST(StatelessReaderTests, EmptyPayloadUnregisterDisposeProcessing)
 {
     RTPSParticipantAttributes part_attrs;
     RTPSParticipant* part = RTPSDomain::createParticipant(0, false, part_attrs, nullptr);
@@ -127,11 +76,11 @@ TEST(StatefulReaderTests, EmptyPayloadUnregisterDisposeProcessing)
 
     ReaderAttributes reader_att{};
     reader_att.endpoint.endpointKind = READER;
-    reader_att.endpoint.reliabilityKind = RELIABLE;
-    reader_att.endpoint.durabilityKind = TRANSIENT_LOCAL;
+    reader_att.endpoint.reliabilityKind = BEST_EFFORT;
+    reader_att.endpoint.durabilityKind = VOLATILE;
 
     RTPSReader* reader = RTPSDomain::createRTPSReader(part, reader_att, &reader_history, nullptr);
-    StatefulReader* uut = dynamic_cast<StatefulReader*>(reader);
+    StatelessReader* uut = dynamic_cast<StatelessReader*>(reader);
     ASSERT_NE(uut, nullptr);
 
     WriterAttributes writer_att{};

@@ -101,6 +101,8 @@ private:
     std::map<InstanceHandle_t, uint32_t> samples_per_instance_;
 
     std::vector<InstanceHandle_t> disposed_instances_;
+
+    std::map<InstanceHandle_t, std::string> color_per_instance_;
 };
 
 } // namespace topic_instances
