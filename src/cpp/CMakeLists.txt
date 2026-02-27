@@ -12,49 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(CheckCXXSourceCompiles)
-
-#{{{ Configuration low-bandwidth transports
-option(ZLIB_REQUIRED "Make ZLib dependency required" OFF)
-find_package(ZLIB)
-if (NOT ZLIB_FOUND)
-    find_package(PkgConfig)
-    pkg_search_module(ZLIB zlib IMPORTED_TARGET)
-    if (ZLIB_FOUND)
-        add_library(ZLIB::ZLIB ALIAS PkgConfig::ZLIB)
-    endif()
-endif()
-if(ZLIB_FOUND)
-    set(HAVE_ZLIB 1)
-else()
-    if (ZLIB_REQUIRED)
-        message(FATAL_ERROR "ZLib library not found! and it is required")
-    else()
-        set(HAVE_ZLIB 0)
-    endif()
-endif()
-
-# Configure BZIP2
-option(BZIP2_REQUIRED "Make BZip2 dependency required" OFF)
-find_package(BZip2)
-if(NOT BZIP2_FOUND)
-    find_package(PkgConfig)
-    pkg_search_module(BZip2 bzip2 IMPORTED_TARGET)
-    set(BZIP2_FOUND ${BZip2_FOUND})
-    if (BZIP2_FOUND)
-        add_library(BZip2::BZip2 ALIAS PkgConfig::BZip2)
-    endif()
-endif()
-if(BZIP2_FOUND)
-    set(HAVE_BZIP2 1)
-else()
-    if (BZIP2_REQUIRED)
-        message(FATAL_ERROR "Bzip2 library not found! and it is required")
-    else()
-        set(HAVE_BZIP2 0)
-    endif()
-endif()
-
 # Generate the proper configure file
 configure_file(${PROJECT_SOURCE_DIR}/include/fastdds/rtps/transport/low-bandwidth/config.hpp.in
     ${PROJECT_BINARY_DIR}/include/fastdds/rtps/transport/low-bandwidth/config.hpp)
@@ -63,14 +20,14 @@ configure_file(${PROJECT_SOURCE_DIR}/include/fastdds/rtps/transport/low-bandwidt
 # Set source files
 if(WIN32)
 
-file(GLOB_RECURSE ALL_HEADERS
+    file(GLOB_RECURSE ALL_HEADERS
     ${PROJECT_SOURCE_DIR}/include/**/*.h
     ${PROJECT_SOURCE_DIR}/include/**/*.hpp
     ${PROJECT_SOURCE_DIR}/src/cpp/**/*.h
     ${PROJECT_SOURCE_DIR}/src/cpp/**/*.hpp
     )
 
-add_definitions(-DNOMINMAX)
+    add_definitions(-DNOMINMAX)
 
 endif(WIN32)
 

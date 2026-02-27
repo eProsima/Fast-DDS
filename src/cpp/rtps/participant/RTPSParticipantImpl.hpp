@@ -53,6 +53,7 @@
 #include <fastdds/utils/TypePropagation.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/data/WriterProxyData.hpp>
+#include <rtps/congestion-control/ICongestionControl.hpp>
 #include <rtps/flowcontrol/types.hpp>
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
@@ -561,7 +562,7 @@ public:
      * @param reason Discovery reason.
      * @param info Information about the discovered reader.
      */
-    virtual void notify_reader_discovery(
+    void notify_reader_discovery(
             ReaderDiscoveryStatus reason,
             const SubscriptionBuiltinTopicData& info);
 
@@ -575,7 +576,7 @@ public:
      * @param info Information about the discovered reader.
      * @param listener Listener to be notified.
      */
-    virtual void notify_reader_discovery(
+    void notify_reader_discovery(
             ReaderDiscoveryStatus reason,
             const SubscriptionBuiltinTopicData& info,
             RTPSParticipantListener* listener);
@@ -589,7 +590,7 @@ public:
      * @param reason Discovery reason.
      * @param info Information about the discovered writer.
      */
-    virtual void notify_writer_discovery(
+    void notify_writer_discovery(
             WriterDiscoveryStatus reason,
             const PublicationBuiltinTopicData& info);
 
@@ -603,12 +604,12 @@ public:
      * @param info Information about the discovered writer.
      * @param listener Listener to be notified.
      */
-    virtual void notify_writer_discovery(
+    void notify_writer_discovery(
             WriterDiscoveryStatus reason,
             const PublicationBuiltinTopicData& info,
             RTPSParticipantListener* listener);
 
-protected:
+private:
 
     //! DomainId
     uint32_t domain_id_;
@@ -720,7 +721,9 @@ protected:
 
     bool match_local_endpoints_ = true;
 
-private:
+    std::unique_ptr<ICongestionControl> congestion_control_;
+
+    void configure_congestion_control();
 
     void setup_guids(
             const GuidPrefix_t& persistence_guid);
@@ -905,7 +908,7 @@ public:
      * @param isBuiltin Bool value indicating if the Writer is builtin (Discovery or Liveliness protocol) or is created for the end user.
      * @return True if the Writer was correctly created.
      */
-    virtual bool createWriter(
+    bool createWriter(
             RTPSWriter** Writer,
             WriterAttributes& param,
             WriterHistory* hist,
@@ -925,7 +928,7 @@ public:
      *
      * @return True if the Writer was correctly created.
      */
-    virtual bool create_writer(
+    bool create_writer(
             RTPSWriter** Writer,
             WriterAttributes& watt,
             WriterHistory* hist,
@@ -944,7 +947,7 @@ public:
      * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
-    virtual bool createReader(
+    bool createReader(
             RTPSReader** Reader,
             ReaderAttributes& param,
             ReaderHistory* hist,
@@ -965,7 +968,7 @@ public:
      * @param enable Whether the reader should be automatically enabled.
      * @return True if the Reader was correctly created.
      */
-    virtual bool createReader(
+    bool createReader(
             RTPSReader** Reader,
             ReaderAttributes& param,
             const std::shared_ptr<IPayloadPool>& payload_pool,

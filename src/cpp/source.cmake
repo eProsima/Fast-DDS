@@ -135,6 +135,8 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/LocatorWithMask.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/Time_t.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/Token.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/congestion-control/CongestionControlFactory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/congestion-control/basic/CongestionControlBasic.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/DataSharing/DataSharingListener.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/DataSharing/DataSharingNotification.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/DataSharing/DataSharingPayloadPool.cpp

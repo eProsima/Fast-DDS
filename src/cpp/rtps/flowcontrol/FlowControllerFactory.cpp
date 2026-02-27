@@ -48,12 +48,6 @@ void FlowControllerFactory::init(
                     sender_thread_settings))));
 #endif // ifndef FASTDDS_STATISTICS
 
-    // GrainedFlowController
-    flow_controllers_.insert(decltype(flow_controllers_)::value_type(
-                grained_flow_controller_name,
-                std::unique_ptr<FlowController>(
-                    new GrainedFlowController(participant_, async_controller_index_++, sender_thread_settings,
-                    /*TODO(richiware)*/ 65300, 1000))));
 }
 
 void FlowControllerFactory::register_flow_controller (

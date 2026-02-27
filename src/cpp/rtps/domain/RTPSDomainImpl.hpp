@@ -225,11 +225,11 @@ private:
 
     eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
 
+    std::shared_ptr<dds::detail::LogResources> log_resources_;
+
     std::unique_ptr<IPChangeMonitorAPI> ip_change_monitor_;
 
     bool first_participant_created_;
-
-    std::shared_ptr<dds::detail::LogResources> log_resources_;
 
 };
 

@@ -56,6 +56,9 @@
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/builtin/discovery/participant/simple/PDPStatelessWriter.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
+#include <rtps/congestion-control/CongestionControlFactory.hpp>
+#include <rtps/congestion-control/CongestionControlParameters.hpp>
+#include <rtps/congestion-control/basic/CongestionControlBasic.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/messages/MessageReceiver.h>
@@ -362,6 +365,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                 "RTPSParticipant \"" << m_att.getName() << "\" with guidPrefix: " << m_guid.guidPrefix);
     }
 
+    configure_congestion_control();
+
     initialized_ = true;
 }
 
@@ -373,6 +378,116 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
 {
+}
+
+void RTPSParticipantImpl::configure_congestion_control()
+{
+    // Check for congestion control properties
+    PropertyPolicy cc_props = PropertyPolicyHelper::get_properties_with_prefix(
+        m_att.properties, "fastdds.congestion.");
+    if (cc_props.properties().empty())
+    {
+        // No congestion control properties found. Congestion control disabled.
+        return;
+    }
+
+    // Parse congestion control properties
+    std::string plugin_name = CongestionControlFactory::DEFAULT_CONGESTION_CONTROL;
+    CongestionControlParameters cc_params;
+    uint32_t max_data_size = getMaxDataSize();
+    const PropertySeq& props = cc_props.properties();
+    for (const Property& prop : props)
+    {
+        if (prop.name() == "plugin")
+        {
+            plugin_name = prop.value();
+        }
+        else if (prop.name() == "period")
+        {
+            cc_params.period_duration_ms = static_cast<uint32_t>(std::stoul(prop.value()));
+        }
+        else if (prop.name() == "initial_bandwidth")
+        {
+            cc_params.initial_target_bytes_per_second = static_cast<uint32_t>(std::stoul(prop.value()));
+        }
+        else if (prop.name() == "increase_multiplier")
+        {
+            cc_params.increase_factor = std::stof(prop.value());
+        }
+        else if (prop.name() == "decrease_multiplier")
+        {
+            cc_params.decrease_factor = std::stof(prop.value());
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Unknown congestion control property: " << prop.name());
+        }
+    }
+
+    // Create congestion control instance
+    congestion_control_.reset(CongestionControlFactory::create_congestion_control(plugin_name));
+    if (!congestion_control_)
+    {
+        EPROSIMA_LOG_ERROR(
+            RTPS_PARTICIPANT,
+            "Failed to create congestion control plugin '" << plugin_name << "'. Disabling.");
+        return;
+    }
+
+    // Check for valid parameters
+    if (1500 > cc_params.period_duration_ms)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Congestion control period too low ("
+                << cc_params.period_duration_ms << " ms). Setting to minimum of 1500 ms.");
+        cc_params.period_duration_ms = 1500;
+    }
+    if (1.0f >= cc_params.increase_factor)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Congestion control increase factor must be greater than 1.0, but "
+                << cc_params.increase_factor << " was provided. Setting to default of 1.2.");
+        cc_params.increase_factor = 1.2f;
+    }
+    if ((1.0f <= cc_params.decrease_factor) || (0.0f >= cc_params.decrease_factor))
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
+                "Congestion control decrease factor must be strictly positive and less than 1.0, but "
+                << cc_params.decrease_factor << " was provided. Setting to default of 0.75.");
+        cc_params.decrease_factor = 0.75f;
+    }
+    if (0 == cc_params.initial_target_bytes_per_second)
+    {
+        // Instructed to use default initial bandwidth (half the size of the socket send buffer)
+        uint32_t min_send_buffer_size = get_min_network_send_buffer_size();
+        cc_params.initial_target_bytes_per_second = min_send_buffer_size / 2;
+        // But should allow for at least 1 message per second
+        if (cc_params.initial_target_bytes_per_second < max_data_size)
+        {
+            cc_params.initial_target_bytes_per_second = max_data_size;
+        }
+    }
+    else
+    {
+        // Should allow for at least 1 message per second
+        if (cc_params.initial_target_bytes_per_second < max_data_size)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Congestion control initial bandwidth ("
+                    << cc_params.initial_target_bytes_per_second << " B/s) is less than the maximum message size ("
+                    << max_data_size << " B). Setting initial bandwidth to maximum message size.");
+            cc_params.initial_target_bytes_per_second = max_data_size;
+        }
+    }
+
+    // Initialize congestion control
+    bool success = congestion_control_->initialize(*this, flow_controller_factory_, cc_params);
+    if (!success)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Failed to initialize congestion control. Disabling.");
+        congestion_control_.reset();
+        return;
+    }
+
+    // Set the congestion control implementation as the StatefulWriterListener to receive congestion control events
+    stateful_writer_listener_ = congestion_control_.get();
 }
 
 void RTPSParticipantImpl::setup_guids(
@@ -1241,7 +1356,15 @@ bool RTPSParticipantImpl::createWriter(
         return false;
     }
 
-    return create_writer(WriterOut, param, hist, listen, entityId, isBuiltin);
+    if (!congestion_control_)
+    {
+        // No congestion control configured, use base implementation
+        return create_writer(WriterOut, param, hist, listen, entityId, isBuiltin);
+    }
+
+    // Create writer using congestion control
+    WriterAttributes modified_attr = congestion_control_->prepare_writer_attributes(param, entityId, isBuiltin);
+    return create_writer(WriterOut, modified_attr, hist, listen, entityId, isBuiltin);
 }
 
 bool RTPSParticipantImpl::create_writer(
@@ -1310,7 +1433,15 @@ bool RTPSParticipantImpl::create_writer(
 
                 return writer;
             };
-    return create_writer(WriterOut, watt, entityId, isBuiltin, callback);
+
+    if (!congestion_control_)
+    {
+        // No congestion control configured, use base implementation
+        return create_writer(WriterOut, watt, entityId, isBuiltin, callback);
+    }
+    // Create writer using congestion control
+    WriterAttributes modified_attr = congestion_control_->prepare_writer_attributes(watt, entityId, isBuiltin);
+    return create_writer(WriterOut, modified_attr, entityId, isBuiltin, callback);
 }
 
 bool RTPSParticipantImpl::createReader(
@@ -3443,6 +3574,12 @@ void RTPSParticipantImpl::notify_reader_discovery(
         const SubscriptionBuiltinTopicData& info,
         RTPSParticipantListener* listener)
 {
+    // Pass discovery information to congestion control
+    if (congestion_control_)
+    {
+        congestion_control_->notify_reader_discovery(reason, info);
+    }
+
     if (listener)
     {
         RTPSParticipant* participant = getUserRTPSParticipant();

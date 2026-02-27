@@ -23,9 +23,9 @@
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include "../domain/DomainParticipantImpl.hpp"
-#include "../publisher/PublisherImpl.hpp"
-#include "../subscriber/SubscriberImpl.hpp"
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
 
 namespace eprosima {
 namespace fastdds {

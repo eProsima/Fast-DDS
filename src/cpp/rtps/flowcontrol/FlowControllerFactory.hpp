@@ -41,6 +41,26 @@ public:
     virtual void init(
             fastdds::rtps::RTPSParticipantImpl* participant);
 
+    template<typename FlowControllerType, typename ... Args>
+    FlowControllerType* register_flow_controller_type(
+            const std::string& flow_controller_name,
+            Args&&... args)
+    {
+        if (flow_controllers_.find(flow_controller_name) != flow_controllers_.end())
+        {
+            // Flow controller with that name already exists.
+            return nullptr;
+        }
+
+        FlowControllerType* ret_val =
+                new FlowControllerType(participant_, async_controller_index_++, std::forward<Args>(args)...);
+        flow_controllers_.insert(
+            decltype(flow_controllers_)::value_type(
+                flow_controller_name,
+                std::unique_ptr<FlowController>(ret_val)));
+        return ret_val;
+    }
+
     /*!
      * Registers a new flow controller.
      * This function should be used by the participant.

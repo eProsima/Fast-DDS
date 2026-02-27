@@ -62,11 +62,6 @@ TEST(FlowControllerFactory, get_default_flow_controllers)
     async = dynamic_cast<FlowControllerImpl<FlowControllerAsyncPublishMode,
                     FlowControllerFifoSchedule>*>(flow_controller);
     ASSERT_TRUE(nullptr != async);
-
-    flow_controller = factory.retrieve_flow_controller(grained_flow_controller_name, reliable_async_attributes);
-    GrainedFlowController* grained_flow = dynamic_cast<GrainedFlowController*>(flow_controller);
-    ASSERT_TRUE(nullptr != grained_flow);
-
 }
 
 TEST(FlowControllerFactory, register_flow_controllers)
@@ -163,6 +158,99 @@ TEST(FlowControllerFactory, register_flow_controllers)
             FlowControllerPriorityWithReservationSchedule>* async_limited_reserv_flow = dynamic_cast<FlowControllerImpl<FlowControllerLimitedAsyncPublishMode,
                     FlowControllerPriorityWithReservationSchedule>*>(flow_controller);
     ASSERT_TRUE(nullptr != async_limited_reserv_flow);
+}
+
+TEST(FlowControllerFactory, register_custom_flow_controller)
+{
+    class CustomFlowController : public FlowController
+    {
+    public:
+
+        CustomFlowController(
+                RTPSParticipantImpl* participant,
+                uint32_t flow_controller_index)
+            : participant_(participant)
+            , flow_controller_index_(flow_controller_index)
+        {
+        }
+
+        void init() override
+        {
+        }
+
+        void register_writer(
+                BaseWriter*) override
+        {
+        }
+
+        void unregister_writer(
+                BaseWriter*) override
+        {
+        }
+
+        bool add_new_sample(
+                BaseWriter*,
+                CacheChange_t*,
+                const std::chrono::time_point<std::chrono::steady_clock>&) override
+        {
+            return true;
+        }
+
+        bool add_old_sample(
+                BaseWriter*,
+                CacheChange_t*) override
+        {
+            return true;
+        }
+
+        bool remove_change(
+                CacheChange_t*,
+                const std::chrono::time_point<std::chrono::steady_clock>&) override
+        {
+            return true;
+        }
+
+        uint32_t get_max_payload() override
+        {
+            return 0;
+        }
+
+        RTPSParticipantImpl* participant_;
+        uint32_t flow_controller_index_;
+    };
+
+    FlowControllerFactory factory;
+    FlowController* flow_controller = nullptr;
+
+    // Initialize factory.
+    factory.init(nullptr);
+    // Register custom flow controller.
+    CustomFlowController* custom_flow_controller =
+            factory.register_flow_controller_type<CustomFlowController>("CustomFlowController");
+    ASSERT_TRUE(nullptr != custom_flow_controller);
+    EXPECT_EQ(custom_flow_controller->participant_, nullptr);
+    EXPECT_GT(custom_flow_controller->flow_controller_index_, 2u);
+
+    // Retrieve custom flow controller.
+    flow_controller = factory.retrieve_flow_controller("CustomFlowController", WriterAttributes{});
+    ASSERT_EQ(custom_flow_controller, flow_controller);
+
+    // Registering with the same name should fail
+    CustomFlowController* another_flow_controller =
+            factory.register_flow_controller_type<CustomFlowController>("CustomFlowController");
+    ASSERT_EQ(nullptr, another_flow_controller);
+    // Retrieve custom flow controller again to verify it's the same one.
+    flow_controller = factory.retrieve_flow_controller("CustomFlowController", WriterAttributes{});
+    ASSERT_EQ(custom_flow_controller, flow_controller);
+
+    // Register another custom flow controller with a different name.
+    another_flow_controller =
+            factory.register_flow_controller_type<CustomFlowController>("AnotherCustomFlowController");
+    ASSERT_TRUE(nullptr != another_flow_controller);
+    EXPECT_NE(custom_flow_controller, another_flow_controller);
+    EXPECT_EQ(another_flow_controller->participant_, nullptr);
+    EXPECT_EQ(another_flow_controller->flow_controller_index_, custom_flow_controller->flow_controller_index_ + 1);
+
 }
 
 int main(

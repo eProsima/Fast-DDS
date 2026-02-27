@@ -61,7 +61,7 @@ env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
   colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wunused-value -Woverloaded-virtual -Wsign-compare -Wcast-align -Wlogical-op -Wduplicated-cond -Wrestrict -Wpointer-arith -Wwrite-strings -Wunreachable-code"'
   fastdds-python-branch: 'main'
-  fastdds-docs-branch: 'master'
+  fastdds-docs-branch: 'main'
   shapes-demo-branch: 'master'
   discovery-server-branch: 'master'
   cmake-build-type: 'RelWithDebInfo'
@@ -398,17 +398,22 @@ jobs:
         with:
           ccache-folder: /ccache
 
-      - name: Get Fast DDS Python branch
+      - name: set up git credentials
+        run: |
+          git config --global credential.helper store
+          echo "https://NONE:${{ secrets.FAST_DDS_PRO_TOKEN }}@github.com" > ~/.git-credentials
+
+      - name: Get Fast DDS Pro Python branch
         id: get_fastdds_python_branch
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
-          remote_repository: eProsima/Fast-DDS-python
+          remote_repository: eProsima/Fast-DDS-Pro-Python
           fallback_branch: ${{ env.fastdds-python-branch }}
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          repository: eProsima/Fast-DDS-python
+          repository: eProsima/Fast-DDS-Pro-Python
           path: src/fastdds-python
           ref: ${{ steps.get_fastdds_python_branch.outputs.deduced_branch }}
 
@@ -511,12 +516,24 @@ jobs:
         with:
           ccache-folder: /ccache
 
-      - name: Get Fast DDS Python branch for CI Testing
+      - name: set up git credentials
+        run: |
+          git config --global credential.helper store
+          echo "https://NONE:${{ secrets.FAST_DDS_PRO_TOKEN }}@github.com" > ~/.git-credentials
+
+      - name: Get Fast DDS Pro Python branch for CI Testing
         id: get_fastdds_python_branch
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
-          remote_repository: eProsima/Fast-DDS-python
+          remote_repository: eProsima/Fast-DDS-Pro-Python
           fallback_branch: ${{ env.fastdds-python-branch }}
+
+      - name: Download Fast DDS Python repo
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-DDS-Pro-Python
+          path: src/fastdds-python
+          ref: ${{ steps.get_fastdds_python_branch.outputs.deduced_branch }}
 
       - name: Colcon build
         continue-on-error: false
@@ -639,17 +656,22 @@ jobs:
         with:
           ccache-folder: /ccache
 
-      - name: Get Fast DDS Docs branch
+      - name: set up git credentials
+        run: |
+          git config --global credential.helper store
+          echo "https://NONE:${{ secrets.FAST_DDS_PRO_TOKEN }}@github.com" > ~/.git-credentials
+
+      - name: Get Fast DDS Pro Docs branch
         id: get_fastdds_docs_branch
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
-          remote_repository: eProsima/Fast-DDS-docs
+          remote_repository: eProsima/Fast-DDS-Pro-Docs
           fallback_branch: ${{ env.fastdds-docs-branch }}
 
       - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          repository: eProsima/Fast-DDS-docs
+          repository: eProsima/Fast-DDS-Pro-Docs
           path: src/fastdds-docs
           ref: ${{ steps.get_fastdds_docs_branch.outputs.deduced_branch }}
 

@@ -44,13 +44,13 @@ endif()
 #    - OFF  -> not define FASTDDS_CHECK_LICENSE
 #    - AUTO -> define FASTDDS_CHECK_LICENSE=1 for non-Release configs only
 if(FASTDDS_LICENSE_ENABLE STREQUAL "ON")
-  add_compile_definitions(FASTDDS_CHECK_LICENSE=1)
-  set(FASTDDS_LICENSE_CHECK_ENABLED TRUE)
+    add_compile_definitions(FASTDDS_CHECK_LICENSE=1)
+    set(FASTDDS_LICENSE_CHECK_ENABLED TRUE)
 elseif(FASTDDS_LICENSE_ENABLE STREQUAL "AUTO")
-  # enabled in non-Release builds
-  # disabled in Release
-  add_compile_definitions($<$<NOT:$<CONFIG:Release>>:FASTDDS_CHECK_LICENSE=1>)
-  set(FASTDDS_LICENSE_CHECK_ENABLED TRUE)
+    # enabled in non-Release builds
+    # disabled in Release
+    add_compile_definitions($<$<NOT:$<CONFIG:Release>>:FASTDDS_CHECK_LICENSE=1>)
+    set(FASTDDS_LICENSE_CHECK_ENABLED TRUE)
 endif()
 
 # Option to embed license data into the binaries
@@ -234,7 +234,7 @@ option(APPEND_PROJECT_NAME_TO_INCLUDEDIR
 set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 set(_include_dir "include/")
 if(APPEND_PROJECT_NAME_TO_INCLUDEDIR)
-  string(APPEND _include_dir "${PROJECT_NAME}/")
+    string(APPEND _include_dir "${PROJECT_NAME}/")
 endif()
 set(INCLUDE_INSTALL_DIR "${_include_dir}" CACHE PATH "Installation directory for C++ headers")
 unset(_include_dir)
@@ -451,6 +451,52 @@ endif()
 ###############################################################################
 option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" ON)
 
+
+# Find Bzip2 and Zlib
+###############################################################################
+include(CheckCXXSourceCompiles)
+
+#{{{ Configuration low-bandwidth transports
+option(ZLIB_REQUIRED "Make ZLib dependency required" OFF)
+find_package(ZLIB)
+if (NOT ZLIB_FOUND)
+    find_package(PkgConfig)
+    pkg_search_module(ZLIB zlib IMPORTED_TARGET)
+    if (ZLIB_FOUND)
+        add_library(ZLIB::ZLIB ALIAS PkgConfig::ZLIB)
+    endif()
+endif()
+if(ZLIB_FOUND)
+    set(HAVE_ZLIB 1)
+else()
+    if (ZLIB_REQUIRED)
+        message(FATAL_ERROR "ZLib library not found! and it is required")
+    else()
+        set(HAVE_ZLIB 0)
+    endif()
+endif()
+
+# Configure BZIP2
+option(BZIP2_REQUIRED "Make BZip2 dependency required" OFF)
+find_package(BZip2)
+if(NOT BZIP2_FOUND)
+    find_package(PkgConfig)
+    pkg_search_module(BZip2 bzip2 IMPORTED_TARGET)
+    set(BZIP2_FOUND ${BZip2_FOUND})
+    if (BZIP2_FOUND)
+        add_library(BZip2::BZip2 ALIAS PkgConfig::BZip2)
+    endif()
+endif()
+if(BZIP2_FOUND)
+    set(HAVE_BZIP2 1)
+else()
+    if (BZIP2_REQUIRED)
+        message(FATAL_ERROR "Bzip2 library not found! and it is required")
+    else()
+        set(HAVE_BZIP2 0)
+    endif()
+endif()
+
 ###############################################################################
 # Compile library.
 ###############################################################################
@@ -633,8 +679,8 @@ install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastdds_static_discovery.xsd
 option(INSTALL_EXAMPLES "Install example" OFF)
 
 if(INSTALL_EXAMPLES)
-  # Install examples
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
+    # Install examples
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
       DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples
       COMPONENT examples
       PATTERN "examples/CMakeLists.txt" EXCLUDE
@@ -644,8 +690,8 @@ endif()
 option(INSTALL_TOOLS "Install tools" OFF)
 
 if(INSTALL_TOOLS)
-  # Install tools
-  install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools/
+    # Install tools
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/tools/
       DESTINATION tools
       COMPONENT tools
       PATTERN "tools/CMakeLists.txt" EXCLUDE

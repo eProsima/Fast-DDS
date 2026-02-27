@@ -464,8 +464,8 @@ public:
     MOCK_METHOD1(ignore_participant, bool (
                 const fastdds::rtps::InstanceHandle_t& handle));
 
-    MOCK_METHOD1(find_service_type, rpc::ServiceTypeSupport(
-                const std::string& service_name));
+    MOCK_METHOD(const rpc::ServiceTypeSupport, find_service_type, (
+                const std::string& service_name), (const));
 
     MOCK_METHOD2(register_service_type, ReturnCode_t(
                 rpc::ServiceTypeSupport service_type,

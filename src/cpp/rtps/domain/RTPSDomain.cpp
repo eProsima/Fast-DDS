@@ -45,7 +45,6 @@
 #include <rtps/network/IPChangeMonitor.hpp>
 #include <rtps/network/IPChangeMonitorImpl.hpp>
 #include <rtps/network/utils/external_locators.hpp>
-#include <rtps/participant/rtps_participant_types.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/reader/BaseReader.hpp>
 #include <rtps/reader/LocalReaderPointer.hpp>
@@ -318,7 +317,7 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
     // would ensure builtin endpoints are able to differentiate between a communication loss and a participant recovery
     if (PParam.prefix != c_GuidPrefix_Unknown)
     {
-        pimpl = new RTPSParticipantImplType(domain_id, PParam, PParam.prefix, guidP, p, listen);
+        pimpl = new RTPSParticipantImpl(domain_id, PParam, PParam.prefix, guidP, p, listen);
     }
     else
     {
@@ -327,7 +326,7 @@ RTPSParticipant* RTPSDomainImpl::create_participant(
             EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Specifying a GUID prefix is mandatory for BACKUP Discovery Servers.");
             return nullptr;
         }
-        pimpl = new RTPSParticipantImplType(domain_id, PParam, guidP, p, listen);
+        pimpl = new RTPSParticipantImpl(domain_id, PParam, guidP, p, listen);
     }
 
     // Check implementation was correctly initialized
