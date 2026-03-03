@@ -234,7 +234,7 @@ void DataWriterImpl::create_history(
                 qos_.history(),
                 qos_.resource_limits(),
                 (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
-                type_->max_serialized_type_size,
+                type_->get_max_serialized_size(type_support_context_),
                 qos_.endpoint().history_memory_policy,
                 [this](
                     const InstanceHandle_t& handle) -> void
@@ -252,14 +252,16 @@ ReturnCode_t DataWriterImpl::enable()
 
     auto history_att = DataWriterHistory::to_history_attributes(
         qos_.history(),
-        qos_.resource_limits(), (type_->is_compute_key_provided ? WITH_KEY : NO_KEY), type_->max_serialized_type_size,
+        qos_.resource_limits(),
+        (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
+        type_->get_max_serialized_size(type_support_context_),
         qos_.endpoint().history_memory_policy);
     pool_config_ = PoolConfig::from_history_attributes(history_att);
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
-            (type_->is_bounded() || type_->is_plain(data_representation_)))
+            (type_->is_bounded(type_support_context_) || type_->is_plain(type_support_context_, data_representation_)))
     {
         pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
     }
@@ -536,8 +538,8 @@ ReturnCode_t DataWriterImpl::loan_sample(
             microseconds(rtps::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
 
     // Type should be plain and have space for the representation header
-    if (!type_->is_plain(data_representation_) ||
-            SerializedPayload_t::representation_header_size > type_->max_serialized_type_size)
+    if (!type_->is_plain(type_support_context_, data_representation_) ||
+            SerializedPayload_t::representation_header_size > type_->get_max_serialized_size(type_support_context_))
     {
         return RETCODE_ILLEGAL_OPERATION;
     }
@@ -561,7 +563,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
 
     // Get one payload from the pool
     SerializedPayload_t payload;
-    uint32_t size = type_->max_serialized_type_size;
+    uint32_t size = type_->get_max_serialized_size(type_support_context_);
     if (!get_free_payload_from_pool(size, payload))
     {
         return RETCODE_OUT_OF_RESOURCES;
@@ -603,7 +605,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
             break;
 
         case LoanInitializationKind::CONSTRUCTED_LOAN_INITIALIZATION:
-            if (!type_->construct_sample(sample))
+            if (!type_->construct_sample(type_support_context_, sample))
             {
                 check_and_remove_loan(sample, payload);
                 payload_pool_->release_payload(payload);
@@ -624,8 +626,8 @@ ReturnCode_t DataWriterImpl::discard_loan(
         void*& sample)
 {
     // Type should be plain and have space for the representation header
-    if (!type_->is_plain(data_representation_) ||
-            SerializedPayload_t::representation_header_size > type_->max_serialized_type_size)
+    if (!type_->is_plain(type_support_context_, data_representation_) ||
+            SerializedPayload_t::representation_header_size > type_->get_max_serialized_size(type_support_context_))
     {
         return RETCODE_ILLEGAL_OPERATION;
     }
@@ -687,13 +689,14 @@ ReturnCode_t DataWriterImpl::check_write_preconditions(
         return RETCODE_NOT_ENABLED;
     }
 
-    if (type_.get()->is_compute_key_provided)
+    if (type_->is_compute_key_provided)
     {
         bool is_key_protected = false;
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        if (!type_->compute_key(data, instance_handle, is_key_protected) || !instance_handle.isDefined())
+        if (!type_->compute_key(type_support_context_, data, instance_handle, is_key_protected) ||
+                !instance_handle.isDefined())
         {
             EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
             return RETCODE_PRECONDITION_NOT_MET;
@@ -785,7 +788,8 @@ ReturnCode_t DataWriterImpl::check_instance_preconditions(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        if (!type_->compute_key(data, instance_handle, is_key_protected) || !instance_handle.isDefined())
+        if (!type_->compute_key(type_support_context_, data, instance_handle, is_key_protected) ||
+                !instance_handle.isDefined())
         {
             EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
             return RETCODE_PRECONDITION_NOT_MET;
@@ -861,10 +865,11 @@ InstanceHandle_t DataWriterImpl::do_register_instance(
             assert(nullptr != payload);
             if (0 == payload->length || nullptr == payload->data)
             {
-                uint32_t size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(key,
-                                data_representation_);
+                uint32_t size = fixed_payload_size_
+                    ? fixed_payload_size_
+                    : type_->calculate_serialized_size(type_support_context_, key, data_representation_);
                 payload->reserve(size);
-                if (!type_->serialize(key, *payload, data_representation_))
+                if (!type_->serialize(type_support_context_, key, *payload, data_representation_))
                 {
                     EPROSIMA_LOG_WARNING(DATA_WRITER, "Key data serialization failed");
 
@@ -980,7 +985,7 @@ ReturnCode_t DataWriterImpl::get_key_value(
         return RETCODE_BAD_PARAMETER;
     }
 
-    type_->deserialize(*payload, key_holder);
+    type_->deserialize(type_support_context_, *payload, key_holder);
     return RETCODE_OK;
 }
 
@@ -1041,8 +1046,9 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     bool was_loaned = check_and_remove_loan(data, payload);
     if (!was_loaned)
     {
-        uint32_t payload_size = fixed_payload_size_ ? fixed_payload_size_ : type_->calculate_serialized_size(
-            data, data_representation_);
+        uint32_t payload_size = fixed_payload_size_
+            ? fixed_payload_size_
+            : type_->calculate_serialized_size(type_support_context_, data, data_representation_);
         // Initialize payload to null state
         payload.length = 0;
         payload.max_size = 0;
@@ -1058,7 +1064,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
                 return RETCODE_OUT_OF_RESOURCES;
             }
 
-            if (!type_->serialize(data, payload, data_representation_))
+            if (!type_->serialize(type_support_context_, data, payload, data_representation_))
             {
                 EPROSIMA_LOG_WARNING(DATA_WRITER, "Data serialization returned false");
                 payload_pool_->release_payload(payload);
@@ -1161,7 +1167,7 @@ ReturnCode_t DataWriterImpl::create_new_change_with_params(
 #if HAVE_SECURITY
         is_key_protected = writer_->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-        if (!type_->compute_key(data, handle, is_key_protected) || !handle.isDefined())
+        if (!type_->compute_key(type_support_context_, data, handle, is_key_protected) || !handle.isDefined())
         {
             EPROSIMA_LOG_ERROR(DATA_WRITER, "Could not compute key for data");
             return RETCODE_PRECONDITION_NOT_MET;
@@ -1570,6 +1576,12 @@ ReturnCode_t DataWriterImpl::set_related_datareader(
     return ret;
 }
 
+void DataWriterImpl::set_type_support_context(
+        const std::shared_ptr<TopicDataType::Context>& context)
+{
+    type_support_context_ = context;
+}
+
 bool DataWriterImpl::deadline_timer_reschedule()
 {
     std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
@@ -1869,7 +1881,7 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
 
     qos_.endpoint().unicast_locator_list.copy_to(publication_data.remote_locators.unicast);
     qos_.endpoint().multicast_locator_list.copy_to(publication_data.remote_locators.multicast);
-    publication_data.max_serialized_size = type_->max_serialized_type_size;
+    publication_data.max_serialized_size = type_->get_max_serialized_size(type_support_context_);
     publication_data.loopback_transformation =
             writer_->get_participant_impl()->network_factory().network_configuration();
 
@@ -2270,7 +2282,7 @@ std::shared_ptr<IPayloadPool> DataWriterImpl::get_payload_pool()
         }
 
         // Prepare loans collection for plain types only
-        if (type_->is_plain(data_representation_))
+        if (type_->is_plain(type_support_context_, data_representation_))
         {
             loans_.reset(new LoanCollection(pool_config_));
         }
@@ -2347,7 +2359,7 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
     bool has_bound_payload_size =
             (qos_.endpoint().history_memory_policy == eprosima::fastdds::rtps::PREALLOCATED_MEMORY_MODE ||
             qos_.endpoint().history_memory_policy == eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE) &&
-            type_.is_bounded();
+            type_->is_bounded(type_support_context_);
 
     bool has_key = type_->is_compute_key_provided;
 
@@ -2374,7 +2386,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             if (!has_bound_payload_size)
             {
                 EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with "
-                        << (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                        << (type_->is_bounded(type_support_context_) ? "memory policies other than PREALLOCATED" :
+                        "unbounded data types"));
                 return RETCODE_BAD_PARAMETER;
             }
 
@@ -2404,7 +2417,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             if (!has_bound_payload_size)
             {
                 EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because "
-                        << (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                        << (type_->is_bounded(type_support_context_) ? "memory policy is not PREALLOCATED" :
+                        "data type is not bounded"));
                 return RETCODE_OK;
             }
 
