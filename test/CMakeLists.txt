@@ -12,15 +12,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Set BUILD_TESTING to OFF by default.
-if(NOT BUILD_TESTING)
-    message(STATUS "Tests not compiled by default")
-    set(BUILD_TESTING OFF CACHE BOOL "Enable testing" FORCE)
-endif()
-
 if (BUILD_TESTING)
     find_package(GTest)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
+
+    # Docker test configuration. It is common for all docker-based tests
+    option(USE_OUTSIDE_DOCKER "Run docker against a host daemon (Docker-outside-of-Docker)." OFF)
+    # Environment variable to set the docker host URI and select where the docker will run
+    set(DOCKER_HOST_URI "" CACHE STRING "Docker host IP to use.")
+    set(_docker_host "tcp://172.17.0.1:2375")  # Default docker host for Linux
+    if(DOCKER_HOST_URI)
+        set(_docker_host "${DOCKER_HOST_URI}")
+    endif()
+    # Directory in the host where Docker configuration files will be staged for Docker-outside-of-Docker tests
+    set(DOCKER_HOST_STAGE_DIR "/shares/docker-testing" CACHE STRING
+        "Directory on the host used to stage files for Docker-outside-of-Docker tests.")
+    message(STATUS "Docker host resolved to '${_docker_host}'")
+    message(STATUS "Docker testing stage directory is '${DOCKER_HOST_STAGE_DIR}'")
+    if(USE_OUTSIDE_DOCKER)
+        # When using Docker-outside-of-Docker, all libs and binaries must be delivered from the builder container
+        set(DOCKER_HOST_RESOLVED "${_docker_host}")
+        set(PROJECT_BINARY_VOLUME "- ${DOCKER_HOST_STAGE_DIR}/build/fastdds:/docker_ws/build/fastdds")
+        set(PROJECT_BINARY_DIR_HOST "/docker_ws/build/fastdds")
+        set(PROJECT_LICENSE_VOLUME "- ${DOCKER_HOST_STAGE_DIR}/license:/root/.config/fastdds/:ro")
+        set(fastcdr_LIB_DIR_VOLUME "- ${DOCKER_HOST_STAGE_DIR}/install/fastcdr/lib:/docker_ws/install/fastcdr/lib")
+        set(CMAKE_INSTALL_PREFIX_VOLUME "- ${DOCKER_HOST_STAGE_DIR}/install/fastdds:/docker_ws/install/fastdds")
+        set(CMAKE_INSTALL_PREFIX_DIR "/docker_ws/install/fastdds")
+        set(LD_LIBRARY_PATH_COMPOSE "/docker_ws/build/fastdds/src/cpp:/docker_ws/install/fastcdr/lib:/docker_ws/install/fastdds/lib")
+    else()
+        # When using Docker-in-Docker, all libs and binaries are mounted from the host
+        set(DOCKER_HOST_RESOLVED "")
+        set(PROJECT_BINARY_VOLUME "- ${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}")
+        set(PROJECT_BINARY_DIR_HOST "${PROJECT_BINARY_DIR}")
+        set(PROJECT_LICENSE_VOLUME "- ${PROJECT_SOURCE_DIR}/.github/license:/root/.config/fastdds/:ro")
+        set(fastcdr_LIB_DIR_VOLUME "- ${fastcdr_LIB_DIR}:${fastcdr_LIB_DIR}")
+        set(CMAKE_INSTALL_PREFIX_VOLUME "- ${CMAKE_INSTALL_PREFIX}:${CMAKE_INSTALL_PREFIX}")
+        set(CMAKE_INSTALL_PREFIX_DIR "${CMAKE_INSTALL_PREFIX}")
+        set(LD_LIBRARY_PATH_COMPOSE "${PROJECT_BINARY_DIR}/src/cpp:${fastcdr_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/lib")
+    endif()
+
 
     # Require C++ 14 for testing as both GTest v1.14.0 and ROS 2 Jazzy require it anyways
     set(FORCE_CXX "14")

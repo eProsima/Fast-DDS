@@ -8,30 +8,34 @@
 
 services:
   publisher:
-    image: ubuntu:22.04
-    volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
-    environment:
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --wait 1 --samples 10 --loops 1 --seed 0 --magic T"
-
-  subscriber:
     build:
         context: .
         dockerfile: net-tools.Dockerfile
-    image: ubuntu-net-tools:22.04
+    image: ubuntu-net-tools:24.04
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+      @PROJECT_LICENSE_VOLUME@
+      @fastcdr_LIB_DIR_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --wait 1 --samples 10 --loops 1 --seed 0 --magic T"
+
+  receiver:
+    build:
+        context: .
+        dockerfile: net-tools.Dockerfile
+    image: ubuntu-net-tools:24.04
     privileged: true
     volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+      @PROJECT_BINARY_VOLUME@
+      @PROJECT_LICENSE_VOLUME@
+      @fastcdr_LIB_DIR_VOLUME@
     environment:
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@@TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/test/dds/communication
-    working_dir: @PROJECT_BINARY_DIR@/test/dds/communication
-    command: @SHELL_EXECUTABLE@ "@PROJECT_BINARY_DIR@/test/feature/ip-mobility/system/launch_subscriber.bash"
+      LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_DIR_COMPOSE@
+      LAUNCH_DIR: @PROJECT_BINARY_DIR_HOST@/test/feature/ip-mobility/system
+    working_dir: @PROJECT_BINARY_DIR_HOST@/test/feature/ip-mobility/system
+    command: @SHELL_EXECUTABLE@ -c "@SHELL_EXECUTABLE@ $${LAUNCH_DIR}/launch_subscriber.bash"
     depends_on:
       - publisher

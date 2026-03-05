@@ -47,4 +47,4 @@ RUN apt-get update && apt-get install --yes --no-install-recommends \
     libtinyxml2-dev \
     openssl
 
-ENTRYPOINT ["/bin/bash", "-c", "cd && colcon build --event-handlers=console_direct+ --cmake-args -DSECURITY=ON -DFASTDDS_STATISTICS=ON"]
+ENTRYPOINT ["/bin/bash", "-c", "cd && colcon build --packages-up-to fastdds --event-handlers=console_direct+ --cmake-args -DSECURITY=ON -DFASTDDS_STATISTICS=ON"]

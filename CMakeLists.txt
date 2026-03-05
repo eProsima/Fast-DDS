@@ -513,6 +513,11 @@ add_subdirectory(thirdparty/optionparser)
 ###############################################################################
 # Testing options
 ###############################################################################
+# Set BUILD_TESTING to OFF by default.
+if(NOT BUILD_TESTING)
+    message(STATUS "Tests not compiled by default")
+    set(BUILD_TESTING OFF CACHE BOOL "Enable testing" FORCE)
+endif()
 include(CTest)
 add_subdirectory(test)
 

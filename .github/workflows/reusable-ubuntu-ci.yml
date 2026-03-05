@@ -56,6 +56,11 @@ on:
         required: false
         type: boolean
         default: true
+      docker-stage-dir:
+        description: 'Directory inside the docker container to stage files for testing'
+        required: false
+        type: string
+        default: '/shares/docker-testing'
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
@@ -66,6 +71,7 @@ env:
   discovery-server-branch: 'master'
   cmake-build-type: 'RelWithDebInfo'
   test-skip-args: '-E v6'
+  docker-test-stage-dir: ${{ inputs.docker-stage-dir }}/${{ github.run_id }}-${{ github.job }}
 
 defaults:
   run:
@@ -206,6 +212,7 @@ jobs:
       volumes:
         - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
+        - ${{ inputs.docker-stage-dir }}:${{ inputs.docker-stage-dir }}
     if: ${{ inputs.run-tests == true }}
     steps:
 
@@ -259,6 +266,25 @@ jobs:
             xmlschema
           path: /vdev
 
+      - name: Install docker CLI to run docker-compose tests
+        run: |
+          apt install -y --no-install-recommends ca-certificates curl
+          install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          chmod a+r /etc/apt/keyrings/docker.asc
+
+          tee /etc/apt/sources.list.d/docker.sources <<EOF
+          Types: deb
+          URIs: https://download.docker.com/linux/ubuntu
+          Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+          Components: stable
+          Signed-By: /etc/apt/keyrings/docker.asc
+          EOF
+
+          apt update
+          apt install -y --no-install-recommends docker-ce-cli docker-compose-plugin
+          rm -rf /var/lib/apt/lists/*
+
       - name: Setup CCache
         uses: ./src/fastdds/.github/actions/linux/get-ccache
         if: ${{ inputs.use-ccache == true }}
@@ -293,11 +319,30 @@ jobs:
         with:
           colcon_meta_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_build.meta ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_test.meta
           colcon_build_args: ${{ inputs.colcon-args }} --packages-select googletest-distribution fastdds
-          cmake_args: ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }} ${{ inputs.use-ccache == true && '-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache' || ''}}
+          cmake_args: ${{ env.security-cmake-flag }} ${{ inputs.cmake-args }} ${{ inputs.use-ccache == true && '-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache' || ''}} -DDOCKER_HOST_STAGE_DIR=${{ env.docker-test-stage-dir }} -DCOMPILE_TOOLS=ON -DUSE_OUTSIDE_DOCKER=ON
           cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
           cmake_build_type: ${{ env.cmake-build-type }}
           workspace_dependencies: ${{ env.WORKSPACE }}/install
           workspace: ${{ env.WORKSPACE }}
+
+      - name: Stage docker-test artifacts to host-mounted directory
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          STAGE=${{ env.docker-test-stage-dir }}
+
+          rm -rf "${STAGE}/build" "${STAGE}/install" "${STAGE}/license"
+          mkdir -p "${STAGE}/build" "${STAGE}/install" "${STAGE}/license"
+
+          # 1) Copy the build tree of the package
+          cp -a -r "${{ env.WORKSPACE }}/build/fastdds/" "${STAGE}/build/"
+
+          # 2) Copy install tree
+          cp -a -r "${{ env.WORKSPACE }}/install/" "${STAGE}/"
+
+          # 3) Copy license
+          cp -r "${{ env.WORKSPACE }}/src/fastdds/.github/license/" "${STAGE}/"
 
       - name: Show CCache statistics
         if: ${{ inputs.use-ccache == true }}
@@ -329,9 +374,14 @@ jobs:
           show_disabled: 'False'
           show_skipped: 'False'
 
-      - name: Clean workspace
+      - name: Clean workspace and staging area
         run: |
+          set -euo pipefail
+
           find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf -- {} +
+
+          STAGE=${{ env.docker-test-stage-dir }}
+          rm -rf "${STAGE}"
         if: ${{ always() }}
 
   fastdds_pro_python_build:
@@ -414,6 +464,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           repository: eProsima/Fast-DDS-Pro-Python
+          token: ${{ secrets.FAST_DDS_PRO_TOKEN }}
           path: src/fastdds-python
           ref: ${{ steps.get_fastdds_python_branch.outputs.deduced_branch }}
 
@@ -532,6 +583,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           repository: eProsima/Fast-DDS-Pro-Python
+          token: ${{ secrets.FAST_DDS_PRO_TOKEN }}
           path: src/fastdds-python
           ref: ${{ steps.get_fastdds_python_branch.outputs.deduced_branch }}
 
@@ -672,6 +724,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           repository: eProsima/Fast-DDS-Pro-Docs
+          token: ${{ secrets.FAST_DDS_PRO_TOKEN }}
           path: src/fastdds-docs
           ref: ${{ steps.get_fastdds_docs_branch.outputs.deduced_branch }}
 
@@ -996,6 +1049,7 @@ jobs:
       volumes:
         - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
         - /var/lib/jenkins/.ccache:/ccache
+        - ${{ inputs.docker-stage-dir }}:${{ inputs.docker-stage-dir }}
     steps:
 
       - name: Add WORKSPACE variable to env context
@@ -1170,17 +1224,60 @@ jobs:
           workspace_dependencies: ${{ env.WORKSPACE }}/install
           workspace: ${{ env.WORKSPACE }}
 
+      - name: Install docker CLI to run docker-compose tests
+        if: ${{ !cancelled() }}
+        run: |
+          apt install -y --no-install-recommends ca-certificates curl
+          install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          chmod a+r /etc/apt/keyrings/docker.asc
+
+          tee /etc/apt/sources.list.d/docker.sources <<EOF
+          Types: deb
+          URIs: https://download.docker.com/linux/ubuntu
+          Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+          Components: stable
+          Signed-By: /etc/apt/keyrings/docker.asc
+          EOF
+
+          apt update
+          apt install -y --no-install-recommends docker-ce-cli docker-compose-plugin
+          rm -rf /var/lib/apt/lists/*
+
+      - name: Stage docker-test artifacts to host-mounted directory
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          STAGE_GCC=${{ env.docker-test-stage-dir }}/gcc_latest
+
+          rm -rf "${STAGE_GCC}"
+          mkdir -p "${STAGE_GCC}/src"
+
+          # 1) Copy the src of the workspace
+          cp -a -r "${{ env.WORKSPACE }}/src/" "${STAGE_GCC}/src/"
+
       - name: GCC latest colcon build
         if: ${{ !cancelled() }}
         env:
           DOCKER_HOST: 'tcp://172.17.0.1:2375'
         run: |
+          set -euo pipefail
+
+          STAGE_GCC=${{ env.docker-test-stage-dir }}/gcc_latest
+
           cd ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/docker/ubuntu/alternative_builds
           docker build -t fastdds_gcc_latest -f fastdds_gcc_latest.Dockerfile .
-          docker run --rm -v ${{ github.workspace }}:/root fastdds_gcc_latest
+          docker run --rm -v ${STAGE_GCC}/src/:/root/src fastdds_gcc_latest
           docker rmi fastdds_gcc_latest
 
-      - name: Clean workspace
+      - name: Clean workspace and staging area
         run: |
+          set -euo pipefail
+
           find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf -- {} +
+
+          STAGE=${{ env.docker-test-stage-dir }}
+          rm -rf "${STAGE}"
         if: ${{ always() }}
