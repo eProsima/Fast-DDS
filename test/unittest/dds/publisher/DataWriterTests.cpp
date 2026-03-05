@@ -241,8 +241,6 @@ public:
 
 };
 
-<<<<<<< HEAD
-=======
 // Class to check dispose or unregister operations with non empty payload
 class NonEmptyPayloadInstanceTopicDataTypeMock : public InstanceTopicDataTypeMock
 {
@@ -405,7 +403,6 @@ public:
 
 };
 
->>>>>>> 47bfac03 (Allow empty payloads in dispose/unregister operations (#6217))
 class BoundedTopicDataTypeMock : public TopicDataType
 {
 public:
