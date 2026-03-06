@@ -2058,10 +2058,11 @@ ReturnCode_t DataWriterImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" << qos.resource_limits().max_samples_per_instance <<
-                "'. Consistency rule: depth <= max_samples_per_instance." <<
-                " Effectively using max_samples_per_instance as depth.");
+                "HISTORY DEPTH '" << qos.history().depth
+                                  << "' is inconsistent with max_samples_per_instance: '"
+                                  << qos.resource_limits().max_samples_per_instance
+                                  << "'. Consistency rule: depth <= max_samples_per_instance."
+                                  << " Effectively using max_samples_per_instance as depth.");
     }
     return RETCODE_OK;
 }
@@ -2317,8 +2318,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with " <<
-                        (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                EPROSIMA_LOG_ERROR(DATA_WRITER, "Data sharing cannot be used with "
+                        << (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
                 return RETCODE_BAD_PARAMETER;
             }
 
@@ -2347,8 +2348,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because " <<
-                        (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Data sharing disabled because "
+                        << (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
                 return RETCODE_OK;
             }
 

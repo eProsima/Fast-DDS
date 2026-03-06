@@ -549,7 +549,8 @@ void StatefulWriter::send_heartbeat_to_all_readers()
             select_all_readers_nts(group, locator_selector_general_);
 
             assert(
-                (SequenceNumber_t::unknown() == get_seq_num_min() && SequenceNumber_t::unknown() == get_seq_num_max()) ||
+                (SequenceNumber_t::unknown() == get_seq_num_min() &&
+                SequenceNumber_t::unknown() == get_seq_num_max()) ||
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
@@ -1030,8 +1031,9 @@ bool StatefulWriter::matched_reader_add_edp(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers <<
-                    ") reached for writer " << m_guid);
+            EPROSIMA_LOG_WARNING(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers
+                                                                                   << ") reached for writer "
+                                                                                   << m_guid);
             return false;
         }
     }
@@ -1183,8 +1185,8 @@ bool StatefulWriter::matched_reader_add_edp(
 
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
                                                    << rdata.remote_locators.unicast.size() << "(u)-"
-                                                   << rdata.remote_locators.multicast.size() <<
-            "(m) locators");
+                                                   << rdata.remote_locators.multicast.size()
+                                                   << "(m) locators");
 
     if (nullptr != listener_)
     {
@@ -2084,9 +2086,9 @@ bool StatefulWriter::ack_timer_expired()
             last_sequence_number_++;
         }
         while (!history_->get_change(
-            last_sequence_number_,
-            getGuid(),
-            &change) && last_sequence_number_ < next_sequence_number());
+                    last_sequence_number_,
+                    getGuid(),
+                    &change) && last_sequence_number_ < next_sequence_number());
 
         if (!history_->get_change(
                     last_sequence_number_,
