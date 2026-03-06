@@ -256,11 +256,7 @@ public:
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-
-        auto& communication_mode =  std::get<0>(GetParam());
-        auto& reliability = std::get<1>(GetParam());
-
-        switch (communication_mode)
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -274,16 +270,9 @@ public:
             default:
                 break;
         }
-
-        switch (reliability)
-        {
-            case TEST_BEST_EFFORT:
-                reliability_ = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
-                break;
-            case TEST_RELIABLE:
-                reliability_ = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-                break;
-        }
+        reliability_ = (std::get<1>(GetParam()) == TEST_RELIABLE) ?
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+                eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
 
     void TearDown() override
@@ -6360,24 +6349,22 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
             ),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
-            const auto& communication_mode = std::get<0>(info.param);
-            const auto& reliability_mode = std::get<1>(info.param);
-            std::string test_name = "";
-
-            switch (communication_mode)
+            std::string test_name;
+            switch (std::get<0>(info.param))
             {
                 case INTRAPROCESS:
-                    test_name += "Intraprocess";
+                    test_name = "Intraprocess";
                     break;
                 case DATASHARING:
-                    test_name += "Datasharing";
+                    test_name = "Datasharing";
                     break;
                 case TRANSPORT:
                 default:
-                    test_name += "Transport";
+                    test_name = "Transport";
+                    break;
             }
 
-            switch (reliability_mode)
+            switch (std::get<1>(info.param))
             {
                 case TEST_BEST_EFFORT:
                     test_name += "_BestEffort";
