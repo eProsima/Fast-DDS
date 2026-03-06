@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles xmlns="http://www.eprosima.com">
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>udp_transport</transport_id>
+            <type>UDPv4</type>
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="test_custom_meta_default_default_pub" is_default_profile="true">
+        <rtps>
+            <useBuiltinTransports>false</useBuiltinTransports>
+            <userTransports>
+                <transport_id>udp_transport</transport_id>
+            </userTransports>
+        </rtps>
+    </participant>
+
+    <data_writer profile_name="simple_publisher_profile" is_default_profile="true">
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+            <data_sharing>
+                <kind>OFF</kind>
+            </data_sharing>
+        </qos>
+    </data_writer>
+</profiles>
