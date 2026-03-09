@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cstdint>
@@ -19,6 +20,9 @@
 #include <thread>
 #include <vector>
 
+#include <gtest/gtest.h>
+
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -28,8 +32,12 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/common/EntityId_t.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/common/SequenceNumber.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
-#include <gtest/gtest.h>
+#include <fastdds/utils/IPLocator.hpp>
 
 #include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.hpp"
@@ -38,6 +46,7 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -948,7 +957,6 @@ TEST(DDSContentFilter, filter_other_type_name)
     ASSERT_EQ(dds::DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
 }
 
-
 /*
  * Regression test for https://eprosima.easyredmine.com/issues/24038
  *
@@ -1037,6 +1045,209 @@ TEST(DDSContentFilter, reusing_reader_proxy)
 
     // Wait for reception and check
     reader_2.block_for_all();
+}
+
+/*
+ * Regression test for CVE-2026-22591
+ */
+TEST(DDSContentFilter, ShouldNotFailWithTooManySubExpressionsDiscovered)
+{
+    using namespace eprosima::fastdds::rtps;
+
+    const char* const topic_name = "DDSContentFilter_ShouldNotFailWithTooManySubExpressionsDiscovered";
+
+    // Since we want to send a custom crafted EDP message, we will specify the metatraffic port so we can send the
+    // crafted message to a known port.
+    PubSubWriter<HelloWorldPubSubType> writer(topic_name);
+    writer.setManualTopicName(topic_name);
+    writer.add_to_metatraffic_unicast_locator_list("127.0.0.1", 6999);
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    PubSubReader<HelloWorldPubSubType> reader(topic_name);
+    LocatorList initial_peers;
+    Locator loc;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "127.0.0.1", 6999, loc);
+    initial_peers.push_back(loc);
+    reader.setManualTopicName(topic_name);
+    reader.initial_peers(initial_peers);
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery();
+
+    // Craft a filter expression with too many sub-expressions (nested parentheses)
+    constexpr size_t depth = 20000;
+    constexpr size_t expression_length = depth + depth + 9;
+    constexpr size_t expression_aligned_length = (expression_length + 1 /* null */ + 3) & ~3;
+    std::string filter_expression = std::string(depth, '(') + "index = 1" + std::string(depth, ')');
+    ASSERT_EQ(filter_expression.length(), expression_length);
+
+    // Structure for the malicious DATA(r) message payload
+    struct PayloadData
+    {
+        struct Encapsulation
+        {
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+            std::array<uint8_t, 2> encapsulation{ 0x00, 0x02 };  // PL_CDR_BE
+#else
+            std::array<uint8_t, 2> encapsulation{ 0x00, 0x03 };  // PL_CDR_LE
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+            std::array<uint8_t, 2> encapsulation_opts{ 0x00, 0x00 };
+        }
+        encapsulation;
+
+        struct ReaderGUIDParameter
+        {
+            uint16_t parameter_id{ 0x5a };
+            uint16_t parameter_length{ 0x10 };
+            GUID_t value;
+        }
+        entity_guid;
+
+        struct TopicNameParameter
+        {
+            uint16_t parameter_id{ 0x05 };
+            uint16_t parameter_length{ 68 + 4 };
+            uint32_t string_length{ 66 }; // "DDSContentFilter_ShouldNotFailWithTooManySubExpressionsDiscovered" + null
+            std::array<char, 68> value { "DDSContentFilter_ShouldNotFailWithTooManySubExpressionsDiscovered\0" };
+        }
+        topic_name;
+
+        struct TypeNameParameter
+        {
+            uint16_t parameter_id{ 0x07 };
+            uint16_t parameter_length{ 12 + 4 };
+            uint32_t string_length{ 11 }; // "HelloWorld" + null
+            std::array<char, 12> value { "HelloWorld\0" };
+        }
+        type_name;
+
+        struct ContentFilterParameter
+        {
+            uint16_t parameter_id{ 0x35 };
+            uint16_t parameter_length{ 24 + 4 + 68 + 4 + 8 + 4 + expression_aligned_length + 4 + 4 };
+            struct ContentFilteredTopicName
+            {
+                uint32_t string_length{ 23 }; // "MaliciousFilteredTopic" + null
+                std::array<char, 24> value {"MaliciousFilteredTopic\0"};
+            }
+            content_filtered_topic_name;
+            struct RelatedTopicName
+            {
+                uint32_t string_length{ 66 }; // "DDSContentFilter_ShouldNotFailWithTooManySubExpressionsDiscovered" + null
+                std::array<char, 68> value{ "DDSContentFilter_ShouldNotFailWithTooManySubExpressionsDiscovered\0" };
+            }
+            related_topic_name;
+            struct FilterClassName
+            {
+                uint32_t string_length{ 7 }; // "DDSSQL" + null
+                std::array<char, 8> value{ "DDSSQL\0" };
+            }
+            filter_class_name;
+            struct FilterExpression
+            {
+                // Length will be set later
+                uint32_t string_length{ expression_length + 1 };
+                std::array<char, expression_aligned_length> value; // Padding to 4 bytes
+            }
+            filter_expression;
+            // Sequence of expression parameters (empty)
+            uint32_t expression_parameter_count{ 0 };
+        }
+        content_filter;
+
+        struct SentinelParameter
+        {
+            uint16_t parameter_id{ 0x0001 };
+            uint16_t parameter_length{ 0x0000 };
+        }
+        sentinel;
+    };
+
+    static_assert(
+        sizeof(PayloadData) ==
+        sizeof(PayloadData::Encapsulation) +
+        sizeof(PayloadData::ReaderGUIDParameter) +
+        sizeof(PayloadData::TopicNameParameter) +
+        sizeof(PayloadData::TypeNameParameter) +
+        sizeof(PayloadData::ContentFilterParameter) +
+        sizeof(PayloadData::SentinelParameter),
+        "Unexpected size for PayloadData");
+
+    struct MaliciousDiscoveryPacket
+    {
+        struct RTPSHeader
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            GuidPrefix_t sender_prefix{};
+        }
+        header;
+
+        static_assert(sizeof(RTPSHeader) == RTPSMESSAGE_HEADER_SIZE, "Unexpected size for RTPS header");
+
+        struct DataSubMsg
+        {
+            struct Header
+            {
+                uint8_t submessage_id = 0x15;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint8_t flags = 0x04; // Serialized data
+#else
+                uint8_t flags = 0x05; // Serialized data, endianness
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint16_t octets_to_next_header = 0;  // Last submessage, fills the rest of the packet
+                uint16_t extra_flags = 0;
+                uint16_t octets_to_inline_qos = 0x10;
+                EntityId_t reader_id = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_READER;
+                EntityId_t writer_id = ENTITYID_SEDP_BUILTIN_SUBSCRIPTIONS_WRITER;
+                SequenceNumber_t sn{ 2 };
+            };
+
+            static_assert(sizeof(Header) == RTPSMESSAGE_DATA_MIN_LENGTH, "Unexpected size for DATA header");
+
+            Header header;
+            PayloadData payload;
+        }
+        data;
+
+        static_assert(
+            sizeof(DataSubMsg) ==
+            sizeof(DataSubMsg::Header) + sizeof(PayloadData),
+            "Unexpected size for DataSubMsg");
+    };
+
+    static_assert(
+        sizeof(MaliciousDiscoveryPacket) ==
+        sizeof(MaliciousDiscoveryPacket::RTPSHeader) + sizeof(MaliciousDiscoveryPacket::DataSubMsg),
+        "Unexpected size for MaliciousDiscoveryPacket");
+
+    UDPMessageSender fake_msg_sender;
+
+    // Fill and send the malicious packet
+    {
+        GUID_t reader_guid = reader.datareader_guid();
+
+        MaliciousDiscoveryPacket malicious_packet;
+        malicious_packet.header.sender_prefix = reader_guid.guidPrefix;
+        malicious_packet.data.payload.entity_guid.value = reader_guid;
+        std::memcpy(
+            malicious_packet.data.payload.content_filter.filter_expression.value.data(),
+            filter_expression.data(),
+            filter_expression.length());
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(malicious_packet));
+        msg.init(reinterpret_cast<octet*>(&malicious_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, loc);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
