@@ -26,8 +26,14 @@ runs:
         mkdir -p bin
         LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/ccache/ccache/releases/latest); \
         LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"v\([^"]*\)".*/\1/'); \
-        curl -OL https://github.com/ccache/ccache/releases/download/v$LATEST_VERSION/ccache-$LATEST_VERSION-linux-x86_64.tar.xz && \
-        tar xf ccache-$LATEST_VERSION-linux-x86_64.tar.xz --strip-components=1 --one-top-level=bin
+        THRESHOLD="4.13"
+        if [ "$(printf '%s\n%s' "$THRESHOLD" "$LAST_VERSION" | sort -V | head -n1)" = "$THRESHOLD" ]; then
+          curl -OL https://github.com/ccache/ccache/releases/download/v$LATEST_VERSION/ccache-$LATEST_VERSION-linux-x86_64-glibc.tar.xz && \
+          tar xf ccache-$LATEST_VERSION-linux-x86_64-glibc.tar.xz --strip-components=1 --one-top-level=bin
+        else
+          curl -OL https://github.com/ccache/ccache/releases/download/v$LATEST_VERSION/ccache-$LATEST_VERSION-linux-x86_64.tar.xz && \
+          tar xf ccache-$LATEST_VERSION-linux-x86_64.tar.xz --strip-components=1 --one-top-level=bin
+        fi
       shell: bash
 
     - name: Add CCache to PATH variable to env context

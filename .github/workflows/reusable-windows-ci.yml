@@ -32,7 +32,7 @@ on:
         description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
         required: true
         type: string
-      fastcdr_branch:
+      fastcdr-branch:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
@@ -70,7 +70,7 @@ jobs:
         with:
           path: src/fastdds
           submodules: true
-          ref: ${{ inputs.fastdds_pro_branch }}
+          ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -157,7 +157,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-CDR
-          fallback_branch: ${{ inputs.fastcdr_branch }}
+          fallback_branch: ${{ inputs.fastcdr-branch }}
 
       - name: Download Fast CDR
         uses: eProsima/eProsima-CI/external/checkout@v0
@@ -251,7 +251,7 @@ jobs:
         with:
           path: src/fastdds
           submodules: true
-          ref: ${{ inputs.fastdds_pro_branch }}
+          ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get build artifacts
         if: ${{ inputs.run-tests == true }}
@@ -351,18 +351,19 @@ jobs:
             exit 1
           }
 
-      - name: Install colcon
-        if: ${{ inputs.run-tests == true }}
-        uses: eProsima/eProsima-CI/windows/install_colcon@v0
-
       - name: Install Python dependencies
         if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
           packages: |
+            pip-system-certs
             psutil
             vcstool
             xmlschema
+
+      - name: Install colcon
+        if: ${{ inputs.run-tests == true }}
+        uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Clean interprocess directory
         if: ${{ inputs.run-tests == true }}
