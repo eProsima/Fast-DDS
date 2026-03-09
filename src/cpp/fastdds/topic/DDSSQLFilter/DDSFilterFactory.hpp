@@ -40,6 +40,17 @@ class DDSFilterFactory final : public IContentFilterFactory
 
 public:
 
+    static constexpr size_t DEFAULT_MAX_SUBEXPRESSIONS = 256;
+    static constexpr size_t DEFAULT_MAX_EXPRESSION_LENGTH = 16 * 1024;
+
+    explicit DDSFilterFactory(
+            size_t max_subexpressions,
+            size_t max_expression_length)
+        : max_subexpressions_(max_subexpressions)
+        , max_expression_length_(max_expression_length)
+    {
+    }
+
     ~DDSFilterFactory();
 
     ReturnCode_t create_content_filter(
@@ -55,6 +66,20 @@ public:
             IContentFilter* filter_instance) override;
 
 private:
+
+    /**
+     * @brief Validate a DDS-SQL filter expression.
+     *
+     * Performs basic validation checks on the expression before passing it to the PEGTL parser.
+     *
+     * @param[in] expression The filter expression to validate.
+     * @param[in] expression_len The length of the filter expression.
+     *
+     * @return true if the expression is valid, false otherwise.
+     */
+    bool validate_filter_expression(
+            const char* expression,
+            const size_t expression_len) const;
 
     /**
      * Retrieve a DDSFilterExpression from the pool.
@@ -86,6 +111,10 @@ private:
     DDSFilterEmptyExpression empty_expression_;
     /// Pool of DDSFilterExpression objects
     ObjectPool<DDSFilterExpression*> expression_pool_;
+    /// Maximum number of sub-expressions allowed in a filter expression
+    const size_t max_subexpressions_ = DEFAULT_MAX_SUBEXPRESSIONS;
+    /// Maximum length of a filter expression
+    const size_t max_expression_length_ = DEFAULT_MAX_EXPRESSION_LENGTH;
 
 };
 

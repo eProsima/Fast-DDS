@@ -521,51 +521,60 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
             }
         }
     }
-    else if (std::strlen(filter_expression) == 0)
-    {
-        delete_content_filter(filter_class_name, filter_instance);
-        filter_instance = &empty_expression_;
-        ret = ReturnCode_t::RETCODE_OK;
-    }
     else
     {
-        auto type_id = get_complete_type_identifier(type_name, data_type);
-        if (!type_id)
+        size_t expression_len = std::strlen(filter_expression);
+
+        if (0 == expression_len)
         {
-            EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
-            ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+            delete_content_filter(filter_class_name, filter_instance);
+            filter_instance = &empty_expression_;
+            ret = ReturnCode_t::RETCODE_OK;
         }
-        else
+        else if (validate_filter_expression(filter_expression, expression_len))
         {
-            auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_id);
-            auto node = parser::parse_filter_expression(filter_expression, type_object);
-            if (node)
+            auto type_id = get_complete_type_identifier(type_name, data_type);
+            if (!type_id)
             {
-                auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
-                DDSFilterExpression* expr = get_expression();
-                expr->set_type(dyn_type);
-                size_t n_params = filter_parameters.length();
-                expr->parameters.reserve(n_params);
-                while (expr->parameters.size() < n_params)
-                {
-                    expr->parameters.emplace_back();
-                }
-                ExpressionParsingState state{ type_object, filter_parameters, expr };
-                ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
-                if (ReturnCode_t::RETCODE_OK == ret)
-                {
-                    delete_content_filter(filter_class_name, filter_instance);
-                    filter_instance = expr;
-                }
-                else
-                {
-                    delete_content_filter(filter_class_name, expr);
-                }
+                EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
+                ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
             else
             {
-                ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+                auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_id);
+                auto node = parser::parse_filter_expression(filter_expression, type_object);
+                if (node)
+                {
+                    auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
+                    DDSFilterExpression* expr = get_expression();
+                    expr->set_type(dyn_type);
+                    size_t n_params = filter_parameters.length();
+                    expr->parameters.reserve(n_params);
+                    while (expr->parameters.size() < n_params)
+                    {
+                        expr->parameters.emplace_back();
+                    }
+                    ExpressionParsingState state{ type_object, filter_parameters, expr };
+                    ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
+                    if (ReturnCode_t::RETCODE_OK == ret)
+                    {
+                        delete_content_filter(filter_class_name, filter_instance);
+                        filter_instance = expr;
+                    }
+                    else
+                    {
+                        delete_content_filter(filter_class_name, expr);
+                    }
+                }
+                else
+                {
+                    ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
+                }
             }
+        }
+        else
+        {
+            ret = ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
     }
 
@@ -590,6 +599,50 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::delete_content_filter(
         expression_pool_.put(expr);
     }
     return ReturnCode_t::RETCODE_OK;
+}
+
+bool DDSFilterFactory::validate_filter_expression(
+        const char* expression,
+        const size_t expression_len) const
+{
+    if (expression_len > max_expression_length_)
+    {
+        // Expression too long
+        return false;
+    }
+
+    // Check parentheses balance and count
+    size_t num_parentheses = 0;
+    size_t pending_size = expression_len;
+    for (const char* ptr = expression; (pending_size > 0) && (*ptr != '\0'); ++ptr, --pending_size)
+    {
+        if (*ptr == '(')
+        {
+            ++num_parentheses;
+
+            if (num_parentheses > max_subexpressions_)
+            {
+                // Too many nested parentheses
+                return false;
+            }
+        }
+        else if (*ptr == ')')
+        {
+            if (num_parentheses == 0)
+            {
+                // Unmatched closing parenthesis
+                return false;
+            }
+            --num_parentheses;
+        }
+    }
+    if (num_parentheses != 0)
+    {
+        // Unmatched opening parenthesis
+        return false;
+    }
+
+    return true;
 }
 
 }  // namespace DDSSQLFilter
