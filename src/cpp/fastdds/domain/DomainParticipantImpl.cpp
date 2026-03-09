@@ -57,6 +57,7 @@
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
+#include <fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
@@ -134,6 +135,54 @@ static void set_qos_from_attributes(
     qos.presentation() = attr.qos.m_presentation;
 }
 
+static size_t get_filter_max_subexpressions(
+        const DomainParticipantQos& qos)
+{
+    constexpr const char parameter_name[] = "dds.sql.expression.max_subexpressions";
+    const std::string* property = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        qos.properties(), parameter_name);
+    if (nullptr != property)
+    {
+        try
+        {
+            return std::stoul(*property);
+        }
+        catch (...)
+        {
+            logWarning(DOMAIN_PARTICIPANT,
+                    "Invalid value for dds.sql.expression.max_subexpressions property: "
+                    << *property << ". Will use default value of "
+                    << DDSSQLFilter::DDSFilterFactory::DEFAULT_MAX_SUBEXPRESSIONS);
+        }
+    }
+
+    return DDSSQLFilter::DDSFilterFactory::DEFAULT_MAX_SUBEXPRESSIONS;
+}
+
+static size_t get_filter_max_expression_length(
+        const DomainParticipantQos& qos)
+{
+    constexpr const char parameter_name[] = "dds.sql.expression.max_expression_length";
+    const std::string* property = fastrtps::rtps::PropertyPolicyHelper::find_property(
+        qos.properties(), parameter_name);
+    if (nullptr != property)
+    {
+        try
+        {
+            return std::stoul(*property);
+        }
+        catch (...)
+        {
+            logWarning(DOMAIN_PARTICIPANT,
+                    "Invalid value for dds.sql.expression.max_expression_length property: "
+                    << *property << ". Will use default value of "
+                    << DDSSQLFilter::DDSFilterFactory::DEFAULT_MAX_EXPRESSION_LENGTH);
+        }
+    }
+
+    return DDSSQLFilter::DDSFilterFactory::DEFAULT_MAX_EXPRESSION_LENGTH;
+}
+
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
         DomainId_t did,
@@ -147,6 +196,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     , listener_(listen)
     , default_pub_qos_(PUBLISHER_QOS_DEFAULT)
     , default_sub_qos_(SUBSCRIBER_QOS_DEFAULT)
+    , dds_sql_filter_factory_(get_filter_max_subexpressions(qos), get_filter_max_expression_length(qos))
     , default_topic_qos_(TOPIC_QOS_DEFAULT)
 #pragma warning (disable : 4355 )
     , rtps_listener_(this)
