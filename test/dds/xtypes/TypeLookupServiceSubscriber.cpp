@@ -151,7 +151,7 @@ bool TypeLookupServiceSubscriber::create_known_type(
     }
 }
 
-template <typename Type, typename TypePubSubType>
+template<typename Type, typename TypePubSubType>
 bool TypeLookupServiceSubscriber::create_known_type_impl(
         const std::string& type)
 {
@@ -171,7 +171,7 @@ bool TypeLookupServiceSubscriber::create_known_type_impl(
     return true;
 }
 
-template <typename Type>
+template<typename Type>
 bool TypeLookupServiceSubscriber::process_type_impl(
         DataReader* reader)
 {
@@ -181,8 +181,8 @@ bool TypeLookupServiceSubscriber::process_type_impl(
     ReturnCode_t success = reader->take(datas, infos);
     if (eprosima::fastdds::dds::RETCODE_OK != success)
     {
-        std::cout << "ERROR TypeLookupServiceSubscriber: error taking samples: " <<
-            reader->type().get_type_name() << std::endl;
+        std::cout << "ERROR TypeLookupServiceSubscriber: error taking samples: "
+                  << reader->type().get_type_name() << std::endl;
         return false;
     }
 
@@ -199,8 +199,8 @@ bool TypeLookupServiceSubscriber::process_type_impl(
         }
         else
         {
-            std::cout << "ERROR TypeLookupServiceSubscriber: sample invalid " <<
-                reader->type().get_type_name() << std::endl;
+            std::cout << "ERROR TypeLookupServiceSubscriber: sample invalid "
+                      << reader->type().get_type_name() << std::endl;
             return false;
         }
     }
@@ -217,8 +217,8 @@ bool TypeLookupServiceSubscriber::process_dyn_type_impl(
     ReturnCode_t success = reader->take(datas, infos);
     if (eprosima::fastdds::dds::RETCODE_OK != success)
     {
-        std::cout << "ERROR TypeLookupServiceSubscriber: Error taking dynamic samples: " <<
-            reader->type().get_type_name() << std::endl;
+        std::cout << "ERROR TypeLookupServiceSubscriber: Error taking dynamic samples: "
+                  << reader->type().get_type_name() << std::endl;
         return false;
     }
 
@@ -235,8 +235,8 @@ bool TypeLookupServiceSubscriber::process_dyn_type_impl(
         }
         else
         {
-            std::cout << "ERROR TypeLookupServiceSubscriber: Dynamic sample invalid " <<
-                reader->type().get_type_name() << std::endl;
+            std::cout << "ERROR TypeLookupServiceSubscriber: Dynamic sample invalid "
+                      << reader->type().get_type_name() << std::endl;
             return false;
         }
     }
@@ -319,8 +319,8 @@ bool TypeLookupServiceSubscriber::wait_discovery(
 
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServiceSubscriber discovery Timeout with matched = " <<
-            matched_ << std::endl;
+        std::cout << "ERROR TypeLookupServiceSubscriber discovery Timeout with matched = "
+                  << matched_ << std::endl;
         return false;
     }
     return true;
@@ -339,8 +339,8 @@ bool TypeLookupServiceSubscriber::wait_participant_discovery(
 
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServiceSubscriber participoant discovery Timeout with matched = " <<
-            participant_matched_ << std::endl;
+        std::cout << "ERROR TypeLookupServiceSubscriber participoant discovery Timeout with matched = "
+                  << participant_matched_ << std::endl;
         return false;
     }
     return true;
@@ -375,15 +375,15 @@ bool TypeLookupServiceSubscriber::run(
         std::cout << "ERROR TypeLookupServiceSubscriber" << std::endl;
         if (expected_matches_ != received_samples_.size())
         {
-            std::cout << "Expected_matches_ = " << expected_matches_ <<
-                " Working_writers_ = " << received_samples_.size() << std::endl;
+            std::cout << "Expected_matches_ = " << expected_matches_
+                      << " Working_writers_ = " << received_samples_.size() << std::endl;
         }
         for (auto& received_sample : received_samples_)
         {
             if (samples != received_sample.second)
             {
-                std::cout << "From: " << received_sample.first <<
-                    " samples: " << received_sample.second << "/" << samples << std::endl;
+                std::cout << "From: " << received_sample.first
+                          << " samples: " << received_sample.second << "/" << samples << std::endl;
             }
         }
 
@@ -422,8 +422,8 @@ void TypeLookupServiceSubscriber::on_data_available(
         }
         else
         {
-            std::cout << "ERROR TypeLookupServiceSubscriber: Processed unknown type: " <<
-                reader->type().get_type_name() << std::endl;
+            std::cout << "ERROR TypeLookupServiceSubscriber: Processed unknown type: "
+                      << reader->type().get_type_name() << std::endl;
         }
     }
 
@@ -489,8 +489,8 @@ void TypeLookupServiceSubscriber::on_participant_discovery(
     static_cast<void>(should_be_ignored);
     if (status == ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " discovered participant " << info.guid << ": " <<
-            ++participant_matched_ << std::endl;
+        std::cout << "Participant " << participant->guid() << " discovered participant " << info.guid << ": "
+                  << ++participant_matched_ << std::endl;
     }
     else if (status == ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT)
     {
@@ -500,8 +500,8 @@ void TypeLookupServiceSubscriber::on_participant_discovery(
     else if (status == ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
             status == ParticipantDiscoveryStatus::DROPPED_PARTICIPANT)
     {
-        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.guid << ": " <<
-            --participant_matched_ << std::endl;
+        std::cout << "Participant " << participant->guid() << " undiscovered participant " << info.guid << ": "
+                  << --participant_matched_ << std::endl;
     }
     cv_.notify_all();
 }
