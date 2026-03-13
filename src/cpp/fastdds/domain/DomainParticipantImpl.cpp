@@ -146,6 +146,13 @@ DomainParticipantImpl::DomainParticipantImpl(
     }
 
     property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
+        qos_.properties(), parameter_policy_physical_data_hostname);
+    if (nullptr != property_value && property_value->empty())
+    {
+        property_value->assign(asio::ip::host_name());
+    }
+        
+    property_value = fastdds::rtps::PropertyPolicyHelper::find_property(
         qos_.properties(), parameter_policy_physical_data_user);
     if (nullptr != property_value && property_value->empty())
     {
