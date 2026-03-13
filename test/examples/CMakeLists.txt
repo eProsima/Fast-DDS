@@ -30,9 +30,19 @@ set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH "")
 
 # Configure TinyXML2 library path if installed in user library path
 if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
-    get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
-    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
-    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
+    if(TARGET tinyxml2::tinyxml2)
+        get_target_property(TINYXML2_LIB_DIR tinyxml2::tinyxml2 IMPORTED_LOCATION)
+        if(NOT TINYXML2_LIB_DIR)
+            get_target_property(TINYXML2_LIB_DIR tinyxml2::tinyxml2 IMPORTED_LOCATION_NONE)
+        endif()
+    elseif(EXISTS "${TINYXML2_LIBRARY}")
+        set(TINYXML2_LIB_DIR "${TINYXML2_LIBRARY}")
+    endif()
+    if(TINYXML2_LIB_DIR)
+        get_filename_component(TINYXML2_LIB_DIR "${TINYXML2_LIB_DIR}" DIRECTORY)
+        set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${TINYXML2_LIB_DIR}:ro")
+        set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${TINYXML2_LIB_DIR}")
+    endif()
 endif()
 
 # Linux configurations
@@ -44,7 +54,7 @@ if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
     endif()
 
     set(SHELL_EXECUTABLE ${BASH_EXECUTABLE})
-    set(DOCKER_IMAGE_NAME "ubuntu:22.04")
+    set(DOCKER_IMAGE_NAME "ubuntu:24.04")
 
     set(PROJECT_BINARY_DIR_COMPOSE_VOLUME "${PROJECT_BINARY_DIR}:${PROJECT_BINARY_DIR}")
     set(fastcdr_LIB_DIR_COMPOSE_VOLUME "${fastcdr_LIB_DIR}:${fastcdr_LIB_DIR}")
