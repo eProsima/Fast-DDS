@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ARG ubuntu_version=22.04
+ARG ubuntu_version=24.04
 FROM ubuntu:$ubuntu_version AS ubuntu-cli
 
 # Needed for a dependency that forces to set timezone
