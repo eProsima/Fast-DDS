@@ -1,0 +1,66 @@
+name: Fast DDS Pro ABI Compatibility Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds_pro_branch:
+        description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
+        type: string
+        required: true
+      security:
+        description: 'Enable security features'
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: 'Run suite of tests of Fast DDS Pro'
+        required: false
+        type: boolean
+        default: true
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: true
+
+  pull_request:
+    types:
+      - review_requested
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  abi-check:
+    if: ${{ !(github.event_name == 'pull_request') || (!contains(github.event.pull_request.labels.*.name, 'conflicts') && !contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+    uses: ./.github/workflows/reusable-abi-check.yml
+    with:
+      runner: 'self-hosted'
+      docker-image: 'ci.intranet.eprosima.com:5000/eprosima/ubuntu-ci:noble'
+      label: ${{ inputs.label || 'ubuntu-ci' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args }}
+      fastdds-pro-branch: ${{ inputs.fastdds_pro_branch || github.ref || 'main' }}
+      use-ccache: ${{ inputs.use-ccache == true || true }}
+    secrets: inherit

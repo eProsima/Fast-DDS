@@ -1,0 +1,442 @@
+name: Fast DDS Pro ABI Compatibility Check reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: 'The runner to use for the workflow'
+        required: true
+        type: string
+      docker-image:
+        description: 'The docker image to use for the workflow'
+        required: true
+        type: string
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      fastdds-pro-branch:
+        description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
+        required: true
+        type: string
+      fastdds-branch:
+        description: 'Branch or tag of Fast DDS (basic) repository (https://github.com/eProsima/Fast-DDS)'
+        required: false
+        type: string
+        default: 'master'
+      fastcdr-branch:
+        description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
+        required: false
+        type: string
+        default: 'master'
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: true
+
+env:
+  colcon-build-default-cmake-args: '-DCMAKE_CXX_FLAGS_INIT="-Werror -Wall"'
+  cmake-build-type: 'RelWithDebInfo'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  fastdds_basic_build:
+    runs-on:
+      - ${{ inputs.runner }}
+      - linux
+      - x64
+      - Ubuntu
+    container:
+      image: ${{ inputs.docker-image }}
+      volumes:
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
+        - /var/lib/jenkins/.ccache:/ccache
+    steps:
+
+      - name: Add WORKSPACE variable to env context
+        run: |
+          echo "WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      # We need the Pro repo checked out to access shared actions and workflow configs
+      - name: Sync eProsima/Fast-DDS-Pro repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: repo/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds-pro-branch }}
+
+      - name: Exclude Pro checkout from colcon
+        run: |
+          touch ${{ env.WORKSPACE }}/repo/fastdds/COLCON_IGNORE
+
+      - name: Get Fast DDS (basic) branch
+        id: get_fastdds_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-DDS
+          fallback_branch: ${{ inputs.fastdds-branch }}
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-DDS
+          path: src/fastdds
+          submodules: true
+          ref: ${{ steps.get_fastdds_branch.outputs.deduced_branch }}
+
+      - name: Install apt dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: |
+            cmake
+            libasio-dev
+            libtinyxml2-dev
+            libssl-dev
+            python3
+            python3-pip
+            python3-venv
+          update: false
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        with:
+          path: /vdev
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: |
+            vcstool
+            xmlschema
+          path: /vdev
+          upgrade: false
+
+      - name: Setup CCache
+        uses: ./repo/fastdds/.github/actions/linux/get-ccache
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          ccache-folder: /ccache
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr-branch }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
+
+      - name: Fetch Fast DDS (basic) dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ env.WORKSPACE }}/src/fastdds/fastdds.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Colcon build - Fast DDS (basic)
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        with:
+          # No meta file for basic - we only set the flags that affect public ABI to match Pro
+          colcon_meta_file: ''
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-ignore bzip2 zlib --packages-up-to fastdds
+          cmake_args: >-
+            -DSECURITY=ON
+            -DBUILD_SHARED_LIBS=ON
+            -DFASTDDS_STATISTICS=ON
+            ${{ inputs.cmake-args }}
+            ${{ inputs.use-ccache == true && '-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache' || '' }}
+          cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
+          cmake_build_type: ${{ env.cmake-build-type }}
+          workspace: ${{ env.WORKSPACE }}
+
+      - name: Show CCache statistics
+        if: ${{ inputs.use-ccache == true }}
+        run: |
+          ccache --show-stats
+
+      - name: Store basic build artifacts
+        uses: ./repo/fastdds/.github/actions/linux/store-artifact
+        with:
+          name: fastdds_basic_abi_build_${{ inputs.label }}_${{ github.run_id }}
+          artifact-path: |
+            build
+            install
+          destination-folder-path: /tmp/artifacts
+
+      - name: Clean workspace
+        run: |
+          find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src ! -name repo -exec rm -rf -- {} +
+        if: ${{ always() }}
+
+  fastdds_pro_abi_build:
+    runs-on:
+      - ${{ inputs.runner }}
+      - linux
+      - x64
+      - Ubuntu
+    container:
+      image: ${{ inputs.docker-image }}
+      volumes:
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
+        - /var/lib/jenkins/.ccache:/ccache
+    steps:
+
+      - name: Add WORKSPACE variable to env context
+        run: |
+          echo "WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      - name: Sync eProsima/Fast-DDS-Pro repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds-pro-branch }}
+
+      - name: Install apt dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: |
+            cmake
+            libasio-dev
+            libbz2-dev
+            libtinyxml2-dev
+            libssl-dev
+            python3
+            python3-pip
+            python3-venv
+            zlib1g-dev
+          update: false
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        with:
+          path: /vdev
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: |
+            vcstool
+            xmlschema
+          path: /vdev
+          upgrade: false
+
+      - name: Setup CCache
+        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          ccache-folder: /ccache
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr-branch }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
+
+      - name: set up git credentials
+        run: |
+          git config --global credential.helper store
+          echo "https://NONE:${{ secrets.FAST_DDS_PRO_TOKEN }}@github.com" > ~/.git-credentials
+
+      - name: Fetch Fast DDS Pro dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ env.WORKSPACE }}/src/fastdds/fastdds.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Colcon build - Fast DDS Pro
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_build.meta
+          colcon_build_args: ${{ inputs.colcon-args }} --packages-ignore bzip2 zlib --packages-up-to fastdds
+          cmake_args: >-
+            -DSECURITY=ON
+            -DBUILD_SHARED_LIBS=ON
+            -DFASTDDS_STATISTICS=ON
+            ${{ inputs.cmake-args }}
+            ${{ inputs.use-ccache == true && '-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache' || '' }}
+          cmake_args_default: ${{ env.colcon-build-default-cmake-args }}
+          cmake_build_type: ${{ env.cmake-build-type }}
+          workspace: ${{ env.WORKSPACE }}
+
+      - name: Show CCache statistics
+        if: ${{ inputs.use-ccache == true }}
+        run: |
+          ccache --show-stats
+
+      - name: Store Pro build artifacts
+        uses: ./src/fastdds/.github/actions/linux/store-artifact
+        with:
+          name: fastdds_pro_abi_build_${{ inputs.label }}_${{ github.run_id }}
+          artifact-path: |
+            build
+            install
+          destination-folder-path: /tmp/artifacts
+
+      - name: Clean workspace
+        run: |
+          find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf -- {} +
+        if: ${{ always() }}
+
+  abi_compatibility_check:
+    needs:
+      - fastdds_basic_build
+      - fastdds_pro_abi_build
+    runs-on:
+      - ${{ inputs.runner }}
+      - linux
+      - x64
+      - Ubuntu
+    container:
+      image: ${{ inputs.docker-image }}
+      volumes:
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
+    steps:
+
+      - name: Add WORKSPACE variable to env context
+        run: |
+          echo "WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      - name: Sync eProsima/Fast-DDS-Pro repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds-pro-branch }}
+
+      - name: Get basic build artifacts
+        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        with:
+          name: fastdds_basic_abi_build_${{ inputs.label }}_${{ github.run_id }}
+          artifacts-folder-path: /tmp/artifacts
+          destination-folder-path: ${{ env.WORKSPACE }}/basic
+
+      - name: Get Pro build artifacts
+        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        with:
+          name: fastdds_pro_abi_build_${{ inputs.label }}_${{ github.run_id }}
+          artifacts-folder-path: /tmp/artifacts
+          destination-folder-path: ${{ env.WORKSPACE }}/pro
+
+      - name: Install ABI check dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: |
+            elfutils
+            universal-ctags
+            vtable-dumper
+
+      - name: Install abi-dumper
+        run: |
+          apt-get install -y --no-install-recommends elfutils universal-ctags vtable-dumper 2>/dev/null || true
+          for tool_info in "abi-dumper:1.4" "abi-compliance-checker:2.3"; do
+            tool="${tool_info%%:*}"; tag="${tool_info##*:}"
+            if ! command -v "$tool" &>/dev/null; then
+              git clone --depth 1 --branch "$tag" "https://github.com/lvc/${tool}.git" "/tmp/${tool}"
+              cp -r "/tmp/${tool}" "/usr/local/share/${tool}"
+              ln -sf "/usr/local/share/${tool}/${tool}.pl" "/usr/local/bin/${tool}"
+              chmod +x "/usr/local/bin/${tool}"
+            fi
+          done
+          abi-dumper -v && abi-compliance-checker -v
+
+      - name: Locate libraries and headers
+        id: locate
+        run: |
+          find_lib()   { readlink -f "$(find "$1/install" -name 'libfastdds.so' \( -type f -o -type l \) | head -1)"; }
+          find_hdrs()  { dirname "$(find "$1/install" -path '*/include/fastdds' -type d | head -1)"; }
+
+          BASIC_LIB=$(find_lib "${{ env.WORKSPACE }}/basic")
+          PRO_LIB=$(find_lib "${{ env.WORKSPACE }}/pro")
+          BASIC_HDRS=$(find_hdrs "${{ env.WORKSPACE }}/basic")
+          PRO_HDRS=$(find_hdrs "${{ env.WORKSPACE }}/pro")
+
+          for var in BASIC_LIB PRO_LIB BASIC_HDRS PRO_HDRS; do
+            [ -z "${!var}" ] && echo "::error::Could not locate $var" && exit 1
+          done
+
+          # Verify Pro has debug symbols (required for accurate ABI dump)
+          if ! readelf -S "$PRO_LIB" | grep -q '\.debug_info'; then
+            echo "::error::Pro library missing debug symbols"; exit 1
+          fi
+
+          echo "basic_lib=$BASIC_LIB"   >> $GITHUB_OUTPUT
+          echo "pro_lib=$PRO_LIB"       >> $GITHUB_OUTPUT
+          echo "basic_hdrs=$BASIC_HDRS" >> $GITHUB_OUTPUT
+          echo "pro_hdrs=$PRO_HDRS"     >> $GITHUB_OUTPUT
+
+      - name: Run ABI compatibility check
+        id: abi_check
+        run: |
+          OUTDIR="${{ env.WORKSPACE }}/abi_results"
+          mkdir -p "$OUTDIR"
+
+          # Generate ABI dumps
+          abi-dumper "${{ steps.locate.outputs.basic_lib }}" \
+            -o "$OUTDIR/base.abi.dump" -lver basic \
+            -public-headers "${{ steps.locate.outputs.basic_hdrs }}"
+
+          abi-dumper "${{ steps.locate.outputs.pro_lib }}" \
+            -o "$OUTDIR/target.abi.dump" -lver pro \
+            -public-headers "${{ steps.locate.outputs.pro_hdrs }}"
+
+          # Run compliance check (exit 0=compatible, 1=incompatible)
+          set +e
+          abi-compliance-checker -l fastdds \
+            -old "$OUTDIR/base.abi.dump" \
+            -new "$OUTDIR/target.abi.dump" \
+            -report-path "$OUTDIR/compat_report.html" \
+            -bin -source
+          ABI_RC=$?
+          set -e
+
+          if [ "$ABI_RC" -eq 0 ]; then
+            echo "::notice::ABI check PASSED - Pro is fully binary compatible with basic"
+          else
+            echo "::error::ABI check FAILED - binary incompatibility detected (see report)"
+            exit 1
+          fi
+
+      - name: Upload ABI report
+        if: always() && steps.abi_check.outcome != 'skipped'
+        uses: actions/upload-artifact@v4
+        with:
+          name: abi_compatibility_report_${{ inputs.label }}_${{ github.run_id }}
+          path: ${{ env.WORKSPACE }}/abi_results/
+          retention-days: 7
+
+      - name: Clean workspace
+        run: |
+          find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf -- {} +
+        if: ${{ always() }}

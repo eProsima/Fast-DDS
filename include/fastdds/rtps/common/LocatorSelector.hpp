@@ -118,12 +118,12 @@ public:
             // Resuse the last state instead of recreating it.
             for (size_t count {0}; count < entries_.size(); ++count)
             {
-                if (last_state_.at(count).second != (entries_.at(count)->allowed_to_send ? 1 : 0))
+                if (decode_entry_allowed_to_send(last_state_.at(count)) != entries_.at(count)->allowed_to_send)
                 {
                     force_reset_ = true;
                 }
-                last_state_.at(count).first = entries_.at(count)->enabled ? 1 : 0;
-                last_state_.at(count).second = entries_.at(count)->allowed_to_send ? 1 : 0;
+                last_state_.at(count) = encode_entry_state(
+                    entries_.at(count)->enabled, entries_.at(count)->allowed_to_send);
                 entries_.at(count)->enable(enable_all);
             }
         }
@@ -133,7 +133,7 @@ public:
             last_state_.clear();
             for (LocatorSelectorEntry* entry : entries_)
             {
-                last_state_.emplace_back(entry->enabled ? 1 : 0, entry->allowed_to_send ? 1 : 0);
+                last_state_.push_back(encode_entry_state(entry->enabled, entry->allowed_to_send));
                 entry->enable(enable_all);
             }
         }
@@ -171,8 +171,8 @@ public:
 
         for (size_t i = 0; i < entries_.size(); ++i)
         {
-            if (last_state_.at(i).first != (entries_.at(i)->enabled ? 1 : 0) ||
-                    last_state_.at(i).second != (entries_.at(i)->allowed_to_send ? 1 : 0))
+            if (decode_entry_enabled(last_state_.at(i)) != entries_.at(i)->enabled ||
+                    decode_entry_allowed_to_send(last_state_.at(i)) != entries_.at(i)->allowed_to_send)
             {
                 return true;
             }
@@ -545,13 +545,33 @@ private:
     //! List of selected indexes.
     ResourceLimitedVector<size_t> selections_;
     //! Enabling state when reset was called.
-    ResourceLimitedVector<std::pair<int, int>> last_state_;
+    ResourceLimitedVector<int> last_state_;
 
     //! Whether it is the initial state of all allow_to_send flags.
     bool initial_allow_to_send_ {true};
 
     //! Whether a reset is forced due to changes in the entries.
     bool force_reset_ {false};
+
+    static constexpr int encode_entry_state(
+            bool enabled,
+            bool allowed_to_send) noexcept
+    {
+        return (enabled ? 1 : 0) | (allowed_to_send ? 2 : 0);
+    }
+
+    static constexpr bool decode_entry_enabled(
+            int state) noexcept
+    {
+        return (state & 1) != 0;
+    }
+
+    static constexpr bool decode_entry_allowed_to_send(
+            int state) noexcept
+    {
+        return (state & 2) != 0;
+    }
+
 };
 
 } // namespace rtps
