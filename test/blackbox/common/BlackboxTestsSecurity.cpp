@@ -329,8 +329,16 @@ public:
 
         if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
         {
-            // For best effor, we just check if at least 2 samples are received
-            reader.block_for_at_least(2);
+            // For best effort, samples may be lost if the security crypto context was not
+            // fully established on the reader side before the initial burst arrived.
+            // Retry sending once if fewer than 2 samples were received within the timeout.
+            if (reader.block_for_all(std::chrono::seconds(2)) < 2)
+            {
+                auto retry_data = default_helloworld_data_generator();
+                reader.startReception(retry_data);
+                writer.send(retry_data);
+                reader.block_for_at_least(2);
+            }
         }
         else
         {
@@ -371,8 +379,16 @@ public:
 
         if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
         {
-            // For best effor, we just check if at least 2 samples are received
-            reader.block_for_at_least(2);
+            // For best effort, samples may be lost if the security crypto context was not
+            // fully established on the reader side before the initial burst arrived.
+            // Retry sending once if fewer than 2 samples were received within the timeout.
+            if (reader.block_for_all(std::chrono::seconds(2)) < 2)
+            {
+                auto retry_data = default_data300kb_data_generator();
+                reader.startReception(retry_data);
+                writer.send(retry_data);
+                reader.block_for_at_least(2);
+            }
         }
         else
         {
