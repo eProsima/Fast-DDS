@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ARG ubuntu_version=24.04
-FROM ubuntu:$ubuntu_version AS ubuntu-cli
+FROM ubuntu:$ubuntu_version AS ubuntu-examples-tests
 
 # Needed for a dependency that forces to set timezone
 ENV TZ=Europe/Madrid

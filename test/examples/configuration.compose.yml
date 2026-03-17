@@ -15,12 +15,13 @@
 services:
   subscriber:
     container_name: subscriber-${CONTAINER_SUFFIX_COMPOSE}
+    @DOCKER_BUILD_COMPOSE@
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
       - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/configuration/@EXAMPLE_SUFFIX_DIR_COMPOSE@
@@ -30,12 +31,13 @@ services:
 
   publisher-subscriber:
     container_name: publisher-subscriber-${CONTAINER_SUFFIX_COMPOSE}
+    @DOCKER_BUILD_COMPOSE@
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
       - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/configuration/@EXAMPLE_SUFFIX_DIR_COMPOSE@
