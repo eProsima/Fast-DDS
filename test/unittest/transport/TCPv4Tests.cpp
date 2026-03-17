@@ -31,6 +31,8 @@
 #include <MockReceiverResource.h>
 
 #include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/transport/tcp/RTCPMessageManager.h>
+#include <rtps/transport/TCPChannelResourceBasic.h>
 #include <rtps/transport/TCPv4Transport.h>
 #include <utils/Semaphore.hpp>
 

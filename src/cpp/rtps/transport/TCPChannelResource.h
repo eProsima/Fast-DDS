@@ -15,20 +15,54 @@
 #ifndef _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 #define _FASTDDS_TCP_CHANNEL_RESOURCE_BASE_
 
+#include <atomic>
+#include <condition_variable>
+#include <cstdint>
+#include <map>
+#include <mutex>
+#include <vector>
+
 #include "../network/asio.hpp"
+#include <fastdds/rtps/common/Locator.hpp>
+#include <fastdds/rtps/transport/NetworkBuffer.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TransportReceiverInterface.hpp>
-#include <fastdds/rtps/common/Locator.hpp>
 #include <rtps/transport/ChannelResource.h>
-#include <rtps/transport/tcp/RTCPMessageManager.h>
+#include <rtps/transport/tcp/RTCPHeader.h>
+#include <rtps/transport/tcp/TCPControlMessage.h>
 
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+/**
+ * @brief Helper to convert between time_point and its representation as integer
+ *
+ * @param tp Time point to convert
+ * @return Representation as integer
+ */
+static inline std::chrono::steady_clock::rep to_rep(
+        std::chrono::steady_clock::time_point tp)
+{
+    return tp.time_since_epoch().count();
+}
+
+/**
+ * @brief Helper to convert between integer and its representation as time_point
+ *
+ * @param r Representation as integer
+ * @return Steady clock time point
+ */
+static inline std::chrono::steady_clock::time_point from_rep(
+        std::chrono::steady_clock::time_point::rep r)
+{
+    return std::chrono::steady_clock::time_point(std::chrono::steady_clock::duration(r));
+}
+
 class TCPConnector;
 class TCPTransportInterface;
+class RTCPMessageManager;
 
 enum eSocketErrorCodes
 {
@@ -65,7 +99,6 @@ protected:
 
     TCPTransportInterface* parent_;
     Locator locator_;
-    bool waiting_for_keep_alive_;
     // Must be accessed after lock pending_logical_mutex_
     std::map<TCPTransactionId, uint16_t> negotiating_logical_ports_;
     std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
@@ -74,6 +107,11 @@ protected:
     std::condition_variable_any logical_output_ports_updated_cv;
     std::recursive_mutex pending_logical_mutex_;
     std::atomic<eConnectionStatus> connection_status_;
+    TCPConnectionType tcp_connection_type_;
+    //! Last activity time point
+    std::atomic<std::chrono::steady_clock::time_point::rep> last_activity_ns_;
+    //! Last keep-alive sent time point
+    std::atomic<std::chrono::steady_clock::time_point::rep> last_ka_sent_ns_;
 
 public:
 
@@ -235,6 +273,50 @@ public:
         return tcp_connection_type_;
     }
 
+    /**
+     * @brief Getter for the last activity time point.
+     * Activity is defined as any data received from the remote endpoint
+     * through this channel.
+     *
+     * @return Last activity time point.
+     */
+    std::chrono::steady_clock::time_point get_last_activity_ns_() const
+    {
+        return from_rep(last_activity_ns_.load(std::memory_order_relaxed));
+    }
+
+    /**
+     * @brief Getter for the last keep-alive sent time point.
+     *
+     * @return Last keep-alive sent time point.
+     */
+    std::chrono::steady_clock::time_point get_last_ka_sent_ns_() const
+    {
+        return from_rep(last_ka_sent_ns_.load(std::memory_order_relaxed));
+    }
+
+    /**
+     * @brief Setter for the last activity time point.
+     *
+     * @param time_point New last activity time point.
+     */
+    void set_last_activity_ns_(
+            std::chrono::steady_clock::time_point time_point)
+    {
+        last_activity_ns_.store(to_rep(time_point), std::memory_order_relaxed);
+    }
+
+    /**
+     * @brief Setter for the last keep-alive sent time point.
+     *
+     * @param time_point New last keep-alive sent time point.
+     */
+    void set_last_ka_sent_ns_(
+            std::chrono::steady_clock::time_point time_point)
+    {
+        last_ka_sent_ns_.store(to_rep(time_point), std::memory_order_relaxed);
+    }
+
 protected:
 
     // Constructor called when trying to connect to a remote server
@@ -289,8 +371,6 @@ protected:
     void set_socket_options(
             asio::basic_socket<asio::ip::tcp>& socket,
             const TCPTransportDescriptor* options);
-
-    TCPConnectionType tcp_connection_type_;
 
     friend class TCPTransportInterface;
     friend class RTCPMessageManager;

@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <cstring>
 #include <limits>
 #include <map>
@@ -77,14 +78,10 @@ namespace rtps {
 
 using Log = fastdds::dds::Log;
 
-static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
-static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
-//static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
-
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
-    , keep_alive_frequency_ms(s_default_keep_alive_frequency)
-    , keep_alive_timeout_ms(s_default_keep_alive_timeout)
+    , keep_alive_frequency_ms(0)
+    , keep_alive_timeout_ms(0)
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
@@ -168,7 +165,6 @@ TCPTransportInterface::TCPTransportInterface(
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
-    , keep_alive_event_(io_context_timers_)
 {
 }
 
@@ -178,15 +174,22 @@ TCPTransportInterface::~TCPTransportInterface()
 
 void TCPTransportInterface::clean()
 {
+    // Prevent keep alive thread execution
+    keep_alive_running_.store(false, std::memory_order_release);
+    // Stop timer and io_context cleanly
+    asio::post(io_context_timers_, [this]()
+            {
+                keep_alive_timer_.cancel();
+                io_context_timers_.stop();
+            });
+    // Wait for keep alive thread to end
+    if (tcp_keep_alive_thread_.joinable())
+    {
+        tcp_keep_alive_thread_.join();
+    }
+
     assert(receiver_resources_.size() == 0);
     alive_.store(false);
-
-    keep_alive_event_.cancel();
-    if (io_context_timers_thread_.joinable())
-    {
-        io_context_timers_.stop();
-        io_context_timers_thread_.join();
-    }
 
     {
         std::vector<std::shared_ptr<TCPChannelResource>> channels;
@@ -209,11 +212,11 @@ void TCPTransportInterface::clean()
                     delete_channels.push_back(channel.first);
                 }
             }
-        }
 
-        for (auto& delete_channel : delete_channels)
-        {
-            channel_resources_.erase(delete_channel);
+            for (auto& delete_channel : delete_channels)
+            {
+                channel_resources_.erase(delete_channel);
+            }
         }
 
         for (auto& channel : channels)
@@ -310,6 +313,9 @@ ResponseCode TCPTransportInterface::bind_socket(
         {
             // There is an existing channel that can be used. Force the Client to close unnecessary socket
             ret = RETCODE_SERVER_ERROR;
+            // If there is an existing channel that can be used we will manually ask for a keep alive request
+            // to accelerate the detection of stale TCP channels
+            keep_alive(insert_ret.first->second);
         }
         else
         {
@@ -583,15 +589,20 @@ bool TCPTransportInterface::init(
 
     if (0 < configuration()->keep_alive_frequency_ms)
     {
-        auto ioContextTimersFunction = [&]()
+        const auto period = std::chrono::milliseconds(configuration()->keep_alive_frequency_ms);
+        keep_alive_running_.store(true, std::memory_order_release);
+        next_event_time_ = std::chrono::steady_clock::now() + period;
+        // Schedule first keep-alive event
+        schedule_keep_alive_event();
+
+        auto run_keep_alive = [this]()
                 {
                     asio::executor_work_guard<asio::io_context::executor_type> work =
-                            make_work_guard(io_context_timers_.
-                                            get_executor());
+                            asio::make_work_guard(io_context_timers_);
                     io_context_timers_.run();
                 };
-        io_context_timers_thread_ = create_thread(ioContextTimersFunction,
-                        configuration()->keep_alive_thread, "dds.tcp_keep");
+        tcp_keep_alive_thread_ = create_thread(run_keep_alive,
+                        configuration()->keep_alive_thread, "dds.tcp_keep_alive");
     }
 
     return true;
@@ -1076,64 +1087,6 @@ bool TCPTransportInterface::OpenInputChannel(
     return success;
 }
 
-void TCPTransportInterface::keep_alive()
-{
-    std::map<Locator, std::shared_ptr<TCPChannelResource>> tmp_vec;
-
-    {
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
-        tmp_vec = channel_resources_;
-    }
-
-
-    for (auto& channel_resource : tmp_vec)
-    {
-        if (TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel_resource.second->tcp_connection_type())
-        {
-            rtcp_message_manager_->sendKeepAliveRequest(channel_resource.second);
-        }
-    }
-    //TODO Check timeout.
-
-    /*
-       const TCPTransportDescriptor* config = configuration(); // Keep a copy for us.
-
-       std::chrono::time_point<std::chrono::system_clock> time_now = std::chrono::system_clock::now();
-       std::chrono::time_point<std::chrono::system_clock> next_time = time_now +
-        std::chrono::milliseconds(config->keep_alive_frequency_ms);
-       std::chrono::time_point<std::chrono::system_clock> timeout_time =
-        time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
-
-       while (channel && TCPChannelResource::TCPConnectionStatus::TCP_CONNECTED == channel->tcp_connection_status())
-       {
-        if (channel->connection_established())
-        {
-            // KeepAlive
-            if (config->keep_alive_frequency_ms > 0 && config->keep_alive_timeout_ms > 0)
-            {
-                time_now = std::chrono::system_clock::now();
-
-                // Keep Alive Management
-                if (!channel->waiting_for_keep_alive_ && time_now > next_time)
-                {
-                    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_); // Why mutex here?
-                    rtcp_message_manager_->sendKeepAliveRequest(channel);
-                    channel->waiting_for_keep_alive_ = true;
-                    next_time = time_now + std::chrono::milliseconds(config->keep_alive_frequency_ms);
-                    timeout_time = time_now + std::chrono::milliseconds(config->keep_alive_timeout_ms);
-                }
-                else if (channel->waiting_for_keep_alive_ && time_now >= timeout_time)
-                {
-                    // Disable the socket to erase it after the reception.
-                    close_tcp_socket(channel);
-                }
-            }
-        }
-       }
-       EPROSIMA_LOG_INFO(RTCP, "End perform_rtcp_management_thread " << channel->locator());
-     */
-}
-
 void TCPTransportInterface::create_listening_thread(
         const std::shared_ptr<TCPChannelResource>& channel)
 {
@@ -1244,6 +1197,12 @@ bool TCPTransportInterface::read_body(
     {
         EPROSIMA_LOG_ERROR(RTCP, "Bad RTCP body size: " << *bytes_received << " (expected: " << body_size << ")");
         return false;
+    }
+
+    if (keep_alive_running_.load(std::memory_order_acquire))
+    {
+        // Reset keep-alive counter on successful read
+        channel->set_last_activity_ns_(std::chrono::steady_clock::now());
     }
 
     return true;
@@ -1620,6 +1579,118 @@ bool TCPTransportInterface::send(
     }
 
     return success;
+}
+
+void TCPTransportInterface::schedule_keep_alive_event()
+{
+    keep_alive_timer_.expires_at(next_event_time_);
+    keep_alive_timer_.async_wait([this](const asio::error_code& ec)
+            {
+                if (!keep_alive_running_.load(std::memory_order_acquire))
+                {
+                    // Keep-alive stopped
+                    return;
+                }
+                if (asio::error::operation_aborted == ec)
+                {
+                    // Timer was cancelled to reschedule but keep_alive_running_ is still set
+                    schedule_keep_alive_event();
+                    return;
+                }
+                keep_alive();
+                schedule_keep_alive_event();
+            });
+}
+
+void TCPTransportInterface::keep_alive()
+{
+    using clock = std::chrono::steady_clock;
+
+    std::map<Locator, std::shared_ptr<TCPChannelResource>> tmp_vec;
+    {
+        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+        tmp_vec = channel_resources_;
+    }
+    const auto ka_freq = std::chrono::milliseconds(configuration()->keep_alive_frequency_ms);
+    const auto timeout = std::chrono::milliseconds(configuration()->keep_alive_timeout_ms);
+
+    std::set<std::shared_ptr<TCPChannelResource>> keep_alive_channels;
+    for (auto& channel_resource : tmp_vec)
+    {
+        if (channel_resource.second->connection_established())
+        {
+            keep_alive_channels.insert(channel_resource.second);
+        }
+    }
+
+    // Initialize next event time in the future to less restrictive update (now + keep alive frequency)
+    clock::time_point local_next_event = clock::now() + ka_freq;
+    for (auto channel : keep_alive_channels)
+    {
+        // Increase the counter
+        auto last_activity = channel->get_last_activity_ns_();
+        auto last_ka_sent = channel->get_last_ka_sent_ns_();
+        auto send_time = last_activity + ka_freq;
+        auto cooldown_time = last_ka_sent + ka_freq;
+        auto next_send_allowed = std::max(send_time, cooldown_time);
+        // Multiple keep-alive might be sent before timeout if the frequency is lower than the timeout.
+        // Timeout time must be computed as last activity + frequency + timeout, assuming we sent a keep-alive
+        // request right after last activity
+        auto timeout_time = last_activity + ka_freq + timeout;
+        auto now = clock::now();
+        // Close connection if a keep alive was sent and the timeout was exceeded
+        if ((last_ka_sent != clock::time_point()) && (last_activity <= last_ka_sent) && (now >= timeout_time))
+        {
+            EPROSIMA_LOG_WARNING(RTCP,
+                    "Keep-Alive timeout for channel: " << channel->locator()
+                                                       << ". Closing the TCP connection.");
+            close_tcp_socket(channel);
+            continue;
+        }
+        // Send a keep alive request if the send time has been reached and no request has already been sent
+        else if (now >= next_send_allowed)
+        {
+            channel->set_last_ka_sent_ns_(now);
+            rtcp_message_manager_->sendKeepAliveRequest(channel);
+            next_send_allowed = now + ka_freq; // Update next send time after sending
+        }
+        // Calculate next keep alive event time
+        auto timeout_next_event = (last_activity <= last_ka_sent) ? timeout_time : clock::time_point::max();
+        local_next_event = std::min(local_next_event, std::min(next_send_allowed, timeout_next_event));
+    }
+    // Update next event time
+    next_event_time_ = local_next_event;
+}
+
+void TCPTransportInterface::keep_alive(
+        std::shared_ptr<eprosima::fastdds::rtps::TCPChannelResource> channel)
+{
+    if (!channel->connection_established())
+    {
+        // This should be unreachable, as we can only call this method for established channels, but we check it just in case
+        return;
+    }
+
+    const auto ka_freq = std::chrono::milliseconds(configuration()->keep_alive_frequency_ms);
+    auto last_ka_sent = channel->get_last_ka_sent_ns_();
+    auto now = std::chrono::steady_clock::now();
+    if ((now - last_ka_sent) >= ka_freq)
+    {
+        // Manually send a keep alive request
+        channel->set_last_ka_sent_ns_(now);
+        rtcp_message_manager_->sendKeepAliveRequest(channel);
+        asio::post(io_context_timers_, [this, now]()
+                {
+                    const auto timeout = std::chrono::milliseconds(configuration()->keep_alive_timeout_ms);
+                    // Reschedule next event in case it is earlier than the current one
+                    if (next_event_time_ > now + timeout)
+                    {
+                        next_event_time_ = now + timeout;
+                        // Force wake of handler and reschedule
+                        keep_alive_timer_.cancel_one();
+                    }
+                });
+    }
 }
 
 void TCPTransportInterface::select_locators(

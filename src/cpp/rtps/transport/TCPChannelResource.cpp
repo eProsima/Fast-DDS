@@ -20,6 +20,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/transport/asio_helpers.hpp>
+#include <rtps/transport/tcp/RTCPMessageManager.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
@@ -53,9 +54,10 @@ TCPChannelResource::TCPChannelResource(
     : ChannelResource(maxMsgSize)
     , parent_ (parent)
     , locator_(locator)
-    , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
     , tcp_connection_type_(TCPConnectionType::TCP_CONNECT_TYPE)
+    , last_activity_ns_(to_rep(std::chrono::steady_clock::now()))
+    , last_ka_sent_ns_(0)
 {
 }
 
@@ -65,9 +67,10 @@ TCPChannelResource::TCPChannelResource(
     : ChannelResource(maxMsgSize)
     , parent_(parent)
     , locator_()
-    , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
     , tcp_connection_type_(TCPConnectionType::TCP_ACCEPT_TYPE)
+    , last_activity_ns_(to_rep(std::chrono::steady_clock::now()))
+    , last_ka_sent_ns_(0)
 {
 }
 
@@ -196,7 +199,6 @@ void TCPChannelResource::add_logical_port(
             }
         }
     }
-
 }
 
 void TCPChannelResource::send_pending_open_logical_ports(

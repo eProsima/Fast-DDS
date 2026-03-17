@@ -38,8 +38,8 @@
 #include <fastdds/utils/IPFinder.hpp>
 
 #include <rtps/transport/tcp/RTCPHeader.h>
-#include <rtps/transport/TCPAcceptorBasic.h>
-#include <rtps/transport/TCPChannelResourceBasic.h>
+#include <rtps/transport/TCPAcceptor.h>
+#include <rtps/transport/tcp/TCPControlMessage.h>
 
 #if TLS_FOUND
 #include <rtps/transport/TCPAcceptorSecure.h>
@@ -88,7 +88,6 @@ class TCPTransportInterface : public TransportInterface
 protected:
 
     asio::io_context io_context_;
-    asio::io_context io_context_timers_;
     std::unique_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
     uint16_t initial_peer_local_locator_port_;
 
@@ -96,7 +95,6 @@ protected:
     asio::ssl::context ssl_context_;
 #endif // if TLS_FOUND
     eprosima::thread io_context_thread_;
-    eprosima::thread io_context_timers_thread_;
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
@@ -112,8 +110,6 @@ protected:
 
     std::vector<std::pair<TCPChannelResource*, uint64_t>> sockets_timestamp_;
 
-    asio::steady_timer keep_alive_event_;
-
     std::map<Locator, std::shared_ptr<TCPAcceptor>> acceptors_;
 
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
@@ -126,6 +122,18 @@ protected:
 
     NetmaskFilterKind netmask_filter_;
     std::vector<AllowedNetworkInterface> allowed_interfaces_;
+
+    //! Keep-alive thread
+    eprosima::thread tcp_keep_alive_thread_;
+    //! io_context for keep-alive timer
+    asio::io_context io_context_timers_;
+    //! Keep-alive timer
+    asio::steady_timer keep_alive_timer_{io_context_timers_};
+    //! Next keep-alive event time point
+    std::chrono::steady_clock::time_point next_event_time_;
+
+    //! Keep-alive thread running flag
+    std::atomic_bool keep_alive_running_{false};
 
     TCPTransportInterface(
             int32_t transport_kind);
@@ -237,6 +245,13 @@ protected:
 
     void create_listening_thread(
             const std::shared_ptr<TCPChannelResource>& channel);
+
+    /**
+     * @brief Scheduler method for the keep alive event.
+     * New events must always be scheduled by updating next_event_time_ and calling
+     * this method afterwards.
+     */
+    void schedule_keep_alive_event();
 
 public:
 
@@ -497,8 +512,6 @@ public:
 
     virtual TCPTransportDescriptor* configuration() = 0;
 
-    void keep_alive();
-
     void update_network_interfaces() override;
 
     bool is_localhost_allowed() const override;
@@ -543,6 +556,21 @@ public:
     void is_own_interface(
             const Locator& locator,
             std::vector<fastdds::rtps::IPFinder::info_IP>& locNames) const;
+
+    /**
+     * @brief Keep-alive mechanism to detect dead connections.
+     * It checks all connected channels of channel_resources_ map and sends
+     * keep-alive messages to those that have been idle for the keep alive period.
+     */
+    void keep_alive();
+
+    /**
+     * @brief Keep-alive mechanism overload for a specific channel.
+     * A new keep-alive request is sent only through the provided channel if and only if
+     * no other request was sent in the keep alive period.
+     */
+    void keep_alive(
+            std::shared_ptr<eprosima::fastdds::rtps::TCPChannelResource> channel);
 };
 
 } // namespace rtps

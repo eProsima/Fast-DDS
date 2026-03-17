@@ -149,11 +149,15 @@ public:
      * These methods wouldn't be needed under perfect server operation (no need of dynamic endpoint allocation)
      * but must be implemented to solve server shutdown situations.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
+     * @param updated_participant Whether the participant is new or updated.
      */
     void assignRemoteEndpoints(
-            fastdds::rtps::ParticipantProxyData* pdata) override;
+            fastdds::rtps::ParticipantProxyData* pdata,
+            bool updated_participant) override;
+
     void removeRemoteEndpoints(
             fastdds::rtps::ParticipantProxyData* pdata) override;
+
     void notifyAboveRemoteEndpoints(
             const fastdds::rtps::ParticipantProxyData& pdata,
             bool notify_secure_endpoints) override;

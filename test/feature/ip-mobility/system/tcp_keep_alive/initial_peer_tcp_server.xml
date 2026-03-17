@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>server_tcp_transport</transport_id>
+            <type>TCPv4</type>
+            <listening_ports>
+                <port>12345</port>
+            </listening_ports>
+            <wan_addr>172.28.16.200</wan_addr>
+            <keep_alive_frequency_ms>3000</keep_alive_frequency_ms>
+            <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="initial_peer_server" is_default_profile="true">
+        <rtps>
+            <!-- Disable builtin transports and use custom transports -->
+            <useBuiltinTransports>false</useBuiltinTransports>
+            <userTransports>
+                <transport_id>server_tcp_transport</transport_id>
+            </userTransports>
+
+            <builtin>
+                <discovery_config>
+                    <discoveryProtocol>SIMPLE</discoveryProtocol>
+                </discovery_config>
+            </builtin>
+        </rtps>
+    </participant>
+</profiles>

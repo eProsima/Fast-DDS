@@ -52,10 +52,10 @@ string(SUBSTRING "${_di_hash}" 0 8 COMPOSE_PROJECT)
 # Export test vars into templates
 if(USE_OUTSIDE_DOCKER)
     # When using Docker-outside-of-Docker, all libs and binaries must be delivered from the builder container
-    set(EXAMPLE_DIR_COMPOSE "/docker_ws/build/fastdds/test/dds/communication")
+    set(COMM_EXAMPLE_DIR_COMPOSE "/docker_ws/build/fastdds/test/dds/communication")
 else()
     # When using Docker-in-Docker, all libs and binaries are mounted from the host
-    set(EXAMPLE_DIR_COMPOSE "${PROJECT_BINARY_DIR}/test/dds/communication")
+    set(COMM_EXAMPLE_DIR_COMPOSE "${PROJECT_BINARY_DIR}/test/dds/communication")
 endif()
 
 # Running script that executes the test in docker compose

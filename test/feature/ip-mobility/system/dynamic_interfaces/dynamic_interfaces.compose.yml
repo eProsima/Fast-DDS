@@ -18,7 +18,7 @@ services:
       @fastcdr_LIB_DIR_VOLUME@
     environment:
       LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
-      EXAMPLE_DIR: @EXAMPLE_DIR_COMPOSE@
+      EXAMPLE_DIR: @COMM_EXAMPLE_DIR_COMPOSE@
     command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/DDSCommunicationPublisher --xmlfile $${EXAMPLE_DIR}/simple_reliable_profile.xml --wait 1 --samples 10 --loops 1 --seed 0 --magic T"
 
   receiver:
@@ -33,9 +33,9 @@ services:
       @fastcdr_LIB_DIR_VOLUME@
     environment:
       LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
-      EXAMPLE_DIR: @EXAMPLE_DIR_COMPOSE@
-      LAUNCH_DIR: @PROJECT_BINARY_DIR_HOST@/test/feature/ip-mobility/system
-    working_dir: @PROJECT_BINARY_DIR_HOST@/test/feature/ip-mobility/system
+      EXAMPLE_DIR: @COMM_EXAMPLE_DIR_COMPOSE@
+      LAUNCH_DIR: @PROJECT_BINARY_DIR_HOST@/test/feature/ip-mobility/system/dynamic_interfaces
+    working_dir: @PROJECT_BINARY_DIR_HOST@/test/feature/ip-mobility/system/dynamic_interfaces
     command: @SHELL_EXECUTABLE@ -c "@SHELL_EXECUTABLE@ $${LAUNCH_DIR}/launch_subscriber.bash"
     depends_on:
       - publisher

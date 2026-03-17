@@ -13,14 +13,20 @@ DOCKER="@DOCKER_EXECUTABLE@"
 DEFAULT_PROJECT_NAME="dynif_@COMPOSE_PROJECT@"
 
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <compose_file> [project_name]" >&2
+  echo "Usage: $0 <compose_file> [project_name] [profile_name]" >&2
   exit 2
 fi
 
 COMPOSE_FILE="$1"
 PROJECT_NAME="${2:-$DEFAULT_PROJECT_NAME}"
+PROFILE_NAME="${3:-}"
 # If set, target host daemon
 DOCKER_HOST_RESOLVED="@DOCKER_HOST_RESOLVED@"
+
+COMPOSE_PROFILES=()
+if [[ -n "${PROFILE_NAME}" ]]; then
+  COMPOSE_PROFILES+=(--profile "${PROFILE_NAME}")
+fi
 
 # Rely on DOCKER_HOST environment variable rather than use -H flag
 if [[ -n "${DOCKER_HOST_RESOLVED}" ]]; then
@@ -30,12 +36,13 @@ fi
 # Always cleanup
 cleanup() {
   set +e
-  "${DOCKER}" compose --project-name "${PROJECT_NAME}" -f "${COMPOSE_FILE}" down -v --remove-orphans
+  "${DOCKER}" compose --project-name "${PROJECT_NAME}" -f "${COMPOSE_FILE}" "${COMPOSE_PROFILES[@]}" down -v --remove-orphans
 }
 trap cleanup EXIT
 
 "${DOCKER}" compose \
   --project-name "${PROJECT_NAME}" \
+  "${COMPOSE_PROFILES[@]}" \
   -f "${COMPOSE_FILE}" up \
   --abort-on-container-exit \
   --exit-code-from receiver

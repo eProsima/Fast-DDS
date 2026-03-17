@@ -1,0 +1,235 @@
+# Copyright (C) 2026, Proyectos y Sistemas de Mantenimiento SL (eProsima)
+#
+# This program is commercial software licensed under the terms of the
+# eProsima Software License Agreement Rev 03 (the "License")
+#
+# You may obtain a copy of the License at
+# https://www.eprosima.com/licenses/LICENSE-REV03
+
+# Network topology:
+#                      "Public" / routed network (172.x)
+#        ┌───────────────────────────┐    ┌───────────────────────────┐
+#        │          ROUTER1          │<──>│          ROUTER2          │
+#        │  WAN: 172.28.16.200       │    │  WAN: 172.28.16.100       │
+#        │  LAN: 192.168.20.1   (GW) │    │  LAN: 192.168.10.1   (GW) │
+#        └──────────────┬────────────┘    └──────────────┬────────────┘
+#                       │                                │
+#                       │ "Local" LAN (192.x)            │ "Local" LAN (192.x)
+#        ┌──────────────▼────────────┐     ┌─────────────▼─────────────┐
+#        │           SENDER          │     │          RECEIVER         │
+#        │  IP: 192.168.20.13        │     │  IP: 192.168.10.13        │
+#        │  Default GW: 192.168.20.1 │     │  Default GW: 192.168.10.1 │
+#        └───────────────────────────┘     └───────────────────────────┘
+#
+
+services:
+  ###########################
+  # TCP Client
+  # - [unplug, wan] Normal operation
+  # - [local] Must change local IP after some time
+  ###########################
+  sender:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    networks:
+      sender_lan:
+        ipv4_address: 192.168.20.13
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+      @PROJECT_LICENSE_VOLUME@
+      @fastcdr_LIB_DIR_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
+      EXAMPLE_DIR: @CONF_EXAMPLE_DIR_COMPOSE@
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROFILES_PREFIX_FILE_COMPOSE@/initial_peer_tcp.xml
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_sender.bash"
+    profiles: ["unplug", "wan"]
+    depends_on:
+      - receiver
+
+  sender_local:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    networks:
+      sender_lan:
+        ipv4_address: 192.168.20.13
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+      @PROJECT_LICENSE_VOLUME@
+      @fastcdr_LIB_DIR_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
+      EXAMPLE_DIR: @CONF_EXAMPLE_DIR_COMPOSE@
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROFILES_PREFIX_FILE_COMPOSE@/initial_peer_tcp.xml
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_sender_change_loc.bash"
+    profiles: ["local"]
+    depends_on:
+      - receiver
+
+  ###########################
+  # Router 1 (connected to TCP client)
+  # - [unplug] Must unplug connection after some time
+  # - [wan] Must change WAN IP after some time
+  # - [local] Normal operation
+  ###########################
+  router1_pro_local:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    sysctls:
+      - net.ipv4.ip_forward=1
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+    environment:
+      CLIENT_IP: 192.168.20.13
+      TCP_PORTS: "12345"
+      PEER_LAN_CIDR: 192.168.10.0/24
+      PEER_WAN_IP: 172.28.16.200
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router.bash"
+    profiles: ["local"]
+    networks:
+      sender_lan:
+        ipv4_address: 192.168.20.1
+      backbone_net:
+        ipv4_address: 172.28.16.100
+
+  router1_pro_wan:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    sysctls:
+      - net.ipv4.ip_forward=1
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+    environment:
+      CLIENT_IP: 192.168.20.13
+      TCP_PORTS: "12345"
+      PEER_LAN_CIDR: 192.168.10.0/24
+      PEER_WAN_IP: 172.28.16.200
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router_change_wan.bash"
+    profiles: ["wan"]
+    networks:
+      sender_lan:
+        ipv4_address: 192.168.20.1
+      backbone_net:
+        ipv4_address: 172.28.16.100
+
+  router1_pro_unplug:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    sysctls:
+      - net.ipv4.ip_forward=1
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+    environment:
+      CLIENT_IP: 192.168.20.13
+      TCP_PORTS: "12345"
+      PEER_LAN_CIDR: 192.168.10.0/24
+      PEER_WAN_IP: 172.28.16.200
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router_unplug.bash"
+    profiles: ["unplug"]
+    networks:
+      sender_lan:
+        ipv4_address: 192.168.20.1
+      backbone_net:
+        ipv4_address: 172.28.16.100
+
+  ###########################
+  # TCP Server
+  # - [unplug, wan, local] Normal operation
+  ###########################
+  receiver:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    networks:
+      receiver_lan:
+        ipv4_address: 192.168.10.13
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+      @PROJECT_LICENSE_VOLUME@
+      @fastcdr_LIB_DIR_VOLUME@
+    environment:
+      LD_LIBRARY_PATH: @LD_LIBRARY_PATH_COMPOSE@
+      EXAMPLE_DIR: @CONF_EXAMPLE_DIR_COMPOSE@
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROFILES_PREFIX_FILE_COMPOSE@/initial_peer_tcp_server.xml
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_receiver.bash"
+    depends_on:
+          - router2_pro
+
+  ###########################
+  # Router 2 (connected to TCP server)
+  # - [unplug, wan, local] Normal operation
+  ###########################
+  router2_pro:
+    build:
+        context: .
+        dockerfile: net-ip-tools.Dockerfile
+    image: ubuntu-net-ip-tools
+    cap_add: [ NET_ADMIN, NET_RAW ]
+    privileged: true
+    sysctls:
+      - net.ipv4.ip_forward=1
+    volumes:
+      @PROJECT_BINARY_VOLUME@
+    environment:
+      CLIENT_IP: 192.168.10.13
+      TCP_PORTS: "12345"
+      PEER_LAN_CIDR: 192.168.20.0/24
+      PEER_WAN_IP: 172.28.16.100
+      TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router.bash"
+    networks:
+      receiver_lan:
+        ipv4_address: 192.168.10.1
+      backbone_net:
+        ipv4_address: 172.28.16.200
+
+networks:
+  backbone_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.16.0/24
+          gateway: 172.28.16.1
+
+  sender_lan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.20.0/24
+          gateway: 192.168.20.254
+
+  receiver_lan:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.254

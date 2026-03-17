@@ -53,13 +53,6 @@ static bool operator == (
     return lhs == right_list;
 }
 
-static bool operator == (
-        const eprosima::fastdds::rtps::RemoteLocatorList& lhs,
-        const eprosima::fastdds::rtps::RemoteLocatorList& rhs)
-{
-    return lhs.multicast == rhs.multicast && lhs.unicast == rhs.unicast;
-}
-
 // -------------------- Adding external locators to ParticipantProxyData --------------------
 
 void single_participant_check(

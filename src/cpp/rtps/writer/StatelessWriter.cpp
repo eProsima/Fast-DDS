@@ -469,8 +469,8 @@ bool StatelessWriter::matched_reader_add_edp(
                 if (reader.remote_guid() == data.guid)
                 {
                     EPROSIMA_LOG_WARNING(RTPS_WRITER, "Attempting to add existing reader, updating information.");
-                    if (reader.update(data.remote_locators.unicast,
-                    data.remote_locators.multicast,
+                    if (reader.update(data.remote_locators.get_unicast(),
+                    data.remote_locators.get_multicast(),
                     data.expects_inline_qos))
                     {
                         filter_remote_locators(*reader.general_locator_selector_entry(),
@@ -533,8 +533,8 @@ bool StatelessWriter::matched_reader_add_edp(
 
     // Add info of new datareader.
     new_reader->start(data.guid,
-            data.remote_locators.unicast,
-            data.remote_locators.multicast,
+            data.remote_locators.get_unicast(),
+            data.remote_locators.get_multicast(),
             data.expects_inline_qos,
             is_datasharing_compatible_with(data.data_sharing));
     filter_remote_locators(*new_reader->general_locator_selector_entry(),
