@@ -20,9 +20,8 @@
             "_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
 // Variant for large-data (e.g. Data1mb) readers/writers used alongside a HelloWorld pair in the
-// same test.  Both types are bounded so DataWriterImpl maps them to PREALLOCATED_MEMORY_MODE;
-// TopicPayloadPoolRegistry then returns the same pool for identical topic names.  The HelloWorld
-// pool is created first with only 137-byte buffers, which are far too small for Data1mb payloads.
+// same test. Somehow, TopicPayloadPoolRegistry returns the same pool for identical topic names.
+// The HelloWorld pool is created first with only 137-byte buffers, which are too small for Data1mb payloads.
 // Using a distinct topic name avoids sharing that pool.
 #define TEST_LARGE_DATA_TOPIC_NAME (TEST_TOPIC_NAME + "_large")
 
