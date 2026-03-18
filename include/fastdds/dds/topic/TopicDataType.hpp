@@ -102,6 +102,7 @@ public:
      * will call the serialize method in which the topic data representation is not considered.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      *
+     * @param [in] context Context that can be used during serialization.
      * @param [in] data Pointer to the data
      * @param [out] payload Pointer to the payload
      * @param [in] data_representation Representation that should be used to encode the data into the payload.
@@ -131,6 +132,7 @@ public:
     /**
      * Deserialize method, it should be implemented by the user, since it is abstract.
      *
+     * @param [in] context Context that can be used during deserialization.
      * @param [in] payload Pointer to the payload
      * @param [out] data Pointer to the data
      * @return True if correct.
@@ -158,6 +160,7 @@ public:
     /*!
      * @brief Calculates the serialized size of the provided data.
      *
+     * @param [in] context Context that can be used during computation.
      * @param [in] data Pointer to data.
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Serialized size of the data.
@@ -181,6 +184,7 @@ public:
     /**
      * Create a Data Type.
      *
+     * @param context Context that can be used during creation.
      * @return Void pointer to the created object.
      */
     FASTDDS_EXPORTED_API virtual void* create_data(
@@ -201,6 +205,7 @@ public:
     /**
      * Remove a previously created object.
      *
+     * @param context Context that can be used during deletion.
      * @param data Pointer to the created Data.
      */
     FASTDDS_EXPORTED_API virtual void delete_data(
@@ -227,6 +232,7 @@ public:
     /**
      * Get the key associated with the data.
      *
+     * @param [in] context Context that can be used during computation.
      * @param [in] payload Pointer to the payload containing the data.
      * @param [out] ihandle Pointer to the Handle.
      * @param [in] force_md5 Force MD5 checking.
@@ -258,6 +264,7 @@ public:
     /**
      * Get the key associated with the data.
      *
+     * @param [in] context Context that can be used during computation.
      * @param [in] data Pointer to the data.
      * @param [out] ihandle Pointer to the Handle.
      * @param [in] force_md5 Force MD5 checking.
@@ -325,6 +332,8 @@ public:
 
     /**
      * Checks if the type is bounded.
+     *
+     * @param [in] context Context that can be used during check.
      */
     FASTDDS_EXPORTED_API virtual inline bool is_bounded(
             const std::shared_ptr<Context>& context) const
@@ -344,6 +353,9 @@ public:
 
     /**
      * Checks if the type is plain when using a specific encoding.
+     *
+     * @param [in] context Context that can be used during check.
+     * @param [in] representation Representation of the data.
      */
     FASTDDS_EXPORTED_API virtual inline bool is_plain(
             const std::shared_ptr<Context>& context,
@@ -370,6 +382,7 @@ public:
     /**
      * Construct a sample on a memory location.
      *
+     * @param [in] context Context that can be used during construction.
      * @param memory Pointer to the memory location where the sample should be constructed.
      *
      * @return whether this type supports in-place construction or not.
@@ -391,6 +404,7 @@ public:
 
     /**
      * @brief Register TypeObject type representation
+     * @param [in] context Context that can be used during registration.
      */
     FASTDDS_EXPORTED_API virtual inline void register_type_object_representation(
             const std::shared_ptr<Context>& context)
@@ -399,6 +413,12 @@ public:
         register_type_object_representation();
     }
 
+    /**
+     * @brief Get the maximum serialized size of the type.
+     *
+     * @param [in] context Context that can be used during computation.
+     * @return Maximum serialized size of the type in bytes.
+     */
     FASTDDS_EXPORTED_API virtual inline uint32_t get_max_serialized_size(
             const std::shared_ptr<Context>& context)
     {
