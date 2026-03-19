@@ -123,6 +123,17 @@ public:
         should_be_ignored = false;
     }
 
+
+    virtual bool should_endpoints_match(
+            const RTPSParticipant* participant,
+            const SubscriptionBuiltinTopicData& reader_info,
+            const PublicationBuiltinTopicData& writer_info)
+    {
+        static_cast<void>(participant);
+        static_cast<void>(reader_info);
+        static_cast<void>(writer_info);
+        return true;
+    }
 };
 
 } // namespace rtps
