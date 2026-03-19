@@ -84,6 +84,9 @@ public:
     typedef std::function<bool (
                         eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
                         const eprosima::fastdds::dds::PublicationBuiltinTopicData& info)> EndpointDiscoveryFunctor;
+    typedef std::function<bool (
+                        const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& reader_info,
+                        const eprosima::fastdds::dds::PublicationBuiltinTopicData& writer_info)> EndpointMatchingFunctor;
 
 protected:
 
@@ -139,6 +142,19 @@ protected:
                 reader_.discovery_result_ |= reader_.onEndpointDiscovery_(reason, info);
                 reader_.cvDiscovery_.notify_one();
             }
+        }
+
+        bool should_endpoints_match(
+                const eprosima::fastdds::dds::DomainParticipant*,
+                const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& reader_info,
+                const eprosima::fastdds::dds::PublicationBuiltinTopicData& writer_info) override
+        {
+            if (reader_.onEndpointMatching_ != nullptr)
+            {
+                return reader_.onEndpointMatching_(reader_info, writer_info);
+            }
+
+            return true;
         }
 
 #if HAVE_SECURITY
@@ -1799,6 +1815,12 @@ public:
         onEndpointDiscovery_ = f;
     }
 
+    void set_should_endpoints_match_function(
+            EndpointMatchingFunctor f)
+    {
+        onEndpointMatching_ = f;
+    }
+
     bool take_first_data(
             void* data)
     {
@@ -2270,6 +2292,7 @@ protected:
     std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
             eprosima::fastdds::rtps::ParticipantDiscoveryStatus status)> onDiscovery_;
     EndpointDiscoveryFunctor onEndpointDiscovery_;
+    EndpointMatchingFunctor onEndpointMatching_;
 
     //! True to take data from history. On False, read_ is checked.
     bool take_;
