@@ -18,12 +18,16 @@
                     <topics>
                         <topic>LatencyTest_*</topic>
                         <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
                     </topics>
                 </publish>
                 <subscribe>
                     <topics>
                         <topic>LatencyTest_*</topic>
                         <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
                     </topics>
                 </subscribe>
             </allow_rule>
@@ -46,12 +50,16 @@
                     <topics>
                         <topic>LatencyTest_*</topic>
                         <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
                     </topics>
                 </publish>
                 <subscribe>
                     <topics>
                         <topic>LatencyTest_*</topic>
                         <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
                     </topics>
                 </subscribe>
             </allow_rule>
