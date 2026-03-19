@@ -98,8 +98,9 @@ public:
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /**
-     * Serialize method, it should be implemented by the user, since it is abstract. If not implemented, this method
-     * will call the serialize method in which the topic data representation is not considered.
+     * Serialize method with context, it can be reimplemented by the user to perform
+     * custom serialization depending on the context received.
+     * The default implementation falls back to using the callback without context.
      * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
      *
      * @param [in] context Context that can be used during serialization.
@@ -130,7 +131,9 @@ public:
             void* data) = 0;
 
     /**
-     * Deserialize method, it should be implemented by the user, since it is abstract.
+     * Deserialize method with context, it can be reimplemented by the user to perform
+     * custom deserialization depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during deserialization.
      * @param [in] payload Pointer to the payload
@@ -158,7 +161,9 @@ public:
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) = 0;
 
     /*!
-     * @brief Calculates the serialized size of the provided data.
+     * @brief Calculates the serialized size of the provided data with context.
+     * It can be reimplemented by the user to perform custom calculations depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during computation.
      * @param [in] data Pointer to data.
@@ -182,7 +187,9 @@ public:
     FASTDDS_EXPORTED_API virtual void* create_data() = 0;
 
     /**
-     * Create a Data Type.
+     * Create a Data Type with context.
+     * It can be reimplemented by the user to perform custom creation depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param context Context that can be used during creation.
      * @return Void pointer to the created object.
@@ -203,7 +210,9 @@ public:
             void* data) = 0;
 
     /**
-     * Remove a previously created object.
+     * Remove a previously created object with context.
+     * It can be reimplemented by the user to perform custom deletion depending on the context received
+     * The default implementation falls back to using the callback without context.
      *
      * @param context Context that can be used during deletion.
      * @param data Pointer to the created Data.
@@ -230,7 +239,9 @@ public:
             bool force_md5 = false) = 0;
 
     /**
-     * Get the key associated with the data.
+     * Get the key associated with the data with context.
+     * It can be reimplemented by the user to perform custom key computation depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during computation.
      * @param [in] payload Pointer to the payload containing the data.
@@ -262,7 +273,9 @@ public:
             bool force_md5 = false) = 0;
 
     /**
-     * Get the key associated with the data.
+     * Get the key associated with the data with context.
+     * It can be reimplemented by the user to perform custom key computation depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during computation.
      * @param [in] data Pointer to the data.
@@ -331,7 +344,9 @@ public:
     }
 
     /**
-     * Checks if the type is bounded.
+     * Checks if the type is bounded with context.
+     * It can be reimplemented by the user to perform custom checks depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during check.
      */
@@ -352,7 +367,9 @@ public:
     }
 
     /**
-     * Checks if the type is plain when using a specific encoding.
+     * Checks if the type is plain when using a specific encoding and a context
+     * It can be reimplemented by the user to perform custom checks depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during check.
      * @param [in] representation Representation of the data.
@@ -380,7 +397,9 @@ public:
     }
 
     /**
-     * Construct a sample on a memory location.
+     * Construct a sample on a memory location using a context.
+     * It can be reimplemented by the user to perform custom construction depending on the context received.
+     * The default implementation falls back to using the callback without context.
      *
      * @param [in] context Context that can be used during construction.
      * @param memory Pointer to the memory location where the sample should be constructed.
@@ -404,6 +423,9 @@ public:
 
     /**
      * @brief Register TypeObject type representation
+     * It can be reimplemented by the user to perform custom registration depending on the context received.
+     * The default implementation falls back to using the callback without context.
+     *
      * @param [in] context Context that can be used during registration.
      */
     FASTDDS_EXPORTED_API virtual inline void register_type_object_representation(
@@ -414,7 +436,9 @@ public:
     }
 
     /**
-     * @brief Get the maximum serialized size of the type.
+     * @brief Get the maximum serialized size of the type using a context
+     * It can be reimplemented by the user to perform custom calculations depending on the context received.
+     * The default implementation just returns the maximum serialized size without using the context.
      *
      * @param [in] context Context that can be used during computation.
      * @return Maximum serialized size of the type in bytes.

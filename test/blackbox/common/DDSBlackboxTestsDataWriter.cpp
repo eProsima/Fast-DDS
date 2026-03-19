@@ -2096,9 +2096,9 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
         }
 
         bool deserialize(
-            const std::shared_ptr<TopicDataType::Context>& ctx,
-            eprosima::fastdds::rtps::SerializedPayload_t& payload,
-            void* data) override
+                const std::shared_ptr<TopicDataType::Context>& ctx,
+                eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                void* data) override
         {
             if (auto tracking = std::dynamic_pointer_cast<CallCountingContext>(ctx))
             {
