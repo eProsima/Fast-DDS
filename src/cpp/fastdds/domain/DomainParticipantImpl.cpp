@@ -2175,7 +2175,7 @@ bool DomainParticipantImpl::MyRTPSParticipantListener::should_endpoints_match(
         }
     }
 
-    return false;
+    return true;
 }
 
 bool DomainParticipantImpl::new_remote_endpoint_discovered(

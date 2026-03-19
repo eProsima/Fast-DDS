@@ -1107,8 +1107,16 @@ bool EDP::user_valid_matching(
         const ReaderProxyData& rdata,
         const WriterProxyData& wdata) const
 {
-    return this->mp_PDP->getRTPSParticipant()->getListener()->should_endpoints_match(
-        this->mp_PDP->getRTPSParticipant()->getUserRTPSParticipant(), rdata, wdata);
+    auto* participant = this->mp_PDP->getRTPSParticipant();
+    auto* listener = participant->getListener();
+
+    if (nullptr == listener)
+    {
+        return true;
+    }
+
+    return listener->should_endpoints_match(
+        participant->getUserRTPSParticipant(), rdata, wdata);
 }
 
 //TODO This four functions share common code (2 to 2) and surely can be templatized.
