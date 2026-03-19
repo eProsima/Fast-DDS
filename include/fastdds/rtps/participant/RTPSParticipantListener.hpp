@@ -123,7 +123,6 @@ public:
         should_be_ignored = false;
     }
 
-
     /**
      * This method is called to check whether a discovered DataReader and DataWriter should be matched or not.
      * By default, they will match, but the user can override this method to implement custom matching logic.
@@ -143,6 +142,7 @@ public:
         static_cast<void>(writer_info);
         return true;
     }
+
 };
 
 } // namespace rtps

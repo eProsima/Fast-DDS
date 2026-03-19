@@ -493,7 +493,7 @@ TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysTrue)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.set_should_endpoints_match_function(
         [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
-            const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
         {
             ++writer_calls;
             return true;
@@ -502,7 +502,7 @@ TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysTrue)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     reader.set_should_endpoints_match_function(
         [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
-            const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
         {
             ++reader_calls;
             return true;
@@ -533,7 +533,7 @@ TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysFalse)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.set_should_endpoints_match_function(
         [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
-            const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
         {
             ++writer_calls;
             return false;
@@ -542,7 +542,7 @@ TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysFalse)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     reader.set_should_endpoints_match_function(
         [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
-            const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
         {
             ++reader_calls;
             return false;

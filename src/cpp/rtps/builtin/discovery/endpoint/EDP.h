@@ -410,8 +410,8 @@ private:
      * @param rdata Ref to the ReaderProxyData
      */
     bool user_valid_matching(
-        const ReaderProxyData& rdata,
-        const WriterProxyData& wdata) const;
+            const ReaderProxyData& rdata,
+            const WriterProxyData& wdata) const;
 };
 
 } // namespace rtps

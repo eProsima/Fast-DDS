@@ -2161,9 +2161,9 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
 }
 
 bool DomainParticipantImpl::MyRTPSParticipantListener::should_endpoints_match(
-                const RTPSParticipant*,
-                const SubscriptionBuiltinTopicData& reader_info,
-                const PublicationBuiltinTopicData& writer_info)
+        const RTPSParticipant*,
+        const SubscriptionBuiltinTopicData& reader_info,
+        const PublicationBuiltinTopicData& writer_info)
 {
     Sentry sentinel(this);
     if (sentinel)
