@@ -2079,8 +2079,6 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
     public:
 
         using HelloWorldPubSubType::HelloWorldPubSubType;
-        using HelloWorldPubSubType::serialize_ctx;
-        using HelloWorldPubSubType::deserialize_ctx;
 
         bool serialize_ctx(
                 const std::shared_ptr<TopicDataType::Context>& ctx,

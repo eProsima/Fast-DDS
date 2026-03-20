@@ -261,7 +261,8 @@ ReturnCode_t DataWriterImpl::enable()
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
-            (type_->is_bounded_ctx(type_support_context_) || type_->is_plain_ctx(type_support_context_, data_representation_)))
+            (type_->is_bounded_ctx(type_support_context_) ||
+            type_->is_plain_ctx(type_support_context_, data_representation_)))
     {
         pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
     }

@@ -2836,6 +2836,12 @@ TEST(DataWriterTests, set_type_support_context)
     // Writer is enabled: must return RETCODE_ILLEGAL_OPERATION
     EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, datawriter->set_type_support_context(ctx));
     EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, datawriter->set_type_support_context(nullptr));
+
+    // Tear down
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
 } // namespace dds
