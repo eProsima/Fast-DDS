@@ -2079,10 +2079,10 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
     public:
 
         using HelloWorldPubSubType::HelloWorldPubSubType;
-        using HelloWorldPubSubType::serialize;
-        using HelloWorldPubSubType::deserialize;
+        using HelloWorldPubSubType::serialize_ctx;
+        using HelloWorldPubSubType::deserialize_ctx;
 
-        bool serialize(
+        bool serialize_ctx(
                 const std::shared_ptr<TopicDataType::Context>& ctx,
                 const void* const data,
                 SerializedPayload_t& payload,
@@ -2095,7 +2095,7 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
             return HelloWorldPubSubType::serialize(data, payload, data_representation);
         }
 
-        bool deserialize(
+        bool deserialize_ctx(
                 const std::shared_ptr<TopicDataType::Context>& ctx,
                 eprosima::fastdds::rtps::SerializedPayload_t& payload,
                 void* data) override

@@ -109,7 +109,7 @@ public:
      * @param [in] data_representation Representation that should be used to encode the data into the payload.
      * @return True if correct.
      */
-    FASTDDS_EXPORTED_API virtual bool serialize(
+    FASTDDS_EXPORTED_API virtual bool serialize_ctx(
             const std::shared_ptr<Context>& context,
             const void* const data,
             rtps::SerializedPayload_t& payload,
@@ -140,7 +140,7 @@ public:
      * @param [out] data Pointer to the data
      * @return True if correct.
      */
-    FASTDDS_EXPORTED_API virtual bool deserialize(
+    FASTDDS_EXPORTED_API virtual bool deserialize_ctx(
             const std::shared_ptr<Context>& context,
             rtps::SerializedPayload_t& payload,
             void* data)
@@ -170,7 +170,7 @@ public:
      * @param [in] data_representation Representation that should be used for calculating the serialized size.
      * @return Serialized size of the data.
      */
-    FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size(
+    FASTDDS_EXPORTED_API virtual uint32_t calculate_serialized_size_ctx(
             const std::shared_ptr<Context>& context,
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation)
@@ -194,7 +194,7 @@ public:
      * @param context Context that can be used during creation.
      * @return Void pointer to the created object.
      */
-    FASTDDS_EXPORTED_API virtual void* create_data(
+    FASTDDS_EXPORTED_API virtual void* create_data_ctx(
             const std::shared_ptr<Context>& context)
     {
         static_cast<void>(context);
@@ -217,7 +217,7 @@ public:
      * @param context Context that can be used during deletion.
      * @param data Pointer to the created Data.
      */
-    FASTDDS_EXPORTED_API virtual void delete_data(
+    FASTDDS_EXPORTED_API virtual void delete_data_ctx(
             const std::shared_ptr<Context>& context,
             void* data)
     {
@@ -249,7 +249,7 @@ public:
      * @param [in] force_md5 Force MD5 checking.
      * @return True if correct.
      */
-    FASTDDS_EXPORTED_API virtual bool compute_key(
+    FASTDDS_EXPORTED_API virtual bool compute_key_ctx(
             const std::shared_ptr<Context>& context,
             rtps::SerializedPayload_t& payload,
             rtps::InstanceHandle_t& ihandle,
@@ -283,7 +283,7 @@ public:
      * @param [in] force_md5 Force MD5 checking.
      * @return True if correct.
      */
-    FASTDDS_EXPORTED_API virtual bool compute_key(
+    FASTDDS_EXPORTED_API virtual bool compute_key_ctx(
             const std::shared_ptr<Context>& context,
             const void* const data,
             rtps::InstanceHandle_t& ihandle,
@@ -350,7 +350,7 @@ public:
      *
      * @param [in] context Context that can be used during check.
      */
-    FASTDDS_EXPORTED_API virtual inline bool is_bounded(
+    FASTDDS_EXPORTED_API virtual inline bool is_bounded_ctx(
             const std::shared_ptr<Context>& context) const
     {
         static_cast<void>(context);
@@ -374,7 +374,7 @@ public:
      * @param [in] context Context that can be used during check.
      * @param [in] representation Representation of the data.
      */
-    FASTDDS_EXPORTED_API virtual inline bool is_plain(
+    FASTDDS_EXPORTED_API virtual inline bool is_plain_ctx(
             const std::shared_ptr<Context>& context,
             DataRepresentationId_t representation) const
     {
@@ -406,7 +406,7 @@ public:
      *
      * @return whether this type supports in-place construction or not.
      */
-    FASTDDS_EXPORTED_API virtual inline bool construct_sample(
+    FASTDDS_EXPORTED_API virtual inline bool construct_sample_ctx(
             const std::shared_ptr<Context>& context,
             void* memory) const
     {
@@ -428,7 +428,7 @@ public:
      *
      * @param [in] context Context that can be used during registration.
      */
-    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation(
+    FASTDDS_EXPORTED_API virtual inline void register_type_object_representation_ctx(
             const std::shared_ptr<Context>& context)
     {
         static_cast<void>(context);
@@ -443,7 +443,7 @@ public:
      * @param [in] context Context that can be used during computation.
      * @return Maximum serialized size of the type in bytes.
      */
-    FASTDDS_EXPORTED_API virtual inline uint32_t get_max_serialized_size(
+    FASTDDS_EXPORTED_API virtual inline uint32_t get_max_serialized_size_ctx(
             const std::shared_ptr<Context>& context)
     {
         static_cast<void>(context);
