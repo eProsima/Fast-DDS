@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <profiles>
+
+        <!-- NOTATION ON PROFILE NAMES:
+               tl means transient local, vo means volatile
+               be means best effort, re means reliable
+        -->
+
+        <!-- Participant profile. Just sets name, domain and allocation QoS -->
+        <participant profile_name="test_participant_profile" is_default_profile="true">
+            <domainId>231</domainId>
+            <rtps>
+                <allocation>
+                    <!-- As tests are performed in localhost, only one locator should be necessary -->
+                    <remote_locators>
+                        <max_unicast_locators>1</max_unicast_locators>
+                        <max_multicast_locators>1</max_multicast_locators>
+                    </remote_locators>
+                    <!-- Only two participants in our system (1 local, 1 remote) -->
+                    <total_participants>
+                        <initial>2</initial>
+                        <maximum>2</maximum>
+                        <increment>0</increment>
+                    </total_participants>
+                    <!-- Only one reader in our system -->
+                    <total_readers>
+                        <initial>1</initial>
+                        <maximum>1</maximum>
+                        <increment>0</increment>
+                    </total_readers>
+                    <!-- Only one writer in our system -->
+                    <total_writers>
+                        <initial>1</initial>
+                        <maximum>1</maximum>
+                        <increment>0</increment>
+                    </total_writers>
+                </allocation>
+                <name>test_alloc_participant</name>
+                <builtin>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>80</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>0</count>
+                        </initialAnnouncements>
+                    </discovery_config>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <!-- __________________________ [PUBLISHERS] ___________________________ -->
+
+        <data_writer profile_name="test_publisher_profile_tl_be" is_default_profile="true">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+            <matchedSubscribersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedSubscribersAllocation>
+        </data_writer>
+
+        <data_writer profile_name="test_publisher_profile_tl_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <matchedSubscribersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedSubscribersAllocation>
+        </data_writer>
+
+        <data_writer profile_name="test_publisher_profile_vo_be">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+            <matchedSubscribersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedSubscribersAllocation>
+        </data_writer>
+
+        <data_writer profile_name="test_publisher_profile_vo_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <matchedSubscribersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedSubscribersAllocation>
+        </data_writer>
+
+        <!-- _____________________________ [SUBSCRIBERS] ______________________________ -->
+
+        <data_reader profile_name="test_subscriber_profile_tl_be" is_default_profile="true">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
+        </data_reader>
+
+        <data_reader profile_name="test_subscriber_profile_tl_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
+        </data_reader>
+
+        <data_reader profile_name="test_subscriber_profile_vo_be">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
+        </data_reader>
+
+        <data_reader profile_name="test_subscriber_profile_vo_re">
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>20</max_samples>
+                    <allocated_samples>20</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <matchedPublishersAllocation>
+                <initial>1</initial>
+                <maximum>1</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
+        </data_reader>
+
+    </profiles>
+</dds>

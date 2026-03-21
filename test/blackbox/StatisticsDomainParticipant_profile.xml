@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>          
+        <participant profile_name="statistics_participant" is_default_profile="true">
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <property>
+                            <name>fastdds.statistics</name>
+                            <value>SUBSCRIPTION_THROUGHPUT_TOPIC;NACKFRAG_COUNT_TOPIC;SAMPLE_DATAS_TOPIC;DATA_COUNT_TOPIC</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>

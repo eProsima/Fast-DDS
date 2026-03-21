@@ -1,0 +1,25 @@
+name: Fast DDS Windows CI (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *' # At 22:00 GMT
+
+jobs:
+  nightly-windows-ci-master:
+    name: nightly-windows-ci-master (${{ matrix.cmake_build_type }}, SEC=${{ matrix.security }})
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake_build_type:
+          - 'RelWithDebInfo'
+          - 'Debug'
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@master
+    with:
+      label: nightly-sec-${{ matrix.security }}-${{ matrix.cmake_build_type }}-${{ matrix.test_filter }}-windows-ci-master
+      cmake-config: ${{ matrix.cmake_build_type }}
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      fastdds_branch: 'master'

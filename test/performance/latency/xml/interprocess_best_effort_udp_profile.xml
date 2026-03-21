@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+	<profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>udp_transport</transport_id>
+                <type>UDPv4</type>
+                <interfaceWhiteList>
+                    <address>127.0.0.1</address>
+                </interfaceWhiteList>
+            </transport_descriptor>
+        </transport_descriptors>
+        <!-- PUBLISHER -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <name>latency_test_publisher</name>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+        <data_writer profile_name="pub_publisher_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="pub_subscriber_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+           </qos>
+        </data_reader>
+
+        <!-- SUBSCRIBER -->
+        <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <name>latency_test_subscriber</name>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+        <data_writer profile_name="sub_publisher_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+          </qos>
+        </data_writer>
+        <data_reader profile_name="sub_subscriber_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

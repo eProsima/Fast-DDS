@@ -1,0 +1,45 @@
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+services:
+  subscriber:
+    container_name: subscriber-${CONTAINER_SUFFIX_COMPOSE}
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/configuration/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/configuration/configuration_profile.xml
+      SUB_ADDITIONAL_ARGS_COMPOSE: ${SUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/configuration@FILE_EXTENSION@ subscriber --samples 10 @SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
+
+  publisher-subscriber:
+    container_name: publisher-subscriber-${CONTAINER_SUFFIX_COMPOSE}
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/configuration/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/configuration/configuration_profile.xml
+      PUB_ADDITIONAL_ARGS_COMPOSE: ${PUB_ARGS}
+      SUB_ADDITIONAL_ARGS_COMPOSE: ${SUB_ARGS}
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/configuration@FILE_EXTENSION@ subscriber --samples 10 @SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@ @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/configuration@FILE_EXTENSION@ publisher --samples 10 --wait 2 @PUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@@COMMAND_BACKGROUND_JOB_COMPOSE@"

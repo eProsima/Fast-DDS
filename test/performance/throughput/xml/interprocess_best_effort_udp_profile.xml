@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>udp_transport</transport_id>
+                <type>UDPv4</type>
+                <interfaceWhiteList>
+                    <address>127.0.0.1</address>
+                </interfaceWhiteList>
+            </transport_descriptor>
+        </transport_descriptors>
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>222</domainId>
+            <rtps>
+                <name>throughput_test_publisher</name>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <domainId>222</domainId>
+            <rtps>
+                <name>throughput_test_subscriber</name>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+
+        <!-- PUBLISHER -->
+        <data_writer profile_name="publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+
+        <!-- SUBSCRIBER -->
+        <data_reader profile_name="subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

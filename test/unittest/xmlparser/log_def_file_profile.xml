@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <log>
+        <use_default>TRUE</use_default>
+        <consumer>
+            <class>FileConsumer</class>
+        </consumer>
+        <thread_settings>
+            <scheduling_policy>-1</scheduling_policy>
+            <priority>0</priority>
+            <affinity>0</affinity>
+            <stack_size>-1</stack_size>
+        </thread_settings>
+    </log>
+</dds>

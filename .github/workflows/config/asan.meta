@@ -1,0 +1,16 @@
+names:
+    fastdds:
+        cmake-args:
+            - "-DNO_TLS=OFF"
+            - "-DSECURITY=ON"
+            - "-DFASTDDS_STATISTICS=ON"
+            - "-DSANITIZER=Address"
+            - "-DCMAKE_CXX_FLAGS_INIT='-Werror'"
+    discovery-server:
+        cmake-args:
+            - "-DSANITIZER=Address"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"

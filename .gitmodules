@@ -1,0 +1,15 @@
+[submodule "thirdparty/android-ifaddrs"]
+	path = thirdparty/android-ifaddrs
+	url = https://github.com/michalsrb/android-ifaddrs.git
+[submodule "thirdparty/asio"]
+	path = thirdparty/asio
+	url = https://github.com/chriskohlhoff/asio.git
+[submodule "thirdparty/fastcdr"]
+	path = thirdparty/fastcdr
+	url = https://github.com/eProsima/Fast-CDR.git
+[submodule "thirdparty/tinyxml2"]
+	path = thirdparty/tinyxml2
+	url = https://github.com/leethomason/tinyxml2.git
+[submodule "thirdparty/dds-types-test"]
+	path = thirdparty/dds-types-test
+	url = https://github.com/eProsima/dds-types-test

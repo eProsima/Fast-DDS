@@ -1,0 +1,14 @@
+bitset ColorBitset
+{
+    bitfield<3> red;
+    bitfield<1> green;
+    bitfield<4>;
+    bitfield<10> blue;
+    bitfield<12, short> yellow;
+};
+
+@extensibility(APPENDABLE)
+struct BitsetStruct
+{
+    ColorBitset my_bitset;
+};

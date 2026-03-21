@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>222</domainId>
+            <rtps>
+                <builtin>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>180</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>2</count>
+                        </initialAnnouncements>
+                    </discovery_config>
+                </builtin>
+                <name>throughput_test_publisher</name>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <domainId>222</domainId>
+            <rtps>
+                <builtin>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_DIFFERENT_PROCESS | FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+                        <leaseAnnouncement>
+                            <sec>180</sec>
+                        </leaseAnnouncement>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                        <initialAnnouncements>
+                            <count>2</count>
+                        </initialAnnouncements>
+                    </discovery_config>
+                </builtin>
+                <name>throughput_test_subscriber</name>
+            </rtps>
+        </participant>
+
+        <!-- PUBLISHER -->
+        <data_writer profile_name="publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+
+        <!-- SUBSCRIBER -->
+        <data_reader profile_name="subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+
+    </profiles>
+
+    <!-- INTRA-PROCESS -->
+    <library_settings>
+        <intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>
+    </library_settings>
+</dds>

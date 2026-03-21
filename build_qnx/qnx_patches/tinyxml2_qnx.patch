@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ff45bb8..30183a2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -58,9 +58,14 @@ set_target_properties(tinyxml2 PROPERTIES
+ 
+ 
+ if(DEFINED CMAKE_VERSION AND NOT "${CMAKE_VERSION}" VERSION_LESS "2.8.11")
+-    target_include_directories(tinyxml2 PUBLIC 
+-                          $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+-                          $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
++    if(QNX)
++      target_include_directories(tinyxml2 PUBLIC 
++                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>)
++    else()
++      target_include_directories(tinyxml2 PUBLIC 
++                            $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
++                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>)
++    endif()
+ 
+     if(MSVC)
+       target_compile_definitions(tinyxml2 PUBLIC -D_CRT_SECURE_NO_WARNINGS)

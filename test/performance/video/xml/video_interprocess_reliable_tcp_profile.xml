@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <!-- TRANSPORT -->
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>video_publisher_tcp_transport</transport_id>
+                <type>TCPv4</type>
+                <keep_alive_frequency_ms>1000</keep_alive_frequency_ms>
+                <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
+                <calculate_crc>false</calculate_crc>
+                <check_crc>false</check_crc>
+                <enable_tcp_nodelay>true</enable_tcp_nodelay>
+                <listening_ports>
+                        <port>7400</port>
+                </listening_ports>
+            </transport_descriptor>
+
+            <transport_descriptor>
+                <transport_id>video_subscriber_tcp_transport</transport_id>
+                <type>TCPv4</type>
+                <keep_alive_frequency_ms>1000</keep_alive_frequency_ms>
+                <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
+                <calculate_crc>false</calculate_crc>
+                <check_crc>false</check_crc>
+                <enable_tcp_nodelay>true</enable_tcp_nodelay>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>229</domainId>
+            <rtps>
+                <userTransports>
+                    <transport_id>video_publisher_tcp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <name>video_test_publisher</name>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <domainId>229</domainId>
+            <rtps>
+                <builtin>
+                    <initialPeersList>
+                        <locator>
+                            <tcpv4>
+                                <address>127.0.0.1</address>
+                                <physical_port>7400</physical_port>
+                            </tcpv4>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <userTransports>
+                    <transport_id>video_subscriber_tcp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <name>video_test_subscriber</name>
+            </rtps>
+        </participant>
+
+        <!-- PUBLISHER -->
+        <data_writer profile_name="publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                    <max_blocking_time>
+                        <sec>1</sec>
+                        <nanosec>0</nanosec>
+                    </max_blocking_time>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <publishMode>
+                    <kind>ASYNCHRONOUS</kind>
+                </publishMode>
+            </qos>
+            <times>
+                <heartbeat_period>
+                    <sec>0</sec>
+                    <nanosec>100000000</nanosec>
+                </heartbeat_period>
+            </times>
+            <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
+        </data_writer>
+
+        <!-- SUBSCRIBER -->
+        <data_reader profile_name="subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
+        </data_reader>
+    </profiles>
+</dds>

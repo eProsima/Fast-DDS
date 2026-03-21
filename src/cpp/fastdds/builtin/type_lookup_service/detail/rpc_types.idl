@@ -1,0 +1,79 @@
+//This directive is not supported yet.
+//#ifdef BASIC
+
+module dds {
+
+//This directive is not supported yet.
+//#ifdef REDEFINE_DDS_TYPES
+
+  // The following DDS related types are
+  // borrowed from the RTPS v1.2 specification
+  typedef octet GuidPrefix_t[12];
+
+  @final @nested
+  struct EntityId_t
+  {
+    octet entityKey[3];
+    octet entityKind;
+  };
+
+  @final @nested
+  struct GUID_t
+  {
+    GuidPrefix_t guidPrefix;
+    EntityId_t entityId;
+  };
+
+  @final @nested
+  struct SequenceNumber_t
+  {
+    long high;
+    unsigned long low;
+  };
+
+//#endif // REDEFINE_DDS_TYPES
+
+@final @nested
+struct SampleIdentity
+{
+  GUID_t           writer_guid;
+  SequenceNumber_t sequence_number;
+};
+
+module rpc {
+
+typedef octet UnknownOperation;
+typedef octet UnknownException;
+typedef octet UnusedMember;
+
+enum RemoteExceptionCode_t
+{
+    REMOTE_EX_OK,
+    REMOTE_EX_UNSUPPORTED,
+    REMOTE_EX_INVALID_ARGUMENT,
+    REMOTE_EX_OUT_OF_RESOURCES,
+    REMOTE_EX_UNKNOWN_OPERATION,
+    REMOTE_EX_UNKNOWN_EXCEPTION
+};
+
+typedef string<255> InstanceName;
+
+@final @nested
+struct RequestHeader
+{
+    dds::SampleIdentity  requestId;
+    InstanceName         instanceName;
+};
+
+@final @nested
+struct ReplyHeader
+{
+    dds::SampleIdentity             relatedRequestId;
+    dds::rpc::RemoteExceptionCode_t remoteEx;
+};
+
+}; // module rpc
+
+}; // module dds
+
+//#endif // BASIC

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <types>
+        <type>
+            <enum name="my_alone_enum">
+                <enumerator name="A" value="0"/>
+                <enumerator name="B" value="1"/>
+                <enumerator name="C" value="2"/>
+            </enum>
+        </type>
+        <type>
+            <enum name="my_enum_inner">
+                <enumerator name="A" value="0"/>
+                <enumerator name="B" value="1"/>
+                <enumerator name="C" value="2"/>
+            </enum>
+
+            <typedef name="my_enum" type="nonBasic" nonBasicTypeName="my_enum_inner"/>
+        </type>
+
+        <type>
+            <typedef name="my_sequence_inner" type="int32" sequenceMaxLength="2"/>
+            <struct name="SeqSeqStruct">
+                <member name="my_sequence_sequence" type="nonBasic" nonBasicTypeName="my_sequence_inner" sequenceMaxLength="3"/>
+            </struct>
+
+            <typedef name="my_map_inner" type="int32" key_type="int32" mapMaxLength="2"/>
+            <struct name="MapMapStruct">
+                <member name="my_map_map" type="nonBasic" nonBasicTypeName="my_map_inner" key_type="int32" mapMaxLength="2"/>
+            </struct>
+
+            <typedef name="my_array_inner" type="int32" arrayDimensions="2,2"/>
+            <struct name="my_array">
+                <member name="long_array" type="int32" arrayDimensions="2,3,4"/>
+            </struct>
+
+            <struct name="my_struct">
+                <member name="first" type="int32"/>
+                <member name="second" type="int64"/>
+            </struct>
+
+            <struct name="other_struct">
+                <member name="my_enum" type="nonBasic" nonBasicTypeName="my_alone_enum"/>
+                <member name="my_struct" type="nonBasic" nonBasicTypeName="my_struct" arrayDimensions="5"/>
+            </struct>
+
+            <!-- All possible members struct type -->
+            <struct name="my_full_struct">
+                <!-- Primitives & basic -->
+                <member name="my_bool" type="bool"/>
+                <member name="my_boolean" type="boolean"/>
+                <member name="my_char" type="char"/>
+                <member name="my_char8" type="char8"/>
+                <member name="my_wchar" type="wchar"/>
+                <member name="my_char16" type="char16"/>
+                <member name="my_byte" type="byte"/>
+                <member name="my_octet" type="octet"/>
+                <member name="my_int8" type="int8"/>
+                <member name="my_uint8" type="uint8"/>
+                <member name="my_short" type="short"/>
+                <member name="my_uShort" type="uShort"/>
+                <member name="my_int16" type="int16"/>
+                <member name="my_uint16" type="uint16"/>
+                <member name="my_long" type="long"/>
+                <member name="my_uLong" type="uLong"/>
+                <member name="my_int32" type="int32"/>
+                <member name="my_uint32" type="uint32"/>
+                <member name="my_longLong" type="longLong"/>
+                <member name="my_uLongLong" type="uLongLong"/>
+                <member name="my_int64" type="int64"/>
+                <member name="my_uint64" type="uint64"/>
+                <member name="my_float32" type="float32"/>
+                <member name="my_float64" type="float64"/>
+                <member name="my_float128" type="float128"/>
+                <member name="my_string" type="string"/>
+                <member name="my_wstring" type="wstring"/>
+                <member name="nonBasic Type" type="nonBasic"/>
+
+                <!-- long long_array[2][3][4]; -->
+                <member name="long_array" arrayDimensions="2,3,4" type="int32"/>
+
+                <!-- map<long,map<long,long,2>,2> my_map_map; -->
+                <member name="my_map_map" type="nonBasic" nonBasicTypeName="my_map_inner" key_type="int32" mapMaxLength="2"/>
+
+                <!-- Complex types -->
+                <member name="my_other_struct" type="nonBasic" nonBasicTypeName="other_struct"/>
+            </struct>
+        </type>
+
+        <type>
+            <struct name="my_keyed_struct">
+                <member name="first" type="int32"/>
+                <member name="second" type="int64"/>
+                <member name="third" type="int32" key="true"/>
+            </struct>
+        </type>
+
+        <type>
+            <bitset name="my_bitset_inner">
+                <bitfield bit_bound="10" name="a" type="int16"/>
+                <bitfield bit_bound="11" name="b"/>
+                <bitfield bit_bound="12"/>
+            </bitset>
+
+            <bitset name="my_bitset" baseType="my_bitset_inner">
+                <bitfield bit_bound="13" name="d" type="int32"/>
+                <bitfield bit_bound="14" name="e"/>
+                <bitfield bit_bound="15"/>
+            </bitset>
+
+            <bitmask name="my_bitmask" bit_bound="8">
+                <bit_value name="flag0" position="0"/>
+                <bit_value name="flag1"/>
+            </bitmask>
+
+            <union name="my_union">
+                <discriminator type="byte"/>
+                <case>
+                    <caseDiscriminator value="0"/>
+                    <caseDiscriminator value="1"/>
+                    <member name="first" type="int32"/>
+                </case>
+                <case>
+                    <caseDiscriminator value="2"/>
+                    <member name="second" type="nonBasic" nonBasicTypeName="my_struct"/>
+                </case>
+                <case>
+                    <caseDiscriminator value="default"/>
+                    <member name="third" type="uint16"/>
+                </case>
+            </union>
+        </type>
+    </types>
+</dds>

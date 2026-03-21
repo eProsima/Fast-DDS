@@ -1,0 +1,7 @@
+openssl ecparam -name prime256v1 > ecdsaparam
+
+openssl req -new -newkey ec:ecdsaparam -config pwdpub.cnf -keyout pwdpubkey.pem -out pwdpubreq.pem
+
+# password = "testkey"
+
+openssl ca -batch -create_serial -config maincaconf.cnf -days 3650 -in pwdpubreq.pem -out pwdpubcert.pem

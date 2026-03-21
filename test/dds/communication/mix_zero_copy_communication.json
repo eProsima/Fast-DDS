@@ -1,0 +1,27 @@
+{
+    "description" : "Simple test to communicate a publisher and a subscriber with default values",
+    "participants" : [
+        {
+            "kind" : "subscriber",
+            "xmlfile" : "simple_reliable_zerocopy_profile.xml",
+            "zero_copy" : true,
+            "publishers" : "2"
+        },
+        {
+            "kind" : "publisher",
+            "xmlfile" : "simple_reliable_profile.xml",
+            "fixed_type" : true
+        },
+        {
+            "kind" : "subscriber",
+            "xmlfile" : "simple_reliable_profile.xml",
+            "fixed_type" : true,
+            "publishers" : "2"
+        },
+        {
+            "kind" : "publisher",
+            "xmlfile" : "simple_reliable_zerocopy_profile.xml",
+            "zero_copy" : true
+        }
+    ]
+}
