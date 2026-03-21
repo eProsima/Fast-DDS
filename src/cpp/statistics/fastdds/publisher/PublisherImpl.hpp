@@ -1,0 +1,81 @@
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file PublisherImpl.hpp
+ */
+
+#ifndef _STATISTICS_FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP_
+#define _STATISTICS_FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP_
+
+#include <fastdds/statistics/IListeners.hpp>
+
+#include <fastdds/publisher/PublisherImpl.hpp>
+#include <statistics/fastdds/publisher/DataWriterImpl.hpp>
+
+namespace eprosima {
+namespace fastdds {
+namespace statistics {
+namespace dds {
+
+namespace efd = eprosima::fastdds::dds;
+
+class PublisherImpl : public efd::PublisherImpl
+{
+    using BaseType = efd::PublisherImpl;
+
+public:
+
+    virtual ~PublisherImpl() = default;
+
+    PublisherImpl(
+            efd::DomainParticipantImpl* p,
+            const efd::PublisherQos& qos,
+            efd::PublisherListener* p_listen,
+            const std::shared_ptr<IListener>& stat_listener)
+        : BaseType(p, qos, p_listen)
+        , statistics_listener_(stat_listener)
+    {
+    }
+
+    efd::DataWriterImpl* create_datawriter_impl(
+            const efd::TypeSupport& type,
+            efd::Topic* topic,
+            const efd::DataWriterQos& qos,
+            const eprosima::fastdds::rtps::EntityId_t& entity_id)
+    {
+        return new DataWriterImpl(this, type, topic, qos, entity_id);
+    }
+
+    efd::DataWriterImpl* create_datawriter_impl(
+            const efd::TypeSupport& type,
+            efd::Topic* topic,
+            const efd::DataWriterQos& qos,
+            efd::DataWriterListener* listener,
+            std::shared_ptr<fastdds::rtps::IPayloadPool> payload_pool) override
+    {
+        return new DataWriterImpl(this, type, topic, qos, listener, payload_pool, statistics_listener_);
+    }
+
+private:
+
+    std::shared_ptr<IListener> statistics_listener_;
+};
+
+} // dds
+} // statistics
+} // fastdds
+} // eprosima
+
+#endif  // _STATISTICS_FASTDDS_PUBLISHER_PUBLISHERIMPL_HPP_

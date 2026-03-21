@@ -1,0 +1,3 @@
+openssl ecparam -name prime256v1 > ecdsaparam
+
+openssl req -nodes -x509 -days 3650 -newkey ec:ecdsaparam -keyout othercakey.pem -out othercacert.pem -config othercaconf.cnf

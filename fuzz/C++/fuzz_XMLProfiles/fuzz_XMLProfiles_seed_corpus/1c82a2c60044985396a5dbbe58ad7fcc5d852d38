@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <profiles>
+        <participant profile_name="participant_profile">
+            <domainId>80</domainId>
+            <rtps>
+                <builtin>
+                    <discovery_config>
+                        <leaseDuration>
+                            <sec>DURATION_INFINITY</sec>
+                        </leaseDuration>
+                    </discovery_config>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <publisher profile_name="publisher_profile">
+            <topic>
+                <name>xml_profiles_topic</name>
+                <dataType>XMLProfilesExample</dataType>
+                <kind>NO_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+        </publisher>
+
+        <subscriber profile_name="subscriber_profile">
+            <topic>
+                <name>xml_profiles_topic</name>
+                <dataType>XMLProfilesExample</dataType>
+                <kind>NO_KEY</kind>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+        </subscriber>
+
+    </profiles>
+</dds>

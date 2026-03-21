@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>Test</transport_id>
+                <type>UDPv4</type>
+                <sendBufferSize>8192</sendBufferSize>
+                <receiveBufferSize>8192</receiveBufferSize>
+                <TTL>250</TTL>
+                <non_blocking_send>true</non_blocking_send>
+                <maxMessageSize>16384</maxMessageSize>
+                <maxInitialPeersRange>100</maxInitialPeersRange>
+                <interfaceWhiteList>
+                    <address>192.168.1.41</address>
+                    <interface>lo</interface>
+                </interfaceWhiteList>
+                <netmask_filter>ON</netmask_filter>
+                <interfaces>
+                    <allowlist>
+                        <interface name="wlp59s0" netmask_filter="ON"/>
+                        <interface name="127.0.0.1" netmask_filter="AUTO"/>
+                    </allowlist>
+                    <blocklist>
+                        <interface name="docker0"/>
+                    </blocklist>
+                </interfaces>
+                <output_port>5101</output_port>
+                <default_reception_threads>
+                    <scheduling_policy>-1</scheduling_policy>
+                    <priority>0</priority>
+                    <affinity>0</affinity>
+                    <stack_size>-1</stack_size>
+                </default_reception_threads>
+                <reception_threads>
+                    <reception_thread port="12345">
+                        <scheduling_policy>-1</scheduling_policy>
+                        <priority>0</priority>
+                        <affinity>0</affinity>
+                        <stack_size>-1</stack_size>
+                    </reception_thread>
+                    <reception_thread port="12346">
+                        <scheduling_policy>-1</scheduling_policy>
+                        <priority>0</priority>
+                        <affinity>0</affinity>
+                        <stack_size>-1</stack_size>
+                    </reception_thread>
+                </reception_threads>
+            </transport_descriptor>
+        </transport_descriptors>
+    </profiles>
+</dds>

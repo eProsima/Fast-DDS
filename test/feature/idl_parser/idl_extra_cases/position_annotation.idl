@@ -1,0 +1,45 @@
+@position(4) struct position_ann_on_struct
+{
+  long invalid_member;
+};
+
+struct position_ann_on_struct_member
+{
+  @position(4) long invalid_member;
+};
+
+@position(4) union position_ann_on_union switch(long)
+{
+  case 0:
+    long first;
+  default:
+    float second;
+};
+
+union position_ann_on_union_discriminator switch(@position(4) long)
+{
+  case 0:
+    long first;
+  default:
+    float second;
+};
+
+union position_ann_on_union_member switch(long)
+{
+  case 0:
+    @position(4) long first;
+  default:
+    float second;
+};
+
+@position(1) enum position_ann_on_enum
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+enum position_ann_on_enum_member
+{
+    @position(1) ENUM_VALUE_1,
+    ENUM_VALUE_2
+};

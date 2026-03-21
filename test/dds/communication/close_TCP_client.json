@@ -1,0 +1,15 @@
+{
+    "description" : "[13540] Test that TCP client does not get stuck when being deleted in the following case: client launched before server and deleted also before server",
+    "participants" : [
+        {
+            "kind" : "subscriber",
+            "samples" : "5",
+            "xmlfile" : "TCP_client_profile.xml"
+        },
+        {
+            "kind" : "publisher",
+            "sleep_before_exec" : "1",
+            "xmlfile" : "TCP_server_profile.xml"
+        }
+    ]
+}

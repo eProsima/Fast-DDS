@@ -1,0 +1,6 @@
+@extensibility(APPENDABLE)
+struct FlowControl
+{
+   unsigned long index;
+   char message[600000];
+};

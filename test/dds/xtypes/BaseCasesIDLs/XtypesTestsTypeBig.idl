@@ -1,0 +1,516 @@
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file test/dds/xtypes/BaseCasesIDLs/XtypesTestsTypeBig.idl
+ */
+ 
+#include "XtypesTestsType1.idl"
+#include "XtypesTestsType2.idl"
+#include "XtypesTestsType3.idl"
+
+struct Type4	
+{	
+	string content;
+};	
+struct Type5	
+{	
+	string content;
+};	
+struct Type6	
+{	
+	string content;
+};	
+struct Type7	
+{	
+	string content;
+};	
+struct Type8	
+{	
+	string content;
+};	
+struct Type9	
+{	
+	string content;
+};	
+struct Type10	
+{	
+	string content;
+};	
+struct Type11	
+{	
+	string content;
+};	
+struct Type12	
+{	
+	string content;
+};	
+struct Type13	
+{	
+	string content;
+};	
+struct Type14	
+{	
+	string content;
+};	
+struct Type15	
+{	
+	string content;
+};	
+struct Type16	
+{	
+	string content;
+};	
+struct Type17	
+{	
+	string content;
+};	
+struct Type18	
+{	
+	string content;
+};	
+struct Type19	
+{	
+	string content;
+};	
+struct Type20	
+{	
+	string content;
+};	
+struct Type21	
+{	
+	string content;
+};	
+struct Type22	
+{	
+	string content;
+};	
+struct Type23	
+{	
+	string content;
+};	
+struct Type24	
+{	
+	string content;
+};	
+struct Type25	
+{	
+	string content;
+};	
+struct Type26	
+{	
+	string content;
+};	
+struct Type27	
+{	
+	string content;
+};	
+struct Type28	
+{	
+	string content;
+};	
+struct Type29	
+{	
+	string content;
+};	
+struct Type30	
+{	
+	string content;
+};	
+struct Type31	
+{	
+	string content;
+};	
+struct Type32	
+{	
+	string content;
+};	
+struct Type33	
+{	
+	string content;
+};	
+struct Type34	
+{	
+	string content;
+};	
+struct Type35	
+{	
+	string content;
+};	
+struct Type36	
+{	
+	string content;
+};	
+struct Type37	
+{	
+	string content;
+};	
+struct Type38	
+{	
+	string content;
+};	
+struct Type39	
+{	
+	string content;
+};	
+struct Type40	
+{	
+	string content;
+};	
+struct Type41	
+{	
+	string content;
+};	
+struct Type42	
+{	
+	string content;
+};	
+struct Type43	
+{	
+	string content;
+};	
+struct Type44	
+{	
+	string content;
+};	
+struct Type45	
+{	
+	string content;
+};	
+struct Type46	
+{	
+	string content;
+};	
+struct Type47	
+{	
+	string content;
+};	
+struct Type48	
+{	
+	string content;
+};	
+struct Type49	
+{	
+	string content;
+};	
+struct Type50	
+{	
+	string content;
+};	
+struct Type51	
+{	
+	string content;
+};	
+struct Type52	
+{	
+	string content;
+};	
+struct Type53	
+{	
+	string content;
+};	
+struct Type54	
+{	
+	string content;
+};	
+struct Type55	
+{	
+	string content;
+};	
+struct Type56	
+{	
+	string content;
+};	
+struct Type57	
+{	
+	string content;
+};	
+struct Type58	
+{	
+	string content;
+};	
+struct Type59	
+{	
+	string content;
+};	
+struct Type60	
+{	
+	string content;
+};	
+struct Type61	
+{	
+	string content;
+};	
+struct Type62	
+{	
+	string content;
+};	
+struct Type63	
+{	
+	string content;
+};	
+struct Type64	
+{	
+	string content;
+};	
+struct Type65	
+{	
+	string content;
+};	
+struct Type66	
+{	
+	string content;
+};	
+struct Type67	
+{	
+	string content;
+};	
+struct Type68	
+{	
+	string content;
+};	
+struct Type69	
+{	
+	string content;
+};	
+struct Type70	
+{	
+	string content;
+};	
+struct Type71	
+{	
+	string content;
+};	
+struct Type72	
+{	
+	string content;
+};	
+struct Type73	
+{	
+	string content;
+};	
+struct Type74	
+{	
+	string content;
+};	
+struct Type75	
+{	
+	string content;
+};	
+struct Type76	
+{	
+	string content;
+};	
+struct Type77	
+{	
+	string content;
+};	
+struct Type78	
+{	
+	string content;
+};	
+struct Type79	
+{	
+	string content;
+};	
+struct Type80	
+{	
+	string content;
+};	
+struct Type81	
+{	
+	string content;
+};	
+struct Type82	
+{	
+	string content;
+};	
+struct Type83	
+{	
+	string content;
+};	
+struct Type84	
+{	
+	string content;
+};	
+struct Type85	
+{	
+	string content;
+};	
+struct Type86	
+{	
+	string content;
+};	
+struct Type87	
+{	
+	string content;
+};	
+struct Type88	
+{	
+	string content;
+};	
+struct Type89	
+{	
+	string content;
+};	
+struct Type90	
+{	
+	string content;
+};	
+struct Type91	
+{	
+	string content;
+};	
+struct Type92	
+{	
+	string content;
+};	
+struct Type93	
+{	
+	string content;
+};	
+struct Type94	
+{	
+	string content;
+};	
+struct Type95	
+{	
+	string content;
+};	
+struct Type96	
+{	
+	string content;
+};	
+struct Type97	
+{	
+	string content;
+};	
+struct Type98	
+{	
+	string content;
+};	
+struct Type99	
+{	
+	string content;
+};	
+struct Type100	
+{	
+	string content;
+};	
+
+
+struct TypeBig			
+{			
+	string content;
+	Type1 dep1;
+	Type2 dep2;
+	Type3 dep3;
+	Type4 dep4;
+	Type5 dep5;
+	Type6 dep6;
+	Type7 dep7;
+	Type8 dep8;
+	Type9 dep9;
+	Type10 dep10;
+	Type11 dep11;
+	Type12 dep12;
+	Type13 dep13;
+	Type14 dep14;
+	Type15 dep15;
+	Type16 dep16;
+	Type17 dep17;
+	Type18 dep18;
+	Type19 dep19;
+	Type20 dep20;
+	Type21 dep21;
+	Type22 dep22;
+	Type23 dep23;
+	Type24 dep24;
+	Type25 dep25;
+	Type26 dep26;
+	Type27 dep27;
+	Type28 dep28;
+	Type29 dep29;
+	Type30 dep30;
+	Type31 dep31;
+	Type32 dep32;
+	Type33 dep33;
+	Type34 dep34;
+	Type35 dep35;
+	Type36 dep36;
+	Type37 dep37;
+	Type38 dep38;
+	Type39 dep39;
+	Type40 dep40;
+	Type41 dep41;
+	Type42 dep42;
+	Type43 dep43;
+	Type44 dep44;
+	Type45 dep45;
+	Type46 dep46;
+	Type47 dep47;
+	Type48 dep48;
+	Type49 dep49;
+	Type50 dep50;
+	Type51 dep51;
+	Type52 dep52;
+	Type53 dep53;
+	Type54 dep54;
+	Type55 dep55;
+	Type56 dep56;
+	Type57 dep57;
+	Type58 dep58;
+	Type59 dep59;
+	Type60 dep60;
+	Type61 dep61;
+	Type62 dep62;
+	Type63 dep63;
+	Type64 dep64;
+	Type65 dep65;
+	Type66 dep66;
+	Type67 dep67;
+	Type68 dep68;
+	Type69 dep69;
+	Type70 dep70;
+	Type71 dep71;
+	Type72 dep72;
+	Type73 dep73;
+	Type74 dep74;
+	Type75 dep75;
+	Type76 dep76;
+	Type77 dep77;
+	Type78 dep78;
+	Type79 dep79;
+	Type80 dep80;
+	Type81 dep81;
+	Type82 dep82;
+	Type83 dep83;
+	Type84 dep84;
+	Type85 dep85;
+	Type86 dep86;
+	Type87 dep87;
+	Type88 dep88;
+	Type89 dep89;
+	Type90 dep90;
+	Type91 dep91;
+	Type92 dep92;
+	Type93 dep93;
+	Type94 dep94;
+	Type95 dep95;
+	Type96 dep96;
+	Type97 dep97;
+	Type98 dep98;
+	Type99 dep99;
+	Type100 dep100;
+};

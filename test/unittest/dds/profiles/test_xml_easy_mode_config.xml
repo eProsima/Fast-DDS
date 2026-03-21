@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <participant profile_name="test_default_participant_profile" is_default_profile="true">
+            <domainId>123</domainId>
+            <rtps>
+                <easy_mode_ip>2.2.2.2</easy_mode_ip>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>
+

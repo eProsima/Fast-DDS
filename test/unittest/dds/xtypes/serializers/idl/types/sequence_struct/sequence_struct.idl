@@ -1,0 +1,22 @@
+@extensibility(APPENDABLE)
+struct NestedSequenceElement
+{
+    string my_string;
+};
+
+@extensibility(APPENDABLE)
+struct ComplexSequenceElement
+{
+    short my_short;
+    long my_long;
+    NestedSequenceElement my_complex_element;
+};
+
+@extensibility(APPENDABLE)
+struct SequenceStruct
+{
+    sequence<char> my_basic_sequence;
+    sequence<float, 13> my_bounded_sequence;
+    sequence<ComplexSequenceElement> my_complex_sequence;
+    sequence<ComplexSequenceElement, 123> my_complex_bounded_sequence;
+};

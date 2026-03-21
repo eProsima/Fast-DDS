@@ -1,0 +1,39 @@
+// Check nested modules
+module Module_1
+{
+    module Module_2
+    {
+        struct NestedModuleStruct
+        {
+            long var_int32;
+            string<10> var_string;
+        };
+    };
+};
+
+// Check scope resolution from an inner module
+module Outer
+{
+    module Inner
+    {
+        typedef long IntAlias;
+    };
+
+    struct StructWithInnerAlias
+    {
+        Inner::IntAlias int_alias;
+    };
+};
+
+// Check resolution of relative and absolute scoped names
+module MyModule
+{
+    typedef float FloatAlias;
+
+    struct ScopedNamesStruct
+    {
+        MyModule::FloatAlias absolute_scoped_float;
+        ::MyModule::FloatAlias absolute_scoped_w_root_float;
+        FloatAlias relative_scoped_float;
+    };
+};

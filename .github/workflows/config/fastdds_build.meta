@@ -1,0 +1,14 @@
+names:
+    fastdds:
+        cmake-args:
+            - "-DBUILD_DOCUMENTATION=OFF"
+            - "-DCOMPILE_EXAMPLES=ON"
+            - "-DFASTDDS_ENFORCE_LOG_INFO=ON"
+            - "-DENABLE_OLD_LOG_MACROS=OFF"
+            - "-DINSTALL_EXAMPLES=ON"
+            - "-DINTERNAL_DEBUG=ON"
+            - "-DNO_TLS=OFF"
+            - "-DSHM_TRANSPORT_DEFAULT=ON"
+            - "-DSTRICT_REALTIME=OFF"
+            - "-DMEMORYCHECK_COMMAND_OPTIONS=-q --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --log-fd=2 --error-exitcode=1"
+            - "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastdds/valgrind.supp"

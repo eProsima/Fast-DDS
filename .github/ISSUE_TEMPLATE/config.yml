@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contributing guidelines
+    url: https://github.com/eProsima/Fast-DDS/blob/master/CONTRIBUTING.md
+    about: Please check the contributing guidelines before opening an issue.

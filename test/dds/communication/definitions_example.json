@@ -1,0 +1,48 @@
+{
+    "DESCRIPTION" : "This json file specifies all the different parameters each participant class can have",
+    "DESCRIPTION_structure" : "All participants to create must be an element in <participants> array and must have <kind>",
+    "DESCRIPTION_fields" : "Every field must have a value. Booleans : true/false. Strings : string. Int : int",
+    "DESCRIPTION_kind" : "Element <kind> can be 'subscriber' 'publisher' or 'pubsub'",
+    "participants" : [
+        {
+            "kind" : "publisher",
+            "exit_on_lost_liveliness" : false,
+            "fixed_type" : false,
+            "zero_copy" : false,
+            "seed" : 7800,
+            "wait" : 0,
+            "samples" : 4,
+            "magic" : "str",
+            "xmlfile" : "path/file.xml",
+            "interval" : 250
+        },
+        {
+            "kind" : "subscriber",
+            "notexit" : true,
+            "fixed_type" : true,
+            "zero_copy" : true,
+            "seed" : 7800,
+            "samples" : 4,
+            "magic" : "str",
+            "xmlfile" : "path/file.xml",
+            "publishers" : 1,
+            "timeout" : 20,
+            "succeed_on_timeout" : false
+        },
+        {
+            "kind" : "pubsub",
+            "exit_on_lost_liveliness" : false,
+            "notexit" : false,
+            "fixed_type" : false,
+            "zero_copy" : false,
+            "seed" : 7800,
+            "wait" : 0,
+            "samples" : 4,
+            "magic" : "str",
+            "xmlfile" : "path/file.xml",
+            "publishers" : 1,
+            "publisher_loops" : 2,
+            "interval" : 250
+        }
+    ]
+}

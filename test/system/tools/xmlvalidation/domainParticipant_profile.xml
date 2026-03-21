@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com" >
+    <participant profile_name="domainparticipant_profile_name">
+        <domainId>11</domainId>
+        <rtps>
+            <name>DomainParticipant Name</name>
+
+            <defaultUnicastLocatorList>
+                <locator>
+                    <udpv4>
+                        <port>7400</port>
+                        <address>192.168.1.41</address>
+                    </udpv4>
+                </locator>
+                <locator>
+                    <udpv4>
+                        <port>7401</port>
+                        <address>192.168.1.41</address>
+                    </udpv4>
+                </locator>
+                <locator>
+                    <udpv6>
+                        <port>7402</port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </udpv6>
+                </locator>
+                <locator>
+                    <tcpv4>
+                        <port>7403</port>
+                        <physical_port>8403</physical_port>
+                        <address>192.168.1.41</address>
+                        <unique_lan_id>192.168.1.1.1.1.1.41</unique_lan_id>
+                        <wan_address>192.168.2.41</wan_address>
+                    </tcpv4>
+                </locator>
+                <locator>
+                    <tcpv6>
+                        <port>7404</port>
+                        <physical_port>8404</physical_port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </tcpv6>
+                </locator>
+            </defaultUnicastLocatorList>
+
+            <defaultMulticastLocatorList>
+                <locator>
+                    <udpv4>
+                        <port>7400</port>
+                        <address>192.168.2.41</address>
+                    </udpv4>
+                </locator>
+                <locator>
+                    <udpv4>
+                        <port>7401</port>
+                        <address>192.168.2.41</address>
+                    </udpv4>
+                </locator>
+                <locator>
+                    <udpv6>
+                        <port>7402</port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </udpv6>
+                </locator>
+                <locator>
+                    <tcpv4>
+                        <port>7403</port>
+                        <physical_port>8403</physical_port>
+                        <address>192.168.2.41</address>
+                        <unique_lan_id>192.168.1.1.1.1.2.41</unique_lan_id>
+                        <wan_address>192.168.3.41</wan_address>
+                    </tcpv4>
+                </locator>
+                <locator>
+                    <tcpv6>
+                        <port>7404</port>
+                        <physical_port>8404</physical_port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </tcpv6>
+                </locator>
+            </defaultMulticastLocatorList>
+
+            <default_external_unicast_locators>
+                <udpv4 externality="1" cost="0" mask="24">
+                    <address>100.100.100.10</address>
+                    <port>23456</port>
+                </udpv4>
+                <udpv4 externality="1" cost="0" mask="24">
+                    <address>100.100.100.11</address>
+                    <port>23456</port>
+                </udpv4>
+                <udpv4 externality="1" cost="0" mask="24">
+                    <address>100.100.100.12</address>
+                    <port>23456</port>
+                </udpv4>
+                <udpv6 externality="2" cost="1" mask="25">
+                    <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    <port>34567</port>
+                </udpv6>
+            </default_external_unicast_locators>
+
+            <ignore_non_matching_locators>true</ignore_non_matching_locators>
+
+            <sendSocketBufferSize>8192</sendSocketBufferSize>
+
+            <listenSocketBufferSize>8192</listenSocketBufferSize>
+
+            <builtin>
+                <discovery_config>
+                    <discoveryProtocol>CLIENT</discoveryProtocol>
+
+                    <discoveryServersList>
+                        <locator>
+                            <udpv4>
+                                <address>192.168.10.57</address>
+                                <port>56542</port>
+                            </udpv4>
+                        </locator>
+                    </discoveryServersList>
+
+                    <ignoreParticipantFlags>FILTER_DIFFERENT_HOST</ignoreParticipantFlags>
+
+                    <EDP>SIMPLE</EDP>
+
+                    <simpleEDP>
+                        <PUBWRITER_SUBREADER>true</PUBWRITER_SUBREADER>
+                        <PUBREADER_SUBWRITER>true</PUBREADER_SUBWRITER>
+                    </simpleEDP>
+
+                    <leaseDuration>
+                        <sec>20</sec>
+                    </leaseDuration>
+
+                    <leaseAnnouncement>
+                        <sec>3</sec>
+                    </leaseAnnouncement>
+
+                    <initialAnnouncements>
+                        <count>5</count>
+                        <period>
+                            <nanosec>10000</nanosec>
+                        </period>
+                    </initialAnnouncements>
+
+                    <static_edp_xml_config>file://filename.xml</static_edp_xml_config>
+                </discovery_config>
+
+                <avoid_builtin_multicast>true</avoid_builtin_multicast>
+
+                <use_WriterLivelinessProtocol>false</use_WriterLivelinessProtocol>
+
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <port>7400</port>
+                            <address>192.168.1.41</address>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv4>
+                            <port>7401</port>
+                            <address>192.168.1.41</address>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv6>
+                            <port>7402</port>
+                            <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        </udpv6>
+                    </locator>
+                    <locator>
+                        <tcpv4>
+                            <port>7403</port>
+                            <physical_port>8403</physical_port>
+                            <address>192.168.1.41</address>
+                            <unique_lan_id>192.168.1.1.1.1.1.41</unique_lan_id>
+                            <wan_address>192.168.2.41</wan_address>
+                        </tcpv4>
+                    </locator>
+                    <locator>
+                        <tcpv6>
+                            <port>7404</port>
+                            <physical_port>8404</physical_port>
+                            <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        </tcpv6>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+
+                <metatrafficMulticastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <port>7400</port>
+                            <address>192.168.2.41</address>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv4>
+                            <port>7401</port>
+                            <address>192.168.2.41</address>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv6>
+                            <port>7402</port>
+                            <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        </udpv6>
+                    </locator>
+                    <locator>
+                        <tcpv4>
+                            <port>7403</port>
+                            <physical_port>8403</physical_port>
+                            <address>192.168.2.41</address>
+                            <unique_lan_id>192.168.1.1.1.1.2.41</unique_lan_id>
+                            <wan_address>192.168.3.41</wan_address>
+                        </tcpv4>
+                    </locator>
+                    <locator>
+                        <tcpv6>
+                            <port>7404</port>
+                            <physical_port>8404</physical_port>
+                            <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        </tcpv6>
+                    </locator>
+                </metatrafficMulticastLocatorList>
+
+                <initialPeersList>
+                    <locator>
+                        <udpv4>
+                            <port>7400</port>
+                            <address>192.168.3.41</address>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv4>
+                            <port>7401</port>
+                            <address>192.168.3.41</address>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv6>
+                            <port>7402</port>
+                            <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        </udpv6>
+                    </locator>
+                    <locator>
+                        <tcpv4>
+                            <port>7403</port>
+                            <physical_port>8403</physical_port>
+                            <address>192.168.3.41</address>
+                            <unique_lan_id>192.168.1.1.1.1.2.41</unique_lan_id>
+                            <wan_address>192.168.4.41</wan_address>
+                        </tcpv4>
+                    </locator>
+                    <locator>
+                        <tcpv6>
+                            <port>7404</port>
+                            <physical_port>8404</physical_port>
+                            <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        </tcpv6>
+                    </locator>
+                </initialPeersList>
+
+                <metatraffic_external_unicast_locators>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>100.100.100.10</address>
+                        <port>23456</port>
+                    </udpv4>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>100.100.100.11</address>
+                        <port>23456</port>
+                    </udpv4>
+                    <udpv4 externality="1" cost="0" mask="24">
+                        <address>100.100.100.12</address>
+                        <port>23456</port>
+                    </udpv4>
+                    <udpv6 externality="2" cost="1" mask="25">
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                        <port>34567</port>
+                    </udpv6>
+                </metatraffic_external_unicast_locators>
+
+                <readerHistoryMemoryPolicy>PREALLOCATED_WITH_REALLOC</readerHistoryMemoryPolicy>
+
+                <readerPayloadSize>512</readerPayloadSize>
+
+                <writerHistoryMemoryPolicy>PREALLOCATED_WITH_REALLOC</writerHistoryMemoryPolicy>
+
+                <writerPayloadSize>512</writerPayloadSize>
+
+                <mutation_tries>55</mutation_tries>
+
+            </builtin>
+
+            <port>
+                <portBase>7400</portBase>
+                <domainIDGain>200</domainIDGain>
+                <participantIDGain>10</participantIDGain>
+                <offsetd0>0</offsetd0>
+                <offsetd1>1</offsetd1>
+                <offsetd2>2</offsetd2>
+                <offsetd3>3</offsetd3>
+                <offsetd4>4</offsetd4>
+            </port>
+
+            <participantID>99</participantID>
+
+            <userTransports>
+                <transport_id>TransportId1</transport_id>
+                <transport_id>TransportId2</transport_id>
+            </userTransports>
+
+            <useBuiltinTransports>false</useBuiltinTransports>
+
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>Property1Name</name>
+                        <value>Property1Value</value>
+                        <propagate>false</propagate>
+                    </property>
+                    <property>
+                        <name>Property2Name</name>
+                        <value>Property2Value</value>
+                        <propagate>true</propagate>
+                    </property>
+                </properties>
+                <binary_properties>
+                    <property>
+                        <name>binary_prop_a</name>
+                        <propagate>false</propagate>
+                    </property>
+                    <property>
+                        <name>binary_prop_b</name>
+                        <propagate>true</propagate>
+                    </property>
+                </binary_properties>
+            </propertiesPolicy>
+
+            <allocation>
+                <remote_locators>
+                    <max_unicast_locators>4</max_unicast_locators>
+                    <max_multicast_locators>1</max_multicast_locators>
+                </remote_locators>
+
+                <total_participants>
+                    <initial>0</initial>
+                    <maximum>0</maximum>
+                    <increment>1</increment>
+                </total_participants>
+
+                <total_readers>
+                    <initial>0</initial>
+                    <maximum>0</maximum>
+                    <increment>1</increment>
+                </total_readers>
+
+                <total_writers>
+                    <initial>0</initial>
+                    <maximum>0</maximum>
+                    <increment>1</increment>
+                </total_writers>
+
+                <max_partitions>256</max_partitions>
+
+                <max_user_data>256</max_user_data>
+
+                <max_properties>512</max_properties>
+
+                <send_buffers>
+                    <preallocated_number>127</preallocated_number>
+                    <dynamic>true</dynamic>
+                    <network_buffers_config>
+                        <initial>16</initial>
+                        <maximum>0</maximum>
+                        <increment>16</increment>
+                    </network_buffers_config>
+                </send_buffers>
+            </allocation>
+        </rtps>
+    </participant>
+</profiles>

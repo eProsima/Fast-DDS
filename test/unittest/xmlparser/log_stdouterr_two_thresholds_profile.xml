@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <log>
+        <use_default>FALSE</use_default>
+        <consumer>
+            <class>StdoutErrConsumer</class>
+            <property>
+                <name>stderr_threshold</name>
+                <value>Log::Kind::Error</value>
+            </property>
+            <property>
+                <name>stderr_threshold</name>
+                <value>Log::Kind::Warning</value>
+            </property>
+        </consumer>
+    </log>
+</dds>

@@ -1,0 +1,12 @@
+prompt=no
+string_mask 			= utf8only
+distinguished_name	= req_distinguished_name
+
+[ req_distinguished_name ]
+countryName     		= ES
+stateOrProvinceName	= MA
+localityName			= Tres Cantos
+organizationName		= eProsima
+organizationalUnitName  = eProsima
+emailAddress			= mainpub@eprosima.com
+commonName				= Main Publisher

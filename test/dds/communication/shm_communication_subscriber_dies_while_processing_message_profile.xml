@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <library_settings>
+        <intraprocess_delivery>OFF</intraprocess_delivery>
+    </library_settings>
+
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>shm_transport</transport_id>
+                <type>SHM</type>
+                <port_queue_capacity>10</port_queue_capacity>
+                <healthy_check_timeout_ms>100</healthy_check_timeout_ms>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="SHMParticipant" is_default_profile="true">
+            <rtps>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>shm_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+
+        <data_writer profile_name="simple_publisher_profile" is_default_profile="true">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>100</depth>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+        </data_writer>
+
+        <data_reader profile_name="simple_subscriber_profile" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

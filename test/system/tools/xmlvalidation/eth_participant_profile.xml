@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com">
+	<transport_descriptors>
+		<transport_descriptor>
+			<transport_id>eth_transport</transport_id>
+			<type>ETH</type>
+			<eth_interface_name>eth0</eth_interface_name>
+			<eth_output_port>6000</eth_output_port>
+			<eth_priority_mappings>
+				<priority value="-1" source_port="5000" pcp="0" vlan_id="100"/>
+				<priority value="1" source_port="5000" pcp="1" vlan_id="100"/>
+				<priority value="2" source_port="5000" pcp="2" vlan_id="100"/>
+				<priority value="3" source_port="5000" pcp="3" vlan_id="100"/>
+			</eth_priority_mappings>
+		</transport_descriptor>
+	</transport_descriptors>
+
+	<participant profile_name="ETH_participant" is_default_profile="true">
+		<rtps>
+			<useBuiltinTransports>false</useBuiltinTransports>
+			<userTransports>
+				<transport_id>eth_transport</transport_id>
+			</userTransports>
+			<builtin>
+				<metatrafficMulticastLocatorList>
+					<locator>
+						<ethernet>
+							<address>01.00.5E.7F.00.0F</address>
+							<port>6999</port>
+							<pcp>7</pcp>
+							<vlan_id>255</vlan_id>
+						</ethernet>
+					</locator>
+				</metatrafficMulticastLocatorList>
+			</builtin>
+		</rtps>
+	</participant>
+</profiles>
