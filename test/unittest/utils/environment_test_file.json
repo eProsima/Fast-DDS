@@ -1,0 +1,4 @@
+{
+    "ROS_DISCOVERY_SERVER": "localhost:11811",
+    "EMPTY_ENV_VAR": ""
+}

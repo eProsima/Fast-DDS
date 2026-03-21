@@ -1,0 +1,22 @@
+@extensibility(APPENDABLE)
+struct NestedArrayElement
+{
+    string my_string;
+};
+
+@extensibility(APPENDABLE)
+struct ComplexArrayElement
+{
+    long my_number;
+    boolean my_boolean;
+    NestedArrayElement my_nested_element;
+};
+
+@extensibility(APPENDABLE)
+struct ArrayStruct
+{
+    long my_basic_array[10];
+    long my_multidimensional_array[10][10][10];
+    ComplexArrayElement my_complex_array[10];
+    ComplexArrayElement my_multidimensional_complex_array[10][10];
+};

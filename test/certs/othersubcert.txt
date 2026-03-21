@@ -1,0 +1,5 @@
+openssl ecparam -name prime256v1 > ecdsaparam
+
+openssl req -nodes -new -newkey ec:ecdsaparam -config othersub.cnf -keyout othersubkey.pem -out othersubreq.pem
+
+openssl ca -batch -create_serial -config othercaconf.cnf -days 3650 -in othersubreq.pem -out othersubcert.pem

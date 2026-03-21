@@ -1,0 +1,12 @@
+enum ColorEnum
+{
+    RED,
+    GREEN,
+    BLUE
+};
+
+@extensibility(APPENDABLE)
+struct EnumStruct
+{
+    ColorEnum enum_value;
+};

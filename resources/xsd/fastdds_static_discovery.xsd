@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="topicKind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NO_KEY"/>
+            <xs:enumeration value="WITH_KEY"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="livelinessKind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTOMATIC_LIVELINESS_QOS"/>
+            <xs:enumeration value="MANUAL_BY_PARTICIPANT_LIVELINESS_QOS"/>
+            <xs:enumeration value="MANUAL_BY_TOPIC_LIVELINESS_QOS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ownershipKind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="SHARED_OWNERSHIP_QOS"/>
+            <xs:enumeration value="EXCLUSIVE_OWNERSHIP_QOS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="durationType">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="sec" minOccurs="0" maxOccurs="1" nillable="true">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:minLength value="1"/>
+                                    <xs:enumeration value="DURATION_INFINITY"/>
+                                    <xs:enumeration value="DURATION_INFINITE_SEC"/>
+                                    <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_SEC)\s*"/> -->
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:unsignedInt"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="nanosec" minOccurs="0" maxOccurs="1">
+                    <xs:simpleType>
+                        <xs:union>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="DURATION_INFINITY"/>
+                                    <xs:enumeration value="DURATION_INFINITE_NSEC"/>
+                                    <!-- <xs:pattern value="\s*(DURATION_INFINITY|DURATION_INFINITE_NSEC)\s*"/> -->
+                                </xs:restriction>
+                            </xs:simpleType>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:unsignedInt"/>
+                            </xs:simpleType>
+                        </xs:union>
+                    </xs:simpleType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="leaseDurationType">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                    <xs:enumeration value="INF"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt"/>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+    <xs:simpleType name="durabilityQosPolicyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VOLATILE_DURABILITY_QOS"/>
+            <xs:enumeration value="TRANSIENT_LOCAL_DURABILITY_QOS"/>
+            <xs:enumeration value="TRANSIENT_DURABILITY_QOS"/>
+            <xs:enumeration value="PERSISTENT_DURABILITY_QOS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="livelinessQosProfileType">
+        <xs:attribute name="kind" type="livelinessKind"/>
+        <xs:attribute name="leaseDuration_ms" type="leaseDurationType"/>
+    </xs:complexType>
+    <xs:simpleType name ="reliabilityQosPolicyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BEST_EFFORT_RELIABILITY_QOS"/>
+            <xs:enumeration value="RELIABLE_RELIABILITY_QOS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name ="ownershipQosPolicyType">
+        <xs:attribute name="kind" type="ownershipKind"/>
+    </xs:complexType>
+    <xs:complexType name="locatorType">
+        <xs:attribute name="address" type="xs:string"/>
+        <xs:attribute name="port" type="xs:positiveInteger"/>
+    </xs:complexType>
+    <xs:complexType name="disablePositiveAcksQosPolicyType">
+        <xs:all>
+            <xs:element name="enabled" type="xs:boolean" />
+            <xs:element name="duration" type="durationType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="entityProfileType">
+        <xs:all>
+            <xs:element name="userId" type="xs:positiveInteger"/>
+            <xs:element name="entityID" type="xs:positiveInteger"/>
+            <xs:element name="expects_inline_qos" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="topicName" type="xs:string"/>
+            <xs:element name="topicDataType" type="xs:string"/>
+            <xs:element name="topicKind" type="topicKind"/>
+            <xs:element name="partitionQos" type="xs:string" minOccurs="0"/>
+            <xs:element name="durabilityQos" type="durabilityQosPolicyType" minOccurs="0"/>
+            <xs:element name="livelinessQos" type="livelinessQosProfileType" minOccurs="0"/>
+            <xs:element name="reliabilityQos" type="reliabilityQosPolicyType" minOccurs="0"/>
+            <xs:element name="ownershipQos" type="ownershipQosPolicyType" minOccurs="0"/>
+            <xs:element name="multicastLocator" type="locatorType" minOccurs="0"/>
+            <xs:element name="unicastLocator" type="locatorType" minOccurs="0"/>
+            <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="participantProfileType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="reader" type="entityProfileType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="writer" type="entityProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="staticdiscovery">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="participant" type="participantProfileType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

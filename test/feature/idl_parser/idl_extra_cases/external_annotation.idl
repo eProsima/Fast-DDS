@@ -1,0 +1,21 @@
+struct external_ann_struct_valid
+{
+    @external long first;
+    @external(FALSE) string second;
+    @external(value = FALSE) short third;
+};
+
+struct external_ann_invalid_value_type
+{
+    @external("invalid") long invalid_member;
+};
+
+struct external_ann_extra_parameter
+{
+    @external(value = FALSE, value2 = "extra") long invalid_member;
+};
+
+@external struct external_ann_on_struct
+{
+    long first;
+};

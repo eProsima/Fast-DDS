@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <participant profile_name="ds_server">
+            <domainId>1</domainId>
+            <rtps>
+                <prefix>44.53.00.5f.45.50.52.4f.53.49.4d.41</prefix>
+                <builtin>
+                    <discovery_config>
+                        <discoveryProtocol>SERVER</discoveryProtocol>
+                    </discovery_config>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <udpv4>
+                                <address>127.0.0.1</address>
+                                <port>14521</port>
+                            </udpv4>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ds_client_pub">
+            <domainId>2</domainId>
+            <rtps>
+                <builtin>
+                    <discovery_config>
+                        <discoveryProtocol>CLIENT</discoveryProtocol>
+                        <discoveryServersList>
+                            <locator>
+                                <udpv4>
+                                    <address>127.0.0.1</address>
+                                    <port>14521</port>
+                                </udpv4>
+                            </locator>
+                        </discoveryServersList>
+                    </discovery_config>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="ds_client_sub">
+            <domainId>3</domainId>
+            <rtps>
+                <builtin>
+                    <discovery_config>
+                        <discoveryProtocol>CLIENT</discoveryProtocol>
+                        <discoveryServersList>
+                            <locator>
+                                <udpv4>
+                                    <address>127.0.0.1</address>
+                                    <port>14521</port>
+                                </udpv4>
+                            </locator>
+                        </discoveryServersList>
+                    </discovery_config>
+                </builtin>
+            </rtps>
+        </participant>
+
+    </profiles>
+</dds>

@@ -1,0 +1,38 @@
+<staticdiscovery>
+    <participant>
+        <name>writer_participant</name>
+        <writer>
+            <userId>1</userId>
+            <entityID>2</entityID>
+            <expects_inline_qos>true</expects_inline_qos>
+            <topicName>HelloWorldTopic</topicName>
+            <topicDataType>HelloWorld</topicDataType>
+            <topicKind>NO_KEY</topicKind>
+            <partitionQos>customqosgoeshere</partitionQos>
+            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+            <livelinessQos kind="MANUAL_BY_PARTICIPANT_LIVELINESS_QOS" leaseDuration_ms="INF"/>
+            <unicastLocator address="231.2.3.1" port="231"/>
+            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+        </writer>
+    </participant>
+    <participant>
+        <name>reader_participant</name>
+        <reader>
+            <userId>1</userId>
+            <entityID>2</entityID>
+            <expects_inline_qos>false</expects_inline_qos>
+            <topicName>HelloWorldTopic</topicName>
+            <topicDataType>HelloWorld</topicDataType>
+            <topicKind>WITH_KEY</topicKind>
+            <ownershipQos kind="SHARED_OWNERSHIP_QOS"/>
+            <multicastLocator address="123.1.2.3" port="123"/>
+            <livelinessQos kind="MANUAL_BY_TOPIC_LIVELINESS_QOS" leaseDuration_ms="2560"/>
+            <disablePositiveAcks>
+                <enabled>true</enabled>
+                <duration>
+                    <sec>DURATION_INFINITY</sec>
+                </duration>
+            </disablePositiveAcks>
+        </reader>
+    </participant>
+</staticdiscovery>

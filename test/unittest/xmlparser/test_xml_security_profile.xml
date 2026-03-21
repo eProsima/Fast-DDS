@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <participant profile_name="test_participant_security_profile">
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.identity_ca</name>
+                            <value>maincacert.pem</value>
+                            <propagate>false</propagate>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.identity_certificate</name>
+                            <value>appcert.pem</value>
+                            <propagate>true</propagate>
+                        </property>
+                    </properties>
+                    <binary_properties>
+                        <property>
+                            <name>binary_prop_a</name>
+                            <propagate>false</propagate>
+                        </property>
+                        <property>
+                            <name>binary_prop_b</name>
+                            <propagate>true</propagate>
+                        </property>
+                    </binary_properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+
+        <data_writer profile_name="test_publisher_security_profile">
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>rtps.endpoint.submessage_protection_kind</name>
+                        <value>ENCRYPT</value>
+                        <propagate>true</propagate>
+                    </property>
+                    <property>
+                        <name>rtps.endpoint.payload_protection_kind</name>
+                        <value>ENCRYPT</value>
+                        <propagate>true</propagate>
+                    </property>
+                </properties>
+                <binary_properties>
+                    <property>
+                        <name>binary_prop_c</name>
+                        <propagate>true</propagate>
+                    </property>
+                    <property>
+                        <name>binary_prop_d</name>
+                        <propagate>false</propagate>
+                    </property>
+                </binary_properties>
+            </propertiesPolicy>
+        </data_writer>
+
+        <data_reader profile_name="test_subscriber_security_profile">
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>rtps.endpoint.submessage_protection_kind</name>
+                        <value>ENCRYPT</value>
+                        <propagate>true</propagate>
+                    </property>
+                    <property>
+                        <name>rtps.endpoint.payload_protection_kind</name>
+                        <value>ENCRYPT</value>
+                        <propagate>true</propagate>
+                    </property>
+                </properties>
+                <binary_properties>
+                    <property>
+                        <name>binary_prop_e</name>
+                        <propagate>true</propagate>
+                    </property>
+                    <property>
+                        <name>binary_prop_f</name>
+                        <propagate>false</propagate>
+                    </property>
+                </binary_properties>
+            </propertiesPolicy>
+        </data_reader>
+
+    </profiles>
+</dds>

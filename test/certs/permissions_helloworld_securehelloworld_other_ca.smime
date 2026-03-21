@@ -1,0 +1,82 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----3934965CFBB897223A391AE03BC0850F"
+
+This is an S/MIME signed message
+
+------3934965CFBB897223A391AE03BC0850F
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="utf-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
+    <permissions>
+        <grant name="SubscriberPermissions">
+            <subject_name>emailAddress=othersub@eprosima.com, CN=Other Subscriber, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2038-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_*</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>SecureHelloWorldTopic_*</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
+    </permissions>
+</dds>
+
+------3934965CFBB897223A391AE03BC0850F
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEtAYJKoZIhvcNAQcCoIIEpTCCBKECAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggJuMIICajCCAhGgAwIBAgIUcsQhk60Hd3DBT+O8EmRXlj8CSf8w
+CgYIKoZIzj0EAwIwgZwxCzAJBgNVBAYTAkVTMQswCQYDVQQIDAJNQTEUMBIGA1UE
+BwwLVHJlcyBDYW50b3MxETAPBgNVBAoMCGVQcm9zaW1hMREwDwYDVQQLDAhlUHJv
+c2ltYTEfMB0GA1UEAwwWZVByb3NpbWEgT3RoZXIgVGVzdCBDQTEjMCEGCSqGSIb3
+DQEJARYUb3RoZXJjYUBlcHJvc2ltYS5jb20wHhcNMjMwMzMwMTAzNTAyWhcNMzMw
+MzI3MTAzNTAyWjCBnDELMAkGA1UEBhMCRVMxCzAJBgNVBAgMAk1BMRQwEgYDVQQH
+DAtUcmVzIENhbnRvczERMA8GA1UECgwIZVByb3NpbWExETAPBgNVBAsMCGVQcm9z
+aW1hMR8wHQYDVQQDDBZlUHJvc2ltYSBPdGhlciBUZXN0IENBMSMwIQYJKoZIhvcN
+AQkBFhRvdGhlcmNhQGVwcm9zaW1hLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEH
+A0IABE43rFtDDe1JkOMvvGAE7qKIvwRw5RT1W0EGijZiR2pj/RZ184KuxajfOLGY
+RXOa4J93e33h3mmqrDUFrieMqoyjLzAtMAwGA1UdEwQFMAMBAf8wHQYDVR0OBBYE
+FMkCyFAODKjV+jph9N6evAPX8an4MAoGCCqGSM49BAMCA0cAMEQCIAOLdnOdkQla
+8/ziYXxwU2VyN/iEgznWtvSH91sa1w2iAiAVwQ2wHaEh1SGrrgAt68LbmY1XRrFU
+KqF+dVwAw95t1zGCAgowggIGAgEBMIG1MIGcMQswCQYDVQQGEwJFUzELMAkGA1UE
+CAwCTUExFDASBgNVBAcMC1RyZXMgQ2FudG9zMREwDwYDVQQKDAhlUHJvc2ltYTER
+MA8GA1UECwwIZVByb3NpbWExHzAdBgNVBAMMFmVQcm9zaW1hIE90aGVyIFRlc3Qg
+Q0ExIzAhBgkqhkiG9w0BCQEWFG90aGVyY2FAZXByb3NpbWEuY29tAhRyxCGTrQd3
+cMFP47wSZFeWPwJJ/zANBglghkgBZQMEAgEFAKCB5DAYBgkqhkiG9w0BCQMxCwYJ
+KoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMzA1MDgxNDA2MDJaMC8GCSqGSIb3
+DQEJBDEiBCCCH2G2Xa8+eUvm3US5yrQq6ZhtQJzfM0Qr7zBotqaqhDB5BgkqhkiG
+9w0BCQ8xbDBqMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAEC
+MAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDANBggqhkiG9w0DAgIBQDAHBgUr
+DgMCBzANBggqhkiG9w0DAgIBKDAKBggqhkjOPQQDAgRHMEUCIQDg4DiHq0Se05h+
+bNjHf6/A+mpQXf0/NxWBF1vtu/VE6QIgZ3RRj9dZD3tAPRrIpOi/B9bK8+OgsZ+N
+6cCmPLMDwDM=
+
+------3934965CFBB897223A391AE03BC0850F--
+

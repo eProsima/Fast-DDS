@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <participant profile_name="monitor_service_property_participant" is_default_profile="true">
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <property>
+                            <name>fastdds.enable_monitor_service</name>
+                            <value>true</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+        <participant profile_name="monitor_service_statistics_property_participant">
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <property>
+                            <name>fastdds.statistics</name>
+                            <value>SUBSCRIPTION_THROUGHPUT_TOPIC;NACKFRAG_COUNT_TOPIC;MONITOR_SERVICE_TOPIC</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>
+

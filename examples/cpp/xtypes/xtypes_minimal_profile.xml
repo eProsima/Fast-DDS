@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <profiles>
+        <participant profile_name="xtypes_participant_profile" is_default_profile="true">
+            <domainId>0</domainId>
+            <rtps>
+                <name>xtypes_participant</name>
+                <propertiesPolicy>
+                    <properties>
+                        <!-- Activate minimal type propagation only -->
+                        <property>
+                            <name>fastdds.type_propagation</name>
+                            <value>minimal_bandwidth</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+        <data_writer profile_name="xtypes_datawriter_profile" is_default_profile="true">
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>100</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>100</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>100</max_samples_per_instance>
+                </resourceLimitsQos>
+            </topic>
+        </data_writer>
+
+        <data_reader profile_name="xtypes_datareader_profile" is_default_profile="true">
+            <qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+            </qos>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>100</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>100</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>100</max_samples_per_instance>
+                </resourceLimitsQos>
+            </topic>
+        </data_reader>
+    </profiles>
+
+    <types>
+        <type>
+            <struct name="HelloWorld">
+                <member name="index" type="uint32"/>
+                <member name="message" type="string"/>
+            </struct>
+        </type>
+    </types>
+</dds>

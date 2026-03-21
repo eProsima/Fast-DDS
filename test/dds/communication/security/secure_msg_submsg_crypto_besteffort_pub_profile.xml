@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>shm_transport</transport_id>
+                <type>SHM</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="secure_participant_profile" is_default_profile="true">
+            <rtps>
+                <userTransports>
+                    <transport_id>shm_transport</transport_id>
+                </userTransports>
+                <propertiesPolicy>
+                    <properties>
+                        <!-- Activate DDS:Auth:PKI-DH plugin -->
+                        <property>
+                            <name>dds.sec.auth.plugin</name>
+                            <value>builtin.PKI-DH</value>
+                        </property>
+                        <!-- Configure DDS:Auth:PKI-DH plugin -->
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.identity_ca</name>
+                            <value>file://maincacert.pem</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.identity_certificate</name>
+                            <value>file://mainpubcert.pem</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.private_key</name>
+                            <value>file://mainpubkey.pem</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.preferred_key_agreement</name>
+                            <value>DH</value>
+                        </property>
+                        <!-- Activate DDS:Crypto:AES-GCM-GMAC plugin -->
+                        <property>
+                            <name>dds.sec.crypto.plugin</name>
+                            <value>builtin.AES-GCM-GMAC</value>
+                        </property>
+                        <!-- Configure DDS:Crypto:AES-GCM-GMAC plugin -->
+                        <property>
+                            <name>rtps.participant.rtps_protection_kind</name>
+                            <value>ENCRYPT</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+
+        <data_writer profile_name="secure_publisher_profile" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+            <propertiesPolicy>
+                <properties>
+                    <!-- Configure DDS:Crypto:AES-GCM-GMAC plugin -->
+                    <property>
+                        <name>rtps.endpoint.submessage_protection_kind</name>
+                        <value>ENCRYPT</value>
+                    </property>
+                </properties>
+            </propertiesPolicy>
+        </data_writer>
+    </profiles>
+</dds>

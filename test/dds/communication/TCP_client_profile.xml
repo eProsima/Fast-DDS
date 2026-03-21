@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>tcp_transport_client</transport_id>
+                <type>TCPv4</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="TCPClient" is_default_profile="true">
+            <rtps>
+                <userTransports>
+                    <transport_id>tcp_transport_client</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <builtin>
+                    <initialPeersList>
+                        <locator>
+                            <tcpv4>
+                                <address>127.0.0.1</address>
+                                <physical_port>5100</physical_port>
+                            </tcpv4>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>

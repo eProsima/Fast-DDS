@@ -1,0 +1,6 @@
+struct KeyedData1mb
+{
+    @Key
+    unsigned short key;
+    sequence<octet, 1023996> data;
+};

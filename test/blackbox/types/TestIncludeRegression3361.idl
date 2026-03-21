@@ -1,0 +1,10 @@
+#ifndef TESTINCLUDE_REGRESSION_3361
+#define TESTINCLUDE_REGRESSION_3361
+
+module TestModule {
+
+typedef string MACHINEID;
+
+};
+
+#endif // TESTINCLUDE_REGRESSION_3361

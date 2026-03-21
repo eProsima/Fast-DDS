@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library_settings xmlns="http://www.eprosima.com">
+    <intraprocess_delivery>OFF</intraprocess_delivery>
+</library_settings>

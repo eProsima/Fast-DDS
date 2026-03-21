@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com" >
+    <participant profile_name="test_participant_profile" is_default_profile="true">
+        <domainId>80</domainId>
+        <rtps>
+            <builtin>
+                <discovery_config>
+                    <leaseDuration>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseDuration>
+                    <leaseAnnouncement>
+                        <sec>10</sec>
+                        <nanosec>333</nanosec>
+                    </leaseAnnouncement>
+                </discovery_config>
+            </builtin>
+        </rtps>
+    </participant>
+
+    <data_writer profile_name="test_publisher_profile" is_default_profile="true">
+        <topic>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+        <qos>
+            <latencyBudget>
+                <duration>
+                      <sec>10</sec>
+                </duration>
+            </latencyBudget>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+            <deadline>
+                <period>
+                    <sec>15</sec>
+                </period>
+            </deadline>
+            <liveliness>
+                <kind>MANUAL_BY_PARTICIPANT</kind>
+                <lease_duration>
+                    <sec>1</sec>
+                    <nanosec>2</nanosec>
+                </lease_duration>
+                <announcement_period>
+                    <sec>DURATION_INFINITY</sec>
+                </announcement_period>
+            </liveliness>
+        </qos>
+        <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+    </data_writer>
+
+    <data_reader profile_name="test_subscriber_profile" is_default_profile="true">
+        <topic>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+        <qos>
+            <latencyBudget>
+                <duration>
+                    <sec>20</sec>
+                </duration>
+            </latencyBudget>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+            <deadline>
+                <period>
+                    <sec>DURATION_INFINITY</sec>
+                </period>
+            </deadline>
+            <liveliness>
+                <kind>MANUAL_BY_TOPIC</kind>
+                <lease_duration>
+                    <sec>DURATION_INFINITY</sec>
+                </lease_duration>
+                <announcement_period>
+                    <sec>0</sec>
+                    <nanosec>0</nanosec>
+                </announcement_period>
+            </liveliness>
+        </qos>
+        <historyMemoryPolicy>PREALLOCATED</historyMemoryPolicy>
+    </data_reader>
+
+</profiles>

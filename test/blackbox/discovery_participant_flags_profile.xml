@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>          
+
+        <participant profile_name="participant_1">
+            <rtps>
+                <name>Discovery.IgnoreParticipantFlags.p1</name>
+                
+                <builtin>
+                    <discovery_config>
+                        <ignoreParticipantFlags>FILTER_SAME_PROCESS</ignoreParticipantFlags>
+                    </discovery_config>
+                    <metatrafficUnicastLocatorList>
+                        <locator>
+                            <udpv4>
+                                <port>7399</port>
+                                <address>127.0.0.1</address>
+                            </udpv4>
+                        </locator>
+                        <locator>
+                            <udpv4>
+                                <port>7398</port>
+                                <address>127.0.0.1</address>
+                            </udpv4>
+                        </locator>
+                    </metatrafficUnicastLocatorList>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="participant_2">
+            <rtps>
+                <name>Discovery.IgnoreParticipantFlags.p2</name>
+                
+                <builtin>
+                    <initialPeersList>
+                        <locator>
+                            <udpv4>
+                                <port>7399</port>
+                                <address>127.0.0.1</address>
+                            </udpv4>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <participant profile_name="participant_3">
+            <rtps>
+                <prefix>f0.f0.f0.f0.f0.f0.f0.f0.f0.f0.f0.f0</prefix>
+                <name>Discovery.IgnoreParticipantFlags.p3</name>
+                
+                <builtin>
+                    <initialPeersList>
+                        <locator>
+                            <udpv4>
+                                <port>7398</port>
+                                <address>127.0.0.1</address>
+                            </udpv4>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+            </rtps>
+        </participant>
+
+    </profiles>
+</dds>
