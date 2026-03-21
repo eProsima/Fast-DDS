@@ -165,7 +165,8 @@ protected:
             uint8_t status;
 
             // Has this payload been removed from the shared history?
-            uint8_t has_been_removed;
+            // Accessed from multiple threads (writer releasing, reader advancing).
+            std::atomic<uint8_t> has_been_removed;
 
             // Encapsulation of the data
             uint16_t encapsulation;
@@ -312,13 +313,13 @@ protected:
 
         bool has_been_removed() const
         {
-            return metadata_.has_been_removed == 1;
+            return metadata_.has_been_removed.load(std::memory_order_acquire) == 1;
         }
 
         void has_been_removed(
                 bool removed)
         {
-            metadata_.has_been_removed = removed ? 1 : 0;
+            metadata_.has_been_removed.store(removed ? 1 : 0, std::memory_order_release);
         }
 
         fastdds::rtps::SampleIdentity related_sample_identity() const
