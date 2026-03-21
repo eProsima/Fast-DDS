@@ -147,17 +147,21 @@ public:
         segment_ = std::move(local_segment);
         if (is_volatile_)
         {
+            // Fast-forward to the writer's current position so a volatile
+            // reader skips old samples.  The previous condition used ||
+            // which caused an infinite loop when get_next_unread_payload
+            // returned unknown but next_payload_ had not yet caught up
+            // with a concurrently advancing writer.
             CacheChange_t ch;
             SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
             uint64_t current_end = end();
             get_next_unread_payload(ch, last_sequence, current_end);
-            while (ch.sequenceNumber != SequenceNumber_t::unknown() || next_payload_ != current_end)
+            while (ch.sequenceNumber != SequenceNumber_t::unknown() && next_payload_ != current_end)
             {
                 current_end = end();
                 advance(next_payload_);
                 get_next_unread_payload(ch, last_sequence, current_end);
             }
-            assert(next_payload_ == current_end);
         }
 
         return true;
