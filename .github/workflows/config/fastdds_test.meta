@@ -1,0 +1,19 @@
+names:
+    fastdds:
+        cmake-args:
+            - "-DEPROSIMA_BUILD_TESTS=ON"
+            - "-DFASTDDS_PIM_API_TESTS=ON"
+            - "-DPERFORMANCE_TESTS=ON"
+            - "-DPROFILING_TESTS=OFF"
+            - "-DCOMPILE_TOOLS=ON"
+            - "-DSYSTEM_TESTS=ON"
+        ctest-args: [
+                "--repeat", "until-pass:3",
+                "--timeout", "300",
+                "--label-exclude", "xfail"
+        ]
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"

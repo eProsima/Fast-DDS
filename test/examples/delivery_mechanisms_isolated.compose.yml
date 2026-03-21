@@ -1,0 +1,76 @@
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+services:
+  subscriber:
+    image: @DOCKER_IMAGE_NAME@
+    container_name: subscriber_dmi_${CONTAINER_SUFFIX_COMPOSE}
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/delivery_mechanisms/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE: ${ISUB_ARGS}
+    # avoid network and ipc host to isolate this subscriber for sharing memory with other containers
+    networks:
+      delivery_mechanisms_net:
+        ipv4_address: 113.1.1.2
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/delivery_mechanisms@FILE_EXTENSION@ subscriber --samples 10 @ISOLATED_SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
+
+  publisher-subscriber:
+    image: @DOCKER_IMAGE_NAME@
+    container_name: publisher_subscriber_dmi_${CONTAINER_SUFFIX_COMPOSE}
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/delivery_mechanisms/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      PUB_ADDITIONAL_ARGS_COMPOSE: ${PUB_ARGS}
+      SUB_ADDITIONAL_ARGS_COMPOSE: ${SUB_ARGS}
+    # avoid network and ipc host to isolate this subscriber for sharing memory with other containers
+    networks:
+      delivery_mechanisms_net:
+        ipv4_address: 113.1.1.3
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/delivery_mechanisms@FILE_EXTENSION@ subscriber --samples 10 @SUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@ @COMMAND_CONCATENATE_COMPOSE@ @COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/delivery_mechanisms@FILE_EXTENSION@ publisher --samples 10 @PUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@@COMMAND_BACKGROUND_JOB_COMPOSE@"
+
+  pubsub:
+    image: @DOCKER_IMAGE_NAME@
+    container_name: pubsub_dmi_${CONTAINER_SUFFIX_COMPOSE}
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/delivery_mechanisms/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      PUBSUB_ADDITIONAL_ARGS_COMPOSE: ${PUBSUB_ARGS}
+    # avoid network and ipc host to isolate this subscriber for sharing memory with other containers
+    networks:
+      delivery_mechanisms_net:
+        ipv4_address: 113.1.1.4
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/delivery_mechanisms@FILE_EXTENSION@ pubsub --samples 10 @PUBSUB_ADDITIONAL_ARGS_COMPOSE@@SPLIT_ARGS_COMPOSE@"
+
+networks:
+  delivery_mechanisms_net:
+    ipam:
+      config:
+        - subnet: 113.1.1.0/24
+          gateway: 113.1.1.1

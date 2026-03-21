@@ -1,0 +1,70 @@
+# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+services:
+  sub-rtps:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/rtps/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/rtps@FILE_EXTENSION@ reader --samples 20"
+
+  sub-dds:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/rtps/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ subscriber --samples 20"
+
+  pub-rtps:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/rtps/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/rtps@FILE_EXTENSION@ writer --samples 10 --matched 2"
+    depends_on:
+    - sub-rtps
+    - sub-dds
+
+  pub-dds:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
+      - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
+      - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
+      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+    environment:
+      @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
+      EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/hello_world/@EXAMPLE_SUFFIX_DIR_COMPOSE@
+      FASTDDS_DEFAULT_PROFILES_FILE: @FASTDDS_DEFAULT_PROFILES_FILE_PREFIX_COMPOSE@/rtps/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "@COMMAND_EXAMPLE_DIR_PREFIX_COMPOSE@/hello_world@FILE_EXTENSION@ publisher --samples 10 --matched 2"
+    depends_on:
+    - sub-rtps
+    - sub-dds

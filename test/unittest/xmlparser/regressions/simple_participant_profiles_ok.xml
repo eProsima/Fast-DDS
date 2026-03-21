@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <participant profile_name="empty_participant">
+        </participant>
+
+        <participant profile_name="only_rtps_participant">
+            <rtps></rtps>
+        </participant>
+
+        <participant profile_name="only_rtps_participant">
+            <rtps/>
+        </participant>
+
+        <participant profile_name="only_domainid_participant">
+            <domainId>1</domainId>
+        </participant>
+
+        <participant profile_name="complete_participant">
+            <domainId>1</domainId>
+            <rtps></rtps>
+        </participant>
+    </profiles>
+</dds>

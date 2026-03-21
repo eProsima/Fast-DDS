@@ -1,0 +1,25 @@
+{
+    "test_cases": [
+        {
+            "TestCase": "Case_6",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": [
+                        "TypeDep"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "10",
+                    "expected_matches": "1",
+                    "known_types": []
+                }
+            ]
+        }
+    ]
+}

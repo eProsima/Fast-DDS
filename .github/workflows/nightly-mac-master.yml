@@ -1,0 +1,23 @@
+name: Fast DDS MacOS CI (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 22 * * *' # At 22:00 GMT
+
+jobs:
+  nightly-mac-ci-master:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@master
+    with:
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-master'
+      cmake-args: "-DSECURITY=${{ matrix.security }} -DTHIRDPARTY_Asio=FORCE"
+      ctest-args: "-LE xfail"
+      fastdds-branch: 'master'
+      use-ccache: false
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<log xmlns="http://www.eprosima.com">
+    <use_default>false</use_default>
+
+    <consumer>
+        <class>StdoutConsumer</class>
+    </consumer>
+
+    <consumer>
+        <class>StdoutErrConsumer</class>
+        <property>
+            <name>stderr_threshold</name>
+            <value>Log::Kind::Error</value>
+        </property>
+    </consumer>
+
+    <consumer>
+        <class>StdoutErrConsumer</class>
+        <property>
+            <name>stderr_threshold</name>
+            <value>Log::Kind::Warning</value>
+        </property>
+    </consumer>
+
+    <consumer>
+        <class>FileConsumer</class>
+        <property>
+            <name>filename</name>
+            <value>execution.log</value>
+        </property>
+        <property>
+            <name>append</name>
+            <value>true</value>
+        </property>
+    </consumer>
+</log>

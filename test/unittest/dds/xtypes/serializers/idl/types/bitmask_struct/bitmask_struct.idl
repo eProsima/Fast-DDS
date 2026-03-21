@@ -1,0 +1,14 @@
+@bit_bound(8)
+bitmask ColorBitmask
+{
+    red,
+    @position(2) green,
+    blue,
+    @position(5) yellow
+};
+
+@extensibility(APPENDABLE)
+struct BitmaskStruct
+{
+    ColorBitmask my_bitmask;
+};

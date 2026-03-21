@@ -1,0 +1,25 @@
+name: Fast DDS Ubuntu CI (weekly 2.6.x)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1' # Run at minute 0 on Monday
+
+jobs:
+  weekly-ubuntu-ci-2_6_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - true
+          - false
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@2.6.x
+    with:
+      os-image: 'ubuntu-22.04'
+      label: 'weekly-sec-${{ matrix.security }}-ubuntu-ci-2.6.x'
+      ctest-args: "-LE xfail"
+      fastdds-branch: '2.6.x'
+      security: ${{ matrix.security }}
+      run-build: true
+      run-tests: true
+      use-ccache: false

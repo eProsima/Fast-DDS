@@ -1,0 +1,26 @@
+<staticdiscovery>
+    <participant>
+        <name>static_edp_delivery_pub_participant</name>
+        <writer>
+            <entityID>1</entityID>
+            <userId>2</userId>
+            <topicName>hello_world_topic</topicName>
+            <topicDataType>HelloWorld</topicDataType>
+            <topicKind>NO_KEY</topicKind>
+            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+        </writer>
+    </participant>
+    <participant>
+        <name>static_edp_delivery_sub_participant</name>
+        <reader>
+            <entityID>3</entityID>
+            <userId>4</userId>
+            <topicName>hello_world_topic</topicName>
+            <topicDataType>HelloWorld</topicDataType>
+            <topicKind>NO_KEY</topicKind>
+            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+            <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
+        </reader>
+    </participant>
+</staticdiscovery>

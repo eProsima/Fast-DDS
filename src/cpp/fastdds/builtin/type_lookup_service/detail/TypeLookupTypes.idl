@@ -1,0 +1,84 @@
+/* TypeLookupTypes.idl */
+
+#include "../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.idl"
+#include "../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl"
+#include "rpc_types.idl"
+
+module dds {
+module builtin {
+
+    // computed from @hashid("getTypes")
+    const unsigned long TypeLookup_getTypes_HashId = 0x018252d3;
+
+    // computed from @hashid("getDependencies");
+    const unsigned long TypeLookup_getDependencies_HashId = 0x05aafb31;
+
+    // Query the TypeObjects associated with one or more TypeIdentifiers
+    @extensibility(MUTABLE)
+    struct TypeLookup_getTypes_In {
+        @hashid sequence<DDS::XTypes::TypeIdentifier> type_ids;
+    };
+
+    @extensibility(MUTABLE)
+    struct TypeLookup_getTypes_Out {
+        @hashid sequence<DDS::XTypes::TypeIdentifierTypeObjectPair> types;
+        @hashid sequence<DDS::XTypes::TypeIdentifierPair> complete_to_minimal;
+    };
+
+    union TypeLookup_getTypes_Result switch(long) {
+        //TODO case DDS::RETCODE_OK:
+        case eprosima::fastdds::dds::RETCODE_OK:
+            TypeLookup_getTypes_Out result;
+    };
+
+    // Query TypeIdentifiers that the specified types depend on
+    @extensibility(MUTABLE)
+    struct TypeLookup_getTypeDependencies_In {
+        @hashid sequence<DDS::XTypes::TypeIdentifier> type_ids;
+        @hashid sequence<octet, 32> continuation_point;
+    };
+
+    @extensibility(MUTABLE)
+    struct TypeLookup_getTypeDependencies_Out {
+        @hashid sequence<DDS::XTypes::TypeIdentfierWithSize> dependent_typeids;
+        @hashid sequence<octet, 32> continuation_point;
+    };
+
+    union TypeLookup_getTypeDependencies_Result switch(long){
+        //TODO case DDS::RETCODE_OK:
+        case eprosima::fastdds::dds::RETCODE_OK:
+            TypeLookup_getTypeDependencies_Out result;
+    };
+
+    // Service Request
+    union TypeLookup_Call switch(long) {
+        case TypeLookup_getTypes_HashId:
+            TypeLookup_getTypes_In getTypes;
+        case TypeLookup_getDependencies_HashId:
+            TypeLookup_getTypeDependencies_In getTypeDependencies;
+    };
+
+    // @RPCRequestType // Annotation not defined
+    @final
+    struct TypeLookup_Request {
+        rpc::RequestHeader header;
+        TypeLookup_Call data;
+    };
+
+    // Service Reply
+    union TypeLookup_Return switch(long) {
+        case TypeLookup_getTypes_HashId:
+            TypeLookup_getTypes_Result getType;
+        case TypeLookup_getDependencies_HashId:
+            TypeLookup_getTypeDependencies_Result getTypeDependencies;
+    };
+
+    // @RPCReplyType // Annotation not defined
+    @final
+    struct TypeLookup_Reply {
+        rpc::ReplyHeader header;
+        TypeLookup_Return return_value; //This name was changed from "return" to "return_value" to avoid problems in c++
+    };
+
+}; // builtin
+}; // dds

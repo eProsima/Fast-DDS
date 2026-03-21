@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <!-- TRANSPORT -->
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>latency_publisher_tcp_transport</transport_id>
+                <type>TCPv4</type>
+                <keep_alive_frequency_ms>1000</keep_alive_frequency_ms>
+                <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
+                <calculate_crc>false</calculate_crc>
+                <check_crc>false</check_crc>
+                <enable_tcp_nodelay>true</enable_tcp_nodelay>
+                <listening_ports>
+                        <port>7400</port>
+                </listening_ports>
+            </transport_descriptor>
+
+            <transport_descriptor>
+                <transport_id>latency_subscriber_tcp_transport</transport_id>
+                <type>TCPv4</type>
+                <keep_alive_frequency_ms>1000</keep_alive_frequency_ms>
+                <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
+                <calculate_crc>false</calculate_crc>
+                <check_crc>false</check_crc>
+                <enable_tcp_nodelay>true</enable_tcp_nodelay>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <!-- PUBLISHER -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <userTransports>
+                    <transport_id>latency_publisher_tcp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <name>latency_test_publisher</name>
+            </rtps>
+        </participant>
+        <data_writer profile_name="pub_publisher_profile">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="pub_subscriber_profile">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+
+        <!-- SUBSCRIBER -->
+        <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <builtin>
+                    <initialPeersList>
+                        <locator>
+                            <tcpv4>
+                                <address>127.0.0.1</address>
+                                <physical_port>7400</physical_port>
+                            </tcpv4>
+                        </locator>
+                    </initialPeersList>
+                </builtin>
+                <userTransports>
+                    <transport_id>latency_subscriber_tcp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <name>latency_test_subscriber</name>
+            </rtps>
+        </participant>
+        <data_writer profile_name="sub_publisher_profile">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="sub_subscriber_profile">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

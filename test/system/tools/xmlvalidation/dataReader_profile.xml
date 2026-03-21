@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <profiles>
+        <data_reader profile_name="datawriter_profile_example" is_default_profile="true">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>20</depth>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>5</max_samples>
+                    <max_instances>2</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>20</allocated_samples>
+                    <extra_samples>5</extra_samples>
+                </resourceLimitsQos>
+            </topic>
+
+            <qos>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <liveliness>
+                    <kind>AUTOMATIC</kind>
+                    <lease_duration>
+                        <sec>1</sec>
+                        <nanosec>856000</nanosec>
+                    </lease_duration>
+                    <announcement_period>
+                        <sec>1</sec>
+                        <nanosec>856000</nanosec>
+                    </announcement_period>
+                </liveliness>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                    <max_blocking_time>
+                        <sec>1</sec>
+                        <nanosec>856000</nanosec>
+                    </max_blocking_time>
+                </reliability>
+                <lifespan>
+                    <duration>
+                        <sec>5</sec>
+                    </duration>
+                </lifespan>
+                <partition>
+                    <names>
+                        <name>part1</name>
+                        <name>part2</name>
+                        <name>part3</name>
+                    </names>
+                </partition>
+                <deadline>
+                    <period>
+                        <sec>5</sec>
+                    </period>
+                </deadline>
+
+                <ownership>
+                    <kind>EXCLUSIVE</kind>
+                </ownership>
+
+                <latencyBudget>
+                    <duration>
+                        <sec>1</sec>
+                    </duration>
+                </latencyBudget>
+
+                <disablePositiveAcks>
+                    <enabled>true</enabled>
+                    <duration>
+                        <sec>1</sec>
+                    </duration>
+                </disablePositiveAcks>
+
+                <data_sharing>
+                    <kind>AUTOMATIC</kind>
+                    <shared_dir>/home</shared_dir>
+                    <max_domains>10</max_domains>
+                    <domain_ids>
+                        <domainId>0</domainId>
+                        <domainId>11</domainId>
+                    </domain_ids>
+                </data_sharing>
+
+                <destination_order>
+                    <kind>BY_RECEPTION_TIMESTAMP</kind>
+                </destination_order>
+
+                <durabilityService>
+                    <service_cleanup_delay>
+                        <sec>1</sec>
+                    </service_cleanup_delay>
+                    <history_kind>KEEP_ALL</history_kind>
+                    <history_depth>15</history_depth>
+                    <max_samples>10</max_samples>
+                    <max_instances>5</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                </durabilityService>
+
+                <presentation>
+                    <access_scope>TOPIC</access_scope>
+                    <coherent_access>true</coherent_access>
+                    <ordered_access>true</ordered_access>
+                </presentation>
+
+                <timeBasedFilter>
+                    <minimum_separation>
+                        <sec>1</sec>
+                    </minimum_separation>
+                </timeBasedFilter>
+            </qos>
+
+            <times>
+                <initial_acknack_delay>
+                    <nanosec>12</nanosec>
+                </initial_acknack_delay>
+
+                <heartbeat_response_delay>
+                    <sec>3</sec>
+                </heartbeat_response_delay>
+            </times>
+
+            <unicastLocatorList>
+                <locator>
+                    <udpv4>
+                        <port>7400</port>
+                        <address>192.168.1.41</address>
+                    </udpv4>
+                </locator>
+                <locator>
+                    <udpv6>
+                        <port>7401</port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </udpv6>
+                </locator>
+                <locator>
+                    <udpv6>
+                        <port>7402</port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </udpv6>
+                </locator>
+                <locator>
+                    <tcpv4>
+                        <port>7403</port>
+                        <physical_port>8403</physical_port>
+                        <address>192.168.1.41</address>
+                        <unique_lan_id>192.168.1.1.1.1.1.41</unique_lan_id>
+                        <wan_address>192.168.2.41</wan_address>
+                    </tcpv4>
+                </locator>
+                <locator>
+                    <tcpv6>
+                        <port>7404</port>
+                        <physical_port>8404</physical_port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </tcpv6>
+                </locator>
+            </unicastLocatorList>
+
+            <multicastLocatorList>
+                <locator>
+                    <udpv4>
+                        <port>7400</port>
+                        <address>192.168.2.41</address>
+                    </udpv4>
+                </locator>
+                <locator>
+                    <udpv6>
+                        <port>7401</port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </udpv6>
+                </locator>
+                <locator>
+                    <tcpv4>
+                        <port>7402</port>
+                        <physical_port>8402</physical_port>
+                        <address>192.168.2.41</address>
+                        <unique_lan_id>192.168.1.1.1.1.2.41</unique_lan_id>
+                        <wan_address>192.168.3.41</wan_address>
+                    </tcpv4>
+                </locator>
+                <locator>
+                    <tcpv4>
+                        <port>7403</port>
+                        <physical_port>8403</physical_port>
+                        <address>192.168.2.41</address>
+                        <unique_lan_id>192.168.1.1.1.1.2.41</unique_lan_id>
+                        <wan_address>192.168.3.41</wan_address>
+                    </tcpv4>
+                </locator>
+                <locator>
+                    <tcpv6>
+                        <port>7404</port>
+                        <physical_port>8404</physical_port>
+                        <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    </tcpv6>
+                </locator>
+            </multicastLocatorList>
+
+            <external_unicast_locators>
+                <udpv4 externality="1" cost="0" mask="24">
+                    <address>100.100.100.10</address>
+                    <port>23456</port>
+                </udpv4>
+                <udpv4 externality="1" cost="0" mask="24">
+                    <address>100.100.100.11</address>
+                    <port>23456</port>
+                </udpv4>
+                <udpv4 externality="1" cost="0" mask="24">
+                    <address>100.100.100.12</address>
+                    <port>23456</port>
+                </udpv4>
+                <udpv6 externality="2" cost="1" mask="25">
+                    <address>2001:0db8:85a3:0000:0000:8a2e:0370:7334</address>
+                    <port>34567</port>
+                </udpv6>
+            </external_unicast_locators>
+
+            <ignore_non_matching_locators>true</ignore_non_matching_locators>
+
+            <expects_inline_qos>false</expects_inline_qos>
+
+            <historyMemoryPolicy>DYNAMIC</historyMemoryPolicy>
+
+            <matchedPublishersAllocation>
+                <initial>3</initial>
+                <maximum>3</maximum>
+                <increment>0</increment>
+            </matchedPublishersAllocation>
+
+            <propertiesPolicy>
+                <properties>
+                    <property>
+                        <name>Property1Name</name>
+                        <value>Property1Value</value>
+                        <propagate>false</propagate>
+                    </property>
+                    <property>
+                        <name>Property2Name</name>
+                        <value>Property2Value</value>
+                        <propagate>true</propagate>
+                    </property>
+                </properties>
+            </propertiesPolicy>
+
+            <userDefinedID>45</userDefinedID>
+
+            <entityID>76</entityID>
+        </data_reader>
+    </profiles>
+</dds>

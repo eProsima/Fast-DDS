@@ -1,0 +1,16 @@
+@final
+struct final_ann_valid_struct
+{
+    long first;
+};
+
+@final("extra")
+struct final_ann_extra_parameter_struct
+{
+    long first;
+};
+
+struct final_ann_on_struct_member
+{
+    @final long first;
+};

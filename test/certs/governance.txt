@@ -1,0 +1,4 @@
+ openssl smime -sign -in governance_dds_sec.xml -text -out governance.smime -signer maincacert.pem -inkey maincakey.pem
+
+ openssl smime -sign -in permissions_dds_sec.xml -text -out permissions.smime -signer maincacert.pem -inkey maincakey.pem
+

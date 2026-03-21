@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com">
+    <transport_descriptors>
+        <transport_descriptor>
+            <transport_id>udp4_priorities_transport</transport_id>
+            <type>UDPv4</type>
+            <udp_priority_mappings>
+                <priority value="-1" source_port="5000"/>
+                <priority value="1" source_port="5000" dscp="1"/>
+                <priority value="2" source_port="5000" dscp="2" interface="eth0"/>
+                <priority value="3" source_port="5000" dscp="3" interface="10.10.1.2"/>
+            </udp_priority_mappings>
+        </transport_descriptor>
+        <transport_descriptor>
+            <transport_id>udp6_priorities_transport</transport_id>
+            <type>UDPv6</type>
+            <udp_priority_mappings>
+                <priority value="-1" source_port="5000"/>
+                <priority value="1" source_port="5000" dscp="1"/>
+                <priority value="2" source_port="5000" dscp="2" interface="eth0"/>
+                <priority value="3" source_port="5000" dscp="3" interface="::1"/>
+            </udp_priority_mappings>
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="UDP_priorities_participant" is_default_profile="true">
+        <rtps>
+            <useBuiltinTransports>false</useBuiltinTransports>
+            <userTransports>
+                <transport_id>udp4_priorities_transport</transport_id>
+                <transport_id>udp6_priorities_transport</transport_id>
+            </userTransports>
+        </rtps>
+    </participant>
+</profiles>

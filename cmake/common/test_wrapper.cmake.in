@@ -1,0 +1,8 @@
+find_package(Python3 COMPONENTS Interpreter)
+
+# Clean first so the exit code comes from the second process
+message(STATUS "test_wrapper - Running command: ${Python3_EXECUTABLE} @PROJECT_BINARY_DIR@/tools/fastdds/fastdds.py shm clean")
+execute_process(COMMAND ${Python3_EXECUTABLE} @PROJECT_BINARY_DIR@/tools/fastdds/fastdds.py shm clean)
+
+message(STATUS "test_wrapper - Running command: ${ACTUAL_TEST} ${ACTUAL_ARGS}")
+execute_process(COMMAND ${ACTUAL_TEST} ${ACTUAL_ARGS})

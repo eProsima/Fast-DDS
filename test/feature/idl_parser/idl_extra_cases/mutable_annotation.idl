@@ -1,0 +1,16 @@
+@mutable
+struct mutable_ann_valid_struct
+{
+    long first;
+};
+
+@mutable("extra")
+struct mutable_ann_extra_parameter_struct
+{
+    long first;
+};
+
+struct mutable_ann_on_struct_member
+{
+    @mutable long first;
+};

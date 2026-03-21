@@ -1,0 +1,21 @@
+name: Fast DDS Windows CI (weekly 2.6.x)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1' # Run at minute 0 on Monday
+
+jobs:
+  weekly-windows-ci-2_6_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-windows-ci.yml@2.6.x
+    with:
+      label: 'weekly-sec-${{ matrix.security }}-windows-ci-2.6.x'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      ctest-args: "-LE xfail"
+      fastdds_branch: '2.6.x'

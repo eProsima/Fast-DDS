@@ -1,0 +1,23 @@
+union BasicUnion switch (short)
+{
+    case 0:
+        string first;
+    case 1:
+    default:
+        long long second;
+};
+
+union ComplexUnion switch (long)
+{
+    case 0:
+    case 1:
+        long third;
+    default:
+        BasicUnion fourth;
+};
+
+@extensibility(APPENDABLE)
+struct UnionStruct
+{
+    ComplexUnion my_complex_union;
+};
