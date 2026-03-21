@@ -1,0 +1,216 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----06F17C4209D855B738E40F5EA440C478"
+
+This is an S/MIME signed message
+
+------06F17C4209D855B738E40F5EA440C478
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="utf-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
+    <permissions>
+        <grant name="PublisherPermissions">
+            <subject_name>emailAddress=mainpub@eprosima.com, CN=Main Publisher, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2038-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>HelloWorldTopic_no_partitions</topic>
+                    </topics>
+                </publish>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>HelloWorldTopic_no_partitions_wildcards*</topic>
+                    </topics>
+                </publish>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>HelloWorldTopic_single_partition</topic>
+                    </topics>
+                    <partitions>
+                        <partition>Partition</partition>
+                    </partitions>
+                </publish>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>HelloWorldTopic_multiple_partition</topic>
+                    </topics>
+                    <partitions>
+                        <partition>Partition1</partition>
+                        <partition>Partition2</partition>
+                        <partition>Partition3</partition>
+                    </partitions>
+                </publish>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>HelloWorldTopic_partition_wildcards</topic>
+                    </topics>
+                    <partitions>
+                        <partition>Partition*</partition>
+                    </partitions>
+                </publish>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
+        <grant name="SubscriberPermissions">
+            <subject_name> emailAddress=mainsub@eprosima.com, CN=Main Subscriber, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2038-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_no_partitions</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_no_partitions_wildcards*</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_single_partition</topic>
+                    </topics>
+                    <partitions>
+                        <partition>Partition</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_multiple_partition</topic>
+                    </topics>
+                    <partitions>
+                        <partition>Partition1</partition>
+                        <partition>Partition2</partition>
+                        <partition>Partition3</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_partition_wildcards</topic>
+                    </topics>
+                    <partitions>
+                        <partition>Partition*</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
+    </permissions>
+</dds>
+
+------06F17C4209D855B738E40F5EA440C478
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEsAYJKoZIhvcNAQcCoIIEoTCCBJ0CAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggJrMIICZzCCAg2gAwIBAgIUZGCfUDVyxQhCHFIbIM42sFnAwKsw
+CgYIKoZIzj0EAwIwgZoxCzAJBgNVBAYTAkVTMQswCQYDVQQIDAJNQTEUMBIGA1UE
+BwwLVHJlcyBDYW50b3MxETAPBgNVBAoMCGVQcm9zaW1hMREwDwYDVQQLDAhlUHJv
+c2ltYTEeMBwGA1UEAwwVZVByb3NpbWEgTWFpbiBUZXN0IENBMSIwIAYJKoZIhvcN
+AQkBFhNtYWluY2FAZXByb3NpbWEuY29tMB4XDTI1MDExMDE2MDAwMFoXDTI1MDEx
+MTE2MDAwMFowgZoxCzAJBgNVBAYTAkVTMQswCQYDVQQIDAJNQTEUMBIGA1UEBwwL
+VHJlcyBDYW50b3MxETAPBgNVBAoMCGVQcm9zaW1hMREwDwYDVQQLDAhlUHJvc2lt
+YTEeMBwGA1UEAwwVZVByb3NpbWEgTWFpbiBUZXN0IENBMSIwIAYJKoZIhvcNAQkB
+FhNtYWluY2FAZXByb3NpbWEuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE
+3roiCZVhjBQTsP3z4gth7UNQlrAnGwI0M1FvwmFZMPaGoaWt+4JCyPqL//OH9CgD
+z5THK0kUyrEesPwAL4k3C6MvMC0wDAYDVR0TBAUwAwEB/zAdBgNVHQ4EFgQUPEHc
+5miSwb+mZtS6HgT6im4YoDswCgYIKoZIzj0EAwIDSAAwRQIhAM42l2crii8qFHzn
+r8x1Z9h6KmLAYb+Z6waTU2feHUgwAiAsMS+BzAhMVCXNp5d3nP949CeIlxSpOLFU
+tRZ6US35mzGCAgkwggIFAgEBMIGzMIGaMQswCQYDVQQGEwJFUzELMAkGA1UECAwC
+TUExFDASBgNVBAcMC1RyZXMgQ2FudG9zMREwDwYDVQQKDAhlUHJvc2ltYTERMA8G
+A1UECwwIZVByb3NpbWExHjAcBgNVBAMMFWVQcm9zaW1hIE1haW4gVGVzdCBDQTEi
+MCAGCSqGSIb3DQEJARYTbWFpbmNhQGVwcm9zaW1hLmNvbQIUZGCfUDVyxQhCHFIb
+IM42sFnAwKswDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwMTE0MTE0MzQxWjAvBgkqhkiG9w0BCQQx
+IgQg8OO4YVJtX47sfe/kyeJ0h8L8wxIp5kC6sRI7mdWiYjgweQYJKoZIhvcNAQkP
+MWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggq
+hkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcw
+DQYIKoZIhvcNAwICASgwCgYIKoZIzj0EAwIESDBGAiEAh+b+NtyWRvraNJVZMGtx
+r1VfNmb5hTc9WNW3DFJtUhACIQDoe864arGZmd+ipZzZM+kcyil5lWqJz7qbWfKw
+08/K3A==
+
+------06F17C4209D855B738E40F5EA440C478--
+

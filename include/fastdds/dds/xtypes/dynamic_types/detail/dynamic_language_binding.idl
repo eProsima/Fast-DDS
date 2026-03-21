@@ -1,0 +1,89 @@
+// The content of this file, was extracted from DDS-XTypes v1.3 standard.
+
+module DDS
+{
+    typedef sequence<string> IncludePathSeq;
+    typedef string<256> ObjectName;
+
+    // Inserted until defined in standard.
+    typedef sequence<unsigned long> BoundSeq;
+
+    // ---------- TypeKinds (begin) -------------------
+    typedef octet TypeKind;
+
+    // Primitive TKs
+    const TypeKind TK_NONE= 0x00;
+    const TypeKind TK_BOOLEAN= 0x01;
+    const TypeKind TK_BYTE= 0x02;
+    const TypeKind TK_INT16= 0x03;
+    const TypeKind TK_INT32= 0x04;
+    const TypeKind TK_INT64= 0x05;
+    const TypeKind TK_UINT16= 0x06;
+    const TypeKind TK_UINT32= 0x07;
+    const TypeKind TK_UINT64= 0x08;
+    const TypeKind TK_FLOAT32= 0x09;
+    const TypeKind TK_FLOAT64= 0x0A;
+    const TypeKind TK_FLOAT128= 0x0B;
+    const TypeKind TK_INT8= 0x0C;
+    const TypeKind TK_UINT8= 0x0D;
+    const TypeKind TK_CHAR8= 0x10;
+    const TypeKind TK_CHAR16= 0x11;
+
+    // String TKs
+    const TypeKind TK_STRING8= 0x20;
+    const TypeKind TK_STRING16= 0x21;
+
+    // Constructed/Named types
+    const TypeKind TK_ALIAS = 0x30;
+
+    // Enumerated TKs
+    const TypeKind TK_ENUM= 0x40;
+    const TypeKind TK_BITMASK= 0x41;
+
+    // Structured TKs
+    const TypeKind TK_ANNOTATION = 0x50;
+    const TypeKind TK_STRUCTURE= 0x51;
+    const TypeKind TK_UNION= 0x52;
+    const TypeKind TK_BITSET= 0x53;
+
+    // Collection TKs
+    const TypeKind TK_SEQUENCE= 0x60;
+    const TypeKind TK_ARRAY= 0x61;
+    const TypeKind TK_MAP= 0x62;
+    // ---------- TypeKinds (end) -------------------
+
+    typedef map<ObjectName, ObjectName> Parameters;
+
+    enum ExtensibilityKind {
+        FINAL,
+        APPENDABLE,
+        MUTABLE
+    };
+
+    enum TryConstructKind {
+        USE_DEFAULT,
+        DISCARD,
+        TRIM
+    };
+
+    typedef unsigned long MemberId;
+    typedef sequence<long> UnionCaseLabelSeq;
+
+    typedef sequence<long>Int32Seq;
+    typedef sequence<unsigned long>UInt32Seq;
+    typedef sequence<int8>Int8Seq;
+    typedef sequence<uint8>UInt8Seq;
+    typedef sequence<short>Int16Seq;
+    typedef sequence<unsigned short>UInt16Seq;
+    typedef sequence<long long>Int64Seq;
+    typedef sequence<unsigned long long>UInt64Seq;
+    typedef sequence<float>Float32Seq;
+    typedef sequence<double>Float64Seq;
+    typedef sequence<long double>Float128Seq;
+    typedef sequence<char>CharSeq;
+    typedef sequence<wchar>WcharSeq;
+    typedef sequence<boolean>BooleanSeq;
+    typedef sequence<octet>ByteSeq;
+    typedef sequence<string>StringSeq;
+    typedef sequence<wstring>WstringSeq;
+};

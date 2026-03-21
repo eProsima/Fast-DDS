@@ -1,0 +1,11 @@
+names:
+    fastdds:
+        cmake-args:
+            - "-DCOMPILE_TOOLS=ON"
+            - "-DINSTALL_TOOLS=ON"
+    discovery-server:
+        ctest-args: [
+                "--repeat", "until-pass:3",
+                "--timeout", "300",
+                "--label-exclude", "xfail"
+        ]

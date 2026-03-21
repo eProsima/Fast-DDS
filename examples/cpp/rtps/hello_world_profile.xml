@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com" >
+    <participant profile_name="hello_world_participant_profile" is_default_profile="true">
+        <domainId>0</domainId>
+        <rtps>
+            <name>hello_world_participant</name>
+        </rtps>
+    </participant>
+    <data_writer profile_name="hello_world_datawriter_profile" is_default_profile="true">
+        <qos>
+            <durability>
+                <kind>TRANSIENT_LOCAL</kind>
+            </durability>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+        </qos>
+    </data_writer>
+
+    <data_reader profile_name="hello_world_datareader_profile" is_default_profile="true">
+        <qos>
+            <durability>
+                <kind>TRANSIENT_LOCAL</kind>
+            </durability>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+        </qos>
+    </data_reader>
+</profiles>

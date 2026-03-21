@@ -1,0 +1,25 @@
+@extensibility(FINAL)
+struct FinalStruct
+{
+    octet my_value;
+};
+
+@extensibility(MUTABLE)
+struct MutableStruct
+{
+    octet my_value;
+};
+
+@extensibility(APPENDABLE)
+struct AppendableStruct
+{
+    octet my_value;
+};
+
+@extensibility(APPENDABLE)
+struct ExtensibilityStruct
+{
+    FinalStruct my_final_struct;
+    MutableStruct my_mutable_struct;
+    AppendableStruct my_appendable_struct;
+};

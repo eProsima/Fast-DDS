@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="dds" type="PermissionsNode" />
+    <xs:complexType name="PermissionsNode">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:element name="permissions" type="Permissions" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Permissions">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="grant" type="Grant" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Grant">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:element name="subject_name" type="xs:string" />
+            <xs:element name="validity" type="Validity" />
+            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                <xs:choice minOccurs="1" maxOccurs="1">
+                    <xs:element name="allow_rule" minOccurs="0" type="Rule" />
+                    <xs:element name="deny_rule" minOccurs="0" type="Rule" />
+                </xs:choice>
+            </xs:sequence>
+            <xs:element name="default" type="DefaultAction" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+    <xs:complexType name="Validity">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:element name="not_before" type="xs:dateTime" />
+            <xs:element name="not_after" type="xs:dateTime" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Rule">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:element name="domains" type="DomainIdSet" />
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="publish" type="Criteria" />
+            </xs:sequence>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="subscribe" type="Criteria" />
+            </xs:sequence>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="relay" type="Criteria" />
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DomainIdSet">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="id" type="DomainId" />
+            <xs:element name="id_range" type="DomainIdRange" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:simpleType name="DomainId">
+        <xs:restriction base="xs:nonNegativeInteger" />
+    </xs:simpleType>
+    <xs:complexType name="DomainIdRange">
+        <xs:choice>
+            <xs:sequence>
+                <xs:element name="min" type="DomainId" />
+                <xs:element name="max" type="DomainId" minOccurs="0" />
+            </xs:sequence>
+            <xs:element name="max" type="DomainId" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="Criteria">
+        <xs:all minOccurs="1">
+            <xs:element name="topics" minOccurs="1"
+                type="TopicExpressionList" />
+            <xs:element name="partitions" minOccurs="0"
+                type="PartitionExpressionList" />
+            <xs:element name="data_tags" minOccurs="0" type="DataTags" />
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="TopicExpressionList">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="topic" type="TopicExpression" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PartitionExpressionList">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="partition" type="PartitionExpression" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="TopicExpression">
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+    <xs:simpleType name="PartitionExpression">
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+    <xs:complexType name="DataTags">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="tag" type="TagNameValuePair" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TagNameValuePair">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="DefaultAction">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ALLOW" />
+            <xs:enumeration value="DENY" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

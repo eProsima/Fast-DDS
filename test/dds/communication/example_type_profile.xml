@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<types xmlns="http://www.eprosima.com" >
+    <type>
+        <struct name="InnerStruct">
+            <member name="inner_count" type="byte"/>
+        </struct>
+    </type>
+    <type>
+        <struct name="TypeLookup">
+            <member name="message" type="string"/>
+            <member name="index" type="uint32"/>
+            <member name="count" type="nonBasic" nonBasicTypeName="InnerStruct"/>
+        </struct>
+    </type>
+</types>

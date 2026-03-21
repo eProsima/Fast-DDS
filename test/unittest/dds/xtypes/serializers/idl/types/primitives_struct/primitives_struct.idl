@@ -1,0 +1,19 @@
+@extensibility(APPENDABLE)
+struct PrimitivesStruct
+{
+    boolean my_bool;
+    octet my_octet;
+    char my_char;
+    wchar my_wchar;
+    long my_long;
+    unsigned long my_ulong;
+    int8 my_int8;
+    uint8 my_uint8;
+    short my_short;
+    unsigned short my_ushort;
+    long long my_longlong;
+    unsigned long long my_ulonglong;
+    float my_float;
+    double my_double;
+    long double my_longdouble;
+};

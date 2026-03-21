@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"  ?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>         
+        <data_writer profile_name="partition_a_writer">
+            <qos>
+                <partition>
+                    <names>
+                        <name>partition_a</name>
+                    </names>
+                </partition>
+            </qos>
+        </data_writer>
+        <data_writer profile_name="partition_b_writer">
+            <qos>
+                <partition>
+                    <names>
+                        <name>partition_b</name>
+                    </names>
+                </partition>
+            </qos>
+        </data_writer>
+        <data_writer profile_name="partition_a_b_writer">
+            <qos>
+                <partition>
+                    <names>
+                        <name>partition_a</name>
+                        <name>partition_b</name>
+                    </names>
+                </partition>
+            </qos>
+        </data_writer>
+
+        <data_reader profile_name="partition_a_reader">
+            <qos>
+                <partition>
+                    <names>
+                        <name>partition_a</name>
+                    </names>
+                </partition>
+            </qos>        
+        </data_reader>
+
+        <data_reader profile_name="partition_b_reader">
+           <qos>
+                <partition>
+                    <names>
+                        <name>partition_b</name>
+                    </names>
+                </partition>
+            </qos>        
+        </data_reader>
+
+        <data_reader profile_name="partition_a_b_reader">
+            <qos>
+                <partition>
+                    <names>
+                        <name>partition_a</name>
+                        <name>partition_b</name>
+                    </names>
+                </partition>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com" >
+    <log>
+        <use_default>FALSE</use_default>
+        <consumer>
+            <class>FileConsumer</class>
+            <property>
+                <name>filename</name>
+                <value>test1.log</value>
+            </property>
+            <property>
+                <name>append</name>
+                <value>TRUE</value>
+            </property>
+        </consumer>
+    </log>
+</dds>

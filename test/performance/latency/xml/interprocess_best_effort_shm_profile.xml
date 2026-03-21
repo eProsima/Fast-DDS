@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <!-- PUBLISHER -->
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>publisher_transport</transport_id>
+                <type>SHM</type>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <name>latency_test_publisher</name>
+                <userTransports>
+                    <transport_id>publisher_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+        <data_writer profile_name="pub_publisher_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="pub_subscriber_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+
+        <!-- SUBSCRIBER -->
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>subscriber_transport</transport_id>
+                <type>SHM</type>
+            </transport_descriptor>
+        </transport_descriptors>
+        <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
+            <rtps>
+                <name>latency_test_subscriber</name>
+                <userTransports>
+                    <transport_id>subscriber_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+            </rtps>
+        </participant>
+        <data_writer profile_name="sub_publisher_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+        <data_reader profile_name="sub_subscriber_profile">
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

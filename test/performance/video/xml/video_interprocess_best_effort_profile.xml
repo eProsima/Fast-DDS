@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <profiles>
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>229</domainId>
+            <rtps>
+                <name>video_test_publisher</name>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <domainId>229</domainId>
+            <rtps>
+                <name>video_test_subscriber</name>
+            </rtps>
+        </participant>
+
+        <!-- PUBLISHER -->
+        <data_writer profile_name="publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                    <max_blocking_time>
+                        <sec>1</sec>
+                        <nanosec>0</nanosec>
+                    </max_blocking_time>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <publishMode>
+                    <kind>ASYNCHRONOUS</kind>
+                </publishMode>
+            </qos>
+            <times>
+                <heartbeat_period>
+                    <sec>0</sec>
+                    <nanosec>100000000</nanosec>
+                </heartbeat_period>
+            </times>
+            <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
+        </data_writer>
+
+        <!-- SUBSCRIBER -->
+        <data_reader profile_name="subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+            </qos>
+            <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>
+        </data_reader>
+    </profiles>
+</dds>

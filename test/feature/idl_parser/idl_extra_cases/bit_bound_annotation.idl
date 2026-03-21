@@ -1,0 +1,77 @@
+@bit_bound(8) enum bit_bound_ann_valid_enum_8
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound(13) enum bit_bound_ann_valid_enum_16
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound(100) enum bit_bound_ann_invalid_bound_value
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound("invalid") enum bit_bound_ann_invalid_value_type
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound enum bit_bound_ann_missing_parameter
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound(value = 8, value2 = "extra") enum bit_bound_ann_extra_parameter
+{
+    ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound(8) struct bit_bound_ann_on_struct
+{
+    long first;
+    string second;
+};
+
+struct bit_bound_ann_on_struct_member
+{
+    @bit_bound(8) long first;
+    string second;
+};
+
+enum bit_bound_ann_on_enum_member
+{
+    @bit_bound(8) ENUM_VALUE_1,
+    ENUM_VALUE_2
+};
+
+@bit_bound(8) union bit_bound_ann_on_union switch (long)
+{
+    case 0:
+        long first;
+    default:
+        long second;
+};
+
+union bit_bound_ann_on_union_member switch (long)
+{
+    case 0:
+        @bit_bound(8) long first;
+    default:
+        long second;
+};
+
+union bit_bound_ann_on_union_discriminator switch (@bit_bound(8) long)
+{
+    case 0:
+        long first;
+    default:
+        long second;
+};

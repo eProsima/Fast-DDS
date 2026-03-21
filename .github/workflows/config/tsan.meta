@@ -1,0 +1,22 @@
+names:
+    fastcdr:
+        cmake-args:
+            - "-DCMAKE_C_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
+            - "-DCMAKE_CXX_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
+    fastdds:
+        cmake-args:
+            - "-DCOMPILE_EXAMPLES=OFF"
+            - "-DEPROSIMA_BUILD_TESTS=ON"
+            - "-DRTPS_API_TESTS=ON"
+            - "-DFASTDDS_PIM_API_TESTS=ON"
+            - "-DPERFORMANCE_TESTS=ON"
+            - "-DNO_TLS=OFF"
+            - "-DSECURITY=ON"
+            - "-DFASTDDS_STATISTICS=ON"
+            - "-DCMAKE_C_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
+            - "-DCMAKE_CXX_FLAGS_INIT='-fsanitize=thread -fno-omit-frame-pointer'"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"

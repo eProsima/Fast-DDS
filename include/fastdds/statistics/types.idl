@@ -1,0 +1,174 @@
+// Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file include/fastdds/statistics/types.idl
+ */
+
+module eprosima {
+module fastdds {
+module statistics {
+
+    module detail
+    {
+
+        struct EntityId_s
+        {
+            octet value[4];
+        };
+
+        struct GuidPrefix_s
+        {
+            octet value[12];
+        };
+
+        struct GUID_s
+        {
+            GuidPrefix_s guidPrefix;
+            EntityId_s entityId;
+        };
+
+        struct SequenceNumber_s
+        {
+            long high;
+            unsigned long low;
+        };
+
+        struct SampleIdentity_s
+        {
+            GUID_s writer_guid;
+            SequenceNumber_s sequence_number;
+        };
+
+        struct Locator_s
+        {
+            long kind;
+            unsigned long port;
+            octet address[16];
+        };
+
+    }; // namespace detail
+
+struct DiscoveryTime
+{
+    @Key detail::GUID_s local_participant_guid;
+    @Key detail::GUID_s remote_entity_guid;
+    unsigned long long time;
+    string host;
+    string user;
+    string process;
+};
+
+struct EntityCount
+{
+    @Key detail::GUID_s guid;
+    unsigned long long count;
+};
+
+struct SampleIdentityCount
+{
+    @Key detail::SampleIdentity_s sample_id;
+    unsigned long long count;
+};
+
+struct Entity2LocatorTraffic
+{
+    @Key detail::GUID_s src_guid;
+    @Key detail::Locator_s dst_locator;
+    unsigned long long packet_count;
+    unsigned long long byte_count;
+    short byte_magnitude_order;
+};
+
+struct WriterReaderData
+{
+    @Key detail::GUID_s writer_guid;
+    @Key detail::GUID_s reader_guid;
+    float data;
+};
+
+struct Locator2LocatorData
+{
+    @Key detail::Locator_s src_locator;
+    @Key detail::Locator_s dst_locator;
+    float data;
+};
+
+struct EntityData
+{
+    @Key detail::GUID_s guid;
+    float data;
+};
+
+struct PhysicalData
+{
+    @Key detail::GUID_s participant_guid;
+    string host;
+    string user;
+    string process;
+};
+
+module EventKind
+{
+    const unsigned long HISTORY2HISTORY_LATENCY = 0x1;
+    const unsigned long NETWORK_LATENCY = 0x2;
+    const unsigned long PUBLICATION_THROUGHPUT = 0x4;
+    const unsigned long SUBSCRIPTION_THROUGHPUT = 0x8;
+    const unsigned long RTPS_SENT = 0x10;
+    const unsigned long RTPS_LOST = 0x20;
+    const unsigned long RESENT_DATAS = 0x40;
+    const unsigned long HEARTBEAT_COUNT = 0x80;
+    const unsigned long ACKNACK_COUNT = 0x100;
+    const unsigned long NACKFRAG_COUNT = 0x200;
+    const unsigned long GAP_COUNT = 0x400;
+    const unsigned long DATA_COUNT = 0x800;
+    const unsigned long PDP_PACKETS = 0x1000;
+    const unsigned long EDP_PACKETS = 0x2000;
+    const unsigned long DISCOVERED_ENTITY = 0x4000;
+    const unsigned long SAMPLE_DATAS = 0x8000;
+    const unsigned long PHYSICAL_DATA = 0x10000;
+};
+
+union Data switch(unsigned long)
+{
+    case EventKind::HISTORY2HISTORY_LATENCY:
+        WriterReaderData writer_reader_data;
+    case EventKind::NETWORK_LATENCY:
+        Locator2LocatorData locator2locator_data;
+    case EventKind::PUBLICATION_THROUGHPUT:
+    case EventKind::SUBSCRIPTION_THROUGHPUT:
+        EntityData entity_data;
+    case EventKind::RTPS_SENT:
+    case EventKind::RTPS_LOST:
+        Entity2LocatorTraffic entity2locator_traffic;
+    case EventKind::RESENT_DATAS:
+    case EventKind::HEARTBEAT_COUNT:
+    case EventKind::ACKNACK_COUNT:
+    case EventKind::NACKFRAG_COUNT:
+    case EventKind::GAP_COUNT:
+    case EventKind::DATA_COUNT:
+    case EventKind::PDP_PACKETS:
+    case EventKind::EDP_PACKETS:
+        EntityCount entity_count;
+    case EventKind::DISCOVERED_ENTITY:
+        DiscoveryTime discovery_time;
+    case EventKind::SAMPLE_DATAS:
+        SampleIdentityCount sample_identity_count;
+    case EventKind::PHYSICAL_DATA:
+        PhysicalData physical_data;
+};
+
+}; // namespace statistics
+}; // namespace fastdds
+}; // namespace eprosima

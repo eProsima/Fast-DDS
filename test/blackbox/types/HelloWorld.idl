@@ -1,0 +1,6 @@
+@final
+struct HelloWorld
+{
+    unsigned short index;
+    string<128> message;
+};

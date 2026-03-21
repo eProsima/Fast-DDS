@@ -1,0 +1,220 @@
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file test/blackbox/types/core/core_types.idl
+ */
+
+module eprosima {
+module fastdds {
+module rtps {
+module core {
+
+module detail {
+
+    struct EntityId_t
+    {
+        octet value[4];
+    };
+
+    struct ProtocolVersion_t
+    {
+        octet major;
+        octet minor;
+    };
+
+    struct VendorId_t
+    {
+        octet vendorId[2];
+    };
+
+    struct GuidPrefix_t
+    {
+        octet value[12];
+    };
+
+    struct GUID_t
+    {
+        GuidPrefix_t guidPrefix;
+        EntityId_t entityId;
+    };
+
+    struct SequenceNumber_t
+    {
+        long high;
+        unsigned long low;
+    };
+
+    struct Count_t
+    {
+        long value;
+    };
+
+    struct Time_t
+    {
+        unsigned long seconds;
+        unsigned long fraction;
+    };
+
+    typedef Time_t Timestamp;
+
+    struct SequenceNumberSet
+    {
+      SequenceNumber_t bitmapBase;
+      unsigned long numBits;
+      octet bitmap[8];
+    };
+
+    struct Locator_t
+    {
+        long kind;
+        unsigned long port;
+        octet address[16];
+    };
+
+    struct Duration_t
+    {
+      long seconds;
+      unsigned long fraction;
+    };
+
+    typedef unsigned long DomainId_t;
+    typedef unsigned long BuiltinEndpointQos_t;
+
+    struct StatusInfo_t
+    {
+        octet value[4];
+    };
+
+    struct KeyHash_t
+    {
+        octet value[16];
+    };
+
+    struct EntityName_t
+    {
+        string name;
+    };
+
+}; // namespace detail
+
+//-------- RTPS 9.4.4 ------------
+struct Header
+{
+    octet prefix[4];
+    detail::ProtocolVersion_t version;
+    detail::VendorId_t vendorId;
+    detail::GuidPrefix_t guidPrefix;
+};
+
+//-------- RTPS 9.4.5.1 ----------
+struct SubmessageHeader
+{
+    octet submessageId;
+    octet flags;
+    unsigned short submessageLength; /* octetsToNextHeader */
+};
+
+//-------- RTPS 9.4.5.1.1 --------
+module SubmessageKind
+{
+    const char RTPS_HE = 0x00;
+    const char PAD = 0x01;
+    const char ACKNACK = 0x06;
+    const char HEARTBEAT = 0x07;
+    const char GAP = 0x08;
+    const char INFO_TS = 0x09;
+    const char INFO_SRC = 0x0c;
+    const char INFO_REPLY_IP4 = 0x0d;
+    const char INFO_DST = 0x0e;
+    const char INFO_REPLY = 0x0f;
+    const char NACK_FRAG = 0x12;
+    const char HEARTBEAT_FRAG = 0x13;
+    const char DATA = 0x15;
+    const char DATA_FRAG = 0x16;
+};
+
+//-------- RTPS 9.4.5.3 --------
+struct AckNackSubmessage
+{
+    SubmessageHeader submsgHeader;
+    detail::EntityId_t readerId;
+    detail::EntityId_t writerId;
+    detail::SequenceNumberSet readerSNState;
+    detail::Count_t count;
+};
+
+//-------- RTPS 9.4.5.7 --------
+struct HeartBeatSubmessage
+{
+    SubmessageHeader submsgHeader;
+    detail::EntityId_t readerId;
+    detail::EntityId_t writerId;
+    detail::SequenceNumber_t firstSN;
+    detail::SequenceNumber_t lastSN;
+    detail::Count_t count;
+};
+
+//-------- RTPS 9.4.5.9 --------
+struct InfoDestinationSubmessage
+{
+    SubmessageHeader submsgHeader;
+    detail::GuidPrefix_t guidPrefix;
+};
+
+//-------- RTPS 9.4.5.11 -------
+struct InfoSourceSubmessage
+{
+    SubmessageHeader submsgHeader;
+    long unused;
+    detail::ProtocolVersion_t version;
+    detail::VendorId_t vendorId;
+    detail::GuidPrefix_t guidPrefix;
+};
+
+//-------- RTPS 9.4.5.12 -------
+struct InfoTimestampSubmessage
+{
+    SubmessageHeader submsgHeader;
+    detail::Timestamp timestamp;
+};
+
+union Submessage switch (char)
+{
+    case SubmessageKind::HEARTBEAT:
+        HeartBeatSubmessage heartbeat_submsg;
+
+    case SubmessageKind::INFO_TS:
+        InfoTimestampSubmessage info_ts_submsg;
+
+    case SubmessageKind::INFO_SRC:
+        InfoSourceSubmessage info_src_submsg;
+
+    case SubmessageKind::INFO_DST:
+        InfoDestinationSubmessage info_dst_submsg;
+
+    default:
+        SubmessageHeader unknown_submsg;
+};
+
+struct RTPSMessage
+{
+    Header msg_header; /* header is illegal */
+    sequence<Submessage> submessages;
+};
+
+}; // namespace core
+}; // namespace rtps
+}; // namespace fastdds
+}; // namespace eprosima

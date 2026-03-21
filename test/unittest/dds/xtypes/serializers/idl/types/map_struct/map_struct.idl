@@ -1,0 +1,14 @@
+@extensibility(APPENDABLE)
+struct ValueStruct
+{
+    boolean value;
+};
+
+@extensibility(APPENDABLE)
+struct MapStruct
+{
+    map<string, boolean> my_basic_map;
+    map<string, ValueStruct> my_complex_map;
+    map<long, string, 10> my_basic_bounded_map;
+    map<short, ValueStruct, 123> my_complex_bounded_map;
+};

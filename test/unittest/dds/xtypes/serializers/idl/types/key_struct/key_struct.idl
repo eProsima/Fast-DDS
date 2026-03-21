@@ -1,0 +1,16 @@
+@extensibility(APPENDABLE)
+struct ImportantStruct
+{
+    @key long my_first_value;
+    long my_second_value;
+    @key long my_third_value;
+};
+
+@extensibility(APPENDABLE)
+struct KeyStruct
+{
+    short my_short;
+    @key long my_long;
+    @key string my_string;
+    @key ImportantStruct my_important_struct;
+};

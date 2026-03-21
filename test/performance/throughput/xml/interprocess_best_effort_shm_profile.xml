@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns="http://www.eprosima.com">
+    <library_settings>
+        <intraprocess_delivery>OFF</intraprocess_delivery> <!-- OFF | USER_DATA_ONLY | FULL -->
+    </library_settings>
+    <profiles>
+        <!-- TRANSPORT -->
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>shm_transport</transport_id>
+                <type>SHM</type>
+            </transport_descriptor>
+            <transport_descriptor>
+              <transport_id>udp_transport</transport_id>
+              <type>UDPv4</type>
+              <interfaceWhiteList>
+                  <address>127.0.0.1</address>
+              </interfaceWhiteList>
+            </transport_descriptor>
+        </transport_descriptors>
+
+        <!-- PARTICIPANTS -->
+        <participant profile_name="pub_participant_profile">
+            <domainId>120</domainId>
+            <rtps>
+                <userTransports>
+                    <transport_id>shm_transport</transport_id>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <name>throughput_test_publisher</name>
+            </rtps>
+        </participant>
+
+        <participant profile_name="sub_participant_profile">
+            <domainId>120</domainId>
+            <rtps>
+                <userTransports>
+                    <transport_id>shm_transport</transport_id>
+                    <transport_id>udp_transport</transport_id>
+                </userTransports>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <name>throughput_test_subscriber</name>
+            </rtps>
+        </participant>
+
+        <!-- PUBLISHER -->
+        <data_writer profile_name="publisher_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE</kind>
+                </durability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_writer>
+
+        <!-- SUBSCRIBER -->
+        <data_reader profile_name="subscriber_profile">
+            <topic>
+                <historyQos>
+                    <kind>KEEP_ALL</kind>
+                </historyQos>
+                <resourceLimitsQos>
+                    <max_samples>1</max_samples>
+                    <max_instances>1</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                    <allocated_samples>1</allocated_samples>
+                </resourceLimitsQos>
+            </topic>
+            <qos>
+                <reliability>
+                    <kind>BEST_EFFORT</kind>
+                </reliability>
+                <data_sharing>
+                    <kind>OFF</kind>
+                </data_sharing>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>

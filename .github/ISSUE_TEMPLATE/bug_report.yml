@@ -1,0 +1,106 @@
+name: Bug Report
+description: File a bug report.
+labels: ["triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue report!
+        Please, provide a general summary of the issue in the title above.
+  - type: checkboxes
+    attributes:
+      label: Is there an already existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+      - label: I have searched the existing issues
+        required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A concise description of what is expected to happen. Please include references, if applicable, to the Fast DDS documentation/DDS specification where the expected behavior is established.
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: A concise description of what is currently happening.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Please provide an unambigous set of steps to reproduce the issue. If relevant, include a minimal example.
+    validations:
+      required: true
+  - type: textarea
+    id: fast-dds-version
+    attributes:
+      label: Fast DDS version/commit
+      description: Please provide the release tag, branch, commit hash...
+    validations:
+      required: true
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Platform/Architecture
+      description: Tier 1 platforms/architectures where the issue is reproducible. If not a Tier 1 platform, consider opening the issue in the proper discussion forum (check contributing guidelines)
+      multiple: true
+      options:
+        - Ubuntu Focal 20.04 amd64
+        - Ubuntu Focal 20.04 arm64
+        - Windows 10 Visual Studio 2019
+        - MacOS Mojave 10.14
+        - Other. Please specify in Additional context section.
+    validations:
+      required: true
+  - type: dropdown
+    id: transport
+    attributes:
+      label: Transport layer
+      description: Transport layer with which the issue is reproducible.
+      multiple: true
+      options:
+        - Default configuration, UDPv4 & SHM
+        - UDPv4
+        - UDPv6
+        - TCPv4
+        - TCPv6
+        - Shared Memory Transport (SHM)
+        - Intra-process
+        - Data-sharing delivery
+        - Zero copy
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Please provide any additional information that can be of interest such as network interfaces being used, ROS 2 version if applicable, etc.
+    validations:
+      required: false
+  - type: textarea
+    id: xml-profiles
+    attributes:
+      label: XML configuration file
+      description: Please copy and paste the XML configuration file being used if applicable. This will be automatically formatted into code, so no need for backquotes.
+      render: xml
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backquotes.
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: network-traffic
+    attributes:
+      label: Network traffic capture
+      description: If applicable, please provide with a network traffic capture of the relevant packages (for example using Wireshark). Use this box to comment on the capture if needed.
+    validations:
+      required: false

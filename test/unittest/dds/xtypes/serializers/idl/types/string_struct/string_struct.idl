@@ -1,0 +1,8 @@
+@extensibility(APPENDABLE)
+struct StringStruct
+{
+    string my_string;
+    wstring my_wstring;
+    string<41925> my_bounded_string;
+    wstring<20925> my_bounded_wstring;
+};

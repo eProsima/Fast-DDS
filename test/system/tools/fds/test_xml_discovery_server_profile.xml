@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com" >
+    <participant profile_name="UDP_server" is_default_profile="true">
+        <rtps>
+            <prefix>44.49.53.43.53.45.52.56.45.52.5F.31</prefix>
+            <builtin>
+                <discovery_config>
+                    <clientAnnouncementPeriod>
+                        <sec>0</sec>
+                        <nanosec>20000000</nanosec>
+                    </clientAnnouncementPeriod>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
+                    <initialAnnouncements>
+                        <count>0</count>
+                    </initialAnnouncements>
+                    <leaseAnnouncement>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseAnnouncement>
+                    <leaseDuration>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseDuration>
+                </discovery_config>
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.9</address>
+                            <port>02811</port>
+                        </udpv4>
+                    </locator>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.3.1</address>
+                            <port>05511</port>
+                        </udpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+            </builtin>
+        </rtps>
+    </participant>
+
+    <participant profile_name="UDP_server_two" is_default_profile="false">
+        <rtps>
+            <prefix>EE.49.53.42.52.4A.52.56.45.52.5F.31</prefix>
+            <builtin>
+                <discovery_config>
+                    <clientAnnouncementPeriod>
+                        <sec>0</sec>
+                        <nanosec>20000000</nanosec>
+                    </clientAnnouncementPeriod>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
+                    <initialAnnouncements>
+                        <count>0</count>
+                    </initialAnnouncements>
+                    <leaseAnnouncement>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseAnnouncement>
+                    <leaseDuration>
+                        <sec>DURATION_INFINITY</sec>
+                    </leaseDuration>
+                </discovery_config>
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.5</address>
+                            <port>02811</port>
+                        </udpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+            </builtin>
+        </rtps>
+    </participant>
+
+    <participant profile_name="UDP_backup">
+        <rtps>
+            <prefix>44.53.33.5f.45.50.52.4f.53.49.4d.41</prefix>
+            <builtin>
+                <discovery_config>
+                    <discoveryProtocol>BACKUP</discoveryProtocol>
+                </discovery_config>
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.105</address>
+                            <port>11825</port>
+                        </udpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+            </builtin>
+        </rtps>
+    </participant>
+
+    <participant profile_name="UDP_no_prefix">
+        <rtps>
+            <builtin>
+                <discovery_config>
+                    <discoveryProtocol>SERVER</discoveryProtocol>
+                </discovery_config>
+                <metatrafficUnicastLocatorList>
+                    <locator>
+                        <udpv4>
+                            <address>127.0.0.5</address>
+                            <port>11817</port>
+                        </udpv4>
+                    </locator>
+                </metatrafficUnicastLocatorList>
+            </builtin>
+        </rtps>
+    </participant>
+</profiles>
