@@ -14,13 +14,14 @@
 
 services:
   subscriber:
+    @DOCKER_BUILD_COMPOSE@
     image: @DOCKER_IMAGE_NAME@
     container_name: subscriber_ds_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
       - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
@@ -33,13 +34,14 @@ services:
         ipv4_address: 172.150.0.2
 
   publisher:
+    @DOCKER_BUILD_COMPOSE@
     image: @DOCKER_IMAGE_NAME@
     container_name: publisher_ds_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
       - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
@@ -52,13 +54,14 @@ services:
         ipv4_address: 172.150.0.3
 
   server_1:
+    @DOCKER_BUILD_COMPOSE@
     image: @DOCKER_IMAGE_NAME@
     container_name: ds1_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
       - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@
@@ -69,13 +72,14 @@ services:
         ipv4_address: 172.150.0.4
 
   server_2:
+    @DOCKER_BUILD_COMPOSE@
     image: @DOCKER_IMAGE_NAME@
     container_name: ds2_${CONTAINER_SUFFIX_COMPOSE}
     volumes:
       - @PROJECT_BINARY_DIR_COMPOSE_VOLUME@
       - @fastcdr_LIB_DIR_COMPOSE_VOLUME@
       - @CMAKE_INSTALL_PREFIX_COMPOSE_VOLUME@
-      @TINYXML2_LIB_DIR_COMPOSE_VOLUME@
+
     environment:
       @PATH_ENVIRONMENT_VARIABLE_COMPOSE@
       EXAMPLE_DIR: @EXAMPLE_PREFIX_DIR_COMPOSE@/discovery_server/@EXAMPLE_SUFFIX_DIR_COMPOSE@

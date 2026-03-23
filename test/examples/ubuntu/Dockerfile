@@ -1,4 +1,4 @@
-# Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2026 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 ARG ubuntu_version=24.04
-FROM ubuntu:$ubuntu_version AS ubuntu-cli
+FROM ubuntu:$ubuntu_version AS ubuntu-examples-tests
 
 # Needed for a dependency that forces to set timezone
 ENV TZ=Europe/Madrid
