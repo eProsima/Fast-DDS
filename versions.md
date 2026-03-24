@@ -1,6 +1,9 @@
 Forthcoming
 -----------
 
+Version v3.5.0
+--------------
+
 * ResourceLimitsQosPolicy maximum limits default values changed to LENGTH_UNLIMITED (i.e. infinite).
 * Discovery Server CLIENT participants now behave like SUPER_CLIENT participants.
 * Secure Discovery Server is now exclusively a Fast DDS Pro feature.
