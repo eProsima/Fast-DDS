@@ -67,6 +67,14 @@ using eprosima::fastdds::rtps::BuiltinTransportsOptions;
 template<class TypeSupport>
 class PubSubWriter
 {
+public:
+
+    typedef std::function<bool (
+                        const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& reader_info,
+                        const eprosima::fastdds::dds::PublicationBuiltinTopicData& writer_info)> EndpointMatchingFunctor;
+
+private:
+
     class ParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
     public:
@@ -162,6 +170,19 @@ class PubSubWriter
             {
                 writer_.remove_writer_info(info);
             }
+        }
+
+        bool should_endpoints_match(
+                const eprosima::fastdds::dds::DomainParticipant*,
+                const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& reader_info,
+                const eprosima::fastdds::dds::PublicationBuiltinTopicData& writer_info) override
+        {
+            if (writer_.onEndpointMatching_ != nullptr)
+            {
+                return writer_.onEndpointMatching_(reader_info, writer_info);
+            }
+
+            return true;
         }
 
     private:
@@ -927,6 +948,12 @@ public:
             eprosima::fastdds::rtps::ParticipantDiscoveryStatus)> f)
     {
         onDiscovery_ = f;
+    }
+
+    void set_should_endpoints_match_function(
+            EndpointMatchingFunctor f)
+    {
+        onEndpointMatching_ = f;
     }
 
     /*** Function to change QoS ***/
@@ -2200,6 +2227,7 @@ protected:
 
     std::function<bool(const eprosima::fastdds::rtps::ParticipantBuiltinTopicData& info,
             eprosima::fastdds::rtps::ParticipantDiscoveryStatus status)> onDiscovery_;
+    EndpointMatchingFunctor onEndpointMatching_;
 
     //! A mutex for liveliness
     std::mutex liveliness_mutex_;

@@ -1034,6 +1034,11 @@ protected:
                 const fastdds::rtps::PublicationBuiltinTopicData& info,
                 bool& should_be_ignored) override;
 
+        bool should_endpoints_match(
+                const fastdds::rtps::RTPSParticipant* participant,
+                const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info,
+                const fastdds::rtps::PublicationBuiltinTopicData& writer_info) override;
+
         DomainParticipantImpl* participant_;
         int callback_counter_ = 0;
 

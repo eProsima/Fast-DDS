@@ -2160,6 +2160,24 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_writer_discovery(
     }
 }
 
+bool DomainParticipantImpl::MyRTPSParticipantListener::should_endpoints_match(
+        const RTPSParticipant*,
+        const SubscriptionBuiltinTopicData& reader_info,
+        const PublicationBuiltinTopicData& writer_info)
+{
+    Sentry sentinel(this);
+    if (sentinel)
+    {
+        DomainParticipantListener* listener = participant_->listener_;
+        if (nullptr != listener)
+        {
+            return listener->should_endpoints_match(participant_->participant_, reader_info, writer_info);
+        }
+    }
+
+    return true;
+}
+
 bool DomainParticipantImpl::new_remote_endpoint_discovered(
         const fastdds::rtps::GUID_t& partguid,
         uint16_t endpointId,

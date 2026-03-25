@@ -483,6 +483,132 @@ TEST(DDSDiscovery, UpdateMatchedStatus)
     datawriter_2.destroy();
 }
 
+TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysTrue)
+{
+    using namespace std::chrono_literals;
+
+    std::atomic_uint32_t writer_calls {0};
+    std::atomic_uint32_t reader_calls {0};
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++writer_calls;
+            return true;
+        });
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++reader_calls;
+            return true;
+        });
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery(3s, 1u);
+    writer.wait_discovery(1u, 3s);
+
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_EQ(writer.get_matched(), 1u);
+    ASSERT_GE(reader_calls.load(), 1u);
+    ASSERT_GE(writer_calls.load(), 1u);
+}
+
+TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysFalse)
+{
+    using namespace std::chrono_literals;
+
+    std::atomic_uint32_t writer_calls {0};
+    std::atomic_uint32_t reader_calls {0};
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++writer_calls;
+            return false;
+        });
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++reader_calls;
+            return false;
+        });
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery(2s, 1u);
+    writer.wait_discovery(1u, 2s);
+
+    ASSERT_FALSE(reader.is_matched());
+    ASSERT_FALSE(writer.is_matched());
+    ASSERT_GE(reader_calls.load(), 1u);
+    ASSERT_GE(writer_calls.load(), 1u);
+    ASSERT_EQ(reader.get_matched(), 0u);
+    ASSERT_EQ(writer.get_matched(), 0u);
+}
+
+TEST(DDSDiscovery, EndpointMatchingCallbackSelectivelyMatchesOneWriter)
+{
+    using namespace std::chrono_literals;
+
+    // Writer that will be matched
+    PubSubWriter<HelloWorldPubSubType> allowed_writer(TEST_TOPIC_NAME);
+    allowed_writer.setPublisherIDs(1u, 1u);
+    allowed_writer.init();
+    ASSERT_TRUE(allowed_writer.isInitialized());
+
+    // Writer that wont be matched due to the callback
+    PubSubWriter<HelloWorldPubSubType> rejected_writer(TEST_TOPIC_NAME);
+    rejected_writer.setPublisherIDs(2u, 2u);
+    rejected_writer.init();
+    ASSERT_TRUE(rejected_writer.isInitialized());
+
+    const auto allowed_entity_id = allowed_writer.datawriter_guid().entityId;
+
+    std::atomic_uint32_t reader_calls {0};
+
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.set_should_endpoints_match_function(
+        [&, allowed_entity_id](
+            const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+            const eprosima::fastdds::dds::PublicationBuiltinTopicData& writer_info)
+        {
+            // Simple callback that will only accept the allowed_writer
+            ++reader_calls;
+            return writer_info.guid.entityId == allowed_entity_id;
+        });
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery(3s, 1u);
+    allowed_writer.wait_discovery(1u, 3s);
+
+    // Check that only the allowed writer is matched from the reader's perspective
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_GE(reader_calls.load(), 1u);
+
+    // NOTE: Beware, the rejected_writer hasn't rejected the reader, so it believes it is matched.
+}
+
 /**
  * This test checks that the physical properties are correctly sent on the DATA[p], and that the
  * ParticipantProxyData on the receiver side has the correct values.
