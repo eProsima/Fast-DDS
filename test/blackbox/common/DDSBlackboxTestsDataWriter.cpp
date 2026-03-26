@@ -2161,6 +2161,7 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
     LoanableSequence<HelloWorld> datas;
     SampleInfoSeq infos;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datareader->take(datas, infos));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datareader->return_loan(datas, infos));
 
     // Verify that the context-aware overloads were called
     EXPECT_GT(writer_ctx->serialize_calls, 0);
@@ -2168,12 +2169,12 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
     EXPECT_EQ(reader_ctx->serialize_calls, 0);
     EXPECT_GT(reader_ctx->deserialize_calls, 0);
 
-    publisher->delete_datawriter(datawriter);
-    subscriber->delete_datareader(datareader);
-    participant->delete_topic(topic);
-    participant->delete_publisher(publisher);
-    participant->delete_subscriber(subscriber);
-    DomainParticipantFactory::get_instance()->delete_participant(participant);
+    EXPECT_EQ(RETCODE_OK, publisher->delete_datawriter(datawriter));
+    EXPECT_EQ(RETCODE_OK, subscriber->delete_datareader(datareader));
+    EXPECT_EQ(RETCODE_OK, participant->delete_topic(topic));
+    EXPECT_EQ(RETCODE_OK, participant->delete_publisher(publisher));
+    EXPECT_EQ(RETCODE_OK, participant->delete_subscriber(subscriber));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
