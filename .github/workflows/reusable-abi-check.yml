@@ -126,10 +126,11 @@ jobs:
           upgrade: false
 
       - name: Setup CCache
-        uses: ./repo/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Fast CDR branch
         id: get_fastcdr_branch
@@ -175,7 +176,7 @@ jobs:
           ccache --show-stats
 
       - name: Store basic build artifacts
-        uses: ./repo/fastdds/.github/actions/linux/store-artifact
+        uses: eProsima/eProsima-CI/ubuntu/store-artifact@v0
         with:
           name: fastdds_basic_abi_build_${{ inputs.label }}_${{ github.run_id }}
           artifact-path: |
@@ -243,10 +244,11 @@ jobs:
           upgrade: false
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Fast CDR branch
         id: get_fastcdr_branch
@@ -296,7 +298,7 @@ jobs:
           ccache --show-stats
 
       - name: Store Pro build artifacts
-        uses: ./src/fastdds/.github/actions/linux/store-artifact
+        uses: eProsima/eProsima-CI/ubuntu/store-artifact@v0
         with:
           name: fastdds_pro_abi_build_${{ inputs.label }}_${{ github.run_id }}
           artifact-path: |
@@ -336,14 +338,14 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get basic build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_basic_abi_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
           destination-folder-path: ${{ env.WORKSPACE }}/basic
 
       - name: Get Pro build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_abi_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts

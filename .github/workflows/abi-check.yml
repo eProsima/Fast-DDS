@@ -62,5 +62,5 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       fastdds-pro-branch: ${{ inputs.fastdds_pro_branch || github.ref || 'main' }}
-      use-ccache: ${{ inputs.use-ccache == true || true }}
+      use-ccache: ${{ inputs.use-ccache == '' || inputs.use-ccache == 'true' || false }}
     secrets: inherit

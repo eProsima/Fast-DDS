@@ -78,7 +78,7 @@ jobs:
           python-version: '3.12'
 
       - name: Get minimum supported version of CMake
-        uses: ./src/fastdds/.github/actions/windows/get-cmake
+        uses: eProsima/eProsima-CI/windows/get-cmake@v0
 
       - name: Install OpenSSL
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
@@ -143,13 +143,13 @@ jobs:
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/windows/get-ccache
+        uses: eProsima/eProsima-CI/windows/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: c:\\ccache
 
       - name: Setup Ninja
-        uses: ./src/fastdds/.github/actions/windows/get-ninja
+        uses: eProsima/eProsima-CI/windows/get-ninja@v0
         if: ${{ inputs.use-ccache == true }}
 
       - name: Get Fast CDR branch
@@ -199,7 +199,7 @@ jobs:
           ccache --show-stats
 
       - name: Store build artifacts
-        uses: ./src/fastdds/.github/actions/windows/store-artifact
+        uses: eProsima/eProsima-CI/windows/store-artifact@v0
         if: ${{ inputs.run-tests == true }}
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
@@ -255,7 +255,7 @@ jobs:
 
       - name: Get build artifacts
         if: ${{ inputs.run-tests == true }}
-        uses: ./src/fastdds/.github/actions/windows/get-artifact
+        uses: eProsima/eProsima-CI/windows/get-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: c:\github_artifacts\fastdds-pro
@@ -297,7 +297,7 @@ jobs:
 
       - name: Get minimum supported version of CMake
         if: ${{ inputs.run-tests == true }}
-        uses: ./src/fastdds/.github/actions/windows/get-cmake
+        uses: eProsima/eProsima-CI/windows/get-cmake@v0
 
       - name: Install OpenSSL
         if: ${{ inputs.run-tests == true }}

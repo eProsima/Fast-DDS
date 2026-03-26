@@ -134,10 +134,11 @@ jobs:
           upgrade: false
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Fast CDR branch
         id: get_fastcdr_branch
@@ -180,7 +181,7 @@ jobs:
           ccache --show-stats
 
       - name: Store build artifacts
-        uses: ./src/fastdds/.github/actions/linux/store-artifact
+        uses: eProsima/eProsima-CI/ubuntu/store-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifact-path: |
@@ -222,7 +223,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -280,10 +281,11 @@ jobs:
           rm -rf /var/lib/apt/lists/*
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Set up hosts file for DNS testing
         run: |
@@ -405,7 +407,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -437,10 +439,11 @@ jobs:
           path: /vdev
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Fast DDS Pro Python branch
         id: get_fastdds_python_branch
@@ -476,7 +479,7 @@ jobs:
           ccache --show-stats
 
       - name: Store build artifacts
-        uses: ./src/fastdds/.github/actions/linux/store-artifact
+        uses: eProsima/eProsima-CI/ubuntu/store-artifact@v0
         with:
           name: fastdds_pro_python_build_${{ inputs.label }}_${{ github.run_id }}
           artifact-path: |
@@ -516,7 +519,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_python_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -552,10 +555,11 @@ jobs:
           path: /vdev
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Fast DDS Pro Python branch for CI Testing
         id: get_fastdds_python_branch
@@ -594,7 +598,7 @@ jobs:
         id: python_test
         uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
         with:
-          colcon_meta_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_test.meta
+          colcon_meta_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/python_test.meta
           colcon_test_args: ${{ inputs.colcon-args }}
           colcon_test_args_default: --event-handlers=console_direct+ --packages-ignore bzip2 zlib
           ctest_args: ${{ inputs.ctest-args }} ${{ env.test-skip-args }}
@@ -647,7 +651,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get Python build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_python_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -689,10 +693,11 @@ jobs:
           path: /vdev
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Fast DDS Pro Docs branch
         id: get_fastdds_docs_branch
@@ -798,7 +803,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -843,10 +848,11 @@ jobs:
           echo "LD_LIBRARY_PATH=/opt/qt/6.8.3/gcc_64/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       # Get Shapes Demo to make sure it keeps compiling
       - name: Get Shapes Demo branch
@@ -906,7 +912,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -946,10 +952,11 @@ jobs:
           path: /vdev
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Get Discovery Server branch
         id: get_discovery_server_branch
@@ -1046,7 +1053,7 @@ jobs:
           ref: ${{ inputs.fastdds-pro-branch }}
 
       - name: Get Fast DDS Pro build artifacts
-        uses: ./src/fastdds/.github/actions/linux/get-artifact
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
         with:
           name: fastdds_pro_build_${{ inputs.label }}_${{ github.run_id }}
           artifacts-folder-path: /tmp/artifacts
@@ -1083,10 +1090,11 @@ jobs:
           upgrade: false
 
       - name: Setup CCache
-        uses: ./src/fastdds/.github/actions/linux/get-ccache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
         if: ${{ inputs.use-ccache == true }}
         with:
           ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
 
       - name: Sync osrf/osrf_testing_tools_cpp repository
         uses: eProsima/eProsima-CI/external/checkout@v0

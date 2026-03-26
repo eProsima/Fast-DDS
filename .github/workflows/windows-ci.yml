@@ -61,4 +61,4 @@ jobs:
       ctest-args: ${{ inputs.ctest-args }}
       fastdds-pro-branch: ${{ inputs.fastdds_pro_branch || github.ref || 'main' }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
-      use-ccache: ${{ inputs.use-ccache == true || true }}
+      use-ccache: ${{ inputs.use-ccache == '' || inputs.use-ccache == 'true' || false }}

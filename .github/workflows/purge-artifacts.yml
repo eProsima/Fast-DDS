@@ -37,7 +37,7 @@ jobs:
       volumes:
         - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
     steps:
-      - uses: eProsima/Fast-DDS-Pro/.github/actions/linux/purge-artifacts@main
+      - uses: eProsima/eProsima-CI/ubuntu/purge-artifacts@v0
         with:
           artifacts-folder-path: /tmp/artifacts
           days: ${{ inputs.days || '30' }}
@@ -49,7 +49,7 @@ jobs:
       - windows
       - x64
     steps:
-      - uses: eProsima/Fast-DDS-Pro/.github/actions/windows/purge-artifacts@main
+      - uses: eProsima/eProsima-CI/windows/purge-artifacts@v0
         with:
           artifacts-folder-path: c:\github_artifacts\fastdds-pro
           days: ${{ inputs.days || '30' }}

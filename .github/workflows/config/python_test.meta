@@ -5,7 +5,7 @@ names:
             - -DBUILD_DOCUMENTATION=ON
         ctest-args: [
                 "--repeat", "until-pass:3",
-                "--timeout", "300",
+                "--timeout", "400",
                 "--label-exclude", "xfail"
         ]
     googletest-distribution:

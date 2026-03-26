@@ -68,5 +68,5 @@ jobs:
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
       run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
       run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
-      use-ccache: ${{ inputs.use-ccache == true || true }}
+      use-ccache: ${{ inputs.use-ccache == '' || inputs.use-ccache == 'true' || false }}
     secrets: inherit
