@@ -783,13 +783,13 @@ bool RTPSParticipantImpl::setup_builtin_protocols()
 
 void RTPSParticipantImpl::enable()
 {
-    mp_builtinProtocols->enable();
-
     //Start reception
     for (auto& receiver : m_receiverResourcelist)
     {
         receiver.Receiver->RegisterReceiver(receiver.mp_receiver);
     }
+
+    mp_builtinProtocols->enable();
 }
 
 void RTPSParticipantImpl::disable()
