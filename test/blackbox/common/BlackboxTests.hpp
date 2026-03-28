@@ -19,6 +19,12 @@
         ::testing::UnitTest::GetInstance()->current_test_info()->test_case_name() + std::string( \
             "_") + ::testing::UnitTest::GetInstance()->current_test_info()->name())
 
+// Variant for large-data (e.g. Data1mb) readers/writers used alongside a HelloWorld pair in the
+// same test. Somehow, TopicPayloadPoolRegistry returns the same pool for identical topic names.
+// The HelloWorld pool is created first with only 137-byte buffers, which are too small for Data1mb payloads.
+// Using a distinct topic name avoids sharing that pool.
+#define TEST_LARGE_DATA_TOPIC_NAME (TEST_TOPIC_NAME + "_large")
+
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
 #include <process.h>

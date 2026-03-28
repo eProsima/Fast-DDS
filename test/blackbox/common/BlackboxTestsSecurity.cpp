@@ -49,6 +49,12 @@ enum communication_type
     DATASHARING
 };
 
+enum reliability
+{
+    TEST_BEST_EFFORT,
+    TEST_RELIABLE
+};
+
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
 {
@@ -135,14 +141,122 @@ static void fill_sub_auth(
     }
 }
 
-class Security : public testing::TestWithParam<communication_type>
+static void CommonPermissionsConfigure(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy sub_property_policy(extra_properties);
+    fill_sub_auth(sub_property_policy);
+    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+    reader.property_policy(sub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy pub_property_policy(extra_properties);
+
+    fill_pub_auth(pub_property_policy);
+    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+    writer.property_policy(pub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties = PropertyPolicy())
+{
+    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubReader<Data1mbPubSubType>& reader,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy sub_property_policy(extra_properties);
+    fill_sub_auth(sub_property_policy);
+    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+    reader.property_policy(sub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubWriter<Data1mbPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy pub_property_policy(extra_properties);
+
+    fill_pub_auth(pub_property_policy);
+    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+            "builtin.Access-Permissions"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file));
+    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file));
+
+    writer.property_policy(pub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubReader<Data1mbPubSubType>& reader,
+        PubSubWriter<Data1mbPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties = PropertyPolicy())
+{
+    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
+}
+
+class Security : public testing::TestWithParam<std::tuple<communication_type, reliability>>
 {
 public:
 
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -156,13 +270,17 @@ public:
             default:
                 break;
         }
+        reliability_ = (std::get<1>(GetParam()) == TEST_RELIABLE) ?
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+                eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
 
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
+            // Only need to tear down transports
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
@@ -174,6 +292,108 @@ public:
             case TRANSPORT:
             default:
                 break;
+        }
+    }
+
+    eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_;
+
+    void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
+            PubSubReader<HelloWorldPubSubType>& reader,
+            PubSubWriter<HelloWorldPubSubType>& writer,
+            const std::string& governance_file)
+    {
+        CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
+
+        reader.history_depth(10).reliability(reliability_).init();
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.history_depth(10).init();
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.wait_authorized();
+        writer.wait_authorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_helloworld_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+
+        if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+        {
+            // For best effort, samples may be lost if the security crypto context was not
+            // fully established on the reader side before the initial burst arrived.
+            // Retry sending once if fewer than 2 samples were received within the timeout.
+            if (reader.block_for_all(std::chrono::seconds(2)) < 2)
+            {
+                auto retry_data = default_helloworld_data_generator();
+                reader.startReception(retry_data);
+                writer.send(retry_data);
+                reader.block_for_at_least(2);
+            }
+        }
+        else
+        {
+            // Block reader until reception finished or timeout.
+            reader.block_for_all();
+        }
+    }
+
+    void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(
+            PubSubReader<Data1mbPubSubType>& reader,
+            PubSubWriter<Data1mbPubSubType>& writer,
+            const std::string& governance_file)
+    {
+        CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
+
+        reader.history_depth(10).reliability(reliability_).init();
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.history_depth(10).init();
+        ASSERT_TRUE(writer.isInitialized());
+
+        // Wait for authorization
+        reader.wait_authorized();
+        writer.wait_authorized();
+
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+
+        auto data = default_data300kb_data_generator();
+
+        reader.startReception(data);
+
+        // Send data
+        writer.send(data);
+        // In this test all data should be sent.
+        ASSERT_TRUE(data.empty());
+
+        if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+        {
+            // For best effort, samples may be lost if the security crypto context was not
+            // fully established on the reader side before the initial burst arrived.
+            // Retry sending once if fewer than 2 samples were received within the timeout.
+            if (reader.block_for_all(std::chrono::seconds(2)) < 2)
+            {
+                auto retry_data = default_data300kb_data_generator();
+                reader.startReception(retry_data);
+                writer.send(retry_data);
+                reader.block_for_at_least(2);
+            }
+        }
+        else
+        {
+            // Block reader until reception finished or timeout.
+            reader.block_for_all();
         }
     }
 
@@ -645,1630 +865,6 @@ TEST_P(Security, BuiltinAuthenticationPlugin_ensure_same_guid_reconnection)
     // No SECURITY error logs should have been produced
     Log::Flush();
     EXPECT_EQ(0u, n_logs);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_transport_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-    const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size);
-    shm_transport->max_message_size(segment_size);
-    reader.disable_builtin_transport();
-    reader.add_user_transport_to_pparams(shm_transport);
-    writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(shm_transport);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_shm_udp_transport_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    auto shm_transport = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
-    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
-    const uint32_t segment_size = 1024 * 1024;
-    shm_transport->segment_size(segment_size);
-    shm_transport->max_message_size(segment_size);
-    reader.disable_builtin_transport();
-    reader.add_user_transport_to_pparams(shm_transport);
-    reader.add_user_transport_to_pparams(udp_transport);
-    writer.disable_builtin_transport();
-    writer.add_user_transport_to_pparams(shm_transport);
-    writer.add_user_transport_to_pparams(udp_transport);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-// Used to detect Github issue #106
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
-{
-    PubSubWriterReader<HelloWorldPubSubType> wreader(TEST_TOPIC_NAME);
-
-    PropertyPolicy property_policy;
-
-    fill_pub_auth(property_policy);
-    property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(
-        eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
-    wreader.property_policy(property_policy).init();
-
-    ASSERT_TRUE(wreader.isInitialized());
-
-    // Wait for discovery.
-    wreader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    wreader.startReception(data);
-
-    // Send data
-    wreader.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    wreader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_rtps_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 500;
-
-    writer.history_depth(5).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_rtps_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
-
-    writer.history_depth(5).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-// Used to detect Github issue #106
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_participant)
-{
-    PubSubWriterReader<HelloWorldPubSubType> wreader(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy,
-            property_policy;
-
-    fill_pub_auth(pub_property_policy);
-    property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(
-        eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
-    wreader.property_policy(property_policy).
-            pub_property_policy(pub_property_policy).
-            sub_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(wreader.isInitialized());
-
-    // Wait for discovery.
-    wreader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    wreader.startReception(data);
-
-    // Send data
-    wreader.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    wreader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_submessage_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 500;
-
-    writer.history_depth(5).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_submessage_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
-
-    writer.history_depth(5).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-// Used to detect Github issue #106
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participant)
-{
-    PubSubWriterReader<HelloWorldPubSubType> wreader(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy,
-            property_policy;
-
-    fill_pub_auth(property_policy);
-    property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(
-        eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
-    wreader.property_policy(property_policy).
-            pub_property_policy(pub_property_policy).
-            sub_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(wreader.isInitialized());
-
-    // Wait for discovery.
-    wreader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    wreader.startReception(data);
-
-    // Send data
-    wreader.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    wreader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participant_300kb)
-{
-    PubSubWriterReader<Data1mbPubSubType> wreader(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_property_policy, sub_property_policy, property_policy;
-
-    fill_pub_auth(property_policy);
-    property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(
-        eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
-            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
-    wreader.property_policy(property_policy).
-            pub_property_policy(pub_property_policy).
-            sub_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(wreader.isInitialized());
-
-    // Wait for discovery.
-    wreader.wait_discovery();
-
-    auto data = default_data300kb_data_generator();
-
-    wreader.startReception(data);
-
-    // Send data
-    wreader.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    wreader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_payload_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 500;
-
-    writer.history_depth(5).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_payload_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
-
-    writer.history_depth(5).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_ok)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_large_string)
-{
-    PubSubReader<StringTestPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<StringTestPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(10).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_large_string_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_besteffort_all_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 1000;
-
-    writer.history_depth(5).
-            reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_at_least(2);
-}
-
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    // When doing fragmentation, it is necessary to have some degree of
-    // flow control not to overrun the receive buffer.
-    uint32_t bytesPerPeriod = 65536;
-    uint32_t periodInMs = 50;
-
-    writer.history_depth(5).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            add_flow_controller_descriptor_to_pparams(
-        eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO, bytesPerPeriod, periodInMs).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator(5);
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
-// Regression test of Refs #2457
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_reliable_all_data300kb_mix)
-{
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.history_depth(5).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(2).resource_limits_max_samples(2).resource_limits_allocated_samples(2).
-            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_mix_data_generator(10);
-
-    reader.startReception(data);
-
-    size_t count = 0;
-    for (auto data_sample : data)
-    {
-        // Send data
-        writer.send_sample(data_sample);
-        ++count;
-        if (count % 2 == 0)
-        {
-            // Block reader until reception finished or timeout.
-            reader.block_for_at_least(count);
-        }
-    }
-}
-
-// Regression test of Refs #2457, Github ros2 #438.
-TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_user_data)
-{
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
-            pub_property_policy, sub_property_policy;
-
-    fill_pub_auth(pub_part_property_policy);
-    pub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    writer.history_depth(100).
-            user_data({ 'a', 'b', 'c', 'd', 'e' }).
-            property_policy(pub_part_property_policy).
-            entity_property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    fill_sub_auth(sub_part_property_policy);
-    sub_part_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-    sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
-
-    reader.set_on_discovery_function([&writer](const ParticipantBuiltinTopicData& info,
-            ParticipantDiscoveryStatus /*status*/) -> bool
-            {
-                if (info.guid == writer.participant_guid())
-                {
-                    std::cout << "Received USER_DATA from the writer: ";
-                    for (auto i : info.user_data)
-                    {
-                        std::cout << i << ' ';
-                    }
-                    return info.user_data == std::vector<octet>({ 'a', 'b', 'c', 'd', 'e' });
-                }
-
-                return false;
-            });
-
-    reader.history_depth(100).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_part_property_policy).
-            entity_property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    reader.wait_discovery();
-    writer.wait_discovery();
-
-    reader.wait_discovery_result();
 }
 
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_governance_rule_order)
@@ -2911,93 +1507,6 @@ TEST_F(SecurityPkcs, BuiltinAuthenticationAndAccessAndCryptoPlugin_pkcs11_key)
     }
 }
 
-static void CommonPermissionsConfigure(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties)
-{
-    PropertyPolicy sub_property_policy(extra_properties);
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
-
-    reader.property_policy(sub_property_policy);
-}
-
-static void CommonPermissionsConfigure(
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties)
-{
-    PropertyPolicy pub_property_policy(extra_properties);
-
-    fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
-
-    writer.property_policy(pub_property_policy);
-}
-
-static void CommonPermissionsConfigure(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties = PropertyPolicy())
-{
-    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
-    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
-}
-
-static void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file)
-{
-    CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
-
-    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    ASSERT_TRUE(reader.isInitialized());
-
-    writer.history_depth(10).init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
-}
-
 // Regression test of Refs #16168, Github #3102.
 TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validation_no_deadlock)
 {
@@ -3343,6 +1852,28 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt_large_data_only)
+// *INDENT-ON*
+{
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    // Use a topic name that matches the governance rule for enable_discovery_enable_access_encrypt
+    std::string topic_name =
+            "Security/Security_BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt/large_data_"
+            + std::to_string(GET_PID());
+    PubSubReader<Data1mbPubSubType> reader_large_data(topic_name);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(topic_name);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
 
 // *INDENT-OFF*
@@ -3354,7 +1885,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3365,7 +1902,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3376,7 +1919,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
@@ -3387,7 +1936,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
@@ -3398,7 +1953,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
@@ -3409,7 +1970,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
@@ -3420,7 +1987,89 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3431,7 +2080,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3442,7 +2097,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3453,7 +2114,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3464,7 +2131,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
@@ -3475,7 +2148,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
@@ -3486,7 +2165,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
@@ -3497,7 +2182,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 
 // *INDENT-OFF*
@@ -3509,7 +2200,301 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3520,7 +2505,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3531,7 +2522,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3542,7 +2539,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3553,7 +2556,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
@@ -3564,7 +2573,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
@@ -3575,7 +2590,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
@@ -3586,7 +2607,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 
 // *INDENT-OFF*
@@ -3598,7 +2625,90 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3609,7 +2719,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3620,7 +2736,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3631,7 +2753,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3642,7 +2770,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
@@ -3653,7 +2787,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
@@ -3664,7 +2804,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
@@ -3675,7 +2821,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
@@ -3686,7 +2838,301 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisabl
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsDisableDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3697,7 +3143,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3708,7 +3160,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3719,7 +3177,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3730,7 +3194,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
@@ -3741,7 +3211,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
@@ -3752,7 +3228,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
@@ -3763,7 +3245,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
@@ -3774,7 +3262,89 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3785,7 +3355,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3796,7 +3372,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3807,7 +3389,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3818,7 +3406,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
@@ -3829,7 +3423,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
@@ -3840,7 +3440,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
@@ -3851,7 +3457,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
@@ -3862,7 +3474,301 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3873,7 +3779,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3884,7 +3796,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3895,7 +3813,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3906,7 +3830,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
@@ -3917,7 +3847,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
@@ -3928,7 +3864,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
@@ -3939,7 +3881,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
@@ -3950,7 +3898,89 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
@@ -3961,7 +3991,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
@@ -3972,7 +4008,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
@@ -3983,7 +4025,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
@@ -3994,7 +4042,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
@@ -4005,7 +4059,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
@@ -4016,7 +4076,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
@@ -4027,7 +4093,13 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
 
 // *INDENT-OFF*
 TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
@@ -4038,7 +4110,1573 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnable
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
     BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
 }
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsEnableDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryDisableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessEncrypt_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessNone_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_none.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_encrypt)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_none)
+// *INDENT-ON*
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_enable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_disable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
+
+// *INDENT-OFF*
+TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_PermissionsSignDiscoveryEnableAccessSign_validation_ok_enable_discovery_disable_access_sign)
+// *INDENT-ON*
+{
+    FASTDDS_TODO_BEFORE(3, 7, "SIGN protection is not working when combined with other protection kinds");
+    GTEST_SKIP() << "SIGN protection is not working when combined with other protection kinds";
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
+
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(reader, writer, governance_file);
+    // Test for large data
+    PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
+    BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(reader_large_data,
+            writer_large_data, governance_file);
+}
+
 
 TEST(Security, MaliciousHeartbeatIgnore)
 {
@@ -4881,22 +6519,40 @@ TEST(Security, DatagramInjectionOnReader_23836)
 
 GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
-        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+        ::testing::Combine(
+            ::testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
+            ::testing::Values(TEST_BEST_EFFORT, TEST_RELIABLE)
+            ),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
-            switch (info.param)
+            std::string test_name;
+            switch (std::get<0>(info.param))
             {
                 case INTRAPROCESS:
-                    return "Intraprocess";
+                    test_name = "Intraprocess";
                     break;
                 case DATASHARING:
-                    return "Datasharing";
+                    test_name = "Datasharing";
                     break;
                 case TRANSPORT:
                 default:
-                    return "Transport";
+                    test_name = "Transport";
+                    break;
             }
 
+            switch (std::get<1>(info.param))
+            {
+                case TEST_BEST_EFFORT:
+                    test_name += "_BestEffort";
+                    break;
+                case TEST_RELIABLE:
+                    test_name += "_Reliable";
+                    break;
+                default:
+                    break;
+            }
+
+            return test_name;
         });
 
 
