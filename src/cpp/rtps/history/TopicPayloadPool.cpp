@@ -80,11 +80,13 @@ bool TopicPayloadPool::do_get_payload(
         }
     }
 
-    lock.unlock();
+    // Increment reference count while still under lock to prevent the node
+    // from being recycled by a concurrent release_payload() call.
     payload_node->reference();
     payload.data = payload_node->data();
     payload.max_size = payload_node->data_size();
     payload.payload_owner = this;
+    lock.unlock();
 
     return true;
 }

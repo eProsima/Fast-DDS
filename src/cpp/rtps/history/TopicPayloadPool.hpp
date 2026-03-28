@@ -224,7 +224,10 @@ protected:
 
         void reference()
         {
-            info().ref_counter.fetch_add(1, std::memory_order_relaxed);
+            // Use acq_rel to establish happens-before with the writing thread's
+            // release on the ref counter or mutex unlock. This ensures payload
+            // data written before the handoff is visible to the acquiring thread.
+            info().ref_counter.fetch_add(1, std::memory_order_acq_rel);
         }
 
         bool dereference()
@@ -235,7 +238,7 @@ protected:
         static void reference(
                 octet* data)
         {
-            info(data).ref_counter.fetch_add(1, std::memory_order_relaxed);
+            info(data).ref_counter.fetch_add(1, std::memory_order_acq_rel);
         }
 
         static bool dereference(
