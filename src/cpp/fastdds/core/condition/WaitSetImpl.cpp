@@ -171,6 +171,12 @@ void WaitSetImpl::will_be_deleted (
 {
     std::lock_guard<std::mutex> guard(mutex_);
     entries_.remove(&condition);
+    // Wake the WaitSet so any in-progress wait() re-evaluates entries_
+    // without the deleted condition. This prevents fill_active_conditions
+    // from calling get_trigger_value() on a partially-destroyed object
+    // if the WaitSet was spuriously woken between the derived destructor
+    // and this base destructor call.
+    cond_.notify_one();
 }
 
 }  // namespace detail
