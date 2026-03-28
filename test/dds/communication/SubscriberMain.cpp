@@ -107,7 +107,7 @@ int main(
         {
             if (++arg_count >= argc)
             {
-                std::cout << "--run-for expects a parameter" << std::endl;
+                std::cout << "--timeout expects a parameter" << std::endl;
                 return -1;
             }
 
