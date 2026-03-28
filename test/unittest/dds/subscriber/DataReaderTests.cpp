@@ -3901,6 +3901,36 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
+/**
+ * @test Tests that set_type_support_context returns RETCODE_OK on a disabled DataReader,
+ *       RETCODE_ILLEGAL_OPERATION on an enabled one
+ */
+TEST_F(DataReaderTests, set_type_support_context)
+{
+    // Create a disabled DataReader via subscriber QoS
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+    sub_qos.entity_factory().autoenable_created_entities = false;
+
+    create_entities(nullptr, DATAREADER_QOS_DEFAULT, sub_qos);
+
+    ASSERT_NE(data_reader_, nullptr);
+    EXPECT_FALSE(data_reader_->is_enabled());
+
+    auto ctx = std::make_shared<TopicDataType::Context>();
+
+    // Reader is disabled: any context (including null) must return RETCODE_OK
+    EXPECT_EQ(RETCODE_OK, data_reader_->set_type_support_context(ctx));
+    EXPECT_EQ(RETCODE_OK, data_reader_->set_type_support_context(nullptr));
+
+    // Enable the reader
+    ASSERT_EQ(RETCODE_OK, data_reader_->enable());
+    EXPECT_TRUE(data_reader_->is_enabled());
+
+    // Reader is enabled: must return RETCODE_ILLEGAL_OPERATION
+    EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, data_reader_->set_type_support_context(ctx));
+    EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, data_reader_->set_type_support_context(nullptr));
+}
+
 int main(
         int argc,
         char** argv)

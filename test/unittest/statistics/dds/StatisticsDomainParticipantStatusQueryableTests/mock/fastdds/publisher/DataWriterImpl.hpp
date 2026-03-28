@@ -454,6 +454,11 @@ public:
         return RETCODE_OK;
     }
 
+    void set_type_support_context(
+            const std::shared_ptr<eprosima::fastdds::dds::TopicDataType::Context>&)
+    {
+    }
+
     //! Pointer to the associated Data Writer.
     fastdds::rtps::RTPSWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;

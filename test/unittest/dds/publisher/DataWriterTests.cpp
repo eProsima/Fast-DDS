@@ -2799,6 +2799,51 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
+/**
+ * @test Tests that set_type_support_context returns RETCODE_OK on a disabled DataWriter,
+ *       RETCODE_ILLEGAL_OPERATION on an enabled one.
+ */
+TEST(DataWriterTests, set_type_support_context)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // The DataWriters must start disabled
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+    pub_qos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pub_qos);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic_ctx", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    DataWriter* datawriter = publisher->create_datawriter(topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(datawriter, nullptr);
+
+    auto ctx = std::make_shared<TopicDataType::Context>();
+
+    // Writer is disabled: any context (including null) must return RETCODE_OK
+    EXPECT_EQ(RETCODE_OK, datawriter->set_type_support_context(ctx));
+    EXPECT_EQ(RETCODE_OK, datawriter->set_type_support_context(nullptr));
+
+    // Enable the writer
+    ASSERT_EQ(RETCODE_OK, datawriter->enable());
+
+    // Writer is enabled: must return RETCODE_ILLEGAL_OPERATION
+    EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, datawriter->set_type_support_context(ctx));
+    EXPECT_EQ(RETCODE_ILLEGAL_OPERATION, datawriter->set_type_support_context(nullptr));
+
+    // Tear down
+    ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
+    ASSERT_TRUE(participant->delete_publisher(publisher) == RETCODE_OK);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
