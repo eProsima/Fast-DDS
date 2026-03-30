@@ -73,7 +73,7 @@ ParticipantProxyData::ParticipantProxyData(
         fastdds::dds::DOMAIN_ID_UNKNOWN,
         allocation
         )
-    , m_protocol_version(c_ProtocolVersion)
+    , m_protocol_version(c_ProtocolVersion_2_1)  // RTI Micro interop: advertise RTPS 2.1
     , m_expects_inline_qos(false)
     , m_available_builtin_endpoints(0)
     , m_network_configuration(0)
@@ -166,11 +166,8 @@ uint32_t ParticipantProxyData::get_serialized_size(
     // PID_VENDORID
     ret_val += 4 + PARAMETER_VENDOR_LENGTH;
 
-    // PID_PRODUCT_VERSION
-    ret_val += 4 + PARAMETER_PRODUCT_VERSION_LENGTH;
-
-    // PID_DOMAIN_ID
-    ret_val += 4 + PARAMETER_DOMAINID_LENGTH;
+    // RTI Micro interop: PID_PRODUCT_VERSION (0x8000) removed — vendor PID causes crash
+    // RTI Micro interop: PID_DOMAIN_ID (0x000F) removed — RTPS 2.3+ PID causes crash
 
     if (m_expects_inline_qos)
     {
@@ -181,15 +178,8 @@ uint32_t ParticipantProxyData::get_serialized_size(
     // PID_PARTICIPANT_GUID
     ret_val += 4 + PARAMETER_GUID_LENGTH;
 
-    // PID_NETWORK_CONFIGURATION_SET
-    ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
-
-    if (machine_id.size() > 0)
-    {
-        // PID_MACHINE_ID
-        ret_val +=
-                fastdds::dds::ParameterSerializer<Parameter_t>::cdr_serialized_size(machine_id);
-    }
+    // RTI Micro interop: PID_NETWORK_CONFIGURATION_SET (0x8007) removed — vendor PID causes crash
+    // RTI Micro interop: PID_MACHINE_ID (0x8003) removed — vendor PID causes crash
 
     // PID_METATRAFFIC_MULTICAST_LOCATOR
     ret_val +=
@@ -257,15 +247,9 @@ uint32_t ParticipantProxyData::get_serialized_size(
     }
 #endif // if HAVE_SECURITY
 
-    if (force_including_optional_qos || should_send_optional_qos())
-    {
-        // No need for QosPoliciesSerializer::should_be_sent since it is always different from the default.
-        // For instance, the locator lists.
+    // RTI Micro interop: PID_WIREPROTOCOL_CONFIG (0x8300) removed — vendor PID causes crash
+    (void)force_including_optional_qos;
 
-        // PID_WIREPROTOCOL_CONFIG
-        ret_val += fastdds::dds::QosPoliciesSerializer<dds::WireProtocolConfigQos>::cdr_serialized_size(
-            wire_protocol.value());
-    }
     // PID_SENTINEL
     return ret_val + 4;
 }
@@ -302,26 +286,8 @@ bool ParticipantProxyData::write_to_cdr_message(
             return false;
         }
     }
-    {
-        ParameterProductVersion_t p(fastdds::dds::PID_PRODUCT_VERSION,
-                PARAMETER_PRODUCT_VERSION_LENGTH);
-        p.version.major = this->product_version.major;
-        p.version.minor = this->product_version.minor;
-        p.version.patch = this->product_version.patch;
-        p.version.tweak = this->product_version.tweak;
-        if (!fastdds::dds::ParameterSerializer<ParameterProductVersion_t>::add_to_cdr_message(p, msg))
-        {
-            return false;
-        }
-    }
-    {
-        ParameterDomainId_t p(fastdds::dds::PID_DOMAIN_ID, 4);
-        p.domain_id = this->domain_id;
-        if (!fastdds::dds::ParameterSerializer<ParameterDomainId_t>::add_to_cdr_message(p, msg))
-        {
-            return false;
-        }
-    }
+    // RTI Micro interop: PID_PRODUCT_VERSION (0x8000) removed
+    // RTI Micro interop: PID_DOMAIN_ID (0x000F) removed
     if (this->m_expects_inline_qos)
     {
         ParameterBool_t p(fastdds::dds::PID_EXPECTS_INLINE_QOS, PARAMETER_BOOL_LENGTH,
@@ -338,25 +304,8 @@ bool ParticipantProxyData::write_to_cdr_message(
             return false;
         }
     }
-    {
-        ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET,
-                PARAMETER_NETWORKCONFIGSET_LENGTH);
-        p.netconfigSet = m_network_configuration;
-        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(
-                    p,
-                    msg))
-        {
-            return false;
-        }
-    }
-    if (machine_id.size() > 0)
-    {
-        ParameterString_t p(fastdds::dds::PID_MACHINE_ID, 0, machine_id);
-        if (!fastdds::dds::ParameterSerializer<ParameterString_t>::add_to_cdr_message(p, msg))
-        {
-            return false;
-        }
-    }
+    // RTI Micro interop: PID_NETWORK_CONFIGURATION_SET (0x8007) removed
+    // RTI Micro interop: PID_MACHINE_ID (0x8003) removed
     for (const Locator_t& it : metatraffic_locators.multicast)
     {
         ParameterLocator_t p(fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR, PARAMETER_LOCATOR_LENGTH,
@@ -475,18 +424,8 @@ bool ParticipantProxyData::write_to_cdr_message(
     }
 #endif // if HAVE_SECURITY
 
-    // serialize optional QoS if present
-    if (force_write_optional_qos || should_send_optional_qos())
-    {
-        // No need for QosPoliciesSerializer::should_be_sent since it is always different from the default.
-        // For instance, the discovery protocol is always different from NONE.
-        if (!fastdds::dds::QosPoliciesSerializer<dds::WireProtocolConfigQos>::add_to_cdr_message(
-                    wire_protocol.value(),
-                    msg))
-        {
-            return false;
-        }
-    }
+    // RTI Micro interop: PID_WIREPROTOCOL_CONFIG (0x8300) removed
+    (void)force_write_optional_qos;
 
     return fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }

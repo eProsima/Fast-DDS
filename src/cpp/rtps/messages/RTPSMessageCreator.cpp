@@ -56,7 +56,8 @@ bool RTPSMessageCreator::addHeader(
         CDRMessage_t* msg,
         const GuidPrefix_t& guidPrefix)
 {
-    return RTPSMessageCreator::addHeader(msg, guidPrefix, c_ProtocolVersion, c_VendorId_eProsima);
+    // RTI Micro interop: send RTPS 2.1 (RTI Micro 2.4.9 drops messages with version > 2.1)
+    return RTPSMessageCreator::addHeader(msg, guidPrefix, c_ProtocolVersion_2_1, c_VendorId_eProsima);
 }
 
 bool RTPSMessageCreator::addCustomContent(

@@ -499,7 +499,8 @@ bool RTPSMessageGroup::add_info_dst_in_buffer(
     if ((header_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
             participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
     {
-        RTPSMessageCreator::addSubmessageInfoSRC(buffer, c_ProtocolVersion, c_VendorId_eProsima,
+        // RTI Micro interop: send RTPS 2.1
+        RTPSMessageCreator::addSubmessageInfoSRC(buffer, c_ProtocolVersion_2_1, c_VendorId_eProsima,
                 participant_->getGuid().guidPrefix);
     }
 #endif // if HAVE_SECURITY
