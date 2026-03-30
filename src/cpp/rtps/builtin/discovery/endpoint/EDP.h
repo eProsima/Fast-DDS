@@ -401,6 +401,17 @@ private:
     bool checkDataRepresentationQos(
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata) const;
+
+    /**
+     * Check the validity of a matching between a reader and a writer taking
+     * into account user-defined matching rules via the RTPSListener callback
+     *
+     * @param wdata Ref to the WriterProxyData
+     * @param rdata Ref to the ReaderProxyData
+     */
+    bool user_valid_matching(
+            const ReaderProxyData& rdata,
+            const WriterProxyData& wdata) const;
 };
 
 } // namespace rtps

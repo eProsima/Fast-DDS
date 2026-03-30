@@ -123,6 +123,28 @@ public:
         should_be_ignored = false;
     }
 
+    /**
+     * This method is called to check whether a discovered DataReader and DataWriter should be matched or not.
+     * It is called after successful validation of the standard DDS matching rules.
+     * By default, they will match, but the user can override this method to implement custom matching logic.
+     *
+     * @param [in] participant Pointer to the Participant which discovered the remote endpoints.
+     * @param [in] reader_info Remote reader information.
+     * @param [in] writer_info Remote writer information.
+     *
+     * @return true if the endpoints should be matched, false otherwise.
+     */
+    virtual bool should_endpoints_match(
+            const RTPSParticipant* participant,
+            const SubscriptionBuiltinTopicData& reader_info,
+            const PublicationBuiltinTopicData& writer_info)
+    {
+        static_cast<void>(participant);
+        static_cast<void>(reader_info);
+        static_cast<void>(writer_info);
+        return true;
+    }
+
 };
 
 } // namespace rtps
