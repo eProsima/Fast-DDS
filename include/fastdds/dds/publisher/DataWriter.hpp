@@ -32,6 +32,7 @@
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -631,6 +632,18 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t set_related_datareader(
             const DataReader* related_reader);
+
+    /**
+     * @brief Set the type support context to be used when serializing data for this DataWriter.
+     *        Cannot be called on an enabled DataWriter.
+     *
+     * @param [in] context Shared pointer to the context to be used when serializing data.
+     *
+     * @return RETCODE_OK if the context is set successfully.
+     *         RETCODE_ILLEGAL_OPERATION if this entity is enabled.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_type_support_context(
+            const std::shared_ptr<TopicDataType::Context>& context);
 
 protected:
 

@@ -2053,6 +2053,130 @@ TEST(DDSDataWriter, transport_priority_xml)
     EXPECT_EQ(transport_priority_1, PRIORITY_1);
 }
 
+/**
+ * @test End-to-end test for the type support context feature.
+ *
+ * Verifies that:
+ * 1. set_type_support_context can be called before enable on both DataWriter and DataReader.
+ * 2. The context is passed through to the context-aware serialize() and deserialize() overloads
+ *    when data actually flows between writer and reader over transport.
+ */
+TEST(DDSDataWriter, type_support_context_end_to_end)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    // Tracks calls to context-aware type support methods.
+    struct CallCountingContext : public TopicDataType::Context
+    {
+        int serialize_calls{0};
+        int deserialize_calls{0};
+    };
+
+    // Type support that intercepts the context-aware overloads used during data flow.
+    class ContextTrackingTypeSupport : public HelloWorldPubSubType
+    {
+    public:
+
+        using HelloWorldPubSubType::HelloWorldPubSubType;
+
+        bool serialize_ctx(
+                const std::shared_ptr<TopicDataType::Context>& ctx,
+                const void* const data,
+                SerializedPayload_t& payload,
+                DataRepresentationId_t data_representation) override
+        {
+            if (auto tracking = std::dynamic_pointer_cast<CallCountingContext>(ctx))
+            {
+                tracking->serialize_calls += 1;
+            }
+            return HelloWorldPubSubType::serialize(data, payload, data_representation);
+        }
+
+        bool deserialize_ctx(
+                const std::shared_ptr<TopicDataType::Context>& ctx,
+                eprosima::fastdds::rtps::SerializedPayload_t& payload,
+                void* data) override
+        {
+            if (auto tracking = std::dynamic_pointer_cast<CallCountingContext>(ctx))
+            {
+                tracking->deserialize_calls += 1;
+            }
+            return HelloWorldPubSubType::deserialize(payload, data);
+        }
+
+    };
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport ts(new ContextTrackingTypeSupport());
+    ts.register_type(participant);
+    Topic* topic = participant->create_topic(
+        "type_support_context_topic", ts.get_type_name(), TOPIC_QOS_DEFAULT);
+
+    // Create publisher/subscriber with autoenable off so we can set context before enabling
+    PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+    pub_qos.entity_factory().autoenable_created_entities = false;
+    Publisher* publisher = participant->create_publisher(pub_qos);
+    ASSERT_NE(publisher, nullptr);
+
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+    sub_qos.entity_factory().autoenable_created_entities = false;
+    Subscriber* subscriber = participant->create_subscriber(sub_qos);
+    ASSERT_NE(subscriber, nullptr);
+
+    // Create disabled reliable writer and reader.
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    writer_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    DataWriter* datawriter = publisher->create_datawriter(topic, writer_qos);
+    ASSERT_NE(datawriter, nullptr);
+    EXPECT_FALSE(datawriter->is_enabled());
+
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    DataReader* datareader = subscriber->create_datareader(topic, reader_qos);
+    ASSERT_NE(datareader, nullptr);
+    EXPECT_FALSE(datareader->is_enabled());
+
+    // Set tracking contexts on the disabled entities
+    auto writer_ctx = std::make_shared<CallCountingContext>();
+    auto reader_ctx = std::make_shared<CallCountingContext>();
+    ASSERT_EQ(RETCODE_OK, datawriter->set_type_support_context(writer_ctx));
+    ASSERT_EQ(RETCODE_OK, datareader->set_type_support_context(reader_ctx));
+
+    // Enable both entities now that the contexts are set
+    ASSERT_EQ(RETCODE_OK, datawriter->enable());
+    ASSERT_EQ(RETCODE_OK, datareader->enable());
+
+    // Write one sample and verify it is received
+    HelloWorld data;
+    data.index(1);
+    data.message("context test");
+    ASSERT_EQ(RETCODE_OK, datawriter->write(&data));
+    ASSERT_TRUE(datareader->wait_for_unread_message({10, 0}));
+    LoanableSequence<HelloWorld> datas;
+    SampleInfoSeq infos;
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datareader->take(datas, infos));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, datareader->return_loan(datas, infos));
+
+    // Verify that the context-aware overloads were called
+    EXPECT_GT(writer_ctx->serialize_calls, 0);
+    EXPECT_EQ(writer_ctx->deserialize_calls, 0);
+    EXPECT_EQ(reader_ctx->serialize_calls, 0);
+    EXPECT_GT(reader_ctx->deserialize_calls, 0);
+
+    EXPECT_EQ(RETCODE_OK, publisher->delete_datawriter(datawriter));
+    EXPECT_EQ(RETCODE_OK, subscriber->delete_datareader(datareader));
+    EXPECT_EQ(RETCODE_OK, participant->delete_topic(topic));
+    EXPECT_EQ(RETCODE_OK, participant->delete_publisher(publisher));
+    EXPECT_EQ(RETCODE_OK, participant->delete_subscriber(subscriber));
+    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
