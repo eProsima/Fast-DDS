@@ -687,7 +687,8 @@ void RTPSParticipantImpl::setup_user_traffic()
         std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
-                    m_network_Factory.fill_default_locator_port(loc, multicast_port);
+                    // This methods leaves the address unchanged if it is already set
+                    m_network_Factory.fillMetatrafficMulticastLocator(loc, multicast_port);
                 });
     }
 
