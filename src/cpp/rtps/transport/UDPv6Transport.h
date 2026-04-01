@@ -82,10 +82,6 @@ public:
             LocatorList& locators,
             uint32_t unicast_port) const override;
 
-    bool fillMetatrafficMulticastLocator(
-            Locator& locator,
-            uint32_t metatraffic_multicast_port) const override;
-
     void AddDefaultOutputLocator(
             LocatorList& defaultList) override;
 

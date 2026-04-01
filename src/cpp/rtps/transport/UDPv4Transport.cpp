@@ -287,21 +287,6 @@ bool UDPv4Transport::getDefaultUnicastLocators(
     return true;
 }
 
-bool UDPv4Transport::fillMetatrafficMulticastLocator(
-        Locator& locator,
-        uint32_t metatraffic_multicast_port) const
-{
-    if (locator.port == 0)
-    {
-        locator.port = metatraffic_multicast_port;
-    }
-    if (!IsAddressDefined(locator))
-    {
-        IPLocator::setIPv4(locator, DEFAULT_METATRAFFIC_MULTICAST_ADDRESS);
-    }
-    return true;
-}
-
 void UDPv4Transport::AddDefaultOutputLocator(
         LocatorList& defaultList)
 {

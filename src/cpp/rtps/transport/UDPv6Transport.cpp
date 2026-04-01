@@ -288,21 +288,6 @@ bool UDPv6Transport::getDefaultUnicastLocators(
     return true;
 }
 
-bool UDPv6Transport::fillMetatrafficMulticastLocator(
-        Locator& locator,
-        uint32_t metatraffic_multicast_port) const
-{
-    if (locator.port == 0)
-    {
-        locator.port = metatraffic_multicast_port;
-    }
-    if (!IsAddressDefined(locator))
-    {
-        IPLocator::setIPv6(locator, "ff1e::ffff:efff:1");
-    }
-    return true;
-}
-
 void UDPv6Transport::AddDefaultOutputLocator(
         LocatorList& defaultList)
 {
