@@ -18,6 +18,7 @@
  */
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include "ParameterList.hpp"
 #include "ParameterSerializer.hpp"
 
@@ -26,6 +27,13 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+namespace {
+
+constexpr ParameterId_t pid_standard_rpc_related_sample_identity =
+        static_cast<ParameterId_t>(0x0083);
+
+} // namespace
 
 
 bool ParameterList::writeEncapsulationToCDRMsg(
@@ -40,14 +48,17 @@ bool ParameterList::writeEncapsulationToCDRMsg(
 bool ParameterList::updateCacheChangeFromInlineQos(
         fastrtps::rtps::CacheChange_t& change,
         fastrtps::rtps::CDRMessage_t* msg,
+        const fastrtps::rtps::VendorId_t& source_vendor_id,
         uint32_t& qos_size)
 {
+    static const fastrtps::rtps::VendorId_t c_VendorId_rti_connext = {0x01, 0x01};
+
     auto parameter_process = [&](
         fastrtps::rtps::CDRMessage_t* msg,
         const ParameterId_t pid,
         uint16_t plength)
             {
-                switch (pid)
+                switch (static_cast<uint16_t>(pid))
                 {
                     case PID_KEY_HASH:
                     {
@@ -61,8 +72,18 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                         break;
                     }
 
-                    case PID_RELATED_SAMPLE_IDENTITY:
+                    case static_cast<uint16_t>(pid_standard_rpc_related_sample_identity):
+                    case static_cast<uint16_t>(PID_RELATED_SAMPLE_IDENTITY):
                     {
+                        if (pid == PID_RELATED_SAMPLE_IDENTITY)
+                        {
+                            if ((fastrtps::rtps::c_VendorId_eProsima != source_vendor_id) &&
+                                    (c_VendorId_rti_connext != source_vendor_id))
+                            {
+                                return true;
+                            }
+                        }
+
                         if (plength >= 24)
                         {
                             ParameterSampleIdentity_t p(pid, plength);

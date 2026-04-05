@@ -790,7 +790,7 @@ bool MessageReceiver::proc_Submsg_Data(
 
     if (inlineQosFlag)
     {
-        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
+        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, source_vendor_id_, inlineQosSize))
         {
             logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;
@@ -980,7 +980,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     if (inlineQosFlag)
     {
-        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, inlineQosSize))
+        if (!ParameterList::updateCacheChangeFromInlineQos(ch, msg, source_vendor_id_, inlineQosSize))
         {
             logInfo(RTPS_MSG_IN, IDSTRING "SubMessage Data ERROR, Inline Qos ParameterList error");
             return false;

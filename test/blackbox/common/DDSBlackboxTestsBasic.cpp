@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
@@ -38,6 +39,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 
 #include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
@@ -50,6 +52,136 @@ namespace fastdds {
 namespace dds {
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+namespace
+{
+
+constexpr eprosima::fastdds::dds::ParameterId_t pid_standard_rpc_related_sample_identity =
+        static_cast<eprosima::fastdds::dds::ParameterId_t>(0x0083);
+
+constexpr eprosima::fastdds::dds::ParameterId_t pid_legacy_fastdds_related_sample_identity =
+        eprosima::fastdds::dds::PID_RELATED_SAMPLE_IDENTITY;
+
+bool check_related_sample_identity_field(
+        eprosima::fastrtps::rtps::CDRMessage_t& msg,
+        bool& exists_standard_related_sample_identity,
+        bool& exists_custom_related_sample_identity,
+        bool drop_standard_related_sample_identity = false,
+        bool drop_custom_related_sample_identity = true)
+{
+    auto old_pos = msg.pos;
+    uint8_t flags = msg.buffer[msg.pos - 3];
+
+    msg.pos += 2;
+    uint16_t to_inline_qos = 0;
+    eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+
+    if ((flags & (1 << 1)) == 0)
+    {
+        msg.pos = old_pos;
+        return false;
+    }
+
+    uint32_t original_pos = msg.pos + to_inline_qos;
+    uint32_t qos_size = 0;
+
+    auto parameter_process = [&](
+        eprosima::fastrtps::rtps::CDRMessage_t* msg,
+        eprosima::fastdds::dds::ParameterId_t& pid,
+        uint16_t plength,
+        uint32_t& pid_pos)
+            {
+                switch (static_cast<uint16_t>(pid))
+                {
+                    case static_cast<uint16_t>(pid_legacy_fastdds_related_sample_identity):
+                    {
+                        if (plength >= 24)
+                        {
+                            eprosima::fastdds::dds::ParameterSampleIdentity_t p(pid, plength);
+                            if (!eprosima::fastdds::dds::ParameterSerializer<
+                                        eprosima::fastdds::dds::ParameterSampleIdentity_t>::read_from_cdr_message(
+                                        p, msg, plength))
+                            {
+                                return false;
+                            }
+                            exists_custom_related_sample_identity = true;
+                            if (drop_custom_related_sample_identity)
+                            {
+                                msg->buffer[pid_pos] = 0xff;
+                                msg->buffer[pid_pos + 1] = 0xff;
+                            }
+                        }
+                        break;
+                    }
+                    case static_cast<uint16_t>(pid_standard_rpc_related_sample_identity):
+                    {
+                        if (plength >= 24)
+                        {
+                            eprosima::fastdds::dds::ParameterSampleIdentity_t p(pid, plength);
+                            if (!eprosima::fastdds::dds::ParameterSerializer<
+                                        eprosima::fastdds::dds::ParameterSampleIdentity_t>::read_from_cdr_message(
+                                        p, msg, plength))
+                            {
+                                return false;
+                            }
+                            exists_standard_related_sample_identity = true;
+                            if (drop_standard_related_sample_identity)
+                            {
+                                msg->buffer[pid_pos] = 0xff;
+                                msg->buffer[pid_pos + 1] = 0xff;
+                            }
+                        }
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+                return true;
+            };
+
+    bool is_sentinel = false;
+    while (!is_sentinel)
+    {
+        msg.pos = original_pos + qos_size;
+
+        eprosima::fastdds::dds::ParameterId_t pid{eprosima::fastdds::dds::PID_SENTINEL};
+        bool valid = true;
+        auto msg_pid_pos = msg.pos;
+        pid = static_cast<eprosima::fastdds::dds::ParameterId_t>(
+            static_cast<uint16_t>(msg.buffer[msg.pos]) |
+            (static_cast<uint16_t>(msg.buffer[msg.pos + 1]) << 8));
+        msg.pos += 2;
+        uint16_t plength = static_cast<uint16_t>(msg.buffer[msg.pos]) |
+                (static_cast<uint16_t>(msg.buffer[msg.pos + 1]) << 8);
+        msg.pos += 2;
+
+        if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+        {
+            plength = 0;
+            is_sentinel = true;
+        }
+
+        qos_size += (4 + plength);
+        qos_size = (qos_size + 3) & ~3;
+
+        if (!valid || ((msg.pos + plength) > msg.length))
+        {
+            return false;
+        }
+        else if (!is_sentinel)
+        {
+            if (!parameter_process(&msg, pid, plength, msg_pid_pos))
+            {
+                return false;
+            }
+        }
+    }
+    msg.pos = old_pos;
+    return true;
+}
+
+}  // namespace
 
 /**
  * This is a regression test for redmine issue #21060.
@@ -409,6 +541,149 @@ TEST(DDSBasic, max_output_message_size_writer)
     reader.block_for_all(std::chrono::seconds(1));
     EXPECT_EQ(reader.getReceivedCount(), 1u);
 
+}
+
+/**
+ * This test checks that both the standard RPC-over-DDS related_sample_identity PID
+ * and the legacy/custom Fast DDS PID are sent, and that the standard PID is
+ * properly interpreted when the custom one is removed in transit.
+ */
+TEST(DDSBasic, PidRelatedSampleIdentity)
+{
+    PubSubWriter<HelloWorldPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    bool exists_standard_related_sample_identity = false;
+    bool exists_custom_related_sample_identity = false;
+
+    test_transport->drop_data_messages_filter_ =
+            [&exists_standard_related_sample_identity, &exists_custom_related_sample_identity]
+            (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            {
+                bool ret = check_related_sample_identity_field(
+                    msg, exists_standard_related_sample_identity, exists_custom_related_sample_identity);
+                EXPECT_TRUE(ret);
+                return false;
+            };
+
+    reliable_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_writer.isInitialized());
+
+    reliable_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_reader.isInitialized());
+
+    reliable_writer.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    exists_standard_related_sample_identity = false;
+    exists_custom_related_sample_identity = false;
+
+    DataWriter& native_writer = reliable_writer.get_native_writer();
+
+    HelloWorld data;
+    eprosima::fastrtps::rtps::WriteParams write_params;
+    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity;
+    eprosima::fastrtps::rtps::GUID_t unknown_guid;
+    related_sample_identity.writer_guid(unknown_guid);
+    eprosima::fastrtps::rtps::SequenceNumber_t seq(51, 24);
+    related_sample_identity.sequence_number(seq);
+    write_params.related_sample_identity() = related_sample_identity;
+
+    ASSERT_TRUE(native_writer.write((void *)&data, write_params));
+
+    DataReader& native_reader = reliable_reader.get_native_reader();
+
+    HelloWorld read_data;
+    eprosima::fastdds::dds::SampleInfo info;
+    eprosima::fastrtps::Duration_t timeout;
+    timeout.seconds = 2;
+    ASSERT_TRUE(native_reader.wait_for_unread_message(timeout));
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, native_reader.take_next_sample((void *)&read_data, &info));
+
+    ASSERT_TRUE(exists_standard_related_sample_identity);
+    ASSERT_TRUE(exists_custom_related_sample_identity);
+    ASSERT_EQ(related_sample_identity, info.related_sample_identity);
+}
+
+/**
+ * This test checks that the legacy/custom Fast DDS related_sample_identity PID
+ * is still properly interpreted when the standard PID is removed in transit.
+ */
+TEST(DDSBasic, PidCustomRelatedSampleIdentity)
+{
+    PubSubWriter<HelloWorldPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    bool exists_standard_related_sample_identity = false;
+    bool exists_custom_related_sample_identity = false;
+
+    test_transport->drop_data_messages_filter_ =
+            [&exists_standard_related_sample_identity, &exists_custom_related_sample_identity]
+            (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            {
+                bool ret = check_related_sample_identity_field(
+                    msg,
+                    exists_standard_related_sample_identity,
+                    exists_custom_related_sample_identity,
+                    true,
+                    false);
+                EXPECT_TRUE(ret);
+                return false;
+            };
+
+    reliable_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_writer.isInitialized());
+
+    reliable_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_reader.isInitialized());
+
+    reliable_writer.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    exists_standard_related_sample_identity = false;
+    exists_custom_related_sample_identity = false;
+
+    DataWriter& native_writer = reliable_writer.get_native_writer();
+
+    HelloWorld data;
+    eprosima::fastrtps::rtps::WriteParams write_params;
+    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity;
+    eprosima::fastrtps::rtps::GUID_t unknown_guid;
+    related_sample_identity.writer_guid(unknown_guid);
+    eprosima::fastrtps::rtps::SequenceNumber_t seq(77, 33);
+    related_sample_identity.sequence_number(seq);
+    write_params.related_sample_identity() = related_sample_identity;
+
+    ASSERT_TRUE(native_writer.write((void *)&data, write_params));
+
+    DataReader& native_reader = reliable_reader.get_native_reader();
+
+    HelloWorld read_data;
+    eprosima::fastdds::dds::SampleInfo info;
+    eprosima::fastrtps::Duration_t timeout;
+    timeout.seconds = 2;
+    ASSERT_TRUE(native_reader.wait_for_unread_message(timeout));
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, native_reader.take_next_sample((void *)&read_data, &info));
+
+    ASSERT_TRUE(exists_standard_related_sample_identity);
+    ASSERT_TRUE(exists_custom_related_sample_identity);
+    ASSERT_EQ(related_sample_identity, info.related_sample_identity);
 }
 
 } // namespace dds

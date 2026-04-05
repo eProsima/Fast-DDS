@@ -30,6 +30,13 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+namespace detail {
+
+constexpr ParameterId_t pid_standard_rpc_related_sample_identity =
+        static_cast<ParameterId_t>(0x0083);
+
+} // namespace detail
+
 template <typename Parameter>
 class ParameterSerializer
 {
@@ -145,6 +152,29 @@ public:
     }
 
     static bool add_parameter_sample_identity(
+            fastrtps::rtps::CDRMessage_t* cdr_message,
+            const fastrtps::rtps::SampleIdentity& sample_id)
+    {
+        if (cdr_message->pos + 28 > cdr_message->max_size)
+        {
+            return false;
+        }
+
+        fastrtps::rtps::CDRMessage::addUInt16(cdr_message, detail::pid_standard_rpc_related_sample_identity);
+        fastrtps::rtps::CDRMessage::addUInt16(cdr_message, 24);
+        fastrtps::rtps::CDRMessage::addData(cdr_message,
+                sample_id.writer_guid().guidPrefix.value, fastrtps::rtps::GuidPrefix_t::size);
+        fastrtps::rtps::CDRMessage::addData(cdr_message,
+                sample_id.writer_guid().entityId.value, fastrtps::rtps::EntityId_t::size);
+        fastrtps::rtps::CDRMessage::addInt32(cdr_message, sample_id.sequence_number().high);
+        fastrtps::rtps::CDRMessage::addUInt32(cdr_message, sample_id.sequence_number().low);
+        return true;
+    }
+
+    /**
+     * Add the legacy/custom related_sample_identity parameter to an inline QoS parameter list.
+     */
+    static bool add_parameter_custom_related_sample_identity(
             fastrtps::rtps::CDRMessage_t* cdr_message,
             const fastrtps::rtps::SampleIdentity& sample_id)
     {

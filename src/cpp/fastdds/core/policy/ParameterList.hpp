@@ -53,12 +53,14 @@ public:
      * Update the information of a cache change parsing the inline qos from a CDRMessage
      * @param[inout] change Reference to the cache change to be updated.
      * @param[in] msg Pointer to the message (the pos should be correct, otherwise the behaviour is undefined).
+     * @param[in] source_vendor_id Vendor identifier of the participant that sent the inline QoS.
      * @param[out] qos_size Number of bytes processed.
      * @return true if parsing was correct, false otherwise.
      */
     static bool updateCacheChangeFromInlineQos(
             fastrtps::rtps::CacheChange_t& change,
             fastrtps::rtps::CDRMessage_t* msg,
+            const fastrtps::rtps::VendorId_t& source_vendor_id,
             uint32_t& qos_size);
 
     /**

@@ -126,6 +126,9 @@ struct DataMsgUtils
         {
             fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
                     change->write_params.related_sample_identity());
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_custom_related_sample_identity(
+                msg,
+                change->write_params.related_sample_identity());
         }
 
         if (WITH_KEY == topicKind && (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))

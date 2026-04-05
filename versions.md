@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* Fixed `related_sample_identity` wire compatibility with peers that use the standard RPC-over-DDS PID while preserving legacy Fast DDS custom-PID interoperability.
 
 
 Version 2.6.9
