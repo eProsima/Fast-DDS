@@ -21,6 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/common/WriteParams.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/core/policy//ParameterSerializer.hpp>
 
 #include <mutex>
@@ -28,6 +29,51 @@
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+namespace {
+
+constexpr uint16_t pid_standard_rpc_related_sample_identity = 0x0083;
+
+bool append_standard_related_sample_identity_inline_qos(
+        CacheChange_t& change)
+{
+    if (change.writerGUID.is_builtin() ||
+            change.write_params.related_sample_identity() == SampleIdentity::unknown())
+    {
+        return true;
+    }
+
+    change.inline_qos.reserve(
+        change.inline_qos.length +
+        fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
+
+    CDRMessage_t msg(change.inline_qos);
+    const SampleIdentity& sample_id = change.write_params.related_sample_identity();
+
+    bool valid = true;
+    valid &= CDRMessage::addUInt16(&msg, pid_standard_rpc_related_sample_identity);
+    valid &= CDRMessage::addUInt16(&msg, 24);
+    valid &= CDRMessage::addData(
+        &msg,
+        sample_id.writer_guid().guidPrefix.value,
+        GuidPrefix_t::size);
+    valid &= CDRMessage::addData(
+        &msg,
+        sample_id.writer_guid().entityId.value,
+        EntityId_t::size);
+    valid &= CDRMessage::addInt32(&msg, sample_id.sequence_number().high);
+    valid &= CDRMessage::addUInt32(&msg, sample_id.sequence_number().low);
+
+    if (valid)
+    {
+        change.inline_qos.length = msg.length;
+        change.inline_qos.pos = msg.pos;
+    }
+
+    return valid;
+}
+
+} // namespace
 
 WriteParams WriteParams::WRITE_PARAM_DEFAULT;
 
@@ -94,6 +140,11 @@ bool WriterHistory::prepare_and_add_change(
     wparams.sample_identity().writer_guid(a_change->writerGUID);
     wparams.sample_identity().sequence_number(a_change->sequenceNumber);
     wparams.related_sample_identity(wparams.sample_identity());
+    if (!append_standard_related_sample_identity_inline_qos(*a_change))
+    {
+        logError(RTPS_WRITER_HISTORY, "Failed to append standard related_sample_identity inline QoS");
+        return false;
+    }
     set_fragments(a_change);
 
     m_changes.push_back(a_change);

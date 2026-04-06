@@ -27,6 +27,12 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+namespace {
+
+constexpr ParameterId_t pid_standard_rpc_related_sample_identity =
+        static_cast<ParameterId_t>(0x0083);
+
+} // namespace
 
 bool ParameterList::writeEncapsulationToCDRMsg(
         fastrtps::rtps::CDRMessage_t* msg)
@@ -73,6 +79,25 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                             }
 
                             change.write_params.sample_identity(p.sample_id);
+                        }
+                        break;
+                    }
+
+                    case pid_standard_rpc_related_sample_identity:
+                    {
+                        if (plength >= 24)
+                        {
+                            ParameterSampleIdentity_t p(pid, plength);
+                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                                    msg, plength))
+                            {
+                                return false;
+                            }
+
+                            if (!change.writerGUID.is_builtin())
+                            {
+                                change.write_params.sample_identity(p.sample_id);
+                            }
                         }
                         break;
                     }
