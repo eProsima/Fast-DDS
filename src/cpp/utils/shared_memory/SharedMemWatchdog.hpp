@@ -47,7 +47,9 @@ public:
 
     static std::shared_ptr<SharedMemWatchdog>& get()
     {
-        static std::shared_ptr<SharedMemWatchdog> watch_dog_instance(new SharedMemWatchdog());
+        // Intentionally leaked to avoid static destruction order issues.
+        static std::shared_ptr<SharedMemWatchdog>& watch_dog_instance =
+                *new std::shared_ptr<SharedMemWatchdog>(new SharedMemWatchdog());
         return watch_dog_instance;
     }
 

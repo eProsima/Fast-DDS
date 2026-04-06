@@ -96,7 +96,7 @@ def send_command(command):
                             )
 
     # sleep to let the server run
-    time.sleep(1)
+    time.sleep(3)
 
     # 1. An exit code of 0 means everything was alright
     # 2. An exit code of 1 means the tool's process terminated before even

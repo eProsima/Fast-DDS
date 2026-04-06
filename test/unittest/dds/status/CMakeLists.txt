@@ -95,9 +95,8 @@ set(LISTENERTESTS_SOURCE ListenerTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
-
-    ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
     )
 
 if (FASTDDS_STATISTICS)
@@ -173,9 +172,15 @@ target_include_directories(ListenerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EthernetTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeaderReductionTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PayloadCompressionTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SourceTimestampTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TypeLookupManager
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor

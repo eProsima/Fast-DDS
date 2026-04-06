@@ -54,6 +54,9 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
             "CLIENT_SERVER_DYNAMIC_DISCOVERY_BIN=$<TARGET_FILE:DDSParticipantDiscovery>")
         set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT
             "W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}")
+        set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT
+            "FASTDDSHOME=${PROJECT_SOURCE_DIR}/.github/license")
+
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST AddDiscoveryServerToListFromEnvironmentFile APPEND PROPERTY ENVIRONMENT

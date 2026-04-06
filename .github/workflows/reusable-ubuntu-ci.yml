@@ -1258,7 +1258,7 @@ jobs:
           STAGE_GCC=${{ env.docker-test-stage-dir }}/gcc_latest
 
           cd ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/docker/ubuntu/alternative_builds
-          docker build -t fastdds_gcc_latest -f fastdds_gcc_latest.Dockerfile .
+          docker build --pull --no-cache -t fastdds_gcc_latest -f fastdds_gcc_latest.Dockerfile .
           docker run --rm -v ${STAGE_GCC}/src/:/root/src fastdds_gcc_latest
           docker rmi fastdds_gcc_latest
 

@@ -103,9 +103,8 @@ set(XMLPROFILEPARSER_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
-
-    ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
     )
 
 # External sources
@@ -141,10 +140,16 @@ target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EthernetTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeaderReductionTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PayloadCompressionTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SourceTimestampTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
@@ -200,9 +205,8 @@ set(XMLPARSER_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
-
-    ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
     )
 
 # External sources
@@ -231,11 +235,17 @@ target_compile_definitions(XMLParserTests PRIVATE
 target_include_directories(XMLParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectRegistry
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EthernetTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeaderReductionTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PayloadCompressionTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SourceTimestampTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
@@ -322,6 +332,7 @@ set(XMLENDPOINTPARSERTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLEndpointParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
 
     # locators
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
@@ -330,8 +341,6 @@ set(XMLENDPOINTPARSERTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
-
-    ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
     )
 
 # External sources
@@ -357,12 +366,18 @@ target_compile_definitions(XMLEndpointParserTests PRIVATE
 target_include_directories(XMLEndpointParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectRegistry
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EthernetTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeaderReductionTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PayloadCompressionTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SourceTimestampTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
@@ -411,6 +426,7 @@ set(XMLLOADFILE_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLElementParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserCommon.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLParserExtras.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
 
     # locators
@@ -420,8 +436,6 @@ set(XMLLOADFILE_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
-
-    ${PROJECT_SOURCE_DIR}/test/mock/xmlparser/XMLParserExtras.cpp
     )
 
 # External sources
@@ -452,10 +466,16 @@ target_include_directories(XMLLoadFileTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectRegistry
     ${PROJECT_SOURCE_DIR}/test/mock/xtypes/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EthernetTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/HeaderReductionTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PayloadCompressionTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SourceTimestampTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv4TransportDescriptor
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TSN_UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor

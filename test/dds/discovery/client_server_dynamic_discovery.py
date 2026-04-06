@@ -40,6 +40,10 @@ if not process_command:
         process_command = next(pf, None)
 assert(process_command)
 
+def ignorable_line(line):
+    """Method to ignore License related lines in the output"""
+    return 'License valid for holder:' in line
+
 # Thread that read process output and push it into a queue
 def output_reader(proc, outq):
     for line in iter(proc.stdout.readline, b''):
@@ -58,6 +62,8 @@ def first_step(outq):
             line = outq.get(block=False).rstrip()
             print(line)
             sys.stdout.flush()
+            if ignorable_line(line):
+                continue
 
             assert '44.53.00.5f.45.50.52.4f.53.49.4d.41' in line
             assert 'discovered participant' in line
@@ -95,6 +101,8 @@ def second_step(outq):
             line = outq.get(block=False).rstrip()
             print(line)
             sys.stdout.flush()
+            if ignorable_line(line):
+                continue
 
             if 'discovered participant' in line:
                 assert '44.53.01.5f.45.50.52.4f.53.49.4d.41' in line
@@ -138,6 +146,8 @@ def third_step(outq):
             line = outq.get(block=False).rstrip()
             print(line)
             sys.stdout.flush()
+            if ignorable_line(line):
+                continue
 
             if 'Participant 44.53.01.5f.45.50.52.4f.53.49.4d.41|0.0.1.c1 discovered participant' in line and \
                 '44.53.00.5f.45.50.52.4f.53.49.4d.41|0.0.1.c1: 2' in line:
@@ -173,6 +183,8 @@ def fourth_step(outq):
             line = outq.get(block=False).rstrip()
             print(line)
             sys.stdout.flush()
+            if ignorable_line(line):
+                continue
 
             if 'Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP or an' in line \
                 and 'overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)' in line:
@@ -206,6 +218,8 @@ def fifth_step(outq):
             line = outq.get(block=False).rstrip()
             print(line)
             sys.stdout.flush()
+            if ignorable_line(line):
+                continue
 
             if 'discovered participant' in line:
                 count = count + 1
@@ -313,31 +327,42 @@ f.write(random_port_server_1)
 f.write('"}')
 f.close()
 
+base_env = os.environ.copy()
+
 outq = queue.Queue()
 outt = queue.Queue()
 outt.put("TEST RUNNING\n")
 outt.put("FIRST STEP: Override Client discovers Server 1\n")
 
+server_1_env = base_env.copy()
+server_1_env["FASTDDS_ENVIRONMENT_FILE"] = server_1_env_file
 server_1_process = subprocess.Popen([process_command,
     "--discovery_protocol", "SERVER",
     "--guid_prefix", "44.53.00.5F.45.50.52.4F.53.49.4D.41",
     "--unicast_metatraffic_locator", random_port_server_1],
-    env={"FASTDDS_ENVIRONMENT_FILE": server_1_env_file},
+    env=server_1_env,
     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+server_2_env = base_env.copy()
+server_2_env["FASTDDS_ENVIRONMENT_FILE"] = server_2_env_file
 server_2_process = subprocess.Popen([process_command,
     "--discovery_protocol", "SERVER",
     "--guid_prefix", "44.53.01.5F.45.50.52.4F.53.49.4D.41",
     "--unicast_metatraffic_locator", random_port_server_2],
-    env={"FASTDDS_ENVIRONMENT_FILE": server_2_env_file},
+    env=server_2_env,
     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 # The client must be DiscoveryProtocol::SIMPLE to use the environment variable
+client_override_env = base_env.copy()
+client_override_env["FASTDDS_ENVIRONMENT_FILE"] = client_env_file
 client_override_process = subprocess.Popen(process_command,
-    env={"FASTDDS_ENVIRONMENT_FILE": client_env_file},
+    env=client_override_env,
     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 # DiscoveryProtocol::CLIENT, environment variable does not apply either initializing as updating
+client_env = base_env.copy()
+client_env["FASTDDS_ENVIRONMENT_FILE"] = client_env_file
 client_process = subprocess.Popen([process_command,
     "--discovery_protocol", "CLIENT"],
-    env={"FASTDDS_ENVIRONMENT_FILE": client_env_file},
+    env=client_env,
     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 stop_threads = False

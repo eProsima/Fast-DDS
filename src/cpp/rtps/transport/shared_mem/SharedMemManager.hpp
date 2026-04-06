@@ -1100,7 +1100,9 @@ private:
 
             static std::shared_ptr<WatchTask>& get()
             {
-                static std::shared_ptr<WatchTask> watch_task_instance(new WatchTask());
+                // Intentionally leaked to avoid static destruction order issues.
+                static std::shared_ptr<WatchTask>& watch_task_instance =
+                        *new std::shared_ptr<WatchTask>(new WatchTask());
                 return watch_task_instance;
             }
 
@@ -1325,7 +1327,7 @@ private:
             ids_segments_[id.get()] = segment_wrapper;
             segments_mem_ += segment->mem_size();
 
-            SegmentWrapper::WatchTask::get()->add_segment(segment_wrapper);
+            watch_task_->add_segment(segment_wrapper);
         }
 
         return segment;
@@ -1356,7 +1358,7 @@ private:
 
         for (auto segment : ids_segments_)
         {
-            SegmentWrapper::WatchTask::get()->remove_segment(segment.second);
+            watch_task_->remove_segment(segment.second);
         }
     }
 

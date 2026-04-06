@@ -216,7 +216,11 @@ public:
 
             static const std::shared_ptr<WatchTask>& get()
             {
-                static std::shared_ptr<WatchTask> watch_task_instance(new WatchTask());
+                // Intentionally leaked to avoid static destruction order issues.
+                // The shared_ptr must outlive RTPSDomainImpl's static, which may
+                // open new Ports during its destructor (dispose announcement).
+                static std::shared_ptr<WatchTask>& watch_task_instance =
+                        *new std::shared_ptr<WatchTask>(new WatchTask());
                 return watch_task_instance;
             }
 
@@ -467,12 +471,12 @@ public:
 
             auto port_context = std::make_shared<Port::WatchTask::PortContext>();
             *port_context = {port_segment_, node_, buffer_.get(), { BufferDescriptor{} } };
-            Port::WatchTask::get()->add_port(std::move(port_context));
+            watch_task_->add_port(std::move(port_context));
         }
 
         ~Port()
         {
-            Port::WatchTask::get()->remove_port(node_);
+            watch_task_->remove_port(node_);
 
             if (node_->ref_counter.fetch_sub(1) == 1)
             {
