@@ -94,6 +94,10 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                                 return false;
                             }
 
+                            // Only the new standard 0x0083 path is gated for
+                            // non-builtin traffic; the existing legacy/custom
+                            // 0x800f handling above remains unchanged to avoid
+                            // discovery and builtin regressions.
                             if (!change.writerGUID.is_builtin())
                             {
                                 change.write_params.sample_identity(p.sample_id);

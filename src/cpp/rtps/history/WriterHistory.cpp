@@ -40,6 +40,11 @@ constexpr uint16_t pid_standard_rpc_related_sample_identity = 0x0083;
  * The extra PID is emitted only for non-builtin writers and only when a
  * related sample identity is present, preserving the existing builtin and
  * legacy/custom behavior.
+ *
+ * @param change Cache change whose inline QoS may be extended with the
+ *               standard related_sample_identity PID.
+ * @return true if the PID was appended successfully, or if no append was
+ *         needed for the current change.
  */
 bool append_standard_related_sample_identity_inline_qos(
         CacheChange_t& change)
