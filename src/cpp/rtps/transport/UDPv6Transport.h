@@ -79,8 +79,8 @@ public:
             uint32_t metatraffic_unicast_port) const override;
 
     bool getDefaultMulticastLocators(
-        LocatorList& locators,
-        uint32_t multicast_port) const override;
+            LocatorList& locators,
+            uint32_t multicast_port) const override;
 
     bool getDefaultUnicastLocators(
             LocatorList& locators,

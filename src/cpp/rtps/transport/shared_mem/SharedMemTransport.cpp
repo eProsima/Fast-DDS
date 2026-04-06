@@ -763,7 +763,6 @@ bool SharedMemTransport::fillUnicastLocator(
     return true;
 }
 
-
 bool SharedMemTransport::fillMulticastLocator(
         Locator& locator,
         uint32_t well_known_port) const
@@ -775,6 +774,7 @@ bool SharedMemTransport::fillMulticastLocator(
 
     return true;
 }
+
 }  // namsepace rtps
 }  // namespace fastdds
 }  // namespace eprosima
