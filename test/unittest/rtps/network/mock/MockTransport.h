@@ -157,6 +157,13 @@ public:
         return true;
     }
 
+    bool getDefaultMulticastLocators(
+            LocatorList_t&,
+            uint32_t ) const override
+    {
+        return true;
+    }
+
     bool fillMetatrafficUnicastLocator(
             Locator_t&,
             uint32_t ) const override
@@ -181,6 +188,13 @@ public:
     }
 
     bool fillUnicastLocator(
+            Locator_t&,
+            uint32_t) const override
+    {
+        return true;
+    }
+
+    bool fillMulticastLocator(
             Locator_t&,
             uint32_t) const override
     {

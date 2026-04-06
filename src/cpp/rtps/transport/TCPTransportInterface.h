@@ -464,6 +464,10 @@ public:
             LocatorList& locators,
             uint32_t unicast_port) const override;
 
+    bool getDefaultMulticastLocators(
+            LocatorList& locators,
+            uint32_t multicast_port) const override;
+
     bool fillMetatrafficMulticastLocator(
             Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
@@ -479,6 +483,10 @@ public:
             LocatorList& list) const override;
 
     bool fillUnicastLocator(
+            Locator& locator,
+            uint32_t well_known_port) const override;
+
+    bool fillMulticastLocator(
             Locator& locator,
             uint32_t well_known_port) const override;
 

@@ -660,7 +660,7 @@ TEST_F(NetworkTests, LocatorShrink)
     }
 }
 
-TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv4_fills_default_address_when_empty)
+TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv4_fills_default_address_when_empty)
 {
     // Register UDPv4 transport
     NetworkFactory f{pattr};
@@ -676,7 +676,7 @@ TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv4_fills_default_address
         locator.port = 0;
         locator.set_Invalid_Address();
 
-        ASSERT_TRUE(f.fillMetatrafficMulticastLocator(locator, test_port));
+        ASSERT_TRUE(f.fill_default_multicast_locator(locator, test_port));
         ASSERT_EQ(locator.port, test_port);
         ASSERT_TRUE(IsAddressDefined(locator));
 
@@ -692,7 +692,7 @@ TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv4_fills_default_address
         locator.port = 7500;
         locator.set_Invalid_Address();
 
-        ASSERT_TRUE(f.fillMetatrafficMulticastLocator(locator, test_port));
+        ASSERT_TRUE(f.fill_default_multicast_locator(locator, test_port));
         ASSERT_EQ(locator.port, static_cast<uint32_t>(7500));
         ASSERT_TRUE(IsAddressDefined(locator));
 
@@ -706,13 +706,13 @@ TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv4_fills_default_address
         Locator_t locator;
         IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.1.1", 0, locator);
 
-        ASSERT_TRUE(f.fillMetatrafficMulticastLocator(locator, test_port));
+        ASSERT_TRUE(f.fill_default_multicast_locator(locator, test_port));
         ASSERT_EQ(locator.port, test_port);
         ASSERT_EQ(IPLocator::toIPv4string(locator), std::string("239.255.1.1"));
     }
 }
 
-TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv6_fills_default_address_when_empty)
+TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv6_fills_default_address_when_empty)
 {
     // Register UDPv6 transport
     NetworkFactory f{pattr};
@@ -728,7 +728,7 @@ TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv6_fills_default_address
         locator.port = 0;
         locator.set_Invalid_Address();
 
-        ASSERT_TRUE(f.fillMetatrafficMulticastLocator(locator, test_port));
+        ASSERT_TRUE(f.fill_default_multicast_locator(locator, test_port));
         ASSERT_EQ(locator.port, test_port);
         ASSERT_TRUE(IsAddressDefined(locator));
 
@@ -737,13 +737,29 @@ TEST_F(NetworkTests, FillMetatrafficMulticastLocator_UDPv6_fills_default_address
         ASSERT_EQ(IPLocator::toIPv6string(locator), IPLocator::toIPv6string(expected));
     }
 
-    // Case 2: address already defined -> address is NOT overwritten
+    // Case 2: empty address + nonzero port -> only address is filled, port preserved
+    {
+        Locator_t locator;
+        locator.kind = LOCATOR_KIND_UDPv6;
+        locator.port = 7500;
+        locator.set_Invalid_Address();
+
+        ASSERT_TRUE(f.fill_default_multicast_locator(locator, test_port));
+        ASSERT_EQ(locator.port, static_cast<uint32_t>(7500));
+        ASSERT_TRUE(IsAddressDefined(locator));
+
+        Locator_t expected;
+        IPLocator::createLocator(LOCATOR_KIND_UDPv6, "ff1e::ffff:efff:1", 7500, expected);
+        ASSERT_EQ(IPLocator::toIPv6string(locator), IPLocator::toIPv6string(expected));
+    }
+
+    // Case 3: address already defined -> address is NOT overwritten
     {
         Locator_t locator;
         IPLocator::createLocator(LOCATOR_KIND_UDPv6, "ff1e::1", 0, locator);
         std::string original_address = IPLocator::toIPv6string(locator);
 
-        ASSERT_TRUE(f.fillMetatrafficMulticastLocator(locator, test_port));
+        ASSERT_TRUE(f.fill_default_multicast_locator(locator, test_port));
         ASSERT_EQ(locator.port, test_port);
         ASSERT_EQ(IPLocator::toIPv6string(locator), original_address);
     }

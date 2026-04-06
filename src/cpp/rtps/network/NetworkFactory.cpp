@@ -488,6 +488,18 @@ bool NetworkFactory::getDefaultUnicastLocators(
     return result;
 }
 
+bool NetworkFactory::getDefaultMulticastLocators(
+        LocatorList_t& locators,
+        uint32_t port) const
+{
+    bool result = false;
+    for (auto& transport : mRegisteredTransports)
+    {
+        result |= transport->getDefaultMulticastLocators(locators, port);
+    }
+    return result;
+}
+
 bool NetworkFactory::fill_default_locator_port(
         Locator_t& locator,
         uint32_t port) const
@@ -498,6 +510,21 @@ bool NetworkFactory::fill_default_locator_port(
         if (transport->IsLocatorSupported(locator))
         {
             result |= transport->fillUnicastLocator(locator, port);
+        }
+    }
+    return result;
+}
+
+bool NetworkFactory::fill_default_multicast_locator(
+        Locator_t& locator,
+        uint32_t port) const
+{
+    bool result = false;
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (transport->IsLocatorSupported(locator))
+        {
+            result |= transport->fillMulticastLocator(locator, port);
         }
     }
     return result;

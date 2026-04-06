@@ -180,6 +180,10 @@ public:
             uint32_t domainId,
             LocatorList& list) const override;
 
+    bool fillMulticastLocator(
+            Locator& locator,
+            uint32_t well_known_port) const override;
+
     bool fillUnicastLocator(
             Locator& locator,
             uint32_t well_known_port) const override;

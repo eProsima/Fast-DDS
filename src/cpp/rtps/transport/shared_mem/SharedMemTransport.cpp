@@ -96,6 +96,15 @@ bool SharedMemTransport::getDefaultMetatrafficUnicastLocators(
     return true;
 }
 
+bool SharedMemTransport::getDefaultMulticastLocators(
+        LocatorList& locators,
+        uint32_t multicast_port) const
+{
+    locators.push_back(SHMLocator::create_locator(multicast_port, SHMLocator::Type::MULTICAST));
+
+    return true;
+}
+
 bool SharedMemTransport::getDefaultUnicastLocators(
         LocatorList& locators,
         uint32_t unicast_port) const
@@ -754,6 +763,18 @@ bool SharedMemTransport::fillUnicastLocator(
     return true;
 }
 
+
+bool SharedMemTransport::fillMulticastLocator(
+        Locator& locator,
+        uint32_t well_known_port) const
+{
+    if (locator.port == 0)
+    {
+        locator.port = well_known_port;
+    }
+
+    return true;
+}
 }  // namsepace rtps
 }  // namespace fastdds
 }  // namespace eprosima
