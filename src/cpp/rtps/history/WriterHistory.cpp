@@ -22,7 +22,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastdds/core/policy//ParameterSerializer.hpp>
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include <mutex>
 
@@ -34,6 +34,13 @@ namespace {
 
 constexpr uint16_t pid_standard_rpc_related_sample_identity = 0x0083;
 
+/*!
+ * @brief Append the standard RPC-over-DDS related_sample_identity PID to inline QoS.
+ *
+ * The extra PID is emitted only for non-builtin writers and only when a
+ * related sample identity is present, preserving the existing builtin and
+ * legacy/custom behavior.
+ */
 bool append_standard_related_sample_identity_inline_qos(
         CacheChange_t& change)
 {

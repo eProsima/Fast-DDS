@@ -686,6 +686,105 @@ TEST(DDSBasic, PidCustomRelatedSampleIdentity)
     ASSERT_EQ(related_sample_identity, info.related_sample_identity);
 }
 
+/**
+ * This test checks that the standard RPC-over-DDS related_sample_identity PID
+ * is also preserved on fragmented DATA_FRAG traffic when the custom PID is
+ * removed in transit.
+ */
+TEST(DDSBasic, PidRelatedSampleIdentityFragmented)
+{
+    PubSubWriter<Data1mbPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubReader<Data1mbPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    bool exists_standard_related_sample_identity = false;
+    bool exists_custom_related_sample_identity = false;
+
+    test_transport->sendBufferSize = 65536;
+    test_transport->receiveBufferSize = 65536;
+    test_transport->maxMessageSize = 1024;
+    test_transport->drop_data_frag_messages_filter_ =
+            [&exists_standard_related_sample_identity, &exists_custom_related_sample_identity]
+            (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            {
+                auto old_pos = msg.pos;
+
+                eprosima::fastrtps::rtps::EntityId_t reader_id;
+                eprosima::fastrtps::rtps::EntityId_t writer_id;
+                eprosima::fastrtps::rtps::SequenceNumber_t seq_num;
+                uint32_t first_fragment = 0;
+
+                msg.pos += 2; // flags
+                msg.pos += 2; // octets to inline qos
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &reader_id);
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_id);
+                eprosima::fastrtps::rtps::CDRMessage::readSequenceNumber(&msg, &seq_num);
+                eprosima::fastrtps::rtps::CDRMessage::readUInt32(&msg, &first_fragment);
+                msg.pos = old_pos;
+
+                static_cast<void>(reader_id);
+                static_cast<void>(writer_id);
+                static_cast<void>(seq_num);
+
+                if (first_fragment != 1)
+                {
+                    return false;
+                }
+
+                bool ret = check_related_sample_identity_field(
+                    msg, exists_standard_related_sample_identity, exists_custom_related_sample_identity);
+                EXPECT_TRUE(ret);
+                return false;
+            };
+
+    reliable_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_writer.isInitialized());
+
+    reliable_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_reader.isInitialized());
+
+    reliable_writer.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    exists_standard_related_sample_identity = false;
+    exists_custom_related_sample_identity = false;
+
+    DataWriter& native_writer = reliable_writer.get_native_writer();
+
+    auto samples = default_data16kb_data_generator(1);
+    ASSERT_FALSE(samples.empty());
+    Data1mb data = samples.front();
+    eprosima::fastrtps::rtps::WriteParams write_params;
+    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity;
+    eprosima::fastrtps::rtps::GUID_t unknown_guid;
+    related_sample_identity.writer_guid(unknown_guid);
+    eprosima::fastrtps::rtps::SequenceNumber_t seq(91, 17);
+    related_sample_identity.sequence_number(seq);
+    write_params.related_sample_identity() = related_sample_identity;
+
+    ASSERT_TRUE(native_writer.write((void *)&data, write_params));
+
+    DataReader& native_reader = reliable_reader.get_native_reader();
+
+    Data1mb read_data;
+    eprosima::fastdds::dds::SampleInfo info;
+    eprosima::fastrtps::Duration_t timeout;
+    timeout.seconds = 5;
+    ASSERT_TRUE(native_reader.wait_for_unread_message(timeout));
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, native_reader.take_next_sample((void *)&read_data, &info));
+
+    ASSERT_TRUE(exists_standard_related_sample_identity);
+    ASSERT_TRUE(exists_custom_related_sample_identity);
+    ASSERT_EQ(related_sample_identity, info.related_sample_identity);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
