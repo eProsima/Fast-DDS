@@ -23,6 +23,7 @@
 
 #include <rtps/builtin/discovery/participant/PDP.h>
 
+#include <chrono>
 #include <set>
 #include <sstream>
 #include <string>
@@ -382,6 +383,12 @@ private:
      * TimedEvent for server routine
      */
     DServerRoutineEvent* routine_;
+
+    //! Minimum interval (ms) between sends.  0 = disabled (original behaviour).
+    double send_period_ms_ = 0;
+
+    //! Timestamp of the last process_to_send_lists() flush (used when send_period_ms_ > 0).
+    std::chrono::steady_clock::time_point last_send_time_{};
 
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;

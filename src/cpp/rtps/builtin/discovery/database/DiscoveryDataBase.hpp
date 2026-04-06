@@ -21,10 +21,10 @@
 #define _FASTDDS_RTPS_DISCOVERY_DATABASE_H_
 
 #include <fstream>
-#include <iostream>
 #include <map>
 #include <mutex>
 #include <set>
+#include <unordered_set>
 #include <vector>
 
 #include <nlohmann/json.hpp>
@@ -505,6 +505,18 @@ protected:
     bool add_pdp_to_send_(
             eprosima::fastdds::rtps::CacheChange_t* change);
 
+    // Check if a change is currently queued in pdp_to_send_
+    bool is_in_pdp_to_send_(
+            const eprosima::fastdds::rtps::CacheChange_t* change) const;
+
+    // Check if a change is currently queued in edp_publications_to_send_
+    bool is_in_edp_publications_to_send_(
+            const eprosima::fastdds::rtps::CacheChange_t* change) const;
+
+    // Check if a change is currently queued in edp_subscriptions_to_send_
+    bool is_in_edp_subscriptions_to_send_(
+            const eprosima::fastdds::rtps::CacheChange_t* change) const;
+
     // Add data in edp_to_send if not already in it
     bool add_edp_publications_to_send_(
             eprosima::fastdds::rtps::CacheChange_t* change);
@@ -555,6 +567,11 @@ protected:
     std::vector<eprosima::fastdds::rtps::CacheChange_t*> pdp_to_send_;
     std::vector<eprosima::fastdds::rtps::CacheChange_t*> edp_publications_to_send_;
     std::vector<eprosima::fastdds::rtps::CacheChange_t*> edp_subscriptions_to_send_;
+
+    //! Shadow sets for O(1) membership checks in is_in_*_to_send_() and add_*_to_send_()
+    std::unordered_set<const eprosima::fastdds::rtps::CacheChange_t*> pdp_to_send_set_;
+    std::unordered_set<const eprosima::fastdds::rtps::CacheChange_t*> edp_publications_to_send_set_;
+    std::unordered_set<const eprosima::fastdds::rtps::CacheChange_t*> edp_subscriptions_to_send_set_;
 
     //! changes that are no longer associated to living endpoints and should be returned to it's pool
     std::vector<eprosima::fastdds::rtps::CacheChange_t*> changes_to_release_;

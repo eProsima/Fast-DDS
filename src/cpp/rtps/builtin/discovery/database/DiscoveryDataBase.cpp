@@ -307,7 +307,16 @@ void DiscoveryDataBase::add_ack_(
             // database has been updated, so this ACK is not relevant anymore
             if (it->second.change()->write_params.sample_identity() == change->write_params.sample_identity())
             {
-                it->second.add_or_update_ack_participant(acked_entity, ParticipantState::ACKED);
+                // Don't transition to ACKED if this DATA(p) is queued for re-send in pdp_to_send_.
+                // When process_dirty_topics() detects a new relevance pair and queues the DATA(p),
+                // the OLD history entry is still present with a stale sequence number. The RTPS
+                // reader proxy may report a cumulative ACK that covers the stale sequence, causing a
+                // false positive. Blocking the ACKED transition while the re-send is pending ensures
+                // the DATA(p) is actually delivered with a fresh sequence number before being cleared.
+                if (!is_in_pdp_to_send_(it->second.change()))
+                {
+                    it->second.add_or_update_ack_participant(acked_entity, ParticipantState::ACKED);
+                }
             }
         }
     }
@@ -322,7 +331,11 @@ void DiscoveryDataBase::add_ack_(
             // database has been updated, so this ACK is not relevant anymore
             if (it->second.change()->write_params.sample_identity() == change->write_params.sample_identity())
             {
-                it->second.add_or_update_ack_participant(acked_entity, ParticipantState::ACKED);
+                // Don't transition to ACKED if this DATA(w) is queued for re-send (see PDP comment above).
+                if (!is_in_edp_publications_to_send_(it->second.change()))
+                {
+                    it->second.add_or_update_ack_participant(acked_entity, ParticipantState::ACKED);
+                }
             }
         }
     }
@@ -337,7 +350,11 @@ void DiscoveryDataBase::add_ack_(
             // database has been updated, so this ACK is not relevant anymore
             if (it->second.change()->write_params.sample_identity() == change->write_params.sample_identity())
             {
-                it->second.add_or_update_ack_participant(acked_entity, ParticipantState::ACKED);
+                // Don't transition to ACKED if this DATA(r) is queued for re-send (see PDP comment above).
+                if (!is_in_edp_subscriptions_to_send_(it->second.change()))
+                {
+                    it->second.add_or_update_ack_participant(acked_entity, ParticipantState::ACKED);
+                }
             }
         }
     }
@@ -437,6 +454,7 @@ void DiscoveryDataBase::clear_pdp_to_send()
     // lock(exclusive mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     pdp_to_send_.clear();
+    pdp_to_send_set_.clear();
 }
 
 const std::vector<eprosima::fastdds::rtps::CacheChange_t*> DiscoveryDataBase::edp_publications_to_send()
@@ -451,6 +469,7 @@ void DiscoveryDataBase::clear_edp_publications_to_send()
     // lock(exclusive mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     edp_publications_to_send_.clear();
+    edp_publications_to_send_set_.clear();
 }
 
 const std::vector<eprosima::fastdds::rtps::CacheChange_t*> DiscoveryDataBase::edp_subscriptions_to_send()
@@ -465,6 +484,7 @@ void DiscoveryDataBase::clear_edp_subscriptions_to_send()
     // lock(exclusive mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
     edp_subscriptions_to_send_.clear();
+    edp_subscriptions_to_send_set_.clear();
 }
 
 const std::vector<eprosima::fastdds::rtps::CacheChange_t*> DiscoveryDataBase::changes_to_release()
@@ -2425,10 +2445,7 @@ bool DiscoveryDataBase::add_pdp_to_send_(
 {
     // Add DATA(p) to send in next iteration if it is not already there
     std::lock_guard<std::recursive_mutex> guard(mutex_);
-    if (std::find(
-                pdp_to_send_.begin(),
-                pdp_to_send_.end(),
-                change) == pdp_to_send_.end())
+    if (pdp_to_send_set_.insert(change).second)
     {
         EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(p) to send: "
                 << change->instanceHandle);
@@ -2438,14 +2455,29 @@ bool DiscoveryDataBase::add_pdp_to_send_(
     return false;
 }
 
+bool DiscoveryDataBase::is_in_pdp_to_send_(
+        const eprosima::fastdds::rtps::CacheChange_t* change) const
+{
+    return pdp_to_send_set_.count(change) != 0;
+}
+
+bool DiscoveryDataBase::is_in_edp_publications_to_send_(
+        const eprosima::fastdds::rtps::CacheChange_t* change) const
+{
+    return edp_publications_to_send_set_.count(change) != 0;
+}
+
+bool DiscoveryDataBase::is_in_edp_subscriptions_to_send_(
+        const eprosima::fastdds::rtps::CacheChange_t* change) const
+{
+    return edp_subscriptions_to_send_set_.count(change) != 0;
+}
+
 bool DiscoveryDataBase::add_edp_publications_to_send_(
         eprosima::fastdds::rtps::CacheChange_t* change)
 {
     // Add DATA(w) to send in next iteration if it is not already there
-    if (std::find(
-                edp_publications_to_send_.begin(),
-                edp_publications_to_send_.end(),
-                change) == edp_publications_to_send_.end())
+    if (edp_publications_to_send_set_.insert(change).second)
     {
         EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(w) to send: "
                 << change->instanceHandle);
@@ -2459,10 +2491,7 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
         eprosima::fastdds::rtps::CacheChange_t* change)
 {
     // Add DATA(r) to send in next iteration if it is not already there
-    if (std::find(
-                edp_subscriptions_to_send_.begin(),
-                edp_subscriptions_to_send_.end(),
-                change) == edp_subscriptions_to_send_.end())
+    if (edp_subscriptions_to_send_set_.insert(change).second)
     {
         EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(r) to send: "
                 << change->instanceHandle);

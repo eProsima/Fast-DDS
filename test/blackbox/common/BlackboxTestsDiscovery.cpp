@@ -2534,3 +2534,67 @@ TEST_P(Discovery, discovery_server_rediscover_participant_being_removed)
     // Client 2 should discover client 1 again and log error "Writer has no associated participant." should not appear
     client_2->sub_wait_discovery(1);
 }
+
+// Verify that "fastdds.discovery_server.send_period" delays subsequent sends.
+// client_1 (publisher) joins first and is discovered on the immediate send.
+// client_2 (subscriber, same topic) joins after. Its discovery by client_1 must
+// be delayed until the send period elapses.
+TEST(Discovery, discovery_server_send_period_rate_limiter)
+{
+    using namespace eprosima::fastdds::dds;
+
+    auto server = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0, 0, 0, 0);
+
+    Locator_t locator_server;
+    eprosima::fastdds::rtps::IPLocator::setIPv4(locator_server, 127, 0, 0, 1);
+    eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator_server, global_port);
+
+    WireProtocolConfigQos server_wp_qos;
+    server_wp_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SERVER;
+    server_wp_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server);
+    server_wp_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    server_wp_qos.builtin.discovery_config.leaseDuration_announcementperiod = c_TimeInfinite;
+    server_wp_qos.builtin.discovery_config.initial_announcements.count = 0;
+
+    eprosima::fastdds::rtps::PropertyPolicy server_props;
+    server_props.properties().emplace_back("fastdds.discovery_server.send_period", "5000");
+
+    server->disable_builtin_transport()
+            .add_user_transport_to_pparams(std::make_shared<UDPv4TransportDescriptor>())
+            .wire_protocol(server_wp_qos)
+            .property_policy(server_props);
+    ASSERT_TRUE(server->init_participant());
+
+    WireProtocolConfigQos client_qos;
+    client_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::CLIENT;
+    client_qos.builtin.discovery_config.m_DiscoveryServers.push_back(locator_server);
+    client_qos.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    client_qos.builtin.discovery_config.leaseDuration_announcementperiod = c_TimeInfinite;
+    client_qos.builtin.discovery_config.initial_announcements.count = 1;
+
+    // client_1 = publisher, client_2 = subscriber on the same topic
+    auto client_1 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(1u, 0u, 0u, 1u);
+    auto client_2 = std::make_shared<PubSubParticipant<HelloWorldPubSubType>>(0u, 1u, 1u, 0u);
+
+    // Start client_1 and wait for the server to discover it (first immediate send)
+    client_1->wire_protocol(client_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .pub_topic_name(TEST_TOPIC_NAME);
+    ASSERT_TRUE(client_1->init_participant());
+    ASSERT_TRUE(client_1->init_publisher(0u));
+    ASSERT_TRUE(server->wait_discovery(std::chrono::seconds(5), 1, true));
+
+    // Start client_2 after the first send has already fired
+    WireProtocolConfigQos client2_qos = client_qos;
+    client_2->wire_protocol(client2_qos)
+            .setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4)
+            .sub_topic_name(TEST_TOPIC_NAME);
+    ASSERT_TRUE(client_2->init_participant());
+    ASSERT_TRUE(client_2->init_subscriber(0u));
+
+    // client_1 should not have discovered client_2 within 4 s (send period is 5 s)
+    ASSERT_FALSE(client_1->wait_discovery(std::chrono::seconds(4), 2, true));
+
+    // After the send period elapses, client_1 must discover client_2
+    ASSERT_TRUE(client_1->wait_discovery(std::chrono::seconds(10), 2, true));
+}

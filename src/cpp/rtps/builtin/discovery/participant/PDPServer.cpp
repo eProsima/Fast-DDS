@@ -17,13 +17,14 @@
  *
  */
 
+#include <chrono>
 #include <fstream>
-#include <iostream>
 #include <mutex>
 #include <set>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <fastdds/rtps/history/History.hpp>
 #include <fastdds/rtps/history/ReaderHistory.hpp>
 #include <fastdds/rtps/history/WriterHistory.hpp>
@@ -132,6 +133,33 @@ bool PDPServer::init(
     routine_ = new DServerRoutineEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
+
+    // Optional send rate limiter (Pro feature). When the property
+    // "fastdds.discovery_server.send_period" is set to a positive value (integer milliseconds,
+    // e.g. "1000"), process_to_send_lists() is called at most once per send_period instead of
+    // every routine iteration, letting changes accumulate so that sends contain more complete
+    // discovery data, reducing redundant retransmissions in large-scale scenarios.
+    // Default 0 = disabled (original behaviour).
+    const std::string* send_period_str = PropertyPolicyHelper::find_property(
+        getRTPSParticipant()->get_attributes().properties,
+        "fastdds.discovery_server.send_period");
+    if (send_period_str != nullptr)
+    {
+        try
+        {
+            int ms = std::stoi(*send_period_str);
+            if (ms > 0)
+            {
+                send_period_ms_ = static_cast<double>(ms);
+            }
+        }
+        catch (const std::exception& e)
+        {
+            EPROSIMA_LOG_WARNING(RTPS_PDP_SERVER,
+                    "Invalid value for property 'fastdds.discovery_server.send_period': "
+                    << *send_period_str << " (" << e.what() << "). Using default (disabled).");
+        }
+    }
 
     return true;
 }
@@ -1125,7 +1153,10 @@ bool PDPServer::server_update_routine()
         process_dirty_topics();                 // all ddb
         process_changes_release();              // server + ddb(changes_to_release(), clear_changes_to_release())
         process_disposals();                    // server + ddb(changes_to_dispose(), clear_changes_to_disposes())
-        process_to_send_lists();                // server + ddb(get_to_send, remove_to_send_this)
+        if (send_period_ms_ <= 0)
+        {
+            process_to_send_lists();            // server + ddb(get_to_send, remove_to_send_this)
+        }
         pending_work = pending_ack();           // all server
 
         EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
@@ -1153,6 +1184,30 @@ bool PDPServer::server_update_routine()
     }
     // Unlock the incoming data after finishing the backuo storage
     discovery_db().unlock_incoming_data();
+
+    // Rate-limited send: when "fastdds.discovery_server.send_period" property is configured, sends are
+    // deferred and only flushed once the send period has elapsed. This lets changes
+    // accumulate in the DDB between flushes so that sends contain more complete
+    // discovery data, reducing redundant retransmissions in large-scale scenarios.
+    if (send_period_ms_ > 0)
+    {
+        auto now = std::chrono::steady_clock::now();
+        double elapsed_ms = std::chrono::duration<double, std::milli>(now - last_send_time_).count();
+        if (elapsed_ms >= send_period_ms_)
+        {
+            process_to_send_lists();
+            last_send_time_ = now;
+            // Recheck pending acks after sending: the send may have added changes
+            // to writer histories that need acknowledgement processing.
+            pending_work = pending_ack();
+        }
+        else if (!pending_work && discovery_db_.is_enabled())
+        {
+            // If there isn't any pending work (default routine won't reschedule) and the send_period has not
+            // elapsed yet, we need to reschedule the routine to send pdp/edp after the send_period has elapsed.
+            awake_routine_thread(send_period_ms_ - elapsed_ms);
+        }
+    }
 
     return pending_work && discovery_db_.is_enabled();
 }
@@ -1497,9 +1552,10 @@ bool PDPServer::process_to_send_list(
         fastdds::rtps::WriterHistory* history)
 {
     // Iterate over DATAs in send_list
-    std::unique_lock<fastdds::RecursiveTimedMutex> lock(writer->getMutex());
     for (auto change: send_list)
     {
+        // Locking inside the loop to avoid holding it across the entire send list (which causes sender starvation)
+        std::unique_lock<fastdds::RecursiveTimedMutex> lock(writer->getMutex());
         // If the DATA is already in the writer's history, then remove it, but do not release the change.
         remove_change_from_history_nts(history, change, false);
         // Set change's writer GUID so it matches with this writer
