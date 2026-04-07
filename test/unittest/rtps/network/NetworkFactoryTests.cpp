@@ -660,7 +660,7 @@ TEST_F(NetworkTests, LocatorShrink)
     }
 }
 
-TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv4_fills_default_address_when_empty)
+TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv4_fills_default_attributes_when_empty)
 {
     // Register UDPv4 transport
     NetworkFactory f{pattr};
@@ -712,7 +712,7 @@ TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv4_fills_default_address_whe
     }
 }
 
-TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv6_fills_default_address_when_empty)
+TEST_F(NetworkTests, FillDefaultMulticastLocator_UDPv6_fills_default_attributes_when_empty)
 {
     // Register UDPv6 transport
     NetworkFactory f{pattr};

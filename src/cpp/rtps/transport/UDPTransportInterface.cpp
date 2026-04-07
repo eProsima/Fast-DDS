@@ -735,7 +735,7 @@ bool UDPTransportInterface::fillMetatrafficMulticastLocator(
         }
         if (!IsAddressDefined(locator))
         {
-            std::memcpy(locator.address, default_loc.address, sizeof(locator.address));
+            IPLocator::copy_address(default_loc, locator);
         }
     }
     return true;
@@ -811,7 +811,7 @@ bool UDPTransportInterface::fillMulticastLocator(
         }
         if (!IsAddressDefined(locator))
         {
-            std::memcpy(locator.address, default_loc.address, sizeof(locator.address));
+            IPLocator::copy_address(default_loc, locator);
         }
     }
     return true;
