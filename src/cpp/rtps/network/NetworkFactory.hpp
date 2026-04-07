@@ -299,7 +299,7 @@ public:
 
     /**
      * Add the default multicast locator to the given locator list.
-     * 
+     *
      * @param locators List to be filled with the default multicast locator.
      * @param port Port to be used in the default multicast locator.
      * */
