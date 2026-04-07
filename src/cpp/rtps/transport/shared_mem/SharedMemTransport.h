@@ -151,6 +151,10 @@ public:
             LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
+    /**
+     * This method should never be called because shared memory interfaces do not support
+     * multicast locators. It always returns false
+     */
     bool getDefaultMulticastLocators(
             LocatorList& locators,
             uint32_t multicast_port) const override;
@@ -213,6 +217,10 @@ public:
             Locator& locator,
             uint32_t well_known_port) const override;
 
+    /**
+     * This method should never be called because shared memory interfaces do not support
+     * multicast locators. It always returns false
+     */
     bool fillMulticastLocator(
             Locator& locator,
             uint32_t well_known_port) const override;

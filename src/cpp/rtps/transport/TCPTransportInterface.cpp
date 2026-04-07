@@ -1690,7 +1690,7 @@ bool TCPTransportInterface::getDefaultMetatrafficMulticastLocators(
         uint32_t ) const
 {
     // TCP doesn't have multicast support
-    return true;
+    return false;
 }
 
 bool TCPTransportInterface::getDefaultMulticastLocators(
@@ -1698,7 +1698,7 @@ bool TCPTransportInterface::getDefaultMulticastLocators(
         uint32_t ) const
 {
     // TCP doesn't have multicast support
-    return true;
+    return false;
 }
 
 bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(
@@ -1730,7 +1730,7 @@ bool TCPTransportInterface::fillMetatrafficMulticastLocator(
         uint32_t) const
 {
     // TCP doesn't have multicast support
-    return true;
+    return false;
 }
 
 bool TCPTransportInterface::fillMulticastLocator(
@@ -1738,7 +1738,7 @@ bool TCPTransportInterface::fillMulticastLocator(
         uint32_t) const
 {
     // TCP doesn't have multicast support
-    return true;
+    return false;
 }
 
 bool TCPTransportInterface::fillMetatrafficUnicastLocator(

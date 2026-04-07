@@ -100,9 +100,7 @@ bool SharedMemTransport::getDefaultMulticastLocators(
         LocatorList& locators,
         uint32_t multicast_port) const
 {
-    locators.push_back(SHMLocator::create_locator(multicast_port, SHMLocator::Type::MULTICAST));
-
-    return true;
+    return false;
 }
 
 bool SharedMemTransport::getDefaultUnicastLocators(
@@ -767,12 +765,7 @@ bool SharedMemTransport::fillMulticastLocator(
         Locator& locator,
         uint32_t well_known_port) const
 {
-    if (locator.port == 0)
-    {
-        locator.port = well_known_port;
-    }
-
-    return true;
+    return false;
 }
 
 }  // namsepace rtps

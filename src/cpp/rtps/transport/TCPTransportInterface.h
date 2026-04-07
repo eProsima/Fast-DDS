@@ -452,6 +452,10 @@ public:
      */
     virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
+    /**
+     * This method should never be called because TCP interfaces do not support
+     * multicast locators. It always returns false
+     */
     bool getDefaultMetatrafficMulticastLocators(
             LocatorList& locators,
             uint32_t metatraffic_multicast_port) const override;
@@ -464,10 +468,18 @@ public:
             LocatorList& locators,
             uint32_t unicast_port) const override;
 
+    /**
+     * This method should never be called because TCP interfaces do not support
+     * multicast locators. It always returns false
+     */
     bool getDefaultMulticastLocators(
             LocatorList& locators,
             uint32_t multicast_port) const override;
 
+    /**
+     * This method should never be called because TCP interfaces do not support
+     * multicast locators. It always returns false
+     */
     bool fillMetatrafficMulticastLocator(
             Locator& locator,
             uint32_t metatraffic_multicast_port) const override;
@@ -486,6 +498,10 @@ public:
             Locator& locator,
             uint32_t well_known_port) const override;
 
+    /**
+     * This method should never be called because TCP interfaces do not support
+     * multicast locators. It always returns false
+     */
     bool fillMulticastLocator(
             Locator& locator,
             uint32_t well_known_port) const override;
