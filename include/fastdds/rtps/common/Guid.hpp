@@ -25,7 +25,6 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 
 #include <cstdint>
-#include <cstring>
 #include <sstream>
 
 namespace eprosima {
@@ -159,18 +158,11 @@ inline bool operator ==(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if (g1.guidPrefix == g2.guidPrefix && g1.entityId == g2.entityId)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return (g1.entityId == g2.entityId) && (g1.guidPrefix == g2.guidPrefix);
 }
 
 /**
- * GUID comparison operator
+ * GUID not equal operator
  * @param g1 First GUID to compare
  * @param g2 Second GUID to compare
  * @return True if not equal
@@ -179,14 +171,7 @@ inline bool operator !=(
         const GUID_t& g1,
         const GUID_t& g2)
 {
-    if (g1.guidPrefix != g2.guidPrefix || g1.entityId != g2.entityId)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return !(g1 == g2);
 }
 
 inline bool operator <(

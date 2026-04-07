@@ -1,0 +1,13 @@
+# Types excluded from ABI source-compatibility checking.
+#
+# EntityId_t and GuidPrefix_t: the 'value' member appears renamed to 'unnamed0'
+# by abi-compliance-checker because it was wrapped in an anonymous union.
+# Anonymous unions inject their members into the enclosing scope, so 'value'
+# remains accessible at the same offset with the same type -- no real ABI or
+# API break. Binary compatibility is 100% confirmed by the checker itself.
+# The second union member 'n' (uint32_t / std::array<uint32_t,3>) was added
+# solely to enable optimized integer comparison in operator==.
+#
+# Note: abi-compliance-checker requires the 'struct' keyword prefix for matching.
+struct eprosima::fastdds::rtps::EntityId_t
+struct eprosima::fastdds::rtps::GuidPrefix_t

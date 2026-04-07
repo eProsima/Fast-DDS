@@ -171,9 +171,9 @@ DataWriterImpl::DataWriterImpl(
     endpoint_attributes.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
     endpoint_attributes.setEntityID(qos_.endpoint().entity_id);
     endpoint_attributes.setUserDefinedID(qos_.endpoint().user_defined_id);
-    fastdds::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
+    fastdds::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes(
         fastdds::rtps::EntityId_t::unknown(),
-        publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
+        publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId, 0x03, 0x02);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
 
     if (payload_pool != nullptr)

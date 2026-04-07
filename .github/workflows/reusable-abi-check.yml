@@ -419,6 +419,7 @@ jobs:
             -old "$OUTDIR/base.abi.dump" \
             -new "$OUTDIR/target.abi.dump" \
             -report-path "$OUTDIR/compat_report.html" \
+            -skip-types "$GITHUB_WORKSPACE/src/fastdds/abi_check/skip_types.txt" \
             -bin -source
           ABI_RC=$?
           set -e

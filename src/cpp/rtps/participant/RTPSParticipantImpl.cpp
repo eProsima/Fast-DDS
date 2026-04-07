@@ -952,12 +952,13 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     send_resource_list_.clear();
 }
 
-template<EndpointKind_t kind, octet no_key, octet with_key>
 bool RTPSParticipantImpl::preprocess_endpoint_attributes(
         const EntityId_t& entity_id,
         std::atomic<uint32_t>& id_counter,
         EndpointAttributes& att,
-        EntityId_t& entId)
+        EntityId_t& entId,
+        octet no_key,
+        octet with_key)
 {
     const char* debug_label = (att.endpointKind == WRITER ? "writer" : "reader");
 
@@ -1044,7 +1045,7 @@ bool RTPSParticipantImpl::create_writer(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Creating writer of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(entity_id, IdCounter, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes(entity_id, IdCounter, param.endpoint, entId, 0x03, 0x02))
     {
         return false;
     }
@@ -1199,7 +1200,7 @@ bool RTPSParticipantImpl::create_reader(
     std::string type = (param.endpoint.reliabilityKind == RELIABLE) ? "RELIABLE" : "BEST_EFFORT";
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "Creating reader of type " << type);
     EntityId_t entId;
-    if (!preprocess_endpoint_attributes<READER, 0x04, 0x07>(entity_id, IdCounter, param.endpoint, entId))
+    if (!preprocess_endpoint_attributes(entity_id, IdCounter, param.endpoint, entId, 0x04, 0x07))
     {
         return false;
     }

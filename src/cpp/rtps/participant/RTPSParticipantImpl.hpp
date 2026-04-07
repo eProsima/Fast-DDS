@@ -1259,12 +1259,13 @@ public:
             SubscriptionBuiltinTopicData& data,
             const GUID_t& reader_guid) const;
 
-    template<EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t& entity_id,
             std::atomic<uint32_t>& id_count,
             EndpointAttributes& att,
-            EntityId_t& entId);
+            EntityId_t& entId,
+            octet no_key,
+            octet with_key);
 
 #if HAVE_SECURITY
     void set_endpoint_rtps_protection_supports(

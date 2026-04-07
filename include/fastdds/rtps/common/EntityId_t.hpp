@@ -76,7 +76,16 @@ namespace rtps {
 struct FASTDDS_EXPORTED_API EntityId_t
 {
     static constexpr unsigned int size = 4;
-    octet value[size];
+    // NOTE: abi-compliance-checker may report 'value' as renamed due to the anonymous union
+    // wrapper. This is a false positive: 'value' remains at offset 0 with the same type and size.
+    // The union adds 'n' (uint32_t) to enable faster integer comparison in operator==.
+    // Binary layout is unchanged; existing code using 'value' compiles and behaves identically.
+    union
+    {
+        octet value[size];
+        uint32_t n;
+    };
+
     //! Default constructor. Unknown entity.
     EntityId_t()
     {
@@ -255,11 +264,11 @@ inline bool operator ==(
         const EntityId_t& id1,
         const EntityId_t& id2)
 {
-    return EntityId_t::cmp(id1, id2) == 0;
+    return id1.n == id2.n;  // direct union access, no memcpy
 }
 
 /**
- * Guid prefix comparison operator
+ * Entity Id not equal operator
  * @param id1 First EntityId to compare
  * @param id2 Second EntityId to compare
  * @return True if not equal
@@ -270,7 +279,7 @@ inline bool operator !=(
 {
     // Use == operator as it is faster enough.
     // NOTE: this could be done comparing the entities backwards (starting in [3]) as it would probably be faster.
-    return !(operator ==(id1, id2));
+    return !(id1 == id2);
 }
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

@@ -339,12 +339,13 @@ public:
     {
     }
 
-    template<EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t&,
             std::atomic<uint32_t>&,
             EndpointAttributes&,
-            EntityId_t&)
+            EntityId_t&,
+            octet,
+            octet)
     {
         return true;
     }
