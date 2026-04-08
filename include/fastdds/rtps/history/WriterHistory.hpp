@@ -301,12 +301,32 @@ protected:
         return true;
     }
 
+    /**
+     * Get the overhead in bytes that the inline QoS adds to a change when sent.
+     *
+     * @param [in] change Change for which the inline QoS overhead will be calculated.
+     * @param [out] inline_qos_overhead The calculated inline QoS overhead for the given change.
+     *
+     * @return True if the inline QoS overhead could be calculated, false otherwise.
+     * @warning Not supported yet.
+     */
+    FASTDDS_EXPORTED_API virtual bool get_inline_qos_overhead(
+            const CacheChange_t* change,
+            uint32_t& inline_qos_overhead) const
+    {
+        (void)change;
+        (void)inline_qos_overhead;
+        return true;
+    }
+
     //! Last CacheChange Sequence Number added to the History.
     SequenceNumber_t m_lastCacheChangeSeqNum {};
     //! Pointer to the associated writer
     BaseWriter* mp_writer = nullptr;
 
     uint32_t high_mark_for_frag_ = 0;
+
+    uint32_t max_fragment_size_ = 0;
 
 private:
 
