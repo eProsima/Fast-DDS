@@ -41,11 +41,17 @@ struct FASTDDS_EXPORTED_API GuidPrefix_t
     // wrapper. This is a false positive: 'value' remains at offset 0 with the same type and size.
     // The union adds 'n' (array of uint32_t) to enable faster integer comparison in operator==.
     // Binary layout is unchanged; existing code using 'value' compiles and behaves identically.
+    // SWIG does not support anonymous unions nested inside structs, so the union
+    // is hidden from SWIG via #ifndef SWIG to preserve the Python 'value' attribute.
+#ifndef SWIG
     union
     {
         octet value[size];
         std::array<uint32_t, 3> n;
     };
+#else
+    octet value[size];
+#endif // ifndef SWIG
 
     //!Default constructor. Set the Guid prefix to 0.
     GuidPrefix_t()
