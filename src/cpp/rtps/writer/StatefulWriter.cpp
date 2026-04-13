@@ -1217,7 +1217,10 @@ bool StatefulWriter::matched_reader_add_edp(
                 {
                     if (rp->is_local_reader())
                     {
-                        intraprocess_gap(rp, min_seq, history_->next_sequence_number());
+                        if (intraprocess_gap(rp, min_seq, history_->next_sequence_number()))
+                        {
+                            rp->acked_changes_set(history_->next_sequence_number());
+                        }
                     }
                     else
                     {

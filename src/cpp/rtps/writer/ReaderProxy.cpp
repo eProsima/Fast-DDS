@@ -134,7 +134,7 @@ void ReaderProxy::start(
     if (durability_kind_ == DurabilityKind_t::VOLATILE)
     {
         SequenceNumber_t min_sequence = writer_->get_seq_num_min();
-        changes_low_mark_ = (min_sequence == SequenceNumber_t::unknown()) ?
+        changes_low_mark_ = (!is_local_reader() || min_sequence == SequenceNumber_t::unknown()) ?
                 writer_->next_sequence_number() - 1 : min_sequence - 1;
     }
     else
