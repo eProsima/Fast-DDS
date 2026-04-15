@@ -1,0 +1,32 @@
+name: mirror-branch
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_call:
+    inputs:
+      runner:
+        description: 'The runner to use for the workflow'
+        required: false
+        type: string
+        default: 'self-hosted'
+
+jobs:
+  mirror_job_main:
+    runs-on: ${{ inputs.runner || 'self-hosted' }}
+    name: Mirror custom test branch to destination test branch
+    strategy:
+      fail-fast: false
+      matrix:
+        dest_branch:
+          - 'pro/3.6.x'
+          - 'pro/3.x'
+    steps:
+      - name: Mirror action step
+        id: mirror
+        uses: eProsima/eProsima-CI/external/custom-mirror-branch-action@v0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          source: 'main'
+          dest: ${{ matrix.dest_branch }}

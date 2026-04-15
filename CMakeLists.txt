@@ -67,7 +67,7 @@ endif()
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastdds VERSION "3.5.0.1" LANGUAGES C CXX)
+project(fastdds VERSION "3.6.0.1" LANGUAGES C CXX)
 
 set(PROJECT_NAME_LARGE "Fast DDS Pro")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
