@@ -2889,8 +2889,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
         patt = m_att;
     }
     // Only if it is a server/backup or a client override
-    if (DiscoveryProtocol::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
-            DiscoveryProtocol::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
+    if (DiscoveryProtocol::SERVER == patt.builtin.discovery_config.discoveryProtocol ||
+            DiscoveryProtocol::BACKUP == patt.builtin.discovery_config.discoveryProtocol ||
             client_override_)
     {
         if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
@@ -2911,8 +2911,8 @@ void RTPSParticipantImpl::get_default_metatraffic_locators(
 {
     uint32_t metatraffic_multicast_port = att.port.getMulticastPort(domain_id_);
 
-    if (m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT &&
-            m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SUPER_CLIENT)
+    if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT &&
+            att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SUPER_CLIENT)
     {
         m_network_Factory.getDefaultMetatrafficMulticastLocators(att.builtin.metatrafficMulticastLocatorList,
                 metatraffic_multicast_port);
@@ -3421,12 +3421,16 @@ void RTPSParticipantImpl::update_removed_participant(
 {
     if (!remote_participant_locators.empty())
     {
-        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
-        LocatorList_t initial_peers_and_ds = m_att.builtin.discovery_config.m_DiscoveryServers;
-        for (const Locator_t& locator : m_att.builtin.initialPeersList)
+        LocatorList_t initial_peers_and_ds;
         {
-            initial_peers_and_ds.push_back(locator);
+            std::lock_guard<std::mutex> _(mutex_);
+            initial_peers_and_ds = m_att.builtin.discovery_config.m_DiscoveryServers;
+            for (const Locator_t& locator : m_att.builtin.initialPeersList)
+            {
+                initial_peers_and_ds.push_back(locator);
+            }
         }
+        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
         m_network_Factory.remove_participant_associated_send_resources(
             send_resource_list_,
             remote_participant_locators,
