@@ -893,8 +893,18 @@ private:
 
 public:
 
+    /**
+     * @brief Get the RTPSParticipantAttributes of this RTPSParticipantImpl. This method is not thread safe,
+     * it is recommended to use copy_attributes() instead.
+     * @return RTPSParticipantAttributes of this RTPSParticipantImpl.
+     */
+    FASTDDS_TODO_BEFORE(4, 0, "Make this method return a copy and delete copy_attributes()");
     const RTPSParticipantAttributes& get_attributes() const;
 
+    /**
+     * @brief Get a copy of the RTPSParticipantAttributes of this RTPSParticipantImpl in a thread safe manner.
+     * @return A copy of the RTPSParticipantAttributes of this RTPSParticipantImpl.
+     */
     RTPSParticipantAttributes copy_attributes() const;
 
     /**
