@@ -236,7 +236,7 @@ public:
      * Get a reference of the current state of the RTPSParticipantParameters.
      * @return RTPSParticipantAttributes reference.
      */
-    RTPSParticipantAttributes get_attributes() const;
+    const RTPSParticipantAttributes& get_attributes() const;
 
     /**
      * Retrieves the maximum message size.

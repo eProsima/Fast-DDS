@@ -123,7 +123,7 @@ bool SecurityManager::init(
     try
     {
         domain_id_ = participant_->get_domain_id();
-        auto part_attributes = participant_->get_attributes();
+        auto part_attributes = participant_->copy_attributes();
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
             part_attributes.properties,
             "dds.sec.log.builtin.DDS_LogTopic.");
@@ -1124,7 +1124,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
         participant_stateless_message_writer_hattr_,
         participant_stateless_message_pool_);
 
-    RTPSParticipantAttributes pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     WriterAttributes watt;
     watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
@@ -1173,7 +1173,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
 {
     participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
 
-    RTPSParticipantAttributes pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
@@ -1272,7 +1272,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     participant_volatile_message_secure_writer_history_ =
             new WriterHistory(participant_volatile_message_secure_hattr_, participant_volatile_message_secure_pool_);
 
-    RTPSParticipantAttributes pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -1325,7 +1325,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     participant_volatile_message_secure_reader_history_ =
             new ReaderHistory(participant_volatile_message_secure_hattr_);
 
-    RTPSParticipantAttributes pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
