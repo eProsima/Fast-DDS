@@ -332,6 +332,11 @@ public:
         return attr_;
     }
 
+    RTPSParticipantAttributes copy_attributes() const
+    {
+        return attr_;
+    }
+
     void get_sending_locators(
             rtps::LocatorList_t& /*locators*/) const
     {

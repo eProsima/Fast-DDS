@@ -232,6 +232,11 @@ public:
         return attributes_;
     }
 
+    RTPSParticipantAttributes copy_attributes() const
+    {
+        return attributes_;
+    }
+
     MOCK_METHOD(bool, get_publication_info,
             (fastdds::rtps::PublicationBuiltinTopicData&,
             const GUID_t&), (const));
