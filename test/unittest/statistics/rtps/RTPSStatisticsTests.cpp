@@ -69,7 +69,7 @@ public:
 
 private:
 
-    ~RTPSParticipantMock();
+    ~RTPSParticipantMock() = default;
 };
 
 struct MockListener : IListener
