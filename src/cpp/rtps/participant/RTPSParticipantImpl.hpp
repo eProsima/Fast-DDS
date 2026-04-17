@@ -1066,7 +1066,7 @@ public:
             const RTPSParticipantAttributes& patt);
 
     void update_mutable_attributes(
-        const RTPSParticipantAttributes& patt);
+            const RTPSParticipantAttributes& patt);
 
     /**
      * Update local writer QoS

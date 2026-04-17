@@ -140,6 +140,11 @@ const RTPSParticipantAttributes& RTPSParticipant::get_attributes() const
     return mp_impl->get_attributes();
 }
 
+RTPSParticipantAttributes RTPSParticipant::copy_attributes() const
+{
+    return mp_impl->copy_attributes();
+}
+
 uint32_t RTPSParticipant::getMaxMessageSize() const
 {
     return mp_impl->getMaxMessageSize();
@@ -315,4 +320,3 @@ bool RTPSParticipant::fill_discovery_data_from_cdr_message(
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
-

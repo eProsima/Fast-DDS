@@ -236,7 +236,14 @@ public:
      * Get a reference of the current state of the RTPSParticipantParameters.
      * @return RTPSParticipantAttributes reference.
      */
+    FASTDDS_TODO_BEFORE(4, 0, "Make this method return a copy and delete copy_attributes()");
     const RTPSParticipantAttributes& get_attributes() const;
+
+    /**
+     * Get a copy of the current state of the RTPSParticipantParameters.
+     * @return RTPSParticipantAttributes copy.
+     */
+    RTPSParticipantAttributes copy_attributes() const;
 
     /**
      * Retrieves the maximum message size.
