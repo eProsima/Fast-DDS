@@ -58,6 +58,8 @@ target_include_directories(ReaderProxyTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderLocator
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSGapBuilder
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSMessageGroup
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
