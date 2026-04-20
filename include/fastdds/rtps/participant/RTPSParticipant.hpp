@@ -234,6 +234,8 @@ public:
 
     /**
      * Get a reference of the current state of the RTPSParticipantParameters.
+     * @warning The returned reference is not thread safe. It is recommended to use copy_attributes()
+     * instead to get a thread safe copy of the attributes.
      * @return RTPSParticipantAttributes reference.
      */
     FASTDDS_TODO_BEFORE(4, 0, "Make this method return a copy and delete copy_attributes()");
