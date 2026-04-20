@@ -511,7 +511,10 @@ protected:
                 const uint32_t& status_id);
 #endif //FASTDDS_STATISTICS
 
+    private:
+
         DataReaderImpl* data_reader_;
+        std::mutex matching_info_mutex_;
 
     }
     reader_listener_;
