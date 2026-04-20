@@ -31,7 +31,6 @@
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
-#include <openssl/types.h>
 
 #if !defined(OPENSSL_NO_ENGINE)
 #include <openssl/engine.h>
