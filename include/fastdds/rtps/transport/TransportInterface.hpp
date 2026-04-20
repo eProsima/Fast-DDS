@@ -245,11 +245,6 @@ public:
             LocatorList& locators,
             uint32_t unicast_port) const = 0;
 
-    //! Add multicast locator with the given port
-    virtual bool getDefaultMulticastLocators(
-            LocatorList& locators,
-            uint32_t multicast_port) const = 0;
-
     //! Assign port to the given metatraffic multicast locator if not already defined
     virtual bool fillMetatrafficMulticastLocator(
             Locator& locator,
@@ -273,14 +268,6 @@ public:
      *  does not assign a new value
      */
     virtual bool fillUnicastLocator(
-            Locator& locator,
-            uint32_t well_known_port) const = 0;
-
-    /**
-     *  Assign default multicast values to a locator if the transport supports them
-     *  and if they are not already defined.
-     */
-    virtual bool fillMulticastLocator(
             Locator& locator,
             uint32_t well_known_port) const = 0;
 

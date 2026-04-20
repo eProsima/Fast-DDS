@@ -796,27 +796,6 @@ bool UDPTransportInterface::fillUnicastLocator(
     return true;
 }
 
-bool UDPTransportInterface::fillMulticastLocator(
-        Locator& locator,
-        uint32_t well_known_port) const
-{
-    LocatorList defaults;
-    getDefaultMulticastLocators(defaults, well_known_port);
-    if (!defaults.empty())
-    {
-        const Locator& default_loc = *defaults.begin();
-        if (locator.port == 0)
-        {
-            locator.port = default_loc.port;
-        }
-        if (!IsAddressDefined(locator))
-        {
-            IPLocator::copy_address(default_loc, locator);
-        }
-    }
-    return true;
-}
-
 void UDPTransportInterface::get_unknown_network_interfaces(
         const SendResourceList& sender_resource_list,
         std::vector<IPFinder::info_IP>& locNames,

@@ -193,6 +193,7 @@ set(${PROJECT_NAME}_source_files
     ${FASTDDS_SOURCE_DIR}/rtps/transport/TCPv4Transport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/TCPv6Transport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/test_UDPv4Transport.cpp
+    ${FASTDDS_SOURCE_DIR}/rtps/transport/MulticastTransportInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/TransportInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/UDPChannelResource.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/UDPTransportInterface.cpp

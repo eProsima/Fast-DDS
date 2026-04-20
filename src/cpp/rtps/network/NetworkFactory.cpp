@@ -25,6 +25,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/network/NetworkConfiguration.hpp>
+#include <rtps/transport/MulticastTransportInterface.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 using namespace std;
@@ -495,7 +496,12 @@ bool NetworkFactory::getDefaultMulticastLocators(
     bool result = false;
     for (auto& transport : mRegisteredTransports)
     {
-        result |= transport->getDefaultMulticastLocators(locators, port);
+        const MulticastTransportInterface* multicast_transport =
+                dynamic_cast<const MulticastTransportInterface*>(transport.get());
+        if (multicast_transport)
+        {
+            result |= multicast_transport->getDefaultMulticastLocators(locators, port);
+        }
     }
     return result;
 }
@@ -524,7 +530,12 @@ bool NetworkFactory::fill_default_multicast_locator(
     {
         if (transport->IsLocatorSupported(locator))
         {
-            result |= transport->fillMulticastLocator(locator, port);
+            const MulticastTransportInterface* multicast_transport =
+                    dynamic_cast<const MulticastTransportInterface*>(transport.get());
+            if (multicast_transport)
+            {
+                result |= multicast_transport->fillMulticastLocator(locator, port);
+            }
         }
     }
     return result;

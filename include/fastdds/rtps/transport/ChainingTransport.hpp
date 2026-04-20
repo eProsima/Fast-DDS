@@ -227,17 +227,6 @@ public:
         return low_level_transport_->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
     }
 
-    /**
-     * Call the low-level transport `getDefaultMulticastLocators()`.
-     * Add multicast locator with the given port
-     */
-    FASTDDS_EXPORTED_API bool getDefaultMulticastLocators(
-            fastdds::rtps::LocatorList_t& locators,
-            uint32_t multicast_port) const override
-    {
-        return low_level_transport_->getDefaultMulticastLocators(locators, multicast_port);
-    }
-
     /*!
      * Call the low-level transport `getDefaultMetatrafficUnicastLocators()`.
      * Add metatraffic unicast locator with the given port
@@ -293,17 +282,6 @@ public:
             fastdds::rtps::LocatorList_t& list) const override
     {
         return low_level_transport_->configureInitialPeerLocator(locator, port_params, domainId, list);
-    }
-
-    /**
-     * Call the low-level transport `fillMulticastLocator()`.
-     * Assign default values (address and port) to the given multicast locator if not already defined
-     */
-    FASTDDS_EXPORTED_API bool fillMulticastLocator(
-            fastdds::rtps::Locator_t& locator,
-            uint32_t well_known_port) const override
-    {
-        return low_level_transport_->fillMulticastLocator(locator, well_known_port);
     }
 
     /*!

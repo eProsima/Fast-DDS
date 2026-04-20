@@ -96,15 +96,6 @@ bool SharedMemTransport::getDefaultMetatrafficUnicastLocators(
     return true;
 }
 
-bool SharedMemTransport::getDefaultMulticastLocators(
-        LocatorList& locators,
-        uint32_t multicast_port) const
-{
-    static_cast<void>(locators);
-    static_cast<void>(multicast_port);
-    return false;
-}
-
 bool SharedMemTransport::getDefaultUnicastLocators(
         LocatorList& locators,
         uint32_t unicast_port) const
@@ -761,15 +752,6 @@ bool SharedMemTransport::fillUnicastLocator(
     }
 
     return true;
-}
-
-bool SharedMemTransport::fillMulticastLocator(
-        Locator& locator,
-        uint32_t well_known_port) const
-{
-    static_cast<void>(locator);
-    static_cast<void>(well_known_port);
-    return false;
 }
 
 }  // namsepace rtps

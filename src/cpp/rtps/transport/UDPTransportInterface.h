@@ -29,6 +29,7 @@
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
+#include <rtps/transport/MulticastTransportInterface.h>
 #include <rtps/transport/UDPChannelResource.h>
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
 
@@ -36,7 +37,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class UDPTransportInterface : public TransportInterface
+class UDPTransportInterface
+    : public TransportInterface
+    , public MulticastTransportInterface
 {
     friend class UDPSenderResource;
     friend struct TSN_UDPSender;
@@ -179,18 +182,6 @@ public:
             const PortParameters& port_params,
             uint32_t domainId,
             LocatorList& list) const override;
-
-    /**
-     *  Assign default multicast values to a locator if they are not already defined.
-     *  This means setting both the address and the port to the default multicast
-     *  values for each version of UDP
-     *
-     *  @param locator Locator to be filled with default multicast values if not already defined.
-     *  @param well_known_port Port to be used if the locator port is not already defined.
-     */
-    bool fillMulticastLocator(
-            Locator& locator,
-            uint32_t well_known_port) const override;
 
     bool fillUnicastLocator(
             Locator& locator,
