@@ -97,7 +97,7 @@ if(Python3_Interpreter_FOUND)
         if(WIN32)
            add_test(
                     NAME system.tools.fastdds.${TEST}
-                    COMMAND powershell "-File" ${PWS_LAUNCHER}
+                    COMMAND powershell.exe -NoProfile -ExecutionPolicy Bypass -File ${PWS_LAUNCHER}
                             ${Python3_EXECUTABLE}
                             ${CMAKE_CURRENT_SOURCE_DIR}/tests.py
                             $<TARGET_FILE:fast-discovery-server>
