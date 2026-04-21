@@ -145,6 +145,15 @@ RTPSParticipantAttributes RTPSParticipant::copy_attributes() const
     return mp_impl->copy_attributes();
 }
 
+std::shared_ptr<const LocatorList_t> RTPSParticipant::get_mutable_discovery_servers() const
+{
+    return mp_impl->get_discovery_servers_snapshot();
+}
+std::shared_ptr<const std::vector<octet>> RTPSParticipant::get_mutable_user_data() const
+{
+    return mp_impl->get_user_data_snapshot();
+}
+
 uint32_t RTPSParticipant::getMaxMessageSize() const
 {
     return mp_impl->getMaxMessageSize();

@@ -241,6 +241,9 @@ public:
     FASTDDS_TODO_BEFORE(4, 0, "Make this method return a copy and delete copy_attributes()");
     const RTPSParticipantAttributes& get_attributes() const;
 
+    std::shared_ptr<const LocatorList_t> get_mutable_discovery_servers() const;
+    std::shared_ptr<const std::vector<octet>> get_mutable_user_data() const;
+
     /**
      * Get a copy of the current state of the RTPSParticipantParameters.
      * @return RTPSParticipantAttributes copy.
