@@ -123,9 +123,8 @@ bool SecurityManager::init(
     try
     {
         domain_id_ = participant_->get_domain_id();
-        auto part_attributes = participant_->copy_attributes();
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
-            part_attributes.properties,
+            participant_->get_attributes().properties,
             "dds.sec.log.builtin.DDS_LogTopic.");
 
         // length(log_properties) == 0 considered as logging disable.
@@ -214,7 +213,7 @@ bool SecurityManager::init(
         {
             // retrieve authentication properties, if any
             const PropertyPolicy auth_handshake_properties = PropertyPolicyHelper::get_properties_with_prefix(
-                part_attributes.properties,
+                participant_->get_attributes().properties,
                 "dds.sec.auth.builtin.PKI-DH.");
 
             // if auth_handshake_properties is empty, the default values are used
@@ -234,7 +233,7 @@ bool SecurityManager::init(
                 ret = authentication_plugin_->validate_local_identity(&local_identity_handle_,
                                 adjusted_participant_key,
                                 domain_id_,
-                                part_attributes,
+                                participant_->get_attributes().properties,
                                 participant_->getGuid(),
                                 exception);
             }
@@ -257,7 +256,7 @@ bool SecurityManager::init(
                     local_permissions_handle_ = access_plugin_->validate_local_permissions(
                         *authentication_plugin_, *local_identity_handle_,
                         domain_id_,
-                        part_attributes,
+                        participant_->get_attributes().properties,
                         exception);
 
                     if (local_permissions_handle_ != nullptr)
@@ -265,8 +264,7 @@ bool SecurityManager::init(
                         if (!local_permissions_handle_->nil())
                         {
                             if (access_plugin_->check_create_participant(*local_permissions_handle_,
-                                    domain_id_,
-                                    part_attributes, exception))
+                                    domain_id_, exception))
                             {
                                 // Set credentials.
                                 PermissionsCredentialToken* token = nullptr;
@@ -1124,10 +1122,11 @@ bool SecurityManager::create_participant_stateless_message_writer()
         participant_stateless_message_writer_hattr_,
         participant_stateless_message_pool_);
 
-    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    auto ext_unicast = participant_->get_metatraffic_ext_unicast_snapshot();
 
     WriterAttributes watt;
-    watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    watt.endpoint.external_unicast_locators = *ext_unicast;
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = BEST_EFFORT;
@@ -1173,7 +1172,9 @@ bool SecurityManager::create_participant_stateless_message_reader()
 {
     participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
 
-    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    auto unicast = participant_->get_metatraffic_unicast_snapshot();
+    auto ext_unicast = participant_->get_metatraffic_ext_unicast_snapshot();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
@@ -1182,8 +1183,8 @@ bool SecurityManager::create_participant_stateless_message_reader()
     {
         ratt.endpoint.multicastLocatorList = pattr.builtin.metatrafficMulticastLocatorList;
     }
-    ratt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
-    ratt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    ratt.endpoint.unicastLocatorList = *unicast;
+    ratt.endpoint.external_unicast_locators = *ext_unicast;
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.matched_writers_allocation = pattr.allocation.participants;
 
@@ -1272,15 +1273,17 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     participant_volatile_message_secure_writer_history_ =
             new WriterHistory(participant_volatile_message_secure_hattr_, participant_volatile_message_secure_pool_);
 
-    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    auto unicast = participant_->get_metatraffic_unicast_snapshot();
+    auto ext_unicast = participant_->get_metatraffic_ext_unicast_snapshot();
 
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
     watt.endpoint.reliabilityKind = RELIABLE;
     watt.endpoint.topicKind = NO_KEY;
     watt.endpoint.durabilityKind = VOLATILE;
-    watt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
-    watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    watt.endpoint.unicastLocatorList = *unicast;
+    watt.endpoint.external_unicast_locators = *ext_unicast;
     watt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     watt.endpoint.security_attributes().is_submessage_protected = true;
     watt.endpoint.security_attributes().plugin_endpoint_attributes =
@@ -1325,14 +1328,16 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     participant_volatile_message_secure_reader_history_ =
             new ReaderHistory(participant_volatile_message_secure_hattr_);
 
-    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    auto unicast = participant_->get_metatraffic_unicast_snapshot();
+    auto ext_unicast = participant_->get_metatraffic_ext_unicast_snapshot();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.endpoint.durabilityKind = VOLATILE;
-    ratt.endpoint.unicastLocatorList = pattr.builtin.metatrafficUnicastLocatorList;
-    ratt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
+    ratt.endpoint.unicastLocatorList = *unicast;
+    ratt.endpoint.external_unicast_locators = *ext_unicast;
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.security_attributes().is_submessage_protected = true;
     ratt.endpoint.security_attributes().plugin_endpoint_attributes =

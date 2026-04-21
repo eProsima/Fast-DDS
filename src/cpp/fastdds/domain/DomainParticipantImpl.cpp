@@ -432,7 +432,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
             else
             {
                 // Trigger update of network interfaces by calling update_attributes with current attributes
-                patt = rtps_participant->copy_attributes();
+                patt = rtps_participant->copy_attributes(); // We are only interested in user data and discovery servers.
             }
         }
     }

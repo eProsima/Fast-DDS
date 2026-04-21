@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <limits>
 #include <list>
+#include <memory>
 #include <mutex>
 #include <set>
 #include <sys/types.h>
@@ -697,6 +698,19 @@ protected:
     //! Participant Mutex
     mutable std::mutex mutex_;
 
+    /*
+     * Lock-free snapshots of the six mutable fields of m_att. Writers replace them atomically
+     * in update_mutable_attributes() while holding mutex_; readers load them with
+     * std::atomic_load (C++11 free function) for zero-copy, race-free access. Kept in sync
+     * with m_att so the legacy get_attributes() reference still observes the latest values.
+     */
+    std::shared_ptr<const std::vector<octet>>                 user_data_snapshot_;
+    std::shared_ptr<const LocatorList_t>                      metatraffic_unicast_snapshot_;
+    std::shared_ptr<const LocatorList_t>                      default_unicast_snapshot_;
+    std::shared_ptr<const fastdds::rtps::ExternalLocators>    default_ext_unicast_snapshot_;
+    std::shared_ptr<const LocatorList_t>                      discovery_servers_snapshot_;
+    std::shared_ptr<const fastdds::rtps::ExternalLocators>    metatraffic_ext_unicast_snapshot_;
+
     //! Will this participant use intraprocess only?
     bool is_intraprocess_only_;
 
@@ -906,6 +920,18 @@ public:
      * @return A copy of the RTPSParticipantAttributes of this RTPSParticipantImpl.
      */
     RTPSParticipantAttributes copy_attributes() const;
+
+    /*
+     * Lock-free snapshot accessors for the six mutable fields of m_att. Each returns a
+     * shared_ptr to an immutable copy that stays alive as long as the caller holds it.
+     * Prefer these over copy_attributes() when only one mutable field is needed.
+     */
+    std::shared_ptr<const std::vector<octet>> get_user_data_snapshot() const;
+    std::shared_ptr<const LocatorList_t> get_metatraffic_unicast_snapshot() const;
+    std::shared_ptr<const LocatorList_t> get_default_unicast_snapshot() const;
+    std::shared_ptr<const fastdds::rtps::ExternalLocators> get_default_ext_unicast_snapshot() const;
+    std::shared_ptr<const LocatorList_t> get_discovery_servers_snapshot() const;
+    std::shared_ptr<const fastdds::rtps::ExternalLocators> get_metatraffic_ext_unicast_snapshot() const;
 
     /**
      * Create a Writer in this RTPSParticipant.

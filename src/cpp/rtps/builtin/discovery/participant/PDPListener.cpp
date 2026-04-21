@@ -49,7 +49,7 @@ namespace rtps {
 PDPListener::PDPListener(
         PDP* parent)
     : parent_pdp_(parent)
-    , temp_participant_data_(parent->getRTPSParticipant()->copy_attributes().allocation)
+    , temp_participant_data_(parent->getRTPSParticipant()->get_attributes().allocation)
 {
 }
 
@@ -123,10 +123,12 @@ void PDPListener::on_new_cache_change_added(
             }
 
             // Filter locators
-            auto pattr = parent_pdp_->getRTPSParticipant()->copy_attributes();
+            auto* participant = parent_pdp_->getRTPSParticipant();
+            auto meta_ext = participant->get_metatraffic_ext_unicast_snapshot();
+            auto default_ext = participant->get_default_ext_unicast_snapshot();
             fastdds::rtps::network::external_locators::filter_remote_locators(temp_participant_data_,
-                    pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
-                    pattr.ignore_non_matching_locators);
+                    *meta_ext, *default_ext,
+                    participant->get_attributes().ignore_non_matching_locators);
 
             // Check if participant already exists (updated info)
             ParticipantProxyData* pdata = nullptr;

@@ -295,6 +295,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
+    , user_data_snapshot_(std::make_shared<const std::vector<octet>>(PParam.userData))
+    , metatraffic_unicast_snapshot_(
+        std::make_shared<const LocatorList_t>(PParam.builtin.metatrafficUnicastLocatorList))
+    , default_unicast_snapshot_(std::make_shared<const LocatorList_t>(PParam.defaultUnicastLocatorList))
+    , default_ext_unicast_snapshot_(
+        std::make_shared<const fastdds::rtps::ExternalLocators>(PParam.default_external_unicast_locators))
+    , discovery_servers_snapshot_(
+        std::make_shared<const LocatorList_t>(PParam.builtin.discovery_config.m_DiscoveryServers))
+    , metatraffic_ext_unicast_snapshot_(
+        std::make_shared<const fastdds::rtps::ExternalLocators>(PParam.builtin.metatraffic_external_unicast_locators))
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
 #ifdef FASTDDS_STATISTICS
     , monitor_server_(nullptr)
@@ -1690,6 +1700,29 @@ void RTPSParticipantImpl::update_mutable_attributes(
     m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
     m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
     m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    m_att.builtin.metatraffic_external_unicast_locators = patt.builtin.metatraffic_external_unicast_locators;
+
+    // Publish fresh, immutable snapshots for lock-free readers. Allocations happen under
+    // mutex_ but the stores themselves are atomic, so concurrent readers are race-free.
+    std::atomic_store(&user_data_snapshot_,
+            std::shared_ptr<const std::vector<octet>>(
+                std::make_shared<const std::vector<octet>>(patt.userData)));
+    std::atomic_store(&metatraffic_unicast_snapshot_,
+            std::shared_ptr<const LocatorList_t>(
+                std::make_shared<const LocatorList_t>(patt.builtin.metatrafficUnicastLocatorList)));
+    std::atomic_store(&default_unicast_snapshot_,
+            std::shared_ptr<const LocatorList_t>(
+                std::make_shared<const LocatorList_t>(patt.defaultUnicastLocatorList)));
+    std::atomic_store(&default_ext_unicast_snapshot_,
+            std::shared_ptr<const fastdds::rtps::ExternalLocators>(
+                std::make_shared<const fastdds::rtps::ExternalLocators>(patt.default_external_unicast_locators)));
+    std::atomic_store(&discovery_servers_snapshot_,
+            std::shared_ptr<const LocatorList_t>(
+                std::make_shared<const LocatorList_t>(patt.builtin.discovery_config.m_DiscoveryServers)));
+    std::atomic_store(&metatraffic_ext_unicast_snapshot_,
+            std::shared_ptr<const fastdds::rtps::ExternalLocators>(
+                std::make_shared<const fastdds::rtps::ExternalLocators>(
+                    patt.builtin.metatraffic_external_unicast_locators)));
 }
 
 bool RTPSParticipantImpl::update_writer(
@@ -3453,6 +3486,42 @@ RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const
 {
     std::lock_guard<std::mutex> _(mutex_);
     return m_att;
+}
+
+std::shared_ptr<const std::vector<octet>>
+RTPSParticipantImpl::get_user_data_snapshot() const
+{
+    return std::atomic_load(&user_data_snapshot_);
+}
+
+std::shared_ptr<const LocatorList_t>
+RTPSParticipantImpl::get_metatraffic_unicast_snapshot() const
+{
+    return std::atomic_load(&metatraffic_unicast_snapshot_);
+}
+
+std::shared_ptr<const LocatorList_t>
+RTPSParticipantImpl::get_default_unicast_snapshot() const
+{
+    return std::atomic_load(&default_unicast_snapshot_);
+}
+
+std::shared_ptr<const fastdds::rtps::ExternalLocators>
+RTPSParticipantImpl::get_default_ext_unicast_snapshot() const
+{
+    return std::atomic_load(&default_ext_unicast_snapshot_);
+}
+
+std::shared_ptr<const LocatorList_t>
+RTPSParticipantImpl::get_discovery_servers_snapshot() const
+{
+    return std::atomic_load(&discovery_servers_snapshot_);
+}
+
+std::shared_ptr<const fastdds::rtps::ExternalLocators>
+RTPSParticipantImpl::get_metatraffic_ext_unicast_snapshot() const
+{
+    return std::atomic_load(&metatraffic_ext_unicast_snapshot_);
 }
 
 void RTPSParticipantImpl::notify_reader_discovery(
