@@ -237,6 +237,16 @@ public:
         return attributes_;
     }
 
+    std::shared_ptr<const LocatorList_t> get_mutable_discovery_servers() const
+    {
+        return std::make_shared<const LocatorList_t>();
+    }
+
+    std::shared_ptr<const std::vector<octet>> get_mutable_user_data() const
+    {
+        return std::make_shared<const std::vector<octet>>();
+    }
+
     MOCK_METHOD(bool, get_publication_info,
             (fastdds::rtps::PublicationBuiltinTopicData&,
             const GUID_t&), (const));

@@ -337,6 +337,36 @@ public:
         return attr_;
     }
 
+    std::shared_ptr<const std::vector<octet>> get_user_data_snapshot() const
+    {
+        return std::make_shared<const std::vector<octet>>();
+    }
+
+    std::shared_ptr<const LocatorList_t> get_metatraffic_unicast_snapshot() const
+    {
+        return std::make_shared<const LocatorList_t>();
+    }
+
+    std::shared_ptr<const LocatorList_t> get_default_unicast_snapshot() const
+    {
+        return std::make_shared<const LocatorList_t>();
+    }
+
+    std::shared_ptr<const fastdds::rtps::ExternalLocators> get_default_ext_unicast_snapshot() const
+    {
+        return std::make_shared<const fastdds::rtps::ExternalLocators>();
+    }
+
+    std::shared_ptr<const LocatorList_t> get_discovery_servers_snapshot() const
+    {
+        return std::make_shared<const LocatorList_t>();
+    }
+
+    std::shared_ptr<const fastdds::rtps::ExternalLocators> get_metatraffic_ext_unicast_snapshot() const
+    {
+        return std::make_shared<const fastdds::rtps::ExternalLocators>();
+    }
+
     void get_sending_locators(
             rtps::LocatorList_t& /*locators*/) const
     {
