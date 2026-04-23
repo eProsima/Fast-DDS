@@ -758,7 +758,7 @@ bool SecurityManager::discovered_participant(
         notify_participant_authorized(*remote_participant_data);
     }
 
-    return returnedValue;
+    return undiscovered ? returnedValue : false;
 }
 
 void SecurityManager::remove_participant(
