@@ -29,7 +29,7 @@
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
-#include <rtps/transport/MulticastTransportInterface.h>
+#include <rtps/transport/MulticastTransportInterface.hpp>
 #include <rtps/transport/UDPChannelResource.h>
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
 

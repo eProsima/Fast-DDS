@@ -25,7 +25,7 @@
 #include <fastdds/utils/IPLocator.hpp>
 
 #include <rtps/network/NetworkConfiguration.hpp>
-#include <rtps/transport/MulticastTransportInterface.h>
+#include <rtps/transport/MulticastTransportInterface.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 
 using namespace std;

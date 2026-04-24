@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_MULTICAST_TRANSPORT_INTERFACE_H_
-#define _FASTDDS_MULTICAST_TRANSPORT_INTERFACE_H_
+#ifndef _FASTDDS_MULTICAST_TRANSPORT_INTERFACE_HPP_
+#define _FASTDDS_MULTICAST_TRANSPORT_INTERFACE_HPP_
 
 #include <cstdint>
 
@@ -43,4 +43,4 @@ public:
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_MULTICAST_TRANSPORT_INTERFACE_H_
+#endif // _FASTDDS_MULTICAST_TRANSPORT_INTERFACE_HPP_

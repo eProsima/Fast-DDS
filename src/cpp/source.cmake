@@ -178,6 +178,7 @@ set(${PROJECT_NAME}_source_files
     ${FASTDDS_SOURCE_DIR}/rtps/domain/RTPSDomain.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/ChainingTransport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/ChannelResource.cpp
+    ${FASTDDS_SOURCE_DIR}/rtps/transport/MulticastTransportInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetmaskFilterKind.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetworkInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetworkInterfaceWithFilter.cpp
@@ -193,7 +194,6 @@ set(${PROJECT_NAME}_source_files
     ${FASTDDS_SOURCE_DIR}/rtps/transport/TCPv4Transport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/TCPv6Transport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/test_UDPv4Transport.cpp
-    ${FASTDDS_SOURCE_DIR}/rtps/transport/MulticastTransportInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/TransportInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/UDPChannelResource.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/UDPTransportInterface.cpp
