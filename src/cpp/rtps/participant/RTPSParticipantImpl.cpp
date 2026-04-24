@@ -1690,6 +1690,7 @@ void RTPSParticipantImpl::update_mutable_attributes(
     m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
     m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
     m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    m_att.builtin.metatraffic_external_unicast_locators = patt.builtin.metatraffic_external_unicast_locators;
 }
 
 bool RTPSParticipantImpl::update_writer(
