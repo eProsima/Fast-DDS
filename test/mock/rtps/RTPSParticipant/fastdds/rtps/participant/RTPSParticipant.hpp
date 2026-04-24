@@ -232,6 +232,11 @@ public:
         return attributes_;
     }
 
+    const RTPSParticipantAttributes& get_const_attributes() const
+    {
+        return attributes_;
+    }
+
     RTPSParticipantAttributes copy_attributes() const
     {
         return attributes_;

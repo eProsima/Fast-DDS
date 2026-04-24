@@ -133,7 +133,7 @@ BaseReader::~BaseReader()
 bool BaseReader::matched_writer_add(
         const PublicationBuiltinTopicData& info)
 {
-    auto alloc = mp_RTPSParticipant->copy_attributes().allocation;
+    auto alloc = mp_RTPSParticipant->get_const_attributes().allocation;
     WriterProxyData wdata(alloc.data_limits, info);
 
     return matched_writer_add_edp(wdata);

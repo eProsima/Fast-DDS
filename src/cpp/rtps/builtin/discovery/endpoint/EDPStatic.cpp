@@ -137,8 +137,8 @@ bool EDPStatic::initEDP(
     }
 
     // Check there is a Participant's property changing the exchange format.
-    auto properties = mp_RTPSParticipant->copy_attributes().properties.properties();
-    for (auto& property : properties)
+    const auto& properties = mp_RTPSParticipant->get_const_attributes().properties.properties();
+    for (const auto& property : properties)
     {
         if (0 == property.name().compare(exchange_format_property_name))
         {

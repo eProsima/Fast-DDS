@@ -119,7 +119,7 @@ bool PDPServer::init(
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
-    RTPSParticipantAttributes part_attr = getRTPSParticipant()->copy_attributes();
+    const RTPSParticipantAttributes& part_attr = getRTPSParticipant()->get_const_attributes();
     uint32_t id_for_thread = static_cast<uint32_t>(part_attr.participantID);
     const fastdds::rtps::ThreadSettings& thr_config = part_attr.discovery_server_thread;
     resource_event_thread_.init_thread(thr_config, "dds.ds_ev.%u", id_for_thread);
@@ -360,7 +360,7 @@ void PDPServer::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    auto discovery_config = getRTPSParticipant()->copy_attributes().builtin.discovery_config;
+    const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
 
     if (discovery_config.discoveryProtocol != DiscoveryProtocol::SERVER &&
             discovery_config.discoveryProtocol != DiscoveryProtocol::BACKUP)
@@ -395,7 +395,7 @@ void PDPServer::match_reliable_pdp_endpoints(
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_available_builtin_endpoints;
-    bool use_multicast_locators = !mp_RTPSParticipant->copy_attributes().builtin.avoid_builtin_multicast ||
+    bool use_multicast_locators = !mp_RTPSParticipant->get_const_attributes().builtin.avoid_builtin_multicast ||
             pdata.metatraffic_locators.unicast.empty();
 
     // Only SERVER and CLIENT participants will be received. All builtin must be there
