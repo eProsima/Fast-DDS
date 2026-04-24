@@ -140,6 +140,11 @@ const RTPSParticipantAttributes& RTPSParticipant::get_attributes() const
     return mp_impl->get_attributes();
 }
 
+const RTPSParticipantAttributes& RTPSParticipant::get_const_attributes() const
+{
+    return mp_impl->get_const_attributes();
+}
+
 RTPSParticipantAttributes RTPSParticipant::copy_attributes() const
 {
     return mp_impl->copy_attributes();

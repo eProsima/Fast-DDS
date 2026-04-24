@@ -238,13 +238,23 @@ public:
      * instead to get a thread safe copy of the attributes.
      * @return RTPSParticipantAttributes reference.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Make this method return a copy and delete copy_attributes()");
+    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
     const RTPSParticipantAttributes& get_attributes() const;
+
+    /**
+     * @brief Get a const reference of the constant RTPSParticipantAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const reference to the internal attributes.
+     * @warning It must not be used to access mutable attributes as it could return outdated values.
+     * @return A const reference to the RTPSParticipantAttributes of this RTPSParticipantImpl.
+     */
+    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
+    const RTPSParticipantAttributes& get_const_attributes() const;
 
     /**
      * Get a copy of the current state of the RTPSParticipantParameters.
      * @return RTPSParticipantAttributes copy.
      */
+    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
     RTPSParticipantAttributes copy_attributes() const;
 
     /**

@@ -179,7 +179,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
         {
             // Pool is empty but limit has not been reached, so we create a new entry.
             ++participant_proxies_number_;
-            ret_val = new ParticipantProxyData(mp_RTPSParticipant->copy_attributes().allocation);
+            ret_val = new ParticipantProxyData(mp_RTPSParticipant->get_const_attributes().allocation);
             if (participant_guid != mp_RTPSParticipant->getGuid())
             {
                 ret_val->lease_duration_event = new TimedEvent(mp_RTPSParticipant->getEventResource(),
@@ -487,8 +487,7 @@ bool PDP::initPDP(
 {
     EPROSIMA_LOG_INFO(RTPS_PDP, "Beginning");
     mp_RTPSParticipant = part;
-    m_discovery = mp_RTPSParticipant->copy_attributes().builtin;
-    initial_announcements_ = m_discovery.discovery_config.initial_announcements;
+    initial_announcements_ = mp_RTPSParticipant->get_const_attributes().builtin.discovery_config.initial_announcements;
     //CREATE ENDPOINTS
     if (!createPDPEndpoints())
     {
@@ -967,7 +966,7 @@ ReaderProxyData* PDP::addReaderProxyData(
                     // Pool is empty but limit has not been reached, so we create a new entry.
                     ++reader_proxies_number_;
 
-                    auto allocations = mp_RTPSParticipant->copy_attributes().allocation;
+                    const auto& allocations = mp_RTPSParticipant->get_const_attributes().allocation;
 
                     ret_val = new ReaderProxyData(
                         allocations.locators.max_unicast_locators,
@@ -1055,7 +1054,7 @@ WriterProxyData* PDP::addWriterProxyData(
                     // Pool is empty but limit has not been reached, so we create a new entry.
                     ++writer_proxies_number_;
 
-                    auto allocations = mp_RTPSParticipant->copy_attributes().allocation;
+                    const auto& allocations = mp_RTPSParticipant->get_const_attributes().allocation;
 
                     ret_val = new WriterProxyData(
                         allocations.locators.max_unicast_locators,
@@ -1518,7 +1517,7 @@ void PDP::resend_ininitial_announcements()
 void PDP::set_external_participant_properties_(
         ParticipantProxyData* participant_data)
 {
-    auto part_attributes = mp_RTPSParticipant->copy_attributes();
+    const RTPSParticipantAttributes& part_attributes = mp_RTPSParticipant->get_const_attributes();
 
     // For each property add it if it should be sent (it is propagated)
     for (auto const& property : part_attributes.properties.properties())
@@ -1588,8 +1587,6 @@ static void set_builtin_endpoint_locators(
         const PDP* pdp,
         const BuiltinProtocols* builtin)
 {
-    RTPSParticipantAttributes pattr = pdp->getRTPSParticipant()->copy_attributes();
-
     auto part_data = pdp->getLocalParticipantProxyData();
     if (nullptr == part_data)
     {
@@ -1615,14 +1612,14 @@ static void set_builtin_endpoint_locators(
 
     // External locators are always taken from the same place
     endpoint.external_unicast_locators = pdp->builtin_attributes().metatraffic_external_unicast_locators;
-    endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    endpoint.ignore_non_matching_locators = pdp->getRTPSParticipant()->get_const_attributes().ignore_non_matching_locators;
 }
 
 ReaderAttributes PDP::create_builtin_reader_attributes()
 {
     ReaderAttributes attributes;
 
-    RTPSParticipantAttributes pattr = getRTPSParticipant()->copy_attributes();
+    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_const_attributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
@@ -1646,7 +1643,7 @@ WriterAttributes PDP::create_builtin_writer_attributes()
 {
     WriterAttributes attributes;
 
-    RTPSParticipantAttributes pattr = getRTPSParticipant()->copy_attributes();
+    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_const_attributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics

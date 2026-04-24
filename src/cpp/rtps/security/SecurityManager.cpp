@@ -123,9 +123,8 @@ bool SecurityManager::init(
     try
     {
         domain_id_ = participant_->get_domain_id();
-        auto part_attributes = participant_->copy_attributes();
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
-            part_attributes.properties,
+            participant_->get_const_attributes().properties,
             "dds.sec.log.builtin.DDS_LogTopic.");
 
         // length(log_properties) == 0 considered as logging disable.
@@ -214,7 +213,7 @@ bool SecurityManager::init(
         {
             // retrieve authentication properties, if any
             const PropertyPolicy auth_handshake_properties = PropertyPolicyHelper::get_properties_with_prefix(
-                part_attributes.properties,
+                participant_->get_const_attributes().properties,
                 "dds.sec.auth.builtin.PKI-DH.");
 
             // if auth_handshake_properties is empty, the default values are used
@@ -234,7 +233,7 @@ bool SecurityManager::init(
                 ret = authentication_plugin_->validate_local_identity(&local_identity_handle_,
                                 adjusted_participant_key,
                                 domain_id_,
-                                part_attributes,
+                                participant_->get_const_attributes().properties,
                                 participant_->getGuid(),
                                 exception);
             }
@@ -257,7 +256,7 @@ bool SecurityManager::init(
                     local_permissions_handle_ = access_plugin_->validate_local_permissions(
                         *authentication_plugin_, *local_identity_handle_,
                         domain_id_,
-                        part_attributes,
+                        participant_->get_const_attributes().properties,
                         exception);
 
                     if (local_permissions_handle_ != nullptr)
@@ -265,8 +264,7 @@ bool SecurityManager::init(
                         if (!local_permissions_handle_->nil())
                         {
                             if (access_plugin_->check_create_participant(*local_permissions_handle_,
-                                    domain_id_,
-                                    part_attributes, exception))
+                                    domain_id_, exception))
                             {
                                 // Set credentials.
                                 PermissionsCredentialToken* token = nullptr;

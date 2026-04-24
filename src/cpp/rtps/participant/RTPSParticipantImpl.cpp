@@ -282,6 +282,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : domain_id_(domain_id)
     , m_att(PParam)
+    , const_m_att(PParam)
     , m_guid(guidP, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
     , IdCounter(0)
@@ -3448,6 +3449,11 @@ dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
 const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
 {
     return m_att;
+}
+
+const RTPSParticipantAttributes& RTPSParticipantImpl::get_const_attributes() const
+{
+    return const_m_att;
 }
 
 RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const

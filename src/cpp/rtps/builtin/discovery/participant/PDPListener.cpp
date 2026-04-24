@@ -49,7 +49,7 @@ namespace rtps {
 PDPListener::PDPListener(
         PDP* parent)
     : parent_pdp_(parent)
-    , temp_participant_data_(parent->getRTPSParticipant()->copy_attributes().allocation)
+    , temp_participant_data_(parent->getRTPSParticipant()->get_const_attributes().allocation)
 {
 }
 
