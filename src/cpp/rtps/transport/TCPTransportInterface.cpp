@@ -2040,8 +2040,15 @@ void TCPTransportInterface::cleanup_sender_resources(
             {
                 if (tcp_sender_resource->locator() == remote_participant_physical_locator)
                 {
-                    it = send_resource_list.erase(it);
-                    continue;
+                    // We must verify that the send resource is not being used by any active channel before removing it.
+                    // This might happen in a reconnection of a client with a listening port, as the bind_socket request
+                    // uses the listening port as port reference to establish the connection in TCPTransportInterface::fill_local_physical_port
+                    auto channel_resource_it = channel_resources_.find(tcp_sender_resource->locator());
+                    if (channel_resource_it == channel_resources_.end() || !channel_resource_it->second->connected())
+                    {
+                        it = send_resource_list.erase(it);
+                        continue;
+                    }
                 }
             }
             ++it;
