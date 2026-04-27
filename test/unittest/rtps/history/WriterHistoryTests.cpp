@@ -78,6 +78,10 @@ void cache_change_fragment(
     {
         ASSERT_EQ(result, 0);
     }
+
+    RTPSDomain::removeRTPSWriter(writer);
+    RTPSDomain::removeRTPSParticipant(participant);
+    delete history;
 }
 
 /**
@@ -137,6 +141,10 @@ TEST(WriterHistoryTests, add_change_with_undefined_instance_handle_and_no_payloa
     ASSERT_FALSE(history->add_change(change));
     change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
     ASSERT_FALSE(history->add_change(change));
+
+    RTPSDomain::removeRTPSWriter(writer);
+    RTPSDomain::removeRTPSParticipant(participant);
+    delete history;
 }
 
 TEST(WriterHistoryTests, add_change_with_defined_instance_handle_and_no_payload)
@@ -173,6 +181,10 @@ TEST(WriterHistoryTests, add_change_with_defined_instance_handle_and_no_payload)
     change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
     change->instanceHandle.value[0] = 1;
     ASSERT_TRUE(history->add_change(change));
+
+    RTPSDomain::removeRTPSWriter(writer);
+    RTPSDomain::removeRTPSParticipant(participant);
+    delete history;
 }
 
 TEST(WriterHistoryTests, add_change_with_payload_but_undefined_handle)
@@ -208,6 +220,10 @@ TEST(WriterHistoryTests, add_change_with_payload_but_undefined_handle)
     change = history->create_change(NOT_ALIVE_DISPOSED_UNREGISTERED);
     change->serializedPayload.length = 10;
     ASSERT_TRUE(history->add_change(change));
+
+    RTPSDomain::removeRTPSWriter(writer);
+    RTPSDomain::removeRTPSParticipant(participant);
+    delete history;
 }
 
 } // namespace rtps
