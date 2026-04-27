@@ -332,9 +332,9 @@ public:
         return attr_;
     }
 
-    const RTPSParticipantAttributes& get_const_attributes() const
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
     {
-        return attr_;
+        return const_attr_;
     }
 
     RTPSParticipantAttributes copy_attributes() const
@@ -470,6 +470,7 @@ private:
     MockParticipantListener listener_;
 
     RTPSParticipantAttributes attr_;
+    RTPSParticipantConstantAttributes const_attr_;
 
     NetworkFactory network_factory_ {attr_};
 

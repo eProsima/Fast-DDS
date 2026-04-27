@@ -232,9 +232,9 @@ public:
         return attributes_;
     }
 
-    const RTPSParticipantAttributes& get_const_attributes() const
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
     {
-        return attributes_;
+        return const_attributes_;
     }
 
     RTPSParticipantAttributes copy_attributes() const
@@ -271,6 +271,7 @@ public:
     const GUID_t m_guid;
     mutable ResourceEvent mp_event_thr;
     RTPSParticipantAttributes attributes_;
+    RTPSParticipantConstantAttributes const_attributes_;
     RTPSParticipantImpl* mp_impl;
 };
 

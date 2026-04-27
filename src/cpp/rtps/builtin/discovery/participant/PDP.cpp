@@ -1517,7 +1517,7 @@ void PDP::resend_ininitial_announcements()
 void PDP::set_external_participant_properties_(
         ParticipantProxyData* participant_data)
 {
-    const RTPSParticipantAttributes& part_attributes = mp_RTPSParticipant->get_const_attributes();
+    const RTPSParticipantConstantAttributes& part_attributes = mp_RTPSParticipant->get_const_attributes();
 
     // For each property add it if it should be sent (it is propagated)
     for (auto const& property : part_attributes.properties.properties())
@@ -1565,7 +1565,7 @@ void PDP::set_external_participant_properties_(
 
 static void set_builtin_matched_allocation(
         ResourceLimitedContainerConfig& allocation,
-        const RTPSParticipantAttributes& pattr)
+        const RTPSParticipantConstantAttributes& pattr)
 {
     // Matched endpoints will depend on total number of participants
     allocation = pattr.allocation.participants;
@@ -1620,7 +1620,7 @@ ReaderAttributes PDP::create_builtin_reader_attributes()
 {
     ReaderAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_const_attributes();
+    const RTPSParticipantConstantAttributes& pattr = getRTPSParticipant()->get_const_attributes();
     set_builtin_matched_allocation(attributes.matched_writers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics
@@ -1644,7 +1644,7 @@ WriterAttributes PDP::create_builtin_writer_attributes()
 {
     WriterAttributes attributes;
 
-    const RTPSParticipantAttributes& pattr = getRTPSParticipant()->get_const_attributes();
+    const RTPSParticipantConstantAttributes& pattr = getRTPSParticipant()->get_const_attributes();
     set_builtin_matched_allocation(attributes.matched_readers_allocation, pattr);
 
     // Builtin endpoints are always reliable, transient local, keyed topics

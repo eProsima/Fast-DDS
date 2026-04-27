@@ -238,7 +238,8 @@ public:
      * instead to get a thread safe copy of the attributes.
      * @return RTPSParticipantAttributes reference.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     const RTPSParticipantAttributes& get_attributes() const;
 
     /**
@@ -247,14 +248,16 @@ public:
      * @warning It must not be used to access mutable attributes as it could return outdated values.
      * @return A const reference to the RTPSParticipantAttributes of this RTPSParticipantImpl.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
-    const RTPSParticipantAttributes& get_const_attributes() const;
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    const RTPSParticipantConstantAttributes& get_const_attributes() const;
 
     /**
      * Get a copy of the current state of the RTPSParticipantParameters.
      * @return RTPSParticipantAttributes copy.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     RTPSParticipantAttributes copy_attributes() const;
 
     /**

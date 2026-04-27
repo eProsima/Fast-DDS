@@ -140,7 +140,7 @@ const RTPSParticipantAttributes& RTPSParticipant::get_attributes() const
     return mp_impl->get_attributes();
 }
 
-const RTPSParticipantAttributes& RTPSParticipant::get_const_attributes() const
+const RTPSParticipantConstantAttributes& RTPSParticipant::get_const_attributes() const
 {
     return mp_impl->get_const_attributes();
 }

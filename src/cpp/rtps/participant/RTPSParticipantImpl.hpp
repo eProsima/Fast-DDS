@@ -615,7 +615,7 @@ protected:
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
     //!Constant copy of Attributes of the RTPSParticipant
-    const RTPSParticipantAttributes const_m_att;
+    const RTPSParticipantConstantAttributes m_const_att;
     //! Metatraffic unicast port used by default on this participant
     uint32_t metatraffic_unicast_port_ = 0;
     //! Default unicast port used by default on this participant
@@ -900,7 +900,8 @@ public:
      * it is recommended to use copy_attributes() instead.
      * @return RTPSParticipantAttributes of this RTPSParticipantImpl.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     const RTPSParticipantAttributes& get_attributes() const;
 
     /**
@@ -909,14 +910,16 @@ public:
      * @warning It must not be used to access mutable attributes as it could return outdated values.
      * @return A const reference to the RTPSParticipantAttributes of this RTPSParticipantImpl.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
-    const RTPSParticipantAttributes& get_const_attributes() const;
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    const RTPSParticipantConstantAttributes& get_const_attributes() const;
 
     /**
      * @brief Get a copy of the RTPSParticipantAttributes of this RTPSParticipantImpl in a thread safe manner.
      * @return A copy of the RTPSParticipantAttributes of this RTPSParticipantImpl.
      */
-    FASTDDS_TODO_BEFORE(4, 0, "Refactor to differentiate mutable and constant objects and make getters thread safe");
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     RTPSParticipantAttributes copy_attributes() const;
 
     /**
