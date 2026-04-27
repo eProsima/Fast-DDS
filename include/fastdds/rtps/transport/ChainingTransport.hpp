@@ -31,6 +31,7 @@ namespace fastdds {
 namespace rtps {
 
 class ChainingReceiverResource;
+class NetworkFactory;
 
 /**
  * @brief Deleter for a ChainingReceiverResource
@@ -57,6 +58,9 @@ using ChainingReceiverResourceReferenceType =
  */
 class ChainingTransport : public TransportInterface
 {
+    // NetworkFactory needs to walk the chain of ChainingTransports down to the
+    // underlying transport for TCP comprobations.
+    friend class NetworkFactory;
 
 public:
 
