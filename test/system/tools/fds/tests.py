@@ -81,13 +81,9 @@ def send_command(command):
     #  it receives
     proc = subprocess.Popen(command,
                             stdout=subprocess.PIPE,
-<<<<<<< HEAD
-                            universal_newlines=True
-=======
                             stderr=subprocess.PIPE,
                             universal_newlines=True,
                             creationflags=creationflags,
->>>>>>> e8294c00d (Improve windows tests (#6373))
                             )
 
     # Sleep to let the server run
