@@ -61,6 +61,11 @@ on:
         required: false
         type: string
         default: '/shares/docker-testing'
+      fastddsgen-pro-branch:
+        description: 'Branch or tag of Fast DDS Gen Pro repository (https://github.com/eProsima/Fast-DDS-Gen-Pro)'
+        required: false
+        type: string
+        default: 'main'
 
 env:
   security-cmake-flag: ${{ inputs.security == true && '-DSECURITY=ON' || '-DSECURITY=OFF' }}
@@ -153,6 +158,23 @@ jobs:
           repository: eProsima/Fast-CDR
           path: src/fastcdr
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
+
+      - name: Get Fast DDS Gen Pro branch
+        id: get_fastdds_gen_pro_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-DDS-Gen-Pro
+          token: ${{ secrets.FAST_DDS_PRO_TOKEN }}
+          fallback_branch: ${{ inputs.fastddsgen-pro-branch }}
+
+      - name: Download Fast DDS Gen Pro
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-DDS-Gen-Pro
+          token: ${{ secrets.FAST_DDS_PRO_TOKEN }}
+          path: src/fastddsgen
+          submodules: true
+          ref: ${{ steps.get_fastdds_gen_pro_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS Pro dependencies
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
