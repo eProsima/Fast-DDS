@@ -1612,7 +1612,8 @@ static void set_builtin_endpoint_locators(
 
     // External locators are always taken from the same place
     endpoint.external_unicast_locators = pdp->builtin_attributes().metatraffic_external_unicast_locators;
-    endpoint.ignore_non_matching_locators = pdp->getRTPSParticipant()->get_const_attributes().ignore_non_matching_locators;
+    endpoint.ignore_non_matching_locators =
+            pdp->getRTPSParticipant()->get_const_attributes().ignore_non_matching_locators;
 }
 
 ReaderAttributes PDP::create_builtin_reader_attributes()
