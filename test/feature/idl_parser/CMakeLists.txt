@@ -63,8 +63,11 @@ target_link_libraries(IdlParserTests
 gtest_discover_tests(IdlParserTests PROPERTIES ${IDLPARSERTESTS_ENV_PROPERTIES})
 
 message(STATUS "Copying IDL directory from ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL for idl_parser testing")
-add_custom_command(
-    TARGET IdlParserTests POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL ${CMAKE_CURRENT_BINARY_DIR}/IDL
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+file(COPY
+    ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL/
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/IDL
+)
+file(COPY
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/IDL
 )
