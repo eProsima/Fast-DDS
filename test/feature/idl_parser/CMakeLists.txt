@@ -63,8 +63,35 @@ target_link_libraries(IdlParserTests
 gtest_discover_tests(IdlParserTests PROPERTIES ${IDLPARSERTESTS_ENV_PROPERTIES})
 
 message(STATUS "Copying IDL directory from ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL for idl_parser testing")
+<<<<<<< HEAD
 add_custom_command(
     TARGET IdlParserTests POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL ${CMAKE_CURRENT_BINARY_DIR}/IDL
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl ${CMAKE_CURRENT_BINARY_DIR}/IDL/
+=======
+file(COPY
+    ${PROJECT_SOURCE_DIR}/thirdparty/dds-types-test/IDL/
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/IDL
+)
+file(COPY
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/no_path_included.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_structures.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extra_unions.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/appendable_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/extensibility_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/final_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/id_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/key_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/mutable_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/optional_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/position_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/bit_bound_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/external_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/nested_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/try_construct_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/value_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_literal_annotation.idl
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/IDL
+>>>>>>> e8294c00d (Improve windows tests (#6373))
 )
