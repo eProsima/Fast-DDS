@@ -711,9 +711,9 @@ inline void BuiltinAttributes::compose(
  */
 class RTPSParticipantAttributes
 {
-    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
-
 public:
+
+    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
 
     RTPSParticipantAttributes() = default;
 
@@ -972,9 +972,9 @@ public:
  */
 class RTPSParticipantConstantAttributes
 {
-    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
-
 public:
+
+    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
 
     RTPSParticipantConstantAttributes() = default;
 
