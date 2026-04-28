@@ -703,14 +703,17 @@ inline void BuiltinAttributes::compose(
 {
     // Constant Discovery settings
     discovery_config.discoveryProtocol = builtin_const.discovery_config.discoveryProtocol;
-    discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = builtin_const.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol;
-    discovery_config.use_STATIC_EndpointDiscoveryProtocol = builtin_const.discovery_config.use_STATIC_EndpointDiscoveryProtocol;
+    discovery_config.use_SIMPLE_EndpointDiscoveryProtocol =
+            builtin_const.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol;
+    discovery_config.use_STATIC_EndpointDiscoveryProtocol =
+            builtin_const.discovery_config.use_STATIC_EndpointDiscoveryProtocol;
     discovery_config.leaseDuration = builtin_const.discovery_config.leaseDuration;
     discovery_config.leaseDuration_announcementperiod = builtin_const.discovery_config.leaseDuration_announcementperiod;
     discovery_config.initial_announcements = builtin_const.discovery_config.initial_announcements;
     discovery_config.m_simpleEDP = builtin_const.discovery_config.m_simpleEDP;
     discovery_config.m_PDPfactory = builtin_const.discovery_config.m_PDPfactory;
-    discovery_config.discoveryServer_client_syncperiod = builtin_const.discovery_config.discoveryServer_client_syncperiod;
+    discovery_config.discoveryServer_client_syncperiod =
+            builtin_const.discovery_config.discoveryServer_client_syncperiod;
     discovery_config.ignoreParticipantFlags = builtin_const.discovery_config.ignoreParticipantFlags;
     // Mutable Discovery settings
     discovery_config.m_DiscoveryServers = builtin_mutable.discovery_config.m_DiscoveryServers;
