@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.22) # TODO 3.28
 
 project(fuzz_processCDRMsg VERSION 1 LANGUAGES CXX)
 
