@@ -390,7 +390,12 @@ protected:
                 fastrtps::rtps::RTPSReader* reader,
                 int32_t sample_lost_since_last_update) override;
 
+    private:
+
         DataReaderImpl* data_reader_;
+
+        //! Serializes the update and notification of the subscription matched status
+        std::mutex matching_info_mutex_;
 
     private:
 

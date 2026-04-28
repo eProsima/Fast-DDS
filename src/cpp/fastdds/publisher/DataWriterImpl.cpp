@@ -1079,6 +1079,8 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         RTPSWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
+    std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
+
     data_writer_->update_publication_matched_status(info);
 }
 
