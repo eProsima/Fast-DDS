@@ -371,6 +371,10 @@ public:
 
 };
 
+// Forward declaration to allow assignment from Constant and Mutable attributes.
+class BuiltinConstantAttributes;
+class BuiltinMutableAttributes;
+
 /**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
@@ -426,6 +430,17 @@ public:
     BuiltinAttributes() = default;
 
     virtual ~BuiltinAttributes() = default;
+
+    /**
+     * Composes this object from a BuiltinConstantAttributes and a BuiltinMutableAttributes.
+     * Every field is assigned: constant fields are taken from @c builtin_const, mutable fields
+     * are taken from @c builtin_mutable.
+     * @param builtin_const Constant builtin attributes to copy from.
+     * @param builtin_mutable Mutable builtin attributes to copy from.
+     */
+    void compose(
+            const BuiltinConstantAttributes& builtin_const,
+            const BuiltinMutableAttributes& builtin_mutable);
 
     bool operator ==(
             const BuiltinAttributes& b) const
@@ -577,6 +592,27 @@ public:
     }
 
 };
+
+inline void BuiltinAttributes::compose(
+        const BuiltinConstantAttributes& builtin_const,
+        const BuiltinMutableAttributes& builtin_mutable)
+{
+    discovery_config = builtin_const.discovery_config;
+    discovery_config.m_DiscoveryServers = builtin_mutable.discovery_config.m_DiscoveryServers;
+    use_WriterLivelinessProtocol = builtin_const.use_WriterLivelinessProtocol;
+    network_configuration = builtin_const.network_configuration;
+    metatrafficUnicastLocatorList = builtin_mutable.metatrafficUnicastLocatorList;
+    metatrafficMulticastLocatorList = builtin_const.metatrafficMulticastLocatorList;
+    metatraffic_external_unicast_locators = builtin_mutable.metatraffic_external_unicast_locators;
+    initialPeersList = builtin_const.initialPeersList;
+    readerHistoryMemoryPolicy = builtin_const.readerHistoryMemoryPolicy;
+    readerPayloadSize = builtin_const.readerPayloadSize;
+    writerHistoryMemoryPolicy = builtin_const.writerHistoryMemoryPolicy;
+    writerPayloadSize = builtin_const.writerPayloadSize;
+    mutation_tries = builtin_const.mutation_tries;
+    avoid_builtin_multicast = builtin_const.avoid_builtin_multicast;
+    flow_controller_name = builtin_const.flow_controller_name;
+}
 
 /**
  * Class RTPSParticipantAttributes used to define different aspects of a RTPSParticipant.
