@@ -3458,6 +3458,7 @@ const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attribut
 
 const RTPSParticipantMutableAttributes RTPSParticipantImpl::get_mutable_attributes() const
 {
+    std::lock_guard<std::mutex> _(mutex_);
     return RTPSParticipantMutableAttributes(m_att);
 }
 

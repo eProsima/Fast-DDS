@@ -359,6 +359,110 @@ public:
 
 };
 
+/**
+ * Class ConstantDiscoverySettings, to define the constant attributes of the several discovery protocols available
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class ConstantDiscoverySettings
+{
+public:
+
+    //! Chosen discovery protocol
+    DiscoveryProtocol discoveryProtocol = DiscoveryProtocol::SIMPLE;
+
+    /**
+     * If set to true, SimpleEDP would be used.
+     */
+    bool use_SIMPLE_EndpointDiscoveryProtocol = true;
+
+    /**
+     * If set to true, StaticEDP based on an XML file would be implemented.
+     * The XML filename must be provided.
+     */
+    bool use_STATIC_EndpointDiscoveryProtocol = false;
+
+    /**
+     * Lease Duration of the RTPSParticipant,
+     * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+     */
+    dds::Duration_t leaseDuration = { 20, 0 };
+
+    /**
+     * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
+     * as well as to all Multicast ports.
+     */
+    dds::Duration_t leaseDuration_announcementperiod = { 3, 0 };
+
+    //!Initial announcements configuration
+    InitialAnnouncementConfig initial_announcements;
+
+    //!Attributes of the SimpleEDP protocol
+    SimpleEDPAttributes m_simpleEDP;
+
+    //! function that returns a PDP object (only if EXTERNAL selected)
+    PDPFactory m_PDPfactory{};
+    /**
+     * The period for the RTPSParticipant to:
+     *  send its Discovery Message to its servers
+     *  check for EDP endpoints matching
+     */
+    dds::Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
+
+    //! Filtering participants out depending on location
+    ParticipantFilteringFlags ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
+
+    ConstantDiscoverySettings() = default;
+
+    ConstantDiscoverySettings(
+            const DiscoverySettings& discovery_settings)
+        : discoveryProtocol(discovery_settings.discoveryProtocol)
+        , use_SIMPLE_EndpointDiscoveryProtocol(discovery_settings.use_SIMPLE_EndpointDiscoveryProtocol)
+        , use_STATIC_EndpointDiscoveryProtocol(discovery_settings.use_STATIC_EndpointDiscoveryProtocol)
+        , leaseDuration(discovery_settings.leaseDuration)
+        , leaseDuration_announcementperiod(discovery_settings.leaseDuration_announcementperiod)
+        , initial_announcements(discovery_settings.initial_announcements)
+        , m_simpleEDP(discovery_settings.m_simpleEDP)
+        , m_PDPfactory(discovery_settings.m_PDPfactory)
+        , discoveryServer_client_syncperiod(discovery_settings.discoveryServer_client_syncperiod)
+        , ignoreParticipantFlags(discovery_settings.ignoreParticipantFlags)
+        , static_edp_xml_config_(discovery_settings.static_edp_xml_config())
+    {
+    }
+
+    bool operator ==(
+            const ConstantDiscoverySettings& b) const
+    {
+        return (this->discoveryProtocol == b.discoveryProtocol) &&
+               (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
+               (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+               (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
+               (this->m_PDPfactory == b.m_PDPfactory) &&
+               (this->leaseDuration == b.leaseDuration) &&
+               (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+               (this->initial_announcements == b.initial_announcements) &&
+               (this->m_simpleEDP == b.m_simpleEDP) &&
+               (this->static_edp_xml_config_ == b.static_edp_xml_config_) &&
+               (this->ignoreParticipantFlags == b.ignoreParticipantFlags);
+    }
+
+    /**
+     * Get the static endpoint XML configuration.
+     * @return URI specifying the static endpoint XML configuration.
+     * The string could contain a filename (file://) or the XML content directly (data://).
+     */
+    const char* static_edp_xml_config() const
+    {
+        return static_edp_xml_config_.c_str();
+    }
+
+private:
+
+    //! URI specifying the static EDP XML configuration, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
+    //! This string could contain a filename or the XML content directly.
+    std::string static_edp_xml_config_ = "";
+
+};
+
 // Forward declaration to allow assignment from Constant and Mutable attributes.
 class BuiltinConstantAttributes;
 class BuiltinMutableAttributes;
