@@ -531,7 +531,10 @@ protected:
                 const uint32_t& status_id);
 #endif //FASTDDS_STATISTICS
 
+    private:
+
         DataWriterImpl* data_writer_;
+        std::mutex matching_info_mutex_;
     }
     writer_listener_;
 
