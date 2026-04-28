@@ -604,6 +604,254 @@ TEST(DDSDiscovery, UpdateMatchedStatus)
     datawriter_2.destroy();
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * This is a regression test for redmine issue 21355.
+ *
+ * In order to check that the on_publication_matched() and on_subscription_matched() callbacks are always called with
+ * either +1 or -1 as the current_count_change, this test creates and destroys multiple DataReaders and DataWriters in
+ * different threads, with a listener that counts the number of times on_publication_matched() and
+ * on_subscription_matched() are called with current_count_change different than 1 or -1.
+ *
+ * The test fails if any of the calls to on_publication_matched() or on_subscription_matched() is made with a
+ * current_count_change different than 1 or -1.
+ */
+TEST(DDSDiscovery, MatchedCallbackListenerMultithread)
+{
+    constexpr size_t NUM_THREADS = 25;
+
+    struct TestListener
+        : public eprosima::fastdds::dds::DataReaderListener
+        , public eprosima::fastdds::dds::DataWriterListener
+    {
+        std::atomic<uint32_t> reader_other_calls{ 0 };
+        std::atomic<uint32_t> writer_other_calls{ 0 };
+
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter*,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override
+        {
+            if ((info.current_count_change != 1) && (info.current_count_change != -1))
+            {
+                ++writer_other_calls;
+            }
+        }
+
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader*,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override
+        {
+            if ((info.current_count_change != 1) && (info.current_count_change != -1))
+            {
+                ++reader_other_calls;
+            }
+        }
+
+    };
+
+    std::ostringstream t;
+    t << TEST_TOPIC_NAME << "_" << asio::ip::host_name() << "_" << GET_PID();
+    std::string topic_name = t.str();
+    TestListener listener;
+    eprosima::fastdds::dds::TypeSupport type(new HelloWorldPubSubType());
+
+    auto create_entities = [&listener, &topic_name, &type]()
+            {
+                using namespace eprosima::fastdds::dds;
+
+                uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 100;
+                auto factory = DomainParticipantFactory::get_shared_instance();
+                DomainParticipantQos participant_qos;
+                factory->get_default_participant_qos(participant_qos);
+                participant_qos.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::UDPv4);
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration.seconds = 0;
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration.nanosec = 100000000;
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod.seconds = 0;
+                participant_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod.nanosec =
+                        50000000;
+
+                auto participant = factory->create_participant(domain_id, participant_qos);
+                ASSERT_NE(participant, nullptr);
+
+                type.register_type(participant);
+                auto topic = participant->create_topic(topic_name, type.get_type_name(), TOPIC_QOS_DEFAULT);
+                ASSERT_NE(topic, nullptr);
+
+                auto publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+                ASSERT_NE(publisher, nullptr);
+
+                DataWriterQos datawriter_qos;
+                publisher->get_default_datawriter_qos(datawriter_qos);
+                datawriter_qos.data_sharing().off();
+                auto datawriter = publisher->create_datawriter(topic, datawriter_qos, &listener);
+                ASSERT_NE(datawriter, nullptr);
+
+                auto subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+                ASSERT_NE(subscriber, nullptr);
+
+                DataReaderQos datareader_qos;
+                subscriber->get_default_datareader_qos(datareader_qos);
+                datareader_qos.data_sharing().off();
+                auto datareader = subscriber->create_datareader(topic, datareader_qos, &listener);
+                ASSERT_NE(datareader, nullptr);
+
+                HelloWorld msg;
+                msg.index(1);
+                datawriter->write(&msg);
+
+                SampleInfo info;
+                datareader->take_next_sample(&msg, &info);
+
+                participant->delete_contained_entities();
+                factory->delete_participant(participant);
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            };
+
+    std::vector<std::thread> threads;
+    threads.reserve(NUM_THREADS);
+    for (size_t i = 0; i < NUM_THREADS; ++i)
+    {
+        threads.emplace_back(create_entities);
+    }
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    EXPECT_EQ(listener.reader_other_calls.load(), 0u);
+    EXPECT_EQ(listener.writer_other_calls.load(), 0u);
+}
+
+TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysTrue)
+{
+    using namespace std::chrono_literals;
+
+    std::atomic_uint32_t writer_calls {0};
+    std::atomic_uint32_t reader_calls {0};
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++writer_calls;
+            return true;
+        });
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++reader_calls;
+            return true;
+        });
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery(3s, 1u);
+    writer.wait_discovery(1u, 3s);
+
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_EQ(writer.get_matched(), 1u);
+    ASSERT_GE(reader_calls.load(), 1u);
+    ASSERT_GE(writer_calls.load(), 1u);
+}
+
+TEST(DDSDiscovery, EndpointMatchingCallbackAlwaysFalse)
+{
+    using namespace std::chrono_literals;
+
+    std::atomic_uint32_t writer_calls {0};
+    std::atomic_uint32_t reader_calls {0};
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++writer_calls;
+            return false;
+        });
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.set_should_endpoints_match_function(
+        [&](const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+        const eprosima::fastdds::dds::PublicationBuiltinTopicData&)
+        {
+            ++reader_calls;
+            return false;
+        });
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery(2s, 1u);
+    writer.wait_discovery(1u, 2s);
+
+    ASSERT_FALSE(reader.is_matched());
+    ASSERT_FALSE(writer.is_matched());
+    ASSERT_GE(reader_calls.load(), 1u);
+    ASSERT_GE(writer_calls.load(), 1u);
+    ASSERT_EQ(reader.get_matched(), 0u);
+    ASSERT_EQ(writer.get_matched(), 0u);
+}
+
+TEST(DDSDiscovery, EndpointMatchingCallbackSelectivelyMatchesOneWriter)
+{
+    using namespace std::chrono_literals;
+
+    // Writer that will be matched
+    PubSubWriter<HelloWorldPubSubType> allowed_writer(TEST_TOPIC_NAME);
+    allowed_writer.setPublisherIDs(1u, 1u);
+    allowed_writer.init();
+    ASSERT_TRUE(allowed_writer.isInitialized());
+
+    // Writer that wont be matched due to the callback
+    PubSubWriter<HelloWorldPubSubType> rejected_writer(TEST_TOPIC_NAME);
+    rejected_writer.setPublisherIDs(2u, 2u);
+    rejected_writer.init();
+    ASSERT_TRUE(rejected_writer.isInitialized());
+
+    const auto allowed_entity_id = allowed_writer.datawriter_guid().entityId;
+
+    std::atomic_uint32_t reader_calls {0};
+
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    reader.set_should_endpoints_match_function(
+        [&, allowed_entity_id](
+            const eprosima::fastdds::dds::SubscriptionBuiltinTopicData&,
+            const eprosima::fastdds::dds::PublicationBuiltinTopicData& writer_info)
+        {
+            // Simple callback that will only accept the allowed_writer
+            ++reader_calls;
+            return writer_info.guid.entityId == allowed_entity_id;
+        });
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.wait_discovery(3s, 1u);
+    allowed_writer.wait_discovery(1u, 3s);
+
+    // Check that only the allowed writer is matched from the reader's perspective
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_GE(reader_calls.load(), 1u);
+
+    // NOTE: Beware, the rejected_writer hasn't rejected the reader, so it believes it is matched.
+}
+
+>>>>>>> de70d42f6 (Make `on_xxx_matched` thread-safe (#6371))
 /**
  * This test checks that the physical properties are correctly sent on the DATA[p], and that the
  * ParticipantProxyData on the receiver side has the correct values.

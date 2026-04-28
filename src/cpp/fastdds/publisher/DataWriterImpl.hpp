@@ -459,11 +459,17 @@ protected:
                 const uint32_t& status_id);
 #endif //FASTDDS_STATISTICS
 
+    private:
+
         DataWriterImpl* data_writer_;
+<<<<<<< HEAD
 
     private:
 
         using fastrtps::rtps::WriterListener::onWriterMatched;
+=======
+        std::mutex matching_info_mutex_;
+>>>>>>> de70d42f6 (Make `on_xxx_matched` thread-safe (#6371))
     }
     writer_listener_;
 
