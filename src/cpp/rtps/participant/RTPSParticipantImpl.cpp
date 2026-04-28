@@ -1686,12 +1686,12 @@ void RTPSParticipantImpl::update_mutable_attributes(
         const RTPSParticipantAttributes& patt)
 {
     // NTS
-    m_att.userData = patt.userData;
-    m_att.builtin.metatrafficUnicastLocatorList = patt.builtin.metatrafficUnicastLocatorList;
-    m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
-    m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
     m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
     m_att.builtin.metatraffic_external_unicast_locators = patt.builtin.metatraffic_external_unicast_locators;
+    m_att.builtin.metatrafficUnicastLocatorList = patt.builtin.metatrafficUnicastLocatorList;
+    m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
+    m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
+    m_att.userData = patt.userData;
 }
 
 bool RTPSParticipantImpl::update_writer(
@@ -3454,6 +3454,11 @@ const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
 const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attributes() const
 {
     return m_const_att;
+}
+
+const RTPSParticipantMutableAttributes RTPSParticipantImpl::get_mutable_attributes() const
+{
+    return RTPSParticipantMutableAttributes(m_att);
 }
 
 RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const

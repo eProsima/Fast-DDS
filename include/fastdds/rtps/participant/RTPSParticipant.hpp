@@ -232,32 +232,41 @@ public:
      */
     std::vector<std::string> getParticipantNames() const;
 
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
-     * Get a reference of the current state of the RTPSParticipantParameters.
+     * Get a reference of the current state of the RTPSParticipantAttributes.
      * @warning The returned reference is not thread safe. It is recommended to use copy_attributes()
      * instead to get a thread safe copy of the attributes.
      * @return RTPSParticipantAttributes reference.
      */
-    FASTDDS_TODO_BEFORE(4, 0,
-            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     const RTPSParticipantAttributes& get_attributes() const;
 
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
-     * @brief Get a const reference of the constant RTPSParticipantAttributes of this RTPSParticipantImpl.
+     * @brief Get a const reference of RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
      * This method is thread safe because it returns a const reference to the internal attributes.
      * @warning It must not be used to access mutable attributes as it could return outdated values.
-     * @return A const reference to the RTPSParticipantAttributes of this RTPSParticipantImpl.
+     * @return A const reference to the RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
      */
-    FASTDDS_TODO_BEFORE(4, 0,
-            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     const RTPSParticipantConstantAttributes& get_const_attributes() const;
 
-    /**
-     * Get a copy of the current state of the RTPSParticipantParameters.
-     * @return RTPSParticipantAttributes copy.
-     */
     FASTDDS_TODO_BEFORE(4, 0,
             "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const copy of the internal attributes.
+     * @return A const copy of the RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * Get a copy of the current state of the RTPSParticipantAttributes.
+     * @return RTPSParticipantAttributes copy.
+     */
     RTPSParticipantAttributes copy_attributes() const;
 
     /**
