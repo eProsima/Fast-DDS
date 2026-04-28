@@ -2045,7 +2045,7 @@ void TCPTransportInterface::cleanup_sender_resources(
                     // The original (tearing-down) channel must still be cleaned up even if it is momentarily in
                     // eEstablished because its UNBIND has not yet been processed by the listener thread.
                     auto channel_resource_it = channel_resources_.find(tcp_sender_resource->locator());
-                    bool should_erase = false;
+                    bool should_erase = true;
                     if (channel_resource_it != channel_resources_.end() && channel_resource_it->second->connected())
                     {
                         const auto& stored = tcp_sender_resource->channel();
