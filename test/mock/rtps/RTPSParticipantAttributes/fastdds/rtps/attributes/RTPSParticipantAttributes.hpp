@@ -333,6 +333,37 @@ private:
 };
 
 /**
+ * Class MutableDiscoverySettings, to define the mutable attributes of the several discovery protocols available
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class MutableDiscoverySettings
+{
+public:
+
+    //! Discovery Server initial connections, needed if `discoveryProtocol` = CLIENT | SUPER_CLIENT | SERVER | BACKUP
+    eprosima::fastdds::rtps::LocatorList m_DiscoveryServers;
+
+    MutableDiscoverySettings() = default;
+
+    MutableDiscoverySettings(
+            const DiscoverySettings& discovery_settings)
+        : m_DiscoveryServers(discovery_settings.m_DiscoveryServers)
+    {
+    }
+
+    bool operator ==(
+            const MutableDiscoverySettings& b) const
+    {
+        return (this->m_DiscoveryServers == b.m_DiscoveryServers);
+    }
+
+};
+
+// Forward declaration to allow assignment from Constant and Mutable attributes.
+class BuiltinConstantAttributes;
+class BuiltinMutableAttributes;
+
+/**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -388,6 +419,17 @@ public:
 
     virtual ~BuiltinAttributes() = default;
 
+    /**
+     * Composes this object from a BuiltinConstantAttributes and a BuiltinMutableAttributes.
+     * Every field is assigned: constant fields are taken from @c builtin_const, mutable fields
+     * are taken from @c builtin_mutable.
+     * @param builtin_const Constant builtin attributes to copy from.
+     * @param builtin_mutable Mutable builtin attributes to copy from.
+     */
+    void compose(
+            const BuiltinConstantAttributes& builtin_const,
+            const BuiltinMutableAttributes& builtin_mutable);
+
     bool operator ==(
             const BuiltinAttributes& b) const
     {
@@ -418,11 +460,11 @@ class BuiltinMutableAttributes
 {
 public:
 
+    //! Discovery protocol related attributes
+    MutableDiscoverySettings discovery_config;
+
     //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
-
-    //! Metatraffic Multicast Locator List.
-    LocatorList_t metatrafficMulticastLocatorList;
 
     //! The collection of external locators to use for communication on metatraffic topics.
     fastdds::rtps::ExternalLocators metatraffic_external_unicast_locators;
@@ -431,8 +473,8 @@ public:
 
     BuiltinMutableAttributes(
             const BuiltinAttributes& builtin)
-        : metatrafficUnicastLocatorList(builtin.metatrafficUnicastLocatorList)
-        , metatrafficMulticastLocatorList(builtin.metatrafficMulticastLocatorList)
+        : discovery_config(builtin.discovery_config)
+        , metatrafficUnicastLocatorList(builtin.metatrafficUnicastLocatorList)
         , metatraffic_external_unicast_locators(builtin.metatraffic_external_unicast_locators)
     {
     }
@@ -442,8 +484,8 @@ public:
     bool operator ==(
             const BuiltinMutableAttributes& b) const
     {
-        return (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
-               (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
+        return (this->discovery_config == b.discovery_config) &&
+               (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                (this->metatraffic_external_unicast_locators == b.metatraffic_external_unicast_locators);
     }
 
@@ -458,7 +500,10 @@ class BuiltinConstantAttributes
 {
 public:
 
-    //! Discovery protocol related attributes
+    /**
+     * Discovery protocol related attributes. Only the discovery server list is mutable, which must be
+     * accessed through the BuiltinMutableAttributes class. Its value in this class is only used as initial value.
+     */
     DiscoverySettings discovery_config;
 
     //! Indicates to use the WriterLiveliness protocol.
@@ -466,6 +511,9 @@ public:
 
     //! Network Configuration
     NetworkConfigSet_t network_configuration = 0;
+
+    //! Metatraffic Multicast Locator List
+    LocatorList_t metatrafficMulticastLocatorList;
 
     //! Initial peers.
     LocatorList_t initialPeersList;
@@ -500,6 +548,7 @@ public:
         : discovery_config(builtin.discovery_config)
         , use_WriterLivelinessProtocol(builtin.use_WriterLivelinessProtocol)
         , network_configuration(builtin.network_configuration)
+        , metatrafficMulticastLocatorList(builtin.metatrafficMulticastLocatorList)
         , initialPeersList(builtin.initialPeersList)
         , readerHistoryMemoryPolicy(builtin.readerHistoryMemoryPolicy)
         , readerPayloadSize(builtin.readerPayloadSize)
@@ -519,6 +568,7 @@ public:
         return (this->discovery_config == b.discovery_config) &&
                (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                (this->network_configuration == b.network_configuration) &&
+               (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                (this->initialPeersList == b.initialPeersList) &&
                (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
                (this->readerPayloadSize == b.readerPayloadSize) &&
@@ -530,6 +580,26 @@ public:
     }
 
 };
+inline void BuiltinAttributes::compose(
+        const BuiltinConstantAttributes& builtin_const,
+        const BuiltinMutableAttributes& builtin_mutable)
+{
+    discovery_config = builtin_const.discovery_config;
+    discovery_config.m_DiscoveryServers = builtin_mutable.discovery_config.m_DiscoveryServers;
+    use_WriterLivelinessProtocol = builtin_const.use_WriterLivelinessProtocol;
+    network_configuration = builtin_const.network_configuration;
+    metatrafficUnicastLocatorList = builtin_mutable.metatrafficUnicastLocatorList;
+    metatrafficMulticastLocatorList = builtin_const.metatrafficMulticastLocatorList;
+    metatraffic_external_unicast_locators = builtin_mutable.metatraffic_external_unicast_locators;
+    initialPeersList = builtin_const.initialPeersList;
+    readerHistoryMemoryPolicy = builtin_const.readerHistoryMemoryPolicy;
+    readerPayloadSize = builtin_const.readerPayloadSize;
+    writerHistoryMemoryPolicy = builtin_const.writerHistoryMemoryPolicy;
+    writerPayloadSize = builtin_const.writerPayloadSize;
+    mutation_tries = builtin_const.mutation_tries;
+    avoid_builtin_multicast = builtin_const.avoid_builtin_multicast;
+    flow_controller_name = builtin_const.flow_controller_name;
+}
 
 /**
  * Class RTPSParticipantAttributes used to define different aspects of a RTPSParticipant.
@@ -745,7 +815,7 @@ private:
 };
 
 /**
- * Class RTPSMutablePartAttributes used to define mutable aspects of a RTPSParticipant.
+ * Class RTPSParticipantMutableAttributes used to define mutable aspects of a RTPSParticipant.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPSParticipantMutableAttributes

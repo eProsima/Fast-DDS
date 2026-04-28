@@ -337,6 +337,11 @@ public:
         return const_attr_;
     }
 
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const
+    {
+        return RTPSParticipantMutableAttributes{attr_};
+    }
+
     RTPSParticipantAttributes copy_attributes() const
     {
         return attr_;
