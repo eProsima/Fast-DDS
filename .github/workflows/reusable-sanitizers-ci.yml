@@ -11,10 +11,6 @@ on:
         description: 'Run Addess Sanitizer job for Fast DDS'
         required: false
         type: boolean
-      run_asan_discovery_server:
-        description: 'Run Addess Sanitizer job for Discovery Server'
-        required: false
-        type: boolean
       run_tsan_fastdds:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
@@ -44,12 +40,6 @@ on:
         required: false
         type: string
         default: 'master'
-      discovery_server_ref:
-        description: >
-          Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
-          Required only if the Discovery Server job is requested
-        required: false
-        type: string
 
 defaults:
   run:
@@ -57,7 +47,7 @@ defaults:
 
 jobs:
   asan_fastdds_build:
-    if: ${{ inputs.run_asan_fastdds == true || inputs.run_asan_discovery_server == true }}
+    if: ${{ inputs.run_asan_fastdds == true }}
     runs-on: ubuntu-24.04
     steps:
       - name: Free disk space

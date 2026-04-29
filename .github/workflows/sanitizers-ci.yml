@@ -11,10 +11,6 @@ on:
         description: 'Run Addess Sanitizer job for Fast DDS'
         required: false
         type: boolean
-      run_asan_discovery_server:
-        description: 'Run Addess Sanitizer job for Discovery Server'
-        required: false
-        type: boolean
       run_tsan_fastdds:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
@@ -38,11 +34,6 @@ on:
       fastdds_ref:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-      discovery_server_ref:
-        description: >
-          Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
-          Required only if the Discovery Server job is requested
-        required: false
 
   pull_request:
     types:
@@ -67,11 +58,9 @@ jobs:
     with:
       label: ${{ inputs.label || 'fastdds-sanitizers-ci' }}
       run_asan_fastdds: ${{ ((inputs.run_asan_fastdds == true) && true) || github.event_name == 'pull_request' }}
-      run_asan_discovery_server: ${{ ((inputs.run_asan_discovery_server == true) && true) || github.event_name == 'pull_request' }}
       run_tsan_fastdds: ${{ ((inputs.run_tsan_fastdds == true) && true) || github.event_name == 'pull_request' }}
       colcon_build_args: ${{ inputs.colcon_build_args || '' }}
       colcon_test_args: ${{ inputs.colcon_test_args || '' }}
       cmake_args: ${{ inputs.cmake_args || '' }}
       ctest_args: ${{ inputs.ctest_args || '' }}
       fastdds_ref: ${{ inputs.fastdds_ref || github.ref || 'master' }}
-      discovery_server_ref: ${{ inputs.discovery_server_ref || 'master' }}
