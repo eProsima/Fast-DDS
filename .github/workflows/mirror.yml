@@ -30,3 +30,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           source: 'main'
           dest: ${{ matrix.dest_branch }}
+          path: src/fastdds
