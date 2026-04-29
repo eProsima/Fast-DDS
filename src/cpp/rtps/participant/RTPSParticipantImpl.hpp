@@ -615,7 +615,7 @@ protected:
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
     //!Constant copy of Attributes of the RTPSParticipant
-    const RTPSParticipantConstantAttributes m_const_att;
+    RTPSParticipantConstantAttributes m_const_att;
     //! Metatraffic unicast port used by default on this participant
     uint32_t metatraffic_unicast_port_ = 0;
     //! Default unicast port used by default on this participant
