@@ -59,7 +59,7 @@ using ChainingReceiverResourceReferenceType =
 class ChainingTransport : public TransportInterface
 {
     // NetworkFactory needs to walk the chain of ChainingTransports down to the
-    // underlying transport for TCP comprobations.
+    // underlying transport for TCP checks.
     friend class NetworkFactory;
 
 public:
