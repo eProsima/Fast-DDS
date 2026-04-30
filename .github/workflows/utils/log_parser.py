@@ -49,7 +49,7 @@ def parse_options():
         '--specific-error-file',
         type=str,
         required=True,
-        help='Path to file with ASAN or TSAN specific errors.'
+        help='Path to file with ASAN, TSAN or UBSAN specific errors.'
     )
     required_args.add_argument(
         '-o',
@@ -64,7 +64,7 @@ def parse_options():
         '--sanitizer',
         type=str,
         required=True,
-        help='Sanitizer to use. [ASAN|TSAN] no case sensitive.'
+        help='Sanitizer to use. [ASAN|TSAN|UBSAN] no case sensitive.'
     )
 
     return parser.parse_args()
@@ -148,6 +148,24 @@ def tsan_line_splitter(
         text_to_split_end=' (pid=')
 
 
+# Each UBSan finding starts with a source location followed by " runtime error: <description>".
+# We group findings by "<basename>:<line>:<col>: <description>" so that the same UB at the
+# same site collapses into a single row regardless of repetition or ctest line prefixes
+_UBSAN_LINE_RE = re.compile(
+    r'(?P<path>\S+?):(?P<line>\d+):(?P<col>\d+):\s*runtime error:\s*(?P<desc>.+?)\s*$'
+)
+
+
+def ubsan_line_splitter(
+        line: str):
+    match = _UBSAN_LINE_RE.search(line.rstrip('\r\n'))
+    if not match:
+        return line.strip()
+    basename = match.group('path').rsplit('/', 1)[-1]
+    return (f"{basename}:{match.group('line')}:{match.group('col')}: "
+            f"{match.group('desc')}")
+
+
 def common_specific_errors_list(
         errors_file_path: str,
         line_splitter):
@@ -203,10 +221,19 @@ def main():
     # Parse arguments
     args = parse_options()
 
-    # Get specific ASAN or TSAN variables
-    asan = args.sanitizer.lower() == 'asan'
-    line_splitter = (asan_line_splitter if asan else tsan_line_splitter)
-    file_title = ('ASAN' if asan else 'TSAN') + ' Errors Summary'
+    # Select the splitter and report title for the requested sanitizer.
+    sanitizer = args.sanitizer.lower()
+    splitters = {
+        'asan': (asan_line_splitter, 'ASAN'),
+        'tsan': (tsan_line_splitter, 'TSAN'),
+        'ubsan': (ubsan_line_splitter, 'UBSAN'),
+    }
+    if sanitizer not in splitters:
+        raise SystemExit(
+            f"Unsupported sanitizer '{args.sanitizer}'. Expected one of: "
+            f"{', '.join(s.upper() for s in splitters)}.")
+    line_splitter, title_prefix = splitters[sanitizer]
+    file_title = f'{title_prefix} Errors Summary'
 
     # Execute specific errors parse
     specific_errors, n_errors = common_specific_errors_list(

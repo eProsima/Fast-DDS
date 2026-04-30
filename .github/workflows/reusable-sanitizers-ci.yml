@@ -19,6 +19,10 @@ on:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
         type: boolean
+      run_ubsan_fastdds:
+        description: 'Run Undefined Behavior Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
       colcon_build_args:
         description: 'Optional colcon build arguments'
         required: false
@@ -447,3 +451,189 @@ jobs:
         run: |
           Write-Host ${{ steps.report_summary.outcome }}
           exit 1
+
+  ubsan_fastdds_build:
+    if: ${{ inputs.run_ubsan_fastdds == true }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds_ref }}
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.28.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        if: ${{ !always() }}
+        with:
+          api_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr_ref }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: ${{ github.workspace }}/src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
+
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Show .meta file
+        id: show_meta
+        run: |
+          cat ${{ github.workspace }}/src/fastdds/.github/workflows/config/ubsan.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ubsan.meta
+          colcon_build_args: ${{ inputs.colcon_build_args }}
+          cmake_args: ${{ inputs.cmake_args }}
+          cmake_args_default: ''
+          cmake_build_type: 'Debug'
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+
+      - name: Pack workspace preserving permissions
+        shell: bash
+        run: |
+          tar -C "${{ github.workspace }}" -cpf "${{ runner.temp }}/ubsan_build_${{ inputs.label }}.tar" .
+
+      - name: Upload build artifacts
+        uses: eProsima/eProsima-CI/external/upload-artifact@v0
+        with:
+          name: build_artifacts_fastdds_ubsan_${{ inputs.label }}
+          path: ${{ runner.temp }}/ubsan_build_${{ inputs.label }}.tar
+
+  ubsan_fastdds_test:
+    if: ${{ inputs.run_ubsan_fastdds == true }}
+    needs: ubsan_fastdds_build
+    runs-on: ubuntu-24.04
+    env:
+      UBSAN_OPTIONS: halt_on_error=1:abort_on_error=1:print_stacktrace=1
+    steps:
+      - name: Free disk space
+        uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
+
+      - name: Download build artifact
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: build_artifacts_fastdds_ubsan_${{ inputs.label }}
+          path: ${{ runner.temp }}
+
+      - name: Unpack workspace preserving permissions
+        shell: bash
+        run: |
+          tar -C "${{ github.workspace }}" -xpf "${{ runner.temp }}/ubsan_build_${{ inputs.label }}.tar"
+
+      - name: Install Fix Python version
+        uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.28.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: setuptools gcovr tomark xmltodict jsondiff pandas
+
+      - name: Set up hosts file for DNS testing
+        run: |
+          sudo echo "" | sudo tee -a /etc/hosts
+          sudo echo "127.0.0.1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "::1 localhost.test" | sudo tee -a /etc/hosts
+          sudo echo "154.56.134.194 www.eprosima.com.test" | sudo tee -a /etc/hosts
+          sudo echo "216.58.215.164 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "2a00:1450:400e:803::2004 www.acme.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.4 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "140.82.121.3 www.foo.com.test" | sudo tee -a /etc/hosts
+          sudo echo "ff1e::ffff:efff:1 acme.org.test" | sudo tee -a /etc/hosts
+
+      - name: Colcon test
+        id: test
+        continue-on-error: true
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        with:
+          colcon_args_default: ''
+          colcon_test_args: ${{ inputs.colcon_test_args }}
+          colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
+          ctest_args: ${{ inputs.ctest_args }}
+          ctest_args_default: '--timeout 300 --label-exclude "xfail"'
+          packages_names: fastdds
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
+
+      - name: Report sanitizer errors
+        run: |
+          # UBSan finding header lines look like:
+          #   <file>:<line>:<col>: runtime error: <description>
+          # Filter on ": runtime error:" so we keep one line per finding (the header)
+          bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
+            ": runtime error:" \
+            log/latest_test/fastdds/stdout_stderr.log \
+            _tmp_specific_error_file.log
+
+          python3 src/fastdds/.github/workflows/utils/log_parser.py \
+            --log-file log/latest_test/fastdds/stdout_stderr.log \
+            --specific-error-file _tmp_specific_error_file.log \
+            --output-file $GITHUB_STEP_SUMMARY  \
+            --sanitizer ubsan
