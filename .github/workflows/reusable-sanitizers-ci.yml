@@ -134,11 +134,16 @@ jobs:
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
 
-      - name: Upload build artifacts
+      - name: Pack workspace preserving permissions
+        shell: bash
+        run: |
+          tar -C "${{ github.workspace }}" -cpf "${{ runner.temp }}/asan_build_${{ inputs.label }}.tar" .
+
+      - name: Upload build artifact
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
-          path: ${{ github.workspace }}
+          path: ${{ runner.temp }}/asan_build_${{ inputs.label }}.tar
 
   asan_fastdds_test:
     if: ${{ inputs.run_asan_fastdds == true }}
@@ -148,11 +153,16 @@ jobs:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
 
-      - name: Download build artifacts
+      - name: Download build artifact
         uses: eProsima/eProsima-CI/external/download-artifact@v0
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
-          path: ${{ github.workspace }}
+          path: ${{ runner.temp }}
+
+      - name: Unpack workspace preserving permissions
+        shell: bash
+        run: |
+          tar -C "${{ github.workspace }}" -xpf "${{ runner.temp }}/asan_build_${{ inputs.label }}.tar"
 
       - name: Install Fix Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
