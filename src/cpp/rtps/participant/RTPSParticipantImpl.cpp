@@ -282,6 +282,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : domain_id_(domain_id)
     , m_att(PParam)
+    , m_const_att(PParam)
     , m_guid(guidP, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
     , IdCounter(0)
@@ -344,7 +345,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif // if HAVE_SECURITY
 
-    // Store the constant attributes. Need to do it at this point to ensure we capture the constant attributes
+    // Update constant attributes. Need to do it at this point to ensure we capture the constant attributes
     // set at "setup_" methods, but before setup_builtin_protocols, which already access constant values.
     m_const_att = m_att;
     // Initialize builtin protocols
