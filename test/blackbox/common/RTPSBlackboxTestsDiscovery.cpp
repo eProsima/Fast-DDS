@@ -25,11 +25,13 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS
 };
+}  // namespace
 
 class RTPSDiscovery : public testing::TestWithParam<communication_type>
 {
