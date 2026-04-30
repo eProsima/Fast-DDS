@@ -1,0 +1,17 @@
+names:
+    fastdds:
+        cmake-args:
+            - "-DNO_TLS=OFF"
+            - "-DSECURITY=ON"
+            - "-DFASTDDS_STATISTICS=ON"
+            - "-DSANITIZER=Undefined"
+            - "-DCMAKE_CXX_FLAGS_INIT='-Werror'"
+            - "-DEPROSIMA_BUILD_TESTS=ON"
+            - "-DRTPS_API_TESTS=ON"
+            - "-DFASTDDS_PIM_API_TESTS=ON"
+            - "-DPERFORMANCE_TESTS=ON"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"
