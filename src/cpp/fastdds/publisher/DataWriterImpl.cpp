@@ -1619,7 +1619,7 @@ void DataWriterImpl::configure_deadline_timer_()
                 return deadline_missed();
             },
             // Park timer with a huge interval (prevents spurious callbacks); we'll arm/cancel explicitly
-            std::numeric_limits<double>::max()
+            std::chrono::microseconds::max()
             );
     }
 
