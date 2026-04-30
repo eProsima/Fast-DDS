@@ -23,12 +23,14 @@
 
 using namespace eprosima::fastdds;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class UserDataQos : public testing::TestWithParam<communication_type>
 {

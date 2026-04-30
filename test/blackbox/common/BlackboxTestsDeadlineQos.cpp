@@ -28,12 +28,14 @@ using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 using fastlog = eprosima::fastdds::dds::Log;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DeadlineQos : public ::testing::TestWithParam<communication_type>
 {
