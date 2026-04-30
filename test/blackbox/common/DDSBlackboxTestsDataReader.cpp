@@ -45,12 +45,14 @@ using namespace eprosima::fastdds::rtps;
         std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSDataReader : public testing::TestWithParam<communication_type>
 {
