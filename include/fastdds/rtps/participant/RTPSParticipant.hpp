@@ -246,8 +246,7 @@ public:
             "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
      * @brief Get a const reference of RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
-     * This method is thread safe because it returns a const reference to the internal attributes.
-     * @warning It must not be used to access mutable attributes as it could return outdated values.
+     * This method is thread safe because it returns a const reference to the internal constant attributes.
      * @return A const reference to the RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
      */
     const RTPSParticipantConstantAttributes& get_const_attributes() const;
@@ -256,7 +255,7 @@ public:
             "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
      * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
-     * This method is thread safe because it returns a const copy of the internal attributes.
+     * This method is thread safe because it returns a const copy of the internal mutable attributes.
      * @return A const copy of the RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
      */
     const RTPSParticipantMutableAttributes get_mutable_attributes() const;
