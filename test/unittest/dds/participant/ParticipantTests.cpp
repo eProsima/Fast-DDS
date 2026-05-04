@@ -991,27 +991,35 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
 
 }
 
-class DomainParticipantTest : public DomainParticipant
-{
-public:
+namespace {
 
-    const DomainParticipantImpl* get_impl() const
+using DomainParticipantImplPtr = DomainParticipantImpl * DomainParticipant::*;
+
+DomainParticipantImplPtr get_domain_participant_impl_ptr();
+
+template<DomainParticipantImplPtr P>
+struct DomainParticipantImplAccessor
+{
+    friend DomainParticipantImplPtr get_domain_participant_impl_ptr()
     {
-        return impl_;
+        return P;
     }
 
 };
 
+template struct DomainParticipantImplAccessor<&DomainParticipant::impl_>;
+
+} // namespace
+
 fastdds::rtps::RTPSParticipantAttributes get_rtps_attributes(
         const DomainParticipant* participant)
 {
-    const DomainParticipantTest* participant_test = static_cast<const DomainParticipantTest*>(participant);
-    EXPECT_NE(nullptr, participant_test);
-    if (participant_test == nullptr)
+    EXPECT_NE(nullptr, participant);
+    if (participant == nullptr)
     {
         return {};
     }
-    const DomainParticipantImpl* participant_impl = participant_test->get_impl();
+    const DomainParticipantImpl* participant_impl = participant->*get_domain_participant_impl_ptr();
     EXPECT_NE(nullptr, participant_impl);
     if (participant_impl == nullptr)
     {
