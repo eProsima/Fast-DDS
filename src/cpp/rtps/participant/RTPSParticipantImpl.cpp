@@ -260,6 +260,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipantListener* plisten)
     : domain_id_(domain_id)
     , m_att(PParam)
+    , m_const_att(PParam)
     , m_guid(guidP, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
     , IdCounter(0)
@@ -269,7 +270,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , internal_metatraffic_locators_(false)
     , internal_default_locators_(false)
 #if HAVE_SECURITY
-    , m_security_manager(this, *this)
+    , m_security_manager(this, PParam, *this)
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
@@ -322,6 +323,9 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif // if HAVE_SECURITY
 
+    // Update constant attributes. Need to do it at this point to ensure we capture the constant attributes
+    // set at "setup_" methods, but before setup_builtin_protocols, which already access constant values.
+    m_const_att = m_att;
     // Initialize builtin protocols
     if (!setup_builtin_protocols())
     {
@@ -1645,7 +1649,7 @@ void RTPSParticipantImpl::update_attributes(
     // Update the attributes data member
     {
         std::lock_guard<std::mutex> _(mutex_);
-        m_att = temp_atts;
+        update_mutable_attributes(temp_atts);
     }
 
     if (update_pdp)
@@ -1653,6 +1657,18 @@ void RTPSParticipantImpl::update_attributes(
         // Send DATA(P)
         pdp->announceParticipantState(true);
     }
+}
+
+void RTPSParticipantImpl::update_mutable_attributes(
+        const RTPSParticipantAttributes& patt)
+{
+    // NTS
+    m_att.builtin.discovery_config.m_DiscoveryServers = patt.builtin.discovery_config.m_DiscoveryServers;
+    m_att.builtin.metatraffic_external_unicast_locators = patt.builtin.metatraffic_external_unicast_locators;
+    m_att.builtin.metatrafficUnicastLocatorList = patt.builtin.metatrafficUnicastLocatorList;
+    m_att.default_external_unicast_locators = patt.default_external_unicast_locators;
+    m_att.defaultUnicastLocatorList = patt.defaultUnicastLocatorList;
+    m_att.userData = patt.userData;
 }
 
 bool RTPSParticipantImpl::update_writer(
@@ -2846,10 +2862,14 @@ DurabilityKind_t RTPSParticipantImpl::get_persistence_durability_red_line(
 
 void RTPSParticipantImpl::environment_file_has_changed()
 {
-    RTPSParticipantAttributes patt = m_att;
+    RTPSParticipantAttributes patt;
+    {
+        std::lock_guard<std::mutex> _(mutex_);
+        patt = m_att;
+    }
     // Only if it is a server/backup or a client override
-    if (DiscoveryProtocol::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
-            DiscoveryProtocol::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
+    if (DiscoveryProtocol::SERVER == patt.builtin.discovery_config.discoveryProtocol ||
+            DiscoveryProtocol::BACKUP == patt.builtin.discovery_config.discoveryProtocol ||
             client_override_)
     {
         if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
@@ -2870,8 +2890,8 @@ void RTPSParticipantImpl::get_default_metatraffic_locators(
 {
     uint32_t metatraffic_multicast_port = att.port.getMulticastPort(domain_id_);
 
-    if (m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT &&
-            m_att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SUPER_CLIENT)
+    if (att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::CLIENT &&
+            att.builtin.discovery_config.discoveryProtocol != DiscoveryProtocol::SUPER_CLIENT)
     {
         m_network_Factory.getDefaultMetatrafficMulticastLocators(att.builtin.metatrafficMulticastLocatorList,
                 metatraffic_multicast_port);
@@ -3380,12 +3400,16 @@ void RTPSParticipantImpl::update_removed_participant(
 {
     if (!remote_participant_locators.empty())
     {
-        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
-        LocatorList_t initial_peers_and_ds = m_att.builtin.discovery_config.m_DiscoveryServers;
-        for (const Locator_t& locator : m_att.builtin.initialPeersList)
+        LocatorList_t initial_peers_and_ds;
         {
-            initial_peers_and_ds.push_back(locator);
+            std::lock_guard<std::mutex> _(mutex_);
+            initial_peers_and_ds = m_att.builtin.discovery_config.m_DiscoveryServers;
+            for (const Locator_t& locator : m_att.builtin.initialPeersList)
+            {
+                initial_peers_and_ds.push_back(locator);
+            }
         }
+        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
         m_network_Factory.remove_participant_associated_send_resources(
             send_resource_list_,
             remote_participant_locators,
@@ -3404,6 +3428,68 @@ const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
     return m_att;
 }
 
+<<<<<<< HEAD
+=======
+const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attributes() const
+{
+    return m_const_att;
+}
+
+const RTPSParticipantMutableAttributes RTPSParticipantImpl::get_mutable_attributes() const
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    return RTPSParticipantMutableAttributes(m_att);
+}
+
+RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    return m_att;
+}
+
+void RTPSParticipantImpl::notify_reader_discovery(
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info)
+{
+    RTPSParticipantListener* listener = getListener();
+    notify_reader_discovery(reason, info, listener);
+}
+
+void RTPSParticipantImpl::notify_reader_discovery(
+        ReaderDiscoveryStatus reason,
+        const SubscriptionBuiltinTopicData& info,
+        RTPSParticipantListener* listener)
+{
+    if (listener)
+    {
+        RTPSParticipant* participant = getUserRTPSParticipant();
+        bool should_be_ignored = false;
+        listener->on_reader_discovery(participant, reason, info, should_be_ignored);
+    }
+}
+
+void RTPSParticipantImpl::notify_writer_discovery(
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info)
+{
+    RTPSParticipantListener* listener = getListener();
+    notify_writer_discovery(reason, info, listener);
+}
+
+void RTPSParticipantImpl::notify_writer_discovery(
+        WriterDiscoveryStatus reason,
+        const PublicationBuiltinTopicData& info,
+        RTPSParticipantListener* listener)
+{
+    if (listener)
+    {
+        RTPSParticipant* participant = getUserRTPSParticipant();
+        bool should_be_ignored = false;
+        listener->on_writer_discovery(participant, reason, info, should_be_ignored);
+    }
+}
+
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
