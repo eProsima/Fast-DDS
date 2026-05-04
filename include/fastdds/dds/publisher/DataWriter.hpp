@@ -517,9 +517,13 @@ public:
      *
      * @param[out] subscription_data subscription data struct
      * @param subscription_handle InstanceHandle_t of the subscription
+<<<<<<< HEAD
      * @return RETCODE_OK
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
+=======
+     * @return RETCODE_OK if successful, RETCODE_BAD_PARAMETER otherwise
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
@@ -528,10 +532,15 @@ public:
     /**
      * @brief Fills the given vector with the InstanceHandle_t of matched DataReaders
      *
+<<<<<<< HEAD
      * @param[out] subscription_handles Vector where the InstanceHandle_t are returned
      * @return RETCODE_OK
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
+=======
+     * @param [out] subscription_handles Vector where the InstanceHandle_t are returned
+     * @return RETCODE_OK if successful, RETCODE_ERROR otherwise
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t>& subscription_handles) const;

@@ -124,6 +124,34 @@ bool PDPServer::init(
         return false;
     }
 
+<<<<<<< HEAD
+=======
+    // Activate listeners
+    EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
+    builtin_endpoints_->enable_pdp_readers(getRTPSParticipant());
+    getRTPSParticipant()->enableReader(edp->subscriptions_reader_.first);
+    getRTPSParticipant()->enableReader(edp->publications_reader_.first);
+
+    // Initialize server dedicated thread.
+    const RTPSParticipantConstantAttributes& part_attr = getRTPSParticipant()->get_const_attributes();
+    uint32_t id_for_thread = static_cast<uint32_t>(part_attr.participantID);
+    const fastdds::rtps::ThreadSettings& thr_config = part_attr.discovery_server_thread;
+    resource_event_thread_.init_thread(thr_config, "dds.ds_ev.%u", id_for_thread);
+
+    /*
+        Given the fact that a participant is either a client or a server the
+        discoveryServer_client_syncperiod parameter has a context defined meaning.
+     */
+    routine_ = new DServerRoutineEvent(this,
+                    TimeConv::Duration_t2MilliSecondsDouble(
+                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
+
+    return true;
+}
+
+void PDPServer::pre_enable_actions()
+{
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     std::vector<nlohmann::json> backup_queue;
     if (durability_ == TRANSIENT)
     {
@@ -510,11 +538,18 @@ void PDPServer::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
+<<<<<<< HEAD
     if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
             DiscoveryProtocol_t::SERVER
             &&
             getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
             DiscoveryProtocol_t::BACKUP)
+=======
+    const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
+
+    if (discovery_config.discoveryProtocol != DiscoveryProtocol::SERVER &&
+            discovery_config.discoveryProtocol != DiscoveryProtocol::BACKUP)
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }
@@ -555,8 +590,13 @@ void PDPServer::match_reliable_pdp_endpoints(
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
+<<<<<<< HEAD
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+=======
+    uint32_t endp = pdata.m_available_builtin_endpoints;
+    bool use_multicast_locators = !mp_RTPSParticipant->get_const_attributes().builtin.avoid_builtin_multicast ||
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             pdata.metatraffic_locators.unicast.empty();
 
     // only SERVER and CLIENT participants will be received. All builtin must be there

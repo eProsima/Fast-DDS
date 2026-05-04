@@ -429,7 +429,11 @@ ReturnCode_t DomainParticipantImpl::set_qos(
             else
             {
                 // Trigger update of network interfaces by calling update_attributes with current attributes
+<<<<<<< HEAD
                 patt = rtps_participant->getRTPSParticipantAttributes();
+=======
+                patt = rtps_participant->copy_attributes();
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             }
         }
     }

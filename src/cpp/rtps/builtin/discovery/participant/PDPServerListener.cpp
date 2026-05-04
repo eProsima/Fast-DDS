@@ -149,7 +149,20 @@ void PDPServerListener::onNewCacheChangeAdded(
                 return;
             }
 
+<<<<<<< HEAD
             const auto& pattr = pdp_server()->getRTPSParticipant()->getAttributes();
+=======
+            std::string participant_type_str;
+            auto ret = check_server_discovery_conditions(participant_data, participant_type_str);
+            if (!ret.first)
+            {
+                return;
+            }
+            EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type_str);
+            bool is_client = ret.second;
+
+            auto pattr = pdp_server()->getRTPSParticipant()->copy_attributes();
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             fastdds::rtps::network::external_locators::filter_remote_locators(participant_data,
                     pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
                     pattr.ignore_non_matching_locators);
