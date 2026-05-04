@@ -6,6 +6,10 @@ names:
             - "-DFASTDDS_STATISTICS=ON"
             - "-DSANITIZER=Address"
             - "-DCMAKE_CXX_FLAGS_INIT='-Werror'"
+            - "-DEPROSIMA_BUILD_TESTS=ON"
+            - "-DRTPS_API_TESTS=ON"
+            - "-DFASTDDS_PIM_API_TESTS=ON"
+            - "-DPERFORMANCE_TESTS=ON"
     discovery-server:
         cmake-args:
             - "-DSANITIZER=Address"
