@@ -815,10 +815,10 @@ PermissionsHandle* Permissions::validate_local_permissions(
         Authentication&,
         const IdentityHandle& identity,
         const uint32_t domain_id,
-        const RTPSParticipantAttributes& participant_attr,
+        const PropertyPolicy& part_props,
         SecurityException& exception)
 {
-    PropertyPolicy access_properties = PropertyPolicyHelper::get_properties_with_prefix(participant_attr.properties,
+    PropertyPolicy access_properties = PropertyPolicyHelper::get_properties_with_prefix(part_props,
                     "dds.sec.access.builtin.Access-Permissions.");
 
     if (PropertyPolicyHelper::length(access_properties) == 0)
@@ -1068,7 +1068,6 @@ PermissionsHandle* Permissions::validate_remote_permissions(
 bool Permissions::check_create_participant(
         const PermissionsHandle& local_handle,
         const uint32_t /*domain_id*/,
-        const RTPSParticipantAttributes&,
         SecurityException& exception)
 {
     bool returned_value = false;
