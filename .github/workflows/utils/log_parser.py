@@ -154,16 +154,25 @@ def tsan_line_splitter(
 _UBSAN_LINE_RE = re.compile(
     r'(?P<path>\S+?):(?P<line>\d+):(?P<col>\d+):\s*runtime error:\s*(?P<desc>.+?)\s*$'
 )
+# Strip GitHub Actions ISO-8601 timestamp prefix and/or a ctest line prefix ("<test-id>: ").
+_GH_TIMESTAMP_RE = re.compile(r'^\d{4}-\d{2}-\d{2}T\S+\s+')
+_CTEST_PREFIX_RE = re.compile(r'^\d+:\s*')
+# Hex addresses ("0x55ade3179480") differ across runs but represent the same logical UB;
+# normalize them to "0x..." so identical findings at the same site collapse into one row.
+_HEX_ADDRESS_RE = re.compile(r'0x[0-9a-fA-F]+')
 
 
 def ubsan_line_splitter(
         line: str):
-    match = _UBSAN_LINE_RE.search(line.rstrip('\r\n'))
+    stripped = _GH_TIMESTAMP_RE.sub('', line.rstrip('\r\n'))
+    stripped = _CTEST_PREFIX_RE.sub('', stripped)
+    match = _UBSAN_LINE_RE.search(stripped)
     if not match:
-        return line.strip()
+        # Not an UBSan finding header
+        return None
     basename = match.group('path').rsplit('/', 1)[-1]
-    return (f"{basename}:{match.group('line')}:{match.group('col')}: "
-            f"{match.group('desc')}")
+    desc = _HEX_ADDRESS_RE.sub('0x...', match.group('desc'))
+    return f"{basename}:{match.group('line')}:{match.group('col')}: {desc}"
 
 
 def common_specific_errors_list(
@@ -188,11 +197,14 @@ def common_specific_errors_dict(
         errors_file_path: str,
         line_splitter):
 
-    # failed tests
+    # Open with newline='' so Python's universal-newline mode does not split a single
+    # grep-emitted line on bare '\r' characters.
     errors = {}
-    with open(errors_file_path, 'r') as file:
-        for line in file.readlines():
+    with open(errors_file_path, 'r', newline='') as file:
+        for line in file:
             error_id = line_splitter(line)
+            if error_id is None:
+                continue
             if error_id in errors:
                 errors[error_id] += 1
             else:
