@@ -37,7 +37,7 @@ public:
             Authentication& auth_plugin,
             const IdentityHandle& identity,
             const uint32_t domain_id,
-            const RTPSParticipantAttributes& participant_attr,
+            const PropertyPolicy& part_props,
             SecurityException& exception) override;
 
     bool get_permissions_token(
@@ -77,7 +77,6 @@ public:
     bool check_create_participant(
             const PermissionsHandle& local_handle,
             const uint32_t domain_id,
-            const RTPSParticipantAttributes& qos,
             SecurityException& exception) override;
 
     bool check_remote_participant(

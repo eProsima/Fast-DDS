@@ -75,6 +75,7 @@ inline bool usleep_bool()
 
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
+        const RTPSParticipantAttributes& pattr,
         ISecurityPluginFactory& plugin_factory)
     : participant_stateless_message_listener_(*this)
     , participant_volatile_message_secure_listener_(*this)
@@ -84,6 +85,7 @@ SecurityManager::SecurityManager(
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({
+<<<<<<< HEAD
     participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
     participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
     participant->getRTPSParticipantAttributes().allocation.data_limits,
@@ -92,6 +94,16 @@ SecurityManager::SecurityManager(
     participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
     participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
     participant->getRTPSParticipantAttributes().allocation.data_limits})
+=======
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits,
+                pattr.allocation.content_filter})
+    , temp_writer_proxies_({
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits})
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 {
     assert(participant != nullptr);
 }
@@ -110,7 +122,11 @@ bool SecurityManager::init(
     {
         domain_id_ = participant_->get_domain_id();
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
+<<<<<<< HEAD
             participant_->getRTPSParticipantAttributes().properties,
+=======
+            participant_->get_const_attributes().properties,
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             "dds.sec.log.builtin.DDS_LogTopic.");
 
         // length(log_properties) == 0 considered as logging disable.
@@ -199,7 +215,11 @@ bool SecurityManager::init(
         {
             // retrieve authentication properties, if any
             const PropertyPolicy auth_handshake_properties = PropertyPolicyHelper::get_properties_with_prefix(
+<<<<<<< HEAD
                 participant_->getRTPSParticipantAttributes().properties,
+=======
+                participant_->get_const_attributes().properties,
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
                 "dds.sec.auth.builtin.PKI-DH.");
 
             // if auth_handshake_properties is empty, the default values are used
@@ -219,7 +239,11 @@ bool SecurityManager::init(
                 ret = authentication_plugin_->validate_local_identity(&local_identity_handle_,
                                 adjusted_participant_key,
                                 domain_id_,
+<<<<<<< HEAD
                                 participant_->getRTPSParticipantAttributes(),
+=======
+                                participant_->get_const_attributes().properties,
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
                                 participant_->getGuid(),
                                 exception);
             }
@@ -242,7 +266,11 @@ bool SecurityManager::init(
                     local_permissions_handle_ = access_plugin_->validate_local_permissions(
                         *authentication_plugin_, *local_identity_handle_,
                         domain_id_,
+<<<<<<< HEAD
                         participant_->getRTPSParticipantAttributes(),
+=======
+                        participant_->get_const_attributes().properties,
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
                         exception);
 
                     if (local_permissions_handle_ != nullptr)
@@ -250,8 +278,12 @@ bool SecurityManager::init(
                         if (!local_permissions_handle_->nil())
                         {
                             if (access_plugin_->check_create_participant(*local_permissions_handle_,
+<<<<<<< HEAD
                                     domain_id_,
                                     participant_->getRTPSParticipantAttributes(), exception))
+=======
+                                    domain_id_, exception))
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
                             {
                                 // Set credentials.
                                 PermissionsCredentialToken* token = nullptr;
@@ -1114,7 +1146,11 @@ bool SecurityManager::create_participant_stateless_message_writer()
 {
     participant_stateless_message_writer_history_ = new WriterHistory(participant_stateless_message_writer_hattr_);
 
+<<<<<<< HEAD
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+=======
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     WriterAttributes watt;
     watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
@@ -1163,7 +1199,11 @@ bool SecurityManager::create_participant_stateless_message_reader()
 {
     participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
 
+<<<<<<< HEAD
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+=======
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
@@ -1263,7 +1303,11 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     participant_volatile_message_secure_writer_history_ =
             new WriterHistory(participant_volatile_message_secure_hattr_);
 
+<<<<<<< HEAD
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+=======
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -1316,7 +1360,11 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     participant_volatile_message_secure_reader_history_ =
             new ReaderHistory(participant_volatile_message_secure_hattr_);
 
+<<<<<<< HEAD
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
+=======
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
