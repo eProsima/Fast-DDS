@@ -127,7 +127,7 @@ bool TypeLookupManager::init(
 {
     participant_ = protocols->mp_participantImpl;
     builtin_protocols_ = protocols;
-    auto locators_allocations = participant_->get_attributes().allocation.locators;
+    const auto& locators_allocations = participant_->get_const_attributes().allocation.locators;
 
     local_instance_name_ = get_instance_name(participant_->getGuid());
 

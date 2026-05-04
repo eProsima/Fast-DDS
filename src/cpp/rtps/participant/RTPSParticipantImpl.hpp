@@ -614,6 +614,8 @@ protected:
     uint32_t domain_id_;
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
+    //!Constant copy of Attributes of the RTPSParticipant
+    RTPSParticipantConstantAttributes m_const_att;
     //! Metatraffic unicast port used by default on this participant
     uint32_t metatraffic_unicast_port_ = 0;
     //! Default unicast port used by default on this participant
@@ -893,7 +895,40 @@ private:
 
 public:
 
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get the RTPSParticipantAttributes of this RTPSParticipantImpl. This method is not thread safe,
+     * it is recommended to use copy_attributes() instead.
+     * @return RTPSParticipantAttributes of this RTPSParticipantImpl.
+     */
     const RTPSParticipantAttributes& get_attributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get a const reference of RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const reference to the internal constant attributes.
+     * @return A const reference to the RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantConstantAttributes& get_const_attributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const copy of the internal mutable attributes.
+     * @return A const copy of the RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get a copy of the RTPSParticipantAttributes of this RTPSParticipantImpl in a thread safe manner.
+     * @return A copy of the RTPSParticipantAttributes of this RTPSParticipantImpl.
+     */
+    RTPSParticipantAttributes copy_attributes() const;
 
     /**
      * Create a Writer in this RTPSParticipant.
@@ -1051,6 +1086,13 @@ public:
      * @param patt New participant attributes.
      */
     void update_attributes(
+            const RTPSParticipantAttributes& patt);
+
+    /**
+     * Update only mutable participant attributes.
+     * @param patt New participant attributes.
+     */
+    void update_mutable_attributes(
             const RTPSParticipantAttributes& patt);
 
     /**

@@ -232,6 +232,21 @@ public:
         return attributes_;
     }
 
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
+    {
+        return const_attributes_;
+    }
+
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const
+    {
+        return RTPSParticipantMutableAttributes{attributes_};
+    }
+
+    RTPSParticipantAttributes copy_attributes() const
+    {
+        return attributes_;
+    }
+
     MOCK_METHOD(bool, get_publication_info,
             (fastdds::rtps::PublicationBuiltinTopicData&,
             const GUID_t&), (const));
@@ -261,6 +276,7 @@ public:
     const GUID_t m_guid;
     mutable ResourceEvent mp_event_thr;
     RTPSParticipantAttributes attributes_;
+    RTPSParticipantConstantAttributes const_attributes_;
     RTPSParticipantImpl* mp_impl;
 };
 

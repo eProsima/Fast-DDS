@@ -104,7 +104,7 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    auto discovery_config = getRTPSParticipant()->get_attributes().builtin.discovery_config;
+    const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
 
     if ((DiscoveryProtocol::CLIENT != discovery_config.discoveryProtocol) &&
             (DiscoveryProtocol::SUPER_CLIENT != discovery_config.discoveryProtocol))
