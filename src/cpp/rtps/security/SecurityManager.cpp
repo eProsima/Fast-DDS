@@ -88,6 +88,7 @@ static CacheChange_t* create_change_for_message(
 
 SecurityManager::SecurityManager(
         RTPSParticipantImpl* participant,
+        const RTPSParticipantAttributes& pattr,
         ISecurityPluginFactory& plugin_factory)
     : participant_stateless_message_listener_(*this)
     , participant_volatile_message_secure_listener_(*this)
@@ -97,14 +98,14 @@ SecurityManager::SecurityManager(
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({
-                participant->get_attributes().allocation.locators.max_unicast_locators,
-                participant->get_attributes().allocation.locators.max_multicast_locators,
-                participant->get_attributes().allocation.data_limits,
-                participant->get_attributes().allocation.content_filter})
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits,
+                pattr.allocation.content_filter})
     , temp_writer_proxies_({
-                participant->get_attributes().allocation.locators.max_unicast_locators,
-                participant->get_attributes().allocation.locators.max_multicast_locators,
-                participant->get_attributes().allocation.data_limits})
+                pattr.allocation.locators.max_unicast_locators,
+                pattr.allocation.locators.max_multicast_locators,
+                pattr.allocation.data_limits})
 {
     assert(participant != nullptr);
 }
@@ -122,9 +123,8 @@ bool SecurityManager::init(
     try
     {
         domain_id_ = participant_->get_domain_id();
-        auto part_attributes = participant_->get_attributes();
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
-            part_attributes.properties,
+            participant_->get_const_attributes().properties,
             "dds.sec.log.builtin.DDS_LogTopic.");
 
         // length(log_properties) == 0 considered as logging disable.
@@ -213,7 +213,7 @@ bool SecurityManager::init(
         {
             // retrieve authentication properties, if any
             const PropertyPolicy auth_handshake_properties = PropertyPolicyHelper::get_properties_with_prefix(
-                part_attributes.properties,
+                participant_->get_const_attributes().properties,
                 "dds.sec.auth.builtin.PKI-DH.");
 
             // if auth_handshake_properties is empty, the default values are used
@@ -233,7 +233,7 @@ bool SecurityManager::init(
                 ret = authentication_plugin_->validate_local_identity(&local_identity_handle_,
                                 adjusted_participant_key,
                                 domain_id_,
-                                part_attributes,
+                                participant_->get_const_attributes().properties,
                                 participant_->getGuid(),
                                 exception);
             }
@@ -256,7 +256,7 @@ bool SecurityManager::init(
                     local_permissions_handle_ = access_plugin_->validate_local_permissions(
                         *authentication_plugin_, *local_identity_handle_,
                         domain_id_,
-                        part_attributes,
+                        participant_->get_const_attributes().properties,
                         exception);
 
                     if (local_permissions_handle_ != nullptr)
@@ -264,8 +264,7 @@ bool SecurityManager::init(
                         if (!local_permissions_handle_->nil())
                         {
                             if (access_plugin_->check_create_participant(*local_permissions_handle_,
-                                    domain_id_,
-                                    part_attributes, exception))
+                                    domain_id_, exception))
                             {
                                 // Set credentials.
                                 PermissionsCredentialToken* token = nullptr;
@@ -1123,7 +1122,7 @@ bool SecurityManager::create_participant_stateless_message_writer()
         participant_stateless_message_writer_hattr_,
         participant_stateless_message_pool_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     WriterAttributes watt;
     watt.endpoint.external_unicast_locators = pattr.builtin.metatraffic_external_unicast_locators;
@@ -1172,7 +1171,7 @@ bool SecurityManager::create_participant_stateless_message_reader()
 {
     participant_stateless_message_reader_history_ = new ReaderHistory(participant_stateless_message_reader_hattr_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
@@ -1271,7 +1270,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     participant_volatile_message_secure_writer_history_ =
             new WriterHistory(participant_volatile_message_secure_hattr_, participant_volatile_message_secure_pool_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     WriterAttributes watt;
     watt.endpoint.endpointKind = WRITER;
@@ -1324,7 +1323,7 @@ bool SecurityManager::create_participant_volatile_message_secure_reader()
     participant_volatile_message_secure_reader_history_ =
             new ReaderHistory(participant_volatile_message_secure_hattr_);
 
-    const RTPSParticipantAttributes& pattr = participant_->get_attributes();
+    RTPSParticipantAttributes pattr = participant_->copy_attributes();
 
     ReaderAttributes ratt;
     ratt.endpoint.topicKind = NO_KEY;
