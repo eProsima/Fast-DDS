@@ -26,7 +26,9 @@
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
@@ -46,6 +48,13 @@ namespace dds {
 class DomainParticipant : public eprosima::fastdds::dds::DomainParticipant
 {
     DomainParticipant() = delete;
+
+protected:
+
+    DomainParticipant(
+            const eprosima::fastdds::dds::StatusMask& mask);
+
+    friend class eprosima::fastdds::dds::DomainParticipantFactory;
 
 public:
 
