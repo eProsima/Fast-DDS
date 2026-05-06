@@ -332,6 +332,21 @@ public:
         return attr_;
     }
 
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
+    {
+        return const_attr_;
+    }
+
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const
+    {
+        return RTPSParticipantMutableAttributes{attr_};
+    }
+
+    RTPSParticipantAttributes copy_attributes() const
+    {
+        return attr_;
+    }
+
     void get_sending_locators(
             rtps::LocatorList_t& /*locators*/) const
     {
@@ -440,6 +455,7 @@ private:
     MockParticipantListener listener_;
 
     RTPSParticipantAttributes attr_;
+    RTPSParticipantConstantAttributes const_attr_;
 
     NetworkFactory network_factory_ {attr_};
 

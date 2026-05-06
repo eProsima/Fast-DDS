@@ -167,6 +167,7 @@ void AccessControlTest::get_access_handle(
         bool should_success)
 {
     IdentityHandle* identity_handle = nullptr;
+    auto part_props = participant_attr.properties;
 
     ValidationResult_t result = ValidationResult_t::VALIDATION_FAILED;
     SecurityException exception;
@@ -176,7 +177,7 @@ void AccessControlTest::get_access_handle(
         &identity_handle,
         adjusted_participant_key,
         domain_id,
-        participant_attr,
+        part_props,
         candidate_participant_key,
         exception);
 
@@ -188,7 +189,7 @@ void AccessControlTest::get_access_handle(
         authentication_plugin,
         *identity_handle,
         domain_id,
-        participant_attr,
+        part_props,
         exception);
 
     bool success = *access_handle != nullptr;

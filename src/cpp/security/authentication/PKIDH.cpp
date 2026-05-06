@@ -1064,13 +1064,13 @@ ValidationResult_t PKIDH::validate_local_identity(
         IdentityHandle** local_identity_handle,
         GUID_t& adjusted_participant_key,
         const uint32_t /*domain_id*/,
-        const RTPSParticipantAttributes& participant_attr,
+        const PropertyPolicy& part_props,
         const GUID_t& candidate_participant_key,
         SecurityException& exception)
 {
     assert(local_identity_handle);
 
-    PropertyPolicy auth_properties = PropertyPolicyHelper::get_properties_with_prefix(participant_attr.properties,
+    PropertyPolicy auth_properties = PropertyPolicyHelper::get_properties_with_prefix(part_props,
                     "dds.sec.auth.builtin.PKI-DH.");
 
     if (PropertyPolicyHelper::length(auth_properties) == 0)
