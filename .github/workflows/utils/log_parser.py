@@ -170,6 +170,9 @@ def ubsan_line_splitter(
     if not match:
         # Not an UBSan finding header
         return None
+    if 'sqlite3.c' in match.group('path'):
+        # Ignore UBSan findings in sqlite3.c (thirdparty code we don't maintain)
+        return None
     basename = match.group('path').rsplit('/', 1)[-1]
     desc = _HEX_ADDRESS_RE.sub('0x...', match.group('desc'))
     return f"{basename}:{match.group('line')}:{match.group('col')}: {desc}"
