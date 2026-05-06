@@ -298,9 +298,26 @@ public:
             uint32_t port) const;
 
     /**
+     * Add the default multicast locator to the given locator list.
+     *
+     * @param locators List to be filled with the default multicast locator.
+     * @param port Port to be used in the default multicast locator.
+     * */
+    bool getDefaultMulticastLocators(
+            LocatorList_t& locators,
+            uint32_t port) const;
+
+    /**
      * Fill the locator with the default unicast configuration.
      * */
     bool fill_default_locator_port(
+            Locator_t& locator,
+            uint32_t port) const;
+
+    /**
+     * Fill the locator with the default multicast configuration.
+     * */
+    bool fill_default_multicast_locator(
             Locator_t& locator,
             uint32_t port) const;
 

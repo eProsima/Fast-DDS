@@ -178,6 +178,7 @@ set(${PROJECT_NAME}_source_files
     ${FASTDDS_SOURCE_DIR}/rtps/domain/RTPSDomain.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/ChainingTransport.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/ChannelResource.cpp
+    ${FASTDDS_SOURCE_DIR}/rtps/transport/MulticastTransportInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetmaskFilterKind.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetworkInterface.cpp
     ${FASTDDS_SOURCE_DIR}/rtps/transport/network/NetworkInterfaceWithFilter.cpp

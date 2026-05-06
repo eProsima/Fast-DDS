@@ -29,6 +29,7 @@
 #include <fastdds/rtps/transport/UDPTransportDescriptor.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 
+#include <rtps/transport/MulticastTransportInterface.hpp>
 #include <rtps/transport/UDPChannelResource.h>
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
 
@@ -36,7 +37,9 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class UDPTransportInterface : public TransportInterface
+class UDPTransportInterface
+    : public TransportInterface
+    , public MulticastTransportInterface
 {
     friend class UDPSenderResource;
     friend struct TSN_UDPSender;

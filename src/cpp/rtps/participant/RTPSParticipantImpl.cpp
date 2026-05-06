@@ -682,6 +682,7 @@ void RTPSParticipantImpl::setup_user_traffic()
         std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
+                    // This methods always leaves the address unchanged
                     m_network_Factory.fill_default_locator_port(loc, default_unicast_port_);
                 });
         m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
@@ -691,7 +692,8 @@ void RTPSParticipantImpl::setup_user_traffic()
         std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
                 [&](Locator_t& loc)
                 {
-                    m_network_Factory.fill_default_locator_port(loc, multicast_port);
+                    // This methods leaves the address unchanged if it was already set
+                    m_network_Factory.fill_default_multicast_locator(loc, multicast_port);
                 });
     }
 
@@ -2348,7 +2350,7 @@ void RTPSParticipantImpl::normalize_endpoint_locators(
     uint32_t multicast_port = m_network_Factory.calculate_well_known_port(domain_id_, m_att, true);
     for (Locator_t& loc : endpoint_att.multicastLocatorList)
     {
-        m_network_Factory.fill_default_locator_port(loc, multicast_port);
+        m_network_Factory.fill_default_multicast_locator(loc, multicast_port);
     }
 
     // Normalize unicast locators

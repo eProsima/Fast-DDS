@@ -81,6 +81,10 @@ public:
             LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
+    bool getDefaultMulticastLocators(
+            LocatorList& locators,
+            uint32_t multicast_port) const override;
+
     bool getDefaultUnicastLocators(
             LocatorList& locators,
             uint32_t unicast_port) const override;
@@ -169,6 +173,9 @@ protected:
 };
 
 const char* const DEFAULT_METATRAFFIC_MULTICAST_ADDRESS = "239.255.0.1";
+// Metatraffic multicast address is the same as default multicast address,
+// but we keep this definition in case we want to differentiate them in the future
+const char* const DEFAULT_MULTICAST_ADDRESS = DEFAULT_METATRAFFIC_MULTICAST_ADDRESS;
 
 } // namespace rtps
 } // namespace fastdds
