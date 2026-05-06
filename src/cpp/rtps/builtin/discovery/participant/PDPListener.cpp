@@ -49,7 +49,7 @@ namespace rtps {
 PDPListener::PDPListener(
         PDP* parent)
     : parent_pdp_(parent)
-    , temp_participant_data_(parent->getRTPSParticipant()->get_attributes().allocation)
+    , temp_participant_data_(parent->getRTPSParticipant()->get_const_attributes().allocation)
 {
 }
 
@@ -76,10 +76,11 @@ void PDPListener::on_new_cache_change_added(
     GUID_t guid;
     iHandle2GUID(guid, change->instanceHandle);
 
+    RTPSParticipantImpl* part = parent_pdp_->getRTPSParticipant();
     if (change->kind == ALIVE)
     {
         // Ignore announcement from own RTPSParticipant
-        if (guid == parent_pdp_->getRTPSParticipant()->getGuid())
+        if (guid == part->getGuid())
         {
             EPROSIMA_LOG_INFO(RTPS_PDP, "Message from own RTPSParticipant, removing");
             parent_pdp_->builtin_endpoints_->remove_from_pdp_reader_history(change);
@@ -105,14 +106,14 @@ void PDPListener::on_new_cache_change_added(
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
         if (temp_participant_data_.read_from_cdr_message(&msg, true,
-                parent_pdp_->getRTPSParticipant()->network_factory(),
+                part->network_factory(),
                 true, change_in->vendor_id))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
             guid = temp_participant_data_.guid;
 
-            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(guid.guidPrefix))
+            if (part->is_participant_ignored(guid.guidPrefix))
             {
                 return;
             }
@@ -123,10 +124,11 @@ void PDPListener::on_new_cache_change_added(
             }
 
             // Filter locators
-            const auto& pattr = parent_pdp_->getRTPSParticipant()->get_attributes();
+            auto mutable_pattr = part->get_mutable_attributes();
             fastdds::rtps::network::external_locators::filter_remote_locators(temp_participant_data_,
-                    pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
-                    pattr.ignore_non_matching_locators);
+                    mutable_pattr.builtin.metatraffic_external_unicast_locators,
+                    mutable_pattr.default_external_unicast_locators,
+                    part->get_const_attributes().ignore_non_matching_locators);
 
             // Check if participant already exists (updated info)
             ParticipantProxyData* pdata = nullptr;
@@ -167,10 +169,10 @@ void PDPListener::on_new_cache_change_added(
 #ifdef FASTDDS_STATISTICS
             //! Removal of a participant proxy should trigger
             //! a connections update on the local participant connection list
-            if (nullptr != parent_pdp_->getRTPSParticipant()->get_connections_observer())
+            if (nullptr != part->get_connections_observer())
             {
-                parent_pdp_->getRTPSParticipant()->get_connections_observer()->on_local_entity_connections_change(
-                    parent_pdp_->getRTPSParticipant()->getGuid());
+                part->get_connections_observer()->on_local_entity_connections_change(
+                    part->getGuid());
             }
 #endif //FASTDDS_STATISTICS
             reader->getMutex().lock();
