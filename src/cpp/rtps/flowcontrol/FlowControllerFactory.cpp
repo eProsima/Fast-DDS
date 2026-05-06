@@ -22,7 +22,11 @@ void FlowControllerFactory::init(
 
     const ThreadSettings& sender_thread_settings =
             (nullptr == participant_) ? ThreadSettings{}
+<<<<<<< HEAD
             : participant_->getAttributes().builtin_controllers_sender_thread;
+=======
+            : participant_->get_const_attributes().builtin_controllers_sender_thread;
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     // PureSyncFlowController -> used by volatile besteffort writers.
     flow_controllers_.insert(decltype(flow_controllers_)::value_type(

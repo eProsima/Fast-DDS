@@ -299,6 +299,21 @@ public:
         return attr_;
     }
 
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
+    {
+        return const_attr_;
+    }
+
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const
+    {
+        return RTPSParticipantMutableAttributes{attr_};
+    }
+
+    RTPSParticipantAttributes copy_attributes() const
+    {
+        return attr_;
+    }
+
     void get_sending_locators(
             rtps::LocatorList_t& /*locators*/) const
     {
@@ -341,6 +356,7 @@ private:
     ResourceEvent events_;
 
     RTPSParticipantAttributes attr_;
+    RTPSParticipantConstantAttributes const_attr_;
 
     std::map<GUID_t, Endpoint*> endpoints_;
 

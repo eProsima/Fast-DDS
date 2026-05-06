@@ -182,10 +182,14 @@ void StatefulReader::init(
         RTPSParticipantImpl* pimpl,
         const ReaderAttributes& att)
 {
+<<<<<<< HEAD
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
+=======
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
-        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_));
+        matched_writers_pool_.push_back(new WriterProxy(this, pimpl->get_const_attributes().allocation.locators,
+                proxy_changes_config_));
     }
 }
 
@@ -255,8 +259,13 @@ bool StatefulReader::matched_writer_add(
             size_t max_readers = matched_writers_pool_.max_size();
             if (getMatchedWritersSize() + matched_writers_pool_.size() < max_readers)
             {
+<<<<<<< HEAD
                 const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
                 wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+=======
+                wp = new WriterProxy(this, mp_RTPSParticipant->get_const_attributes().allocation.locators,
+                                proxy_changes_config_);
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             }
             else
             {

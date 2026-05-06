@@ -41,7 +41,11 @@ PDPStatelessWriter::PDPStatelessWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatelessWriter(participant, guid, attributes, flow_controller, history, listener)
+<<<<<<< HEAD
     , interested_readers_(participant->getRTPSParticipantAttributes().allocation.participants)
+=======
+    , interested_readers_(participant->get_const_attributes().allocation.participants)
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 {
 }
 

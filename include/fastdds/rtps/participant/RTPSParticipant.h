@@ -210,11 +210,46 @@ public:
      */
     std::vector<std::string> getParticipantNames() const;
 
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
+<<<<<<< HEAD:include/fastdds/rtps/participant/RTPSParticipant.h
      * Get a copy of the actual state of the RTPSParticipantParameters
      * @return RTPSParticipantAttributes copy of the params.
+=======
+     * Get a reference of the current state of the RTPSParticipantAttributes.
+     * @warning The returned reference is not thread safe. It is recommended to use copy_attributes()
+     * instead to get a thread safe copy of the attributes.
+     * @return RTPSParticipantAttributes reference.
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370)):include/fastdds/rtps/participant/RTPSParticipant.hpp
      */
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get a const reference of RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const reference to the internal constant attributes.
+     * @return A const reference to the RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantConstantAttributes& get_const_attributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const copy of the internal mutable attributes.
+     * @return A const copy of the RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const;
+
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
+    /**
+     * Get a copy of the current state of the RTPSParticipantAttributes.
+     * @return RTPSParticipantAttributes copy.
+     */
+    RTPSParticipantAttributes copy_attributes() const;
 
     /**
      * Retrieves the maximum message size.

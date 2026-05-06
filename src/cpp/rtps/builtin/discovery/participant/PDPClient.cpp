@@ -105,12 +105,19 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
+<<<<<<< HEAD
     if (
         getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
         != DiscoveryProtocol_t::CLIENT
         &&
         getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
         != DiscoveryProtocol_t::SUPER_CLIENT    )
+=======
+    const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
+
+    if ((DiscoveryProtocol::CLIENT != discovery_config.discoveryProtocol) &&
+            (DiscoveryProtocol::SUPER_CLIENT != discovery_config.discoveryProtocol))
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "Using a PDP client object with another user's settings");
     }

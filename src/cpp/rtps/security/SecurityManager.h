@@ -82,6 +82,7 @@ public:
      */
     SecurityManager(
             RTPSParticipantImpl* participant,
+            const RTPSParticipantAttributes& pattr,
             ISecurityPluginFactory& plugin_factory);
 
     // @brief Destructor

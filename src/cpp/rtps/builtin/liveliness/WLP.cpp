@@ -105,6 +105,7 @@ WLP::WLP(
     , mp_builtinReaderSecureHistory(nullptr)
 #endif // if HAVE_SECURITY
     , temp_reader_proxy_data_(
+<<<<<<< HEAD
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits,
@@ -113,6 +114,16 @@ WLP::WLP(
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
         p->mp_participantImpl->getRTPSParticipantAttributes().allocation.data_limits)
+=======
+        p->mp_participantImpl->get_const_attributes().allocation.locators.max_unicast_locators,
+        p->mp_participantImpl->get_const_attributes().allocation.locators.max_multicast_locators,
+        p->mp_participantImpl->get_const_attributes().allocation.data_limits,
+        p->mp_participantImpl->get_const_attributes().allocation.content_filter)
+    , temp_writer_proxy_data_(
+        p->mp_participantImpl->get_const_attributes().allocation.locators.max_unicast_locators,
+        p->mp_participantImpl->get_const_attributes().allocation.locators.max_multicast_locators,
+        p->mp_participantImpl->get_const_attributes().allocation.data_limits)
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 {
     GUID_t tmp_guid = p->mp_participantImpl->getGuid();
     tmp_guid.entityId = 0;
@@ -233,8 +244,13 @@ bool WLP::initWL(
 
 bool WLP::createEndpoints()
 {
+<<<<<<< HEAD
     const RTPSParticipantAttributes& pattr = mp_participant->getRTPSParticipantAttributes();
     const ResourceLimitedContainerConfig& participants_allocation = pattr.allocation.participants;
+=======
+    const ResourceLimitedContainerConfig& participants_allocation =
+            mp_participant->get_const_attributes().allocation.participants;
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     // Built-in writer history
     HistoryAttributes hatt;
@@ -319,8 +335,13 @@ bool WLP::createEndpoints()
 
 bool WLP::createSecureEndpoints()
 {
+<<<<<<< HEAD
     const RTPSParticipantAttributes& pattr = mp_participant->getRTPSParticipantAttributes();
     const ResourceLimitedContainerConfig& participants_allocation = pattr.allocation.participants;
+=======
+    const ResourceLimitedContainerConfig& participants_allocation =
+            mp_participant->get_const_attributes().allocation.participants;
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 
     //CREATE WRITER
     HistoryAttributes hatt;
@@ -454,7 +475,11 @@ bool WLP::assignRemoteEndpoints(
     const NetworkFactory& network = mp_participant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
     uint32_t auxendp = endp;
+<<<<<<< HEAD
     bool use_multicast_locators = !mp_participant->getAttributes().builtin.avoid_builtin_multicast ||
+=======
+    bool use_multicast_locators = !mp_participant->get_const_attributes().builtin.avoid_builtin_multicast ||
+>>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             pdata.metatraffic_locators.unicast.empty();
 
     std::lock_guard<std::mutex> data_guard(temp_data_lock_);

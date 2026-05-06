@@ -79,7 +79,7 @@ public:
             IdentityHandle** local_identity_handle,
             GUID_t& adjusted_participant_key,
             const uint32_t domain_id,
-            const RTPSParticipantAttributes& participant_attr,
+            const PropertyPolicy& part_props,
             const GUID_t& candidate_participant_key,
             SecurityException& exception) = 0;
 
