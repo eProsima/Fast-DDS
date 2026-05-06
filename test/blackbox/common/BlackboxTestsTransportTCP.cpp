@@ -674,6 +674,198 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
     client->wait_discovery(2, std::chrono::seconds(0));
 }
 
+// Regression test for refs #24379: verify that a send resource is not destroyed by
+// cleanup_sender_resources() when there is still an active channel associated to it.
+//
+// Scenario: a client with a listening port connects to the server. If the client process
+// dies abruptly (SIGKILL), the destructor is not run, the participant never sends the PDP
+// dispose, and the listening port is released by the kernel without any application-level
+// cleanup. When a new client process reconnects using the same listening port, its
+// bind_socket request reuses the same physical locator (see
+// TCPTransportInterface::fill_local_physical_port, which uses the listening port as the
+// local physical port). Later, when the server drops the previously dead participant due
+// to its lease expiring, NetworkFactory::remove_participant_associated_send_resources() ->
+// TCPTransportInterface::cleanup_sender_resources() would wrongly destroy the send
+// resource that is now being used by the reconnected client's active channel. After the
+// fix, the send resource is kept if there is an active channel associated to it.
+TEST_P(TransportTCP, send_resource_cleanup_on_abrupt_disconnection)
+{
+#ifdef _WIN32
+    GTEST_SKIP() << "Test relies on POSIX fork()/SIGKILL to simulate abrupt client death";
+#else
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+
+    using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
+
+    const uint16_t server_port = global_port;
+    const uint16_t client_listening_port = static_cast<uint16_t>(global_port + 1);
+
+    // Short lease duration to accelerate the test
+    const eprosima::fastdds::dds::Duration_t short_lease(5, 0);
+    const eprosima::fastdds::dds::Duration_t short_announcement(1, 0);
+
+    // Need to fix the domain ID and the topic name relative to the parent process, otherwise forked child
+    // will have a different PID and thus different default domain ID and topic name.
+    std::ostringstream topic_oss;
+    topic_oss << TEST_TOPIC_NAME << "_" << asio::ip::host_name() << "_" << GET_PID();
+    const std::string fixed_topic_name = topic_oss.str();
+    const uint32_t fixed_domain_id = static_cast<uint32_t>(GET_PID()) % 230;
+
+    // Common client-side TCP transport setup, used by both the child (Client1) and the parent (Client2)
+    auto setup_client = [&](PubSubWriter<HelloWorldPubSubType>& c)
+            {
+                std::shared_ptr<eprosima::fastdds::rtps::TCPTransportDescriptor> client_transport;
+                Locator_t initialPeerLocator;
+                if (use_ipv6)
+                {
+                    client_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+                    initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+                    IPLocator::setIPv6(initialPeerLocator, "::1");
+                }
+                else
+                {
+                    client_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+                    initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+                    IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+                }
+                client_transport->add_listener_port(client_listening_port);
+                IPLocator::setPhysicalPort(initialPeerLocator, server_port);
+                IPLocator::setLogicalPort(initialPeerLocator, server_port);
+                LocatorList_t initial_peer_list;
+                initial_peer_list.push_back(initialPeerLocator);
+                c.setManualTopicName(fixed_topic_name)
+                        .set_domain_id(fixed_domain_id)
+                        .lease_duration(short_lease, short_announcement)
+                        .disable_builtin_transport()
+                        .add_user_transport_to_pparams(client_transport)
+                        .initial_peers(initial_peer_list)
+                        .init();
+            };
+
+    pid_t child_pid = fork();
+    ASSERT_NE(child_pid, -1) << "fork() failed in send_resource_cleanup_on_abrupt_disconnection test";
+
+    if (child_pid == 0)
+    {
+        // ===== Child process: become Client1 and wait until for SIGKILL =====
+        PubSubWriter<HelloWorldPubSubType> client1(TEST_TOPIC_NAME);
+        setup_client(client1);
+        if (!client1.isInitialized())
+        {
+            _exit(2);
+        }
+
+        // Block until SIGKILL is received
+        while (true)
+        {
+            pause();
+        }
+        // Unreachable.
+    }
+
+    // ===== Parent process. =====
+    // Best-effort guard: if anything below fails, make sure the child does not survive.
+    auto kill_child_on_exit = [&]()
+            {
+                kill(child_pid, SIGKILL);
+                int s = 0;
+                waitpid(child_pid, &s, 0);
+            };
+
+    PubSubReader<HelloWorldPubSubType> server(TEST_TOPIC_NAME);
+    test_transport_->add_listener_port(server_port);
+    auto server_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(test_transport_);
+    Locator_t locator;
+    locator.kind = use_ipv6 ? LOCATOR_KIND_TCPv6 : LOCATOR_KIND_TCPv4;
+    if (use_ipv6)
+    {
+        IPLocator::setIPv6(locator, "::1");
+    }
+    else
+    {
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+    }
+    IPLocator::setPhysicalPort(locator, server_port);
+    IPLocator::setLogicalPort(locator, server_port);
+    eprosima::fastdds::dds::WireProtocolConfigQos wqos;
+    wqos.builtin.metatrafficUnicastLocatorList.push_back(locator);
+    wqos.default_unicast_locator_list.push_back(locator);
+
+    server.setManualTopicName(fixed_topic_name)
+            .set_domain_id(fixed_domain_id)
+            .lease_duration(short_lease, short_announcement)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(server_chaining_transport)
+            .set_wire_protocol_qos(wqos)
+            .init();
+    if (!server.isInitialized())
+    {
+        kill_child_on_exit();
+        FAIL() << "Server failed to initialize";
+    }
+
+    // Wait until the server has discovered Client1
+    server.wait_discovery(std::chrono::seconds(15), 1);
+    if (server.get_matched() < 1u)
+    {
+        kill_child_on_exit();
+        FAIL() << "Server did not discover Client1";
+    }
+
+    auto tcp_send_resources = [](const std::set<SenderResource*>& list) -> size_t
+            {
+                size_t count = 0;
+                for (auto& sr : list)
+                {
+                    if (sr->kind() == LOCATOR_KIND_TCPv4 || sr->kind() == LOCATOR_KIND_TCPv6)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            };
+
+    // Sanity check: server has one TCP send resource for Client1's physical locator.
+    auto send_resource_list = server_chaining_transport->get_send_resource_list();
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1u);
+
+    // SIGKILL Client1
+    ASSERT_EQ(kill(child_pid, SIGKILL), 0);
+    int wait_status = 0;
+    ASSERT_EQ(waitpid(child_pid, &wait_status, 0), child_pid);
+
+    // Bring up Client2 in the parent process, BEFORE the server's lease for Client1 expires.
+    // Client2 reuses the same listening port as Client1, so its bind_socket
+    // request will produce the same physical locator on the server side, and the server
+    // will reuse the TCP channel associated with the old send resource for Client1
+    PubSubWriter<HelloWorldPubSubType> client2(TEST_TOPIC_NAME);
+    setup_client(client2);
+    ASSERT_TRUE(client2.isInitialized());
+
+    client2.wait_discovery(1, std::chrono::seconds(15));
+    ASSERT_GE(client2.get_matched(), 1u);
+
+    // Wait long enough for Client1's lease to expire on the server. This is the moment
+    // when remove_participant_associated_send_resources() -> cleanup_sender_resources()
+    // is called for the physical locator that Client2's active channel is using.
+    std::this_thread::sleep_for(std::chrono::seconds(2 * short_lease.seconds));
+
+    // After the cleanup runs, with the fix in place, the send resource must still exist
+    // because Client2's channel is still connected at that locator. Without the fix, it
+    // would have been wrongly destroyed and the count would be 0.
+    send_resource_list = server_chaining_transport->get_send_resource_list();
+    ASSERT_EQ(tcp_send_resources(send_resource_list), 1u);
+
+    // Data must still flow from Client2 to the server, which proves the send resource is still usable.
+    auto data = default_helloworld_data_generator();
+    server.startReception(data);
+    client2.send(data);
+    EXPECT_TRUE(data.empty());
+    server.block_for_all();
+    EXPECT_TRUE(client2.waitForAllAcked(std::chrono::milliseconds(500)));
+#endif // _WIN32
+}
+
 // Test TCP transport on large message with best effort reliability
 TEST_P(TransportTCP, large_message_send_receive)
 {

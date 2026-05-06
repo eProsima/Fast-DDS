@@ -20,6 +20,7 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
+#include <fastdds/rtps/transport/ChainingTransport.hpp>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 #include <fastdds/utils/IPLocator.hpp>
@@ -553,7 +554,16 @@ void NetworkFactory::remove_participant_associated_send_resources(
     // all transports and let them decide what to do.
     for (auto& transport : mRegisteredTransports)
     {
-        TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
+        // A user-registered transport may be a ChainingTransport that wraps the actual
+        // TCP transport. Walk down the chain until we reach a non-chaining transport so
+        // that the cleanup is invoked on the concrete TCPTransportInterface.
+        TransportInterface* current = transport.get();
+        while (auto* chaining = dynamic_cast<ChainingTransport*>(current))
+        {
+            current = chaining->low_level_transport_.get();
+        }
+
+        TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(current);
         if (tcp_transport)
         {
             tcp_transport->cleanup_sender_resources(

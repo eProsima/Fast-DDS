@@ -816,10 +816,10 @@ bool TCPTransportInterface::OpenOutputChannel(
         }
     }
 
+    std::shared_ptr<TCPChannelResource> channel;
     // (Server-Client Topology OR LARGE DATA with PDP discovery after TCP connection) - Server side
     if (channel_resource != channel_resources_.end())
     {
-        std::shared_ptr<TCPChannelResource> channel;
         // There is an existing channel in channel_resources_ created for reception with the remote locator as key. Use it.
         channel = channel_resource->second;
         // Add logical port to channel if it's not there yet
@@ -867,7 +867,7 @@ bool TCPTransportInterface::OpenOutputChannel(
             EPROSIMA_LOG_INFO(RTCP, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
 
             // Create a TCP_CONNECT_TYPE channel
-            std::shared_ptr<TCPChannelResource> channel(
+            channel.reset(
 #if TLS_FOUND
                 (configuration()->apply_security) ?
                 static_cast<TCPChannelResource*>(
@@ -896,7 +896,7 @@ bool TCPTransportInterface::OpenOutputChannel(
 
     statistics_info_.add_entry(locator);
     send_resource_list.emplace_back(
-        static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
+        static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator, channel)));
 
     return true;
 }
@@ -1008,7 +1008,7 @@ bool TCPTransportInterface::CreateInitialConnect(
     channel->add_logical_port(logical_port, rtcp_message_manager_.get());
     statistics_info_.add_entry(locator);
     send_resource_list.emplace_back(
-        static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
+        static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator, channel)));
 
     std::vector<fastdds::rtps::IPFinder::info_IP> local_interfaces;
     // Check if the locator is from an owned interface to link all local interfaces to the channel
@@ -2040,8 +2040,24 @@ void TCPTransportInterface::cleanup_sender_resources(
             {
                 if (tcp_sender_resource->locator() == remote_participant_physical_locator)
                 {
-                    it = send_resource_list.erase(it);
-                    continue;
+                    // Keep the send resource only if a *different* connected channel currently owns this physical
+                    // locator (reconnection of a client with a listening port; see fill_local_physical_port).
+                    // The original (tearing-down) channel must still be cleaned up even if it is momentarily in
+                    // eEstablished because its UNBIND has not yet been processed by the listener thread.
+                    auto channel_resource_it = channel_resources_.find(tcp_sender_resource->locator());
+                    bool should_erase = true;
+                    if (channel_resource_it != channel_resources_.end() && channel_resource_it->second->connected())
+                    {
+                        const auto& stored = tcp_sender_resource->channel();
+                        const auto& current = channel_resource_it->second;
+                        const bool same_channel = !stored.owner_before(current) && !current.owner_before(stored);
+                        should_erase = same_channel;
+                    }
+                    if (should_erase)
+                    {
+                        it = send_resource_list.erase(it);
+                        continue;
+                    }
                 }
             }
             ++it;
