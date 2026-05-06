@@ -333,6 +333,141 @@ private:
 };
 
 /**
+ * Class MutableDiscoverySettings, to define the mutable attributes of the several discovery protocols available
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class MutableDiscoverySettings
+{
+public:
+
+    //! Discovery Server initial connections, needed if `discoveryProtocol` = CLIENT | SUPER_CLIENT | SERVER | BACKUP
+    eprosima::fastdds::rtps::LocatorList m_DiscoveryServers;
+
+    MutableDiscoverySettings() = default;
+
+    MutableDiscoverySettings(
+            const DiscoverySettings& discovery_settings)
+        : m_DiscoveryServers(discovery_settings.m_DiscoveryServers)
+    {
+    }
+
+    bool operator ==(
+            const MutableDiscoverySettings& b) const
+    {
+        return (this->m_DiscoveryServers == b.m_DiscoveryServers);
+    }
+
+};
+
+/**
+ * Class ConstantDiscoverySettings, to define the constant attributes of the several discovery protocols available
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class ConstantDiscoverySettings
+{
+public:
+
+    //! Chosen discovery protocol
+    DiscoveryProtocol discoveryProtocol = DiscoveryProtocol::SIMPLE;
+
+    /**
+     * If set to true, SimpleEDP would be used.
+     */
+    bool use_SIMPLE_EndpointDiscoveryProtocol = true;
+
+    /**
+     * If set to true, StaticEDP based on an XML file would be implemented.
+     * The XML filename must be provided.
+     */
+    bool use_STATIC_EndpointDiscoveryProtocol = false;
+
+    /**
+     * Lease Duration of the RTPSParticipant,
+     * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
+     */
+    dds::Duration_t leaseDuration = { 20, 0 };
+
+    /**
+     * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
+     * as well as to all Multicast ports.
+     */
+    dds::Duration_t leaseDuration_announcementperiod = { 3, 0 };
+
+    //!Initial announcements configuration
+    InitialAnnouncementConfig initial_announcements;
+
+    //!Attributes of the SimpleEDP protocol
+    SimpleEDPAttributes m_simpleEDP;
+
+    //! function that returns a PDP object (only if EXTERNAL selected)
+    PDPFactory m_PDPfactory{};
+    /**
+     * The period for the RTPSParticipant to:
+     *  send its Discovery Message to its servers
+     *  check for EDP endpoints matching
+     */
+    dds::Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
+
+    //! Filtering participants out depending on location
+    ParticipantFilteringFlags ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
+
+    ConstantDiscoverySettings() = default;
+
+    ConstantDiscoverySettings(
+            const DiscoverySettings& discovery_settings)
+        : discoveryProtocol(discovery_settings.discoveryProtocol)
+        , use_SIMPLE_EndpointDiscoveryProtocol(discovery_settings.use_SIMPLE_EndpointDiscoveryProtocol)
+        , use_STATIC_EndpointDiscoveryProtocol(discovery_settings.use_STATIC_EndpointDiscoveryProtocol)
+        , leaseDuration(discovery_settings.leaseDuration)
+        , leaseDuration_announcementperiod(discovery_settings.leaseDuration_announcementperiod)
+        , initial_announcements(discovery_settings.initial_announcements)
+        , m_simpleEDP(discovery_settings.m_simpleEDP)
+        , m_PDPfactory(discovery_settings.m_PDPfactory)
+        , discoveryServer_client_syncperiod(discovery_settings.discoveryServer_client_syncperiod)
+        , ignoreParticipantFlags(discovery_settings.ignoreParticipantFlags)
+        , static_edp_xml_config_(discovery_settings.static_edp_xml_config())
+    {
+    }
+
+    bool operator ==(
+            const ConstantDiscoverySettings& b) const
+    {
+        return (this->discoveryProtocol == b.discoveryProtocol) &&
+               (this->use_SIMPLE_EndpointDiscoveryProtocol == b.use_SIMPLE_EndpointDiscoveryProtocol) &&
+               (this->use_STATIC_EndpointDiscoveryProtocol == b.use_STATIC_EndpointDiscoveryProtocol) &&
+               (this->discoveryServer_client_syncperiod == b.discoveryServer_client_syncperiod) &&
+               (this->m_PDPfactory == b.m_PDPfactory) &&
+               (this->leaseDuration == b.leaseDuration) &&
+               (this->leaseDuration_announcementperiod == b.leaseDuration_announcementperiod) &&
+               (this->initial_announcements == b.initial_announcements) &&
+               (this->m_simpleEDP == b.m_simpleEDP) &&
+               (this->static_edp_xml_config_ == b.static_edp_xml_config_) &&
+               (this->ignoreParticipantFlags == b.ignoreParticipantFlags);
+    }
+
+    /**
+     * Get the static endpoint XML configuration.
+     * @return URI specifying the static endpoint XML configuration.
+     * The string could contain a filename (file://) or the XML content directly (data://).
+     */
+    const char* static_edp_xml_config() const
+    {
+        return static_edp_xml_config_.c_str();
+    }
+
+private:
+
+    //! URI specifying the static EDP XML configuration, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
+    //! This string could contain a filename or the XML content directly.
+    std::string static_edp_xml_config_ = "";
+
+};
+
+// Forward declaration to allow assignment from Constant and Mutable attributes.
+class BuiltinConstantAttributes;
+class BuiltinMutableAttributes;
+
+/**
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -388,6 +523,17 @@ public:
 
     virtual ~BuiltinAttributes() = default;
 
+    /**
+     * Composes this object from a BuiltinConstantAttributes and a BuiltinMutableAttributes.
+     * Every field is assigned: constant fields are taken from @c builtin_const, mutable fields
+     * are taken from @c builtin_mutable.
+     * @param builtin_const Constant builtin attributes to copy from.
+     * @param builtin_mutable Mutable builtin attributes to copy from.
+     */
+    void compose(
+            const BuiltinConstantAttributes& builtin_const,
+            const BuiltinMutableAttributes& builtin_mutable);
+
     bool operator ==(
             const BuiltinAttributes& b) const
     {
@@ -410,14 +556,164 @@ public:
 };
 
 /**
+ * Class BuiltinMutableAttributes, to define the behavior of the mutable RTPSParticipant builtin protocols.
+ * This class is a subset of BuiltinAttributes. It is separated to keep the logic of constant and mutable attributes separated.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class BuiltinMutableAttributes
+{
+public:
+
+    //! Discovery protocol related attributes
+    MutableDiscoverySettings discovery_config;
+
+    //! Metatraffic Unicast Locator List
+    LocatorList_t metatrafficUnicastLocatorList;
+
+    //! The collection of external locators to use for communication on metatraffic topics.
+    fastdds::rtps::ExternalLocators metatraffic_external_unicast_locators;
+
+    BuiltinMutableAttributes() = default;
+
+    BuiltinMutableAttributes(
+            const BuiltinAttributes& builtin)
+        : discovery_config(builtin.discovery_config)
+        , metatrafficUnicastLocatorList(builtin.metatrafficUnicastLocatorList)
+        , metatraffic_external_unicast_locators(builtin.metatraffic_external_unicast_locators)
+    {
+    }
+
+    ~BuiltinMutableAttributes() = default;
+
+    bool operator ==(
+            const BuiltinMutableAttributes& b) const
+    {
+        return (this->discovery_config == b.discovery_config) &&
+               (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
+               (this->metatraffic_external_unicast_locators == b.metatraffic_external_unicast_locators);
+    }
+
+};
+
+/**
+ * Class BuiltinConstantAttributes, to define the behavior of the constant RTPSParticipant builtin protocols.
+ * This class is a subset of BuiltinAttributes. It is separated to keep the logic of constant and mutable attributes separated.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class BuiltinConstantAttributes
+{
+public:
+
+    /**
+     * Discovery protocol related attributes. Only the discovery server list is mutable, which must be
+     * accessed through the BuiltinMutableAttributes class. Its value in this class is only used as initial value.
+     */
+    DiscoverySettings discovery_config;
+
+    //! Indicates to use the WriterLiveliness protocol.
+    bool use_WriterLivelinessProtocol = true;
+
+    //! Network Configuration
+    NetworkConfigSet_t network_configuration = 0;
+
+    //! Metatraffic Multicast Locator List
+    LocatorList_t metatrafficMulticastLocatorList;
+
+    //! Initial peers.
+    LocatorList_t initialPeersList;
+
+    //! Memory policy for builtin readers
+    MemoryManagementPolicy_t readerHistoryMemoryPolicy =
+            MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+    //! Maximum payload size for builtin readers
+    uint32_t readerPayloadSize = BUILTIN_DATA_MAX_SIZE;
+
+    //! Memory policy for builtin writers
+    MemoryManagementPolicy_t writerHistoryMemoryPolicy =
+            MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+    //! Maximum payload size for builtin writers
+    uint32_t writerPayloadSize = BUILTIN_DATA_MAX_SIZE;
+
+    //! Mutation tries if the port is being used.
+    uint32_t mutation_tries = 100u;
+
+    //! Set to true to avoid multicast traffic on builtin endpoints
+    bool avoid_builtin_multicast = true;
+
+    //! Flow controller name to use for the builtin writers
+    std::string flow_controller_name = "";
+
+    BuiltinConstantAttributes() = default;
+
+    BuiltinConstantAttributes(
+            const BuiltinAttributes& builtin)
+        : discovery_config(builtin.discovery_config)
+        , use_WriterLivelinessProtocol(builtin.use_WriterLivelinessProtocol)
+        , network_configuration(builtin.network_configuration)
+        , metatrafficMulticastLocatorList(builtin.metatrafficMulticastLocatorList)
+        , initialPeersList(builtin.initialPeersList)
+        , readerHistoryMemoryPolicy(builtin.readerHistoryMemoryPolicy)
+        , readerPayloadSize(builtin.readerPayloadSize)
+        , writerHistoryMemoryPolicy(builtin.writerHistoryMemoryPolicy)
+        , writerPayloadSize(builtin.writerPayloadSize)
+        , mutation_tries(builtin.mutation_tries)
+        , avoid_builtin_multicast(builtin.avoid_builtin_multicast)
+        , flow_controller_name(builtin.flow_controller_name)
+    {
+    }
+
+    ~BuiltinConstantAttributes() = default;
+
+    bool operator ==(
+            const BuiltinConstantAttributes& b) const
+    {
+        return (this->discovery_config == b.discovery_config) &&
+               (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
+               (this->network_configuration == b.network_configuration) &&
+               (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
+               (this->initialPeersList == b.initialPeersList) &&
+               (this->readerHistoryMemoryPolicy == b.readerHistoryMemoryPolicy) &&
+               (this->readerPayloadSize == b.readerPayloadSize) &&
+               (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
+               (this->writerPayloadSize == b.writerPayloadSize) &&
+               (this->mutation_tries == b.mutation_tries) &&
+               (this->flow_controller_name == b.flow_controller_name) &&
+               (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
+    }
+
+};
+inline void BuiltinAttributes::compose(
+        const BuiltinConstantAttributes& builtin_const,
+        const BuiltinMutableAttributes& builtin_mutable)
+{
+    discovery_config = builtin_const.discovery_config;
+    discovery_config.m_DiscoveryServers = builtin_mutable.discovery_config.m_DiscoveryServers;
+    use_WriterLivelinessProtocol = builtin_const.use_WriterLivelinessProtocol;
+    network_configuration = builtin_const.network_configuration;
+    metatrafficUnicastLocatorList = builtin_mutable.metatrafficUnicastLocatorList;
+    metatrafficMulticastLocatorList = builtin_const.metatrafficMulticastLocatorList;
+    metatraffic_external_unicast_locators = builtin_mutable.metatraffic_external_unicast_locators;
+    initialPeersList = builtin_const.initialPeersList;
+    readerHistoryMemoryPolicy = builtin_const.readerHistoryMemoryPolicy;
+    readerPayloadSize = builtin_const.readerPayloadSize;
+    writerHistoryMemoryPolicy = builtin_const.writerHistoryMemoryPolicy;
+    writerPayloadSize = builtin_const.writerPayloadSize;
+    mutation_tries = builtin_const.mutation_tries;
+    avoid_builtin_multicast = builtin_const.avoid_builtin_multicast;
+    flow_controller_name = builtin_const.flow_controller_name;
+}
+
+/**
  * Class RTPSParticipantAttributes used to define different aspects of a RTPSParticipant.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
 class RTPSParticipantAttributes
 {
-    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
-
 public:
+
+    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
 
     RTPSParticipantAttributes() = default;
 
@@ -620,6 +916,232 @@ private:
 
     //! Name of the participant.
     fastcdr::string_255 name{"RTPSParticipant"};
+};
+
+/**
+ * Class RTPSParticipantMutableAttributes used to define mutable aspects of a RTPSParticipant.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class RTPSParticipantMutableAttributes
+{
+public:
+
+    RTPSParticipantMutableAttributes() = default;
+
+    RTPSParticipantMutableAttributes(
+            const RTPSParticipantAttributes& attrs)
+        : defaultUnicastLocatorList(attrs.defaultUnicastLocatorList)
+        , default_external_unicast_locators(attrs.default_external_unicast_locators)
+        , userData(attrs.userData)
+        , builtin(attrs.builtin)
+    {
+    }
+
+    ~RTPSParticipantMutableAttributes() = default;
+
+    bool operator ==(
+            const RTPSParticipantMutableAttributes& b) const
+    {
+        return (this->defaultUnicastLocatorList == b.defaultUnicastLocatorList) &&
+               (this->default_external_unicast_locators == b.default_external_unicast_locators) &&
+               (this->userData == b.userData) &&
+               (this->builtin == b.builtin);
+    }
+
+    /**
+     * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
+     * that it was defined with NO UnicastLocators. At least ONE locator should be included in this list.
+     */
+    LocatorList_t defaultUnicastLocatorList;
+
+    /**
+     * The collection of external locators to use for communication on user created topics.
+     */
+    fastdds::rtps::ExternalLocators default_external_unicast_locators;
+
+    //! User Data of the participant
+    std::vector<octet> userData;
+
+    //! Builtin parameters.
+    BuiltinMutableAttributes builtin;
+};
+
+/**
+ * Class RTPSParticipantConstantAttributes used to define constant aspects of a RTPSParticipant.
+ * @ingroup RTPS_ATTRIBUTES_MODULE
+ */
+class RTPSParticipantConstantAttributes
+{
+public:
+
+    using FlowControllerDescriptorList = std::vector<std::shared_ptr<fastdds::rtps::FlowControllerDescriptor>>;
+
+    RTPSParticipantConstantAttributes() = default;
+
+    RTPSParticipantConstantAttributes(
+            const RTPSParticipantAttributes& attrs)
+        : defaultMulticastLocatorList(attrs.defaultMulticastLocatorList)
+        , ignore_non_matching_locators(attrs.ignore_non_matching_locators)
+        , sendSocketBufferSize(attrs.sendSocketBufferSize)
+        , listenSocketBufferSize(attrs.listenSocketBufferSize)
+        , netmaskFilter(attrs.netmaskFilter)
+        , prefix(attrs.prefix)
+        , builtin(attrs.builtin)
+        , port(attrs.port)
+        , participantID(attrs.participantID)
+        , easy_mode_ip(attrs.easy_mode_ip)
+        , userTransports(attrs.userTransports)
+        , useBuiltinTransports(attrs.useBuiltinTransports)
+        , allocation(attrs.allocation)
+        , properties(attrs.properties)
+        , flow_controllers(attrs.flow_controllers)
+        , builtin_controllers_sender_thread(attrs.builtin_controllers_sender_thread)
+        , timed_events_thread(attrs.timed_events_thread)
+        , discovery_server_thread(attrs.discovery_server_thread)
+        , typelookup_service_thread(attrs.typelookup_service_thread)
+        , builtin_transports_reception_threads(attrs.builtin_transports_reception_threads)
+#if HAVE_SECURITY
+        , security_log_thread(attrs.security_log_thread)
+#endif // if HAVE_SECURITY
+        , max_msg_size_no_frag(attrs.max_msg_size_no_frag)
+        , name(attrs.getName())
+    {
+    }
+
+    ~RTPSParticipantConstantAttributes() = default;
+
+    bool operator ==(
+            const RTPSParticipantConstantAttributes& b) const
+    {
+        return (this->defaultMulticastLocatorList == b.defaultMulticastLocatorList) &&
+               (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
+               (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
+               (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
+               (this->netmaskFilter == b.netmaskFilter) &&
+               (this->builtin == b.builtin) &&
+               (this->port == b.port) &&
+               (this->participantID == b.participantID) &&
+               (this->easy_mode_ip == b.easy_mode_ip) &&
+               (this->useBuiltinTransports == b.useBuiltinTransports) &&
+               (this->allocation == b.allocation) &&
+               (this->properties == b.properties) &&
+               (this->prefix == b.prefix) &&
+               (this->flow_controllers == b.flow_controllers) &&
+               (this->builtin_controllers_sender_thread == b.builtin_controllers_sender_thread) &&
+               (this->timed_events_thread == b.timed_events_thread) &&
+#if HAVE_SECURITY
+               (this->security_log_thread == b.security_log_thread) &&
+#endif // if HAVE_SECURITY
+               (this->discovery_server_thread == b.discovery_server_thread) &&
+               (this->typelookup_service_thread == b.typelookup_service_thread) &&
+               (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
+    }
+
+    /**
+     * Default list of Multicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the
+     * case that it was defined with NO MulticastLocators. This is usually left empty.
+     */
+    LocatorList_t defaultMulticastLocatorList;
+
+    /**
+     * Whether locators that don't match with the announced locators should be kept.
+     */
+    bool ignore_non_matching_locators = false;
+
+    /*!
+     * @brief Send socket buffer size for the send resource. Zero value indicates to use default system buffer size.
+     * Default value: 0.
+     */
+    uint32_t sendSocketBufferSize = 0;
+
+    /*! Listen socket buffer for all listen resources. Zero value indicates to use default system buffer size.
+     * Default value: 0.
+     */
+    uint32_t listenSocketBufferSize = 0;
+
+    //! Netmask filter configuration
+    fastdds::rtps::NetmaskFilterKind netmaskFilter = fastdds::rtps::NetmaskFilterKind::AUTO;
+
+    //! Optionally allows user to define the GuidPrefix_t
+    GuidPrefix_t prefix;
+
+    inline bool ReadguidPrefix(
+            const char* pfx)
+    {
+        return bool(std::istringstream(pfx) >> prefix);
+    }
+
+    //! Builtin parameters.
+    BuiltinConstantAttributes builtin;
+
+    //! Port Parameters
+    PortParameters port;
+
+    //! Participant ID
+    int32_t participantID = -1;
+
+    //! IP of the Host where master Server is located (EASY_MODE context)
+    std::string easy_mode_ip = "";
+
+    //! User defined transports to use alongside or in place of builtins.
+    std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
+
+    //! Set as false to disable the creation of the default transports.
+    bool useBuiltinTransports = true;
+
+    //! Holds allocation limits affecting collections managed by a participant.
+    RTPSParticipantAllocationAttributes allocation;
+
+    //! Property policies
+    PropertyPolicy properties;
+
+    //! Set the name of the participant.
+    inline void setName(
+            const char* nam)
+    {
+        name = nam;
+    }
+
+    //! Get the name of the participant.
+    inline const char* getName() const
+    {
+        return name.c_str();
+    }
+
+    //! Flow controllers.
+    FlowControllerDescriptorList flow_controllers;
+
+    //! Thread settings for the builtin flow controllers sender threads
+    fastdds::rtps::ThreadSettings builtin_controllers_sender_thread;
+
+    //! Thread settings for the timed events thread
+    fastdds::rtps::ThreadSettings timed_events_thread;
+
+    //! Thread settings for the discovery server thread
+    fastdds::rtps::ThreadSettings discovery_server_thread;
+
+    //! Thread settings for the builtin TypeLookup service requests and replies threads
+    fastdds::rtps::ThreadSettings typelookup_service_thread;
+
+    //! Thread settings for the builtin transports reception threads
+    fastdds::rtps::ThreadSettings builtin_transports_reception_threads;
+
+#if HAVE_SECURITY
+    //! Thread settings for the security log thread
+    fastdds::rtps::ThreadSettings security_log_thread;
+#endif // if HAVE_SECURITY
+
+    /*! Maximum message size used to avoid fragmentation, set ONLY in LARGE_DATA. If this value is
+     * not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
+     * higher than 65500K.
+     */
+    uint32_t max_msg_size_no_frag = 0;
+
+private:
+
+    //! Name of the participant.
+    fastcdr::string_255 name{"RTPSParticipant"};
+
 };
 
 }  // namespace rtps
