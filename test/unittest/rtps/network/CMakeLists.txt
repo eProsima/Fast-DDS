@@ -33,6 +33,7 @@ set(NETWORKFACTORYTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp

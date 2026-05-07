@@ -140,6 +140,7 @@ set(PDPTESTS_SOURCE PDPTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/network.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChainingTransport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp

@@ -32,9 +32,11 @@ public:
 
     TCPSenderResource(
             TCPTransportInterface& transport,
-            Locator_t& locator)
+            Locator_t& locator,
+            const std::shared_ptr<TCPChannelResource>& channel = {})
         : SenderResource(transport.kind())
         , locator_(locator)
+        , channel_(channel)
     {
         // Implementation functions are bound to the right transport parameters
         clean_up = [this, &transport]()
@@ -66,6 +68,11 @@ public:
     Locator_t& locator()
     {
         return locator_;
+    }
+
+    const std::weak_ptr<TCPChannelResource>& channel() const
+    {
+        return channel_;
     }
 
     static TCPSenderResource* cast(
@@ -104,6 +111,9 @@ private:
             const SenderResource&) = delete;
 
     Locator_t locator_;
+
+    // Identity of the TCP channel at creation time, used to detect a reconnected channel sharing the same locator.
+    std::weak_ptr<TCPChannelResource> channel_;
 };
 
 } // namespace rtps
