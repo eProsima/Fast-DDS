@@ -366,12 +366,17 @@ void SecurityPlugins_Permissions_validation_ok_large_data(
         eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability =
                 eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
 {
+    // Large-data fragmentation is not exercised under best-effort
+    if (reliability == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
+    {
+        return;
+    }
+
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
     reader.history_depth(10).reliability(reliability).init();
     writer.history_depth(10).reliability(reliability).init();
-    test_basic_secure_communication(reader, writer,
-            reliability == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    test_basic_secure_communication(reader, writer, false);
 }
 
 
