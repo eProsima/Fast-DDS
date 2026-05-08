@@ -45,8 +45,7 @@ using namespace eprosima::fastdds::rtps;
 enum communication_type
 {
     TRANSPORT,
-    INTRAPROCESS,
-    DATASHARING
+    INTRAPROCESS
 };
 
 // A LogConsumer that just counts the number of entries consumed
@@ -248,9 +247,6 @@ public:
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
                     library_settings);
                 break;
-            case DATASHARING:
-                enable_datasharing = true;
-                break;
             case TRANSPORT:
             default:
                 break;
@@ -267,9 +263,6 @@ public:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
                     library_settings);
-                break;
-            case DATASHARING:
-                enable_datasharing = false;
                 break;
             case TRANSPORT:
             default:
@@ -6451,9 +6444,6 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
             {
                 case INTRAPROCESS:
                     test_name = "Intraprocess";
-                    break;
-                case DATASHARING:
-                    test_name = "Datasharing";
                     break;
                 case TRANSPORT:
                 default:
