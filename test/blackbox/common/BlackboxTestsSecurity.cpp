@@ -48,6 +48,12 @@ enum communication_type
     INTRAPROCESS
 };
 
+enum reliability
+{
+    TEST_BEST_EFFORT,
+    TEST_RELIABLE
+};
+
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
 {
@@ -233,14 +239,14 @@ static void CommonPermissionsConfigure(
     CommonPermissionsConfigureWriter(writer, governance_file, permissions_file, extra_properties);
 }
 
-class Security : public testing::TestWithParam<communication_type>
+class Security : public testing::TestWithParam<std::tuple<communication_type, reliability>>
 {
 public:
 
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -251,12 +257,15 @@ public:
             default:
                 break;
         }
+        reliability_ = (std::get<1>(GetParam()) == TEST_RELIABLE) ?
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+                eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
 
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (GetParam())
+        switch (std::get<0>(GetParam()))
         {
             // Only need to tear down transports
             case INTRAPROCESS:
@@ -270,12 +279,14 @@ public:
         }
     }
 
+    eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_;
 };
 
 // This method tests basic reliable communication with security plugins configured
 void test_basic_secure_communication(
         PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer)
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        bool is_best_effort = false)
 {
     ASSERT_TRUE(reader.isInitialized());
     ASSERT_TRUE(writer.isInitialized());
@@ -296,34 +307,57 @@ void test_basic_secure_communication(
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
+
+    if (is_best_effort)
+    {
+        // For best effort, samples may be lost if the security crypto context was not
+        // fully established on the reader side before the initial burst arrived.
+        // Retry sending once if fewer than 2 samples were received within the timeout.
+        if (reader.block_for_all(std::chrono::seconds(2)) < 2)
+        {
+            auto retry_data = default_helloworld_data_generator();
+            reader.startReception(retry_data);
+            writer.send(retry_data);
+            reader.block_for_at_least(2);
+        }
+    }
+    else
+    {
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
+    }
 }
 
 // This method tests basic reliable communication with security plugins configured
 void SecurityPlugins_Permissions_validation_ok_common(
         PubSubReader<HelloWorldPubSubType>& reader,
         PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file)
+        const std::string& governance_file,
+        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability =
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
 {
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
-    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    test_basic_secure_communication(reader, writer);
+    reader.history_depth(10).reliability(reliability).init();
+    writer.history_depth(10).reliability(reliability).init();
+    test_basic_secure_communication(reader, writer,
+            reliability == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
 }
 
 // This method tests basic reliable communication with large data with security plugins configured
 void SecurityPlugins_Permissions_validation_ok_large_data(
         PubSubReader<Data1mbPubSubType>& reader,
         PubSubWriter<Data1mbPubSubType>& writer,
-        const std::string& governance_file)
+        const std::string& governance_file,
+        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability =
+                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
 {
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
-    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    test_basic_secure_communication(reader, writer);
+    reader.history_depth(10).reliability(reliability).init();
+    writer.history_depth(10).reliability(reliability).init();
+    test_basic_secure_communication(reader, writer,
+            reliability == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
 }
 
 
@@ -795,7 +829,7 @@ TEST_P(Security, SecurityPlugins_governance_rule_order)
         PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic");
         std::string governance_file("governance_rule_order_test.smime");
 
-        SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+        SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     }
 
     {
@@ -1452,13 +1486,13 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
 
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 // *INDENT-OFF*
@@ -1474,7 +1508,7 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubReader<Data1mbPubSubType> reader_large_data(topic_name);
     PubSubWriter<Data1mbPubSubType> writer_large_data(topic_name);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 // *INDENT-OFF*
@@ -1485,12 +1519,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1502,12 +1536,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1519,12 +1553,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1536,12 +1570,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1553,12 +1587,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1570,12 +1604,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1587,12 +1621,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1606,12 +1640,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1625,12 +1659,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1644,12 +1678,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1663,12 +1697,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessEncrypt
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1680,12 +1714,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1697,12 +1731,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1714,12 +1748,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1731,12 +1765,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1748,12 +1782,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1765,12 +1799,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1782,12 +1816,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1800,12 +1834,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1819,12 +1853,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1838,12 +1872,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1857,12 +1891,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 // *INDENT-OFF*
@@ -1875,12 +1909,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessNone_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1892,12 +1926,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1909,12 +1943,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1926,12 +1960,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1943,12 +1977,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1960,12 +1994,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1977,12 +2011,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -1994,12 +2028,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2012,12 +2046,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2031,12 +2065,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2050,12 +2084,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2069,12 +2103,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2088,12 +2122,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2105,12 +2139,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2122,12 +2156,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2139,12 +2173,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2156,12 +2190,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2173,12 +2207,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2190,12 +2224,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2207,12 +2241,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2225,12 +2259,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2244,12 +2278,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2263,12 +2297,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2282,12 +2316,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2302,12 +2336,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2319,12 +2353,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2336,12 +2370,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2353,12 +2387,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2370,12 +2404,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2387,12 +2421,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2404,12 +2438,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2421,12 +2455,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2438,12 +2472,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2457,12 +2491,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2476,12 +2510,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2495,12 +2529,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2514,12 +2548,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2531,12 +2565,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2548,12 +2582,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2565,12 +2599,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2582,12 +2616,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2599,12 +2633,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2616,12 +2650,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2633,12 +2667,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2650,12 +2684,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2669,12 +2703,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2688,12 +2722,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2707,12 +2741,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2726,12 +2760,12 @@ TEST_P(Security, SecurityPlugins_PermissionsDisableDiscoveryEnableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_disable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2743,12 +2777,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2760,12 +2794,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2777,12 +2811,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2794,12 +2828,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2811,12 +2845,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2828,12 +2862,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2845,12 +2879,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2862,12 +2896,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2881,12 +2915,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2900,12 +2934,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2919,12 +2953,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2938,12 +2972,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessEncrypt_
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2955,12 +2989,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2972,12 +3006,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -2989,12 +3023,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3006,12 +3040,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3023,12 +3057,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3040,12 +3074,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3057,12 +3091,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3074,12 +3108,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3093,12 +3127,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3112,12 +3146,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3131,12 +3165,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3150,12 +3184,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessNone_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3167,12 +3201,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3184,12 +3218,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3201,12 +3235,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3218,12 +3252,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3235,12 +3269,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3252,12 +3286,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3269,12 +3303,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3286,12 +3320,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3305,12 +3339,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3324,12 +3358,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3343,12 +3377,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3362,12 +3396,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryDisableAccessSign_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3379,12 +3413,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3396,12 +3430,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3413,12 +3447,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3430,12 +3464,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3447,12 +3481,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3464,12 +3498,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3481,12 +3515,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3498,12 +3532,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3517,12 +3551,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3536,12 +3570,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3555,12 +3589,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3574,12 +3608,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessEncrypt_v
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3591,12 +3625,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3608,12 +3642,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3625,12 +3659,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3642,12 +3676,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3659,12 +3693,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3676,12 +3710,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3693,12 +3727,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3710,12 +3744,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3729,12 +3763,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3748,12 +3782,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3767,12 +3801,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3786,12 +3820,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessNone_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3803,12 +3837,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3820,12 +3854,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3837,12 +3871,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3854,12 +3888,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3871,12 +3905,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3888,12 +3922,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3905,12 +3939,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3922,12 +3956,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3941,12 +3975,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3960,12 +3994,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3979,12 +4013,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -3998,12 +4032,12 @@ TEST_P(Security, SecurityPlugins_PermissionsEnableDiscoveryEnableAccessSign_vali
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_enable_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4015,12 +4049,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4032,12 +4066,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4049,12 +4083,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4066,12 +4100,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4083,12 +4117,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4100,12 +4134,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4117,12 +4151,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4134,12 +4168,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4153,12 +4187,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4172,12 +4206,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4191,12 +4225,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4210,12 +4244,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessEncrypt_va
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4227,12 +4261,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4244,12 +4278,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4261,12 +4295,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4278,12 +4312,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4295,12 +4329,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4312,12 +4346,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4329,12 +4363,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4346,12 +4380,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4365,12 +4399,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4384,12 +4418,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4403,12 +4437,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4422,12 +4456,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessNone_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4439,12 +4473,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4456,12 +4490,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4473,12 +4507,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4490,12 +4524,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4507,12 +4541,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4524,12 +4558,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4541,12 +4575,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4558,12 +4592,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4577,12 +4611,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4596,12 +4630,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4615,12 +4649,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4634,12 +4668,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryDisableAccessSign_valid
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_disable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4651,12 +4685,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4668,12 +4702,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4685,12 +4719,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4702,12 +4736,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4719,12 +4753,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4736,12 +4770,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4753,12 +4787,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4770,12 +4804,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4789,12 +4823,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4808,12 +4842,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4827,12 +4861,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4846,12 +4880,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessEncrypt_val
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_encrypt.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4863,12 +4897,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4880,12 +4914,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4897,12 +4931,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4914,12 +4948,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4931,12 +4965,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4948,12 +4982,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4965,12 +4999,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -4982,12 +5016,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5001,12 +5035,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5020,12 +5054,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5039,12 +5073,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5058,12 +5092,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessNone_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_none.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5075,12 +5109,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5092,12 +5126,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5109,12 +5143,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5126,12 +5160,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5143,12 +5177,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5160,12 +5194,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5177,12 +5211,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5194,12 +5228,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5213,12 +5247,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5232,12 +5266,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5251,12 +5285,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -5270,12 +5304,12 @@ TEST_P(Security, SecurityPlugins_PermissionsSignDiscoveryEnableAccessSign_valida
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     std::string governance_file("governance_sign_discovery_enable_access_sign.smime");
 
-    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file);
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, governance_file, reliability_);
     // Test for large data
     PubSubReader<Data1mbPubSubType> reader_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer_large_data(TEST_LARGE_DATA_TOPIC_NAME);
     SecurityPlugins_Permissions_validation_ok_large_data(reader_large_data,
-            writer_large_data, governance_file);
+            writer_large_data, governance_file, reliability_);
 }
 
 
@@ -6120,11 +6154,14 @@ TEST(Security, DatagramInjectionOnReader_23836)
 
 GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
-        testing::Values(TRANSPORT, INTRAPROCESS),
+        ::testing::Combine(
+            ::testing::Values(TRANSPORT, INTRAPROCESS),
+            ::testing::Values(TEST_BEST_EFFORT, TEST_RELIABLE)
+            ),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
             std::string test_name;
-            switch (info.param)
+            switch (std::get<0>(info.param))
             {
                 case INTRAPROCESS:
                     test_name = "Intraprocess";
@@ -6132,6 +6169,18 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
                 case TRANSPORT:
                 default:
                     test_name = "Transport";
+                    break;
+            }
+
+            switch (std::get<1>(info.param))
+            {
+                case TEST_BEST_EFFORT:
+                    test_name += "_BestEffort";
+                    break;
+                case TEST_RELIABLE:
+                    test_name += "_Reliable";
+                    break;
+                default:
                     break;
             }
 
