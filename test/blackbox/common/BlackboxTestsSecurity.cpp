@@ -1015,7 +1015,6 @@ TEST_P(Security, SecurityPlugins_Permissions_validation_fail_on_partition_wildca
         // Wildcards are only considered on PERMISSIONS, partition values should be treated as plain strings
         PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic");
         PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic");
-        std::string governance_file("governance_helloworld_all_enable.smime");
 
         PropertyPolicy pub_property_policy, sub_property_policy;
 
