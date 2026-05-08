@@ -280,17 +280,11 @@ public:
 };
 
 // This method tests basic reliable communication with security plugins configured
-void SecurityPlugins_Permissions_validation_ok_common(
+void test_basic_secure_communication(
         PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file)
+        PubSubWriter<HelloWorldPubSubType>& writer)
 {
-    CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
-
-    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
-
-    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for authorization
@@ -309,9 +303,21 @@ void SecurityPlugins_Permissions_validation_ok_common(
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
-
     // Block reader until reception finished or timeout.
     reader.block_for_all();
+}
+
+// This method tests basic reliable communication with security plugins configured
+void SecurityPlugins_Permissions_validation_ok_common(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file)
+{
+    CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
+
+    reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+    test_basic_secure_communication(reader, writer);
 }
 
 // This method tests basic reliable communication with large data with security plugins configured
@@ -323,30 +329,8 @@ void SecurityPlugins_Permissions_validation_ok_large_data(
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
     reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    ASSERT_TRUE(reader.isInitialized());
-
     writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_data300kb_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
+    test_basic_secure_communication(reader, writer);
 }
 
 
