@@ -282,10 +282,24 @@ public:
     eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_;
 };
 
+// Per-type default data generator dispatch for test_basic_secure_communication.
+inline std::list<HelloWorld> default_secure_data_generator(
+        HelloWorldPubSubType*)
+{
+    return default_helloworld_data_generator();
+}
+
+inline std::list<Data1mb> default_secure_data_generator(
+        Data1mbPubSubType*)
+{
+    return default_data300kb_data_generator();
+}
+
 // This method tests basic reliable communication with security plugins configured
+template<typename T>
 void test_basic_secure_communication(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
+        PubSubReader<T>& reader,
+        PubSubWriter<T>& writer,
         bool is_best_effort = false)
 {
     ASSERT_TRUE(reader.isInitialized());
@@ -299,7 +313,7 @@ void test_basic_secure_communication(
     writer.wait_discovery();
     reader.wait_discovery();
 
-    auto data = default_helloworld_data_generator();
+    auto data = default_secure_data_generator(static_cast<T*>(nullptr));
 
     reader.startReception(data);
 
@@ -315,7 +329,7 @@ void test_basic_secure_communication(
         // Retry sending once if fewer than 2 samples were received within the timeout.
         if (reader.block_for_all(std::chrono::seconds(2)) < 2)
         {
-            auto retry_data = default_helloworld_data_generator();
+            auto retry_data = default_secure_data_generator(static_cast<T*>(nullptr));
             reader.startReception(retry_data);
             writer.send(retry_data);
             reader.block_for_at_least(2);
