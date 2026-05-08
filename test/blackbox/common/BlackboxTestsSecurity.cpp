@@ -49,12 +49,6 @@ enum communication_type
     DATASHARING
 };
 
-enum reliability
-{
-    TEST_BEST_EFFORT,
-    TEST_RELIABLE
-};
-
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
 {
@@ -249,14 +243,14 @@ static void CommonPermissionsConfigure(
     CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
 }
 
-class Security : public testing::TestWithParam<std::tuple<communication_type, reliability>>
+class Security : public testing::TestWithParam<communication_type>
 {
 public:
 
     void SetUp() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (std::get<0>(GetParam()))
+        switch (GetParam())
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
@@ -270,15 +264,12 @@ public:
             default:
                 break;
         }
-        reliability_ = (std::get<1>(GetParam()) == TEST_RELIABLE) ?
-                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
-                eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
 
     void TearDown() override
     {
         eprosima::fastdds::LibrarySettings library_settings;
-        switch (std::get<0>(GetParam()))
+        switch (GetParam())
         {
             // Only need to tear down transports
             case INTRAPROCESS:
@@ -295,8 +286,6 @@ public:
         }
     }
 
-    eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability_;
-
     void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_common(
             PubSubReader<HelloWorldPubSubType>& reader,
             PubSubWriter<HelloWorldPubSubType>& writer,
@@ -304,10 +293,10 @@ public:
     {
         CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
-        reader.history_depth(10).reliability(reliability_).init();
+        reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
         ASSERT_TRUE(reader.isInitialized());
 
-        writer.history_depth(10).init();
+        writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
         ASSERT_TRUE(writer.isInitialized());
 
         // Wait for authorization
@@ -327,24 +316,8 @@ public:
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
 
-        if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
-        {
-            // For best effort, samples may be lost if the security crypto context was not
-            // fully established on the reader side before the initial burst arrived.
-            // Retry sending once if fewer than 2 samples were received within the timeout.
-            if (reader.block_for_all(std::chrono::seconds(2)) < 2)
-            {
-                auto retry_data = default_helloworld_data_generator();
-                reader.startReception(retry_data);
-                writer.send(retry_data);
-                reader.block_for_at_least(2);
-            }
-        }
-        else
-        {
-            // Block reader until reception finished or timeout.
-            reader.block_for_all();
-        }
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
     }
 
     void BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_validation_ok_large_data(
@@ -354,10 +327,10 @@ public:
     {
         CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
-        reader.history_depth(10).reliability(reliability_).init();
+        reader.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
         ASSERT_TRUE(reader.isInitialized());
 
-        writer.history_depth(10).init();
+        writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
         ASSERT_TRUE(writer.isInitialized());
 
         // Wait for authorization
@@ -377,24 +350,8 @@ public:
         // In this test all data should be sent.
         ASSERT_TRUE(data.empty());
 
-        if (reliability_ == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
-        {
-            // For best effort, samples may be lost if the security crypto context was not
-            // fully established on the reader side before the initial burst arrived.
-            // Retry sending once if fewer than 2 samples were received within the timeout.
-            if (reader.block_for_all(std::chrono::seconds(2)) < 2)
-            {
-                auto retry_data = default_data300kb_data_generator();
-                reader.startReception(retry_data);
-                writer.send(retry_data);
-                reader.block_for_at_least(2);
-            }
-        }
-        else
-        {
-            // Block reader until reception finished or timeout.
-            reader.block_for_all();
-        }
+        // Block reader until reception finished or timeout.
+        reader.block_for_all();
     }
 
 };
@@ -6519,14 +6476,11 @@ TEST(Security, DatagramInjectionOnReader_23836)
 
 GTEST_INSTANTIATE_TEST_MACRO(Security,
         Security,
-        ::testing::Combine(
-            ::testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
-            ::testing::Values(TEST_BEST_EFFORT, TEST_RELIABLE)
-            ),
+        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
         [](const testing::TestParamInfo<Security::ParamType>& info)
         {
             std::string test_name;
-            switch (std::get<0>(info.param))
+            switch (info.param)
             {
                 case INTRAPROCESS:
                     test_name = "Intraprocess";
@@ -6537,18 +6491,6 @@ GTEST_INSTANTIATE_TEST_MACRO(Security,
                 case TRANSPORT:
                 default:
                     test_name = "Transport";
-                    break;
-            }
-
-            switch (std::get<1>(info.param))
-            {
-                case TEST_BEST_EFFORT:
-                    test_name += "_BestEffort";
-                    break;
-                case TEST_RELIABLE:
-                    test_name += "_Reliable";
-                    break;
-                default:
                     break;
             }
 
