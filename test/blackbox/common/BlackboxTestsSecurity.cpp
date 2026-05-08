@@ -135,25 +135,24 @@ static void fill_sub_auth(
     }
 }
 
-static void CommonPermissionsConfigure(
-        PubSubReader<HelloWorldPubSubType>& reader,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties)
+static void fill_access(
+        PropertyPolicy& policy,
+        const std::string& governance_file="governance_only_auth.smime",
+        const std::string& permissions_file="permissions.smime")
 {
-    PropertyPolicy sub_property_policy(extra_properties);
-    fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
+    policy.properties().emplace_back("dds.sec.access.plugin", "builtin.Access-Permissions");
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem");
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file);
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file);
+}
 
-    reader.property_policy(sub_property_policy);
+static void fill_crypto(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
 }
 
 static void CommonPermissionsConfigureWriter(
@@ -163,17 +162,9 @@ static void CommonPermissionsConfigureWriter(
         const PropertyPolicy& extra_properties)
 {
     PropertyPolicy pub_property_policy(extra_properties);
-
     fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
+    fill_access(pub_property_policy, governance_file, permissions_file);
+    fill_crypto(pub_property_policy);
 
     writer.property_policy(pub_property_policy);
 }
@@ -186,15 +177,8 @@ static void CommonPermissionsConfigureReader(
 {
     PropertyPolicy sub_property_policy(extra_properties);
     fill_sub_auth(sub_property_policy);
-    sub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    sub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
+    fill_access(sub_property_policy, governance_file, permissions_file);
+    fill_crypto(sub_property_policy);
 
     reader.property_policy(sub_property_policy);
 }
@@ -219,15 +203,8 @@ static void CommonPermissionsConfigureWriter(
     PropertyPolicy pub_property_policy(extra_properties);
 
     fill_pub_auth(pub_property_policy);
-    pub_property_policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
-            "builtin.Access-Permissions"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem"));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.governance",
-            "file://" + std::string(certs_path) + "/" + governance_file));
-    pub_property_policy.properties().emplace_back(Property("dds.sec.access.builtin.Access-Permissions.permissions",
-            "file://" + std::string(certs_path) + "/" + permissions_file));
+    fill_access(pub_property_policy, governance_file, permissions_file);
+    fill_crypto(pub_property_policy);
 
     writer.property_policy(pub_property_policy);
 }
@@ -240,8 +217,8 @@ static void CommonPermissionsConfigureReader(
 {
     PropertyPolicy sub_property_policy(extra_properties);
     fill_sub_auth(sub_property_policy);
-    fill_sub_access(sub_property_policy, governance_file, permissions_file);
-    fill_sub_crypto(sub_property_policy);
+    fill_access(sub_property_policy, governance_file, permissions_file);
+    fill_crypto(sub_property_policy);
 
     reader.property_policy(sub_property_policy);
 }
