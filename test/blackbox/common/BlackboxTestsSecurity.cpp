@@ -156,7 +156,7 @@ static void CommonPermissionsConfigure(
     reader.property_policy(sub_property_policy);
 }
 
-static void CommonPermissionsConfigure(
+static void CommonPermissionsConfigureWriter(
         PubSubWriter<HelloWorldPubSubType>& writer,
         const std::string& governance_file,
         const std::string& permissions_file,
@@ -178,19 +178,8 @@ static void CommonPermissionsConfigure(
     writer.property_policy(pub_property_policy);
 }
 
-static void CommonPermissionsConfigure(
+static void CommonPermissionsConfigureReader(
         PubSubReader<HelloWorldPubSubType>& reader,
-        PubSubWriter<HelloWorldPubSubType>& writer,
-        const std::string& governance_file,
-        const std::string& permissions_file,
-        const PropertyPolicy& extra_properties = PropertyPolicy())
-{
-    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
-    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
-}
-
-static void CommonPermissionsConfigure(
-        PubSubReader<Data1mbPubSubType>& reader,
         const std::string& governance_file,
         const std::string& permissions_file,
         const PropertyPolicy& extra_properties)
@@ -211,6 +200,17 @@ static void CommonPermissionsConfigure(
 }
 
 static void CommonPermissionsConfigure(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties = PropertyPolicy())
+{
+    CommonPermissionsConfigureReader(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigureWriter(writer, governance_file, permissions_file, extra_properties);
+}
+
+static void CommonPermissionsConfigureWriter(
         PubSubWriter<Data1mbPubSubType>& writer,
         const std::string& governance_file,
         const std::string& permissions_file,
@@ -232,6 +232,20 @@ static void CommonPermissionsConfigure(
     writer.property_policy(pub_property_policy);
 }
 
+static void CommonPermissionsConfigureReader(
+        PubSubReader<Data1mbPubSubType>& reader,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy sub_property_policy(extra_properties);
+    fill_sub_auth(sub_property_policy);
+    fill_sub_access(sub_property_policy, governance_file, permissions_file);
+    fill_sub_crypto(sub_property_policy);
+
+    reader.property_policy(sub_property_policy);
+}
+
 static void CommonPermissionsConfigure(
         PubSubReader<Data1mbPubSubType>& reader,
         PubSubWriter<Data1mbPubSubType>& writer,
@@ -239,8 +253,8 @@ static void CommonPermissionsConfigure(
         const std::string& permissions_file,
         const PropertyPolicy& extra_properties = PropertyPolicy())
 {
-    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_properties);
-    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigureReader(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigureWriter(writer, governance_file, permissions_file, extra_properties);
 }
 
 class Security : public testing::TestWithParam<communication_type>
@@ -6060,7 +6074,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_p
                     "dds.sec.auth.builtin.PKI-DH.handshake_resend_period_gain",
                     "1.0"));
 
-        CommonPermissionsConfigure(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
+        CommonPermissionsConfigureReader(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
 
         // Init all except the latest one
         if (i != n_participants)
@@ -6132,7 +6146,7 @@ TEST(Security, legacy_token_algorithms_communicate)
                         "dds.sec.auth.builtin.PKI-DH.transmit_algorithms_as_legacy", value);
                     properties.emplace_back(
                         "dds.sec.access.builtin.Access-Permissions.transmit_algorithms_as_legacy", value);
-                    CommonPermissionsConfigure(writer, governance_file, permissions_file, extra_policy);
+                    CommonPermissionsConfigureWriter(writer, governance_file, permissions_file, extra_policy);
                 }
 
                 // Configure Reader
@@ -6144,7 +6158,7 @@ TEST(Security, legacy_token_algorithms_communicate)
                         "dds.sec.auth.builtin.PKI-DH.transmit_algorithms_as_legacy", value);
                     properties.emplace_back(
                         "dds.sec.access.builtin.Access-Permissions.transmit_algorithms_as_legacy", value);
-                    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_policy);
+                    CommonPermissionsConfigureReader(reader, governance_file, permissions_file, extra_policy);
                 }
 
                 // Initialize
@@ -6278,7 +6292,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
             };
 
     // Configure the main participant security
-    CommonPermissionsConfigure(main_participant, governance_file, permissions_file, handshake_prop_policy);
+    CommonPermissionsConfigureWriter(main_participant, governance_file, permissions_file, handshake_prop_policy);
 
     main_participant.disable_builtin_transport()
             .add_user_transport_to_pparams(test_transport)
@@ -6300,7 +6314,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
         participants.emplace_back(std::make_shared<PubSubReader<HelloWorldPubSubType>>("HelloWorldTopic"));
 
         // Configure security for the new participant
-        CommonPermissionsConfigure(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
+        CommonPermissionsConfigureReader(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
 
         // Init participant with the main participant as initial peer
         // and disable multicast so it does not try to discover noone else
@@ -6318,7 +6332,7 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
     // If the participant stateless messages history of the main participant is not correctly freed,
     // the main participant will fail creating a new participant stateless message for him
     auto failing_participant = std::make_shared<PubSubReader<HelloWorldPubSubType>>("HelloWorldTopic");
-    CommonPermissionsConfigure(*failing_participant, governance_file, permissions_file, handshake_prop_policy);
+    CommonPermissionsConfigureReader(*failing_participant, governance_file, permissions_file, handshake_prop_policy);
     failing_participant->disable_multicast(static_cast<int32_t>(n_participants + 1))
             .initial_peers(initial_peers)
             .init();
@@ -6351,7 +6365,7 @@ static void security_datagram_injection_on_reader_test(
     const std::string governance_file("governance_helloworld_all_enable.smime");
     const std::string permissions_file("permissions_helloworld.smime");
     PropertyPolicy extra_policy;
-    CommonPermissionsConfigure(reader, governance_file, permissions_file, extra_policy);
+    CommonPermissionsConfigureReader(reader, governance_file, permissions_file, extra_policy);
 
     // Prepare datagram injection transport
     auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
