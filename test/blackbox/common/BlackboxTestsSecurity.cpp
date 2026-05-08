@@ -142,8 +142,8 @@ static void fill_sub_auth(
 
 static void fill_access(
         PropertyPolicy& policy,
-        const std::string& governance_file="governance_only_auth.smime",
-        const std::string& permissions_file="permissions.smime")
+        const std::string& governance_file = "governance_only_auth.smime",
+        const std::string& permissions_file = "permissions.smime")
 {
     policy.properties().emplace_back("dds.sec.access.plugin", "builtin.Access-Permissions");
     policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca",
@@ -347,8 +347,7 @@ void SecurityPlugins_Permissions_validation_ok_common(
         PubSubReader<HelloWorldPubSubType>& reader,
         PubSubWriter<HelloWorldPubSubType>& writer,
         const std::string& governance_file,
-        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability =
-                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
 {
     CommonPermissionsConfigure(reader, writer, governance_file, "permissions.smime");
 
@@ -363,8 +362,7 @@ void SecurityPlugins_Permissions_validation_ok_large_data(
         PubSubReader<Data1mbPubSubType>& reader,
         PubSubWriter<Data1mbPubSubType>& writer,
         const std::string& governance_file,
-        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability =
-                eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+        eprosima::fastdds::dds::ReliabilityQosPolicyKind reliability = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
 {
     // Large-data fragmentation is not exercised under best-effort
     if (reliability == eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
@@ -378,7 +376,6 @@ void SecurityPlugins_Permissions_validation_ok_large_data(
     writer.history_depth(10).reliability(reliability).init();
     test_basic_secure_communication(reader, writer, false);
 }
-
 
 class SecurityPkcs : public ::testing::Test
 {
@@ -5757,7 +5754,8 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_p
                     "dds.sec.auth.builtin.PKI-DH.handshake_resend_period_gain",
                     "1.0"));
 
-        CommonPermissionsConfigureReader(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
+        CommonPermissionsConfigureReader(*participants.back(), governance_file, permissions_file,
+                handshake_prop_policy);
 
         // Init all except the latest one
         if (i != n_participants)
@@ -5997,7 +5995,8 @@ TEST(Security, participant_stateless_secure_writer_pool_change_is_removed_upon_a
         participants.emplace_back(std::make_shared<PubSubReader<HelloWorldPubSubType>>("HelloWorldTopic"));
 
         // Configure security for the new participant
-        CommonPermissionsConfigureReader(*participants.back(), governance_file, permissions_file, handshake_prop_policy);
+        CommonPermissionsConfigureReader(*participants.back(), governance_file, permissions_file,
+                handshake_prop_policy);
 
         // Init participant with the main participant as initial peer
         // and disable multicast so it does not try to discover noone else
