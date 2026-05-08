@@ -479,56 +479,25 @@ const char* const SecurityPkcs::hsm_token_id_no_pin = "testing_token_no_pin";
 const char* const SecurityPkcs::hsm_token_id_url_pin = "testing_token_url_pin";
 const char* const SecurityPkcs::hsm_token_id_env_pin = "testing_token_env_pin";
 
-TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok)
+// This test is used to check that the security plugins are correctly loaded. Governance with minimal configuration is used
+TEST(Security, SecurityPlugins_basic_configuration)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    PropertyPolicy pub_property_policy, sub_property_policy;
-
-    fill_sub_auth(sub_property_policy);
-
-    reader.history_depth(10).
-            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
-            property_policy(sub_property_policy).init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    fill_pub_auth(pub_property_policy);
-
-    writer.history_depth(10).
-            property_policy(pub_property_policy).init();
-
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Wait for authorization
-    reader.wait_authorized();
-    writer.wait_authorized();
-
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-
-    auto data = default_helloworld_data_generator();
-
-    reader.startReception(data);
-
-    // Send data
-    writer.send(data);
-    // In this test all data should be sent.
-    ASSERT_TRUE(data.empty());
-    // Block reader until reception finished or timeout.
-    reader.block_for_all();
+    SecurityPlugins_Permissions_validation_ok_common(reader, writer, "governance_only_auth.smime");
 }
 
 // Used to detect Github issue #106
-TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_participant)
+TEST(Security, SecurityPlugins_basic_configuration_same_participant)
 {
     PubSubWriterReader<HelloWorldPubSubType> wreader(TEST_TOPIC_NAME);
 
     PropertyPolicy property_policy;
 
     fill_pub_auth(property_policy);
+    fill_access(property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(property_policy);
 
     wreader.sub_history_depth(10).sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
     wreader.pub_history_depth(10);
@@ -551,7 +520,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_ok_same_participan
     wreader.block_for_all();
 }
 
-TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
+TEST(Security, SecurityPlugins_basic_configuration_validation_fail)
 {
     {
         PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -565,6 +534,8 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
         ASSERT_TRUE(reader.isInitialized());
 
         fill_pub_auth(pub_property_policy);
+        fill_access(pub_property_policy, "governance_only_auth.smime", "permissions.smime");
+        fill_crypto(pub_property_policy);
 
         writer.history_depth(10).
                 property_policy(pub_property_policy).init();
@@ -580,6 +551,8 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
 
         PropertyPolicy sub_property_policy;
         fill_sub_auth(sub_property_policy);
+        fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+        fill_crypto(sub_property_policy);
 
         reader.history_depth(10).
                 reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
@@ -596,7 +569,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_validation_fail)
     }
 }
 
-TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
+TEST(Security, SecurityPlugins_basic_configuration_lossy_conditions)
 {
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
@@ -604,6 +577,8 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
     PropertyPolicy pub_property_policy, sub_property_policy;
 
     fill_sub_auth(sub_property_policy);
+    fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(sub_property_policy);
 
     reader.history_depth(10).
             reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
@@ -621,6 +596,8 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
     writer.add_user_transport_to_pparams(testTransport);
 
     fill_pub_auth(pub_property_policy);
+    fill_access(pub_property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(pub_property_policy);
 
     writer.history_depth(10).
             property_policy(pub_property_policy).init();
@@ -637,7 +614,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_PKIDH_lossy_conditions)
 }
 
 // Regresion test for Refs #13295, github #2362
-TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
+TEST(Security, SecurityPlugins_basic_configuration_second_participant_creation_loop)
 {
     constexpr size_t n_loops = 101;
 
@@ -712,13 +689,19 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
             };
 
     // Prepare participant properties
-    PropertyPolicy property_policy;
-    fill_pub_auth(property_policy);
+    PropertyPolicy pub_property_policy, sub_property_policy;
+    fill_pub_auth(pub_property_policy);
+    fill_access(pub_property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(pub_property_policy);
+
+    fill_sub_auth(sub_property_policy);
+    fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(sub_property_policy);
 
     // Create the participant being checked
     PubSubReader<HelloWorldPubSubType> main_participant("HelloWorldTopic");
     main_participant.disable_builtin_transport().add_user_transport_to_pparams(transport);
-    main_participant.property_policy(property_policy).init();
+    main_participant.property_policy(pub_property_policy).init();
     EXPECT_TRUE(main_participant.isInitialized());
 
     // Perform a loop in which we create another participant, and destroy it just after it has been discovered.
@@ -734,7 +717,7 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
 
         // Create another participant with authentication enabled
         PubSubParticipant<HelloWorldPubSubType> other_participant(0, 0, 0, 0);
-        EXPECT_TRUE(other_participant.property_policy(property_policy).init_participant());
+        EXPECT_TRUE(other_participant.property_policy(sub_property_policy).init_participant());
 
         // Wait for the main participant to send an authentication message to the other participant
         auth_message_send_status.wait();
@@ -747,7 +730,7 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
     EXPECT_EQ(0u, n_logs);
 }
 
-TEST_P(Security, BuiltinAuthenticationPlugin_ensure_same_guid_reconnection)
+TEST(Security, SecurityPlugins_basic_configuration_ensure_same_guid_reconnection)
 {
     constexpr size_t n_loops = 10;
 
@@ -764,12 +747,18 @@ TEST_P(Security, BuiltinAuthenticationPlugin_ensure_same_guid_reconnection)
     Log::RegisterConsumer(std::unique_ptr<LogConsumer>(new TestConsumer(n_logs)));
 
     // Prepare participant properties
-    PropertyPolicy property_policy;
-    fill_pub_auth(property_policy);
+    PropertyPolicy pub_property_policy, sub_property_policy;
+    fill_pub_auth(pub_property_policy);
+    fill_access(pub_property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(pub_property_policy);
+
+    fill_sub_auth(sub_property_policy);
+    fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+    fill_crypto(sub_property_policy);
 
     // Create the participant being checked
     PubSubWriter<HelloWorldPubSubType> main_participant("HelloWorldTopic");
-    main_participant.property_policy(property_policy).init();
+    main_participant.property_policy(pub_property_policy).init();
     EXPECT_TRUE(main_participant.isInitialized());
 
     eprosima::fastdds::rtps::GuidPrefix_t guid_prefix;
@@ -787,7 +776,7 @@ TEST_P(Security, BuiltinAuthenticationPlugin_ensure_same_guid_reconnection)
 
         // Create another participant with authentication enabled and custom GUID
         PubSubReader<HelloWorldPubSubType> other_participant("HelloWorldTopic");
-        other_participant.property_policy(property_policy).guid_prefix(guid_prefix).init();
+        other_participant.property_policy(sub_property_policy).guid_prefix(guid_prefix).init();
         EXPECT_TRUE(other_participant.isInitialized());
 
         // Wait for mutual discovery and authentication
