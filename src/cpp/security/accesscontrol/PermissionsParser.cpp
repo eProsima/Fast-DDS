@@ -77,15 +77,25 @@ bool PermissionsParser::parse_stream(
             if (strcmp(root->Name(), Root_str) == 0)
             {
                 tinyxml2::XMLElement* permission_node = root->FirstChildElement();
-                if (strcmp(permission_node->Name(), Permission_str) == 0)
+                if (permission_node != nullptr)
                 {
-                    returned_value = parse_permissions(permission_node);
+                    if (strcmp(permission_node->Name(), Permission_str) == 0)
+                    {
+                        returned_value = parse_permissions(permission_node);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XMLPARSER,
+                                "Invalid tag. Expected  " << Permission_str << " tag. Line " << PRINTLINE(
+                                    permission_node));
+                    }
                 }
                 else
                 {
                     EPROSIMA_LOG_ERROR(XMLPARSER,
                             "Invalid tag. Expected  " << Permission_str << " tag. Line " << PRINTLINE(
                                 permission_node));
+
                 }
             }
             else
@@ -340,23 +350,32 @@ bool PermissionsParser::parse_validity(
                 {
                     if (strcmp(node->Name(), NotAfter_str) == 0)
                     {
-#if _MSC_VER != 1800
-                        memset(&time, 0, sizeof(struct tm));
-                        stream.str(node->GetText());
-                        stream.clear();
-                        stream >> std::get_time(&time, "%Y-%m-%dT%T");
-
-                        if (!stream.fail())
+                        if (node->GetText() != nullptr)
                         {
-                            validity.not_after = std::mktime(&time);
+#if _MSC_VER != 1800
+                            memset(&time, 0, sizeof(struct tm));
+                            stream.str(node->GetText());
+                            stream.clear();
+                            stream >> std::get_time(&time, "%Y-%m-%dT%T");
+
+                            if (!stream.fail())
+                            {
+                                validity.not_after = std::mktime(&time);
 #endif // if _MSC_VER != 1800
-                        returned_value = true;
+                            returned_value = true;
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XMLPARSER,
+                                    "Fail parsing datetime value in " << NotAfter_str << " tag. Line "
+                                                                      << PRINTLINE(
+                                        node));
+                        }
                     }
                     else
                     {
-                        EPROSIMA_LOG_ERROR(XMLPARSER, "Fail parsing datetime value in " << NotAfter_str << " tag. Line "
-                                                                                        << PRINTLINE(
-                                    node));
+                        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected " << NotAfter_str << " tag. Line "
+                                                                  << PRINTLINE(node));
                     }
 #if _MSC_VER != 1800
                 }
