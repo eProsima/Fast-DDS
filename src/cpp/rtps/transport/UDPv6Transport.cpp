@@ -257,7 +257,7 @@ bool UDPv6Transport::getDefaultMetatrafficMulticastLocators(
     Locator locator;
     locator.kind = LOCATOR_KIND_UDPv6;
     locator.port = static_cast<uint16_t>(metatraffic_multicast_port);
-    IPLocator::setIPv6(locator, "ff1e::ffff:efff:1");
+    IPLocator::setIPv6(locator, DEFAULT_METATRAFFIC_MULTICAST_ADDRESS_v6);
     locators.push_back(locator);
     return true;
 }
@@ -272,6 +272,18 @@ bool UDPv6Transport::getDefaultMetatrafficUnicastLocators(
     locator.set_Invalid_Address();
     locators.push_back(locator);
 
+    return true;
+}
+
+bool UDPv6Transport::getDefaultMulticastLocators(
+        LocatorList& locators,
+        uint32_t multicast_port) const
+{
+    Locator locator;
+    locator.kind = LOCATOR_KIND_UDPv6;
+    locator.port = static_cast<uint16_t>(multicast_port);
+    IPLocator::setIPv6(locator, DEFAULT_MULTICAST_ADDRESS_v6);
+    locators.push_back(locator);
     return true;
 }
 
@@ -293,7 +305,7 @@ void UDPv6Transport::AddDefaultOutputLocator(
 {
     // TODO What is the default IPv6 address?
     Locator temp;
-    IPLocator::createLocator(LOCATOR_KIND_UDPv6, "ff1e::ffff:efff:1", 0, temp);
+    IPLocator::createLocator(LOCATOR_KIND_UDPv6, DEFAULT_MULTICAST_ADDRESS_v6, 0, temp);
     defaultList.push_back(temp);
 }
 

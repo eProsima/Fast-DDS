@@ -185,6 +185,7 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/domain/RTPSDomainExtras.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/ChainingTransport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/ChannelResource.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/MulticastTransportInterface.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/network/NetmaskFilterKind.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/network/NetworkInterface.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/network/NetworkInterfaceWithFilter.cpp

@@ -724,9 +724,19 @@ bool UDPTransportInterface::fillMetatrafficMulticastLocator(
         Locator& locator,
         uint32_t metatraffic_multicast_port) const
 {
-    if (locator.port == 0)
+    LocatorList defaults;
+    getDefaultMetatrafficMulticastLocators(defaults, metatraffic_multicast_port);
+    if (!defaults.empty())
     {
-        locator.port = metatraffic_multicast_port;
+        const Locator& default_loc = *defaults.begin();
+        if (locator.port == 0)
+        {
+            locator.port = default_loc.port;
+        }
+        if (!IsAddressDefined(locator))
+        {
+            IPLocator::copy_address(default_loc, locator);
+        }
     }
     return true;
 }

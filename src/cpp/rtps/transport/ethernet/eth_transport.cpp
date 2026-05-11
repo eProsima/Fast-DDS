@@ -82,6 +82,8 @@ static bool check_and_invalidate(
 }
 
 static constexpr EthernetAddress DEFAULT_METATRAFFIC_MULTICAST_ADDRESS{ 0x01, 0x00, 0x5E, 0x7F, 0x00, 0x01 };
+static constexpr EthernetAddress DEFAULT_MULTICAST_ADDRESS = DEFAULT_METATRAFFIC_MULTICAST_ADDRESS;
+
 
 EthernetTransportDescriptor::EthernetTransportDescriptor()
     : PortBasedTransportDescriptor(EthernetPacket::MAX_RTPS_PAYLOAD_SIZE, 1)
@@ -457,13 +459,42 @@ bool EthernetTransport::getDefaultUnicastLocators(
     return true;
 }
 
+bool EthernetTransport::getDefaultMulticastLocators(
+        LocatorList& locators,
+        uint32_t multicast_port) const
+{
+    if (multicast_port > std::numeric_limits<uint16_t>::max())
+    {
+        EPROSIMA_LOG_ERROR(RTPS_ETHERNET_TRANSPORT,
+                "Multicast port exceeds maximum uint16_t value: "
+                << multicast_port << " > " << std::numeric_limits<uint16_t>::max());
+        return false;
+    }
+
+    Locator locator = EthernetLocator::create_locator(
+        DEFAULT_MULTICAST_ADDRESS, 0, 0, 0);
+    locator.port = multicast_port;
+    locators.push_back(locator);
+    return true;
+}
+
 bool EthernetTransport::fillMetatrafficMulticastLocator(
         Locator& locator,
         uint32_t metatraffic_multicast_port) const
 {
-    if (locator.port == 0)
+    LocatorList defaults;
+    getDefaultMetatrafficMulticastLocators(defaults, metatraffic_multicast_port);
+    if (!defaults.empty())
     {
-        locator.port = metatraffic_multicast_port;
+        const Locator& default_loc = *defaults.begin();
+        if (locator.port == 0)
+        {
+            locator.port = default_loc.port;
+        }
+        if (!IsAddressDefined(locator))
+        {
+            EthernetLocator::copy_address(default_loc, locator);
+        }
     }
     return true;
 }

@@ -262,7 +262,11 @@ public:
             uint32_t domainId,
             LocatorList& list) const = 0;
 
-    //! Assign port to the given unicast locator if not already defined
+    /**
+     *  Assign only the port to the given unicast locator if not already defined
+     *  Note: As the default address is usually valid for unicast, this method
+     *  does not assign a new value
+     */
     virtual bool fillUnicastLocator(
             Locator& locator,
             uint32_t well_known_port) const = 0;

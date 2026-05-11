@@ -25,12 +25,14 @@
 #include <fastdds/rtps/transport/ethernet/EthernetTransportDescriptor.hpp>
 
 #include <rtps/transport/ethernet/InputChannelManager.hpp>
+#include <rtps/transport/MulticastTransportInterface.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-struct EthernetTransport : public TransportInterface
+struct EthernetTransport : public TransportInterface,
+    public MulticastTransportInterface
 {
     using TransportInterface::transform_remote_locator;
 
@@ -109,6 +111,10 @@ struct EthernetTransport : public TransportInterface
     bool getDefaultUnicastLocators(
             LocatorList& locators,
             uint32_t unicast_port) const override;
+
+    bool getDefaultMulticastLocators(
+            LocatorList& locators,
+            uint32_t multicast_port) const override;
 
     bool fillMetatrafficMulticastLocator(
             Locator& locator,

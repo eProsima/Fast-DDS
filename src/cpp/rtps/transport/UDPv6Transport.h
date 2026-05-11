@@ -78,6 +78,10 @@ public:
             LocatorList& locators,
             uint32_t metatraffic_unicast_port) const override;
 
+    bool getDefaultMulticastLocators(
+            LocatorList& locators,
+            uint32_t multicast_port) const override;
+
     bool getDefaultUnicastLocators(
             LocatorList& locators,
             uint32_t unicast_port) const override;
@@ -165,6 +169,9 @@ protected:
             const std::string& ip1,
             const std::string& ip2);
 };
+
+const char* const DEFAULT_METATRAFFIC_MULTICAST_ADDRESS_v6 = "ff1e::ffff:efff:1";
+const char* const DEFAULT_MULTICAST_ADDRESS_v6 = DEFAULT_METATRAFFIC_MULTICAST_ADDRESS_v6;
 
 } // namespace rtps
 } // namespace fastdds

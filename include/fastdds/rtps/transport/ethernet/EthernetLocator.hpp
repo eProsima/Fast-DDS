@@ -192,6 +192,29 @@ struct FASTDDS_EXPORTED_API EthernetLocator
         return !IsAddressDefined(locator);
     }
 
+    /**
+     * Copies the whole address from one locator to another.
+     * @param loc1 Locator to copy from.
+     * @param loc2 Locator to copy to.
+     * @return True if the copy was successful.
+     */
+    static inline bool copy_address(
+            const Locator_t& loc1,
+            Locator_t& loc2)
+    {
+        if (loc1.kind != loc2.kind)
+        {
+            return false;
+        }
+
+        if (loc1.kind == LOCATOR_KIND_ETHERNET)
+        {
+            std::memcpy(loc2.address, loc1.address, ETHERNET_ADDRESS_SIZE);
+            return true;
+        }
+        return true;
+    }
+
 };
 
 static_assert(
