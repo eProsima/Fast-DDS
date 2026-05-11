@@ -24,7 +24,7 @@
 #else
 #define PRINTLINE(node) ""
 #define PRINTLINEPLUSONE(node) ""
-#endif
+#endif // if TIXML2_MAJOR_VERSION >= 6
 
 static const char* Root_str = "dds";
 static const char* DomainAccessRules_str = "domain_access_rules";
@@ -53,25 +53,28 @@ static const char* ProtectionKindEncryptAuth_str = "ENCRYPT_WITH_ORIGIN_AUTHENTI
 
 using namespace eprosima::fastrtps::rtps::security;
 
-void GovernanceParser::swap(DomainAccessRules& rules)
+void GovernanceParser::swap(
+        DomainAccessRules& rules)
 {
     rules = std::move(access_rules_);
 }
 
-bool GovernanceParser::parse_stream(const char* stream, size_t stream_length)
+bool GovernanceParser::parse_stream(
+        const char* stream,
+        size_t stream_length)
 {
     assert(stream);
 
     bool returned_value = false;
     tinyxml2::XMLDocument document;
 
-    if(tinyxml2::XMLError::XML_SUCCESS == document.Parse(stream, stream_length))
+    if (tinyxml2::XMLError::XML_SUCCESS == document.Parse(stream, stream_length))
     {
         tinyxml2::XMLElement* root = document.RootElement();
 
-        if(root != nullptr)
+        if (root != nullptr)
         {
-            if(strcmp(root->Name(), Root_str) == 0)
+            if (strcmp(root->Name(), Root_str) == 0)
             {
                 returned_value = parse_domain_access_rules_node(root);
             }
@@ -93,27 +96,28 @@ bool GovernanceParser::parse_stream(const char* stream, size_t stream_length)
     return returned_value;
 }
 
-bool GovernanceParser::parse_domain_access_rules_node(tinyxml2::XMLElement* root)
+bool GovernanceParser::parse_domain_access_rules_node(
+        tinyxml2::XMLElement* root)
 {
     assert(root);
 
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), DomainAccessRules_str) == 0)
+        if (strcmp(node->Name(), DomainAccessRules_str) == 0)
         {
-            if(parse_domain_access_rules(node))
+            if (parse_domain_access_rules(node))
             {
-                if(node->NextSibling() == nullptr)
+                if (node->NextSibling() == nullptr)
                 {
                     returned_value = true;
                 }
                 else
                 {
-                    logError(XMLPARSER, "Only permitted one " << DomainAccessRules_str <<" tag. Line "
-                            << PRINTLINE(node->NextSibling()));
+                    logError(XMLPARSER, "Only permitted one " << DomainAccessRules_str << " tag. Line "
+                                                              << PRINTLINE(node->NextSibling()));
                 }
             }
         }
@@ -130,24 +134,25 @@ bool GovernanceParser::parse_domain_access_rules_node(tinyxml2::XMLElement* root
     return returned_value;
 }
 
-bool GovernanceParser::parse_domain_access_rules(tinyxml2::XMLElement* root)
+bool GovernanceParser::parse_domain_access_rules(
+        tinyxml2::XMLElement* root)
 {
     assert(root);
 
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         returned_value = true;
 
         do
         {
-            if(strcmp(node->Name(), DomainRule_str) == 0)
+            if (strcmp(node->Name(), DomainRule_str) == 0)
             {
                 DomainRule domain_rule;
 
-                if((returned_value = parse_domain_rule(node, domain_rule)) == true)
+                if ((returned_value = parse_domain_rule(node, domain_rule)) == true)
                 {
                     access_rules_.rules.push_back(std::move(domain_rule));
                 }
@@ -158,7 +163,7 @@ bool GovernanceParser::parse_domain_access_rules(tinyxml2::XMLElement* root)
                 logError(XMLPARSER, "Expected " << DomainRule_str << " tag. Line " << PRINTLINE(node));
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
@@ -168,7 +173,9 @@ bool GovernanceParser::parse_domain_access_rules(tinyxml2::XMLElement* root)
     return returned_value;
 }
 
-bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule& rule)
+bool GovernanceParser::parse_domain_rule(
+        tinyxml2::XMLElement* root,
+        DomainRule& rule)
 {
     assert(root);
 
@@ -176,11 +183,11 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
     tinyxml2::XMLElement* old_node = nullptr;
     (void)old_node;
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), Domains_str) == 0)
+        if (strcmp(node->Name(), Domains_str) == 0)
         {
-            if(!parse_domain_id_set(node, rule.domains))
+            if (!parse_domain_id_set(node, rule.domains))
             {
                 return false;
             }
@@ -200,38 +207,44 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), AllowUnauthenticatedParticipants_str) == 0)
+        if (strcmp(node->Name(), AllowUnauthenticatedParticipants_str) == 0)
         {
-            if(node->QueryBoolText(&rule.allow_unauthenticated_participants) != tinyxml2::XMLError::XML_SUCCESS)
+            if (node->QueryBoolText(&rule.allow_unauthenticated_participants) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                logError(XMLPARSER, "Expected boolean value in " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected boolean value in " << AllowUnauthenticatedParticipants_str << " tag. Line "
+                                                     << PRINTLINE(node));
                 return false;
             }
         }
         else
         {
-            logError(XMLPARSER, "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINE(node));
+            logError(XMLPARSER,
+                    "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINE(node));
             return false;
         }
     }
     else
     {
-        logError(XMLPARSER, "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
+        logError(XMLPARSER,
+                "Expected " << AllowUnauthenticatedParticipants_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
         return false;
     }
 
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), EnableJoinAccessControl_str) == 0)
+        if (strcmp(node->Name(), EnableJoinAccessControl_str) == 0)
         {
-            if(node->QueryBoolText(&rule.enable_join_access_control) != tinyxml2::XMLError::XML_SUCCESS)
+            if (node->QueryBoolText(&rule.enable_join_access_control) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                logError(XMLPARSER, "Expected boolean value in " << EnableJoinAccessControl_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected boolean value in " << EnableJoinAccessControl_str << " tag. Line "
+                                                     << PRINTLINE(node));
                 return false;
             }
         }
@@ -250,43 +263,45 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), DiscoveryProtectionKind_str) == 0)
+        if (strcmp(node->Name(), DiscoveryProtectionKind_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
-                if(strcmp(text, ProtectionKindNone_str) == 0)
+                if (strcmp(text, ProtectionKindNone_str) == 0)
                 {
                     rule.discovery_protection_kind = ProtectionKind::NONE;
                 }
-                else if(strcmp(text, ProtectionKindSign_str) == 0)
+                else if (strcmp(text, ProtectionKindSign_str) == 0)
                 {
                     rule.discovery_protection_kind = ProtectionKind::SIGN;
                 }
-                else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
+                else if (strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.discovery_protection_kind = ProtectionKind::ENCRYPT;
                 }
-                else if(strcmp(text, ProtectionKindSignAuth_str) == 0)
+                else if (strcmp(text, ProtectionKindSignAuth_str) == 0)
                 {
                     rule.discovery_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
                 }
-                else if(strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                else if (strcmp(text, ProtectionKindEncryptAuth_str) == 0)
                 {
                     rule.discovery_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                    logError(XMLPARSER,
+                            "Invalid text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(node));
                     return false;
                 }
             }
             else
             {
-                logError(XMLPARSER, "Expected text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected text in " << DiscoveryProtectionKind_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
@@ -305,43 +320,45 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), LivelinessProtectionKind_str) == 0)
+        if (strcmp(node->Name(), LivelinessProtectionKind_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
-                if(strcmp(text, ProtectionKindNone_str) == 0)
+                if (strcmp(text, ProtectionKindNone_str) == 0)
                 {
                     rule.liveliness_protection_kind = ProtectionKind::NONE;
                 }
-                else if(strcmp(text, ProtectionKindSign_str) == 0)
+                else if (strcmp(text, ProtectionKindSign_str) == 0)
                 {
                     rule.liveliness_protection_kind = ProtectionKind::SIGN;
                 }
-                else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
+                else if (strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.liveliness_protection_kind = ProtectionKind::ENCRYPT;
                 }
-                else if(strcmp(text, ProtectionKindSignAuth_str) == 0)
+                else if (strcmp(text, ProtectionKindSignAuth_str) == 0)
                 {
                     rule.liveliness_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
                 }
-                else if(strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                else if (strcmp(text, ProtectionKindEncryptAuth_str) == 0)
                 {
                     rule.liveliness_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                    logError(XMLPARSER,
+                            "Invalid text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(node));
                     return false;
                 }
             }
             else
             {
-                logError(XMLPARSER, "Expected text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected text in " << LivelinessProtectionKind_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
@@ -360,37 +377,38 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), RtpsProtectionKind_str) == 0)
+        if (strcmp(node->Name(), RtpsProtectionKind_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
-                if(strcmp(text, ProtectionKindNone_str) == 0)
+                if (strcmp(text, ProtectionKindNone_str) == 0)
                 {
                     rule.rtps_protection_kind = ProtectionKind::NONE;
                 }
-                else if(strcmp(text, ProtectionKindSign_str) == 0)
+                else if (strcmp(text, ProtectionKindSign_str) == 0)
                 {
                     rule.rtps_protection_kind = ProtectionKind::SIGN;
                 }
-                else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
+                else if (strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.rtps_protection_kind = ProtectionKind::ENCRYPT;
                 }
-                else if(strcmp(text, ProtectionKindSignAuth_str) == 0)
+                else if (strcmp(text, ProtectionKindSignAuth_str) == 0)
                 {
                     rule.rtps_protection_kind = ProtectionKind::SIGN_WITH_ORIGIN_AUTHENTICATION;
                 }
-                else if(strcmp(text, ProtectionKindEncryptAuth_str) == 0)
+                else if (strcmp(text, ProtectionKindEncryptAuth_str) == 0)
                 {
                     rule.rtps_protection_kind = ProtectionKind::ENCRYPT_WITH_ORIGIN_AUTHENTICATION;
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid text in " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                    logError(XMLPARSER,
+                            "Invalid text in " << RtpsProtectionKind_str << " tag. Line " << PRINTLINE(node));
                     return false;
                 }
             }
@@ -415,11 +433,11 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), TopicAccessRules_str) == 0)
+        if (strcmp(node->Name(), TopicAccessRules_str) == 0)
         {
-            if(!parse_topic_access_rules(node, rule.topic_rules))
+            if (!parse_topic_access_rules(node, rule.topic_rules))
             {
                 return false;
             }
@@ -438,7 +456,7 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
 
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         logError(XMLPARSER, "Not expected other tag. Line " << PRINTLINE(node));
         return false;
@@ -448,24 +466,26 @@ bool GovernanceParser::parse_domain_rule(tinyxml2::XMLElement* root, DomainRule&
 }
 
 #include <iostream>
-bool GovernanceParser::parse_topic_access_rules(tinyxml2::XMLElement* root, std::vector<TopicRule>& rules)
+bool GovernanceParser::parse_topic_access_rules(
+        tinyxml2::XMLElement* root,
+        std::vector<TopicRule>& rules)
 {
     assert(root);
 
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         returned_value = true;
 
         do
         {
-            if(strcmp(node->Name(), TopicRule_str) == 0)
+            if (strcmp(node->Name(), TopicRule_str) == 0)
             {
                 TopicRule topic_rule;
 
-                if((returned_value = parse_topic_rule(node, topic_rule)) == true)
+                if ((returned_value = parse_topic_rule(node, topic_rule)) == true)
                 {
                     rules.push_back(std::move(topic_rule));
                 }
@@ -476,7 +496,7 @@ bool GovernanceParser::parse_topic_access_rules(tinyxml2::XMLElement* root, std:
                 logError(XMLPARSER, "Expected " << TopicRule_str << " tag. Line " << PRINTLINE(node));
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
@@ -486,7 +506,9 @@ bool GovernanceParser::parse_topic_access_rules(tinyxml2::XMLElement* root, std:
     return returned_value;
 }
 
-bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& rule)
+bool GovernanceParser::parse_topic_rule(
+        tinyxml2::XMLElement* root,
+        TopicRule& rule)
 {
     assert(root);
 
@@ -494,11 +516,20 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     tinyxml2::XMLElement* old_node = nullptr;
     (void)old_node;
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), TopicExpression_str) == 0)
+        if (strcmp(node->Name(), TopicExpression_str) == 0)
         {
-            rule.topic_expression = node->GetText();
+            if (node->GetText() != nullptr)
+            {
+                rule.topic_expression = node->GetText();
+            }
+            else
+            {
+                logError(XMLPARSER,
+                        "Expected topic name in " << TopicExpression_str << " tag. Line " << PRINTLINE(node));
+                return false;
+            }
         }
         else
         {
@@ -515,13 +546,15 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), EnableDiscoveryProtection_str) == 0)
+        if (strcmp(node->Name(), EnableDiscoveryProtection_str) == 0)
         {
-            if(node->QueryBoolText(&rule.enable_discovery_protection) != tinyxml2::XMLError::XML_SUCCESS)
+            if (node->QueryBoolText(&rule.enable_discovery_protection) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                logError(XMLPARSER, "Expected boolean value in " << EnableDiscoveryProtection_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected boolean value in " << EnableDiscoveryProtection_str << " tag. Line "
+                                                     << PRINTLINE(node));
                 return false;
             }
         }
@@ -533,20 +566,23 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     }
     else
     {
-        logError(XMLPARSER, "Expected " << EnableDiscoveryProtection_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
+        logError(XMLPARSER,
+                "Expected " << EnableDiscoveryProtection_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
         return false;
     }
 
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), EnableLivelinessProtection_str) == 0)
+        if (strcmp(node->Name(), EnableLivelinessProtection_str) == 0)
         {
-            if(node->QueryBoolText(&rule.enable_liveliness_protection) != tinyxml2::XMLError::XML_SUCCESS)
+            if (node->QueryBoolText(&rule.enable_liveliness_protection) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                logError(XMLPARSER, "Expected boolean value in " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected boolean value in " << EnableLivelinessProtection_str << " tag. Line "
+                                                     << PRINTLINE(node));
                 return false;
             }
         }
@@ -558,20 +594,23 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     }
     else
     {
-        logError(XMLPARSER, "Expected " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
+        logError(XMLPARSER,
+                "Expected " << EnableLivelinessProtection_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
         return false;
     }
 
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), EnableReadAccessControl_str) == 0)
+        if (strcmp(node->Name(), EnableReadAccessControl_str) == 0)
         {
-            if(node->QueryBoolText(&rule.enable_read_access_control) != tinyxml2::XMLError::XML_SUCCESS)
+            if (node->QueryBoolText(&rule.enable_read_access_control) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                logError(XMLPARSER, "Expected boolean value in " << EnableReadAccessControl_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected boolean value in " << EnableReadAccessControl_str << " tag. Line "
+                                                     << PRINTLINE(node));
                 return false;
             }
         }
@@ -590,13 +629,15 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), EnableWriteAccessControl_str) == 0)
+        if (strcmp(node->Name(), EnableWriteAccessControl_str) == 0)
         {
-            if(node->QueryBoolText(&rule.enable_write_access_control) != tinyxml2::XMLError::XML_SUCCESS)
+            if (node->QueryBoolText(&rule.enable_write_access_control) != tinyxml2::XMLError::XML_SUCCESS)
             {
-                logError(XMLPARSER, "Expected boolean value in " << EnableWriteAccessControl_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected boolean value in " << EnableWriteAccessControl_str << " tag. Line "
+                                                     << PRINTLINE(node));
                 return false;
             }
         }
@@ -615,23 +656,23 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), MetadataProtectionKind_str) == 0)
+        if (strcmp(node->Name(), MetadataProtectionKind_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
-                if(strcmp(text, ProtectionKindNone_str) == 0)
+                if (strcmp(text, ProtectionKindNone_str) == 0)
                 {
                     rule.metadata_protection_kind = ProtectionKind::NONE;
                 }
-                else if(strcmp(text, ProtectionKindSign_str) == 0)
+                else if (strcmp(text, ProtectionKindSign_str) == 0)
                 {
                     rule.metadata_protection_kind = ProtectionKind::SIGN;
                 }
-                else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
+                else if (strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.metadata_protection_kind = ProtectionKind::ENCRYPT;
                 }
@@ -645,13 +686,15 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                    logError(XMLPARSER,
+                            "Invalid text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(node));
                     return false;
                 }
             }
             else
             {
-                logError(XMLPARSER, "Expected text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER,
+                        "Expected text in " << MetadataProtectionKind_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
@@ -670,29 +713,30 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), DataProtectionKind_str) == 0)
+        if (strcmp(node->Name(), DataProtectionKind_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
-                if(strcmp(text, ProtectionKindNone_str) == 0)
+                if (strcmp(text, ProtectionKindNone_str) == 0)
                 {
                     rule.data_protection_kind = ProtectionKind::NONE;
                 }
-                else if(strcmp(text, ProtectionKindSign_str) == 0)
+                else if (strcmp(text, ProtectionKindSign_str) == 0)
                 {
                     rule.data_protection_kind = ProtectionKind::SIGN;
                 }
-                else if(strcmp(text, ProtectionKindEncrypt_str) == 0)
+                else if (strcmp(text, ProtectionKindEncrypt_str) == 0)
                 {
                     rule.data_protection_kind = ProtectionKind::ENCRYPT;
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid text in " << DataProtectionKind_str << " tag. Line " << PRINTLINE(node));
+                    logError(XMLPARSER,
+                            "Invalid text in " << DataProtectionKind_str << " tag. Line " << PRINTLINE(node));
                     return false;
                 }
             }
@@ -716,7 +760,7 @@ bool GovernanceParser::parse_topic_rule(tinyxml2::XMLElement* root, TopicRule& r
 
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         logError(XMLPARSER, "Not expected other tag. Line " << PRINTLINE(node));
         return false;

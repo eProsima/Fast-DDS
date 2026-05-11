@@ -27,7 +27,7 @@
 #else
 #define PRINTLINE(node) ""
 #define PRINTLINEPLUSONE(node) ""
-#endif
+#endif // if TIXML2_MAJOR_VERSION >= 6
 
 static const char* Root_str = "dds";
 static const char* Permission_str = "permissions";
@@ -53,34 +53,48 @@ static const char* Deny_str = "DENY";
 
 using namespace eprosima::fastrtps::rtps::security;
 
-void PermissionsParser::swap(PermissionsData& permissions)
+void PermissionsParser::swap(
+        PermissionsData& permissions)
 {
     permissions = std::move(permissions_);
 }
 
-bool PermissionsParser::parse_stream(const char* stream, size_t stream_length)
+bool PermissionsParser::parse_stream(
+        const char* stream,
+        size_t stream_length)
 {
     assert(stream);
 
     bool returned_value = false;
     tinyxml2::XMLDocument document;
 
-    if(tinyxml2::XMLError::XML_SUCCESS == document.Parse(stream, stream_length))
+    if (tinyxml2::XMLError::XML_SUCCESS == document.Parse(stream, stream_length))
     {
         tinyxml2::XMLElement* root = document.RootElement();
 
-        if(root != nullptr)
+        if (root != nullptr)
         {
-            if(strcmp(root->Name(), Root_str) == 0)
+            if (strcmp(root->Name(), Root_str) == 0)
             {
                 tinyxml2::XMLElement* permission_node = root->FirstChildElement();
-                if(strcmp(permission_node->Name(), Permission_str) == 0)
+                if (permission_node != nullptr)
                 {
-                    returned_value = parse_permissions(permission_node);
+                    if (strcmp(permission_node->Name(), Permission_str) == 0)
+                    {
+                        returned_value = parse_permissions(permission_node);
+                    }
+                    else
+                    {
+                        logError(XMLPARSER,
+                                "Invalid tag. Expected  " << Permission_str << " tag. Line " << PRINTLINE(
+                                    permission_node));
+                    }
                 }
                 else
                 {
-                    logError(XMLPARSER, "Invalid tag. Expected  " << Permission_str << " tag. Line " << PRINTLINE(permission_node));
+                    logError(XMLPARSER, "Invalid tag. Expected  " << Permission_str << " tag. Line " << PRINTLINE(
+                                permission_node));
+
                 }
             }
             else
@@ -101,23 +115,24 @@ bool PermissionsParser::parse_stream(const char* stream, size_t stream_length)
     return returned_value;
 }
 
-bool PermissionsParser::parse_permissions(tinyxml2::XMLElement* root)
+bool PermissionsParser::parse_permissions(
+        tinyxml2::XMLElement* root)
 {
     assert(root);
 
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         returned_value = true;
 
         do
         {
-            if(strcmp(node->Name(), Grant_str) == 0)
+            if (strcmp(node->Name(), Grant_str) == 0)
             {
                 Grant grant;
-                if((returned_value = parse_grant(node, grant)) == true)
+                if ((returned_value = parse_grant(node, grant)) == true)
                 {
                     permissions_.grants.push_back(std::move(grant));
                 }
@@ -128,7 +143,7 @@ bool PermissionsParser::parse_permissions(tinyxml2::XMLElement* root)
                 returned_value = false;
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
@@ -138,13 +153,15 @@ bool PermissionsParser::parse_permissions(tinyxml2::XMLElement* root)
     return returned_value;
 }
 
-bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
+bool PermissionsParser::parse_grant(
+        tinyxml2::XMLElement* root,
+        Grant& grant)
 {
     assert(root);
 
     const char* name = root->Attribute("name");
 
-    if(name != nullptr)
+    if (name != nullptr)
     {
         grant.name = name;
     }
@@ -156,13 +173,13 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
 
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), SubjectName_str) == 0)
+        if (strcmp(node->Name(), SubjectName_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
                 grant.subject_name = text;
             }
@@ -188,11 +205,11 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     (void)old_node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), Validity_str) == 0)
+        if (strcmp(node->Name(), Validity_str) == 0)
         {
-            if(!parse_validity(node, grant.validity))
+            if (!parse_validity(node, grant.validity))
             {
                 return false;
             }
@@ -212,17 +229,17 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     old_node = node;
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         do
         {
             Rule rule;
 
-            if(strcmp(node->Name(), AllowRule_str) == 0)
+            if (strcmp(node->Name(), AllowRule_str) == 0)
             {
                 rule.allow = true;
             }
-            else if(strcmp(node->Name(), DenyRule_str) == 0)
+            else if (strcmp(node->Name(), DenyRule_str) == 0)
             {
                 rule.allow = false;
             }
@@ -231,7 +248,7 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
                 break;
             }
 
-            if(!parse_rule(node, rule))
+            if (!parse_rule(node, rule))
             {
                 return false;
             }
@@ -239,7 +256,7 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
             grant.rules.push_back(rule);
             old_node = node;
         }
-        while((node = node->NextSiblingElement()) != nullptr);
+        while ((node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
@@ -248,19 +265,19 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
         return false;
     }
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), Default_str) == 0)
+        if (strcmp(node->Name(), Default_str) == 0)
         {
             const char* text = node->GetText();
 
-            if(text != nullptr)
+            if (text != nullptr)
             {
-                if(strcmp(text, Allow_str) == 0)
+                if (strcmp(text, Allow_str) == 0)
                 {
                     grant.is_default_allow = true;
                 }
-                else if(strcmp(text, Deny_str) == 0)
+                else if (strcmp(text, Deny_str) == 0)
                 {
                     grant.is_default_allow = false;
                 }
@@ -291,22 +308,24 @@ bool PermissionsParser::parse_grant(tinyxml2::XMLElement* root, Grant& grant)
     return true;
 }
 
-bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity&
+bool PermissionsParser::parse_validity(
+        tinyxml2::XMLElement* root,
+        Validity&
 #if _MSC_VER != 1800
         validity
-#endif
-        )
+#endif // if _MSC_VER != 1800
+)
 {
     assert(root);
 
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), NotBefore_str) == 0)
+        if (strcmp(node->Name(), NotBefore_str) == 0)
         {
-            if(node->GetText() != nullptr)
+            if (node->GetText() != nullptr)
             {
 #if _MSC_VER != 1800
                 struct tm time;
@@ -314,18 +333,20 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity&
                 std::istringstream stream(node->GetText());
                 stream >> std::get_time(&time, "%Y-%m-%dT%T");
 
-                if(!stream.fail())
+                if (!stream.fail())
                 {
                     validity.not_before = std::mktime(&time);
-#endif
+#endif // if _MSC_VER != 1800
 
-                    tinyxml2::XMLElement* old_node = node;
-                    (void)old_node;
-                    node = node->NextSiblingElement();
+                tinyxml2::XMLElement* old_node = node;
+                (void)old_node;
+                node = node->NextSiblingElement();
 
-                    if(node != nullptr)
+                if (node != nullptr)
+                {
+                    if (strcmp(node->Name(), NotAfter_str) == 0)
                     {
-                        if(strcmp(node->Name(), NotAfter_str) == 0)
+                        if (node->GetText() != nullptr)
                         {
 #if _MSC_VER != 1800
                             memset(&time, 0, sizeof(struct tm));
@@ -333,42 +354,48 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity&
                             stream.clear();
                             stream >> std::get_time(&time, "%Y-%m-%dT%T");
 
-                            if(!stream.fail())
+                            if (!stream.fail())
                             {
                                 validity.not_after = std::mktime(&time);
-#endif
-                                returned_value = true;
-                            }
-                            else
-                            {
-                                logError(XMLPARSER, "Fail parsing datetime value in " << NotAfter_str << " tag. Line " <<
-                                        PRINTLINE(node));
-                            }
-#if _MSC_VER != 1800
+#endif // if _MSC_VER != 1800
+                            returned_value = true;
                         }
                         else
                         {
-                            logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINE(node));
+                            logError(XMLPARSER,
+                                    "Fail parsing datetime value in " << NotAfter_str << " tag. Line "
+                                                                      << PRINTLINE(node));
                         }
-#endif
                     }
                     else
                     {
-                        logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
+                        logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINE(node));
                     }
 #if _MSC_VER != 1800
                 }
                 else
                 {
-                    logError(XMLPARSER, "Fail parsing datetime value in " << NotBefore_str << " tag. Line " <<
-                            PRINTLINE(node));
+                    logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINE(node));
                 }
-#endif
+#endif // if _MSC_VER != 1800
+                }
+                else
+                {
+                    logError(XMLPARSER, "Expected " << NotAfter_str << " tag. Line " << PRINTLINEPLUSONE(old_node));
+                }
+#if _MSC_VER != 1800
             }
             else
             {
-                logError(XMLPARSER, "Expected datetime value in " << NotBefore_str << " tag. Line " <<
-                        PRINTLINE(node));
+                logError(XMLPARSER, "Fail parsing datetime value in " << NotBefore_str << " tag. Line "
+                                                                      << PRINTLINE(node));
+            }
+#endif // if _MSC_VER != 1800
+            }
+            else
+            {
+                logError(XMLPARSER, "Expected datetime value in " << NotBefore_str << " tag. Line "
+                                                                  << PRINTLINE(node));
             }
         }
         else
@@ -384,17 +411,19 @@ bool PermissionsParser::parse_validity(tinyxml2::XMLElement* root, Validity&
     return returned_value;
 }
 
-bool PermissionsParser::parse_rule(tinyxml2::XMLElement* root, Rule& rule)
+bool PermissionsParser::parse_rule(
+        tinyxml2::XMLElement* root,
+        Rule& rule)
 {
     assert(root);
 
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
-        if(strcmp(node->Name(), Domains_str) == 0)
+        if (strcmp(node->Name(), Domains_str) == 0)
         {
-            if(!parse_domain_id_set(node, rule.domains))
+            if (!parse_domain_id_set(node, rule.domains))
             {
                 return false;
             }
@@ -413,34 +442,34 @@ bool PermissionsParser::parse_rule(tinyxml2::XMLElement* root, Rule& rule)
 
     node = node->NextSiblingElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         do
         {
             Criteria criteria;
 
-            if(strcmp(node->Name(), Publish_str) == 0)
+            if (strcmp(node->Name(), Publish_str) == 0)
             {
-                if(!parse_criteria(node, criteria))
+                if (!parse_criteria(node, criteria))
                 {
                     return false;
                 }
 
                 rule.publishes.push_back(std::move(criteria));
             }
-            else if(strcmp(node->Name(), Subscribe_str) == 0)
+            else if (strcmp(node->Name(), Subscribe_str) == 0)
             {
-                if(!parse_criteria(node, criteria))
+                if (!parse_criteria(node, criteria))
                 {
                     return false;
                 }
 
                 rule.subscribes.push_back(std::move(criteria));
             }
-            else if(strcmp(node->Name(), Relay_str) == 0)
+            else if (strcmp(node->Name(), Relay_str) == 0)
             {
 
-                if(!parse_criteria(node, criteria))
+                if (!parse_criteria(node, criteria))
                 {
                     return false;
                 }
@@ -449,45 +478,47 @@ bool PermissionsParser::parse_rule(tinyxml2::XMLElement* root, Rule& rule)
             }
             else
             {
-                logError(XMLPARSER, "Expected " << Publish_str << " or " << Subscribe_str <<
-                        " or " << Relay_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER, "Expected " << Publish_str << " or " << Subscribe_str
+                                                << " or " << Relay_str << " tag. Line " << PRINTLINE(node));
                 return false;
             }
         }
-        while((node = node->NextSiblingElement()) != nullptr);
+        while ((node = node->NextSiblingElement()) != nullptr);
     }
 
     return true;
 }
 
-bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& criteria)
+bool PermissionsParser::parse_criteria(
+        tinyxml2::XMLElement* root,
+        Criteria& criteria)
 {
     bool returned_value = true;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         do
         {
-            if(strcmp(node->Name(), Topics_str) == 0)
+            if (strcmp(node->Name(), Topics_str) == 0)
             {
                 returned_value = parse_topic(node, criteria.topics);
             }
-            else if(strcmp(node->Name(), Partitions_str) == 0)
+            else if (strcmp(node->Name(), Partitions_str) == 0)
             {
                 returned_value = parse_partition(node, criteria.partitions);
             }
-            else if(strcmp(node->Name(), DataTags_str) == 0)
+            else if (strcmp(node->Name(), DataTags_str) == 0)
             {
             }
             else
             {
-                logError(XMLPARSER, "Expected " << Topics_str << " or " << Partitions_str <<
-                        " or " << DataTags_str << " tag. Line " << PRINTLINE(node));
+                logError(XMLPARSER, "Expected " << Topics_str << " or " << Partitions_str
+                                                << " or " << DataTags_str << " tag. Line " << PRINTLINE(node));
                 returned_value = false;
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
 
     if (returned_value && criteria.partitions.empty())
@@ -498,20 +529,22 @@ bool PermissionsParser::parse_criteria(tinyxml2::XMLElement* root, Criteria& cri
     return returned_value;
 }
 
-bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::vector<std::string>& topics)
+bool PermissionsParser::parse_topic(
+        tinyxml2::XMLElement* root,
+        std::vector<std::string>& topics)
 {
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         returned_value = true;
 
         do
         {
-            if(strcmp(node->Name(), Topic_str) == 0)
+            if (strcmp(node->Name(), Topic_str) == 0)
             {
-                if(node->GetText() != nullptr)
+                if (node->GetText() != nullptr)
                 {
                     std::string topic = node->GetText();
                     topics.push_back(std::move(topic));
@@ -528,7 +561,7 @@ bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::vector<std:
                 returned_value = false;
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
@@ -538,20 +571,22 @@ bool PermissionsParser::parse_topic(tinyxml2::XMLElement* root, std::vector<std:
     return returned_value;
 }
 
-bool PermissionsParser::parse_partition(tinyxml2::XMLElement* root, std::vector<std::string>& partitions)
+bool PermissionsParser::parse_partition(
+        tinyxml2::XMLElement* root,
+        std::vector<std::string>& partitions)
 {
     bool returned_value = false;
     tinyxml2::XMLElement* node = root->FirstChildElement();
 
-    if(node != nullptr)
+    if (node != nullptr)
     {
         returned_value = true;
 
         do
         {
-            if(strcmp(node->Name(), Partition_str) == 0)
+            if (strcmp(node->Name(), Partition_str) == 0)
             {
-                if(node->GetText() != nullptr)
+                if (node->GetText() != nullptr)
                 {
                     std::string partition = node->GetText();
                     partitions.push_back(std::move(partition));
@@ -565,7 +600,8 @@ bool PermissionsParser::parse_partition(tinyxml2::XMLElement* root, std::vector<
                     }
                     else
                     {
-                        logError(XMLPARSER, "Expected topic name in " << Partition_str << " tag. Line " << PRINTLINE(node));
+                        logError(XMLPARSER,
+                                "Expected topic name in " << Partition_str << " tag. Line " << PRINTLINE(node));
                         returned_value = false;
                     }
                 }
@@ -576,7 +612,7 @@ bool PermissionsParser::parse_partition(tinyxml2::XMLElement* root, std::vector<
                 returned_value = false;
             }
         }
-        while(returned_value && (node = node->NextSiblingElement()) != nullptr);
+        while (returned_value && (node = node->NextSiblingElement()) != nullptr);
     }
     else
     {
