@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dds>
+    <permissions>
+        <grant name="TestGrant">
+            <subject_name>emailAddress=test@test.com, CN=Test</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after></not_after>
+            </validity>
+            <allow_rule>
+                <domains><id>0</id></domains>
+                <publish><topics><topic>*</topic></topics></publish>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
+    </permissions>
+</dds>
