@@ -123,6 +123,37 @@ bool SecurityManager::init(
     try
     {
         domain_id_ = participant_->get_domain_id();
+
+        // All three security plugin properties must be configured together, or none at all (non-secure participant)
+        {
+            const std::string* auth_plugin_property = PropertyPolicyHelper::find_property(
+                participant_properties, "dds.sec.auth.plugin");
+            const std::string* access_plugin_property = PropertyPolicyHelper::find_property(
+                participant_properties, "dds.sec.access.plugin");
+            const std::string* crypto_plugin_property = PropertyPolicyHelper::find_property(
+                participant_properties, "dds.sec.crypto.plugin");
+
+            const int configured_count =
+                    (auth_plugin_property != nullptr ? 1 : 0) +
+                    (access_plugin_property != nullptr ? 1 : 0) +
+                    (crypto_plugin_property != nullptr ? 1 : 0);
+
+            if (configured_count == 0)
+            {
+                // Non-secure participant: skip security setup entirely.
+                enable_security_manager();
+                return true;
+            }
+
+            if (configured_count != 3)
+            {
+                EPROSIMA_LOG_ERROR(SECURITY,
+                        "All three security plugin properties must be configured together: "
+                        "dds.sec.auth.plugin, dds.sec.access.plugin, dds.sec.crypto.plugin");
+                return false;
+            }
+        }
+
         const PropertyPolicy log_properties = PropertyPolicyHelper::get_properties_with_prefix(
             participant_->get_const_attributes().properties,
             "dds.sec.log.builtin.DDS_LogTopic.");
@@ -319,7 +350,7 @@ bool SecurityManager::init(
                     log_info_message("Access control plugin not configured");
                 }
 
-                if (access_plugin_ == nullptr || local_permissions_handle_ != nullptr)
+                if (access_plugin_ != nullptr && local_permissions_handle_ != nullptr)
                 {
                     crypto_plugin_ = factory_.create_cryptography_plugin(participant_properties);
 
@@ -354,20 +385,28 @@ bool SecurityManager::init(
                     log_info_message("Cryptography plugin not configured");
                 }
 
-                if ((access_plugin_ == nullptr || local_permissions_handle_ != nullptr) &&
-                        (crypto_plugin_ == nullptr || local_participant_crypto_handle_))
+                if (access_plugin_ != nullptr && local_permissions_handle_ != nullptr &&
+                        crypto_plugin_ != nullptr && local_participant_crypto_handle_)
                 {
                     // Should be activated here, to enable encription buffer on created entities
                     throw true;
                 }
                 else
                 {
-                    if (access_plugin_ != nullptr && local_permissions_handle_ == nullptr)
+                    if (access_plugin_ == nullptr)
+                    {
+                        EPROSIMA_LOG_ERROR(SECURITY, "Access control plugin could not be created.");
+                    }
+                    else if (local_permissions_handle_ == nullptr)
                     {
                         EPROSIMA_LOG_ERROR(SECURITY, "Participant is not allowed with its own permissions file.");
                     }
 
-                    if (crypto_plugin_ != nullptr && local_participant_crypto_handle_ == nullptr)
+                    if (crypto_plugin_ == nullptr)
+                    {
+                        EPROSIMA_LOG_ERROR(SECURITY, "Cryptography plugin could not be created.");
+                    }
+                    else if (local_participant_crypto_handle_ == nullptr)
                     {
                         EPROSIMA_LOG_ERROR(SECURITY, "Participant cryptography could not be configured.");
                     }
@@ -382,7 +421,8 @@ bool SecurityManager::init(
         }
         else
         {
-            log_info_message("Authentication plugin not configured. Security will be disabled");
+            EPROSIMA_LOG_ERROR(SECURITY, "Authentication plugin could not be created.");
+            throw false;
         }
     }
     catch (const SecurityException& e)
