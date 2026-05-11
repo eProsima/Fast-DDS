@@ -543,7 +543,16 @@ bool GovernanceParser::parse_topic_rule(
     {
         if (strcmp(node->Name(), TopicExpression_str) == 0)
         {
-            rule.topic_expression = node->GetText();
+            if (node->GetText() != nullptr)
+            {
+                rule.topic_expression = node->GetText();
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected topic name in " << TopicExpression_str
+                                                                        << " tag. Line " << PRINTLINE(node));
+                return false;
+            }
         }
         else
         {
