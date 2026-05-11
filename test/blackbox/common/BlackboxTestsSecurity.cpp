@@ -143,11 +143,12 @@ static void fill_sub_auth(
 static void fill_access(
         PropertyPolicy& policy,
         const std::string& governance_file = "governance_only_auth.smime",
-        const std::string& permissions_file = "permissions.smime")
+        const std::string& permissions_file = "permissions.smime",
+        const std::string& permissions_ca_file = "maincacert.pem")
 {
     policy.properties().emplace_back("dds.sec.access.plugin", "builtin.Access-Permissions");
     policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca",
-            "file://" + std::string(certs_path) + "/maincacert.pem");
+            "file://" + std::string(certs_path) + "/" + permissions_ca_file);
     policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.governance",
             "file://" + std::string(certs_path) + "/" + governance_file);
     policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions",
@@ -1350,7 +1351,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoSecureParticipantsWithDiffere
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/othersubkey.pem"));
     fill_access(sub_property_policy, "governance_allow_unauth_all_disabled_access_none_other_ca.smime",
-            "permissions_helloworld_securehelloworld_other_ca.smime");
+            "permissions_helloworld_securehelloworld_other_ca.smime", "othercacert.pem");
     fill_crypto(sub_property_policy);
 
     reader.history_depth(10).
@@ -1411,7 +1412,7 @@ TEST(Security, AllowUnauthenticatedParticipants_TwoParticipantsDifferentCertific
     sub_property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://" + std::string(certs_path) + "/othersubkey.pem"));
     fill_access(sub_property_policy, "governance_allow_unauth_all_disabled_read_write_enabled_other_ca.smime",
-            "permissions_helloworld_securehelloworld_other_ca.smime");
+            "permissions_helloworld_securehelloworld_other_ca.smime", "othercacert.pem");
     fill_crypto(sub_property_policy);
 
     reader.history_depth(10).
