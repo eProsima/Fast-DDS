@@ -80,6 +80,9 @@ set(TREETESTS_SOURCE
 set(REF_COUNTED_POINTER_TESTS_SOURCE
     RefCountedPointerTests.cpp)
 
+set(BUFFER_TEST_SOURCE
+    test_buffer.cpp)
+
 include_directories(mock/)
 
 add_executable(StringMatchingTests ${STRINGMATCHINGTESTS_SOURCE})
@@ -186,6 +189,11 @@ add_executable(RefCountedPointerTests ${REF_COUNTED_POINTER_TESTS_SOURCE})
 target_include_directories(RefCountedPointerTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(RefCountedPointerTests GTest::gtest)
 gtest_discover_tests(RefCountedPointerTests)
+
+add_executable(BufferTests ${BUFFER_TEST_SOURCE})
+target_include_directories(BufferTests PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(BufferTests GTest::gtest)
+gtest_discover_tests(BufferTests)
 
 ###############################################################################
 # Necessary files
