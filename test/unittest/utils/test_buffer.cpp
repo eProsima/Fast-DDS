@@ -634,8 +634,8 @@ TEST(TestBuffer, swap_is_noexcept) {
   static_assert(
     std::is_nothrow_swappable_v<Buffer<uint8_t>>,
     "rosidl::Buffer should be nothrow-swappable to match std::vector");
-#endif
   SUCCEED();
+#endif
 }
 
 // Test swap used by generic STL algorithm (via ADL internally).

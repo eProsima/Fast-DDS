@@ -353,11 +353,15 @@ public:
     get_cpu_impl()->get_storage().assign(count, value);
   }
 
-  template<typename InputIt>
+  template<typename InputIt,
+    typename std::enable_if<!std::is_integral<InputIt>::value, int>::type = 0>
   void assign(InputIt first, InputIt last)
   {
     throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().assign(first, last);
+    assign_range_impl(
+      first,
+      last,
+      typename std::is_same<typename std::iterator_traits<InputIt>::value_type, T>::type());
   }
 
   void assign(std::initializer_list<T> ilist)
@@ -440,12 +444,22 @@ public:
     return get_cpu_impl()->get_storage().emplace(pos, std::forward<Args>(args)...);
   }
 
+// C++11 version of emplace_back returns void, C++17 version returns reference to the newly added element.
+#if __cplusplus >= 201703L
   template<typename ... Args>
   reference emplace_back(Args && ... args)
   {
     throw_if_not_cpu_backend();
     return get_cpu_impl()->get_storage().emplace_back(std::forward<Args>(args)...);
   }
+#else
+  template<typename ... Args>
+  void emplace_back(Args && ... args)
+  {
+    throw_if_not_cpu_backend();
+    get_cpu_impl()->get_storage().emplace_back(std::forward<Args>(args)...);
+  }
+#endif
 
   iterator erase(const_iterator pos)
   {
@@ -499,7 +513,11 @@ public:
     }
     auto cpu_copy = impl_->to_cpu();
     auto * cpu = static_cast<CpuBufferImpl<T> *>(cpu_copy.get());
-    if constexpr (std::is_same_v<Allocator, std::allocator<T>>) {
+#if __cplusplus >= 201703L
+    if constexpr (std::is_same<Allocator, std::allocator<T>>::value) {
+#else
+    if (std::is_same<Allocator, std::allocator<T>>::value) {
+#endif
       return std::move(cpu->get_storage());
     } else {
       auto & src = cpu->get_storage();
@@ -573,6 +591,25 @@ private:
   CpuBufferImpl<T, Allocator> * get_cpu_impl() const
   {
     return cpu_impl_;
+  }
+
+  template<typename InputIt>
+  void assign_range_impl(InputIt first, InputIt last, std::true_type)
+  {
+    // No conversions needed: value_type matches exactly.
+    get_cpu_impl()->get_storage().assign(first, last);
+  }
+
+  template<typename InputIt>
+  void assign_range_impl(InputIt first, InputIt last, std::false_type)
+  {
+    // With possible conversions: safe path.
+    std::vector<T, Allocator> converted;
+    for (; first != last; ++first)
+    {
+      converted.push_back(static_cast<T>(*first));
+    }
+    get_cpu_impl()->get_storage().assign(converted.begin(), converted.end());
   }
 };
 
