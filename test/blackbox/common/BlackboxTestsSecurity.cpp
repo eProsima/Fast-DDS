@@ -4651,7 +4651,8 @@ TEST(Security, ValidateAuthenticationHandshakePropertiesParsing)
 
     PropertyPolicy property_policy;
 
-    fill_sub_auth(property_policy);
+    fill_pub_auth(property_policy);
+    fill_access(property_policy);
     fill_crypto(property_policy);
 
     // max_handshake_requests out of bounds
@@ -4709,21 +4710,20 @@ TEST(Security, ValidateAuthenticationHandshakePropertiesParsing)
 TEST(Security, ValidateAuthenticationHandshakeProperties)
 {
     // Create
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic");
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic");
 
     PropertyPolicy property_policy;
     std::string xml_file = "auth_handshake_props_profile.xml";
-    std::string profile_name = "auth_handshake_props";
 
     // Set a configuration that makes participant authentication
     // to be performed quickly so that we receive handshake
     // in 0.15 secs approx
     writer.set_xml_filename(xml_file);
-    writer.set_participant_profile(profile_name);
+    writer.set_participant_profile("auth_handshake_props_pub");
 
     reader.set_xml_filename(xml_file);
-    reader.set_participant_profile(profile_name);
+    reader.set_participant_profile("auth_handshake_props_sub");
 
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
