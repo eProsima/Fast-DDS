@@ -1,4 +1,5 @@
 // Copyright 2026 Open Source Robotics Foundation, Inc.
+// Copyright 2026 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROSIDL_BUFFER__BUFFER_IMPL_BASE_HPP_
-#define ROSIDL_BUFFER__BUFFER_IMPL_BASE_HPP_
+#ifndef FASTDDS_UTILS_BUFFER__BUFFER_IMPL_BASE_HPP_
+#define FASTDDS_UTILS_BUFFER__BUFFER_IMPL_BASE_HPP_
 
 #include <cstddef>
 #include <memory>
 #include <string>
 
-namespace rosidl
-{
+namespace eprosima {
+namespace fastdds {
 
 /// Abstract base class for all buffer implementations (CPU, CUDA, ROCm, etc.).
 ///
@@ -53,6 +54,7 @@ public:
   virtual std::unique_ptr<BufferImplBase<T>> clone() const = 0;
 };
 
-}  // namespace rosidl
+}  // namespace fastdds
+}  // namespace eprosima
 
-#endif  // ROSIDL_BUFFER__BUFFER_IMPL_BASE_HPP_
+#endif  // FASTDDS_UTILS_BUFFER__BUFFER_IMPL_BASE_HPP_

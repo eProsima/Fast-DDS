@@ -1,4 +1,5 @@
 // Copyright 2026 Open Source Robotics Foundation, Inc.
+// Copyright 2026 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROSIDL_BUFFER__BUFFER_HPP_
-#define ROSIDL_BUFFER__BUFFER_HPP_
+#ifndef FASTDDS_UTILS_BUFFER__BUFFER_HPP_
+#define FASTDDS_UTILS_BUFFER__BUFFER_HPP_
 
 #include <algorithm>
 #include <cstddef>
@@ -26,11 +27,11 @@
 #include <utility>
 #include <vector>
 
-#include "rosidl_buffer/buffer_impl_base.hpp"
-#include "rosidl_buffer/cpu_buffer_impl.hpp"
+#include <fastdds/utils/buffer/buffer_impl_base.hpp>
+#include <fastdds/utils/buffer/cpu_buffer_impl.hpp>
 
-namespace rosidl
-{
+namespace eprosima {
+namespace fastdds {
 
 /// Buffer<T> provides a drop-in replacement for std::vector<T> with support
 /// for vendor-specific memory backends (CPU, GPU, etc.).
@@ -622,6 +623,7 @@ void swap(std::vector<T, Allocator> & lhs, Buffer<T, Allocator> & rhs) noexcept
   rhs.swap(lhs);
 }
 
-}  // namespace rosidl
+}  // namespace fastdds
+}  // namespace eprosima
 
-#endif  // ROSIDL_BUFFER__BUFFER_HPP_
+#endif  // FASTDDS_UTILS_BUFFER__BUFFER_HPP_

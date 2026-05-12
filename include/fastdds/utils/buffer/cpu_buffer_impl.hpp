@@ -1,4 +1,5 @@
 // Copyright 2026 Open Source Robotics Foundation, Inc.
+// Copyright 2026 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROSIDL_BUFFER__CPU_BUFFER_IMPL_HPP_
-#define ROSIDL_BUFFER__CPU_BUFFER_IMPL_HPP_
+#ifndef FASTDDS_UTILS_BUFFER__CPU_BUFFER_IMPL_HPP_
+#define FASTDDS_UTILS_BUFFER__CPU_BUFFER_IMPL_HPP_
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "rosidl_buffer/buffer_impl_base.hpp"
+#include <fastdds/utils/buffer/buffer_impl_base.hpp>
 
-namespace rosidl
-{
+namespace eprosima {
+namespace fastdds {
 
 /// CPU buffer implementation wrapping std::vector.
 /// Provides the reference implementation for CPU memory buffers.
@@ -60,6 +61,7 @@ private:
   std::vector<T, Allocator> storage_;
 };
 
-}  // namespace rosidl
+}  // namespace fastdds
+}  // namespace eprosima
 
-#endif  // ROSIDL_BUFFER__CPU_BUFFER_IMPL_HPP_
+#endif  // FASTDDS_UTILS_BUFFER__CPU_BUFFER_IMPL_HPP_
