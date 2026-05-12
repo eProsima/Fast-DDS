@@ -267,8 +267,7 @@ struct FASTDDS_EXPORTED_API CacheChange_t
             {
                 // Keep index of next fragment on the payload portion at the beginning of each fragment. Last
                 // fragment will have fragment_count_ as 'next fragment index'
-                size_t offset = 0;
-                for (uint32_t i = 1; i <= fragment_count_; i++, offset += fragment_size_)
+                for (uint32_t i = 1; i <= fragment_count_; i++)
                 {
                     set_next_missing_fragment(i - 1, i);  // index to next fragment in missing list
                 }
