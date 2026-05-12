@@ -43,621 +43,723 @@ template<typename T, typename Allocator = std::allocator<T>>
 class Buffer
 {
 public:
-  // Type aliases for std::vector compatibility
-  using value_type = T;
-  using allocator_type = Allocator;
-  using size_type = size_t;
-  using difference_type = std::ptrdiff_t;
-  using reference = T &;
-  using const_reference = const T &;
-  using pointer = typename std::vector<T, Allocator>::pointer;
-  using const_pointer = typename std::vector<T, Allocator>::const_pointer;
-  using iterator = typename std::vector<T, Allocator>::iterator;
-  using const_iterator = typename std::vector<T, Allocator>::const_iterator;
-  using reverse_iterator = typename std::vector<T, Allocator>::reverse_iterator;
-  using const_reverse_iterator = typename std::vector<T, Allocator>::const_reverse_iterator;
 
-  /// Default constructor creates CPU buffer
-  Buffer()
-  {
-    set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-  }
+    // Type aliases for std::vector compatibility
+    using value_type = T;
+    using allocator_type = Allocator;
+    using size_type = size_t;
+    using difference_type = std::ptrdiff_t;
+    using reference = T&;
+    using const_reference = const T&;
+    using pointer = typename std::vector<T, Allocator>::pointer;
+    using const_pointer = typename std::vector<T, Allocator>::const_pointer;
+    using iterator = typename std::vector<T, Allocator>::iterator;
+    using const_iterator = typename std::vector<T, Allocator>::const_iterator;
+    using reverse_iterator = typename std::vector<T, Allocator>::reverse_iterator;
+    using const_reverse_iterator = typename std::vector<T, Allocator>::const_reverse_iterator;
 
-  /// Construct with a backend implementation (set once at construction).
-  /// This is the only way to set a non-CPU backend; there is no post-
-  /// construction setter, which avoids race conditions with concurrent reads.
-  explicit Buffer(std::unique_ptr<BufferImplBase<T>> impl)
-  {
-    if (!impl) {
-      throw std::invalid_argument("Buffer implementation must not be null");
+    /// Default constructor creates CPU buffer
+    Buffer()
+    {
+        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
     }
-    set_impl(std::move(impl));
-  }
 
-  /// Construct with initial size (CPU backend)
-  explicit Buffer(size_t count)
-  {
-    set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-    cpu_impl_->get_storage().resize(count);
-  }
-
-  /// Construct with initial size and value (CPU backend)
-  Buffer(size_t count, const T & value)
-  {
-    set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-    cpu_impl_->get_storage().assign(count, value);
-  }
-
-  /// Construct from std::vector (copy) - for backward compatibility
-  Buffer(const std::vector<T, Allocator> & vec)  // NOLINT(runtime/explicit)
-  {
-    set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-    cpu_impl_->get_storage() = vec;
-  }
-
-  /// Construct from std::vector (move) - for backward compatibility
-  Buffer(std::vector<T, Allocator> && vec)  // NOLINT(runtime/explicit) - intentionally implicit
-  {
-    set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-    cpu_impl_->get_storage() = std::move(vec);
-  }
-
-  /// Construct from initializer list - for backward compatibility
-  Buffer(std::initializer_list<T> init)
-  {
-    set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-    cpu_impl_->get_storage() = init;
-  }
-
-  /// Copy constructor (deep copy via clone())
-  Buffer(const Buffer & other)
-  {
-    set_impl(other.impl_->clone());
-  }
-
-  /// Move constructor — the moved-from buffer is left in a valid, empty state.
-  Buffer(Buffer && other) noexcept
-  {
-    set_impl(std::move(other.impl_));
-    other.set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
-  }
-
-  /// Copy assignment (deep copy via clone())
-  Buffer & operator=(const Buffer & other)
-  {
-    if (this != &other) {
-      set_impl(other.impl_->clone());
+    /// Construct with a backend implementation (set once at construction).
+    /// This is the only way to set a non-CPU backend; there is no post-
+    /// construction setter, which avoids race conditions with concurrent reads.
+    explicit Buffer(
+            std::unique_ptr<BufferImplBase<T>> impl)
+    {
+        if (!impl)
+        {
+            throw std::invalid_argument("Buffer implementation must not be null");
+        }
+        set_impl(std::move(impl));
     }
-    return *this;
-  }
 
-  /// Move assignment — the moved-from buffer is left in a valid, empty state.
-  Buffer & operator=(Buffer && other) noexcept
-  {
-    if (this != &other) {
-      set_impl(std::move(other.impl_));
-      other.set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+    /// Construct with initial size (CPU backend)
+    explicit Buffer(
+            size_t count)
+    {
+        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        cpu_impl_->get_storage().resize(count);
     }
-    return *this;
-  }
 
-  /// Assignment from initializer list - for backward compatibility
-  /// This must come before vector assignment to resolve ambiguity with {{...}} syntax
-  Buffer & operator=(std::initializer_list<T> init)
-  {
-    throw_if_not_cpu_backend();
-    cpu_impl_->get_storage() = init;
-    return *this;
-  }
+    /// Construct with initial size and value (CPU backend)
+    Buffer(
+            size_t count,
+            const T& value)
+    {
+        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        cpu_impl_->get_storage().assign(count, value);
+    }
 
-  /// Assignment from std::vector (copy) - for backward compatibility
-  /// Uses SFINAE to avoid ambiguity with initializer lists
-  template<typename U = std::vector<T, Allocator>,
-    typename std::enable_if<std::is_same<U, std::vector<T, Allocator>>::value, int>::type = 0>
-  Buffer & operator=(const U & vec)
-  {
-    throw_if_not_cpu_backend();
-    cpu_impl_->get_storage() = vec;
-    return *this;
-  }
+    /// Construct from std::vector (copy) - for backward compatibility
+    Buffer(
+            const std::vector<T, Allocator>& vec) // NOLINT(runtime/explicit)
+    {
+        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        cpu_impl_->get_storage() = vec;
+    }
 
-  /// Assignment from std::vector (move) - for backward compatibility
-  /// Uses SFINAE to avoid ambiguity with initializer lists
-  template<typename U = std::vector<T, Allocator>,
-    typename std::enable_if<std::is_same<U, std::vector<T, Allocator>>::value, int>::type = 0>
-  Buffer & operator=(U && vec)
-  {
-    throw_if_not_cpu_backend();
-    cpu_impl_->get_storage() = std::move(vec);
-    return *this;
-  }
+    /// Construct from std::vector (move) - for backward compatibility
+    Buffer(
+            std::vector<T, Allocator>&& vec) // NOLINT(runtime/explicit) - intentionally implicit
+    {
+        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        cpu_impl_->get_storage() = std::move(vec);
+    }
 
-  // ========== Element Access (CPU only) ==========
+    /// Construct from initializer list - for backward compatibility
+    Buffer(
+            std::initializer_list<T> init)
+    {
+        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        cpu_impl_->get_storage() = init;
+    }
 
-  /// Access element at position (CPU only)
-  reference operator[](size_t pos)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage()[pos];
-  }
+    /// Copy constructor (deep copy via clone())
+    Buffer(
+            const Buffer& other)
+    {
+        set_impl(other.impl_->clone());
+    }
 
-  const_reference operator[](size_t pos) const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage()[pos];
-  }
+    /// Move constructor — the moved-from buffer is left in a valid, empty state.
+    Buffer(
+            Buffer&& other) noexcept
+    {
+        set_impl(std::move(other.impl_));
+        other.set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+    }
 
-  /// Access element with bounds checking (CPU only)
-  reference at(size_t pos)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().at(pos);
-  }
+    /// Copy assignment (deep copy via clone())
+    Buffer& operator =(
+            const Buffer& other)
+    {
+        if (this != &other)
+        {
+            set_impl(other.impl_->clone());
+        }
+        return *this;
+    }
 
-  const_reference at(size_t pos) const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().at(pos);
-  }
+    /// Move assignment — the moved-from buffer is left in a valid, empty state.
+    Buffer& operator =(
+            Buffer&& other) noexcept
+    {
+        if (this != &other)
+        {
+            set_impl(std::move(other.impl_));
+            other.set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        }
+        return *this;
+    }
 
-  /// Access first element (CPU only)
-  reference front()
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().front();
-  }
+    /// Assignment from initializer list - for backward compatibility
+    /// This must come before vector assignment to resolve ambiguity with {{...}} syntax
+    Buffer& operator =(
+            std::initializer_list<T> init)
+    {
+        throw_if_not_cpu_backend();
+        cpu_impl_->get_storage() = init;
+        return *this;
+    }
 
-  const_reference front() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().front();
-  }
+    /// Assignment from std::vector (copy) - for backward compatibility
+    /// Uses SFINAE to avoid ambiguity with initializer lists
+    template<typename U = std::vector<T, Allocator>,
+            typename std::enable_if<std::is_same<U, std::vector<T, Allocator>>::value, int>::type = 0>
+    Buffer& operator =(
+            const U& vec)
+    {
+        throw_if_not_cpu_backend();
+        cpu_impl_->get_storage() = vec;
+        return *this;
+    }
 
-  /// Access last element (CPU only)
-  reference back()
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().back();
-  }
+    /// Assignment from std::vector (move) - for backward compatibility
+    /// Uses SFINAE to avoid ambiguity with initializer lists
+    template<typename U = std::vector<T, Allocator>,
+            typename std::enable_if<std::is_same<U, std::vector<T, Allocator>>::value, int>::type = 0>
+    Buffer& operator =(
+            U&& vec)
+    {
+        throw_if_not_cpu_backend();
+        cpu_impl_->get_storage() = std::move(vec);
+        return *this;
+    }
 
-  const_reference back() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().back();
-  }
+    // ========== Element Access (CPU only) ==========
 
-  /// Get pointer to data (CPU only)
-  pointer data()
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().data();
-  }
+    /// Access element at position (CPU only)
+    reference operator [](
+            size_t pos)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage()[pos];
+    }
 
-  const_pointer data() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().data();
-  }
+    const_reference operator [](
+            size_t pos) const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage()[pos];
+    }
 
-  // ========== Iterators (CPU only) ==========
+    /// Access element with bounds checking (CPU only)
+    reference at(
+            size_t pos)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().at(pos);
+    }
 
-  iterator begin()
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().begin();
-  }
+    const_reference at(
+            size_t pos) const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().at(pos);
+    }
 
-  const_iterator begin() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().begin();
-  }
+    /// Access first element (CPU only)
+    reference front()
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().front();
+    }
 
-  const_iterator cbegin() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().cbegin();
-  }
+    const_reference front() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().front();
+    }
 
-  iterator end()
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().end();
-  }
+    /// Access last element (CPU only)
+    reference back()
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().back();
+    }
 
-  const_iterator end() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().end();
-  }
+    const_reference back() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().back();
+    }
 
-  const_iterator cend() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().cend();
-  }
+    /// Get pointer to data (CPU only)
+    pointer data()
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().data();
+    }
 
-  reverse_iterator rbegin()
-  {
-    return reverse_iterator(end());
-  }
+    const_pointer data() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().data();
+    }
 
-  const_reverse_iterator rbegin() const
-  {
-    return const_reverse_iterator(end());
-  }
+    // ========== Iterators (CPU only) ==========
 
-  const_reverse_iterator crbegin() const
-  {
-    return const_reverse_iterator(cend());
-  }
+    iterator begin()
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().begin();
+    }
 
-  reverse_iterator rend()
-  {
-    return reverse_iterator(begin());
-  }
+    const_iterator begin() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().begin();
+    }
 
-  const_reverse_iterator rend() const
-  {
-    return const_reverse_iterator(begin());
-  }
+    const_iterator cbegin() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().cbegin();
+    }
 
-  const_reverse_iterator crend() const
-  {
-    return const_reverse_iterator(cbegin());
-  }
+    iterator end()
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().end();
+    }
 
-  // ========== Capacity ==========
+    const_iterator end() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().end();
+    }
 
-  /// Works for all backends (delegates to BufferImplBase::size()).
-  bool empty() const {return impl_->size() == 0;}
+    const_iterator cend() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().cend();
+    }
 
-  /// Works for all backends (delegates to BufferImplBase::size()).
-  size_t size() const {return impl_->size();}
+    reverse_iterator rbegin()
+    {
+        return reverse_iterator(end());
+    }
 
-  size_t max_size() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().max_size();
-  }
+    const_reverse_iterator rbegin() const
+    {
+        return const_reverse_iterator(end());
+    }
 
-  void reserve(size_t new_cap)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().reserve(new_cap);
-  }
+    const_reverse_iterator crbegin() const
+    {
+        return const_reverse_iterator(cend());
+    }
 
-  size_t capacity() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().capacity();
-  }
+    reverse_iterator rend()
+    {
+        return reverse_iterator(begin());
+    }
 
-  void shrink_to_fit()
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().shrink_to_fit();
-  }
+    const_reverse_iterator rend() const
+    {
+        return const_reverse_iterator(begin());
+    }
 
-  allocator_type get_allocator() const
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().get_allocator();
-  }
+    const_reverse_iterator crend() const
+    {
+        return const_reverse_iterator(cbegin());
+    }
 
-  // ========== Modifiers (CPU only) ==========
+    // ========== Capacity ==========
 
-  void assign(size_t count, const T & value)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().assign(count, value);
-  }
+    /// Works for all backends (delegates to BufferImplBase::size()).
+    bool empty() const
+    {
+        return impl_->size() == 0;
+    }
 
-  template<typename InputIt,
-    typename std::enable_if<!std::is_integral<InputIt>::value, int>::type = 0>
-  void assign(InputIt first, InputIt last)
-  {
-    throw_if_not_cpu_backend();
-    assign_range_impl(
-      first,
-      last,
-      typename std::is_same<typename std::iterator_traits<InputIt>::value_type, T>::type());
-  }
+    /// Works for all backends (delegates to BufferImplBase::size()).
+    size_t size() const
+    {
+        return impl_->size();
+    }
 
-  void assign(std::initializer_list<T> ilist)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().assign(ilist);
-  }
+    size_t max_size() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().max_size();
+    }
 
-  iterator insert(const_iterator pos, const T & value)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().insert(pos, value);
-  }
+    void reserve(
+            size_t new_cap)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().reserve(new_cap);
+    }
 
-  iterator insert(const_iterator pos, T && value)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().insert(pos, std::move(value));
-  }
+    size_t capacity() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().capacity();
+    }
 
-  iterator insert(const_iterator pos, size_t count, const T & value)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().insert(pos, count, value);
-  }
+    void shrink_to_fit()
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().shrink_to_fit();
+    }
 
-  template<typename InputIt>
-  iterator insert(const_iterator pos, InputIt first, InputIt last)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().insert(pos, first, last);
-  }
+    allocator_type get_allocator() const
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().get_allocator();
+    }
 
-  iterator insert(const_iterator pos, std::initializer_list<T> ilist)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().insert(pos, ilist);
-  }
+    // ========== Modifiers (CPU only) ==========
 
-  void clear()
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().clear();
-  }
+    void assign(
+            size_t count,
+            const T& value)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().assign(count, value);
+    }
 
-  void resize(size_t n)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().resize(n);
-  }
+    template<typename InputIt,
+            typename std::enable_if<!std::is_integral<InputIt>::value, int>::type = 0>
+    void assign(
+            InputIt first,
+            InputIt last)
+    {
+        throw_if_not_cpu_backend();
+        assign_range_impl(
+            first,
+            last,
+            typename std::is_same<typename std::iterator_traits<InputIt>::value_type, T>::type());
+    }
 
-  void resize(size_t n, const T & value)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().resize(n, value);
-  }
+    void assign(
+            std::initializer_list<T> ilist)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().assign(ilist);
+    }
 
-  void push_back(const T & value)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().push_back(value);
-  }
+    iterator insert(
+            const_iterator pos,
+            const T& value)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().insert(pos, value);
+    }
 
-  void push_back(T && value)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().push_back(std::move(value));
-  }
+    iterator insert(
+            const_iterator pos,
+            T&& value)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().insert(pos, std::move(value));
+    }
 
-  void pop_back()
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().pop_back();
-  }
+    iterator insert(
+            const_iterator pos,
+            size_t count,
+            const T& value)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().insert(pos, count, value);
+    }
 
-  template<typename ... Args>
-  iterator emplace(const_iterator pos, Args && ... args)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().emplace(pos, std::forward<Args>(args)...);
-  }
+    template<typename InputIt>
+    iterator insert(
+            const_iterator pos,
+            InputIt first,
+            InputIt last)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().insert(pos, first, last);
+    }
 
-// C++11 version of emplace_back returns void, C++17 version returns reference to the newly added element.
+    iterator insert(
+            const_iterator pos,
+            std::initializer_list<T> ilist)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().insert(pos, ilist);
+    }
+
+    void clear()
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().clear();
+    }
+
+    void resize(
+            size_t n)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().resize(n);
+    }
+
+    void resize(
+            size_t n,
+            const T& value)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().resize(n, value);
+    }
+
+    void push_back(
+            const T& value)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().push_back(value);
+    }
+
+    void push_back(
+            T&& value)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().push_back(std::move(value));
+    }
+
+    void pop_back()
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().pop_back();
+    }
+
+    template<typename ... Args>
+    iterator emplace(
+            const_iterator pos,
+            Args&& ... args)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().emplace(pos, std::forward<Args>(args)...);
+    }
+
+    // C++11 version of emplace_back returns void, C++17 version returns reference to the newly added element.
 #if __cplusplus >= 201703L
-  template<typename ... Args>
-  reference emplace_back(Args && ... args)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().emplace_back(std::forward<Args>(args)...);
-  }
-#else
-  template<typename ... Args>
-  void emplace_back(Args && ... args)
-  {
-    throw_if_not_cpu_backend();
-    get_cpu_impl()->get_storage().emplace_back(std::forward<Args>(args)...);
-  }
-#endif
-
-  iterator erase(const_iterator pos)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().erase(pos);
-  }
-
-  iterator erase(const_iterator first, const_iterator last)
-  {
-    throw_if_not_cpu_backend();
-    return get_cpu_impl()->get_storage().erase(first, last);
-  }
-
-  void swap(Buffer & other) noexcept
-  {
-    throw_if_not_cpu_backend();
-    other.throw_if_not_cpu_backend();
-    cpu_impl_->get_storage().swap(other.cpu_impl_->get_storage());
-  }
-
-  void swap(std::vector<T, Allocator> & vec) noexcept
-  {
-    throw_if_not_cpu_backend();
-    cpu_impl_->get_storage().swap(vec);
-  }
-
-  // ========== Conversion Operators ==========
-
-  /// Implicit conversion to std::vector<T, Allocator>& (CPU only).
-  /// Provides backward compatibility with existing code.
-  /// @throws std::runtime_error if backend is not CPU.
-  operator std::vector<T, Allocator> &()
-  {
-    throw_if_not_cpu_backend();
-    return cpu_impl_->get_storage();
-  }
-
-  operator const std::vector<T, Allocator> &() const
-  {
-    throw_if_not_cpu_backend();
-    return cpu_impl_->get_storage();
-  }
-
-  /// Escape hatch: Explicit conversion to std::vector<T, Allocator> (all backends).
-  /// For non-CPU backends, this triggers a copy to CPU memory.
-  /// @return A std::vector containing a copy of the buffer data.
-  std::vector<T, Allocator> to_vector() const
-  {
-    if (cpu_impl_) {
-      return cpu_impl_->get_storage();
+    template<typename ... Args>
+    reference emplace_back(
+            Args&& ... args)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().emplace_back(std::forward<Args>(args)...);
     }
-    auto cpu_copy = impl_->to_cpu();
-    auto * cpu = static_cast<CpuBufferImpl<T> *>(cpu_copy.get());
+
+#else
+    template<typename ... Args>
+    void emplace_back(
+            Args&& ... args)
+    {
+        throw_if_not_cpu_backend();
+        get_cpu_impl()->get_storage().emplace_back(std::forward<Args>(args)...);
+    }
+
+#endif // if __cplusplus >= 201703L
+
+    iterator erase(
+            const_iterator pos)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().erase(pos);
+    }
+
+    iterator erase(
+            const_iterator first,
+            const_iterator last)
+    {
+        throw_if_not_cpu_backend();
+        return get_cpu_impl()->get_storage().erase(first, last);
+    }
+
+    void swap(
+            Buffer& other) noexcept
+    {
+        throw_if_not_cpu_backend();
+        other.throw_if_not_cpu_backend();
+        cpu_impl_->get_storage().swap(other.cpu_impl_->get_storage());
+    }
+
+    void swap(
+            std::vector<T, Allocator>& vec) noexcept
+    {
+        throw_if_not_cpu_backend();
+        cpu_impl_->get_storage().swap(vec);
+    }
+
+    // ========== Conversion Operators ==========
+
+    /// Implicit conversion to std::vector<T, Allocator>& (CPU only).
+    /// Provides backward compatibility with existing code.
+    /// @throws std::runtime_error if backend is not CPU.
+    operator std::vector<T, Allocator>&()
+    {
+        throw_if_not_cpu_backend();
+        return cpu_impl_->get_storage();
+    }
+
+    operator const std::vector<T, Allocator>&() const
+    {
+        throw_if_not_cpu_backend();
+        return cpu_impl_->get_storage();
+    }
+
+    /// Escape hatch: Explicit conversion to std::vector<T, Allocator> (all backends).
+    /// For non-CPU backends, this triggers a copy to CPU memory.
+    /// @return A std::vector containing a copy of the buffer data.
+    std::vector<T, Allocator> to_vector() const
+    {
+        if (cpu_impl_)
+        {
+            return cpu_impl_->get_storage();
+        }
+        auto cpu_copy = impl_->to_cpu();
+        auto * cpu = static_cast<CpuBufferImpl<T>*>(cpu_copy.get());
 #if __cplusplus >= 201703L
-    if constexpr (std::is_same<Allocator, std::allocator<T>>::value) {
+        if constexpr (std::is_same<Allocator, std::allocator<T>>::value)
+        {
 #else
-    if (std::is_same<Allocator, std::allocator<T>>::value) {
-#endif
-      return std::move(cpu->get_storage());
-    } else {
-      auto & src = cpu->get_storage();
-      return std::vector<T, Allocator>(src.begin(), src.end());
+        if (std::is_same<Allocator, std::allocator<T>>::value)
+        {
+#endif // if __cplusplus >= 201703L
+            return std::move(cpu->get_storage());
+        }
+        else
+        {
+            auto& src = cpu->get_storage();
+            return std::vector<T, Allocator>(src.begin(), src.end());
+        }
     }
-  }
 
-  // ========== Comparison Operators ==========
+    // ========== Comparison Operators ==========
 
-  bool operator==(const Buffer & other) const
-  {
-    if (size() != other.size()) {
-      return false;
+    bool operator ==(
+            const Buffer& other) const
+    {
+        if (size() != other.size())
+        {
+            return false;
+        }
+        if (cpu_impl_ && other.cpu_impl_)
+        {
+            return cpu_impl_->get_storage() == other.cpu_impl_->get_storage();
+        }
+        return to_vector() == other.to_vector();
     }
-    if (cpu_impl_ && other.cpu_impl_) {
-      return cpu_impl_->get_storage() == other.cpu_impl_->get_storage();
+
+    bool operator !=(
+            const Buffer& other) const
+    {
+        return !(*this == other);
     }
-    return to_vector() == other.to_vector();
-  }
 
-  bool operator!=(const Buffer & other) const
-  {
-    return !(*this == other);
-  }
+    // ========== Backend Management ==========
 
-  // ========== Backend Management ==========
-
-  /// Get the backend type identifier (e.g., "cpu", "cuda").
-  /// Delegates to the underlying implementation — the impl is the single
-  /// source of truth for its own backend type.
-  std::string get_backend_type() const
-  {
-    return impl_->get_backend_type();
-  }
-
-  /// Get the implementation pointer (read-only).
-  const BufferImplBase<T> * get_impl() const {return impl_.get();}
-
-  /// Get the implementation pointer (mutable, e.g. for descriptor creation).
-  BufferImplBase<T> * get_impl() {return impl_.get();}
-
-  /// Throw exception if not CPU backend.
-  /// @throws std::runtime_error if backend is not CPU.
-  void throw_if_not_cpu_backend() const
-  {
-    if (!cpu_impl_) {
-      throw std::runtime_error(
-              "Operation requires CPU backend. Current backend: " +
-              impl_->get_backend_type() +
-              ". Use to_vector() for explicit conversion to CPU.");
+    /// Get the backend type identifier (e.g., "cpu", "cuda").
+    /// Delegates to the underlying implementation — the impl is the single
+    /// source of truth for its own backend type.
+    std::string get_backend_type() const
+    {
+        return impl_->get_backend_type();
     }
-  }
+
+    /// Get the implementation pointer (read-only).
+    const BufferImplBase<T> * get_impl() const
+    {
+        return impl_.get();
+    }
+
+    /// Get the implementation pointer (mutable, e.g. for descriptor creation).
+    BufferImplBase<T> * get_impl()
+    {
+        return impl_.get();
+    }
+
+    /// Throw exception if not CPU backend.
+    /// @throws std::runtime_error if backend is not CPU.
+    void throw_if_not_cpu_backend() const
+    {
+        if (!cpu_impl_)
+        {
+            throw std::runtime_error(
+                      "Operation requires CPU backend. Current backend: " +
+                      impl_->get_backend_type() +
+                      ". Use to_vector() for explicit conversion to CPU.");
+        }
+    }
 
 private:
-  /// Unique pointer for proper ownership and value semantics.
-  /// The implementation is the sole source of truth for the backend type.
-  std::unique_ptr<BufferImplBase<T>> impl_;
 
-  /// Cached pointer for type-safe CPU backend detection.
-  /// Set by set_impl() via dynamic_cast; null for non-CPU backends.
-  CpuBufferImpl<T, Allocator> * cpu_impl_ = nullptr;
+    /// Unique pointer for proper ownership and value semantics.
+    /// The implementation is the sole source of truth for the backend type.
+    std::unique_ptr<BufferImplBase<T>> impl_;
 
-  /// Set the implementation and update the cached CPU pointer.
-  void set_impl(std::unique_ptr<BufferImplBase<T>> impl)
-  {
-    impl_ = std::move(impl);
-    cpu_impl_ = dynamic_cast<CpuBufferImpl<T, Allocator> *>(impl_.get());
-  }
+    /// Cached pointer for type-safe CPU backend detection.
+    /// Set by set_impl() via dynamic_cast; null for non-CPU backends.
+    CpuBufferImpl<T, Allocator> * cpu_impl_ = nullptr;
 
-  /// Get CPU implementation (assumes throw_if_not_cpu_backend() was called)
-  CpuBufferImpl<T, Allocator> * get_cpu_impl() const
-  {
-    return cpu_impl_;
-  }
-
-  template<typename InputIt>
-  void assign_range_impl(InputIt first, InputIt last, std::true_type)
-  {
-    // No conversions needed: value_type matches exactly.
-    get_cpu_impl()->get_storage().assign(first, last);
-  }
-
-  template<typename InputIt>
-  void assign_range_impl(InputIt first, InputIt last, std::false_type)
-  {
-    // With possible conversions: safe path.
-    std::vector<T, Allocator> converted;
-    for (; first != last; ++first)
+    /// Set the implementation and update the cached CPU pointer.
+    void set_impl(
+            std::unique_ptr<BufferImplBase<T>> impl)
     {
-      converted.push_back(static_cast<T>(*first));
+        impl_ = std::move(impl);
+        cpu_impl_ = dynamic_cast<CpuBufferImpl<T, Allocator>*>(impl_.get());
     }
-    get_cpu_impl()->get_storage().assign(converted.begin(), converted.end());
-  }
+
+    /// Get CPU implementation (assumes throw_if_not_cpu_backend() was called)
+    CpuBufferImpl<T, Allocator> * get_cpu_impl() const
+    {
+        return cpu_impl_;
+    }
+
+    template<typename InputIt>
+    void assign_range_impl(
+            InputIt first,
+            InputIt last,
+            std::true_type)
+    {
+        // No conversions needed: value_type matches exactly.
+        get_cpu_impl()->get_storage().assign(first, last);
+    }
+
+    template<typename InputIt>
+    void assign_range_impl(
+            InputIt first,
+            InputIt last,
+            std::false_type)
+    {
+        // With possible conversions: safe path.
+        std::vector<T, Allocator> converted;
+        for (; first != last; ++first)
+        {
+            converted.push_back(static_cast<T>(*first));
+        }
+        get_cpu_impl()->get_storage().assign(converted.begin(), converted.end());
+    }
+
 };
 
 /// Free-function comparison: std::vector<T> == Buffer<T>
 /// Needed because template argument deduction does not consider implicit conversions.
 template<typename T, typename Allocator>
-bool operator==(const std::vector<T, Allocator> & lhs, const Buffer<T, Allocator> & rhs)
+bool operator ==(
+        const std::vector<T, Allocator>& lhs,
+        const Buffer<T, Allocator>& rhs)
 {
-  if (rhs.get_backend_type() == "cpu") {
-    return lhs == static_cast<const std::vector<T, Allocator> &>(rhs);
-  }
-  return lhs == rhs.to_vector();
+    if (rhs.get_backend_type() == "cpu")
+    {
+        return lhs == static_cast<const std::vector<T, Allocator>&>(rhs);
+    }
+    return lhs == rhs.to_vector();
 }
 
 template<typename T, typename Allocator>
-bool operator==(const Buffer<T, Allocator> & lhs, const std::vector<T, Allocator> & rhs)
+bool operator ==(
+        const Buffer<T, Allocator>& lhs,
+        const std::vector<T, Allocator>& rhs)
 {
-  return rhs == lhs;
+    return rhs == lhs;
 }
 
 template<typename T, typename Allocator>
-bool operator!=(const std::vector<T, Allocator> & lhs, const Buffer<T, Allocator> & rhs)
+bool operator !=(
+        const std::vector<T, Allocator>& lhs,
+        const Buffer<T, Allocator>& rhs)
 {
-  return !(lhs == rhs);
+    return !(lhs == rhs);
 }
 
 template<typename T, typename Allocator>
-bool operator!=(const Buffer<T, Allocator> & lhs, const std::vector<T, Allocator> & rhs)
+bool operator !=(
+        const Buffer<T, Allocator>& lhs,
+        const std::vector<T, Allocator>& rhs)
 {
-  return !(lhs == rhs);
+    return !(lhs == rhs);
 }
 
 template<typename T, typename Allocator>
-void swap(Buffer<T, Allocator> & lhs, Buffer<T, Allocator> & rhs) noexcept
+void swap(
+        Buffer<T, Allocator>& lhs,
+        Buffer<T, Allocator>& rhs) noexcept
 {
-  lhs.swap(rhs);
+    lhs.swap(rhs);
 }
 
 template<typename T, typename Allocator>
-void swap(Buffer<T, Allocator> & lhs, std::vector<T, Allocator> & rhs) noexcept
+void swap(
+        Buffer<T, Allocator>& lhs,
+        std::vector<T, Allocator>& rhs) noexcept
 {
-  lhs.swap(rhs);
+    lhs.swap(rhs);
 }
 
 template<typename T, typename Allocator>
-void swap(std::vector<T, Allocator> & lhs, Buffer<T, Allocator> & rhs) noexcept
+void swap(
+        std::vector<T, Allocator>& lhs,
+        Buffer<T, Allocator>& rhs) noexcept
 {
-  rhs.swap(lhs);
+    rhs.swap(lhs);
 }
 
 }  // namespace fastdds

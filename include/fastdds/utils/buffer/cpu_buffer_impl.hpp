@@ -31,34 +31,48 @@ template<typename T, typename Allocator = std::allocator<T>>
 class CpuBufferImpl : public BufferImplBase<T>
 {
 public:
-  CpuBufferImpl() = default;
 
-  /// Get mutable reference to underlying std::vector.
-  std::vector<T, Allocator> & get_storage() {return storage_;}
+    CpuBufferImpl() = default;
 
-  /// Get const reference to underlying std::vector.
-  const std::vector<T, Allocator> & get_storage() const {return storage_;}
+    /// Get mutable reference to underlying std::vector.
+    std::vector<T, Allocator>& get_storage()
+    {
+        return storage_;
+    }
 
-  // ========== BufferImplBase overrides ==========
+    /// Get const reference to underlying std::vector.
+    const std::vector<T, Allocator>& get_storage() const
+    {
+        return storage_;
+    }
 
-  std::string get_backend_type() const override {return "cpu";}
+    // ========== BufferImplBase overrides ==========
 
-  size_t size() const override {return storage_.size();}
+    std::string get_backend_type() const override
+    {
+        return "cpu";
+    }
 
-  std::unique_ptr<BufferImplBase<T>> to_cpu() const override
-  {
-    return clone();
-  }
+    size_t size() const override
+    {
+        return storage_.size();
+    }
 
-  std::unique_ptr<BufferImplBase<T>> clone() const override
-  {
-    auto copy = std::make_unique<CpuBufferImpl<T, Allocator>>();
-    copy->storage_ = storage_;
-    return copy;
-  }
+    std::unique_ptr<BufferImplBase<T>> to_cpu() const override
+    {
+        return clone();
+    }
+
+    std::unique_ptr<BufferImplBase<T>> clone() const override
+    {
+        auto copy = std::make_unique<CpuBufferImpl<T, Allocator>>();
+        copy->storage_ = storage_;
+        return copy;
+    }
 
 private:
-  std::vector<T, Allocator> storage_;
+
+    std::vector<T, Allocator> storage_;
 };
 
 }  // namespace fastdds

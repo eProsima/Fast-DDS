@@ -28,26 +28,38 @@ template<typename T>
 class NonCpuBufferImpl : public eprosima::fastdds::BufferImplBase<T>
 {
 public:
-  explicit NonCpuBufferImpl(size_t count)
-  : size_(count) {}
 
-  std::string get_backend_type() const override {return "non_cpu_test";}
-  size_t size() const override {return size_;}
+    explicit NonCpuBufferImpl(
+            size_t count)
+        : size_(count)
+    {
+    }
 
-  std::unique_ptr<eprosima::fastdds::BufferImplBase<T>> to_cpu() const override
-  {
-    auto cpu = std::make_unique<eprosima::fastdds::CpuBufferImpl<T>>();
-    cpu->get_storage().resize(size_);
-    return cpu;
-  }
+    std::string get_backend_type() const override
+    {
+        return "non_cpu_test";
+    }
 
-  std::unique_ptr<eprosima::fastdds::BufferImplBase<T>> clone() const override
-  {
-    return std::make_unique<NonCpuBufferImpl<T>>(size_);
-  }
+    size_t size() const override
+    {
+        return size_;
+    }
+
+    std::unique_ptr<eprosima::fastdds::BufferImplBase<T>> to_cpu() const override
+    {
+        auto cpu = std::make_unique<eprosima::fastdds::CpuBufferImpl<T>>();
+        cpu->get_storage().resize(size_);
+        return cpu;
+    }
+
+    std::unique_ptr<eprosima::fastdds::BufferImplBase<T>> clone() const override
+    {
+        return std::make_unique<NonCpuBufferImpl<T>>(size_);
+    }
 
 private:
-  size_t size_;
+
+    size_t size_;
 };
 
 #endif  // NON_CPU_BUFFER_IMPL_HPP_

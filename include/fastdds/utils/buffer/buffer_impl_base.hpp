@@ -34,24 +34,25 @@ template<typename T>
 class BufferImplBase
 {
 public:
-  virtual ~BufferImplBase() = default;
 
-  /// Get the backend type identifier (e.g., "cpu", "cuda", "demo").
-  /// Each concrete implementation returns its own fixed identifier.
-  virtual std::string get_backend_type() const = 0;
+    virtual ~BufferImplBase() = default;
 
-  /// Get the number of elements in the buffer.
-  /// Required by the serialization layer for all backends.
-  virtual size_t size() const = 0;
+    /// Get the backend type identifier (e.g., "cpu", "cuda", "demo").
+    /// Each concrete implementation returns its own fixed identifier.
+    virtual std::string get_backend_type() const = 0;
 
-  /// Create a CPU copy of this buffer.
-  /// If already on CPU, may return a copy or the same instance.
-  /// @return New BufferImplBase instance on CPU
-  virtual std::unique_ptr<BufferImplBase<T>> to_cpu() const = 0;
+    /// Get the number of elements in the buffer.
+    /// Required by the serialization layer for all backends.
+    virtual size_t size() const = 0;
 
-  /// Create a deep copy of this buffer.
-  /// @return New BufferImplBase instance with copied data
-  virtual std::unique_ptr<BufferImplBase<T>> clone() const = 0;
+    /// Create a CPU copy of this buffer.
+    /// If already on CPU, may return a copy or the same instance.
+    /// @return New BufferImplBase instance on CPU
+    virtual std::unique_ptr<BufferImplBase<T>> to_cpu() const = 0;
+
+    /// Create a deep copy of this buffer.
+    /// @return New BufferImplBase instance with copied data
+    virtual std::unique_ptr<BufferImplBase<T>> clone() const = 0;
 };
 
 }  // namespace fastdds
