@@ -525,6 +525,85 @@ const char* const SecurityPkcs::hsm_token_id_no_pin = "testing_token_no_pin";
 const char* const SecurityPkcs::hsm_token_id_url_pin = "testing_token_url_pin";
 const char* const SecurityPkcs::hsm_token_id_env_pin = "testing_token_env_pin";
 
+TEST(Security, SecurityPlugins_fail_init_with_incomplete_configuration)
+{
+    // Only authentication configured, missing access control and crypto
+    {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        PropertyPolicy sub_property_policy;
+
+        fill_sub_auth(sub_property_policy);
+
+        reader.property_policy(sub_property_policy).init();
+
+        ASSERT_FALSE(reader.isInitialized());
+    }
+    // Only authentication and crypto configured, missing access control
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy pub_property_policy;
+
+        fill_pub_auth(pub_property_policy);
+        fill_crypto(pub_property_policy);
+
+        writer.property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+    // Only authentication and access control configured, missing crypto
+    {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        PropertyPolicy sub_property_policy;
+
+        fill_sub_auth(sub_property_policy);
+        fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+
+        reader.property_policy(sub_property_policy).init();
+
+        ASSERT_FALSE(reader.isInitialized());
+    }
+    // Only access control configured, missing authentication and crypto
+    {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        PropertyPolicy sub_property_policy;
+
+        fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+
+        reader.property_policy(sub_property_policy).init();
+
+        ASSERT_FALSE(reader.isInitialized());
+    }
+    // Only access control and crypto configured, missing authentication
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy pub_property_policy;
+
+        fill_access(pub_property_policy, "governance_only_auth.smime", "permissions.smime");
+        fill_crypto(pub_property_policy);
+
+        writer.property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+    // Only crypto configured, missing authentication and access control
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy pub_property_policy;
+
+        fill_crypto(pub_property_policy);
+
+        writer.property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+}
+
 // This test is used to check that the security plugins are correctly loaded. Governance with minimal configuration is used
 TEST(Security, SecurityPlugins_basic_configuration)
 {
