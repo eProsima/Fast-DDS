@@ -53,6 +53,21 @@ void set_authentication_config(
     props.emplace_back(kIdentityPrivateKey, "file://" + std::string(certs_path) + "/mainsubkey.pem");
 }
 
+void set_access_control_config(
+        rtps::PropertySeq& props)
+{
+    static constexpr auto kAccessControlPlugin{ "dds.sec.access.plugin" };
+    static constexpr auto kAccessControlPluginNameValue{ "builtin.Access-Permissions" };
+    static constexpr auto kPermissionsCA{ "dds.sec.access.builtin.Access-Permissions.permissions_ca" };
+    static constexpr auto kPermissionsGovernance{ "dds.sec.access.builtin.Access-Permissions.governance" };
+    static constexpr auto kPermissionsFile{ "dds.sec.access.builtin.Access-Permissions.permissions" };
+
+    props.emplace_back(kAccessControlPlugin, kAccessControlPluginNameValue);
+    props.emplace_back(kPermissionsCA, "file://" + std::string(certs_path) + "/maincacert.pem");
+    props.emplace_back(kPermissionsGovernance, "file://" + std::string(certs_path) + "/governance_only_auth.smime");
+    props.emplace_back(kPermissionsFile, "file://" + std::string(certs_path) + "/permissions.smime");
+}
+
 void set_participant_crypto_config(
         rtps::PropertySeq& props)
 {
@@ -97,6 +112,7 @@ void test_big_message_corner_case(
 
     auto qos{ fastdds::PARTICIPANT_QOS_DEFAULT };
     set_authentication_config(qos.properties().properties());
+    set_access_control_config(qos.properties().properties());
     set_participant_crypto_config(qos.properties().properties());
     auto transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
     transport->interfaceWhiteList.push_back("127.0.0.1");

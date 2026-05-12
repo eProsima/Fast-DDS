@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"  ?>
 <dds xmlns="http://www.eprosima.com">
     <profiles>
-        <participant profile_name="auth_handshake_props">
+        <participant profile_name="auth_handshake_props_pub">
             <domainId>0</domainId>
             <rtps>
                 <propertiesPolicy>
@@ -24,10 +24,26 @@
                             <name>dds.sec.auth.builtin.PKI-DH.private_key</name>
                             <value>file://${CERTS_PATH}/mainpubkey.pem</value>
                         </property>
-                        <!-- Activate DDS:Crypto:AES-GCM-GMAC plugin -->
                         <property>
-                            <name>dds.sec.crypto.plugin</name>
-                            <value>builtin.AES-GCM-GMAC</value>
+                            <name>dds.sec.auth.builtin.PKI-DH.max_handshake_requests</name>
+                            <value>10</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period</name>
+                            <value>100</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.handshake_resend_period_gain</name>
+                            <value>1.1</value>
+                        </property>
+                        <!-- Activate Access Control -->
+                        <property>
+                            <name>dds.sec.access.plugin</name>
+                            <value>builtin.Access-Permissions</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.access.builtin.Access-Permissions.permissions_ca</name>
+                            <value>file://${CERTS_PATH}/maincacert.pem</value>
                         </property>
                         <property>
                             <name>dds.sec.access.builtin.Access-Permissions.governance</name>
@@ -36,6 +52,39 @@
                         <property>
                             <name>dds.sec.access.builtin.Access-Permissions.permissions</name>
                             <value>file://${CERTS_PATH}/permissions_helloworld.smime</value>
+                        </property>
+                        <!-- Activate DDS:Crypto:AES-GCM-GMAC plugin -->
+                        <property>
+                            <name>dds.sec.crypto.plugin</name>
+                            <value>builtin.AES-GCM-GMAC</value>
+                        </property>
+                    </properties>
+                </propertiesPolicy>
+            </rtps>
+        </participant>
+
+        <participant profile_name="auth_handshake_props_sub">
+            <domainId>0</domainId>
+            <rtps>
+                <propertiesPolicy>
+                    <properties>
+                        <!-- Activate DDS:Auth:PKI-DH plugin -->
+                        <property>
+                            <name>dds.sec.auth.plugin</name>
+                            <value>builtin.PKI-DH</value>
+                        </property>
+                        <!-- Configure DDS:Auth:PKI-DH plugin -->
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.identity_ca</name>
+                            <value>file://${CERTS_PATH}/maincacert.pem</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.identity_certificate</name>
+                            <value>file://${CERTS_PATH}/mainsubcert.pem</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.auth.builtin.PKI-DH.private_key</name>
+                            <value>file://${CERTS_PATH}/mainsubkey.pem</value>
                         </property>
                         <property>
                             <name>dds.sec.auth.builtin.PKI-DH.max_handshake_requests</name>
@@ -48,6 +97,28 @@
                         <property>
                             <name>dds.sec.auth.builtin.PKI-DH.handshake_resend_period_gain</name>
                             <value>1.1</value>
+                        </property>
+                        <!-- Activate Access Control -->
+                        <property>
+                            <name>dds.sec.access.plugin</name>
+                            <value>builtin.Access-Permissions</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.access.builtin.Access-Permissions.permissions_ca</name>
+                            <value>file://${CERTS_PATH}/maincacert.pem</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.access.builtin.Access-Permissions.governance</name>
+                            <value>file://${CERTS_PATH}/governance_helloworld_all_enable.smime</value>
+                        </property>
+                        <property>
+                            <name>dds.sec.access.builtin.Access-Permissions.permissions</name>
+                            <value>file://${CERTS_PATH}/permissions_helloworld.smime</value>
+                        </property>
+                        <!-- Activate DDS:Crypto:AES-GCM-GMAC plugin -->
+                        <property>
+                            <name>dds.sec.crypto.plugin</name>
+                            <value>builtin.AES-GCM-GMAC</value>
                         </property>
                     </properties>
                 </propertiesPolicy>
