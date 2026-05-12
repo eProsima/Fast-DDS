@@ -1147,6 +1147,13 @@ bool StatefulWriter::matched_reader_add_edp(
     update_reader_info(locator_selector_general_, true);
     update_reader_info(locator_selector_async_, true);
 
+    if (late_joiners_listener_ &&
+            TRANSIENT_LOCAL <= rp->durability_kind() &&
+            TRANSIENT_LOCAL <= m_att.durabilityKind)
+    {
+        late_joiners_listener_->on_late_joiner_added(rdata);
+    }
+
     if (rp->is_datasharing_reader())
     {
         if (nullptr != listener_)
@@ -1193,6 +1200,12 @@ bool StatefulWriter::matched_reader_add_edp(
                 {
                     for (History::iterator cit = history_->changesBegin(); cit != history_->changesEnd(); ++cit)
                     {
+                        if (late_joiners_listener_)
+                        {
+                            // Preprocess the change for late joiner prior to delivery
+                            late_joiners_listener_->preprocess_change_for_late_joiner(**cit, rdata);
+                        }
+
                         // Holes are managed when deliver_sample(), sending GAP messages.
                         if (rp->rtps_is_relevant(*cit))
                         {

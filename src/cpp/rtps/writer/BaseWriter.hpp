@@ -43,6 +43,7 @@
 
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/writer/DeliveryRetCode.hpp>
+#include <rtps/writer/LateJoinersListener.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {
@@ -86,6 +87,9 @@ public:
             const WriterAttributes& att) override;
 
     virtual void local_actions_on_writer_removed();
+
+    void late_joiners_listener(
+            LateJoinersListener* listener);
 
 #ifdef FASTDDS_STATISTICS
 
@@ -409,6 +413,9 @@ protected:
     dds::Duration_t liveliness_announcement_period_;
     /// The transport priority of this writer
     std::atomic<int32_t> transport_priority_;
+
+    /// Listener to handle events related to late joiners
+    LateJoinersListener* late_joiners_listener_ = nullptr;
 
 private:
 

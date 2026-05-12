@@ -111,6 +111,12 @@ public:
             bool valid = rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
             valid = valid && rtps::CDRMessage::readUInt16(&msg, &plength);
 
+            if (!valid)
+            {
+                // Invalid parameter header -> stop processing
+                return false;
+            }
+
             if (pid == PID_SENTINEL)
             {
                 // PID_SENTINEL is always considered of length 0
@@ -131,7 +137,7 @@ public:
             // Safely cast back to uint32_t
             qos_size = static_cast<uint32_t>(new_qos_size);
 
-            if (!valid || ((msg.pos + plength) > msg.length))
+            if ((msg.pos + plength) > msg.length)
             {
                 return false;
             }

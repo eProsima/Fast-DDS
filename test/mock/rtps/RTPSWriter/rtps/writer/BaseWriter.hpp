@@ -26,6 +26,7 @@
 #include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/writer/DeliveryRetCode.hpp>
+#include <rtps/writer/LateJoinersListener.hpp>
 #include <rtps/writer/LocatorSelectorSender.hpp>
 
 namespace eprosima {
@@ -60,6 +61,12 @@ public:
     {
         static_cast<void>(wdata);
         return false;
+    }
+
+    void late_joiners_listener(
+            LateJoinersListener* listener)
+    {
+        static_cast<void>(listener);
     }
 
     virtual bool matched_reader_add_edp(

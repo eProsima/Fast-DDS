@@ -35,6 +35,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
+#include <fastdds/publisher/filtering/DataWriterHistoryFiltered.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/builtin/data/TopicDescription.hpp>
 #include <fastdds/rtps/common/Time_t.hpp>
@@ -42,20 +43,24 @@
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <fastdds/topic/ContentFilterInfo.hpp>
 #include <fastdds/utils/TypePropagation.hpp>
+#include <rtps/builtin/data/ReaderProxyData.hpp>
 #include <rtps/builtin/liveliness/WLP.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
+#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/messages/RTPSMessageGroup.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
 #include <rtps/resources/ResourceEvent.h>
 #include <rtps/resources/TimedEvent.h>
-#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/writer/BaseWriter.hpp>
 #include <rtps/writer/StatefulWriter.hpp>
-#include <utils/TimeConversion.hpp>
 #include <utils/BuiltinTopicKeyConversions.hpp>
+#include <utils/TimeConversion.hpp>
+
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.hpp>
@@ -87,6 +92,14 @@ static bool qos_has_pull_mode_request(
 {
     auto push_mode = PropertyPolicyHelper::find_property(qos.properties(), "fastdds.push_mode");
     return (nullptr != push_mode) && ("false" == *push_mode);
+}
+
+static bool qos_has_late_joiners_cft(
+        const DataWriterQos& qos)
+{
+    auto late_joiners_cft = PropertyPolicyHelper::find_property(qos.properties(),
+                    "fastdds.content_filtering_on_late_joiners");
+    return (nullptr != late_joiners_cft) && ("true" == *late_joiners_cft);
 }
 
 class DataWriterImpl::LoanCollection
@@ -225,25 +238,35 @@ DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(
     return return_qos;
 }
 
-void DataWriterImpl::create_history(
+bool DataWriterImpl::create_history(
         const std::shared_ptr<IPayloadPool>& payload_pool,
-        const std::shared_ptr<IChangePool>& change_pool)
+        const std::shared_ptr<IChangePool>& change_pool,
+        bool filtering_enabled,
+        bool late_joiners_filtering_enabled)
 {
-    history_.reset(new DataWriterHistory(
-                payload_pool, change_pool,
-                qos_.history(),
-                qos_.resource_limits(),
-                (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
-                type_->get_max_serialized_size_ctx(type_support_context_),
-                qos_.endpoint().history_memory_policy,
-                [this](
-                    const InstanceHandle_t& handle) -> void
-                {
-                    if (nullptr != listener_)
-                    {
-                        listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
-                    }
-                }));
+    if (filtering_enabled)
+    {
+        uint16_t filters_max_cdr_size = 0;
+        if (late_joiners_filtering_enabled && !ContentFilterInfo::cdr_serialized_size(
+                    qos_.writer_resource_limits().reader_filters_allocation.maximum,
+                    filters_max_cdr_size))
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Failed to create history: filters_max_cdr_size overflow");
+            return false;
+        }
+
+        history_ = make_history<DataWriterHistoryFiltered>(
+            payload_pool, change_pool,
+            filters_max_cdr_size,
+            late_joiners_filtering_enabled);
+    }
+    else
+    {
+        history_ = make_history<DataWriterHistory>(
+            payload_pool, change_pool);
+    }
+
+    return true;
 }
 
 ReturnCode_t DataWriterImpl::enable()
@@ -373,6 +396,9 @@ ReturnCode_t DataWriterImpl::enable()
         reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
     }
 
+    bool late_joiners_filtering_enabled = filtering_enabled &&
+            TRANSIENT_LOCAL_DURABILITY_QOS == qos_.durability().kind && qos_has_late_joiners_cft(qos_);
+
     // Set Datawriter's DataRepresentationId taking into account the QoS.
     data_representation_ = qos_.representation().m_value.empty()
             || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
@@ -392,7 +418,11 @@ ReturnCode_t DataWriterImpl::enable()
         return RETCODE_ERROR;
     }
 
-    create_history(pool, change_pool);
+    if (!create_history(pool, change_pool, filtering_enabled, late_joiners_filtering_enabled))
+    {
+        EPROSIMA_LOG_ERROR(DATA_WRITER, "Problem creating history for associated Writer");
+        return RETCODE_ERROR;
+    }
 
     RTPSWriter* writer =  RTPSDomain::createRTPSWriter(
         publisher_->rtps_participant(),
@@ -431,7 +461,12 @@ ReturnCode_t DataWriterImpl::enable()
             return RETCODE_ERROR;
         }
 
-        create_history(pool, change_pool);
+        if (!create_history(pool, change_pool, filtering_enabled, late_joiners_filtering_enabled))
+        {
+            EPROSIMA_LOG_ERROR(DATA_WRITER, "Problem creating history for associated Writer");
+            return RETCODE_ERROR;
+        }
+
         writer = RTPSDomain::createRTPSWriter(
             publisher_->rtps_participant(),
             guid_.entityId,
@@ -452,6 +487,13 @@ ReturnCode_t DataWriterImpl::enable()
     // Set DataWriterImpl as the implementer of the
     // IReaderDataFilter interface
     writer_->reader_data_filter(this);
+
+    if (late_joiners_filtering_enabled)
+    {
+        // NOTE: this assumes the only possible listener implementation is the one concerning CFT.
+        // If in the future more implementations are possible, this should be refactored.
+        writer_->late_joiners_listener(this);
+    }
 
     // In case it has been loaded from the persistence DB, rebuild instances on history
     history_->rebuild_instances();
@@ -1091,7 +1133,8 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
             auto related_sample_identity = wparams.related_sample_identity();
             auto filter_hook = [&related_sample_identity, this](CacheChange_t& ch)
                     {
-                        reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(ch),
+                        std::lock_guard<std::mutex> lock(filters_mtx_);
+                        reader_filters_->add_filter_info(static_cast<DataWriterFilteredChange&>(ch),
                                 related_sample_identity);
                     };
             added = history_->add_pub_change_with_commit_hook(ch, wparams, filter_hook, lock, max_blocking_time);
@@ -1437,14 +1480,18 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
     {
         switch (reason)
         {
+            case fastdds::rtps::ReaderDiscoveryStatus::DISCOVERED_READER:
+                data_writer_->process_reader_filter_info(reader_guid, *reader_info, true);
+                break;
+
+            case fastdds::rtps::ReaderDiscoveryStatus::CHANGED_QOS_READER:
+                data_writer_->process_reader_filter_info(reader_guid, *reader_info, false);
+                break;
+
             case fastdds::rtps::ReaderDiscoveryStatus::REMOVED_READER:
                 data_writer_->remove_reader_filter(reader_guid);
                 break;
 
-            case fastdds::rtps::ReaderDiscoveryStatus::DISCOVERED_READER:
-            case fastdds::rtps::ReaderDiscoveryStatus::CHANGED_QOS_READER:
-                data_writer_->process_reader_filter_info(reader_guid, *reader_info);
-                break;
             default:
                 break;
         }
@@ -2469,22 +2516,23 @@ void DataWriterImpl::remove_reader_filter(
 {
     if (reader_filters_)
     {
-        assert(writer_);
-        std::lock_guard<RecursiveTimedMutex> guard(writer_->getMutex());
+        std::lock_guard<std::mutex> guard(filters_mtx_);
         reader_filters_->remove_reader(reader_guid);
     }
 }
 
 void DataWriterImpl::process_reader_filter_info(
         const fastdds::rtps::GUID_t& reader_guid,
-        const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info)
+        const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info,
+        bool ignore_if_exists)
 {
     if (reader_filters_ &&
             !writer_->is_datasharing_compatible_with(reader_info.data_sharing) &&
             reader_info.remote_locators.multicast.empty())
     {
+        std::lock_guard<std::mutex> lock(filters_mtx_);
         reader_filters_->process_reader_filter_info(reader_guid, reader_info.content_filter,
-                publisher_->get_participant_impl(), topic_);
+                publisher_->get_participant_impl(), topic_, ignore_if_exists);
     }
 }
 
@@ -2493,8 +2541,7 @@ void DataWriterImpl::filter_is_being_removed(
 {
     if (reader_filters_)
     {
-        assert(writer_);
-        std::lock_guard<RecursiveTimedMutex> guard(writer_->getMutex());
+        std::lock_guard<std::mutex> guard(filters_mtx_);
         reader_filters_->remove_filters(filter_class_name);
     }
 }
@@ -2563,6 +2610,30 @@ bool DataWriterImpl::is_relevant(
     }
 
     return is_relevant_for_reader;
+}
+
+void DataWriterImpl::on_late_joiner_added(
+        const fastdds::rtps::ReaderProxyData& rdata)
+{
+    if (!fastdds::rtps::RTPSDomainImpl::should_intraprocess_between(guid_, rdata.guid))
+    {
+        process_reader_filter_info(rdata.guid, rdata, true);
+
+        // NOTE: Calling the method here is required so that the filter collection is updated before preprocessing
+        // changes for the late joiner, although it will end up being called again as the last step of the discovery
+        // process. Hence the importance of setting ignore_if_exists when calling the method in the discovery callback.
+    }
+}
+
+void DataWriterImpl::preprocess_change_for_late_joiner(
+        fastdds::rtps::CacheChange_t& change,
+        const fastdds::rtps::ReaderProxyData& rdata)
+{
+    if (reader_filters_)
+    {
+        std::lock_guard<std::mutex> lock(filters_mtx_);
+        reader_filters_->update_filter_info(static_cast<DataWriterFilteredChange&>(change), rdata.guid);
+    }
 }
 
 } // namespace dds

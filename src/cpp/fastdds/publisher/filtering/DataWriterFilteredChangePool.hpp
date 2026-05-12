@@ -45,6 +45,15 @@ public:
         init(config);
     }
 
+    bool release_cache(
+            fastdds::rtps::CacheChange_t* change) override
+    {
+        DataWriterFilteredChange* filtered_change = static_cast<DataWriterFilteredChange*>(change);
+        filtered_change->filtered_out_readers.clear();
+        filtered_change->filters_cdr_size = 0;
+        return fastdds::rtps::CacheChangePool::release_cache(change);
+    }
+
 protected:
 
     fastdds::rtps::CacheChange_t* create_change() const final

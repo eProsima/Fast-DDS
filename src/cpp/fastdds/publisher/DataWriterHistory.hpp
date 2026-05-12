@@ -152,11 +152,18 @@ public:
 
         if (add)
         {
+            auto get_inline_qos_overhead_cb =
+                    [this](const rtps::CacheChange_t* change, uint32_t& overhead) -> bool
+                    {
+                        return this->get_inline_qos_overhead(change, overhead);
+                    };
+
     #if HAVE_STRICT_REALTIME
-            if (this->add_change_with_commit_hook(change, wparams, pre_commit, max_blocking_time))
+            if (this->add_change_with_commit_hook(change, wparams, pre_commit, max_blocking_time,
+                    get_inline_qos_overhead_cb))
     #else
             auto time_point = std::chrono::steady_clock::now() + std::chrono::hours(24);
-            if (this->add_change_with_commit_hook(change, wparams, pre_commit, time_point))
+            if (this->add_change_with_commit_hook(change, wparams, pre_commit, time_point, get_inline_qos_overhead_cb))
     #endif // if HAVE_STRICT_REALTIME
             {
                 EPROSIMA_LOG_INFO(RTPS_HISTORY,
@@ -251,6 +258,20 @@ public:
             const rtps::InstanceHandle_t& handle,
             std::unique_lock<RecursiveTimedMutex>& lock,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+protected:
+
+    /**
+     * Get the overhead in bytes that the inline QoS adds to a change when sent.
+     *
+     * @param [in] change Change for which the inline QoS overhead will be calculated.
+     * @param [out] inline_qos_overhead The calculated inline QoS overhead for the given change.
+     *
+     * @return True if the inline QoS overhead could be calculated, false otherwise.
+     */
+    virtual bool get_inline_qos_overhead(
+            const rtps::CacheChange_t* change,
+            uint32_t& inline_qos_overhead) const;
 
 private:
 

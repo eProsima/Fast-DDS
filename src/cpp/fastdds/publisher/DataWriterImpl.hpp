@@ -47,6 +47,7 @@
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
 #include <rtps/history/PoolConfig.h>
+#include <rtps/writer/LateJoinersListener.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -77,7 +78,7 @@ class Publisher;
  * Class DataWriterImpl, contains the actual implementation of the behaviour of the DataWriter.
  * @ingroup FASTDDS_MODULE
  */
-class DataWriterImpl : protected rtps::IReaderDataFilter
+class DataWriterImpl : protected rtps::IReaderDataFilter, protected rtps::LateJoinersListener
 {
     using LoanInitializationKind = DataWriter::LoanInitializationKind;
     using SerializedPayload_t = eprosima::fastdds::rtps::SerializedPayload_t;
@@ -776,16 +777,25 @@ protected:
      * Process filtering information for a reader.
      * Called when a new reader is matched, and whenever the discovery information of a matched reader changes.
      *
-     * @param reader_guid  The GUID of the reader for which the discovery information changed.
-     * @param reader_info  The reader's discovery information.
+     * @param reader_guid       The GUID of the reader for which the discovery information changed.
+     * @param reader_info       The reader's discovery information.
+     * @param ignore_if_exists  Skip filter processing if there is already filtering information for this reader.
      */
     void process_reader_filter_info(
             const fastdds::rtps::GUID_t& reader_guid,
-            const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info);
+            const fastdds::rtps::SubscriptionBuiltinTopicData& reader_info,
+            bool ignore_if_exists);
 
     bool is_relevant(
             const fastdds::rtps::CacheChange_t& change,
             const fastdds::rtps::GUID_t& reader_guid) const override;
+
+    void on_late_joiner_added(
+            const fastdds::rtps::ReaderProxyData& rdata) override;
+
+    void preprocess_change_for_late_joiner(
+            fastdds::rtps::CacheChange_t& change,
+            const fastdds::rtps::ReaderProxyData& rdata) override;
 
 private:
 
@@ -801,9 +811,36 @@ private:
      */
     void notify_deadline_missed_nts_();
 
-    void create_history(
+    bool create_history(
             const std::shared_ptr<IPayloadPool>& payload_pool,
-            const std::shared_ptr<IChangePool>& change_pool);
+            const std::shared_ptr<IChangePool>& change_pool,
+            bool filtering_enabled,
+            bool late_joiners_filtering_enabled);
+
+    template<class HistoryT, class ... Extra>
+    std::unique_ptr<DataWriterHistory> make_history(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            Extra&&... extra)
+    {
+        auto on_unacked_removed = [this](const InstanceHandle_t& handle)
+                {
+                    if (listener_ != nullptr)
+                    {
+                        listener_->on_unacknowledged_sample_removed(user_datawriter_, handle);
+                    }
+                };
+
+        return std::unique_ptr<DataWriterHistory>(new HistoryT(
+                           payload_pool, change_pool,
+                           qos_.history(),
+                           qos_.resource_limits(),
+                           (type_->is_compute_key_provided ? fastdds::rtps::WITH_KEY : fastdds::rtps::NO_KEY),
+                           type_->get_max_serialized_size_ctx(type_support_context_),
+                           qos_.endpoint().history_memory_policy,
+                           on_unacked_removed,
+                           std::forward<Extra>(extra)...));
+    }
 
     DataWriterQos get_datawriter_qos_from_settings(
             const DataWriterQos& qos);

@@ -158,8 +158,32 @@ public:
         return add_change_(a_change, wparams, &pre_commit, max_blocking_time);
     }
 
-    MOCK_METHOD1(set_fragments, void(
-                CacheChange_t * change));
+    template<typename PreCommitHook>
+    bool add_change_with_commit_hook(
+            CacheChange_t* a_change,
+            WriteParams& wparams,
+            PreCommitHook pre_commit,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time,
+            const std::function<bool(const CacheChange_t*, uint32_t&)>&)
+    {
+        return add_change_(a_change, wparams, &pre_commit, max_blocking_time);
+    }
+
+    bool get_inline_qos_overhead_base(
+            const CacheChange_t* change,
+            uint32_t& inline_qos_overhead) const
+    {
+        static_cast<void>(change);
+        inline_qos_overhead = 0;
+        return true;
+    }
+
+    bool set_fragments(
+            CacheChange_t* change)
+    {
+        static_cast<void>(change);
+        return true;
+    }
 
     bool remove_change(
             CacheChange_t* change)

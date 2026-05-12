@@ -47,7 +47,7 @@ public:
     static HistoryAttributes to_history_attributes(
             const HistoryQosPolicy& history_qos,
             const ResourceLimitsQosPolicy& resource_limits_qos,
-            const rtps::TopicKind_t& topic_kind,
+            const TopicKind_t& topic_kind,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy)
     {
@@ -81,10 +81,10 @@ public:
             const std::shared_ptr<IChangePool>& change_pool,
             const HistoryQosPolicy& history_qos,
             const ResourceLimitsQosPolicy& resource_limits_qos,
-            const rtps::TopicKind_t& topic_kind,
+            const TopicKind_t& topic_kind,
             uint32_t payloadMaxSize,
             MemoryManagementPolicy_t mempolicy,
-            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
+            std::function<void (const InstanceHandle_t&)> unack_sample_remove_functor)
         : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize,
                 mempolicy), payload_pool, change_pool)
         , history_qos_(history_qos)
@@ -302,6 +302,15 @@ public:
             }
         }
         return false;
+    }
+
+    virtual bool get_inline_qos_overhead(
+            const CacheChange_t* change,
+            uint32_t& inline_qos_overhead) const
+    {
+        static_cast<void>(change);
+        inline_qos_overhead = 0;
+        return true;
     }
 
 private:

@@ -429,6 +429,12 @@ void BaseWriter::local_actions_on_writer_removed()
     flow_controller_->unregister_writer(this);
 }
 
+void BaseWriter::late_joiners_listener(
+        LateJoinersListener* listener)
+{
+    late_joiners_listener_ = listener;
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

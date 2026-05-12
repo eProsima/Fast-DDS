@@ -233,6 +233,12 @@ public:
         return std::numeric_limits<uint16_t>::max() - data_frag_header_size_ - max_inline_qos_size_ - 3;
     }
 
+    //! Minimum fragment size to consider fragmentation, including headers
+    static inline constexpr uint32_t get_min_fragment_payload_size()
+    {
+        return 4u;
+    }
+
     void set_limitation(
             IRTPSMessageGroupLimitation* limitation)
     {

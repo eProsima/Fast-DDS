@@ -41,6 +41,7 @@
 #include <fastdds/rtps/history/IChangePool.hpp>
 #include <fastdds/rtps/history/IPayloadPool.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/topic/ContentFilterInfo.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
@@ -84,9 +85,7 @@ WriterHistory::WriterHistory(
 WriterHistory::WriterHistory(
         const HistoryAttributes& att,
         const std::shared_ptr<IPayloadPool>& payload_pool)
-    : History(att)
-    , change_pool_(std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(att)))
-    , payload_pool_(payload_pool)
+    : WriterHistory(att, payload_pool, std::make_shared<CacheChangePool>(PoolConfig::from_history_attributes(att)))
 {
 }
 
@@ -133,7 +132,7 @@ bool WriterHistory::add_change(
     return add_change_(a_change, wparams);
 }
 
-bool WriterHistory::prepare_and_add_change(
+bool WriterHistory::prepare_change(
         CacheChange_t* a_change,
         WriteParams& wparams)
 {
@@ -167,8 +166,7 @@ bool WriterHistory::prepare_and_add_change(
         return false;
     }
 
-    ++m_lastCacheChangeSeqNum;
-    a_change->sequenceNumber = m_lastCacheChangeSeqNum;
+    a_change->sequenceNumber = next_sequence_number();
     if (wparams.source_timestamp().seconds() < 0)
     {
         Time_t::now(a_change->sourceTimestamp);
@@ -185,9 +183,36 @@ bool WriterHistory::prepare_and_add_change(
     wparams.sample_identity().writer_guid(a_change->writerGUID);
     wparams.sample_identity().sequence_number(a_change->sequenceNumber);
     wparams.related_sample_identity(wparams.sample_identity());
-    set_fragments(a_change);
+
+    return true;
+}
+
+bool WriterHistory::add_change_to_history(
+        CacheChange_t* a_change)
+{
+    uint32_t inline_qos_overhead;
+    if (!get_inline_qos_overhead_base(a_change, inline_qos_overhead))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                "Failed to get inline QoS overhead for change " << a_change->sequenceNumber);
+        return false;
+    }
+    return add_change_to_history(a_change, inline_qos_overhead);
+}
+
+bool WriterHistory::add_change_to_history(
+        CacheChange_t* a_change,
+        uint32_t inline_qos_overhead)
+{
+    if (!set_fragments(a_change, inline_qos_overhead))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "Failed to set fragments for change " << a_change->sequenceNumber);
+        return false;
+    }
 
     m_changes.push_back(a_change);
+
+    m_lastCacheChangeSeqNum = a_change->sequenceNumber;
 
     if (static_cast<int32_t>(m_changes.size()) == m_att.maximumReservedCaches)
     {
@@ -198,6 +223,13 @@ bool WriterHistory::prepare_and_add_change(
             "Change " << a_change->sequenceNumber << " added with " << a_change->serializedPayload.length << " bytes");
 
     return true;
+}
+
+bool WriterHistory::prepare_and_add_change(
+        CacheChange_t* a_change,
+        WriteParams& wparams)
+{
+    return prepare_change(a_change, wparams) && add_change_to_history(a_change);
 }
 
 void WriterHistory::notify_writer(
@@ -226,6 +258,42 @@ bool WriterHistory::add_change_(
     }
 
     notify_writer(a_change, max_blocking_time);
+
+    return true;
+}
+
+bool WriterHistory::get_inline_qos_overhead_base(
+        const CacheChange_t* change,
+        uint32_t& inline_qos_overhead) const
+{
+    assert(change != nullptr);
+
+    inline_qos_overhead = change->inline_qos.length;
+    if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+    {
+        inline_qos_overhead += (2 * fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
+    }
+    if (change->write_params.original_writer_info().original_writer_guid() != GUID_t::unknown())
+    {
+        inline_qos_overhead += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_ORIGINAL_WRITER_INFO_SIZE;
+    }
+    if (change->write_params.has_more_replies())
+    {
+        inline_qos_overhead += 4u;
+    }
+    if (change->instanceHandle.isDefined() && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
+    {
+        // KEY_HASH inlineQoS could be added even if the change is ALIVE. It could always be sent.
+        // The only restriction is that it MUST be present if the change is not ALIVE (DISPOSE or UNREGISTER).
+        // It is sent it always as long as the instanceHandle is defined.
+        inline_qos_overhead += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
+        if (change->kind != ALIVE)
+        {
+            // If the change is not ALIVE, STATUS inlineQoS will also be added.
+            inline_qos_overhead += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
+        }
+    }
+    inline_qos_overhead += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE;
 
     return true;
 }
@@ -464,67 +532,54 @@ void WriterHistory::do_release_cache(
     release_change(ch);
 }
 
-void WriterHistory::set_fragments(
+bool WriterHistory::set_fragments(
         CacheChange_t* change)
 {
-    // Fragment if necessary
+    uint32_t inline_qos_overhead;
+    if (!get_inline_qos_overhead_base(change, inline_qos_overhead))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY, "Failed to set fragments for change " << change->sequenceNumber);
+        return false;
+    }
+    return set_fragments(change, inline_qos_overhead);
+}
+
+bool WriterHistory::set_fragments(
+        CacheChange_t* change,
+        uint32_t inline_qos_overhead)
+{
+    assert(change != nullptr);
+
     if (high_mark_for_frag_ == 0)
     {
         high_mark_for_frag_ = mp_writer->get_max_allowed_payload_size();
     }
 
+    // Initially consider the maximum allowed payload size as the high mark for fragmentation
     uint32_t final_high_mark_for_frag = high_mark_for_frag_;
 
-    // Calc additional size for inline QoS
-    uint32_t inline_qos_size = change->inline_qos.length;
-    if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
+    // Subtract the inline QoS overhead for this change from the high mark for fragmentation
+    if (0 < inline_qos_overhead)
     {
-        inline_qos_size += (2 * fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SAMPLE_IDENTITY_SIZE);
-    }
-    if (change->write_params.original_writer_info().original_writer_guid() != GUID_t::unknown())
-    {
-        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_ORIGINAL_WRITER_INFO_SIZE;
-    }
-    if (change->write_params.has_more_replies())
-    {
-        inline_qos_size += 4u;
-    }
-    if (change->instanceHandle.isDefined() && TopicKind_t::WITH_KEY == mp_writer->getAttributes().topicKind)
-    {
-        // KEY_HASH inlineQoS could be added even if the change is ALIVE. It could always be sent.
-        // The only restriction is that it MUST be present if the change is not ALIVE (DISPOSE or UNREGISTER).
-        // It is sent it always as long as the instanceHandle is defined.
-        inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_KEY_SIZE;
-        if (change->kind != ALIVE)
-        {
-            // If the change is not ALIVE, STATUS inlineQoS will also be added.
-            inline_qos_size += fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_STATUS_SIZE;
-        }
-    }
-
-    // If inlineqos for related_sample_identity is required, then remove its size from the final fragment size.
-    if (0 < inline_qos_size)
-    {
-        uint32_t overhead = fastdds::dds::ParameterSerializer<Parameter_t>::PARAMETER_SENTINEL_SIZE + inline_qos_size;
-        constexpr uint32_t min_fragment_size = 4;
-        if (final_high_mark_for_frag < (overhead + min_fragment_size))
+        constexpr uint32_t min_fragment_size = RTPSMessageGroup::get_min_fragment_payload_size();
+        if (final_high_mark_for_frag < (inline_qos_overhead + min_fragment_size))
         {
             final_high_mark_for_frag = min_fragment_size;
         }
         else
         {
-            final_high_mark_for_frag -= overhead;
+            final_high_mark_for_frag -= inline_qos_overhead;
         }
     }
 
-    // If it is big data, fragment it.
+    // Fragment change if its payload size is larger than the computed threshold
     if (change->serializedPayload.length > final_high_mark_for_frag)
     {
-        // Fragment the data.
-        // Set the fragment size to the cachechange.
         change->setFragmentSize(static_cast<uint16_t>(
                     (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
     }
+
+    return true;
 }
 
 } // namespace rtps

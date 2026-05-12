@@ -70,6 +70,12 @@ struct DataWriterFilteredChange final : public fastdds::rtps::CacheChange_t
 
     /// Collection with the GUIDs of the readers for which this change is not relevant.
     fastdds::ResourceLimitedVector<fastdds::rtps::GUID_t> filtered_out_readers;
+
+    /**
+     * CDR serialized size of the filter information included in the inline QoS of this change.
+     * This is used to keep track of the inline QoS overhead of filters, which is needed for fragmentation decisions.
+     */
+    uint16_t filters_cdr_size{0};
 };
 
 }  // namespace dds

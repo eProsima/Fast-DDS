@@ -20,6 +20,7 @@
 #define FASTDDS_RTPS_HISTORY__WRITERHISTORY_HPP
 
 #include <cstdint>
+#include <functional>
 #include <memory>
 
 #include <fastdds/fastdds_dll.hpp>
@@ -282,6 +283,42 @@ protected:
             PreCommitHook pre_commit,
             std::chrono::time_point<std::chrono::steady_clock> max_blocking_time)
     {
+        return add_change_with_commit_hook(
+            a_change,
+            wparams,
+            pre_commit,
+            max_blocking_time,
+            [this](const CacheChange_t* change, uint32_t& inline_qos_overhead) -> bool
+            {
+                return get_inline_qos_overhead_base(change, inline_qos_overhead);
+            });
+    }
+
+    /**
+     * Introduce a change into the history, and let the associated writer send it.
+     *
+     * @param [in,out] a_change            The change to be added.
+     *                                     Its @c sequenceNumber and sourceTimestamp will be filled by this method.
+     *                                     Its @c wparams will be filled from parameter @c wparams.
+     * @param [in,out] wparams             On input, it holds the WriteParams to be copied into @c a_change.
+     *                                     On output, will be filled with the sample identity assigned to @c a_change.
+     * @param [in] pre_commit              Functor called after @c a_change has been added to the history, and its
+     *                                     information has been filled, but before the writer is notified of the
+     *                                     insertion.
+     * @param [in] max_blocking_time       Maximum time point the writer is allowed to be blocked till the change is put
+     *                                     into the wire or the sending queue.
+     * @param [in] get_inline_qos_overhead Callback to get the inline QoS overhead for the change.
+     *
+     * @return whether @c a_change could be added to the history.
+     */
+    template<typename PreCommitHook>
+    bool add_change_with_commit_hook(
+            CacheChange_t* a_change,
+            WriteParams& wparams,
+            PreCommitHook pre_commit,
+            std::chrono::time_point<std::chrono::steady_clock> max_blocking_time,
+            const std::function<bool(const CacheChange_t*, uint32_t&)>& get_inline_qos_overhead)
+    {
         if (mp_writer == nullptr || mp_mutex == nullptr)
         {
             EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
@@ -290,36 +327,121 @@ protected:
         }
 
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
-        if (!prepare_and_add_change(a_change, wparams))
+
+        if (!prepare_change(a_change, wparams))
         {
             return false;
         }
 
         pre_commit(*a_change);
+
+        uint32_t inline_qos_overhead;
+        if (!get_inline_qos_overhead(a_change, inline_qos_overhead))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
+                    "Failed to get inline QoS overhead for change " << a_change->sequenceNumber);
+            return false;
+        }
+
+        if (!add_change_to_history(a_change, inline_qos_overhead))
+        {
+            return false;
+        }
+
         notify_writer(a_change, max_blocking_time);
 
         return true;
     }
 
-    //! Last CacheChange Sequence Number added to the History.
+    /**
+     * Get the overhead in bytes that the inline QoS adds to a change when sent.
+     *
+     * @param [in] change Change for which the inline QoS overhead will be calculated.
+     * @param [out] inline_qos_overhead The calculated inline QoS overhead for the given change.
+     *
+     * @return True if the inline QoS overhead could be calculated, false otherwise.
+     */
+    bool get_inline_qos_overhead_base(
+            const CacheChange_t* change,
+            uint32_t& inline_qos_overhead) const;
+
+    /**
+     * Set fragmentation for a change according to its payload size and the history configuration.
+     *
+     * @param [in,out] change Change for which fragmentation will be set.
+     *
+     * @return True if setting fragmentation succeeded, false otherwise.
+     */
+    bool set_fragments(
+            CacheChange_t* change);
+
+    /**
+     * Set fragmentation for a change according to its payload size, the history configuration, and the inline QoS overhead.
+     *
+     * @param [in,out] change Change for which fragmentation will be set.
+     * @param inline_qos_overhead Overhead in bytes that the inline QoS adds to the change when sent.
+     */
+    bool set_fragments(
+            CacheChange_t* change,
+            uint32_t inline_qos_overhead);
+
+    //! Last CacheChange Sequence Number added to the History
     SequenceNumber_t m_lastCacheChangeSeqNum {};
     //! Pointer to the associated writer
     BaseWriter* mp_writer = nullptr;
 
+    //! High mark for fragmentation. This is actually an static-like variable from which the final high mark is computed
     uint32_t high_mark_for_frag_ = 0;
 
 private:
 
     /**
-     * Introduce a change into the history.
+     * Prepare a change to be added to the history.
      *
-     * @param [in,out] a_change  The change to be added.
+     * @param [in,out] a_change       The change to be prepared.
+     *                                Its @c sequenceNumber and sourceTimestamp will be filled by this method.
+     *                                Its @c wparams will be filled from parameter @c wparams.
+     * @param [in,out] wparams        On input, it holds the WriteParams to be copied into @c a_change.
+     *                                On output, will be filled with the sample identity assigned to @c a_change
+     *
+     * @return whether @c a_change could be prepared to be added to the history.
+     */
+    bool prepare_change(
+            CacheChange_t* a_change,
+            WriteParams& wparams);
+
+    /**
+     * Add a change to the history. Change fragmentation is performed if conditions are met.
+     *
+     * @param [in] a_change Change to be added to the history.
+
+     * @return whether @c a_change could be added to the history.
+     */
+    bool add_change_to_history(
+            CacheChange_t* a_change);
+
+    /**
+     * Add a change to the history. Change fragmentation is performed if conditions are met.
+     *
+     * @param [in] a_change Change to be added to the history.
+     * @param inline_qos_overhead Overhead in bytes that the inline QoS adds to the change when sent.
+     *
+     * @return whether @c a_change could be added to the history.
+     */
+    bool add_change_to_history(
+            CacheChange_t* a_change,
+            uint32_t inline_qos_overhead);
+
+    /**
+     * Prepare and introduce a change into the history.
+     *
+     * @param [in,out] a_change  The change to be prepared and added.
      *                           Its @c sequenceNumber and sourceTimestamp will be filled by this method.
      *                           Its @c wparams will be filled from parameter @c wparams.
      * @param [in,out] wparams   On input, it holds the WriteParams to be copied into @c a_change.
      *                           On output, will be filled with the sample identity assigned to @c a_change.
      *
-     * @return whether @c a_change could be added to the history.
+     * @return whether @c a_change could be prepared and added to the history.
      */
     bool prepare_and_add_change(
             CacheChange_t* a_change,
@@ -336,9 +458,6 @@ private:
     void notify_writer(
             CacheChange_t* a_change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
-
-    void set_fragments(
-            CacheChange_t* change);
 
     /// Reference to the change pool used by this history.
     std::shared_ptr<IChangePool> change_pool_;

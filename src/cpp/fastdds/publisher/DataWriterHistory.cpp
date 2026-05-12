@@ -21,6 +21,7 @@
 #include <limits>
 #include <mutex>
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
@@ -599,6 +600,13 @@ bool DataWriterHistory::change_is_acked_or_fully_delivered(
         is_acked = mp_writer->is_acked_by_all(change->sequenceNumber);
     }
     return is_acked;
+}
+
+bool DataWriterHistory::get_inline_qos_overhead(
+        const CacheChange_t* change,
+        uint32_t& inline_qos_overhead) const
+{
+    return get_inline_qos_overhead_base(change, inline_qos_overhead);
 }
 
 }  // namespace dds

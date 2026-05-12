@@ -16,6 +16,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <thread>
 #include <vector>
@@ -26,6 +27,7 @@
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
@@ -39,9 +41,8 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 
-#include "../types/HelloWorldTypeObjectSupport.hpp"
 #include "../types/TestRegression3361PubSubTypes.hpp"
-#include "../types/TestRegression3361TypeObjectSupport.hpp"
+#include "../types/UnboundedHelloWorldPubSubTypes.hpp"
 #include "../utils/filter_helpers.hpp"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -234,16 +235,30 @@ protected:
 
         PubSubWriter<HelloWorldPubSubType> writer;
         PubSubReader<HelloWorldPubSubType> direct_reader;
+        bool transient_local = false;
 
         void init(
                 bool writer_side_filtering,
                 const std::shared_ptr<rtps::TransportDescriptorInterface>& transport,
-                fastdds::ResourceLimitedContainerConfig filter_limits)
+                fastdds::ResourceLimitedContainerConfig filter_limits,
+                bool _transient_local)
         {
+            filter_limits_ = filter_limits;
+            transient_local = _transient_local;
+
             writer_side_filter_ = writer_side_filtering && filter_limits.maximum > 0;
 
             writer.qos().writer_resource_limits().reader_filters_allocation = filter_limits;
+            if (transient_local)
+            {
+                writer.qos().properties().properties().emplace_back(
+                    "fastdds.content_filtering_on_late_joiners",
+                    "true");
+            }
             writer.disable_builtin_transport().add_user_transport_to_pparams(transport);
+            writer.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+            writer.durability_kind(transient_local ? DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS :
+                    DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS);
             writer.history_depth(10).init();
             ASSERT_TRUE(writer.isInitialized());
 
@@ -253,7 +268,8 @@ protected:
             direct_reader.datasharing_off().guid_prefix(custom_prefix);
             direct_reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
             direct_reader.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
-            direct_reader.durability_kind(DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS);
+            direct_reader.durability_kind(transient_local ? DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS :
+                    DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS);
             direct_reader.history_depth(10).init();
             ASSERT_TRUE(direct_reader.isInitialized());
 
@@ -273,7 +289,9 @@ protected:
         {
             DataReaderQos reader_qos = subscriber_->get_default_datareader_qos();
             reader_qos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
-            reader_qos.durability().kind = DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS;
+            reader_qos.durability().kind =
+                    transient_local ? DurabilityQosPolicyKind_t::TRANSIENT_LOCAL_DURABILITY_QOS :
+                    DurabilityQosPolicyKind_t::VOLATILE_DURABILITY_QOS;
             reader_qos.history().depth = 10;
             if (enable_datasharing)
             {
@@ -303,7 +321,28 @@ protected:
         void delete_reader(
                 DataReader* reader)
         {
+            ASSERT_NE(subscriber_, nullptr);
             EXPECT_EQ(RETCODE_OK, subscriber_->delete_datareader(reader));
+        }
+
+        void delete_all_readers()
+        {
+            ASSERT_NE(subscriber_, nullptr);
+            EXPECT_EQ(RETCODE_OK, subscriber_->delete_contained_entities());
+        }
+
+        void delete_all_filtered_readers()
+        {
+            ASSERT_NE(subscriber_, nullptr);
+            std::vector<DataReader*> readers;
+            subscriber_->get_datareaders(readers);
+            for (DataReader* reader : readers)
+            {
+                if (reader != &direct_reader.get_native_reader())
+                {
+                    EXPECT_EQ(RETCODE_OK, subscriber_->delete_datareader(reader));
+                }
+            }
         }
 
         void set_filter_expression(
@@ -324,13 +363,8 @@ protected:
             std::this_thread::sleep_for(std::chrono::milliseconds(250));
         }
 
-        void send_data(
-                DataReader* reader,
-                ContentFilterInfoCounter& filter_counter,
-                uint64_t expected_samples,
-                const std::vector<uint16_t>& index_values,
-                bool expect_wr_filters,
-                uint32_t num_writer_filters)
+        void clean_state(
+                ContentFilterInfoCounter& filter_counter)
         {
             filter_counter.user_data_count = 0;
             filter_counter.content_filter_info_count = 0;
@@ -339,12 +373,30 @@ protected:
             // Ensure writer is in clean state
             drop_data_on_all_readers();
             EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
-            EXPECT_EQ(reader->get_unread_count(), 0);
+        }
 
-            // Send 10 samples with index 1 to 10
-            auto data = default_helloworld_data_generator();
-            writer.send(data);
+        void send_data(
+                size_t num_send_samples)
+        {
+            // Send num_send_samples samples with index 1 to num_send_samples
+            auto data = default_helloworld_data_generator(num_send_samples);
+            rtps::WriteParams write_params;
+            rtps::SampleIdentity sample_id;
+            sample_id.writer_guid(writer.datawriter_guid());
+            write_params.related_sample_identity(sample_id);
+            writer.send(data, 0, &write_params);
             EXPECT_TRUE(data.empty());
+        }
+
+        void check_received_data(
+                DataReader* reader,
+                ContentFilterInfoCounter& filter_counter,
+                size_t num_sent_samples,
+                const std::vector<uint16_t>& index_values,
+                bool expect_wr_filters,
+                size_t nb_of_filter_readers)
+        {
+            const size_t expected_samples = index_values.size();
 
             // On data-sharing, reader acknowledges samples on return_loan.
             if (enable_datasharing)
@@ -387,11 +439,44 @@ protected:
             drop_data_on_all_readers();
             EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
 
-            EXPECT_GE(filter_counter.user_data_count, 10u);
+            EXPECT_GE(filter_counter.user_data_count, num_sent_samples);
             if (writer_side_filter_ && expect_wr_filters)
             {
-                EXPECT_EQ(filter_counter.content_filter_info_count, filter_counter.user_data_count);
-                EXPECT_EQ(filter_counter.max_filter_signature_number, num_writer_filters);
+                size_t expected_wr_filters = nb_of_filter_readers;
+                size_t nb_of_readers_out_of_limits = 0;
+                if (filter_limits_.maximum < expected_wr_filters)
+                {
+                    nb_of_readers_out_of_limits = expected_wr_filters - filter_limits_.maximum;
+                    expected_wr_filters = filter_limits_.maximum;
+                }
+
+                if (transient_local)
+                {
+                    // NOTE: messages sent to direct reader have no CFT because there are no matched readers with filter at send time
+                    ASSERT_GE(filter_counter.user_data_count, num_sent_samples);
+                    EXPECT_EQ(filter_counter.user_data_count - num_sent_samples,
+                            filter_counter.content_filter_info_count);
+                    if (expected_samples > 0 || nb_of_readers_out_of_limits > 0)
+                    {
+                        EXPECT_EQ(filter_counter.content_filter_info_count + num_sent_samples,
+                                filter_counter.user_data_count);
+                        EXPECT_EQ(filter_counter.content_filter_info_count,
+                                expected_samples * expected_wr_filters + num_sent_samples *
+                                nb_of_readers_out_of_limits);
+                        EXPECT_EQ(filter_counter.max_filter_signature_number, expected_wr_filters);
+                    }
+                    else
+                    {
+                        // Since no messages passed the filter (and there are no readers with filter out of resource limits), no signature was sent
+                        EXPECT_EQ(filter_counter.max_filter_signature_number, 0u);
+                    }
+                }
+                else
+                {
+                    // NOTE: messages sent to direct reader also have CFT because there are matched readers with filter at send time
+                    EXPECT_EQ(filter_counter.content_filter_info_count, filter_counter.user_data_count);
+                    EXPECT_EQ(filter_counter.max_filter_signature_number, expected_wr_filters);
+                }
             }
             else
             {
@@ -406,6 +491,7 @@ protected:
         Subscriber* subscriber_ = nullptr;
         ContentFilteredTopic* filtered_topic_ = nullptr;
         bool writer_side_filter_ = false;
+        fastdds::ResourceLimitedContainerConfig filter_limits_;
 
         void drop_data_on_all_readers()
         {
@@ -436,79 +522,209 @@ protected:
 
     bool using_transport_communication_ = false;
 
-    ContentFilterInfoCounter filter_counter;
+    ContentFilterInfoCounter filter_counter_;
 
-    DataReader* prepare_test(
+    void init_test(
             TestState& state,
-            fastdds::ResourceLimitedContainerConfig filter_limits,
-            uint32_t nb_of_additional_filter_readers)
+            bool transient_local,
+            fastdds::ResourceLimitedContainerConfig filter_limits = DATAWRITER_QOS_DEFAULT.writer_resource_limits().
+                    reader_filters_allocation)
     {
-        state.init(using_transport_communication_, filter_counter.transport, filter_limits);
+        state.init(using_transport_communication_, filter_counter_.transport, filter_limits, transient_local);
+    }
 
-        for (uint32_t i = 0; i < nb_of_additional_filter_readers; ++i)
+    DataReader* create_test_reader(
+            TestState& state,
+            size_t nb_of_filter_readers)
+    {
+        for (size_t i = 0; i < nb_of_filter_readers - 1; ++i)
         {
             state.create_filtered_reader();
+            state.writer.wait_discovery(static_cast<unsigned int>(2 + i));
+            state.writer.waitForAllAcked(std::chrono::seconds(3));
         }
 
         auto reader = state.create_filtered_reader();
 
-        state.writer.wait_discovery(2 + nb_of_additional_filter_readers);
+        state.writer.wait_discovery(static_cast<unsigned int>(1 + nb_of_filter_readers));
+        state.writer.waitForAllAcked(std::chrono::seconds(3));
 
         return reader;
     }
 
-    void test_run(
-            DataReader* reader,
+    DataReader* prepare_test(
             TestState& state,
-            uint32_t num_writer_filters)
+            fastdds::ResourceLimitedContainerConfig filter_limits,
+            size_t nb_of_additional_filter_readers,
+            bool transient_local)
     {
+        init_test(state, transient_local, filter_limits);
+
+        return create_test_reader(state, 1 + nb_of_additional_filter_readers);
+    }
+
+    void send_and_check_data(
+            TestState& state,
+            DataReader* reader,
+            size_t nb_of_filter_readers,
+            ContentFilterInfoCounter& filter_counter,
+            size_t num_send_samples,
+            const std::vector<uint16_t>& index_values,
+            bool expect_wr_filters)
+    {
+        ASSERT_EQ(state.transient_local, reader == nullptr);
+
+        // Clean state before sending data
+        state.clean_state(filter_counter);
+
+        if (!state.transient_local)
+        {
+            // Ensure reader is in clean state
+            EXPECT_EQ(reader->get_unread_count(), 0);
+        }
+
+        // Send data
+        state.send_data(num_send_samples);
+
+        if (state.transient_local)
+        {
+            // For transient local durability, readers are created after sending data
+            reader = create_test_reader(state, nb_of_filter_readers);
+        }
+
+        // Check received data and transport counters
+        state.check_received_data(reader, filter_counter, num_send_samples, index_values, expect_wr_filters,
+                nb_of_filter_readers);
+
+        if (state.transient_local)
+        {
+            // Destroy readers in the same scope they were created for transient local durability case
+            state.delete_all_filtered_readers();
+        }
+    }
+
+    void send_and_check_data(
+            TestState& state,
+            DataReader* reader,
+            ContentFilterInfoCounter& filter_counter,
+            size_t num_send_samples,
+            const std::vector<uint16_t>& index_values,
+            bool expect_wr_filters)
+    {
+        send_and_check_data(state, reader, 1, filter_counter, num_send_samples, index_values, expect_wr_filters);
+    }
+
+    void test_run(
+            TestState& state,
+            size_t nb_of_additional_filter_readers,
+            bool transient_local,
+            fastdds::ResourceLimitedContainerConfig filter_limits = DATAWRITER_QOS_DEFAULT.writer_resource_limits().
+                    reader_filters_allocation)
+    {
+        // Test initialization
+        init_test(state, transient_local, filter_limits);
+
+        if (!state.transient_local)
+        {
+            std::cout << std::endl << "\n[EARLY-JOINER TEST CASE]\n" << std::endl;
+        }
+        else
+        {
+            std::cout << std::endl << "\n[LATE-JOINER TEST CASE]\n" << std::endl;
+        }
+
+        // Total number of readers with filter
+        const size_t nb_of_filter_readers = 1 + nb_of_additional_filter_readers;
+
+        DataReader* reader = nullptr;
+        if (!state.transient_local)
+        {
+            // Create readers before sending data for volatile durability test case
+            reader = create_test_reader(state, nb_of_filter_readers);
+        }
+
         std::cout << std::endl << "Test with empty expression..." << std::endl;
-        state.send_data(reader, filter_counter, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false, num_writer_filters);
+        send_and_check_data(state, reader, nb_of_filter_readers, filter_counter_, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                false);
 
         std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"2\", \"4\"}..." << std::endl;
         state.set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" });
-        state.send_data(reader, filter_counter, 3u, {2, 3, 4}, true, num_writer_filters);
+        send_and_check_data(state, reader, nb_of_filter_readers, filter_counter_, 10u, {2, 3, 4}, true);
 
         std::cout << std::endl << "Test 'index BETWEEN %0 AND %1', {\"6\", \"9\"}..." << std::endl;
         state.set_expression_parameters({ "6", "9" });
-        state.send_data(reader, filter_counter, 4u, {6, 7, 8, 9}, true, num_writer_filters);
+        send_and_check_data(state, reader, nb_of_filter_readers, filter_counter_, 10u, {6, 7, 8, 9}, true);
 
         std::cout << std::endl << "Test 'message match %0', {\"'HelloWorld 1.*'\"}..." << std::endl;
         state.set_filter_expression("message match %0", { "'HelloWorld 1.*'" });
-        state.send_data(reader, filter_counter, 2u, {1, 10}, true, num_writer_filters);
+        send_and_check_data(state, reader, nb_of_filter_readers, filter_counter_, 10u, {1, 10}, true);
 
         std::cout << std::endl << "Test 'message match %0', {\"'WRONG MESSAGE .*'\"}..." << std::endl;
         state.set_expression_parameters({ "'WRONG MESSAGE .*'" });
-        state.send_data(reader, filter_counter, 0u, {}, true, num_writer_filters);
+        send_and_check_data(state, reader, nb_of_filter_readers, filter_counter_, 10u, {}, true);
 
         std::cout << std::endl << "Go back to empty expression..." << std::endl;
         state.set_filter_expression("", {});
-        state.send_data(reader, filter_counter, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, false, num_writer_filters);
+        send_and_check_data(state, reader, nb_of_filter_readers, filter_counter_, 10u, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+                false);
+
+        if (!state.transient_local)
+        {
+            // Destroy readers in the same scope they were created for volatile durability case
+            state.delete_all_filtered_readers();
+        }
     }
 
 };
 
-TEST_P(DDSContentFilter, BasicTest)
+TEST_P(DDSContentFilter, BasicTestDefaultLimits)
 {
-    TestState state;
+    // EARLY JOINER TEST CASE
+    {
+        TestState state;
 
-    auto reader = prepare_test(state, {}, 0);
-    ASSERT_NE(nullptr, reader);
+        test_run(state, 0u, false);
+    }
 
-    test_run(reader, state, 1);
+    // LATE JOINER TEST CASE
+    {
+        TestState state;
+
+        test_run(state, 0u, true);
+    }
+}
+
+TEST_P(DDSContentFilter, BasicTestNoLimits)
+{
+    // EARLY JOINER TEST CASE
+    {
+        TestState state;
+
+        test_run(state, 0u, false, {});
+    }
+
+    // LATE JOINER TEST CASE
+    // Not supported for no limits configuration, as that would imply reserving unlimited resources
 }
 
 TEST_P(DDSContentFilter, WriterFiltersDisabled)
 {
-    TestState state;
+    // EARLY JOINER TEST CASE
+    {
+        TestState state;
 
-    auto reader = prepare_test(state, {0, 0, 0}, 0);
-    ASSERT_NE(nullptr, reader);
+        test_run(state, 0u, false, {0, 0, 0});
+    }
 
-    test_run(reader, state, 0);
+    // LATE JOINER TEST CASE
+    {
+        TestState state;
+
+        test_run(state, 0u, true, {0, 0, 0});
+    }
 }
 
-TEST_P(DDSContentFilter, NoLimitsSeveralReaders)
+TEST_P(DDSContentFilter, SeveralReadersDefaultLimits)
 {
     // TODO(Miguel C): Remove when multiple filtering readers case is fixed for data-sharing
     if (enable_datasharing)
@@ -516,15 +732,22 @@ TEST_P(DDSContentFilter, NoLimitsSeveralReaders)
         GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
     }
 
-    TestState state;
+    // EARLY JOINER TEST CASE
+    {
+        TestState state;
 
-    auto reader = prepare_test(state, {}, 3u);
-    ASSERT_NE(nullptr, reader);
+        test_run(state, 3u, false);
+    }
 
-    test_run(reader, state, 4u);
+    // LATE JOINER TEST CASE
+    {
+        TestState state;
+
+        test_run(state, 3u, true);
+    }
 }
 
-TEST_P(DDSContentFilter, WithLimitsSeveralReaders)
+TEST_P(DDSContentFilter, SeveralReadersNoLimits)
 {
     // TODO(Miguel C): Remove when multiple filtering readers case is fixed for data-sharing
     if (enable_datasharing)
@@ -532,12 +755,38 @@ TEST_P(DDSContentFilter, WithLimitsSeveralReaders)
         GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
     }
 
-    TestState state;
+    // EARLY JOINER TEST CASE
+    {
+        TestState state;
 
-    auto reader = prepare_test(state, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 3u);
-    ASSERT_NE(nullptr, reader);
+        test_run(state, 3u, false, {});
+    }
 
-    test_run(reader, state, 2u);
+    // LATE JOINER TEST CASE
+    // Not supported for no limits configuration, as that would imply reserving unlimited resources
+}
+
+TEST_P(DDSContentFilter, SeveralReadersWithLimits)
+{
+    // TODO(Miguel C): Remove when multiple filtering readers case is fixed for data-sharing
+    if (enable_datasharing)
+    {
+        GTEST_SKIP() << "Several filtering readers not correctly working on data sharing";
+    }
+
+    // EARLY JOINER TEST CASE
+    {
+        TestState state;
+
+        test_run(state, 3u, false, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u));
+    }
+
+    // LATE JOINER TEST CASE
+    {
+        TestState state;
+
+        test_run(state, 3u, true, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u));
+    }
 }
 
 TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
@@ -551,14 +800,14 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     TestState state;
 
     // Only one filtered reader created
-    auto reader = prepare_test(state, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 0u);
+    auto reader = prepare_test(state, fastdds::ResourceLimitedContainerConfig::fixed_size_configuration(2u), 0u, false);
     ASSERT_NE(nullptr, reader);
 
     // We want a single filter to be applied, and check only for reader discovery changes
     state.set_filter_expression("index BETWEEN %0 AND %1", { "2", "4" });
 
     std::cout << "========= First reader =========" << std::endl;
-    state.send_data(reader, filter_counter, 3u, { 2, 3, 4 }, true, 1u);
+    send_and_check_data(state, reader, 1u, filter_counter_, 10, { 2, 3, 4 }, true);
 
     // Adding a second reader should increase the number of writer filters
     std::cout << "========= Create a second reader =========" << std::endl;
@@ -568,7 +817,7 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     // Wait for the writer to discover the new reader, and give time for old samples to be delivered.
     state.writer.wait_discovery(3);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    state.send_data(reader_2, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
+    send_and_check_data(state, reader_2, 2u, filter_counter_, 10, { 2, 3, 4 }, true);
 
     // Adding a third reader should not increase the number of writer filters (as the limit is 2)
     std::cout << "========= Create a third reader =========" << std::endl;
@@ -578,13 +827,13 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     // Wait for the writer to discover the new reader, and give time for old samples to be delivered.
     state.writer.wait_discovery(4);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    state.send_data(reader_3, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
+    send_and_check_data(state, reader_3, 2u, filter_counter_, 10, { 2, 3, 4 }, true);
 
     // Deleting the second reader will decrease the number of writer filters
     std::cout << "========= Delete the second reader =========" << std::endl;
     state.delete_reader(reader_2);
     state.writer.wait_reader_undiscovery(3);
-    state.send_data(reader_3, filter_counter, 3u, { 2, 3, 4 }, true, 1u);
+    send_and_check_data(state, reader_3, 1u, filter_counter_, 10, { 2, 3, 4 }, true);
 
     // Adding a fourth will increase the number of writer filters again
     std::cout << "========= Create a fourth reader =========" << std::endl;
@@ -594,7 +843,7 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     // Wait for the writer to discover the new reader, and give time for old samples to be delivered.
     state.writer.wait_discovery(4);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    state.send_data(reader_4, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
+    send_and_check_data(state, reader_4, 2u, filter_counter_, 10, { 2, 3, 4 }, true);
 }
 
 //! Regression test for https://github.com/eProsima/Fast-DDS/issues/3361
@@ -1247,6 +1496,73 @@ TEST(DDSContentFilter, ShouldNotFailWithTooManySubExpressionsDiscovered)
         fake_msg_sender.send(msg, loc);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+}
+
+/*
+ * Regression test for https://eprosima.easyredmine.com/issues/23681
+ *
+ * This test checks that content filtering and fragmentation work correctly together.
+ */
+TEST(DDSContentFilter, WithFragmentation)
+{
+    const size_t num_samples = 10;
+    const size_t num_readers = 2;
+    const size_t expected_samples = 3; // Choose different expressions, but all with this amount of expected samples
+    ASSERT_GE(expected_samples, 1); // Needs to be a positive integer
+
+    /* Create writer */
+    PubSubWriter<UnboundedHelloWorldPubSubType> writer("TestTopic");
+    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
+            std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    writer.disable_builtin_transport().add_user_transport_to_pparams(udp_descriptor);
+    writer.datasharing_off();
+    writer.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(num_samples).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    /* Create readers with filter */
+    std::vector<std::shared_ptr<PubSubReader<UnboundedHelloWorldPubSubType>>> readers;
+    for (size_t i = 0; i < num_readers; ++i)
+    {
+        const std::string expression = "index BETWEEN " + std::to_string(i) + " AND " +
+                std::to_string(i + expected_samples - 1);
+        auto reader = std::make_shared<PubSubReader<UnboundedHelloWorldPubSubType>>("TestTopic", expression,
+                        std::vector<std::string>{});
+        reader->reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+        reader->history_depth(num_samples).init();
+        ASSERT_TRUE(reader->isInitialized());
+        reader->wait_discovery();
+        readers.push_back(reader);
+    }
+
+    /* Wait for discovery before start to publish */
+    writer.wait_discovery(static_cast<unsigned int>(num_readers));
+
+    /* Start samples reception */
+    for (auto& reader : readers)
+    {
+        reader->startReception(expected_samples);
+    }
+
+    /* Create and fill sample to use fragmentation */
+    UnboundedHelloWorld data;
+    data.message(std::string(68000, 'A'));
+
+    /* Send samples */
+    for (size_t i = 0; i < num_samples; ++i)
+    {
+        data.index(static_cast<uint16_t>(i));
+        ASSERT_TRUE(writer.send_sample(data));
+    }
+
+    /* Wait until all samples are acknowledged */
+    writer.waitForAllAcked(std::chrono::seconds(3));
+
+    /* Check that all samples are received */
+    for (auto& reader : readers)
+    {
+        ASSERT_TRUE(reader->wait_for_all_received(std::chrono::seconds(3)));
     }
 }
 

@@ -18,8 +18,8 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/builtin/type_lookup_service/TypeLookupRequestListener.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/core/condition/Condition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/core/condition/ConditionNotifier.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/core/condition/GuardCondition.cpp
@@ -44,15 +44,16 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/DataWriter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/DataWriterHistory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/DataWriterImpl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/filtering/DataWriterHistoryFiltered.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/Publisher.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/PublisherImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/qos/DataWriterQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/qos/PublisherQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/publisher/qos/WriterQos.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/rpc/ServiceImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/rpc/ReplierImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/rpc/RequesterImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/rpc/RPCTypeObjectSupport.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/rpc/ServiceImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/rpc/ServiceTypeSupport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/subscriber/DataReader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/subscriber/DataReaderImpl.cpp
@@ -74,13 +75,13 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/utils/TypePropagation.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
@@ -102,8 +103,8 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/ParticipantBuiltinTopicData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/ParticipantProxyData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/PublicationBuiltinTopicData.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/SubscriptionBuiltinTopicData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/ReaderProxyData.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/SubscriptionBuiltinTopicData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/data/WriterProxyData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/discovery/database/DiscoveryDataBase.cpp
@@ -131,15 +132,17 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/liveliness/WLP.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/builtin/liveliness/WLPListener.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/GuidPrefix_t.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/SerializedPayload.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/LocatorWithMask.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/SerializedPayload.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/Time_t.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/common/Token.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/congestion-control/CongestionControlFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/congestion-control/basic/CongestionControlBasic.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/congestion-control/CongestionControlFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/DataSharing/DataSharingListener.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/DataSharing/DataSharingNotification.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/DataSharing/DataSharingPayloadPool.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/domain/RTPSDomain.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/domain/RTPSDomainExtras.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/exceptions/Exception.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/flowcontrol/FlowControllerConsts.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/flowcontrol/FlowControllerFactory.cpp
@@ -181,8 +184,6 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/resources/ResourceEvent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/resources/TimedEvent.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/resources/TimedEventImpl.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/domain/RTPSDomain.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/rtps/domain/RTPSDomainExtras.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/ChainingTransport.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/ChannelResource.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rtps/transport/MulticastTransportInterface.cpp
