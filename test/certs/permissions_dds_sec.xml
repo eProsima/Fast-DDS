@@ -17,7 +17,7 @@
                 <publish>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>Security/Security_SecurityPlugins_Permissions*_validation_ok*</topic>
+                        <topic>*SecurityPlugins_Permissions*_validation_ok*</topic>
                     </topics>
                 </publish>
             </allow_rule>
@@ -39,7 +39,7 @@
                 <subscribe>
                     <topics>
                         <topic>*clock*</topic>
-                        <topic>Security/Security_SecurityPlugins_Permissions*_validation_ok*</topic>
+                        <topic>*SecurityPlugins_Permissions*_validation_ok*</topic>
                         <topic>*temperature*</topic>
                     </topics>
                 </subscribe>
