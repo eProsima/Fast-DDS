@@ -65,7 +65,7 @@ public:
 
     std::unique_ptr<BufferImplBase<T>> clone() const override
     {
-        auto copy = std::make_unique<CpuBufferImpl<T, Allocator>>();
+        std::unique_ptr<CpuBufferImpl<T, Allocator>> copy (new CpuBufferImpl<T, Allocator>());
         copy->storage_ = storage_;
         return copy;
     }

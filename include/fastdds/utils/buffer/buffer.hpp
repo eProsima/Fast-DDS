@@ -61,7 +61,7 @@ public:
     /// Default constructor creates CPU buffer
     Buffer()
     {
-        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        set_default_cpu_impl();
     }
 
     /// Construct with a backend implementation (set once at construction).
@@ -81,7 +81,7 @@ public:
     explicit Buffer(
             size_t count)
     {
-        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        set_default_cpu_impl();
         cpu_impl_->get_storage().resize(count);
     }
 
@@ -90,7 +90,7 @@ public:
             size_t count,
             const T& value)
     {
-        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        set_default_cpu_impl();
         cpu_impl_->get_storage().assign(count, value);
     }
 
@@ -98,7 +98,7 @@ public:
     Buffer(
             const std::vector<T, Allocator>& vec) // NOLINT(runtime/explicit)
     {
-        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        set_default_cpu_impl();
         cpu_impl_->get_storage() = vec;
     }
 
@@ -106,7 +106,7 @@ public:
     Buffer(
             std::vector<T, Allocator>&& vec) // NOLINT(runtime/explicit) - intentionally implicit
     {
-        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        set_default_cpu_impl();
         cpu_impl_->get_storage() = std::move(vec);
     }
 
@@ -114,7 +114,7 @@ public:
     Buffer(
             std::initializer_list<T> init)
     {
-        set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        set_default_cpu_impl();
         cpu_impl_->get_storage() = init;
     }
 
@@ -130,7 +130,7 @@ public:
             Buffer&& other) noexcept
     {
         set_impl(std::move(other.impl_));
-        other.set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+        other.set_default_cpu_impl();
     }
 
     /// Copy assignment (deep copy via clone())
@@ -151,7 +151,7 @@ public:
         if (this != &other)
         {
             set_impl(std::move(other.impl_));
-            other.set_impl(std::make_unique<CpuBufferImpl<T, Allocator>>());
+            other.set_default_cpu_impl();
         }
         return *this;
     }
@@ -665,6 +665,13 @@ private:
     {
         impl_ = std::move(impl);
         cpu_impl_ = dynamic_cast<CpuBufferImpl<T, Allocator>*>(impl_.get());
+    }
+
+    /// Set default CPU implementation (used by constructors).
+    void set_default_cpu_impl()
+    {
+        cpu_impl_ = new CpuBufferImpl<T, Allocator>();
+        impl_.reset(cpu_impl_);
     }
 
     /// Get CPU implementation (assumes throw_if_not_cpu_backend() was called)
