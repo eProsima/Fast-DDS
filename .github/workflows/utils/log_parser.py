@@ -49,7 +49,7 @@ def parse_options():
         '--specific-error-file',
         type=str,
         required=True,
-        help='Path to file with ASAN or TSAN specific errors.'
+        help='Path to file with ASAN, TSAN or UBSAN specific errors.'
     )
     required_args.add_argument(
         '-o',
@@ -64,7 +64,7 @@ def parse_options():
         '--sanitizer',
         type=str,
         required=True,
-        help='Sanitizer to use. [ASAN|TSAN] no case sensitive.'
+        help='Sanitizer to use. [ASAN|TSAN|UBSAN] no case sensitive.'
     )
 
     return parser.parse_args()
@@ -148,6 +148,36 @@ def tsan_line_splitter(
         text_to_split_end=' (pid=')
 
 
+# Each UBSan finding starts with a source location followed by " runtime error: <description>".
+# We group findings by "<basename>:<line>:<col>: <description>" so that the same UB at the
+# same site collapses into a single row regardless of repetition or ctest line prefixes
+_UBSAN_LINE_RE = re.compile(
+    r'(?P<path>\S+?):(?P<line>\d+):(?P<col>\d+):\s*runtime error:\s*(?P<desc>.+?)\s*$'
+)
+# Strip GitHub Actions ISO-8601 timestamp prefix and/or a ctest line prefix ("<test-id>: ").
+_GH_TIMESTAMP_RE = re.compile(r'^\d{4}-\d{2}-\d{2}T\S+\s+')
+_CTEST_PREFIX_RE = re.compile(r'^\d+:\s*')
+# Hex addresses ("0x55ade3179480") differ across runs but represent the same logical UB;
+# normalize them to "0x..." so identical findings at the same site collapse into one row.
+_HEX_ADDRESS_RE = re.compile(r'0x[0-9a-fA-F]+')
+
+
+def ubsan_line_splitter(
+        line: str):
+    stripped = _GH_TIMESTAMP_RE.sub('', line.rstrip('\r\n'))
+    stripped = _CTEST_PREFIX_RE.sub('', stripped)
+    match = _UBSAN_LINE_RE.search(stripped)
+    if not match:
+        # Not an UBSan finding header
+        return None
+    if 'sqlite3.c' in match.group('path'):
+        # Ignore UBSan findings in sqlite3.c (thirdparty code we don't maintain)
+        return None
+    basename = match.group('path').rsplit('/', 1)[-1]
+    desc = _HEX_ADDRESS_RE.sub('0x...', match.group('desc'))
+    return f"{basename}:{match.group('line')}:{match.group('col')}: {desc}"
+
+
 def common_specific_errors_list(
         errors_file_path: str,
         line_splitter):
@@ -170,11 +200,14 @@ def common_specific_errors_dict(
         errors_file_path: str,
         line_splitter):
 
-    # failed tests
+    # Open with newline='' so Python's universal-newline mode does not split a single
+    # grep-emitted line on bare '\r' characters.
     errors = {}
-    with open(errors_file_path, 'r') as file:
-        for line in file.readlines():
+    with open(errors_file_path, 'r', newline='') as file:
+        for line in file:
             error_id = line_splitter(line)
+            if error_id is None:
+                continue
             if error_id in errors:
                 errors[error_id] += 1
             else:
@@ -203,10 +236,19 @@ def main():
     # Parse arguments
     args = parse_options()
 
-    # Get specific ASAN or TSAN variables
-    asan = args.sanitizer.lower() == 'asan'
-    line_splitter = (asan_line_splitter if asan else tsan_line_splitter)
-    file_title = ('ASAN' if asan else 'TSAN') + ' Errors Summary'
+    # Select the splitter and report title for the requested sanitizer.
+    sanitizer = args.sanitizer.lower()
+    splitters = {
+        'asan': (asan_line_splitter, 'ASAN'),
+        'tsan': (tsan_line_splitter, 'TSAN'),
+        'ubsan': (ubsan_line_splitter, 'UBSAN'),
+    }
+    if sanitizer not in splitters:
+        raise SystemExit(
+            f"Unsupported sanitizer '{args.sanitizer}'. Expected one of: "
+            f"{', '.join(s.upper() for s in splitters)}.")
+    line_splitter, title_prefix = splitters[sanitizer]
+    file_title = f'{title_prefix} Errors Summary'
 
     # Execute specific errors parse
     specific_errors, n_errors = common_specific_errors_list(

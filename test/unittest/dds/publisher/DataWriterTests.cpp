@@ -2161,27 +2161,43 @@ TEST(DataWriterTests, LoanNegativeTests)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == RETCODE_OK);
 }
 
-class DataWriterTest : public DataWriter
-{
-public:
+namespace {
 
-    DataWriterImpl* get_impl() const
+// Accessor to DataWriterImpl from DataWriter
+using DataWriterImplPtr = DataWriterImpl * DataWriter::*;
+
+DataWriterImplPtr get_datawriter_impl_ptr();
+
+template<DataWriterImplPtr P>
+struct DataWriterImplAccessor
+{
+    friend DataWriterImplPtr get_datawriter_impl_ptr()
     {
-        return impl_;
+        return P;
     }
 
 };
 
-class DataWriterImplTest : public DataWriterImpl
-{
-public:
+template struct DataWriterImplAccessor<&DataWriter::impl_>;
 
-    DataWriterHistory* get_history()
+// Accessor to DataWriterHistory unique ptr from DataWriterImpl
+using DataWriterHistoryPtr = std::unique_ptr<DataWriterHistory> DataWriterImpl::*;
+
+DataWriterHistoryPtr get_datawriter_history_ptr();
+
+template<DataWriterHistoryPtr P>
+struct DataWriterHistoryAccessor
+{
+    friend DataWriterHistoryPtr get_datawriter_history_ptr()
     {
-        return history_.get();
+        return P;
     }
 
 };
+
+template struct DataWriterHistoryAccessor<&DataWriterImpl::history_>;
+
+} // namespace
 
 /**
  * This test checks instance wait_for_acknowledgements API
@@ -2244,13 +2260,10 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
 #endif // NDEBUG
 
     // Access DataWriterHistory
-    DataWriterTest* instance_datawriter_test = static_cast<DataWriterTest*>(instance_datawriter);
-    ASSERT_NE(nullptr, instance_datawriter_test);
-    DataWriterImpl* datawriter_impl = instance_datawriter_test->get_impl();
+    DataWriterImpl* datawriter_impl = instance_datawriter->*get_datawriter_impl_ptr();
     ASSERT_NE(nullptr, datawriter_impl);
-    DataWriterImplTest* datawriter_impl_test = static_cast<DataWriterImplTest*>(datawriter_impl);
-    ASSERT_NE(nullptr, datawriter_impl_test);
-    auto history = datawriter_impl_test->get_history();
+    DataWriterHistory* history = (datawriter_impl->*get_datawriter_history_ptr()).get();
+    ASSERT_NE(nullptr, history);
 
     // 5. Calling wait_for_acknowledgments in a keyed topic with HANDLE_NIL returns
     // RETCODE_OK

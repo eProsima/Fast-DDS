@@ -42,6 +42,7 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
@@ -53,6 +54,7 @@ enum reliability
     TEST_BEST_EFFORT,
     TEST_RELIABLE
 };
+}  // namespace
 
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
@@ -522,6 +524,85 @@ std::map<const char*, SecurityPkcs::HsmToken> SecurityPkcs::tokens;
 const char* const SecurityPkcs::hsm_token_id_no_pin = "testing_token_no_pin";
 const char* const SecurityPkcs::hsm_token_id_url_pin = "testing_token_url_pin";
 const char* const SecurityPkcs::hsm_token_id_env_pin = "testing_token_env_pin";
+
+TEST(Security, SecurityPlugins_fail_init_with_incomplete_configuration)
+{
+    // Only authentication configured, missing access control and crypto
+    {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        PropertyPolicy sub_property_policy;
+
+        fill_sub_auth(sub_property_policy);
+
+        reader.property_policy(sub_property_policy).init();
+
+        ASSERT_FALSE(reader.isInitialized());
+    }
+    // Only authentication and crypto configured, missing access control
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy pub_property_policy;
+
+        fill_pub_auth(pub_property_policy);
+        fill_crypto(pub_property_policy);
+
+        writer.property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+    // Only authentication and access control configured, missing crypto
+    {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        PropertyPolicy sub_property_policy;
+
+        fill_sub_auth(sub_property_policy);
+        fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+
+        reader.property_policy(sub_property_policy).init();
+
+        ASSERT_FALSE(reader.isInitialized());
+    }
+    // Only access control configured, missing authentication and crypto
+    {
+        PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+        PropertyPolicy sub_property_policy;
+
+        fill_access(sub_property_policy, "governance_only_auth.smime", "permissions.smime");
+
+        reader.property_policy(sub_property_policy).init();
+
+        ASSERT_FALSE(reader.isInitialized());
+    }
+    // Only access control and crypto configured, missing authentication
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy pub_property_policy;
+
+        fill_access(pub_property_policy, "governance_only_auth.smime", "permissions.smime");
+        fill_crypto(pub_property_policy);
+
+        writer.property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+    // Only crypto configured, missing authentication and access control
+    {
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        PropertyPolicy pub_property_policy;
+
+        fill_crypto(pub_property_policy);
+
+        writer.property_policy(pub_property_policy).init();
+
+        ASSERT_FALSE(writer.isInitialized());
+    }
+}
 
 // This test is used to check that the security plugins are correctly loaded. Governance with minimal configuration is used
 TEST(Security, SecurityPlugins_basic_configuration)
@@ -4570,7 +4651,8 @@ TEST(Security, ValidateAuthenticationHandshakePropertiesParsing)
 
     PropertyPolicy property_policy;
 
-    fill_sub_auth(property_policy);
+    fill_pub_auth(property_policy);
+    fill_access(property_policy);
     fill_crypto(property_policy);
 
     // max_handshake_requests out of bounds
@@ -4628,21 +4710,20 @@ TEST(Security, ValidateAuthenticationHandshakePropertiesParsing)
 TEST(Security, ValidateAuthenticationHandshakeProperties)
 {
     // Create
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic");
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic");
 
     PropertyPolicy property_policy;
     std::string xml_file = "auth_handshake_props_profile.xml";
-    std::string profile_name = "auth_handshake_props";
 
     // Set a configuration that makes participant authentication
     // to be performed quickly so that we receive handshake
     // in 0.15 secs approx
     writer.set_xml_filename(xml_file);
-    writer.set_participant_profile(profile_name);
+    writer.set_participant_profile("auth_handshake_props_pub");
 
     reader.set_xml_filename(xml_file);
-    reader.set_participant_profile(profile_name);
+    reader.set_participant_profile("auth_handshake_props_sub");
 
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
