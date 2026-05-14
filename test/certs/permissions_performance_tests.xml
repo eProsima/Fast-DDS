@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-*20170801/omg_shared_ca_permissions.xsd">
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
     <permissions>
         <grant name="PublisherPermissions">
             <subject_name>emailAddress=mainpub@eprosima.com, CN=Main Publisher, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
@@ -16,10 +16,20 @@
                 </domains>
                 <publish>
                     <topics>
-                        <topic>*clock*</topic>
-                        <topic>*SecurityPlugins_Permissions*_validation_ok*</topic>
+                        <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
                     </topics>
                 </publish>
+                <subscribe>
+                    <topics>
+                        <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
+                    </topics>
+                </subscribe>
             </allow_rule>
             <default>DENY</default>
         </grant>
@@ -36,11 +46,20 @@
                         <max>230</max>
                     </id_range>
                 </domains>
+                <publish>
+                    <topics>
+                        <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
+                    </topics>
+                </publish>
                 <subscribe>
                     <topics>
-                        <topic>*clock*</topic>
-                        <topic>*SecurityPlugins_Permissions*_validation_ok*</topic>
-                        <topic>*temperature*</topic>
+                        <topic>LatencyTest_*</topic>
+                        <topic>ThroughputTest_*</topic>
+                        <topic>VideoTest_*</topic>
+                        <topic>MemoryTest_*</topic>
                     </topics>
                 </subscribe>
             </allow_rule>
