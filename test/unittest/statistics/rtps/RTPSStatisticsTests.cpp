@@ -67,7 +67,9 @@ public:
         return mp_impl;
     }
 
-    virtual ~RTPSParticipantMock() = default;
+private:
+
+    ~RTPSParticipantMock() = default;
 };
 
 struct MockListener : IListener
