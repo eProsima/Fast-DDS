@@ -72,7 +72,7 @@ public:
             traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) noexcept override;
 
-    const std::vector<AnnotationDescriptorImpl> get_annotations() const
+    const std::vector<AnnotationDescriptorImpl>& get_annotations() const
     {
         return annotation_;
     }
