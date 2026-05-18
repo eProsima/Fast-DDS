@@ -78,7 +78,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Add ci-pending label if PR
         if: ${{ github.event_name == 'pull_request' && inputs.add-label == true }}
@@ -179,7 +179,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -282,7 +282,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -369,7 +369,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -464,7 +464,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -580,7 +580,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -665,7 +665,7 @@ jobs:
       fail-fast: false
       matrix:
         cmake-build-type:
-          - 'RelWithDebInfo'
+          - 'Debug'
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
