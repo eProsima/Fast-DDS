@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrEncoding.hpp>
 #include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 
@@ -37,9 +38,28 @@ inline size_t calculate_serialized_size(
     }
     else
     {
-        // For non-CPU buffers, we need to copy to CPU memory first
-        std::vector<uint8_t> vec = data.to_vector();
-        return calculator.calculate_serialized_size(vec, current_alignment);
+        if (CdrVersion::XCDRv1 == calculator.get_cdr_version())
+        {
+            // For non-CPU buffers and XCDRv1, we can calculate size directly from the buffer size
+            size_t initial_alignment{ current_alignment };
+
+            // Align for the length field
+            current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
+
+            // Add size for the length field
+            current_alignment += sizeof(uint32_t);
+
+            // Add size for the data
+            current_alignment += data.size();
+
+            return current_alignment - initial_alignment;
+        }
+        else
+        {
+            // For non-CPU buffers and non-XCDRv1, we need to copy to CPU memory first
+            std::vector<uint8_t> vec = data.to_vector();
+            return calculator.calculate_serialized_size(vec, current_alignment);
+        }
     }
 }
 
