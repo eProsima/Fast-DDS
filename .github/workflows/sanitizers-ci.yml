@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       run_asan_fastdds:
-        description: 'Run Addess Sanitizer job for Fast DDS'
+        description: 'Run Address Sanitizer job for Fast DDS'
         required: false
         type: boolean
       run_tsan_fastdds:
