@@ -20,6 +20,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include <fastdds/utils/buffer/buffer.hpp>
@@ -249,14 +250,14 @@ TEST(TestBuffer, const_reverse_iterators) {
 
     // Type check: crbegin returns const_reverse_iterator
     static_assert(
-        std::is_same_v<
+        std::is_same<
             decltype(buffer.crbegin()),
-            Buffer<uint8_t>::const_reverse_iterator>,
+            Buffer<uint8_t>::const_reverse_iterator>::value,
         "crbegin must return const_reverse_iterator");
     static_assert(
-        std::is_same_v<
+        std::is_same<
             decltype(buffer.crend()),
-            Buffer<uint8_t>::const_reverse_iterator>,
+            Buffer<uint8_t>::const_reverse_iterator>::value,
         "crend must return const_reverse_iterator");
 }
 
@@ -714,9 +715,9 @@ TEST(TestBuffer, get_allocator) {
     EXPECT_EQ(alloc, std::allocator<uint8_t>{});
 
     static_assert(
-        std::is_same_v<
+        std::is_same<
             decltype(buffer.get_allocator()),
-            Buffer<uint8_t>::allocator_type>,
+            Buffer<uint8_t>::allocator_type>::value,
         "get_allocator must return allocator_type");
 }
 
