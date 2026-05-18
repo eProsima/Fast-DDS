@@ -5445,18 +5445,23 @@ size_t DynamicDataImpl::calculate_serialized_size(
                         *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(
                             it->second), current_alignment);
                     break;
+
                 case TK_BYTE:
-                    calculated_size =
-                            calculator.calculate_array_serialized_size(
-                        *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(
-                            it->second), current_alignment);
-                    break;
+                {
+                    auto sequence_ptr = std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second);
+                    calculated_size = calculator.calculate_array_serialized_size(
+                        sequence_ptr->data(), sequence_ptr->size(), current_alignment);
+                }
+                break;
+
                 case TK_UINT8:
-                    calculated_size =
-                            calculator.calculate_array_serialized_size(
-                        *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(
-                            it->second), current_alignment);
-                    break;
+                {
+                    auto sequence_ptr = std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second);
+                    calculated_size = calculator.calculate_array_serialized_size(
+                        sequence_ptr->data(), sequence_ptr->size(), current_alignment);
+                }
+                break;
+
                 case TK_STRING8:
                     calculated_size =
                             calculator.calculate_array_serialized_size(
@@ -6140,12 +6145,21 @@ bool DynamicDataImpl::deserialize(
                 case TK_BOOLEAN:
                     cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(begin_it->second));
                     break;
+
                 case TK_BYTE:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second));
-                    break;
+                {
+                    auto sequence_ptr = std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second);
+                    cdr.deserialize_array(sequence_ptr->data(), sequence_ptr->size());
+                }
+                break;
+
                 case TK_UINT8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second));
-                    break;
+                {
+                    auto sequence_ptr = std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second);
+                    cdr.deserialize_array(sequence_ptr->data(), sequence_ptr->size());
+                }
+                break;
+
                 case TK_STRING8:
                     cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(begin_it->second));
                     break;
@@ -7088,12 +7102,21 @@ void DynamicDataImpl::serialize(
                 case TK_BOOLEAN:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(begin_it->second));
                     break;
+
                 case TK_BYTE:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second));
-                    break;
+                {
+                    auto sequence_ptr = std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second);
+                    cdr.serialize_array(sequence_ptr->data(), sequence_ptr->size());
+                }
+                break;
+
                 case TK_UINT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second));
-                    break;
+                {
+                    auto sequence_ptr = std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second);
+                    cdr.serialize_array(sequence_ptr->data(), sequence_ptr->size());
+                }
+                break;
+
                 case TK_STRING8:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(begin_it->second));
                     break;
