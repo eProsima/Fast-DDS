@@ -17,4 +17,3 @@ jobs:
       cmake_args: ''
       ctest_args: ''
       fastdds_ref: 'master'
-      discovery_server_ref: 'master'
