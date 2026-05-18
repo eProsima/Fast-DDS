@@ -46,29 +46,6 @@ void SecurityTest::initialization_ok()
     ASSERT_TRUE(volatile_writer_->listener_ != nullptr);
 }
 
-void SecurityTest::initialization_auth_ok()
-{
-    SecurityPluginFactory::release_crypto_plugin();
-
-    ::testing::DefaultValue<const GUID_t&>::Set(guid);
-    ::testing::DefaultValue<CDRMessage_t>::Set(default_cdr_message);
-    ::testing::DefaultValue<const ParticipantSecurityAttributes&>::Set(security_attributes_);
-    stateless_writer_ = new ::testing::NiceMock<StatelessWriter>(&participant_);
-    stateless_reader_ = new ::testing::NiceMock<StatelessReader>();
-
-    EXPECT_CALL(*auth_plugin_, validate_local_identity(_, _, _, _, _, _)).Times(1).
-            WillOnce(DoAll(SetArgPointee<0>(&local_identity_handle_), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(participant_, createWriter_mock(_, _, _, _, _, _)).Times(1).
-            WillOnce(DoAll(SetArgPointee<0>(stateless_writer_), Return(true)));
-    EXPECT_CALL(participant_, createReader_mock(_, _, _, _, _, _, _)).Times(1).
-            WillOnce(DoAll(SetArgPointee<0>(stateless_reader_), Return(true)));
-
-    security_activated_ = manager_.init(security_attributes_, participant_properties_);
-    ASSERT_TRUE(security_activated_);
-    ASSERT_TRUE(manager_.is_security_initialized());
-    ASSERT_TRUE(manager_.create_entities());
-}
-
 void SecurityTest::request_process_ok(
         CacheChange_t** request_message_change)
 {

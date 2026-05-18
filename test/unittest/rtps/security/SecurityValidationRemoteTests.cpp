@@ -35,33 +35,6 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_fail)
     ASSERT_FALSE(manager_.discovered_participant(participant_data));
 }
 
-TEST_F(SecurityTest, discovered_participant_validation_remote_identity_ok)
-{
-    initialization_auth_ok();
-
-    auto& remote_identity_handle = get_handle<MockIdentityHandle>();
-    ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.guid);
-
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_), _, _, _)).Times(1).
-            WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
-            WillOnce(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
-            WillOnce(Return(true));
-    EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
-    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
-
-    ParticipantAuthenticationInfo info;
-    info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.guid;
-    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
-
-    ASSERT_TRUE(manager_.discovered_participant(participant_data));
-
-    return_handle(remote_identity_handle);
-}
-
 TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_handshake_message)
 {
     initialization_ok();

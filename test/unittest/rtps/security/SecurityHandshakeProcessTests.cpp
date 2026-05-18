@@ -149,28 +149,25 @@ TEST_F(SecurityTest, discovered_participant_process_message_bad_message_class_id
 
 TEST_F(SecurityTest, discovered_participant_process_message_not_expecting_request)
 {
-    initialization_auth_ok();
+    // Drive the participant to AUTHENTICATION_OK via a full handshake
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle_, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle_, _)).Times(1).
+            WillOnce(Return(true));
 
-    auto& remote_identity_handle = get_handle<MockIdentityHandle>();
+    final_message_process_ok();
 
-    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_), _, _, _)).Times(1).
-            WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(*stateless_writer_->history_, remove_change(SequenceNumber_t{0, 2})).Times(1).
+            WillOnce(Return(true));
 
-    ParticipantProxyData participant_data;
-    fill_participant_key(participant_data.guid);
-    EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
-    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
-
-    ParticipantAuthenticationInfo info;
-    info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-    info.guid = participant_data.guid;
-    EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
-
-    ASSERT_TRUE(manager_.discovered_participant(participant_data));
-
+    // Stray "request" (no related_message_identity) for the already-authorized peer.
+    // SecurityManager should drop it on the AUTHENTICATION_OK branch and the reader
+    // should remove the change from its history.
     ParticipantGenericMessage message;
-    message.message_identity().source_guid(participant_data.guid);
-    message.destination_participant_key(participant_data.guid);
+    message.message_identity().source_guid(participant_data_.guid);
+    message.destination_participant_key(participant_data_.guid);
     message.message_class_id("dds.sec.auth");
     HandshakeMessageToken token;
     message.message_data().push_back(token);
@@ -192,16 +189,10 @@ TEST_F(SecurityTest, discovered_participant_process_message_not_expecting_reques
     ASSERT_TRUE(CDRMessage::addParticipantGenericMessage(&aux_msg, message));
     change->serializedPayload.length = aux_msg.length;
 
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
-            WillRepeatedly(Return(true));
-    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
-            WillRepeatedly(Return(true));
     EXPECT_CALL(*stateless_reader_->history_, remove_change_mock(change)).Times(1).
             WillOnce(Return(true));
 
     stateless_reader_->listener_->on_new_cache_change_added(stateless_reader_, change);
-
-    return_handle(remote_identity_handle);
 }
 
 TEST_F(SecurityTest, discovered_participant_process_message_fail_begin_handshake_reply)

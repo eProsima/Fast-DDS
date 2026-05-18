@@ -28,6 +28,7 @@
 #include <rtps/reader/StatelessReader.hpp>
 #include <rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/common/Handle.h>
+#include <rtps/security/MockAccessControlPlugin.h>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
 #include <rtps/security/SecurityManager.h>
@@ -92,13 +93,84 @@ protected:
     {
         ::testing::DefaultValue<const NetworkFactory&>::Set(network);
         SecurityPluginFactory::set_auth_plugin(auth_plugin_);
+        SecurityPluginFactory::set_access_control_plugin(access_plugin_);
         SecurityPluginFactory::set_crypto_plugin(crypto_plugin_);
         fill_participant_key(guid);
+        // Need to configure participant properties as it is mandatory to have all three security plugins
+        // configured for security to be activated
+        participant_properties_.properties().push_back({"dds.sec.auth.plugin", "mock_auth"});
+        participant_properties_.properties().push_back({"dds.sec.crypto.plugin", "mock_crypto"});
+        participant_properties_.properties().push_back({"dds.sec.access.plugin", "mock_access"});
+
+        // Permissive default behavior for the access plugin so tests that do not care
+        // about access control still traverse init() up to the crypto stage.
+        ON_CALL(*access_plugin_, validate_local_permissions(::testing::_, ::testing::_, ::testing::_,
+                ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Invoke(
+                    [this](Authentication&, const IdentityHandle&, const uint32_t,
+                    const PropertyPolicy&, SecurityException& ex) -> PermissionsHandle*
+                    {
+                        return access_plugin_->get_permissions_handle(ex);
+                    }));
+        ON_CALL(*access_plugin_, check_create_participant(::testing::_, ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Return(true));
+        ON_CALL(*access_plugin_, get_permissions_credential_token(::testing::_, ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Invoke(
+                    [](PermissionsCredentialToken** token, const PermissionsHandle&,
+                    SecurityException&) -> bool
+                    {
+                        *token = new PermissionsCredentialToken();
+                        return true;
+                    }));
+        ON_CALL(*access_plugin_, return_permissions_credential_token(::testing::_, ::testing::_))
+                .WillByDefault(::testing::Invoke(
+                    [](PermissionsCredentialToken* token, SecurityException&) -> bool
+                    {
+                        delete token;
+                        return true;
+                    }));
+        ON_CALL(*access_plugin_, get_participant_sec_attributes(::testing::_, ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Return(true));
+
+        ON_CALL(*auth_plugin_, set_permissions_credential_and_token(::testing::_, ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Return(true));
+
+        // Permissive defaults for the remote-participant authorization path in
+        // SecurityManager::participant_authorized(), now reachable for every test
+        // since access_plugin_ is always non-null.
+        ON_CALL(*auth_plugin_, get_authenticated_peer_credential_token(::testing::_, ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Invoke(
+                    [](PermissionsCredentialToken** token, const IdentityHandle&,
+                    SecurityException&) -> bool
+                    {
+                        *token = new PermissionsCredentialToken();
+                        return true;
+                    }));
+        ON_CALL(*auth_plugin_, return_authenticated_peer_credential_token(::testing::_, ::testing::_))
+                .WillByDefault(::testing::Invoke(
+                    [](PermissionsCredentialToken* token, SecurityException&) -> bool
+                    {
+                        delete token;
+                        return true;
+                    }));
+        ON_CALL(*access_plugin_, validate_remote_permissions(::testing::_, ::testing::_, ::testing::_,
+                ::testing::_, ::testing::_, ::testing::_, ::testing::_))
+                .WillByDefault(::testing::Invoke(
+                    [this](Authentication&, const IdentityHandle&, const PermissionsHandle&,
+                    const IdentityHandle&, const PermissionsToken&, const PermissionsCredentialToken&,
+                    SecurityException& ex) -> PermissionsHandle*
+                    {
+                        return access_plugin_->get_permissions_handle(ex);
+                    }));
+        ON_CALL(*access_plugin_, check_remote_participant(::testing::_, ::testing::_, ::testing::_,
+                ::testing::_))
+                .WillByDefault(::testing::Return(true));
     }
 
     virtual void TearDown()
     {
         SecurityPluginFactory::release_auth_plugin();
+        SecurityPluginFactory::release_access_control_plugin();
         SecurityPluginFactory::release_crypto_plugin();
 
         ::testing::DefaultValue<const GUID_t&>::Clear();
@@ -129,8 +201,6 @@ protected:
 
     void initialization_ok();
 
-    void initialization_auth_ok();
-
     void request_process_ok(
             CacheChange_t** request_message_change = nullptr);
 
@@ -152,6 +222,7 @@ public:
 
     SecurityTest()
         : auth_plugin_(new MockAuthenticationPlugin())
+        , access_plugin_(new ::testing::NiceMock<MockAccessControlPlugin>())
         , crypto_plugin_(new MockCryptographyPlugin())
         , stateless_writer_(nullptr)
         , stateless_reader_(nullptr)
@@ -175,6 +246,7 @@ public:
     }
 
     MockAuthenticationPlugin* auth_plugin_;
+    MockAccessControlPlugin* access_plugin_;
     MockCryptographyPlugin* crypto_plugin_;
     ::testing::NiceMock<RTPSParticipantImpl> participant_;
     ::testing::NiceMock<StatelessWriter>* stateless_writer_;

@@ -24,6 +24,7 @@ const char* const MockParticipantCrypto::class_id_ = "MockParticipantCryptoHandl
 TEST_F(SecurityTest, initialization_auth_nullptr)
 {
     SecurityPluginFactory::release_auth_plugin();
+    participant_properties_ = PropertyPolicy();
     DefaultValue<const GUID_t&>::Set(guid);
 
     security_activated_ = manager_.init(security_attributes_, participant_properties_);
@@ -249,4 +250,3 @@ TEST_F(SecurityTest, initialization_logging_error)
     }
     ASSERT_TRUE(found);
 }
-
