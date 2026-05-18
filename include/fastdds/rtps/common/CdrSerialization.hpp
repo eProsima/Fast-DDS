@@ -22,6 +22,8 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
+#include <fastdds/utils/buffer/buffer_serialization.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {

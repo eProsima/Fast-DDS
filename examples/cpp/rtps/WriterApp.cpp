@@ -34,6 +34,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
+#include <fastdds/utils/buffer/buffer_serialization.hpp>
 
 #include "HelloWorld.hpp"
 

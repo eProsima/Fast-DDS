@@ -33,6 +33,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+#include <fastdds/utils/buffer/buffer_serialization.hpp>
 #include <fastdds/utils/md5.hpp>
 
 #include <fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp>

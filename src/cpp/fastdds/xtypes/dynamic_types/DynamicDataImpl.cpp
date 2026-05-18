@@ -31,6 +31,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/utils/buffer/buffer_serialization.hpp>
 
 #include "common.hpp"
 #include "DynamicTypeMemberImpl.hpp"
