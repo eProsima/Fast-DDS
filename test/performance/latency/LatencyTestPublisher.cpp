@@ -959,8 +959,11 @@ void LatencyTestPublisher::analyze_times(
     stats.received_ = received_count_ - 1;  // Because we are not counting the first one.
     stats.minimum_ = *min_element(times_.begin(), times_.end());
     stats.maximum_ = *max_element(times_.begin(), times_.end());
-    stats.mean_ = accumulate(times_.begin(), times_.end(),
-                    std::chrono::duration<double, std::micro>(0)).count() / times_.size();
+    if (times_.size() > 0)
+    {
+        stats.mean_ = accumulate(times_.begin(), times_.end(),
+                        std::chrono::duration<double, std::micro>(0)).count() / times_.size();
+    }
 
     double aux_stdev = 0;
     for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
@@ -968,7 +971,10 @@ void LatencyTestPublisher::analyze_times(
     {
         aux_stdev += pow(((*tit).count() - stats.mean_), 2);
     }
-    aux_stdev = sqrt(aux_stdev / times_.size());
+    if (times_.size() > 0)
+    {
+        aux_stdev = sqrt(aux_stdev / times_.size());
+    }
     stats.stdev_ = aux_stdev;
 
     /* Percentiles */
