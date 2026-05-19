@@ -978,10 +978,17 @@ TEST(TestBufferNonCpu, modifiers_throw) {
     EXPECT_THROW(buffer.pop_back(), std::runtime_error);
     EXPECT_THROW(buffer.emplace_back(1), std::runtime_error);
 
-    using ConstIt = Buffer<uint8_t>::const_iterator;
-    EXPECT_THROW(buffer.erase(ConstIt{}), std::runtime_error);
-    EXPECT_THROW(buffer.erase(ConstIt{}, ConstIt{}), std::runtime_error);
-    EXPECT_THROW(buffer.emplace(ConstIt{}, 1), std::runtime_error);
+    // NOTE:
+    // erase()/emplace(pos, ...) require a valid iterator from this Buffer.
+    // In non-CPU backend, begin()/cbegin()/cend() already throw, so creating a
+    // valid iterator is impossible by contract. Passing foreign/default
+    // iterators can trigger UB-related diagnostics (-Warray-bounds) under
+    // aggressive inlining, even if runtime would throw first.
+
+    // using ConstIt = Buffer<uint8_t>::const_iterator;
+    // EXPECT_THROW(buffer.erase(ConstIt{}), std::runtime_error);
+    // EXPECT_THROW(buffer.erase(ConstIt{}, ConstIt{}), std::runtime_error);
+    // EXPECT_THROW(buffer.emplace(ConstIt{}, 1), std::runtime_error);
 }
 
 TEST(TestBufferNonCpu, capacity_throws) {
