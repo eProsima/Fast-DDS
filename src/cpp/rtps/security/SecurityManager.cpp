@@ -2970,7 +2970,7 @@ bool SecurityManager::discovered_reader(
 
         if (local_writer != writer_handles_.end())
         {
-            if (remote_participant_crypto_handle != nullptr)
+            if (remote_participant_crypto_handle != nullptr && shared_secret_handle != nullptr)
             {
                 DatareaderCryptoHandle* remote_reader_handle =
                         crypto_plugin_->cryptokeyfactory()->register_matched_remote_datareader(
@@ -3328,7 +3328,7 @@ bool SecurityManager::discovered_writer(
 
         if (local_reader != reader_handles_.end())
         {
-            if (remote_participant_crypto_handle != nullptr)
+            if (remote_participant_crypto_handle != nullptr && shared_secret_handle != nullptr)
             {
                 DatawriterCryptoHandle* remote_writer_handle =
                         crypto_plugin_->cryptokeyfactory()->register_matched_remote_datawriter(
