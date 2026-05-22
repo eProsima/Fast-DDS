@@ -452,7 +452,7 @@ ReturnCode_t DataWriterImpl::enable()
     }
 
     {
-        std::lock_guard<std::mutex> qos_lock(qos_mutex_);
+        std::lock_guard<std::mutex> writer_assign_lock(qos_mutex_);
         writer_ = BaseWriter::downcast(writer);
     }
 
