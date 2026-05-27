@@ -291,7 +291,6 @@ void PDPSimple::announceParticipantState(
 
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
         assert(endpoints && endpoints->writer.history_);
-
         if (!endpoints || !endpoints->writer.history_)
         {
             FASTDDS_UNREACHABLE();       // “cannot happen” invariant
@@ -311,7 +310,11 @@ void PDPSimple::announceParticipantState(
                 // endpoints are matched), and since the secure ones are TRANSIENT_LOCAL, we send periodic heartbeats
                 // to assert liveliness on remote participants
                 auto secure = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
-                assert(nullptr != secure);
+                assert(secure && secure->secure_writer.writer_);
+                if (!secure || !secure->secure_writer.writer_)
+                {
+                    FASTDDS_UNREACHABLE();   // “cannot happen” invariant
+                }
                 secure->secure_writer.writer_->send_periodic_heartbeat(true, true);
             }
 #endif // HAVE_SECURITY
