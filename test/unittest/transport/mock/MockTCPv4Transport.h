@@ -70,6 +70,12 @@ public:
         return channel_pending_logical_ports_;
     }
 
+    void register_channel_as_unbound(
+            const std::shared_ptr<TCPChannelResource>& channel)
+    {
+        unbound_channel_resources_.push_back(channel);
+    }
+
 };
 
 } // namespace rtps

@@ -68,6 +68,20 @@ public:
 
 typedef HandleImpl<MockParticipantCrypto, SecurityTest> MockParticipantCryptoHandle;
 
+struct SecurityTestsGlobalDefaultValues
+{
+    // Default Values
+    RTPSParticipantAttributes pattr;
+
+    SecurityTestsGlobalDefaultValues()
+    {
+        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
+    }
+
+};
+
+static SecurityTestsGlobalDefaultValues g_security_default_values_;
+
 class SecurityTest : public ::testing::Test
 {
 protected:
@@ -135,13 +149,20 @@ protected:
 public:
 
     SecurityTest()
+        : SecurityTest(
+                g_security_default_values_.pattr)
+    {
+    }
+
+    explicit SecurityTest(
+            const RTPSParticipantAttributes& pattr)
         : auth_plugin_(new MockAuthenticationPlugin())
         , crypto_plugin_(new MockCryptographyPlugin())
         , stateless_writer_(nullptr)
         , stateless_reader_(nullptr)
         , volatile_writer_(nullptr)
         , volatile_reader_(nullptr)
-        , manager_(&participant_)
+        , manager_([this, pattr]() { participant_.getAttributes() = pattr; return &participant_; }())
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {
@@ -215,19 +236,5 @@ public:
     }
 
 };
-
-struct SecurityTestsGlobalDefaultValues
-{
-    // Default Values
-    RTPSParticipantAttributes pattr;
-
-    SecurityTestsGlobalDefaultValues()
-    {
-        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
-    }
-
-};
-
-static SecurityTestsGlobalDefaultValues g_security_default_values_;
 
 #endif // __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__
