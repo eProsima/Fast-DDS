@@ -19,6 +19,7 @@
 
 #include <rtps/transport/tcp/RTCPMessageManager.h>
 
+#include <limits>
 #include <thread>
 
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
@@ -58,16 +59,36 @@ static void endpoint_to_locator(
     IPLocator::setPhysicalPort(locator, endpoint.port());
 }
 
-static void readSerializedPayload(
-        SerializedPayload_t& payload,
-        const octet* data,
-        size_t size)
+static bool readResponseCode(
+        ResponseCode& respCode,
+        CDRMessage_t* msg)
 {
-    payload.reserve(static_cast<uint32_t>(size));
-    memcpy(&payload.encapsulation, data, 2);
-    memcpy(&payload.length, &data[2], 4);
-    memcpy(payload.data, &data[6], size);
-    payload.pos = 0;
+    return CDRMessage::readUInt32(msg, (uint32_t*)&respCode);
+}
+
+static bool readSerializedPayload(
+        SerializedPayload_t& payload,
+        CDRMessage_t* msg)
+{
+    bool valid = CDRMessage::readUInt16(msg, &payload.encapsulation);
+    valid = valid && CDRMessage::readUInt32(msg, &payload.length);
+    if (valid)
+    {
+        uint64_t next_pos = static_cast<uint64_t>(msg->pos) + static_cast<uint64_t>(payload.length);
+        valid = (next_pos == static_cast<uint64_t>(msg->length));
+    }
+    if (valid)
+    {
+        payload.data = &msg->buffer[msg->pos];
+        msg->pos += payload.length;
+    }
+    else
+    {
+        payload.data = nullptr;
+        payload.length = 0;
+    }
+
+    return valid;
 }
 
 RTCPMessageManager::~RTCPMessageManager()
@@ -677,169 +698,278 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
         size_t receivedSize,
         fastdds::rtps::Endianness_t msg_endian)
 {
+    if (receivedSize < TCPControlMsgHeader::size())
+    {
+        EPROSIMA_LOG_WARNING(RTCP, "Received message with size smaller than control header size: " << receivedSize);
+        return RETCODE_BAD_REQUEST;
+    }
+
     ResponseCode responseCode(RETCODE_OK);
+
+    size_t dataSize = 0;
 
     TCPControlMsgHeader controlHeader = *(reinterpret_cast<TCPControlMsgHeader*>(receive_buffer));
     controlHeader.valid_endianness(msg_endian);
-    //memcpy(&controlHeader, receive_buffer, TCPControlMsgHeader::size());
-    size_t dataSize = controlHeader.length() - TCPControlMsgHeader::size();
-    size_t bufferSize = dataSize + 4;
-
-    // Message size checking.
-    if (dataSize + TCPControlMsgHeader::size() != receivedSize)
+    // Control header size checking.
+    const size_t header_size = TCPControlMsgHeader::size();
+    const size_t control_length = static_cast<size_t>(controlHeader.length());
+    bool valid = (control_length >= header_size) && (control_length == receivedSize);
+    if (valid)
     {
-        sendData(channel, controlHeader.kind(), controlHeader.transaction_id(),
-                nullptr, RETCODE_BAD_REQUEST);
+        dataSize = control_length - header_size;
+    }
+
+    if (!valid)
+    {
+        sendData(channel, controlHeader.kind(), controlHeader.transaction_id(), nullptr, RETCODE_BAD_REQUEST);
         return RETCODE_OK;
     }
+
+    const TCPTransactionId& transaction_id = controlHeader.transaction_id();
+
+    SerializedPayload_t payload(0);
+    CDRMessage_t message(0);
+    message.init(&(receive_buffer[TCPControlMsgHeader::size()]), static_cast<uint32_t>(dataSize));
+    message.msg_endian = msg_endian;
+    message.length = static_cast<uint32_t>(dataSize);
 
     switch (controlHeader.kind())
     {
         case BIND_CONNECTION_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [BIND_CONNECTION_REQUEST] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [BIND_CONNECTION_REQUEST] Seq: " << transaction_id);
             ConnectionRequest_t request;
-            Locator myLocator;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            endpoint_to_locator(channel->local_endpoint(), myLocator);
+            valid = readSerializedPayload(payload, &message);
+            valid = valid && request.deserialize(&payload);
+            if (valid)
+            {
+                Locator myLocator;
+                endpoint_to_locator(channel->local_endpoint(), myLocator);
 
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
-            request.deserialize(&payload);
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] "
+                        << "LogicalPort: " << IPLocator::getLogicalPort(
+                            request.transportLocator())
+                        << ", Physical remote: " << IPLocator::getPhysicalPort(
+                            request.transportLocator()));
 
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_REQUEST] " <<
-                    "LogicalPort: " << IPLocator::getLogicalPort(
-                        request.transportLocator())
-                                                                             << ", Physical remote: " << IPLocator::getPhysicalPort(
-                        request.transportLocator()));
-
-            responseCode = processBindConnectionRequest(channel, request, controlHeader.transaction_id(), myLocator);
+                responseCode = processBindConnectionRequest(channel, request, transaction_id, myLocator);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize BindConnectionRequest");
+                responseCode = RETCODE_BAD_REQUEST;
+            }
         }
         break;
+
         case BIND_CONNECTION_RESPONSE:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [BIND_CONNECTION_RESPONSE] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [BIND_CONNECTION_RESPONSE] Seq: " << transaction_id);
             ResponseCode respCode;
             BindConnectionResponse_t response;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            memcpy(&respCode, &(receive_buffer[TCPControlMsgHeader::size()]), 4); // uint32_t
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size() + 4]), dataSize);
-            response.deserialize(&payload);
+            valid = readResponseCode(respCode, &message);
+            valid = valid && readSerializedPayload(payload, &message);
+            valid = valid && response.deserialize(&payload);
 
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " \
-                    << IPLocator::getLogicalPort(response.locator()) << ", Physical remote: " \
-                    << IPLocator::getPhysicalPort(response.locator()));
-
-            if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
+            if (valid)
             {
-                std::unique_lock<std::recursive_mutex> scopedLock(channel->pending_logical_mutex_);
-                if (!channel->pending_logical_output_ports_.empty())
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [BIND_CONNECTION_RESPONSE] LogicalPort: " \
+                        << IPLocator::getLogicalPort(response.locator()) << ", Physical remote: " \
+                        << IPLocator::getPhysicalPort(response.locator()));
+
+                if (respCode == RETCODE_OK || respCode == RETCODE_EXISTING_CONNECTION)
                 {
-                    responseCode = processBindConnectionResponse(channel, response, controlHeader.transaction_id());
+                    std::unique_lock<std::recursive_mutex> scopedLock(channel->pending_logical_mutex_);
+                    if (!channel->pending_logical_output_ports_.empty())
+                    {
+                        responseCode = processBindConnectionResponse(channel, response, transaction_id);
+                    }
+                }
+                else
+                {
+                    // If the bind message fails, close the connection and try again.
+                    if (respCode == RETCODE_INCOMPATIBLE_VERSION)
+                    {
+                        EPROSIMA_LOG_ERROR(RTCP, "Received RETCODE_INCOMPATIBLE_VERSION from server.");
+                    }
+                    responseCode = respCode;
                 }
             }
             else
             {
-                // If the bind message fails, close the connection and try again.
-                if (respCode == RETCODE_INCOMPATIBLE_VERSION)
-                {
-                    EPROSIMA_LOG_ERROR(RTCP, "Received RETCODE_INCOMPATIBLE_VERSION from server.");
-                }
-                responseCode = respCode;
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize BindConnectionResponse");
+                // Ignore invalid responses
+                responseCode = RETCODE_OK;
             }
         }
         break;
+
         case OPEN_LOGICAL_PORT_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_REQUEST] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_REQUEST] Seq: " << transaction_id);
             OpenLogicalPortRequest_t request;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
-            request.deserialize(&payload);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_REQUEST] LogicalPort: " << request.logicalPort());
-            responseCode = processOpenLogicalPortRequest(channel, request, controlHeader.transaction_id());
+            valid = readSerializedPayload(payload, &message);
+            valid = valid && request.deserialize(&payload);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG,
+                        "Receive [OPEN_LOGICAL_PORT_REQUEST] LogicalPort: " << request.logicalPort());
+                responseCode = processOpenLogicalPortRequest(channel, request, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize OpenLogicalPortRequest");
+                responseCode = RETCODE_BAD_REQUEST;
+            }
         }
         break;
+
         case CHECK_LOGICAL_PORT_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_REQUEST] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_REQUEST] Seq: " << transaction_id);
             CheckLogicalPortsRequest_t request;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
-            request.deserialize(&payload);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_REQUEST]");
-            processCheckLogicalPortsRequest(channel, request, controlHeader.transaction_id());
+            valid = readSerializedPayload(payload, &message);
+            valid = valid && request.deserialize(&payload);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_REQUEST]");
+                processCheckLogicalPortsRequest(channel, request, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize CheckLogicalPortsRequest");
+                responseCode = RETCODE_BAD_REQUEST;
+            }
         }
         break;
+
         case CHECK_LOGICAL_PORT_RESPONSE:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [CHECK_LOGICAL_PORT_RESPONSE] Seq: " << transaction_id);
             ResponseCode respCode;
             CheckLogicalPortsResponse_t response;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            memcpy(&respCode, &(receive_buffer[TCPControlMsgHeader::size()]), 4); // uint32_t
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size() + 4]), dataSize);
-            response.deserialize(&payload);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_RESPONSE]");
-            processCheckLogicalPortsResponse(channel, response, controlHeader.transaction_id());
+            valid = readResponseCode(respCode, &message);
+            valid = valid && readSerializedPayload(payload, &message);
+            valid = valid && response.deserialize(&payload);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [CHECK_LOGICAL_PORT_RESPONSE]");
+                processCheckLogicalPortsResponse(channel, response, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize CheckLogicalPortsResponse");
+                // Ignore invalid responses
+                responseCode = RETCODE_OK;
+            }
         }
         break;
+
         case KEEP_ALIVE_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [KEEP_ALIVE_REQUEST] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [KEEP_ALIVE_REQUEST] Seq: " << transaction_id);
             KeepAliveRequest_t request;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
-            request.deserialize(&payload);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [KEEP_ALIVE_REQUEST]");
-            responseCode = processKeepAliveRequest(channel, request, controlHeader.transaction_id());
+            valid = readSerializedPayload(payload, &message);
+            valid = valid && request.deserialize(&payload);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [KEEP_ALIVE_REQUEST]");
+                responseCode = processKeepAliveRequest(channel, request, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize KeepAliveRequest");
+                responseCode = RETCODE_BAD_REQUEST;
+            }
         }
         break;
+
         case LOGICAL_PORT_IS_CLOSED_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] Seq: " << transaction_id);
             LogicalPortIsClosedRequest_t request;
-            SerializedPayload_t payload(static_cast<uint32_t>(bufferSize));
-            readSerializedPayload(payload, &(receive_buffer[TCPControlMsgHeader::size()]), dataSize);
-            request.deserialize(&payload);
-            EPROSIMA_LOG_INFO(RTCP_MSG,
-                    "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] LogicalPort: " << request.logicalPort());
-            processLogicalPortIsClosedRequest(channel, request, controlHeader.transaction_id());
+            valid = readSerializedPayload(payload, &message);
+            valid = valid && request.deserialize(&payload);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG,
+                        "Receive [LOGICAL_PORT_IS_CLOSED_REQUEST] LogicalPort: " << request.logicalPort());
+                processLogicalPortIsClosedRequest(channel, request, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to deserialize LogicalPortIsClosedRequest");
+                responseCode = RETCODE_BAD_REQUEST;
+            }
         }
         break;
+
         case UNBIND_CONNECTION_REQUEST:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [UNBIND_CONNECTION_REQUEST] Seq:" << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [UNBIND_CONNECTION_REQUEST] Seq:" << transaction_id);
             EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [UNBIND_CONNECTION_REQUEST]");
             if (alive())
             {
                 mTransport->close_tcp_socket(channel);
-                //channel.reset();
             }
             responseCode = RETCODE_OK;
         }
         break;
+
         case OPEN_LOGICAL_PORT_RESPONSE:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [OPEN_LOGICAL_PORT_RESPONSE] Seq: " << transaction_id);
             ResponseCode respCode;
-            memcpy(&respCode, &(receive_buffer[TCPControlMsgHeader::size()]), 4);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_RESPONSE]");
-            processOpenLogicalPortResponse(channel, respCode, controlHeader.transaction_id());
+            valid = readResponseCode(respCode, &message);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [OPEN_LOGICAL_PORT_RESPONSE]");
+                processOpenLogicalPortResponse(channel, respCode, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to read response code from OpenLogicalPortResponse");
+                // Ignore invalid responses
+                responseCode = RETCODE_OK;
+            }
         }
         break;
+
         case KEEP_ALIVE_RESPONSE:
         {
-            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [KEEP_ALIVE_RESPONSE] Seq: " << controlHeader.transaction_id());
+            //EPROSIMA_LOG_INFO(RTCP_SEQ, "Receive [KEEP_ALIVE_RESPONSE] Seq: " << transaction_id);
             ResponseCode respCode;
-            memcpy(&respCode, &(receive_buffer[TCPControlMsgHeader::size()]), 4);
-            EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [KEEP_ALIVE_RESPONSE]");
-            responseCode = processKeepAliveResponse(channel, respCode, controlHeader.transaction_id());
+            valid = readResponseCode(respCode, &message);
+            if (valid)
+            {
+                EPROSIMA_LOG_INFO(RTCP_MSG, "Receive [KEEP_ALIVE_RESPONSE]");
+                responseCode = processKeepAliveResponse(channel, respCode, transaction_id);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTCP, "Failed to read response code from KeepAliveResponse");
+                // Ignore invalid responses
+                responseCode = RETCODE_OK;
+            }
         }
         break;
+
         default:
-            sendData(channel, controlHeader.kind(), controlHeader.transaction_id(), nullptr, RETCODE_BAD_REQUEST);
+            EPROSIMA_LOG_INFO(RTCP, "Received message with unknown control kind: " << controlHeader.kind());
+            responseCode = RETCODE_BAD_REQUEST;
             break;
     }
+
+    // Avoid freeing memory not owned by payload
+    payload.data = nullptr;
+    payload.length = 0;
+
+    if (responseCode == RETCODE_BAD_REQUEST)
+    {
+        sendData(channel, controlHeader.kind(), transaction_id, nullptr, RETCODE_BAD_REQUEST);
+        responseCode = RETCODE_OK; // Ignore bad request errors after sending the response
+    }
+
     return responseCode;
 }
 

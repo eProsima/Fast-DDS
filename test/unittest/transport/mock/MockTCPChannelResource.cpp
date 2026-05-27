@@ -56,13 +56,20 @@ size_t MockTCPChannelResource::send(
 }
 
 size_t MockTCPChannelResource::send(
-        const octet*,
-        size_t,
-        const std::vector<NetworkBuffer>&,
-        uint32_t,
+        const octet* /*header*/,
+        size_t /*header_size*/,
+        const std::vector<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         asio::error_code&)
 {
-    return 0;
+    last_send_data.clear();
+    for (const auto& nb : buffers)
+    {
+        const auto* p = static_cast<const octet*>(nb.buffer);
+        last_send_data.insert(last_send_data.end(), p, p + nb.size);
+    }
+    send_called = true;
+    return total_bytes;
 }
 
 asio::ip::tcp::endpoint MockTCPChannelResource::remote_endpoint() const
