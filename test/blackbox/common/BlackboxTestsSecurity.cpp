@@ -1359,7 +1359,7 @@ TEST(Security, SecureParticipantsDoNotLoseDiscoveryWithoutUserTraffic)
 
     // Verify discovery state stayed stable
     auto assert_still_discovered = [&reader, &writer]()
-            {                
+            {
                 ASSERT_TRUE(reader.is_matched());
                 ASSERT_TRUE(writer.is_matched());
                 ASSERT_EQ(reader.get_matched(), 1u);
@@ -1373,7 +1373,7 @@ TEST(Security, SecureParticipantsDoNotLoseDiscoveryWithoutUserTraffic)
 
     // Check the secure participants must not be undiscovered just because user traffic stops
     auto assert_idle_period_keeps_discovery = [&reader, &writer, &idle_timeout, &assert_still_discovered]()
-            {                
+            {
                 ASSERT_FALSE(reader.wait_participant_undiscovery(idle_timeout));
                 ASSERT_FALSE(writer.wait_participant_undiscovery(idle_timeout));
 
@@ -1382,12 +1382,12 @@ TEST(Security, SecureParticipantsDoNotLoseDiscoveryWithoutUserTraffic)
 
     // Discovery is only useful if data can still flow after the idle window
     auto assert_data_flow = [&reader, &writer, &data_timeout, &assert_still_discovered]()
-            {                
+            {
                 auto data = default_helloworld_data_generator(2);
 
                 reader.startReception(data);
                 writer.send(data);
-                
+
                 ASSERT_TRUE(data.empty());
                 ASSERT_EQ(reader.block_for_all(data_timeout), 2u);
                 assert_still_discovered();
