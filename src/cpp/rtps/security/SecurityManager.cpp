@@ -82,6 +82,7 @@ SecurityManager::SecurityManager(
     , participant_(participant)
     , factory_(plugin_factory)
     , domain_id_(0)
+    , max_discovered_participants_(pattr.allocation.participants.maximum)
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({
@@ -605,28 +606,48 @@ bool SecurityManager::discovered_participant(
     AuthenticationStatus auth_status = AUTHENTICATION_INIT;
 
     // Create or find information
-    bool undiscovered = false;
+    bool newly_discovered = false;
     DiscoveredParticipantInfo::AuthUniquePtr remote_participant_info;
     // Use the information from the collection
     const ParticipantProxyData* remote_participant_data = nullptr;
     {
         std::lock_guard<shared_mutex> _(mutex_);
 
-        auto map_ret = discovered_participants_.insert(
-            std::make_pair(
+        auto dp_it = discovered_participants_.lower_bound(participant_data.m_guid);
+        if ((dp_it != discovered_participants_.end()) && (dp_it->first == participant_data.m_guid))
+        {
+            // Already exists, use the information from the collection
+            remote_participant_info = dp_it->second->get_auth();
+            remote_participant_data = &dp_it->second->participant_data();
+        }
+        else if (discovered_participants_.size() < max_discovered_participants_)
+        {
+            // Create new element, because it is not discovered yet
+            auto map_ret = discovered_participants_.emplace_hint(
+                dp_it,
                 participant_data.m_guid,
                 std::unique_ptr<DiscoveredParticipantInfo>(
-                    new DiscoveredParticipantInfo(
-                        auth_status,
-                        participant_data))));
+                    new DiscoveredParticipantInfo(auth_status, participant_data)));
 
-        undiscovered = map_ret.second;
-        remote_participant_info = map_ret.first->second->get_auth();
-        remote_participant_data = &map_ret.first->second->participant_data();
+            // New element, so mark as newly_discovered
+            newly_discovered = true;
+            // Use the recently created information from the collection
+            remote_participant_info = map_ret->second->get_auth();
+            remote_participant_data = &map_ret->second->participant_data();
+        }
+        else
+        {
+            // Using info level to avoid clogging the logs, since this could be triggered by an attacker flooding the
+            // network with fake participants.
+            EPROSIMA_LOG_INFO(SECURITY,
+                    "Maximum number of discovered participants reached. Ignoring participant "
+                    << participant_data.m_guid);
+            return false;
+        }
     }
 
     bool notify_part_authorized = false;
-    if (undiscovered && remote_participant_info && remote_participant_data != nullptr)
+    if (newly_discovered && remote_participant_info && remote_participant_data != nullptr)
     {
         // Configure the timed event but do not start it
         const GUID_t guid = remote_participant_data->m_guid;

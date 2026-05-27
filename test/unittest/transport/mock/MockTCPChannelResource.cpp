@@ -46,13 +46,16 @@ uint32_t MockTCPChannelResource::read(
 }
 
 size_t MockTCPChannelResource::send(
-        const octet*,
-        size_t,
-        const octet*,
-        size_t,
-        asio::error_code&)
+        const octet* /*header*/,
+        size_t /*header_size*/,
+        const octet* buffer,
+        size_t size,
+        asio::error_code& /*ec*/)
 {
-    return 0;
+    last_send_data.clear();
+    last_send_data.insert(last_send_data.end(), buffer, buffer + size);
+    send_called = true;
+    return size;
 }
 
 asio::ip::tcp::endpoint MockTCPChannelResource::remote_endpoint() const
