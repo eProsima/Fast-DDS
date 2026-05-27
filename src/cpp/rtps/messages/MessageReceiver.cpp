@@ -1027,7 +1027,16 @@ bool MessageReceiver::proc_Submsg_DataFrag(
     }
 
     uint32_t payload_size;
-    payload_size = smh->submessageLength - (RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize);
+    const uint32_t submsg_no_payload_size = RTPSMESSAGE_DATA_EXTRA_INLINEQOS_SIZE + octetsToInlineQos + inlineQosSize;
+    if (smh->submessageLength < submsg_no_payload_size)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload avoided underflow "
+                "(" << smh->submessageLength << "/" << submsg_no_payload_size << ")");
+        ch.serializedPayload.data = nullptr;
+        ch.inline_qos.data = nullptr;
+        return false;
+    }
+    payload_size = smh->submessageLength - submsg_no_payload_size;
 
     // Validations??? XXX TODO
 

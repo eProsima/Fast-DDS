@@ -6488,7 +6488,17 @@ bool DynamicDataImpl::deserialize(
                                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                                 type->get_descriptor().element_type()));
 
-                            vector_t->resize(sequence_length);
+                            uint32_t bounded_length = sequence_length;
+                            uint32_t max_bound = type->get_descriptor().bound().at(0);
+                            if (max_bound != static_cast<uint32_t>(LENGTH_UNLIMITED) && sequence_length > max_bound)
+                            {
+                                bounded_length = max_bound;
+                                EPROSIMA_LOG_WARNING(DYN_TYPES, "Sequence length "
+                                        << sequence_length << " exceeds the maximum bound of " << max_bound
+                                        << ". Only " << bounded_length << " elements will be deserialized.");
+                            }
+
+                            vector_t->resize(bounded_length);
 
                             for (size_t pos = 0; pos < vector_t->size(); ++pos)
                             {
@@ -6500,11 +6510,24 @@ bool DynamicDataImpl::deserialize(
                             }
 
                             uint32_t count {0};
-                            while (static_cast<uint32_t>(cdr.get_current_position() - offset) < dheader &&
-                                    count < sequence_length)
+                            while ((static_cast<uint32_t>(cdr.get_current_position() - offset) < dheader) &&
+                                    (count < bounded_length))
                             {
                                 cdr.deserialize(vector_t->data()[count]);
                                 ++count;
+                            }
+
+                            if (bounded_length < sequence_length)
+                            {
+                                auto tmp_data = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                    DynamicDataFactory::get_instance()->create_data(element_type));
+                                // Skip remaining elements if sequence length exceeds maximum bound
+                                while ((static_cast<uint32_t>(cdr.get_current_position() - offset) < dheader) &&
+                                        (count < sequence_length))
+                                {
+                                    cdr.deserialize(tmp_data);
+                                    ++count;
+                                }
                             }
 
                             if (static_cast<uint32_t>(cdr.get_current_position() - offset) != dheader)
@@ -6531,7 +6554,18 @@ bool DynamicDataImpl::deserialize(
                                                 type->get_descriptor().element_type()));
                             try
                             {
-                                vector_t->resize(sequence_length);
+                                uint32_t bounded_length = sequence_length;
+                                uint32_t max_bound = type->get_descriptor().bound().at(0);
+                                if (max_bound != static_cast<uint32_t>(LENGTH_UNLIMITED) && sequence_length > max_bound)
+                                {
+                                    bounded_length = max_bound;
+                                    EPROSIMA_LOG_WARNING(DYN_TYPES, "Sequence length "
+                                            << sequence_length << " exceeds the maximum bound of "
+                                            << max_bound << ". Only "
+                                            << bounded_length << " elements will be deserialized.");
+                                }
+
+                                vector_t->resize(bounded_length);
                                 for (size_t pos = 0; pos < vector_t->size(); ++pos)
                                 {
                                     if (!vector_t->at(pos))
@@ -6541,6 +6575,17 @@ bool DynamicDataImpl::deserialize(
                                     }
                                 }
                                 cdr.deserialize_array(vector_t->data(), vector_t->size());
+
+                                if (bounded_length < sequence_length)
+                                {
+                                    auto tmp_data = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                        DynamicDataFactory::get_instance()->create_data(element_type));
+                                    // Skip remaining elements if sequence length exceeds maximum bound
+                                    for (uint32_t count = bounded_length; count < sequence_length; ++count)
+                                    {
+                                        cdr.deserialize(tmp_data);
+                                    }
+                                }
                             }
                             catch (fastcdr::exception::Exception& ex)
                             {

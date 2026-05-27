@@ -57,14 +57,16 @@ void Time_t::fraction(
 
 uint32_t Time_t::fraction() const
 {
-    uint32_t fraction = (nanosec == 0xffffffff)
-        ? 0xffffffff
-        : nano_to_frac(nanosec);
+    constexpr uint32_t infinite_fraction = 0xffffffff;
+    constexpr uint32_t max_fraction = infinite_fraction - 1;
 
-    if (fraction != 0xffffffff)
+    uint32_t fraction = infinite_fraction;
+    uint64_t nanosec_64 = nanosec;
+    if (nanosec_64 < C_NANOSECONDS_PER_SEC)
     {
+        fraction = nano_to_frac(nanosec);
         uint32_t nano_check = frac_to_nano(fraction);
-        while (nano_check != nanosec)
+        while ((nano_check != nanosec) && (fraction < max_fraction))
         {
             nano_check = frac_to_nano(++fraction);
         }
