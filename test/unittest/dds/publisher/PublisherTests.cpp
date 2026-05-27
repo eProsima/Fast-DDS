@@ -221,7 +221,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .reliability
     qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     qos.reliability().max_blocking_time.seconds = 100;
-    qos.reliability().max_blocking_time.nanosec = eprosima::fastdds::dds::Time_t::INFINITE_NANOSECONDS;
+    qos.reliability().max_blocking_time.nanosec = 1u;
     // .destination_order
     qos.destination_order().kind = eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS;
     // .history
@@ -312,7 +312,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .reliability
     EXPECT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
     EXPECT_EQ(100, wqos.reliability().max_blocking_time.seconds);
-    EXPECT_EQ(eprosima::fastdds::dds::Time_t::INFINITE_NANOSECONDS, wqos.reliability().max_blocking_time.nanosec);
+    EXPECT_EQ(1u, wqos.reliability().max_blocking_time.nanosec);
     // .destination_order
     EXPECT_EQ(eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, wqos.destination_order().kind);
     // .history

@@ -18,6 +18,7 @@
  */
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
+#include <fastdds/dds/core/Time_t.hpp>
 
 #include <utils/Host.hpp>
 
@@ -36,6 +37,23 @@ uint64_t default_domain_id()
         id |= static_cast<uint64_t>(mac_id.value[i]) << (56 - (i * 8));
     }
     return id;
+}
+
+bool is_duration_consistent(
+        const Duration_t& duration,
+        bool allow_infinite)
+{
+    if (duration.is_infinite())
+    {
+        return allow_infinite;
+    }
+
+    if (duration.seconds < 0 || duration.nanosec >= 1000000000)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 }  // namespace utils

@@ -15,6 +15,8 @@
 #ifndef MOCK_TCP_CHANNEL_RESOURCE_H
 #define MOCK_TCP_CHANNEL_RESOURCE_H
 
+#include <vector>
+
 #include <asio.hpp>
 #include <rtps/transport/TCPChannelResource.h>
 #include <rtps/transport/TCPTransportInterface.h>
@@ -83,6 +85,19 @@ public:
 
     void shutdown(
             asio::socket_base::shutdown_type what) override;
+
+    void set_waiting_for_bind()
+    {
+        connection_status_.store(eConnectionStatus::eWaitingForBind);
+    }
+
+    bool is_established() const
+    {
+        return connection_status_ == eConnectionStatus::eEstablished;
+    }
+
+    bool send_called = false;
+    std::vector<octet> last_send_data;
 };
 
 } // namespace rtps
