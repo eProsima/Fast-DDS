@@ -834,6 +834,9 @@ private:
     // synchronization
     std::map<GUID_t, std::unique_ptr<DiscoveredParticipantInfo>> discovered_participants_;
 
+    // Maximum allowed size for the collection of discovered participants.
+    const size_t max_discovered_participants_;
+
     GUID_t auth_source_guid;
 
     /**

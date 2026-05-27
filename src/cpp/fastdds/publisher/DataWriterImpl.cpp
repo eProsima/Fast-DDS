@@ -2134,6 +2134,33 @@ ReturnCode_t DataWriterImpl::check_qos(
                                   << "'" << qos.resource_limits().max_samples_per_instance << "'.");
         return RETCODE_INCONSISTENT_POLICY;
     }
+    // Check for nanoseconds in all duration policies
+    if (!utils::is_duration_consistent(qos.deadline().period))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "Deadline period is not consistent");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
+    if (!utils::is_duration_consistent(qos.lifespan().duration))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "Lifespan duration is not consistent");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
+    if (!utils::is_duration_consistent(qos.liveliness().lease_duration))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "Liveliness lease duration is not consistent");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
+    if (!utils::is_duration_consistent(qos.liveliness().announcement_period))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "Liveliness announcement period is not consistent");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
+    if (qos.reliability().kind == RELIABLE_RELIABILITY_QOS &&
+            !utils::is_duration_consistent(qos.reliability().max_blocking_time, false))
+    {
+        EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "Reliability max blocking time is not consistent");
+        return RETCODE_INCONSISTENT_POLICY;
+    }
     return RETCODE_OK;
 }
 

@@ -2436,6 +2436,130 @@ void TCPv4Tests::HELPER_SetDescriptorDefaults()
     descriptor.set_WAN_address(g_test_wan_address);
 }
 
+class RTCPMessageManagerTests : public ::testing::Test
+{
+protected:
+
+    void SetUp() override
+    {
+        TCPv4TransportDescriptor descriptor;
+        transport_ = std::make_unique<MockTCPv4Transport>(descriptor);
+        transport_->init();
+
+        rtcp_manager_ = std::make_shared<RTCPMessageManager>(transport_.get());
+
+        Locator_t locator;
+        locator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(locator, 127, 0, 0, 1);
+        channel_ = std::make_shared<MockTCPChannelResource>(transport_.get(), locator, 65500);
+        channel_->connect(nullptr);
+    }
+
+    void TearDown() override
+    {
+        rtcp_manager_->dispose();
+        channel_.reset();
+        transport_.reset();
+    }
+
+    static std::vector<octet> build_bind_request_buffer(
+            uint16_t header_reported_length,
+            uint32_t inner_payload_length,
+            uint32_t actual_data_bytes)
+    {
+        size_t total = 16 + 2 + 4 + actual_data_bytes;
+        std::vector<octet> buf(total, 0x00);
+
+        buf[0] = static_cast<octet>(BIND_CONNECTION_REQUEST);
+        buf[1] = 0x06;
+        buf[2] = static_cast<octet>(header_reported_length & 0xFF);
+        buf[3] = static_cast<octet>((header_reported_length >> 8) & 0xFF);
+
+        buf[16] = 0x01;
+        buf[17] = 0x00;
+        buf[18] = static_cast<octet>(inner_payload_length & 0xFF);
+        buf[19] = static_cast<octet>((inner_payload_length >> 8) & 0xFF);
+        buf[20] = static_cast<octet>((inner_payload_length >> 16) & 0xFF);
+        buf[21] = static_cast<octet>((inner_payload_length >> 24) & 0xFF);
+
+        return buf;
+    }
+
+    std::unique_ptr<MockTCPv4Transport> transport_;
+    std::shared_ptr<RTCPMessageManager> rtcp_manager_;
+    std::shared_ptr<TCPChannelResource> channel_;
+};
+
+// This test verifies that a well-formed BIND_CONNECTION_REQUEST is processed successfully.
+TEST_F(RTCPMessageManagerTests, process_bind_request_valid)
+{
+    auto mock_channel = std::static_pointer_cast<MockTCPChannelResource>(channel_);
+    mock_channel->set_waiting_for_bind();
+    transport_->register_channel_as_unbound(channel_);
+
+    ConnectionRequest_t request;
+    request.protocolVersion(c_rtcpProtocolVersion);
+    SerializedPayload_t payload(
+        static_cast<uint32_t>(ConnectionRequest_t::getBufferCdrSerializedSize(request)));
+    request.serialize(&payload);
+
+    constexpr uint16_t reported = static_cast<uint16_t>(16 + 6 + 32);
+    auto buf = build_bind_request_buffer(reported, payload.length, payload.length);
+    std::memcpy(buf.data() + 16 + 6, payload.data, payload.length);
+
+    auto result = rtcp_manager_->processRTCPMessage(
+        channel_, buf.data(), buf.size(), Endianness_t::LITTLEEND);
+
+    EXPECT_NE(result, RETCODE_BAD_REQUEST);
+
+    // process_bind_request was called: channel transitions to eEstablished on success.
+    EXPECT_TRUE(mock_channel->is_established());
+
+    // send was called with a BIND_CONNECTION_RESPONSE carrying RETCODE_OK.
+    ASSERT_TRUE(mock_channel->send_called);
+    constexpr size_t response_code_offset = 14 + 16; // TCPHeader + TCPControlMsgHeader
+    ASSERT_GE(mock_channel->last_send_data.size(), response_code_offset + sizeof(uint32_t));
+    uint32_t response_code = 0;
+    std::memcpy(&response_code, mock_channel->last_send_data.data() + response_code_offset, sizeof(uint32_t));
+    EXPECT_EQ(response_code, static_cast<uint32_t>(RETCODE_OK));
+}
+
+// This test verifies that a BIND_CONNECTION_REQUEST with an inner payload.length larger than
+// the available buffer is rejected without an out-of-bounds read (CVE-2026-45093).
+TEST_F(RTCPMessageManagerTests, process_bind_request_oob_payload_length)
+{
+    constexpr uint32_t actual_bytes  = 32;
+    constexpr uint32_t claimed_bytes = actual_bytes + 6;
+    constexpr uint16_t reported = static_cast<uint16_t>(16 + 6 + actual_bytes);
+    auto buf = build_bind_request_buffer(reported, claimed_bytes, actual_bytes);
+
+    auto mock_channel = std::static_pointer_cast<MockTCPChannelResource>(channel_);
+
+    auto result = rtcp_manager_->processRTCPMessage(
+        channel_, buf.data(), buf.size(), Endianness_t::LITTLEEND);
+
+    EXPECT_EQ(result, RETCODE_OK);
+
+    // send was called with a BIND_CONNECTION_RESPONSE carrying RETCODE_BAD_REQUEST.
+    ASSERT_TRUE(mock_channel->send_called);
+    constexpr size_t response_code_offset = 14 + 16; // TCPHeader + TCPControlMsgHeader
+    ASSERT_GE(mock_channel->last_send_data.size(), response_code_offset + sizeof(uint32_t));
+    uint32_t response_code = 0;
+    std::memcpy(&response_code, mock_channel->last_send_data.data() + response_code_offset, sizeof(uint32_t));
+    EXPECT_EQ(response_code, static_cast<uint32_t>(RETCODE_BAD_REQUEST));
+}
+
+// This test verifies that a message shorter than the minimum header size is rejected immediately.
+TEST_F(RTCPMessageManagerTests, process_message_too_short)
+{
+    std::vector<octet> buf(8, 0x00);
+
+    auto result = rtcp_manager_->processRTCPMessage(
+        channel_, buf.data(), buf.size(), Endianness_t::LITTLEEND);
+
+    EXPECT_EQ(result, RETCODE_BAD_REQUEST);
+}
+
 int main(
         int argc,
         char** argv)

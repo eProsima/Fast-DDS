@@ -20,7 +20,9 @@
 #ifndef _FASTDDS_DDS_QOS_QOSPOLICYUTILS_HPP_
 #define _FASTDDS_DDS_QOS_QOSPOLICYUTILS_HPP_
 
-#include <stdint.h>
+#include <cstdint>
+
+#include <fastdds/dds/core/Time_t.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -29,6 +31,18 @@ namespace utils {
 
 // Compute the default DataSharing domain ID
 uint64_t default_domain_id();
+
+/**
+ * @brief Checks if a Duration_t is consistent, i.e. seconds is non-negative, and nanosec is less than 1 second.
+ *
+ * @param duration Duration to check.
+ * @param allow_infinite Whether to allow infinite duration.
+ *
+ * @return true if the duration is consistent, false otherwise.
+ */
+bool is_duration_consistent(
+        const Duration_t& duration,
+        bool allow_infinite = true);
 
 }  // namespace utils
 }  // namespace dds
