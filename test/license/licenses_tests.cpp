@@ -31,23 +31,6 @@ using namespace eprosima::fastdds::rtps;
 
 #ifdef FASTDDS_CHECK_LICENSE
 
-std::string get_source_directory()
-{
-    std::string file_path = __FILE__;  // Path to the current .cpp file
-#ifdef _WIN32
-    const char separator = '\\';
-#else
-    const char separator = '/';
-#endif // ifdef _WIN32
-
-    size_t pos = file_path.find_last_of(separator);
-    if (pos == std::string::npos)
-    {
-        return ".";  // no directory part found, return current dir
-    }
-    return file_path.substr(0, pos);
-}
-
 void publisher_thread(
         DataWriter* writer,
         int sleep_time)
@@ -87,13 +70,20 @@ void common_test(
         std::string test_name,
         bool should_fail)
 {
-    std::string curr_folder = get_source_directory();
+    std::string licenses_path = std::getenv("LICENSES_PATH");
+
+    if (licenses_path.empty())
+    {
+        std::cout << "Cannot get enviroment variable LICENSES_PATH" << std::endl;
+        exit(-1);
+    }
+
     /* Set environment variable */
 #ifdef _WIN32
-    std::string new_env_path = (curr_folder + "\\tests\\" + test_name);
+    std::string new_env_path = (licenses_path + "\\" + test_name);
     _putenv_s("FASTDDSHOME", new_env_path.c_str());
 #else
-    std::string new_env_path = (curr_folder + "/tests/" + test_name);
+    std::string new_env_path = (licenses_path + "/" + test_name);
     setenv("FASTDDSHOME", new_env_path.c_str(), 1);
 #endif // ifdef _WIN32
 

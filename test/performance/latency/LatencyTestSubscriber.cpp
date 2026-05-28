@@ -735,15 +735,22 @@ bool LatencyTestSubscriber::test(
     }
     else
     {
-        // release the buffer next iteration will require different size
-        latency_data_type_->delete_data(latency_data_);
+        // Keep the type alive past destroy_data_endpoints() (which resets
+        // latency_data_type_) so we can still release the buffer below.
+        auto latency_data_type_keep_alive = latency_data_type_;
 
-        // Remove endpoints associated to the given payload size
+        // Remove endpoints before releasing the buffer. Otherwise a late
+        // on_data_available() callback can still reference latency_data_
+        // after delete_data() has freed it, causing a heap-use-after-free.
         if (!destroy_data_endpoints())
         {
             EPROSIMA_LOG_ERROR(LatencyTest,
                     "Static endpoints for payload size " << datasize << " could not been removed");
         }
+
+        // release the buffer next iteration will require different size
+        latency_data_type_keep_alive->delete_data(latency_data_);
+        latency_data_ = nullptr;
     }
 
     if (test_status_ == -1)
@@ -955,16 +962,10 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
     assert(nullptr != publisher_);
     assert(nullptr != subscriber_);
 
-    // Delete the endpoints
-    if (nullptr == data_writer_
-            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
-    {
-        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DataWriter");
-        return false;
-    }
-    data_writer_ = nullptr;
-    data_writer_listener_.reset();
-
+    // Delete the DataReader before the DataWriter. The reader listener's
+    // on_data_available() echoes received samples by calling
+    // data_writer_->write(), so destroying the writer first can race with a
+    // late callback and cause a heap-use-after-free on the writer.
     if (nullptr == data_reader_
             || RETCODE_OK != subscriber_->delete_datareader(data_reader_))
     {
@@ -973,6 +974,15 @@ bool LatencyTestSubscriber::destroy_data_endpoints()
     }
     data_reader_ = nullptr;
     data_reader_listener_.reset();
+
+    if (nullptr == data_writer_
+            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
+    {
+        EPROSIMA_LOG_ERROR(LatencyTest, "ERROR destroying the DataWriter");
+        return false;
+    }
+    data_writer_ = nullptr;
+    data_writer_listener_.reset();
 
     // Delete the Topics
     if (nullptr == latency_data_pub_topic_

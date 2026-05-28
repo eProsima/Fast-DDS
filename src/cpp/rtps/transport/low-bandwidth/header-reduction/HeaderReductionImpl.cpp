@@ -81,7 +81,7 @@ struct HRBufferPointer
     {
         if (buffer_old != buffer_new)
         {
-            memcpy(buffer_new, buffer_old, number_of_bytes);
+            memmove(buffer_new, buffer_old, number_of_bytes);
         }
 
         buffer_old = &buffer_old[number_of_bytes];

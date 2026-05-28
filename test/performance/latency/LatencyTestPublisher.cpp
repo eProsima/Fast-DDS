@@ -931,7 +931,10 @@ bool LatencyTestPublisher::test(
     }
 
     // Drop the first measurement, as it's usually not representative
-    times_.erase(times_.begin());
+    if (!times_.empty())
+    {
+        times_.erase(times_.begin());
+    }
 
     // Log all data to CSV file if specified
     if (raw_data_file_ != "")
@@ -947,6 +950,9 @@ bool LatencyTestPublisher::test(
 void LatencyTestPublisher::analyze_times(
         uint32_t datasize)
 {
+    // Protect against the data listener concurrently mutating times_ when
+    // delete_datareader() does not fully synchronize with in-flight callbacks.
+    std::lock_guard<std::mutex> lock(mutex_);
     // Collect statistics
     TimeStats stats;
     stats.bytes_ = datasize;
@@ -1037,6 +1043,9 @@ void LatencyTestPublisher::export_raw_data(
 {
     std::ofstream data_file;
     data_file.open(raw_data_file_, std::fstream::app);
+    // Protect against the data listener concurrently mutating times_ when
+    // delete_datareader() does not fully synchronize with in-flight callbacks.
+    std::lock_guard<std::mutex> lock(mutex_);
     for (std::vector<std::chrono::duration<double, std::micro>>::iterator tit = times_.begin(); tit != times_.end();
             ++tit)
     {
@@ -1238,15 +1247,11 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     assert(nullptr != subscriber_);
 
     // Delete the endpoints
-    if (nullptr == data_writer_
-            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
-    {
-        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DataWriter");
-        return false;
-    }
-    data_writer_ = nullptr;
-    data_writer_listener_.reset();
 
+    // Delete the DataReader before the DataWriter. The reader listener's
+    // on_data_available() echoes received samples by calling
+    // data_writer_->write(), so destroying the writer first can race with a
+    // late callback and cause a heap-use-after-free on the writer.
     if (nullptr == data_reader_
             || RETCODE_OK != subscriber_->delete_datareader(data_reader_))
     {
@@ -1255,6 +1260,15 @@ bool LatencyTestPublisher::destroy_data_endpoints()
     }
     data_reader_ = nullptr;
     data_reader_listener_.reset();
+
+    if (nullptr == data_writer_
+            || RETCODE_OK != publisher_->delete_datawriter(data_writer_))
+    {
+        EPROSIMA_LOG_ERROR(LATENCYPUBLISHER, "ERROR destroying the DataWriter");
+        return false;
+    }
+    data_writer_ = nullptr;
+    data_writer_listener_.reset();
 
     // Delete the Topics
     if (nullptr == latency_data_pub_topic_

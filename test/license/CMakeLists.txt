@@ -25,4 +25,7 @@ target_link_libraries(licenses_tests
     fastdds
     GTest::gtest
 )
-gtest_discover_tests(licenses_tests)
+gtest_discover_tests(licenses_tests
+    PROPERTIES
+            ENVIRONMENT "LICENSES_PATH=${CMAKE_CURRENT_SOURCE_DIR}/tests"
+)

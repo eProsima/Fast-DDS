@@ -1,4 +1,4 @@
-name: Fast DDS Ubuntu CI reusable workflow
+name: Fast DDS Pro Ubuntu CI reusable workflow
 
 on:
   workflow_call:
@@ -121,7 +121,7 @@ jobs:
             python3-pip
             python3-venv
             zlib1g-dev
-          update: false
+          update: true
           upgrade: false
 
       - name: Install colcon

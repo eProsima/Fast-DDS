@@ -1,0 +1,74 @@
+name: Fast DDS Pro Sanitizers CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      cmake-args:
+        description: 'Optional CMake Compilation Flags'
+        required: false
+        type: string
+      colcon-build-args:
+        description: 'Optional colcon build arguments'
+        required: false
+        type: string
+      colcon-test-args:
+        description: 'Optional colcon test arguments'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Optional CTest Testing Flags'
+        required: false
+        type: string
+      fastdds-pro-branch:
+        description: 'Branch or tag of Fast DDS Pro repository (https://github.com/eProsima/Fast-DDS-Pro)'
+        type: string
+        required: true
+      run-asan-fastdds:
+        description: 'Run Address Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
+      run-tsan-fastdds:
+        description: 'Run Thread Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
+      use-ccache:
+        description: 'Use CCache to speed up the build'
+        required: false
+        type: boolean
+        default: true
+
+  pull_request:
+    types:
+      - review_requested
+    paths-ignore:
+        - '**.md'
+        - '**.txt'
+        - '!**/CMakeLists.txt'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sanitizers-ci:
+    if: ${{ !(github.event_name == 'pull_request') || (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    with:
+      runner: 'self-hosted'
+      docker-image: 'ci.intranet.eprosima.com:5000/eprosima/ubuntu-ci:noble'
+      label: ${{ inputs.label || 'fastdds-sanitizers-ci' }}
+      cmake-args: ${{ inputs.cmake-args || '' }}
+      colcon-build-args: ${{ inputs.colcon-build-args || '' }}
+      colcon-test-args: ${{ inputs.colcon-test-args || '' }}
+      ctest-args: ${{ inputs.ctest-args || '' }}
+      fastdds-pro-branch: ${{ inputs.fastdds-pro-branch || github.ref || 'main' }}
+      run-asan-fastdds: ${{ ((inputs.run-asan-fastdds == true) && true) || github.event_name == 'pull_request' }}
+      run-tsan-fastdds: ${{ ((inputs.run-tsan-fastdds == true) && true) || github.event_name == 'pull_request' }}

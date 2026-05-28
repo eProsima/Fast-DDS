@@ -76,6 +76,14 @@ static std::vector<unsigned char> b64decode(
         return {};
     }
 
+    // Reject malformed base64: a length of 1 modulo 4 cannot be produced by
+    // any valid base64 encoding, and the decoding loop below would read past
+    // the end of the input buffer in that case.
+    if (len % 4 != 0)
+    {
+        return {};
+    }
+
     const char* p = input.c_str();
     size_t pad1 = ((0 != len % 4) || (p[len - 1] == '=')) ? 1 : 0;
     size_t pad2 = (pad1 && (len % 4 > 2 || p[len - 2] != '=')) ? 1 : 0;
