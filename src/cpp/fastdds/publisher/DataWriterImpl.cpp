@@ -250,137 +250,148 @@ ReturnCode_t DataWriterImpl::enable()
 {
     assert(writer_ == nullptr);
 
-    std::unique_lock<std::mutex> qos_lock(qos_mutex_);
-
-    auto history_att = DataWriterHistory::to_history_attributes(
-        qos_.history(),
-        qos_.resource_limits(),
-        (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
-        type_->get_max_serialized_size_ctx(type_support_context_),
-        qos_.endpoint().history_memory_policy);
-    pool_config_ = PoolConfig::from_history_attributes(history_att);
-
-    // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
-    // grow, we translate the policy into bare PREALLOCATED
-    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
-            (type_->is_bounded_ctx(type_support_context_) ||
-            type_->is_plain_ctx(type_support_context_, data_representation_)))
-    {
-        pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
-    }
-
     WriterAttributes w_att;
-    w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
-    w_att.endpoint.endpointKind = WRITER;
-    w_att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
-    w_att.endpoint.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
-    w_att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
-    w_att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
-    w_att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
-    w_att.endpoint.external_unicast_locators = qos_.endpoint().external_unicast_locators;
-    w_att.endpoint.ignore_non_matching_locators = qos_.endpoint().ignore_non_matching_locators;
-    w_att.mode = qos_.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
-    w_att.flow_controller_name = qos_.publish_mode().flow_controller_name;
-    w_att.endpoint.properties = qos_.properties();
-    w_att.endpoint.ownershipKind = qos_.ownership().kind;
-    w_att.endpoint.setEntityID(qos_.endpoint().entity_id);
-    w_att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
-    w_att.times = qos_.reliable_writer_qos().times;
-    w_att.liveliness_kind = qos_.liveliness().kind;
-    w_att.liveliness_lease_duration = qos_.liveliness().lease_duration;
-    w_att.liveliness_announcement_period = qos_.liveliness().announcement_period;
-    w_att.matched_readers_allocation = qos_.writer_resource_limits().matched_subscriber_allocation;
-    w_att.disable_heartbeat_piggyback = qos_.reliable_writer_qos().disable_heartbeat_piggyback;
-    w_att.transport_priority = qos_.transport_priority().value;
+    bool filtering_enabled = false;
+    fastdds::ResourceLimitedContainerConfig reader_filters_alloc{};
+    fastdds::dds::Duration_t lifespan_duration{};
 
-    // TODO(Ricardo) Remove in future
-    // Insert topic_name and partitions
-    Property property;
-    property.name("topic_name");
-    property.value(topic_->get_name().c_str());
-    w_att.endpoint.properties.properties().push_back(std::move(property));
-
-    std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
-
-    if (endpoint_partitions)
     {
-        property.name("partitions");
-        property.value(*endpoint_partitions);
-        w_att.endpoint.properties.properties().push_back(std::move(property));
-    }
-    else if (publisher_->get_qos().partition().names().size() > 0)
-    {
-        property.name("partitions");
-        std::string partitions;
-        bool is_first_partition = true;
-        for (auto partition : publisher_->get_qos().partition().names())
+        std::lock_guard<std::mutex> qos_guard(qos_mutex_);
+
+        auto history_att = DataWriterHistory::to_history_attributes(
+            qos_.history(),
+            qos_.resource_limits(),
+            (type_->is_compute_key_provided ? WITH_KEY : NO_KEY),
+            type_->get_max_serialized_size_ctx(type_support_context_),
+            qos_.endpoint().history_memory_policy);
+        pool_config_ = PoolConfig::from_history_attributes(history_att);
+
+        // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
+        // grow, we translate the policy into bare PREALLOCATED
+        if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == pool_config_.memory_policy &&
+                (type_->is_bounded_ctx(type_support_context_) ||
+                type_->is_plain_ctx(type_support_context_, data_representation_)))
         {
-            partitions += (is_first_partition ? "" : ";") + partition;
-            is_first_partition = false;
+            pool_config_.memory_policy = PREALLOCATED_MEMORY_MODE;
         }
-        property.value(std::move(partitions));
+
+        w_att.endpoint.durabilityKind = qos_.durability().durabilityKind();
+        w_att.endpoint.endpointKind = WRITER;
+        w_att.endpoint.reliabilityKind = qos_.reliability().kind == RELIABLE_RELIABILITY_QOS ? RELIABLE : BEST_EFFORT;
+        w_att.endpoint.topicKind = type_->is_compute_key_provided ? WITH_KEY : NO_KEY;
+        w_att.endpoint.multicastLocatorList = qos_.endpoint().multicast_locator_list;
+        w_att.endpoint.unicastLocatorList = qos_.endpoint().unicast_locator_list;
+        w_att.endpoint.remoteLocatorList = qos_.endpoint().remote_locator_list;
+        w_att.endpoint.external_unicast_locators = qos_.endpoint().external_unicast_locators;
+        w_att.endpoint.ignore_non_matching_locators = qos_.endpoint().ignore_non_matching_locators;
+        w_att.mode = qos_.publish_mode().kind == SYNCHRONOUS_PUBLISH_MODE ? SYNCHRONOUS_WRITER : ASYNCHRONOUS_WRITER;
+        w_att.flow_controller_name = qos_.publish_mode().flow_controller_name;
+        w_att.endpoint.properties = qos_.properties();
+        w_att.endpoint.ownershipKind = qos_.ownership().kind;
+        w_att.endpoint.setEntityID(qos_.endpoint().entity_id);
+        w_att.endpoint.setUserDefinedID(qos_.endpoint().user_defined_id);
+        w_att.times = qos_.reliable_writer_qos().times;
+        w_att.liveliness_kind = qos_.liveliness().kind;
+        w_att.liveliness_lease_duration = qos_.liveliness().lease_duration;
+        w_att.liveliness_announcement_period = qos_.liveliness().announcement_period;
+        w_att.matched_readers_allocation = qos_.writer_resource_limits().matched_subscriber_allocation;
+        w_att.disable_heartbeat_piggyback = qos_.reliable_writer_qos().disable_heartbeat_piggyback;
+        w_att.transport_priority = qos_.transport_priority().value;
+
+        // TODO(Ricardo) Remove in future
+        // Insert topic_name and partitions
+        Property property;
+        property.name("topic_name");
+        property.value(topic_->get_name().c_str());
         w_att.endpoint.properties.properties().push_back(std::move(property));
-    }
 
-    if (qos_.reliable_writer_qos().disable_positive_acks.enabled &&
-            qos_.reliable_writer_qos().disable_positive_acks.duration != dds::c_TimeInfinite)
-    {
-        w_att.disable_positive_acks = true;
-        w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
-    }
+        std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
 
-    ReturnCode_t ret_code = check_datasharing_compatible(w_att, is_data_sharing_compatible_);
-    if (ret_code != RETCODE_OK)
-    {
-        return ret_code;
-    }
-
-    if (is_data_sharing_compatible_)
-    {
-        DataSharingQosPolicy datasharing(qos_.data_sharing());
-        if (datasharing.domain_ids().empty())
+        if (endpoint_partitions)
         {
-            datasharing.add_domain_id(utils::default_domain_id());
+            property.name("partitions");
+            property.value(*endpoint_partitions);
+            w_att.endpoint.properties.properties().push_back(std::move(property));
         }
-        w_att.endpoint.set_data_sharing_configuration(datasharing);
-
-        // Update pool config for KEEP_ALL when max_samples is infinite
-        if ((0 == pool_config_.maximum_size) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
+        else if (publisher_->get_qos().partition().names().size() > 0)
         {
-            // Override infinite with old default value for max_samples + extra samples
-            pool_config_.maximum_size = 5000;
-            if (0 < qos_.resource_limits().extra_samples)
+            property.name("partitions");
+            std::string partitions;
+            bool is_first_partition = true;
+            for (auto partition : publisher_->get_qos().partition().names())
             {
-                pool_config_.maximum_size += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
+                partitions += (is_first_partition ? "" : ";") + partition;
+                is_first_partition = false;
             }
-            EPROSIMA_LOG_ERROR(DATA_WRITER,
-                    "DataWriter with KEEP_ALL history and infinite max_samples is not compatible with DataSharing. "
-                    "Setting max_samples to " << pool_config_.maximum_size);
+            property.value(std::move(partitions));
+            w_att.endpoint.properties.properties().push_back(std::move(property));
         }
-    }
-    else
-    {
-        DataSharingQosPolicy datasharing;
-        datasharing.off();
-        w_att.endpoint.set_data_sharing_configuration(datasharing);
-    }
 
-    bool filtering_enabled =
-            qos_.liveliness().lease_duration.is_infinite() &&
-            (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
+        if (qos_.reliable_writer_qos().disable_positive_acks.enabled &&
+                qos_.reliable_writer_qos().disable_positive_acks.duration != dds::c_TimeInfinite)
+        {
+            w_att.disable_positive_acks = true;
+            w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
+        }
+
+        ReturnCode_t ret_code = check_datasharing_compatible(w_att, is_data_sharing_compatible_);
+        if (ret_code != RETCODE_OK)
+        {
+            return ret_code;
+        }
+
+        if (is_data_sharing_compatible_)
+        {
+            DataSharingQosPolicy datasharing(qos_.data_sharing());
+            if (datasharing.domain_ids().empty())
+            {
+                datasharing.add_domain_id(utils::default_domain_id());
+            }
+            w_att.endpoint.set_data_sharing_configuration(datasharing);
+
+            // Update pool config for KEEP_ALL when max_samples is infinite
+            if ((0 == pool_config_.maximum_size) && (KEEP_ALL_HISTORY_QOS == qos_.history().kind))
+            {
+                // Override infinite with old default value for max_samples + extra samples
+                pool_config_.maximum_size = 5000;
+                if (0 < qos_.resource_limits().extra_samples)
+                {
+                    pool_config_.maximum_size += static_cast<uint32_t>(qos_.resource_limits().extra_samples);
+                }
+                EPROSIMA_LOG_ERROR(DATA_WRITER,
+                        "DataWriter with KEEP_ALL history and infinite max_samples is not compatible with DataSharing. "
+                        "Setting max_samples to " << pool_config_.maximum_size);
+            }
+        }
+        else
+        {
+            DataSharingQosPolicy datasharing;
+            datasharing.off();
+            w_att.endpoint.set_data_sharing_configuration(datasharing);
+        }
+
+        filtering_enabled =
+                qos_.liveliness().lease_duration.is_infinite() &&
+                (0 < qos_.writer_resource_limits().reader_filters_allocation.maximum);
+
+        if (filtering_enabled)
+        {
+            reader_filters_alloc = qos_.writer_resource_limits().reader_filters_allocation;
+        }
+
+        // Set Datawriter's DataRepresentationId taking into account the QoS.
+        data_representation_ = qos_.representation().m_value.empty()
+                || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
+                        ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
+
+        lifespan_duration = qos_.lifespan().duration;
+    }
 
     if (filtering_enabled)
     {
         std::lock_guard<std::mutex> lock(filters_mtx_);
-        reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
+        reader_filters_.reset(new ReaderFilterCollection(reader_filters_alloc));
     }
-
-    // Set Datawriter's DataRepresentationId taking into account the QoS.
-    data_representation_ = qos_.representation().m_value.empty()
-            || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
-                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
-
-    qos_lock.unlock();
 
     auto change_pool = get_change_pool();
     if (!change_pool)
@@ -465,23 +476,19 @@ ReturnCode_t DataWriterImpl::enable()
 
     configure_deadline_timer_();
 
+    lifespan_timer_ = new TimedEvent(publisher_->rtps_participant()->get_resource_event(),
+                    [&]() -> bool
+                    {
+                        return lifespan_expired();
+                    },
+                    lifespan_duration.to_ns() * 1e-6);
+
+    // In case it has been loaded from the persistence DB, expire old samples.
+    if (lifespan_duration != dds::c_TimeInfinite)
     {
-        std::lock_guard<RecursiveTimedMutex> writer_lock(writer_->getMutex());
-
-        lifespan_timer_ = new TimedEvent(publisher_->rtps_participant()->get_resource_event(),
-                        [&]() -> bool
-                        {
-                            return lifespan_expired();
-                        },
-                        qos_.lifespan().duration.to_ns() * 1e-6);
-
-        // In case it has been loaded from the persistence DB, expire old samples.
-        if (qos_.lifespan().duration != dds::c_TimeInfinite)
+        if (lifespan_expired())
         {
-            if (lifespan_expired())
-            {
-                lifespan_timer_->restart_timer();
-            }
+            lifespan_timer_->restart_timer();
         }
     }
 
@@ -1239,16 +1246,23 @@ InstanceHandle_t DataWriterImpl::get_instance_handle() const
 
 void DataWriterImpl::publisher_qos_updated()
 {
-    if (writer_ != nullptr)
+    fastdds::rtps::BaseWriter* writer_snapshot = nullptr;
+    WriterQos wqos;
+
     {
-        WriterQos wqos;
+        std::lock_guard<std::mutex> qos_guard(qos_mutex_);
+
+        if (writer_ == nullptr)
         {
-            std::lock_guard<RecursiveTimedMutex> writer_lock(writer_->getMutex());
-            wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+            return;
         }
-        // NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
-        publisher_->rtps_participant()->update_writer(writer_, wqos);
+
+        writer_snapshot = writer_;
+        wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
     }
+
+    // NOTIFY THE BUILTIN PROTOCOLS THAT THE WRITER HAS CHANGED
+    publisher_->rtps_participant()->update_writer(writer_snapshot, wqos);
 }
 
 ReturnCode_t DataWriterImpl::set_qos(
@@ -1274,51 +1288,49 @@ ReturnCode_t DataWriterImpl::set_qos(
         }
     }
 
-    std::unique_lock<std::mutex> qos_lock(qos_mutex_);
-    bool enabled = writer_ != nullptr;
-
-    if (!enabled)
-    {
-        set_qos(qos_, qos_to_set, true);
-        return RETCODE_OK;
-    }
-
-    if (!can_qos_be_updated(qos_, qos_to_set))
-    {
-        return RETCODE_IMMUTABLE_POLICY;
-    }
-
-    qos_lock.unlock();
-
     DataWriterQos old_qos;
+    DataWriterQos new_qos;
+    {
+        std::lock_guard<std::mutex> qos_guard(qos_mutex_);
+        bool enabled = writer_ != nullptr;
+
+        if (!enabled)
+        {
+            set_qos(qos_, qos_to_set, true);
+            return RETCODE_OK;
+        }
+
+        if (!can_qos_be_updated(qos_, qos_to_set))
+        {
+            return RETCODE_IMMUTABLE_POLICY;
+        }
+
+        old_qos = qos_;
+        set_qos(qos_, qos_to_set, false);
+        new_qos = qos_;
+    }
+
     WriterQos wqos;
     bool update_attributes = false;
     WriterAttributes w_att;
     bool deadline_changed = false;
     bool lifespan_changed = false;
 
+    int32_t transport_priority = writer_->get_transport_priority();
+    if ((new_qos.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
+            new_qos.reliable_writer_qos() == qos_to_set.reliable_writer_qos()) ||
+            (transport_priority != qos_to_set.transport_priority().value))
     {
-        std::lock_guard<RecursiveTimedMutex> writer_lock(writer_->getMutex());
-
-        old_qos = qos_;
-        set_qos(qos_, qos_to_set, false);
-
-        int32_t transport_priority = writer_->get_transport_priority();
-        if ((qos_.reliability().kind == ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS &&
-                qos_.reliable_writer_qos() == qos_to_set.reliable_writer_qos()) ||
-                (transport_priority != qos_to_set.transport_priority().value))
-        {
-            update_attributes = true;
-            w_att.times = qos_.reliable_writer_qos().times;
-            w_att.disable_positive_acks = qos_.reliable_writer_qos().disable_positive_acks.enabled;
-            w_att.keep_duration = qos_.reliable_writer_qos().disable_positive_acks.duration;
-            w_att.transport_priority = qos_to_set.transport_priority().value;
-        }
-
-        wqos = qos_.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
-        deadline_changed = old_qos.deadline().period != qos_.deadline().period;
-        lifespan_changed = old_qos.lifespan().duration != qos_.lifespan().duration;
+        update_attributes = true;
+        w_att.times = new_qos.reliable_writer_qos().times;
+        w_att.disable_positive_acks = new_qos.reliable_writer_qos().disable_positive_acks.enabled;
+        w_att.keep_duration = new_qos.reliable_writer_qos().disable_positive_acks.duration;
+        w_att.transport_priority = qos_to_set.transport_priority().value;
     }
+
+    wqos = new_qos.get_writerqos(get_publisher()->get_qos(), topic_->get_qos());
+    deadline_changed = old_qos.deadline().period != new_qos.deadline().period;
+    lifespan_changed = old_qos.lifespan().duration != new_qos.lifespan().duration;
 
     if (update_attributes)
     {
@@ -1336,11 +1348,11 @@ ReturnCode_t DataWriterImpl::set_qos(
     // Lifespan
     if (lifespan_changed)
     {
-        if (qos_.lifespan().duration != dds::c_TimeInfinite)
+        if (new_qos.lifespan().duration != dds::c_TimeInfinite)
         {
             lifespan_duration_us_ =
-                    duration<double, std::ratio<1, 1000000>>(qos_.lifespan().duration.to_ns() * 1e-3);
-            lifespan_timer_->update_interval_millisec(qos_.lifespan().duration.to_ns() * 1e-6);
+                    duration<double, std::ratio<1, 1000000>>(new_qos.lifespan().duration.to_ns() * 1e-3);
+            lifespan_timer_->update_interval_millisec(new_qos.lifespan().duration.to_ns() * 1e-6);
         }
         else
         {
@@ -1359,14 +1371,7 @@ const DataWriterQos& DataWriterImpl::get_qos() const
 ReturnCode_t DataWriterImpl::get_qos(
         DataWriterQos& qos) const
 {
-    std::unique_lock<std::mutex> qos_lock(qos_mutex_);
-    if (writer_ != nullptr)
-    {
-        qos_lock.unlock();
-        std::lock_guard<RecursiveTimedMutex> writer_lock(writer_->getMutex());
-        qos = qos_;
-        return RETCODE_OK;
-    }
+    std::lock_guard<std::mutex> qos_guard(qos_mutex_);
     qos = qos_;
     return RETCODE_OK;
 }
@@ -1835,11 +1840,13 @@ ReturnCode_t DataWriterImpl::get_liveliness_lost_status(
 
 ReturnCode_t DataWriterImpl::assert_liveliness()
 {
-    if (writer_ == nullptr)
     {
-        return RETCODE_NOT_ENABLED;
+        std::lock_guard<std::mutex> qos_guard(qos_mutex_);
+        if (writer_ == nullptr)
+        {
+            return RETCODE_NOT_ENABLED;
+        }
     }
-
     if (!publisher_->rtps_participant()->wlp()->assert_liveliness(
                 writer_->getGuid(),
                 writer_->get_liveliness_kind(),
@@ -1850,19 +1857,18 @@ ReturnCode_t DataWriterImpl::assert_liveliness()
     }
 
     {
-        std::lock_guard<RecursiveTimedMutex> writer_lock(writer_->getMutex());
-        if (qos_.liveliness().kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+        std::lock_guard<std::mutex> qos_guard(qos_mutex_);
+        if (qos_.liveliness().kind != MANUAL_BY_TOPIC_LIVELINESS_QOS)
         {
-            // As described in the RTPS specification, if liveliness kind is manual a heartbeat must be sent
-            // This only applies to stateful writers, as stateless writers do not send heartbeats
-
-            StatefulWriter* stateful_writer = dynamic_cast<StatefulWriter*>(writer_);
-
-            if (stateful_writer != nullptr)
-            {
-                stateful_writer->send_periodic_heartbeat(true, true);
-            }
+            return RETCODE_OK;
         }
+    }
+    // As described in the RTPS specification, if liveliness kind is manual a heartbeat must be sent
+    // This only applies to stateful writers, as stateless writers do not send heartbeats
+    StatefulWriter* stateful_writer = dynamic_cast<StatefulWriter*>(writer_);
+    if (stateful_writer != nullptr)
+    {
+        stateful_writer->send_periodic_heartbeat(true, true);
     }
     return RETCODE_OK;
 }
@@ -1903,7 +1909,7 @@ ReturnCode_t DataWriterImpl::get_publication_builtin_topic_data(
             writer_->get_participant_impl()->network_factory().network_configuration();
 
     {
-        std::lock_guard<RecursiveTimedMutex> writer_lock(writer_->getMutex());
+        std::lock_guard<std::mutex> qos_guard(qos_mutex_);
 
         // DataWriter qos
         publication_data.durability = qos_.durability();
