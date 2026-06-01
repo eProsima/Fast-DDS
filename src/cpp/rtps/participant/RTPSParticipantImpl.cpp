@@ -3428,8 +3428,6 @@ const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
     return m_att;
 }
 
-<<<<<<< HEAD
-=======
 const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attributes() const
 {
     return m_const_att;
@@ -3447,49 +3445,6 @@ RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const
     return m_att;
 }
 
-void RTPSParticipantImpl::notify_reader_discovery(
-        ReaderDiscoveryStatus reason,
-        const SubscriptionBuiltinTopicData& info)
-{
-    RTPSParticipantListener* listener = getListener();
-    notify_reader_discovery(reason, info, listener);
-}
-
-void RTPSParticipantImpl::notify_reader_discovery(
-        ReaderDiscoveryStatus reason,
-        const SubscriptionBuiltinTopicData& info,
-        RTPSParticipantListener* listener)
-{
-    if (listener)
-    {
-        RTPSParticipant* participant = getUserRTPSParticipant();
-        bool should_be_ignored = false;
-        listener->on_reader_discovery(participant, reason, info, should_be_ignored);
-    }
-}
-
-void RTPSParticipantImpl::notify_writer_discovery(
-        WriterDiscoveryStatus reason,
-        const PublicationBuiltinTopicData& info)
-{
-    RTPSParticipantListener* listener = getListener();
-    notify_writer_discovery(reason, info, listener);
-}
-
-void RTPSParticipantImpl::notify_writer_discovery(
-        WriterDiscoveryStatus reason,
-        const PublicationBuiltinTopicData& info,
-        RTPSParticipantListener* listener)
-{
-    if (listener)
-    {
-        RTPSParticipant* participant = getUserRTPSParticipant();
-        bool should_be_ignored = false;
-        listener->on_writer_discovery(participant, reason, info, should_be_ignored);
-    }
-}
-
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 } /* namespace rtps */
 } /* namespace fastdds */
 } /* namespace eprosima */
