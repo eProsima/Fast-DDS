@@ -444,7 +444,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_kagree_algo)
                 result = plugin.validate_local_identity(&local_identity_handle,
                                 adjusted_participant_key,
                                 domain_id,
-                                participant_attr,
+                                participant_attr.properties,
                                 candidate_participant_key,
                                 exception);
 
@@ -500,7 +500,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok_with_pwd)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -535,7 +535,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_no_pwd)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -570,7 +570,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_pwd)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -603,7 +603,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_ca)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -636,7 +636,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_identity_certific
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -672,7 +672,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -705,7 +705,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_revoked_certificate_wit
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -738,7 +738,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_expired_certificate)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
