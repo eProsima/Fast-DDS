@@ -280,13 +280,38 @@ void PDPSimple::announceParticipantState(
 #endif // HAVE_SECURITY
 
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
+<<<<<<< HEAD
         RTPSWriter& writer = *(endpoints->writer.writer_);
+=======
+        assert(endpoints && endpoints->writer.history_);
+        if (!endpoints || !endpoints->writer.history_)
+        {
+            FASTDDS_UNREACHABLE();       // “cannot happen” invariant
+        }
+
+>>>>>>> 910ac9907 (Assert liveliness with periodic heartbeats in secure participants (#6411))
         WriterHistory& history = *(endpoints->writer.history_);
         PDP::announceParticipantState(writer, history, new_change, dispose, wp);
 
         if (!(dispose || new_change))
         {
             endpoints->writer.writer_->send_periodic_announcement();
+
+#if HAVE_SECURITY
+            if (mp_RTPSParticipant->is_secure())
+            {
+                // PDP non-secure endpoints are unmatched after participant authentication succeeds (and secure PDP
+                // endpoints are matched), and since the secure ones are TRANSIENT_LOCAL, we send periodic heartbeats
+                // to assert liveliness on remote participants
+                auto secure = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
+                assert(secure && secure->secure_writer.writer_);
+                if (!secure || !secure->secure_writer.writer_)
+                {
+                    FASTDDS_UNREACHABLE();   // “cannot happen” invariant
+                }
+                secure->secure_writer.writer_->send_periodic_heartbeat(true, true);
+            }
+#endif // HAVE_SECURITY
         }
     }
 }
