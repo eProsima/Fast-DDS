@@ -339,7 +339,7 @@ protected:
             // Ensure writer is in clean state
             drop_data_on_all_readers();
             EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(5)));
-            EXPECT_EQ(reader->get_unread_count(), 0);
+            EXPECT_EQ(reader->get_unread_count(), 0ull);
 
             // Send 10 samples with index 1 to 10
             auto data = default_helloworld_data_generator();
@@ -371,7 +371,7 @@ protected:
             ReturnCode_t expected_ret;
             expected_ret = expected_samples == 0 ? RETCODE_NO_DATA : RETCODE_OK;
             EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
-            EXPECT_EQ(recv_data.length(), expected_samples);
+            EXPECT_EQ(static_cast<uint64_t>(recv_data.length()), expected_samples);
             for (HelloWorldSeq::size_type i = 0;
                     i < recv_data.length() && static_cast<uint32_t>(i) < expected_samples;
                     ++i)
@@ -1282,3 +1282,4 @@ GTEST_INSTANTIATE_TEST_MACRO(DDSContentFilter,
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
+

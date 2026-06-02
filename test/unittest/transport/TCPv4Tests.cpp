@@ -2301,7 +2301,7 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
             send_resource_list,
             wrong_remote_participant_physical_locators,
             initial_peer_list);
-        ASSERT_EQ(send_resource_list.size(), 2);
+        ASSERT_EQ(send_resource_list.size(), 2u);
 
         // Using the correct locator should remove the channel resource
         LocatorList_t remote_participant_physical_locators;
@@ -2310,7 +2310,7 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
             send_resource_list,
             remote_participant_physical_locators,
             initial_peer_list);
-        ASSERT_EQ(send_resource_list.size(), 1);
+        ASSERT_EQ(send_resource_list.size(), 1u);
 
         // Using the initial peer locator should not remove the channel resource
         remote_participant_physical_locators.clear();
@@ -2325,7 +2325,7 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
             send_resource_list,
             remote_participant_physical_locators,
             initial_peer_list);
-        ASSERT_EQ(send_resource_list.size(), 1);
+        ASSERT_EQ(send_resource_list.size(), 1u);
     }
 }
 
@@ -2387,8 +2387,8 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
         ASSERT_FALSE(server_resource_list.empty());
         ASSERT_TRUE(serverTransportUnderTest->get_channel_resources().empty());
         auto channel_pending_logical_ports = serverTransportUnderTest->get_channel_pending_logical_ports();
-        ASSERT_EQ(channel_pending_logical_ports.size(), 1);
-        ASSERT_EQ(channel_pending_logical_ports.begin()->second.size(), 2);
+        ASSERT_EQ(channel_pending_logical_ports.size(), 1u);
+        ASSERT_EQ(channel_pending_logical_ports.begin()->second.size(), std::size_t{2});
         ASSERT_TRUE(channel_pending_logical_ports.begin()->second.find(
                     7410) != channel_pending_logical_ports.begin()->second.end());
         ASSERT_TRUE(channel_pending_logical_ports.begin()->second.find(

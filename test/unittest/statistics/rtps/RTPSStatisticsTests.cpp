@@ -1400,8 +1400,8 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
     part_impl->get_entity_connections(reader_->getGuid(), conns_reader);
     part_impl->get_entity_connections(writer_->getGuid(), conns_writer);
 
-    ASSERT_EQ(1, conns_writer.size());
-    ASSERT_EQ(1, conns_writer.size());
+    ASSERT_EQ(1u, conns_writer.size());
+    ASSERT_EQ(1u, conns_writer.size());
     ASSERT_EQ(conns_reader[0].guid(), statistics::to_statistics_type(writer_->getGuid()));
     ASSERT_EQ(conns_writer[0].guid(), statistics::to_statistics_type(reader_->getGuid()));
 

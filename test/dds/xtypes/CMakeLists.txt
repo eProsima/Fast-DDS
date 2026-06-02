@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(PythonInterp 3)
+find_package(Python3 COMPONENTS Interpreter)
 
 add_definitions(
     -DBOOST_ASIO_STANDALONE
@@ -114,7 +114,7 @@ file(GLOB TEST_DEFINITIONS
     "TypesTestsCases/Cases*"
 )
 
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
     # Standard types test
     set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
 
@@ -123,7 +123,7 @@ if(PYTHONINTERP_FOUND)
         add_test(
             NAME ${TEST_NAME}
             COMMAND
-            ${PYTHON_EXECUTABLE}
+            ${Python3_EXECUTABLE}
             ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
             --app $<TARGET_FILE:DDSXtypesCommunication>
             ${TEST_DEFINITION}
@@ -136,3 +136,4 @@ if(PYTHONINTERP_FOUND)
         endif()
     endforeach()
 endif()
+

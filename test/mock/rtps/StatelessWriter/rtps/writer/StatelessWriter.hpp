@@ -42,11 +42,11 @@ public:
 
     virtual ~StatelessWriter() = default;
 
-    MOCK_METHOD1(matched_reader_add_edp, bool(const ReaderProxyData&));
+    MOCK_METHOD(bool, matched_reader_add_edp, (const ReaderProxyData&), (override));
 
-    MOCK_METHOD1(matched_reader_remove, bool(const GUID_t&));
+    MOCK_METHOD(bool, matched_reader_remove, (const GUID_t&), (override));
 
-    MOCK_METHOD1 (matched_reader_is_matched, bool(const GUID_t& reader_guid));
+    MOCK_METHOD(bool, matched_reader_is_matched, (const GUID_t& reader_guid), (override));
 
     MOCK_METHOD1(unsent_change_added_to_history_mock, void(CacheChange_t*));
 
@@ -65,3 +65,4 @@ private:
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_STATELESSWRITER_H_
+

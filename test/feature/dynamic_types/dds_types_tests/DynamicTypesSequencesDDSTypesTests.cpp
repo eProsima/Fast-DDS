@@ -1545,7 +1545,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_My_Structure)
         NoCommon_Module::My_Structure struct_data;
         TypeSupport static_pubsubType {new NoCommon_Module::My_StructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
-        EXPECT_EQ(1, struct_data.list().size());
+        EXPECT_EQ(1u, struct_data.list().size());
         EXPECT_EQ(struct_data.list().at(0), test_char_value);
     }
 

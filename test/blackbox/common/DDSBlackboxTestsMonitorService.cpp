@@ -1541,9 +1541,9 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     StatisticsGUIDList w_guids, r_guids;
     endpoint_connections_msg.status_kind(eprosima::fastdds::statistics::StatusKind::CONNECTION_LIST);
     w_guids = MSP1.get_writer_guids();
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     r_guids = MSP2.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
 
     //! dw and dr have one connection only (with each other)
     endpoint_connections_msg.local_entity(w_guids.back());
@@ -1616,7 +1616,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     w_guids = MSP.get_writer_guids();
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     endpoint_qos_msg.local_entity(w_guids.back());
 
     statistics::IncompatibleQoSStatus_s incompatible_qos;
@@ -1629,7 +1629,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_qos_msg.local_entity(r_guids.back());
 
     expected_msgs.push_back(endpoint_qos_msg);
@@ -1689,7 +1689,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
 
     endpoint_liveliness_msg.status_kind(eprosima::fastdds::statistics::StatusKind::LIVELINESS_LOST);
     w_guids = MSP.get_writer_guids();
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     endpoint_liveliness_msg.local_entity(w_guids.back());
 
     statistics::LivelinessLostStatus_s liv_lost_status;
@@ -1753,7 +1753,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
 
     endpoint_liveliness_msg.status_kind(eprosima::fastdds::statistics::StatusKind::LIVELINESS_CHANGED);
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_liveliness_msg.local_entity(r_guids.back());
 
     statistics::LivelinessChangedStatus_s liv_changed_status;
@@ -1809,7 +1809,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
 
     endpoint_deadline_msg.status_kind(eprosima::fastdds::statistics::StatusKind::DEADLINE_MISSED);
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_deadline_msg.local_entity(r_guids.back());
 
     statistics::DeadlineMissedStatus_s deadline_missed_status;
@@ -1819,7 +1819,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
     expected_msgs.push_back(endpoint_deadline_msg);
 
     w_guids = MSP.get_writer_guids();
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     endpoint_deadline_msg.local_entity(w_guids.back());
 
     expected_msgs.push_back(endpoint_deadline_msg);
@@ -1916,7 +1916,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
 
     endpoint_sample_lost_msg.status_kind(eprosima::fastdds::statistics::StatusKind::SAMPLE_LOST);
     r_guids = MSP2.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_sample_lost_msg.local_entity(r_guids.back());
 
     expected_msgs.push_back(endpoint_sample_lost_msg);
@@ -2034,7 +2034,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
     entity_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     StatisticsGUIDList w_guids = MSP.get_writer_guids();
 
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     entity_proxy_msg.local_entity(w_guids.back());
 
     expected_msgs.push_back(entity_proxy_msg);
@@ -2042,7 +2042,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
     entity_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     entity_proxy_msg.local_entity(r_guids.back());
 
     expected_msgs.push_back(entity_proxy_msg);
@@ -2102,13 +2102,13 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_enable_disable_enable)
     StatisticsGUIDList w_guids = MSP.get_writer_guids();
     StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
-    ASSERT_EQ(w_guids.size(), 2);
+    ASSERT_EQ(w_guids.size(), 2u);
     entity_proxy_msg.local_entity(w_guids.front());
     expected_msgs.push_back(entity_proxy_msg);
     entity_proxy_msg.local_entity(w_guids.back());
     expected_msgs.push_back(entity_proxy_msg);
 
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     entity_proxy_msg.local_entity(r_guids.back());
 
     expected_msgs.push_back(entity_proxy_msg);
@@ -2178,11 +2178,11 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_extended_incompatible_qos)
     StatisticsGUIDList w_guids = MSP.get_writer_guids();
     StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     entity_proxy_msg.local_entity(w_guids.back());
     expected_msgs.push_back(entity_proxy_msg);
 
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     entity_proxy_msg.local_entity(r_guids.back());
     expected_msgs.push_back(entity_proxy_msg);
 
@@ -2204,7 +2204,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_extended_incompatible_qos)
 
     // Reader extended incompatibility for reliability
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_ext_incmpqos_msg.local_entity(r_guids.back());
     ext_incompatible_qos_seq.at(0).remote_guid(w_guids.back());
     endpoint_ext_incmpqos_msg.value().extended_incompatible_qos_status(ext_incompatible_qos_seq);
@@ -2242,7 +2242,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_extended_incompatible_qos)
 
     // Expect only the new reader's discovery proxy one
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     entity_proxy_msg.local_entity(r_guids.back());
     expected_msgs.push_back(entity_proxy_msg);
 
@@ -2299,11 +2299,11 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
         StatisticsGUIDList w_guids = MSP.get_writer_guids();
         StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
-        ASSERT_EQ(w_guids.size(), 1);
+        ASSERT_EQ(w_guids.size(), 1u);
         entity_proxy_msg.local_entity(w_guids.back());
         expected_msgs.push_back(entity_proxy_msg);
 
-        ASSERT_EQ(r_guids.size(), 1);
+        ASSERT_EQ(r_guids.size(), 1u);
         entity_proxy_msg.local_entity(r_guids.back());
 
         expected_msgs.push_back(entity_proxy_msg);
@@ -2365,7 +2365,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
         expected_msgs.push_back(msg);
     }
 
-    ASSERT_EQ(3, MSPs.size());
+    ASSERT_EQ(3u, MSPs.size());
 
     //! Expect 6 empty proxies (disposals) (3 entities per each)
     for (auto& MSP : MSPs)
@@ -2450,7 +2450,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 
         endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
         w_guids = MSP.get_writer_guids();
-        ASSERT_EQ(w_guids.size(), 1);
+        ASSERT_EQ(w_guids.size(), 1u);
         endpoint_qos_msg.local_entity(w_guids.back());
 
         statistics::IncompatibleQoSStatus_s incompatible_qos;
@@ -2461,7 +2461,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 
         endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
         r_guids = MSP.get_reader_guids();
-        ASSERT_EQ(r_guids.size(), 1);
+        ASSERT_EQ(r_guids.size(), 1u);
         endpoint_qos_msg.local_entity(r_guids.back());
 
         expected_msgs.push_back(endpoint_qos_msg);
@@ -2509,7 +2509,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     w_guids = MSP.get_writer_guids();
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     endpoint_qos_msg.local_entity(w_guids.back());
 
     statistics::IncompatibleQoSStatus_s incompatible_qos;
@@ -2520,7 +2520,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_qos_msg.local_entity(r_guids.back());
 
     expected_msgs.push_back(endpoint_qos_msg);
@@ -2618,7 +2618,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_extended_incompatible_qos)
 
                 MSP.create_and_add_writer(dw_qos);
 
-                ASSERT_EQ(MSP.get_writer_guids().size(), 1);
+                ASSERT_EQ(MSP.get_writer_guids().size(), 1u);
                 w_guid = MSP.get_writer_guids().back();
 
                 break;
@@ -2840,7 +2840,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
     // That will prove that only the last update of the instance is being received and, in turn,
     // verify that the monitor service datawriter is not holding past samples of the same instance.
     r_guids = MSP.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
+    ASSERT_EQ(r_guids.size(), 1u);
     endpoint_deadline_msg.local_entity(r_guids.back());
 
     statistics::DeadlineMissedStatus_s deadline_missed_status;
@@ -2850,7 +2850,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
     non_expected_msgs.push_back(endpoint_deadline_msg);
 
     w_guids = MSP.get_writer_guids();
-    ASSERT_EQ(w_guids.size(), 1);
+    ASSERT_EQ(w_guids.size(), 1u);
     endpoint_deadline_msg.local_entity(w_guids.back());
 
     non_expected_msgs.push_back(endpoint_deadline_msg);
@@ -3025,3 +3025,4 @@ TEST(DDSMonitorServiceTest, monitor_service_proxy_optional_qos)
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
+

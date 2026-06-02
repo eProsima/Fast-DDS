@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(PythonInterp 3)
+find_package(Python3 COMPONENTS Interpreter)
 
 add_definitions(
     -DBOOST_ASIO_STANDALONE
@@ -121,10 +121,10 @@ if(SECURITY)
     configure_file(${FASTDDS_BASIC_DIR}/test/certs/permissions_helloworld_securehelloworld.smime
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
 
-    if(PYTHONINTERP_FOUND)
+    if(Python3_Interpreter_FOUND)
 
         add_test(NAME SimpleCommunicationSecureBestEffort
-            COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
+            COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${Python3_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
         # Set test with label NoMemoryCheck
         set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -146,7 +146,7 @@ if(SECURITY)
         endif()
 
         add_test(NAME SimpleCommunicationSecureMsgCryptoBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --pub $<TARGET_FILE:CommunicationPublisher>
             --xml-pub secure_msg_crypto_besteffort_pub_profile.xml
             --sub $<TARGET_FILE:CommunicationSubscriber>
@@ -163,7 +163,7 @@ if(SECURITY)
         endif()
 
         add_test(NAME SimpleCommunicationSecureMsgSubmsgCryptoBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --pub $<TARGET_FILE:CommunicationPublisher>
             --xml-pub secure_msg_submsg_crypto_besteffort_pub_profile.xml
             --sub $<TARGET_FILE:CommunicationSubscriber>
@@ -180,7 +180,7 @@ if(SECURITY)
         endif()
 
         add_test(NAME SimpleCommunicationSecureSubmsgCryptoBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --pub $<TARGET_FILE:CommunicationPublisher>
             --xml-pub secure_submsg_crypto_besteffort_pub_profile.xml
             --sub $<TARGET_FILE:CommunicationSubscriber>
@@ -197,7 +197,7 @@ if(SECURITY)
         endif()
 
         add_test(NAME AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --n-subs 1
             --pub $<TARGET_FILE:CommunicationPublisher>
             --xml-pub simple_secure_allow_unauthenticated_pub_profile.xml
@@ -215,7 +215,7 @@ if(SECURITY)
         endif()
 
         add_test(NAME SecureDiscoverServerDisabled
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/test_secure_ds_disabled.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/test_secure_ds_disabled.py
             --ds-server $<TARGET_FILE:fast-discovery-server>
             --xml-ds secure_simple_ds_server_profile.xml
             --server-id 0
@@ -233,3 +233,4 @@ if(SECURITY)
     endif()
 
 endif()
+

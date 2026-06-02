@@ -229,7 +229,7 @@ TEST_F(ReaderHistoryTests, change_order)
 
         // Prepare for next iteration
         history->remove_all_changes();
-        ASSERT_EQ(history->getHistorySize(), 0);
+        ASSERT_EQ(history->getHistorySize(), 0u);
     }
 
     // Clean-up
@@ -293,3 +293,4 @@ int main(
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
