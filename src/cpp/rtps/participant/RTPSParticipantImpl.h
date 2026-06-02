@@ -807,24 +807,16 @@ private:
 
 public:
 
-<<<<<<< HEAD:src/cpp/rtps/participant/RTPSParticipantImpl.h
-    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
-    {
-        return this->m_att;
-    }
-=======
-    FASTDDS_TODO_BEFORE(4, 0,
-            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
      * @brief Get the RTPSParticipantAttributes of this RTPSParticipantImpl. This method is not thread safe,
      * it is recommended to use copy_attributes() instead.
      * @return RTPSParticipantAttributes of this RTPSParticipantImpl.
      */
-    const RTPSParticipantAttributes& get_attributes() const;
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370)):src/cpp/rtps/participant/RTPSParticipantImpl.hpp
+    const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
+    {
+        return this->m_att;
+    }
 
-    FASTDDS_TODO_BEFORE(4, 0,
-            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
      * @brief Get a const reference of RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
      * This method is thread safe because it returns a const reference to the internal constant attributes.
@@ -832,8 +824,6 @@ public:
      */
     const RTPSParticipantConstantAttributes& get_const_attributes() const;
 
-    FASTDDS_TODO_BEFORE(4, 0,
-            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
      * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
      * This method is thread safe because it returns a const copy of the internal mutable attributes.
@@ -841,8 +831,6 @@ public:
      */
     const RTPSParticipantMutableAttributes get_mutable_attributes() const;
 
-    FASTDDS_TODO_BEFORE(4, 0,
-            "Make RTPSParticipantAttributes a composition of RTPSParticipantConstantAttributes and RTPSParticipantMutableAttributes");
     /**
      * @brief Get a copy of the RTPSParticipantAttributes of this RTPSParticipantImpl in a thread safe manner.
      * @return A copy of the RTPSParticipantAttributes of this RTPSParticipantImpl.

@@ -630,18 +630,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif // if HAVE_SECURITY
 
-<<<<<<< HEAD
     // Copy NetworkFactory network_configuration to participant attributes prior to proxy creation
     // NOTE: all transports already registered before
     m_att.builtin.network_configuration = m_network_Factory.network_configuration();
 
-    mp_builtinProtocols = new BuiltinProtocols();
-
-=======
     // Update constant attributes. Need to do it at this point to ensure we capture the constant attributes
     // set at "setup_" methods, but before setup_builtin_protocols, which already access constant values.
     m_const_att = m_att;
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+
+    mp_builtinProtocols = new BuiltinProtocols();
+
     // Initialize builtin protocols
     if (!mp_builtinProtocols->initBuiltinProtocols(this, m_att.builtin))
     {
@@ -1911,18 +1909,11 @@ void RTPSParticipantImpl::update_attributes(
             }
         }
 
-<<<<<<< HEAD
         // Update the attributes data member
         {
             std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
-            m_att = temp_atts;
+            update_mutable_attributes(temp_atts);
         }
-=======
-    // Update the attributes data member
-    {
-        std::lock_guard<std::mutex> _(mutex_);
-        update_mutable_attributes(temp_atts);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     }
 
     if (update_pdp)
@@ -1932,12 +1923,6 @@ void RTPSParticipantImpl::update_attributes(
     }
 }
 
-<<<<<<< HEAD
-bool RTPSParticipantImpl::updateLocalWriter(
-        RTPSWriter* Writer,
-        const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
-=======
 void RTPSParticipantImpl::update_mutable_attributes(
         const RTPSParticipantAttributes& patt)
 {
@@ -1950,10 +1935,10 @@ void RTPSParticipantImpl::update_mutable_attributes(
     m_att.userData = patt.userData;
 }
 
-bool RTPSParticipantImpl::update_writer(
-        RTPSWriter* rtps_writer,
-        const fastdds::dds::WriterQos& wqos)
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+bool RTPSParticipantImpl::updateLocalWriter(
+        RTPSWriter* Writer,
+        const TopicAttributes& topicAtt,
+        const WriterQos& wqos)
 {
     return this->mp_builtinProtocols->updateLocalWriter(Writer, topicAtt, wqos);
 }
@@ -3088,13 +3073,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
         patt = m_att;
     }
     // Only if it is a server/backup or a client override
-<<<<<<< HEAD
-    if (DiscoveryProtocol_t::SERVER == m_att.builtin.discovery_config.discoveryProtocol ||
-            DiscoveryProtocol_t::BACKUP == m_att.builtin.discovery_config.discoveryProtocol ||
-=======
     if (DiscoveryProtocol::SERVER == patt.builtin.discovery_config.discoveryProtocol ||
             DiscoveryProtocol::BACKUP == patt.builtin.discovery_config.discoveryProtocol ||
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             client_override_)
     {
         if (load_environment_server_info(patt.builtin.discovery_config.m_DiscoveryServers))
@@ -3588,38 +3568,12 @@ void RTPSParticipantImpl::update_removed_participant(
 {
     if (!remote_participant_locators.empty())
     {
-<<<<<<< HEAD
-=======
-        LocatorList_t initial_peers_and_ds;
-        {
-            std::lock_guard<std::mutex> _(mutex_);
-            initial_peers_and_ds = m_att.builtin.discovery_config.m_DiscoveryServers;
-            for (const Locator_t& locator : m_att.builtin.initialPeersList)
-            {
-                initial_peers_and_ds.push_back(locator);
-            }
-        }
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
         m_network_Factory.remove_participant_associated_send_resources(
             send_resource_list_,
             remote_participant_locators,
-<<<<<<< HEAD
-            m_att.builtin.initialPeersList);
-=======
-            initial_peers_and_ds);
+            get_const_attributes().builtin.initialPeersList);
     }
-}
-
-dds::utils::TypePropagation RTPSParticipantImpl::type_propagation() const
-{
-    std::lock_guard<std::mutex> _(mutex_);
-    return dds::utils::to_type_propagation(m_att.properties);
-}
-
-const RTPSParticipantAttributes& RTPSParticipantImpl::get_attributes() const
-{
-    return m_att;
 }
 
 const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attributes() const
@@ -3637,49 +3591,6 @@ RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const
 {
     std::lock_guard<std::mutex> _(mutex_);
     return m_att;
-}
-
-void RTPSParticipantImpl::notify_reader_discovery(
-        ReaderDiscoveryStatus reason,
-        const SubscriptionBuiltinTopicData& info)
-{
-    RTPSParticipantListener* listener = getListener();
-    notify_reader_discovery(reason, info, listener);
-}
-
-void RTPSParticipantImpl::notify_reader_discovery(
-        ReaderDiscoveryStatus reason,
-        const SubscriptionBuiltinTopicData& info,
-        RTPSParticipantListener* listener)
-{
-    if (listener)
-    {
-        RTPSParticipant* participant = getUserRTPSParticipant();
-        bool should_be_ignored = false;
-        listener->on_reader_discovery(participant, reason, info, should_be_ignored);
-    }
-}
-
-void RTPSParticipantImpl::notify_writer_discovery(
-        WriterDiscoveryStatus reason,
-        const PublicationBuiltinTopicData& info)
-{
-    RTPSParticipantListener* listener = getListener();
-    notify_writer_discovery(reason, info, listener);
-}
-
-void RTPSParticipantImpl::notify_writer_discovery(
-        WriterDiscoveryStatus reason,
-        const PublicationBuiltinTopicData& info,
-        RTPSParticipantListener* listener)
-{
-    if (listener)
-    {
-        RTPSParticipant* participant = getUserRTPSParticipant();
-        bool should_be_ignored = false;
-        listener->on_writer_discovery(participant, reason, info, should_be_ignored);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
-    }
 }
 
 } /* namespace rtps */

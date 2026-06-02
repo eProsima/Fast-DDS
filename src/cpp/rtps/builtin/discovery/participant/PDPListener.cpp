@@ -51,11 +51,7 @@ namespace rtps {
 PDPListener::PDPListener(
         PDP* parent)
     : parent_pdp_(parent)
-<<<<<<< HEAD
-    , temp_participant_data_(parent->getRTPSParticipant()->getRTPSParticipantAttributes().allocation)
-=======
     , temp_participant_data_(parent->getRTPSParticipant()->get_const_attributes().allocation)
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 {
 }
 
@@ -111,14 +107,8 @@ void PDPListener::onNewCacheChangeAdded(
         // Load information on temp_participant_data_
         CDRMessage_t msg(change->serializedPayload);
         temp_participant_data_.clear();
-<<<<<<< HEAD
-        if (temp_participant_data_.readFromCDRMessage(&msg, true, parent_pdp_->getRTPSParticipant()->network_factory(),
-                parent_pdp_->getRTPSParticipant()->has_shm_transport(), true, change_in->vendor_id))
-=======
-        if (temp_participant_data_.read_from_cdr_message(&msg, true,
-                part->network_factory(),
-                true, change_in->vendor_id))
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+        if (temp_participant_data_.readFromCDRMessage(&msg, true, part->network_factory(),
+                part->has_shm_transport(), true, change_in->vendor_id))
         {
             // After correctly reading it
             change->instanceHandle = temp_participant_data_.m_key;
@@ -130,11 +120,7 @@ void PDPListener::onNewCacheChangeAdded(
             }
 
             // Filter locators
-<<<<<<< HEAD
-            const auto& pattr = parent_pdp_->getRTPSParticipant()->getAttributes();
-=======
             auto mutable_pattr = part->get_mutable_attributes();
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             fastdds::rtps::network::external_locators::filter_remote_locators(temp_participant_data_,
                     mutable_pattr.builtin.metatraffic_external_unicast_locators,
                     mutable_pattr.default_external_unicast_locators,

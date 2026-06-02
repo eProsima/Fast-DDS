@@ -105,14 +105,9 @@ void PDPSimple::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-<<<<<<< HEAD
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.
-                    use_SIMPLE_EndpointDiscoveryProtocol)
-=======
     const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
 
     if (discovery_config.use_SIMPLE_EndpointDiscoveryProtocol)
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     {
         if (getRTPSParticipant()->getAttributes().builtin.discovery_config.m_simpleEDP.
                         use_PublicationWriterANDSubscriptionReader)
@@ -337,12 +332,7 @@ bool PDPSimple::createPDPEndpoints()
 
 bool PDPSimple::create_dcps_participant_endpoints()
 {
-<<<<<<< HEAD
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
-    const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
-=======
     const RTPSParticipantAllocationAttributes& allocation = mp_RTPSParticipant->get_const_attributes().allocation;
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     const BuiltinAttributes& builtin_att = mp_builtin->m_att;
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
     assert(nullptr != endpoints);
@@ -471,12 +461,7 @@ bool PDPSimple::create_dcps_participant_endpoints()
 #if HAVE_SECURITY
 bool PDPSimple::create_dcps_participant_secure_endpoints()
 {
-<<<<<<< HEAD
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
-    const RTPSParticipantAllocationAttributes& allocation = pattr.allocation;
-=======
     const RTPSParticipantAllocationAttributes& allocation = mp_RTPSParticipant->get_const_attributes().allocation;
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     const BuiltinAttributes& builtin_att = mp_builtin->m_att;
     auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpointsSecure*>(builtin_endpoints_.get());
     assert(nullptr != endpoints);
@@ -646,11 +631,7 @@ void PDPSimple::match_pdp_remote_endpoints(
     auto endpoints = static_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
 
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
-<<<<<<< HEAD
-    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
-=======
     bool use_multicast_locators = !mp_RTPSParticipant->get_const_attributes().builtin.avoid_builtin_multicast ||
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
             pdata.metatraffic_locators.unicast.empty();
     const uint32_t endp = pdata.m_availableBuiltinEndpoints;
 

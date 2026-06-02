@@ -352,7 +352,6 @@ private:
 };
 
 /**
-<<<<<<< HEAD:include/fastdds/rtps/attributes/RTPSParticipantAttributes.h
  * TypeLookupService settings.
  */
 class TypeLookupSettings
@@ -364,7 +363,10 @@ public:
 
     //!Indicates to use the TypeLookup Service server endpoints
     bool use_server = false;
-=======
+
+};
+
+/**
  * Class MutableDiscoverySettings, to define the mutable attributes of the several discovery protocols available
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -388,13 +390,10 @@ public:
     {
         return (this->m_DiscoveryServers == b.m_DiscoveryServers);
     }
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370)):include/fastdds/rtps/attributes/RTPSParticipantAttributes.hpp
 
 };
 
 /**
-<<<<<<< HEAD:include/fastdds/rtps/attributes/RTPSParticipantAttributes.h
-=======
  * Class ConstantDiscoverySettings, to define the constant attributes of the several discovery protocols available
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
@@ -490,6 +489,16 @@ public:
         return static_edp_xml_config_.c_str();
     }
 
+    /**
+     * Get the static endpoint XML filename
+     * @return Static endpoint XML filename
+     */
+    FASTRTPS_DEPRECATED("Use static_edp_xml_config()")
+    const char* getStaticEndpointXMLFilename() const
+    {
+        return static_edp_xml_config();
+    }
+
 private:
 
     //! URI specifying the static EDP XML configuration, only necessary if use_STATIC_EndpointDiscoveryProtocol=true
@@ -503,7 +512,6 @@ class BuiltinConstantAttributes;
 class BuiltinMutableAttributes;
 
 /**
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370)):include/fastdds/rtps/attributes/RTPSParticipantAttributes.hpp
  * Class BuiltinAttributes, to define the behavior of the RTPSParticipant builtin protocols.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
