@@ -375,7 +375,7 @@ class MutableDiscoverySettings
 public:
 
     //! Discovery Server initial connections, needed if `discoveryProtocol` = CLIENT | SUPER_CLIENT | SERVER | BACKUP
-    eprosima::fastdds::rtps::LocatorList m_DiscoveryServers;
+    eprosima::fastdds::rtps::RemoteServerList_t m_DiscoveryServers;
 
     MutableDiscoverySettings() = default;
 
@@ -419,13 +419,13 @@ public:
      * Lease Duration of the RTPSParticipant,
      * indicating how much time remote RTPSParticipants should consider this RTPSParticipant alive.
      */
-    dds::Duration_t leaseDuration = { 20, 0 };
+    fastrtps::Duration_t leaseDuration = { 20, 0 };
 
     /**
      * The period for the RTPSParticipant to send its Discovery Message to all other discovered RTPSParticipants
      * as well as to all Multicast ports.
      */
-    dds::Duration_t leaseDuration_announcementperiod = { 3, 0 };
+    fastrtps::Duration_t leaseDuration_announcementperiod = { 3, 0 };
 
     //!Initial announcements configuration
     InitialAnnouncementConfig initial_announcements;
@@ -440,7 +440,7 @@ public:
      *  send its Discovery Message to its servers
      *  check for EDP endpoints matching
      */
-    dds::Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
+    fastrtps::Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
 
     //! Filtering participants out depending on location
     ParticipantFilteringFlags ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;
@@ -658,6 +658,9 @@ public:
     //! Indicates to use the WriterLiveliness protocol.
     bool use_WriterLivelinessProtocol = true;
 
+    //! TypeLookup Service settings
+    TypeLookupSettings typelookup_config;
+
     //! Network Configuration
     NetworkConfigSet_t network_configuration = 0;
 
@@ -687,15 +690,13 @@ public:
     //! Set to true to avoid multicast traffic on builtin endpoints
     bool avoid_builtin_multicast = true;
 
-    //! Flow controller name to use for the builtin writers
-    std::string flow_controller_name = "";
-
     BuiltinConstantAttributes() = default;
 
     BuiltinConstantAttributes(
             const BuiltinAttributes& builtin)
         : discovery_config(builtin.discovery_config)
         , use_WriterLivelinessProtocol(builtin.use_WriterLivelinessProtocol)
+        , typelookup_config(builtin.typelookup_config)
         , network_configuration(builtin.network_configuration)
         , metatrafficMulticastLocatorList(builtin.metatrafficMulticastLocatorList)
         , initialPeersList(builtin.initialPeersList)
@@ -705,7 +706,6 @@ public:
         , writerPayloadSize(builtin.writerPayloadSize)
         , mutation_tries(builtin.mutation_tries)
         , avoid_builtin_multicast(builtin.avoid_builtin_multicast)
-        , flow_controller_name(builtin.flow_controller_name)
     {
     }
 
@@ -716,6 +716,8 @@ public:
     {
         return (this->discovery_config == b.discovery_config) &&
                (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
+               (this->typelookup_config.use_client == b.typelookup_config.use_client) &&
+               (this->typelookup_config.use_server == b.typelookup_config.use_server) &&
                (this->network_configuration == b.network_configuration) &&
                (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                (this->initialPeersList == b.initialPeersList) &&
@@ -724,7 +726,6 @@ public:
                (this->writerHistoryMemoryPolicy == b.writerHistoryMemoryPolicy) &&
                (this->writerPayloadSize == b.writerPayloadSize) &&
                (this->mutation_tries == b.mutation_tries) &&
-               (this->flow_controller_name == b.flow_controller_name) &&
                (this->avoid_builtin_multicast == b.avoid_builtin_multicast);
     }
 
@@ -761,7 +762,6 @@ inline void BuiltinAttributes::compose(
     writerPayloadSize = builtin_const.writerPayloadSize;
     mutation_tries = builtin_const.mutation_tries;
     avoid_builtin_multicast = builtin_const.avoid_builtin_multicast;
-    flow_controller_name = builtin_const.flow_controller_name;
     // Mutable settings
     metatrafficUnicastLocatorList = builtin_mutable.metatrafficUnicastLocatorList;
     metatraffic_external_unicast_locators = builtin_mutable.metatraffic_external_unicast_locators;
@@ -1014,7 +1014,7 @@ public:
         , builtin(attrs.builtin)
         , port(attrs.port)
         , participantID(attrs.participantID)
-        , easy_mode_ip(attrs.easy_mode_ip)
+        , throughputController(attrs.throughputController)
         , userTransports(attrs.userTransports)
         , useBuiltinTransports(attrs.useBuiltinTransports)
         , allocation(attrs.allocation)
@@ -1023,7 +1023,6 @@ public:
         , builtin_controllers_sender_thread(attrs.builtin_controllers_sender_thread)
         , timed_events_thread(attrs.timed_events_thread)
         , discovery_server_thread(attrs.discovery_server_thread)
-        , typelookup_service_thread(attrs.typelookup_service_thread)
         , builtin_transports_reception_threads(attrs.builtin_transports_reception_threads)
 #if HAVE_SECURITY
         , security_log_thread(attrs.security_log_thread)
@@ -1046,7 +1045,7 @@ public:
                (this->builtin == b.builtin) &&
                (this->port == b.port) &&
                (this->participantID == b.participantID) &&
-               (this->easy_mode_ip == b.easy_mode_ip) &&
+               (this->throughputController == b.throughputController) &&
                (this->useBuiltinTransports == b.useBuiltinTransports) &&
                (this->allocation == b.allocation) &&
                (this->properties == b.properties) &&
@@ -1058,7 +1057,6 @@ public:
                (this->security_log_thread == b.security_log_thread) &&
 #endif // if HAVE_SECURITY
                (this->discovery_server_thread == b.discovery_server_thread) &&
-               (this->typelookup_service_thread == b.typelookup_service_thread) &&
                (this->builtin_transports_reception_threads == b.builtin_transports_reception_threads);
     }
 
@@ -1105,8 +1103,12 @@ public:
     //! Participant ID
     int32_t participantID = -1;
 
-    //! IP of the Host where master Server is located (EASY_MODE context)
-    std::string easy_mode_ip = "";
+    /**
+     * @brief Throughput controller parameters. Leave default for uncontrolled flow.
+     *
+     * @deprecated Use flow_controllers on RTPSParticipantAttributes
+     */
+    ThroughputControllerDescriptor throughputController;
 
     //! User defined transports to use alongside or in place of builtins.
     std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>> userTransports;
@@ -1138,9 +1140,6 @@ public:
     //! Thread settings for the discovery server thread
     fastdds::rtps::ThreadSettings discovery_server_thread;
 
-    //! Thread settings for the builtin TypeLookup service requests and replies threads
-    fastdds::rtps::ThreadSettings typelookup_service_thread;
-
     //! Thread settings for the builtin transports reception threads
     fastdds::rtps::ThreadSettings builtin_transports_reception_threads;
 
@@ -1158,7 +1157,7 @@ public:
 private:
 
     //! Name of the participant.
-    fastcdr::string_255 name{"RTPSParticipant"};
+    string_255 name{"RTPSParticipant"};
 
 };
 

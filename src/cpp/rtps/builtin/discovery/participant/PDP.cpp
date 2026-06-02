@@ -238,7 +238,7 @@ bool PDP::data_matches_with_prefix(
 void PDP::initializeParticipantProxyData(
         ParticipantProxyData* participant_data)
 {
-    RTPSParticipantAttributes& mutable_attrs = mp_RTPSParticipant->get_mutable_attributes();
+    RTPSParticipantMutableAttributes mutable_attrs = mp_RTPSParticipant->get_mutable_attributes();
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
     participant_data->m_leaseDuration = mp_RTPSParticipant->get_const_attributes().builtin.discovery_config.leaseDuration;
@@ -263,13 +263,13 @@ void PDP::initializeParticipantProxyData(
 #endif // if HAVE_SECURITY
     }
 
-    if (attributes.builtin.typelookup_config.use_server)
+    if (mp_RTPSParticipant->get_const_attributes().builtin.typelookup_config.use_server)
     {
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_READER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_WRITER;
     }
 
-    if (attributes.builtin.typelookup_config.use_client)
+    if (mp_RTPSParticipant->get_const_attributes().builtin.typelookup_config.use_client)
     {
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REQUEST_DATA_WRITER;
         participant_data->m_availableBuiltinEndpoints |= BUILTIN_ENDPOINT_TYPELOOKUP_SERVICE_REPLY_DATA_READER;
@@ -284,7 +284,7 @@ void PDP::initializeParticipantProxyData(
 
     if (announce_locators)
     {
-        participant_data->m_network_configuration =
+        participant_data->m_networkConfiguration =
                 mp_RTPSParticipant->get_const_attributes().builtin.network_configuration;
 
         for (const Locator_t& loc : mutable_attrs.defaultUnicastLocatorList)
@@ -1537,7 +1537,7 @@ void PDP::set_external_participant_properties_(
     };
     for (auto physical_property_name : physical_property_names)
     {
-        std::string* physical_property = PropertyPolicyHelper::find_property(
+        const std::string* physical_property = PropertyPolicyHelper::find_property(
             part_attributes.properties, physical_property_name);
         if (nullptr != physical_property)
         {

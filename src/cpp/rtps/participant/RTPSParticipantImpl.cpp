@@ -3069,7 +3069,7 @@ void RTPSParticipantImpl::environment_file_has_changed()
 {
     RTPSParticipantAttributes patt;
     {
-        std::lock_guard<std::mutex> _(mutex_);
+        std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
         patt = m_att;
     }
     // Only if it is a server/backup or a client override
@@ -3583,13 +3583,13 @@ const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attribut
 
 const RTPSParticipantMutableAttributes RTPSParticipantImpl::get_mutable_attributes() const
 {
-    std::lock_guard<std::mutex> _(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return RTPSParticipantMutableAttributes(m_att);
 }
 
 RTPSParticipantAttributes RTPSParticipantImpl::copy_attributes() const
 {
-    std::lock_guard<std::mutex> _(mutex_);
+    std::lock_guard<std::recursive_mutex> guard(*mp_mutex);
     return m_att;
 }
 

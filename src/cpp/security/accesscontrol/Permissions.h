@@ -20,6 +20,7 @@
 #define _SECURITY_ACCESSCONTROL_PERMISSIONS_H_
 
 #include <fastdds/rtps/security/accesscontrol/AccessControl.h>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/Token.h>
 
 namespace eprosima {
