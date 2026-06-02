@@ -2617,7 +2617,7 @@ ReturnCode_t TypeObjectRegistry::set_annotation_parameter_value(
                 TypeValueConverter::sto(value) : 0));
             break;
         case TK_CHAR8:
-            param_value = TypeObjectUtils::build_annotation_parameter_value(!value.empty() ? value : 0);
+            param_value = TypeObjectUtils::build_annotation_parameter_value(!value.empty() ? value[0] : '\0');
             break;
         case TK_ENUM:
         {
