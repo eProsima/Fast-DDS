@@ -121,8 +121,8 @@ static void set_builtin_transports_from_env_var(
                     "LARGE_DATA", BuiltinTransports::LARGE_DATA,
                     "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
             {
-                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
-                        env_var_name << "'. Leaving as DEFAULT");
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '"
+                                                                     << env_var_name << "'. Leaving as DEFAULT");
             }
         }
         else if (std::regex_match(env_value, mr, OPTIONS_REGEX, std::regex_constants::match_not_null))
@@ -148,8 +148,8 @@ static void set_builtin_transports_from_env_var(
                         "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                            "Wrong value '" << env_value << "' for environment variable '" <<
-                            env_var_name << "'. Leaving as DEFAULT");
+                            "Wrong value '" << env_value << "' for environment variable '"
+                                            << env_var_name << "'. Leaving as DEFAULT");
                 }
                 // Max_msg_size parser
                 if (std::regex_search(env_value, mr, msg_size_regex, std::regex_constants::match_not_null))
@@ -181,16 +181,16 @@ static void set_builtin_transports_from_env_var(
             catch (std::exception& e)
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                        "Exception parsing environment variable: " << e.what() <<
-                        " Leaving LARGE_DATA with default options.");
+                        "Exception parsing environment variable: " << e.what()
+                                                                   << " Leaving LARGE_DATA with default options.");
                 attr.setup_transports(ret_val);
                 return;
             }
         }
         else
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
-                    env_var_name << "'. Leaving as DEFAULT");
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '"
+                                                                 << env_var_name << "'. Leaving as DEFAULT");
         }
     }
     attr.setup_transports(ret_val);
@@ -443,7 +443,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     if (pT->listening_ports.empty())
                     {
                         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                                "Participant " << m_att.getName() << " with GUID " << m_guid <<
+                                "Participant " << m_att.getName() << " with GUID " << m_guid
+                                               <<
                                 " tries to create a TCP server for discovery server without providing a proper listening port.");
                         break;
                     }
@@ -491,7 +492,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     if (pT->listening_ports.empty())
                     {
                         EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
-                                "Participant " << m_att.getName() << " with GUID " << m_guid <<
+                                "Participant " << m_att.getName() << " with GUID " << m_guid
+                                               <<
                                 " tries to create a TCP client for discovery server without providing a proper listening port."
                                                <<
                                 " No TCP participants will be able to connect to this participant, but it will be able make connections.");
@@ -1679,8 +1681,8 @@ void RTPSParticipantImpl::update_attributes(
     if (!SystemInfo::update_interfaces())
     {
         EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                "Failed to update cached network interfaces during " << temp_atts.getName() <<
-                " attributes update");
+                "Failed to update cached network interfaces during " << temp_atts.getName()
+                                                                     << " attributes update");
     }
 
     // Check if new interfaces have been added
@@ -2163,8 +2165,8 @@ bool RTPSParticipantImpl::createSendResources(
     {
         if (!m_network_Factory.build_send_resources(send_resource_list_, (*it)))
         {
-            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Cannot create send resource for endpoint remote locator (" <<
-                    pend->getGuid() << ", " << (*it) << ")");
+            EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Cannot create send resource for endpoint remote locator ("
+                    << pend->getGuid() << ", " << (*it) << ")");
         }
     }
 
@@ -3085,8 +3087,8 @@ void RTPSParticipantImpl::environment_file_has_changed()
     else
     {
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP " <<
-                "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
+                "Trying to add Discovery Servers to a participant which is not a SERVER, BACKUP "
+                << "or an overriden CLIENT (SIMPLE participant transformed into CLIENT with the environment variable)");
     }
 }
 
@@ -3556,8 +3558,8 @@ bool RTPSParticipantImpl::should_match_local_endpoints(
         {
             should_match_local_endpoints = true;
             EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                    "Unkown value '" << *ignore_local_endpoints <<
-                    "' for property 'fastdds.ignore_local_endpoints'. Setting value to 'true'");
+                    "Unkown value '" << *ignore_local_endpoints
+                                     << "' for property 'fastdds.ignore_local_endpoints'. Setting value to 'true'");
         }
     }
     return should_match_local_endpoints;

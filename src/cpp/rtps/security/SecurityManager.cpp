@@ -934,8 +934,8 @@ bool SecurityManager::on_process_handshake(
                 change->serializedPayload.length = aux_msg.length;
 
                 // Send
-                EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake sent to participant " <<
-                        participant_data.m_guid);
+                EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake sent to participant "
+                        << participant_data.m_guid);
                 if (participant_stateless_message_writer_history_->add_change(change))
                 {
                     handshake_message_send = true;
@@ -1871,8 +1871,8 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                EPROSIMA_LOG_INFO(SECURITY, "Received Reader Cryptography message but not found local writer " <<
-                        message.destination_endpoint_key());
+                EPROSIMA_LOG_INFO(SECURITY, "Received Reader Cryptography message but not found local writer "
+                        << message.destination_endpoint_key());
             }
         }
 
@@ -1947,8 +1947,8 @@ void SecurityManager::process_participant_volatile_message_secure(
             }
             else
             {
-                EPROSIMA_LOG_INFO(SECURITY, "Received Writer Cryptography message but not found local reader " <<
-                        message.destination_endpoint_key());
+                EPROSIMA_LOG_INFO(SECURITY, "Received Writer Cryptography message but not found local reader "
+                        << message.destination_endpoint_key());
             }
         }
 
@@ -2449,8 +2449,9 @@ int SecurityManager::decode_rtps_message(
         }
         else
         {
-            EPROSIMA_LOG_INFO(SECURITY, "Cannot decode rtps message from participant " << remote_participant_key <<
-                    "(" << exception.what() << ")");
+            EPROSIMA_LOG_INFO(SECURITY, "Cannot decode rtps message from participant " << remote_participant_key
+                                                                                       << "(" << exception.what()
+                                                                                       << ")");
         }
     }
     else
@@ -2550,14 +2551,14 @@ bool SecurityManager::get_datawriter_sec_attributes(
                 if ((returned_value = access_plugin_->get_datawriter_sec_attributes(*local_permissions_handle_,
                         topic_name, partitions, security_attributes, exception)) == false)
                 {
-                    EPROSIMA_LOG_ERROR(SECURITY, "Error getting security attributes of local writer " <<
-                            " (" << exception.what() << ")" << std::endl);
+                    EPROSIMA_LOG_ERROR(SECURITY, "Error getting security attributes of local writer "
+                            << " (" << exception.what() << ")" << std::endl);
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error checking creation of local writer " <<
-                        " (" << exception.what() << ")" << std::endl);
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking creation of local writer "
+                        << " (" << exception.what() << ")" << std::endl);
                 returned_value = false;
             }
         }
@@ -2732,14 +2733,14 @@ bool SecurityManager::get_datareader_sec_attributes(
                 if ((returned_value = access_plugin_->get_datareader_sec_attributes(*local_permissions_handle_,
                         topic_name, partitions, security_attributes, exception)) == false)
                 {
-                    EPROSIMA_LOG_ERROR(SECURITY, "Error getting security attributes of local reader " <<
-                            " (" << exception.what() << ")" << std::endl);
+                    EPROSIMA_LOG_ERROR(SECURITY, "Error getting security attributes of local reader "
+                            << " (" << exception.what() << ")" << std::endl);
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error checking creation of local reader " <<
-                        " (" << exception.what() << ")" << std::endl);
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking creation of local reader "
+                        << " (" << exception.what() << ")" << std::endl);
                 returned_value = false;
             }
         }
@@ -3161,14 +3162,16 @@ bool SecurityManager::discovered_reader(
                 else
                 {
                     EPROSIMA_LOG_ERROR(SECURITY,
-                            "Crypto plugin fails registering remote reader " << remote_reader_data.guid() <<
-                            " of participant " << remote_participant_key);
+                            "Crypto plugin fails registering remote reader " << remote_reader_data.guid()
+                                                                             << " of participant "
+                                                                             << remote_participant_key);
                 }
             }
             else
             {
-                EPROSIMA_LOG_INFO(SECURITY, "Storing remote reader << " << remote_reader_data.guid() <<
-                        " of participant " << remote_participant_key << " on pendings");
+                EPROSIMA_LOG_INFO(SECURITY, "Storing remote reader << " << remote_reader_data.guid()
+                                                                        << " of participant "
+                                                                        << remote_participant_key << " on pendings");
 
                 remote_reader_pending_discovery_messages_.push_back(std::make_tuple(remote_reader_data,
                         remote_participant_key, writer_guid));
@@ -3529,14 +3532,16 @@ bool SecurityManager::discovered_writer(
                 else
                 {
                     EPROSIMA_LOG_ERROR(SECURITY,
-                            "Crypto plugin fails registering remote writer " << remote_writer_data.guid() <<
-                            " of participant " << remote_participant_key);
+                            "Crypto plugin fails registering remote writer " << remote_writer_data.guid()
+                                                                             << " of participant "
+                                                                             << remote_participant_key);
                 }
             }
             else
             {
-                EPROSIMA_LOG_INFO(SECURITY, "Storing remote writer << " << remote_writer_data.guid() <<
-                        " of participant " << remote_participant_key << "on pendings");
+                EPROSIMA_LOG_INFO(SECURITY, "Storing remote writer << " << remote_writer_data.guid()
+                                                                        << " of participant "
+                                                                        << remote_participant_key << "on pendings");
 
                 remote_writer_pending_discovery_messages_.push_back(std::make_tuple(remote_writer_data,
                         remote_participant_key, reader_guid));
@@ -3978,16 +3983,16 @@ bool SecurityManager::participant_authorized(
                 if (!access_plugin_->check_remote_participant(*remote_permissions, domain_id_,
                         participant_data, exception))
                 {
-                    EPROSIMA_LOG_ERROR(SECURITY, "Error checking remote participant  " <<
-                            participant_data.m_guid << " (" << exception.what() << ").");
+                    EPROSIMA_LOG_ERROR(SECURITY, "Error checking remote participant  "
+                            << participant_data.m_guid << " (" << exception.what() << ").");
                     access_plugin_->return_permissions_handle(remote_permissions, exception);
                     remote_permissions = nullptr;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error validating remote permissions for " <<
-                        participant_data.m_guid << " (" << exception.what() << ").");
+                EPROSIMA_LOG_ERROR(SECURITY, "Error validating remote permissions for "
+                        << participant_data.m_guid << " (" << exception.what() << ").");
 
                 if (remote_permissions != nullptr)
                 {
@@ -4001,8 +4006,8 @@ bool SecurityManager::participant_authorized(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(SECURITY, "Not receive remote permissions of participant " <<
-                    participant_data.m_guid << " (" << exception.what() << ").");
+            EPROSIMA_LOG_ERROR(SECURITY, "Not receive remote permissions of participant "
+                    << participant_data.m_guid << " (" << exception.what() << ").");
         }
     }
 
@@ -4288,8 +4293,8 @@ void SecurityManager::resend_handshake_message_token(
 
                     if (p_change != nullptr)
                     {
-                        EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant " <<
-                                remote_participant_key);
+                        EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant "
+                                << remote_participant_key);
                         if (participant_stateless_message_writer_history_->add_change(p_change))
                         {
                             remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
@@ -4328,8 +4333,8 @@ void SecurityManager::on_validation_failed(
         EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
     }
 
-    EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
-            participant_data.m_guid);
+    EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant "
+            << participant_data.m_guid);
 
     // Inform user about authenticated remote participant.
     if (participant_->getListener() != nullptr)

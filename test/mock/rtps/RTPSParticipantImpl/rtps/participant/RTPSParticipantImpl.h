@@ -149,7 +149,7 @@ public:
             const EntityId_t& entityId, bool isBuiltin, bool enable));
     // *INDENT-ON*
 
-    MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
+    MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex * ());
 
     bool createWriter(
             RTPSWriter** writer,
@@ -319,7 +319,7 @@ public:
     {
     }
 
-    template <EndpointKind_t kind, octet no_key, octet with_key>
+    template<EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t&,
             std::atomic<uint32_t>&,

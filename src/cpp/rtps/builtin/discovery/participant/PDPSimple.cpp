@@ -678,8 +678,8 @@ void PDPSimple::match_pdp_remote_endpoints(
                         reader->getGuid(), pdata.m_guid, *temp_writer_data,
                         reader->getAttributes().security_attributes()))
             {
-                EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " <<
-                        temp_writer_data->guid());
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer "
+                        << temp_writer_data->guid());
             }
         }
         else
@@ -707,8 +707,8 @@ void PDPSimple::match_pdp_remote_endpoints(
                         writer->getGuid(), pdata.m_guid, *temp_reader_data,
                         writer->getAttributes().security_attributes()))
             {
-                EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " <<
-                        temp_reader_data->guid());
+                EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader "
+                        << temp_reader_data->guid());
             }
         }
         else

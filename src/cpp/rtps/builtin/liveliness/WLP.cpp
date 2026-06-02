@@ -504,8 +504,8 @@ bool WLP::assignRemoteEndpoints(
                     mp_builtinReaderSecure->getGuid(), pdata.m_guid, temp_writer_proxy_data_,
                     mp_builtinReaderSecure->getAttributes().security_attributes()))
         {
-            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader " <<
-                    mp_builtinReaderSecure->getGuid());
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for reader "
+                    << mp_builtinReaderSecure->getGuid());
         }
     }
     auxendp = endp;
@@ -518,8 +518,8 @@ bool WLP::assignRemoteEndpoints(
                     mp_builtinWriterSecure->getGuid(), pdata.m_guid, temp_reader_proxy_data_,
                     mp_builtinWriterSecure->getAttributes().security_attributes()))
         {
-            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer " <<
-                    mp_builtinWriterSecure->getGuid());
+            EPROSIMA_LOG_ERROR(RTPS_EDP, "Security manager returns an error for writer "
+                    << mp_builtinWriterSecure->getGuid());
         }
     }
 #else

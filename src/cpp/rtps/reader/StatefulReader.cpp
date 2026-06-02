@@ -260,8 +260,9 @@ bool StatefulReader::matched_writer_add(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
-                        ") reached for writer " << m_guid);
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers \
+                                                                                       << ") reached for writer "
+                                                                                       << m_guid);
                 return false;
             }
         }
@@ -719,8 +720,8 @@ bool StatefulReader::processDataFragMsg(
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
             EPROSIMA_LOG_INFO(RTPS_MSG_IN,
-                    IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " <<
-                    getGuid().entityId);
+                    IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: "
+                                                       << getGuid().entityId);
 
             size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
             bool will_never_be_accepted = false;
@@ -1110,8 +1111,8 @@ bool StatefulReader::change_received(
 
                 EPROSIMA_LOG_INFO(RTPS_READER,
                         "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                << a_change->sequenceNumber <<
-                        " skipped. Higher sequence numbers have been received.");
+                                                << a_change->sequenceNumber
+                                                << " skipped. Higher sequence numbers have been received.");
                 return false;
             }
         }
@@ -1320,8 +1321,8 @@ bool StatefulReader::nextUntakenCache(
         else
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                    " because is no longer paired");
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID
+                                       << " because is no longer paired");
             it = mp_history->remove_change(it);
         }
 
@@ -1379,8 +1380,8 @@ bool StatefulReader::nextUnreadCache(
         else
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                    " because is no longer paired");
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID
+                                       << " because is no longer paired");
             it = mp_history->remove_change(it);
             continue;
         }

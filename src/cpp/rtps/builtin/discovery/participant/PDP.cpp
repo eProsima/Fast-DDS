@@ -191,8 +191,10 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies << \
-                    ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+            EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of participant proxies (" << max_proxies \
+                                                                                     << ") reached for participant "
+                                                                                     << mp_RTPSParticipant->getGuid()
+                                                                                     << std::endl);
             return nullptr;
         }
     }
@@ -241,7 +243,8 @@ void PDP::initializeParticipantProxyData(
     RTPSParticipantMutableAttributes mutable_attrs = mp_RTPSParticipant->get_mutable_attributes();
     bool announce_locators = !mp_RTPSParticipant->is_intraprocess_only();
 
-    participant_data->m_leaseDuration = mp_RTPSParticipant->get_const_attributes().builtin.discovery_config.leaseDuration;
+    participant_data->m_leaseDuration =
+            mp_RTPSParticipant->get_const_attributes().builtin.discovery_config.leaseDuration;
     //set_VendorId_eProsima(participant_data->m_VendorId);
     participant_data->m_VendorId = c_VendorId_eProsima;
 
@@ -887,8 +890,10 @@ ReaderProxyData* PDP::addReaderProxyData(
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies <<
-                            ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of reader proxies (" << max_proxies
+                                                                                        << ") reached for participant "
+                                                                                        << mp_RTPSParticipant->getGuid()
+                                                                                        << std::endl);
                     return nullptr;
                 }
             }
@@ -988,8 +993,10 @@ WriterProxyData* PDP::addWriterProxyData(
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies <<
-                            ") reached for participant " << mp_RTPSParticipant->getGuid() << std::endl);
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Maximum number of writer proxies (" << max_proxies
+                                                                                        << ") reached for participant "
+                                                                                        << mp_RTPSParticipant->getGuid()
+                                                                                        << std::endl);
                     return nullptr;
                 }
             }
