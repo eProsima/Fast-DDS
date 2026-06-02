@@ -230,8 +230,6 @@ public:
         return attributes_;
     }
 
-<<<<<<< HEAD:test/mock/rtps/RTPSParticipant/fastdds/rtps/participant/RTPSParticipant.h
-=======
     const RTPSParticipantConstantAttributes& get_const_attributes() const
     {
         return const_attributes_;
@@ -247,15 +245,6 @@ public:
         return attributes_;
     }
 
-    MOCK_METHOD(bool, get_publication_info,
-            (fastdds::rtps::PublicationBuiltinTopicData&,
-            const GUID_t&), (const));
-
-    MOCK_METHOD(bool, get_subscription_info,
-            (fastdds::rtps::SubscriptionBuiltinTopicData&,
-            const GUID_t&), (const));
-
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370)):test/mock/rtps/RTPSParticipant/fastdds/rtps/participant/RTPSParticipant.hpp
     bool update_attributes(
             const RTPSParticipantAttributes& patt)
     {
@@ -277,11 +266,7 @@ public:
     const GUID_t m_guid;
     mutable ResourceEvent mp_event_thr;
     RTPSParticipantAttributes attributes_;
-<<<<<<< HEAD:test/mock/rtps/RTPSParticipant/fastdds/rtps/participant/RTPSParticipant.h
-=======
     RTPSParticipantConstantAttributes const_attributes_;
-    RTPSParticipantImpl* mp_impl;
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370)):test/mock/rtps/RTPSParticipant/fastdds/rtps/participant/RTPSParticipant.hpp
 };
 
 } /* namespace rtps */

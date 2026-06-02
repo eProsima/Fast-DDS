@@ -699,14 +699,8 @@ public:
 
 };
 
-<<<<<<< HEAD
-void get_rtps_attributes(
-        const DomainParticipant* participant,
-        fastrtps::rtps::RTPSParticipantAttributes& att)
-=======
-fastdds::rtps::RTPSParticipantAttributes get_rtps_attributes(
+fastrtps::rtps::RTPSParticipantAttributes get_rtps_attributes(
         const DomainParticipant* participant)
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 {
     const DomainParticipantTest* participant_test = static_cast<const DomainParticipantTest*>(participant);
     EXPECT_NE(nullptr, participant_test);
@@ -715,17 +709,12 @@ fastdds::rtps::RTPSParticipantAttributes get_rtps_attributes(
         return {};
     }
     const DomainParticipantImpl* participant_impl = participant_test->get_impl();
-<<<<<<< HEAD
-    ASSERT_NE(nullptr, participant_impl);
-    att = participant_impl->get_rtps_participant()->getRTPSParticipantAttributes();
-=======
     EXPECT_NE(nullptr, participant_impl);
     if (participant_impl == nullptr)
     {
         return {};
     }
     return participant_impl->get_rtps_participant()->copy_attributes();
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 }
 
 void helper_wait_for_at_least_entries(
@@ -884,14 +873,8 @@ void set_and_check_with_environment_file(
     // Wait for the file watch callback
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::SERVER);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 }
 
@@ -914,14 +897,8 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 
     // check UDPv6 transport is there
@@ -957,14 +934,8 @@ TEST(ParticipantTests, NoBuiltinMetatrafficMulticastForClients)
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.metatrafficMulticastLocatorList.size(), 0);
 
     DomainParticipantQos result_qos = participant->get_qos();
@@ -999,14 +970,8 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 
 #ifdef _WIN32
@@ -1019,14 +984,8 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant_2);
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes_2;
-    get_rtps_attributes(participant_2, attributes_2);
+    fastrtps::rtps::RTPSParticipantAttributes attributes_2 = get_rtps_attributes(participant_2);
     EXPECT_EQ(attributes_2.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SUPER_CLIENT);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes_2 = get_rtps_attributes(participant_2);
-    EXPECT_EQ(attributes_2.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::SUPER_CLIENT);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes_2.builtin.discovery_config.m_DiscoveryServers, output);
 
     // check UDPv6 transport is there
@@ -1101,14 +1060,8 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
                     PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(nullptr, participant);
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 
     // check UDPv6 transport is there
@@ -1149,12 +1102,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
 
     // As the environment file does not have the ROS_DISCOVERY_SERVER variable set, this variable has been loaded from
     // the environment
@@ -1201,14 +1149,8 @@ TEST(ParticipantTests, ClientParticipantRemoteServerListConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::CLIENT);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
@@ -1235,14 +1177,8 @@ TEST(ParticipantTests, ServerParticipantEnvironmentConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, server_qos);
     ASSERT_NE(nullptr, participant);
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::SERVER);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_TRUE(attributes.builtin.discovery_config.m_DiscoveryServers.empty());
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
@@ -1270,14 +1206,8 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::SERVER);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
@@ -1288,81 +1218,7 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
  * SERVER Participant with initial server with inconsistent GUID prefix.
  * Dynamic addition of servers failure.
  */
-<<<<<<< HEAD
 TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguration)
-=======
-TEST(ParticipantTests, EasyModeParticipantCheckConfigurationPriority)
-{
-    // Easy Mode is currently not supported on Windows
-#ifndef _WIN32
-    set_easy_mode_environment_variable("1.1.1.1");
-
-    // Set Easy Mode manually using WireProtocolConfigQos with a different value
-    DomainParticipantQos qos;
-    qos.wire_protocol().easy_mode("2.2.2.2");
-    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, qos);
-    ASSERT_NE(nullptr, participant);
-
-    // Verify that the localhost Discovery Server is created and the configured remote IP
-    // is the one set by the QoS (i.e., ROS2_EASY_MODE environment variable is ignored).
-    rtps::RTPSParticipantAttributes rtps_attr = get_rtps_attributes(participant);
-    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1);
-
-    rtps::Locator_t expected_locator;
-    rtps::IPLocator::setIPv4(expected_locator, "127.0.0.1");
-
-    ASSERT_TRUE(
-        rtps::IPLocator::compareAddress(
-            *(rtps_attr.builtin.discovery_config.m_DiscoveryServers.begin()),
-            expected_locator,
-            false));
-    ASSERT_EQ(rtps_attr.easy_mode_ip, "2.2.2.2");
-
-    ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
-    stop_background_servers();
-#endif // _WIN32
-}
-
-/**
- * Check that Easy Mode IP is configured correctly when loading a qos profile from XML.
- */
-TEST(ParticipantTests, EasyModeIPConfigFromXML)
-{
-    // Easy Mode is currently not supported on Windows
-#ifndef _WIN32
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_easy_mode_config.xml");
-    uint32_t domain_id = (uint32_t)GET_PID() % 230;
-
-    //participant using the default profile
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
-    ASSERT_NE(participant, nullptr);
-
-    // Verify that the localhost Discovery Server is created and the configured remote IP
-    // is the one set by the QoS
-    rtps::RTPSParticipantAttributes rtps_attr = get_rtps_attributes(participant);
-    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1);
-
-    rtps::Locator_t expected_locator;
-    rtps::IPLocator::setIPv4(expected_locator, "127.0.0.1");
-
-    ASSERT_TRUE(
-        rtps::IPLocator::compareAddress(
-            *(rtps_attr.builtin.discovery_config.m_DiscoveryServers.begin()),
-            expected_locator,
-            false));
-    ASSERT_EQ(rtps_attr.easy_mode_ip, "2.2.2.2"); // XML value
-
-    ASSERT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
-    stop_background_servers();
-#endif // _WIN32
-}
-/**
- * Dynamic modification of servers. Replacing previous servers with new ones.
- */
-TEST(ParticipantTests, ServerParticipantReplaceRemoteServerListConfiguration)
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
 {
     Log::ClearConsumers();
     MockConsumer* mockConsumer = new MockConsumer("RTPS_QOS_CHECK");
@@ -1389,15 +1245,8 @@ TEST(ParticipantTests, ServerParticipantReplaceRemoteServerListConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastrtps::rtps::DiscoveryProtocol::SERVER);
-=======
-#ifndef __APPLE__
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
-    EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::SERVER);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
 
     // Modify environment file: fails cause the initial guid prefix did not comply with the schema
@@ -1458,12 +1307,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;192.168.1.133:64863\"}";
     file.close();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
@@ -1525,13 +1369,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attributes;
-    get_rtps_attributes(participant, attributes);
-=======
-#ifndef __APPLE__
-    fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+    fastrtps::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Add new server through environment file
     // Even though the server added previously through the environment file is being pinged, it is not really being
@@ -1546,15 +1384,10 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
-<<<<<<< HEAD
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(2, server.guidPrefix);
     output.push_back(server);
-    get_rtps_attributes(participant, attributes);
-=======
-    output.push_back(locator);
     attributes = get_rtps_attributes(participant);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Try to be consistent: add already known server
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -1565,15 +1398,10 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 1234;
-<<<<<<< HEAD
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(1, server.guidPrefix);
     output.push_back(server);
-    get_rtps_attributes(participant, attributes);
-=======
-    output.push_back(locator);
     attributes = get_rtps_attributes(participant);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
@@ -1590,19 +1418,12 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
     locator.port = 8888;
-<<<<<<< HEAD
     server.metatrafficUnicastLocatorList.push_back(locator);
     get_server_client_default_guidPrefix(3, server.guidPrefix);
     result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     output.push_back(server);
-    get_rtps_attributes(participant, attributes);
-=======
-    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
-    EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
-    output.push_back(locator);
     attributes = get_rtps_attributes(participant);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
     result_qos = participant->get_qos();
@@ -4284,17 +4105,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 {
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::DEFAULT);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4315,17 +4132,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::DEFAULTv6);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4346,17 +4159,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::SHM);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4377,17 +4186,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::UDPv4);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4408,17 +4213,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::UDPv6);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4439,17 +4240,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::LARGE_DATA);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4484,17 +4281,13 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
 
     {
         DomainParticipantQos qos;
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attributes_;
-=======
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
         qos.setup_transports(rtps::BuiltinTransports::LARGE_DATAv6);
 
         DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-        fastdds::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
+        fastrtps::rtps::RTPSParticipantAttributes attributes_ = get_rtps_attributes(participant_);
 
         auto transport_check = [](fastrtps::rtps::RTPSParticipantAttributes& attributes_) -> bool
                 {
@@ -4543,12 +4336,7 @@ public:
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attr;
-        get_rtps_attributes(participant_, attr);
-=======
-        fastdds::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+        fastrtps::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
         EXPECT_TRUE(check_options_attr(attr, options));
         EXPECT_EQ(attr.userTransports.size(), 3u);
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
@@ -4565,12 +4353,7 @@ public:
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attr;
-        get_rtps_attributes(participant_, attr);
-=======
-        fastdds::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+        fastrtps::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
         bool udp_ok = false;
         for (auto& transportDescriptor : attr.userTransports)
         {
@@ -4602,12 +4385,7 @@ public:
             (uint32_t)GET_PID() % 230, qos);
         ASSERT_NE(nullptr, participant_);
 
-<<<<<<< HEAD
-        fastrtps::rtps::RTPSParticipantAttributes attr;
-        get_rtps_attributes(participant_, attr);
-=======
-        fastdds::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+        fastrtps::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
         EXPECT_TRUE(check_default_participant(attr));
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
@@ -4758,12 +4536,7 @@ TEST(ParticipantTests, ParticipantCreationWithLargeDataOptionsThroughAPI)
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant_);
 
-<<<<<<< HEAD
-    fastrtps::rtps::RTPSParticipantAttributes attr;
-    get_rtps_attributes(participant_, attr);
-=======
-    fastdds::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
->>>>>>> 7dd4b4d17 (Fix RTPSParticipantAttributes internal data races (#6370))
+    fastrtps::rtps::RTPSParticipantAttributes attr = get_rtps_attributes(participant_);
 
     EXPECT_TRUE(BuiltinTransportsOptionsTest::check_options_attr(attr, options));
     EXPECT_EQ(attr.userTransports.size(), 3u);

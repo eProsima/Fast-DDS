@@ -3576,11 +3576,6 @@ void RTPSParticipantImpl::update_removed_participant(
     }
 }
 
-const RTPSParticipantConstantAttributes& RTPSParticipantImpl::get_const_attributes() const
-{
-    return m_const_att;
-}
-
 const RTPSParticipantMutableAttributes RTPSParticipantImpl::get_mutable_attributes() const
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_mutex);

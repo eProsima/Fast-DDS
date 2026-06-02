@@ -822,7 +822,10 @@ public:
      * This method is thread safe because it returns a const reference to the internal constant attributes.
      * @return A const reference to the RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
      */
-    const RTPSParticipantConstantAttributes& get_const_attributes() const;
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
+    {
+        return m_const_att;
+    }
 
     /**
      * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
