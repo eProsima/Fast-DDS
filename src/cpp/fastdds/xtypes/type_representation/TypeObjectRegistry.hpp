@@ -82,7 +82,8 @@ struct TypeRegistryEntry
 
 // Class which holds the TypeObject registry, including every TypeIdentifier (plain and non-plain types), every
 // non-plain TypeObject and the non-plain TypeObject serialized sizes.
-class TypeObjectRegistry : public ITypeObjectRegistry
+// Exported so shared-library test targets can instantiate thin helper subclasses on Windows.
+class FASTDDS_EXPORTED_API TypeObjectRegistry : public ITypeObjectRegistry
 {
 
 public:

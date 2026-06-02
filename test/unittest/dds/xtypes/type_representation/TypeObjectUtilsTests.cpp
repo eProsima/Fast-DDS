@@ -3479,4 +3479,3 @@ int main(
     eprosima::fastdds::dds::Log::KillThread();
     return ret_value;
 }
-
