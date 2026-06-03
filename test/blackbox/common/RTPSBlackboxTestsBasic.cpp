@@ -38,11 +38,13 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS
 };
+}  // namespace
 
 class RTPS : public testing::TestWithParam<communication_type>
 {

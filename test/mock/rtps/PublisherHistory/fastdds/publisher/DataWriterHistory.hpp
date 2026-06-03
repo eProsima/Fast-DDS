@@ -77,14 +77,64 @@ public:
         , resource_limited_qos_(topic_att.resourceLimitsQos)
         , topic_att_(topic_att)
     {
+<<<<<<< HEAD:test/mock/rtps/PublisherHistory/fastdds/publisher/DataWriterHistory.hpp
         if (resource_limited_qos_.max_instances == 0)
+=======
+        auto initial_samples = resource_limits_qos.allocated_samples;
+        auto max_samples = resource_limits_qos.max_samples;
+        auto extra_samples = resource_limits_qos.extra_samples;
+
+        if (history_qos.kind != KEEP_ALL_HISTORY_QOS)
         {
-            resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
+            max_samples = history_qos.depth;
+            if (topic_kind != NO_KEY)
+            {
+                if (0 < resource_limits_qos.max_instances)
+                {
+                    max_samples *= resource_limits_qos.max_instances;
+                }
+                else
+                {
+                    max_samples = -1;
+                }
+            }
+
+            initial_samples = std::min(initial_samples, max_samples);
+        }
+
+        return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
+    }
+
+    DataWriterHistory(
+            const std::shared_ptr<IPayloadPool>& payload_pool,
+            const std::shared_ptr<IChangePool>& change_pool,
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
+            uint32_t payloadMaxSize,
+            MemoryManagementPolicy_t mempolicy,
+            std::function<void (const fastdds::rtps::InstanceHandle_t&)> unack_sample_remove_functor)
+        : WriterHistory(to_history_attributes(history_qos, resource_limits_qos, topic_kind, payloadMaxSize,
+                mempolicy), payload_pool, change_pool)
+        , history_qos_(history_qos)
+        , resource_limited_qos_(resource_limits_qos)
+        , topic_kind_(topic_kind)
+        , unacknowledged_sample_removed_functor_(unack_sample_remove_functor)
+    {
+        if (resource_limited_qos_.max_samples <= 0)
+        {
+            resource_limited_qos_.max_samples = -1;
+        }
+
+        if (resource_limited_qos_.max_instances <= 0)
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386)):test/mock/dds/DataWriterHistory/fastdds/publisher/DataWriterHistory.hpp
+        {
+            resource_limited_qos_.max_instances = -1;
         }
 
         if (resource_limited_qos_.max_samples_per_instance == 0)
         {
-            resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_samples_per_instance = -1;
         }
     }
 

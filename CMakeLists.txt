@@ -107,6 +107,94 @@ check_compile_feature()
 check_endianness()
 
 ###############################################################################
+<<<<<<< HEAD
+=======
+# Activate Sanitizers
+###############################################################################
+option(SANITIZER "Enable Thread or Address sanitizers" OFF)
+string(TOUPPER ${SANITIZER} SANITIZER)
+
+if (SANITIZER)
+    if(${SANITIZER} STREQUAL "ADDRESS")
+        message(STATUS "Enabling address sanitizer...")
+        # Warning/Error messages
+        if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+            message(WARNING "Address sanitizer results with an optimized (non-Debug) build may be misleading")
+        endif()
+
+        if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+            message(STATUS "Building with llvm Address sanitizer Tools")
+
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+
+        elseif(CMAKE_COMPILER_IS_GNUCXX)
+            message(STATUS "Building with Address sanitizer Tools")
+
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+
+        else()
+            message(FATAL_ERROR "Address sanitizer requires Clang or GCC. Aborting.")
+        endif()
+
+    elseif(${SANITIZER} STREQUAL "THREAD")
+        message(STATUS "Enabling thread sanitizer...")
+        # Warning/Error messages
+        if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+            message(WARNING "Thread sanitizer results with an optimized (non-Debug) build may be misleading")
+        endif()
+
+        if("${CMAKE_C_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "(Apple)?[Cc]lang")
+            message(STATUS "Building with llvm Thread sanitizer Tools")
+
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=thread")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
+
+        elseif(CMAKE_COMPILER_IS_GNUCXX)
+            message(STATUS "Building with Thread sanitizer Tools")
+
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=thread -fno-omit-frame-pointer")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread -fno-omit-frame-pointer")
+
+        else()
+            message(FATAL_ERROR "Thread sanitizer requires Clang or GCC. Aborting.")
+        endif()
+
+    elseif(${SANITIZER} STREQUAL "UNDEFINED")
+        message(STATUS "Enabling undefined behavior sanitizer...")
+        # Warning/Error messages
+        if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+            message(WARNING "Undefined behavior sanitizer results with an optimized (non-Debug) build may be misleading")
+        endif()
+
+        if(CMAKE_COMPILER_IS_GNUCXX)
+            message(STATUS "Building with Undefined behavior sanitizer Tools")
+
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=float-cast-overflow -fsanitize=float-divide-by-zero -fsanitize=bounds-strict")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=float-cast-overflow -fsanitize=float-divide-by-zero -fsanitize=bounds-strict")
+
+        else()
+            message(FATAL_ERROR "Undefined behavior sanitizer requires GCC. Aborting.")
+        endif()
+
+    else()
+        message(WARNING "Sanitizer option not supported. Continuing without any code instrumentation... ")
+
+    endif()
+endif()
+
+###############################################################################
+# Set warnings as errors if the thread sanitizer is not being used
+###############################################################################
+string(FIND ${CMAKE_CXX_FLAGS} "-fsanitize=thread" SANITIZER_THREAD)
+if (${SANITIZER_THREAD} EQUAL -1)
+    message(STATUS "Setting warnings as errors...")
+    set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+endif()
+
+###############################################################################
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 # Installation paths
 ###############################################################################
 option(APPEND_PROJECT_NAME_TO_INCLUDEDIR

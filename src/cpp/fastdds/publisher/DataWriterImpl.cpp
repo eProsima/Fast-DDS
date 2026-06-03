@@ -1304,6 +1304,72 @@ bool DataWriterImpl::deadline_timer_reschedule()
     return true;
 }
 
+<<<<<<< HEAD
+=======
+void DataWriterImpl::configure_deadline_timer_()
+{
+    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+
+    // Create the timer once
+    if (deadline_timer_ == nullptr)
+    {
+        deadline_timer_ = new TimedEvent(
+            publisher_->rtps_participant()->get_resource_event(),
+            [this]() -> bool
+            {
+                return deadline_missed();
+            },
+            // Park timer with a huge interval (prevents spurious callbacks); we'll arm/cancel explicitly
+            std::chrono::microseconds::max()
+            );
+    }
+
+    // Handle "infinite" and "zero" outside the callback
+    if (qos_.deadline().period == dds::c_TimeInfinite)
+    {
+        deadline_duration_us_ = std::chrono::duration<double, std::micro>::max();
+        deadline_timer_->cancel_timer();
+        return;
+    }
+
+    deadline_duration_us_ =
+            std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
+
+    if (qos_.deadline().period.to_ns() == 0)
+    {
+        deadline_timer_->cancel_timer();
+
+        deadline_missed_status_.total_count = std::numeric_limits<uint32_t>::max();
+        deadline_missed_status_.total_count_change = std::numeric_limits<uint32_t>::max();
+        EPROSIMA_LOG_WARNING(
+            DATA_WRITER,
+            "Deadline period is 0, it will be ignored from now on.");
+
+        // Bump once and notify listener exactly once.
+        notify_deadline_missed_nts_();
+        return;
+    }
+
+    deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
+}
+
+void DataWriterImpl::notify_deadline_missed_nts_()
+{
+    StatusMask notify_status = StatusMask::offered_deadline_missed();
+    if (auto* listener = get_listener_for(notify_status))
+    {
+        listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        deadline_missed_status_.total_count_change = 0;
+    }
+
+#ifdef FASTDDS_STATISTICS
+    writer_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
+#endif // FASTDDS_STATISTICS
+
+    user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 bool DataWriterImpl::deadline_missed()
 {
     assert(qos_.deadline().period != c_TimeInfinite);

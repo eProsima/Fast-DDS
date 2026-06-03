@@ -1311,7 +1311,12 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
     auto sender_channel_resource =
+<<<<<<< HEAD
             std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+=======
+            std::static_pointer_cast<TCPChannelResourceSecure>(
+        sender_unbound_channel_resources[0]);
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 
     // Prepare the message
     asio::error_code ec;

@@ -20,6 +20,20 @@
 
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 
+<<<<<<< HEAD
+=======
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <stdexcept>
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif // if defined(__has_include) && __has_include(<version>)
+
+#include <fastdds/config.hpp>
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -1050,9 +1064,57 @@ bool DataReaderImpl::deadline_missed()
 
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
 
+<<<<<<< HEAD
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
+=======
+    // Create the timer once
+    if (deadline_timer_ == nullptr)
+    {
+        deadline_timer_ = new TimedEvent(
+            subscriber_->rtps_participant()->get_resource_event(),
+            [this]() -> bool
+            {
+                return deadline_missed();
+            },
+            // Park timer with a huge interval (prevents spurious callbacks); we'll arm/cancel explicitly
+            std::chrono::microseconds::max()
+            );
+    }
+
+    // Handle "infinite" and "zero" outside the callback
+    if (qos_.deadline().period == dds::c_TimeInfinite)
+    {
+        deadline_duration_us_ = std::chrono::duration<double, std::micro>::max();
+        deadline_timer_->cancel_timer();
+        return;
+    }
+
+    deadline_duration_us_ =
+            std::chrono::duration<double, std::ratio<1, 1000000>>(qos_.deadline().period.to_ns() * 1e-3);
+
+    if (qos_.deadline().period.to_ns() == 0)
+    {
+        deadline_timer_->cancel_timer();
+
+        deadline_missed_status_.total_count = std::numeric_limits<uint32_t>::max();
+        deadline_missed_status_.total_count_change = std::numeric_limits<uint32_t>::max();
+        EPROSIMA_LOG_WARNING(
+            DATA_READER,
+            "Deadline period is 0, it will be ignored from now on.");
+
+        // Bump once and notify listener exactly once.
+        notify_deadline_missed_nts_();
+        return;
+    }
+
+    deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
+}
+
+void DataReaderImpl::notify_deadline_missed_nts_()
+{
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
     StatusMask notify_status = StatusMask::requested_deadline_missed();
     auto listener = get_listener_for(notify_status);
     if (nullptr != listener)
@@ -1287,8 +1349,29 @@ LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
 SampleLostStatus& DataReaderImpl::update_sample_lost_status(
         int32_t sample_lost_since_last_update)
 {
-    sample_lost_status_.total_count += sample_lost_since_last_update;
-    sample_lost_status_.total_count_change += sample_lost_since_last_update;
+    constexpr int32_t int32_max = std::numeric_limits<int32_t>::max();
+
+    // Perform the addition in 64-bit space to avoid signed-integer-overflow UB on int32_t
+    const int32_t prev_total = sample_lost_status_.total_count;
+    const int64_t new_total =
+            static_cast<int64_t>(prev_total) + sample_lost_since_last_update;
+    const int64_t new_change =
+            static_cast<int64_t>(sample_lost_status_.total_count_change) + sample_lost_since_last_update;
+
+    // Saturate at int32_t max
+    sample_lost_status_.total_count =
+            (new_total > int32_max) ? int32_max : static_cast<int32_t>(new_total);
+    sample_lost_status_.total_count_change =
+            (new_change > int32_max) ? int32_max : static_cast<int32_t>(new_change);
+
+    // Warn only when the counter reaches the max value
+    if (prev_total < int32_max && sample_lost_status_.total_count == int32_max)
+    {
+        EPROSIMA_LOG_WARNING(DATA_READER,
+                "SampleLostStatus counter for DataReader "
+                << guid() << " reached max value. The cumulative count will remain saturated, "
+                << "but listener notifications for further lost samples will continue.");
+    }
 
     return sample_lost_status_;
 }

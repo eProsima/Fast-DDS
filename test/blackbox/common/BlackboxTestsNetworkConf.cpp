@@ -27,10 +27,12 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT
 };
+}  // namespace
 
 class NetworkConfig : public testing::TestWithParam<std::tuple<communication_type, bool>>
 {

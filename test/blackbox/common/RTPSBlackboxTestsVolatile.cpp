@@ -22,11 +22,13 @@
 
 using namespace eprosima::fastrtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS
 };
+}  // namespace
 
 class Volatile : public testing::TestWithParam<communication_type>
 {

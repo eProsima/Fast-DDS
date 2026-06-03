@@ -50,6 +50,31 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
+<<<<<<< HEAD
+=======
+namespace {
+
+// Accessor to RTPSParticipantImpl* from RTPSParticipant
+using RTPSParticipantImplPtr = fastdds::rtps::RTPSParticipantImpl * fastdds::rtps::RTPSParticipant::*;
+
+RTPSParticipantImplPtr get_rtps_part_impl();
+
+template<RTPSParticipantImplPtr P>
+struct RTPSParticipantImplAccessor
+{
+    friend RTPSParticipantImplPtr get_rtps_part_impl()
+    {
+        return P;
+    }
+
+};
+
+template struct RTPSParticipantImplAccessor<&fastdds::rtps::RTPSParticipant::mp_impl>;
+
+} // namespace
+
+
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 struct MockListener : IListener
 {
     MockListener()
@@ -1155,6 +1180,46 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     EXPECT_EQ(0, last_lost_data.byte_magnitude_order());
 }
 
+<<<<<<< HEAD
+=======
+TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
+{
+    ConnectionList conns_reader, conns_writer;
+    create_endpoints(1024);
+
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "string", "test_topic_name");
+
+    eprosima::fastdds::rtps::RTPSParticipantImpl* part_impl = participant_->*get_rtps_part_impl();
+
+    part_impl->get_entity_connections(reader_->getGuid(), conns_reader);
+    part_impl->get_entity_connections(writer_->getGuid(), conns_writer);
+
+    ASSERT_EQ(1, conns_writer.size());
+    ASSERT_EQ(1, conns_writer.size());
+    ASSERT_EQ(conns_reader[0].guid(), statistics::to_statistics_type(writer_->getGuid()));
+    ASSERT_EQ(conns_writer[0].guid(), statistics::to_statistics_type(reader_->getGuid()));
+
+    for (auto& locator : conns_reader[0].announced_locators())
+    {
+        bool found = false;
+        auto base_writer = static_cast<fastdds::rtps::BaseWriter*>(writer_);
+        for (auto& writer_loc : base_writer->get_general_locator_selector().locator_selector)
+        {
+            //! Checking the address can be confusing since the writer_loc could be translated to
+            //! 127.0.0.1
+            if (statistics::to_statistics_type(writer_loc).port() == locator.port() &&
+                    statistics::to_statistics_type(writer_loc).kind() == locator.kind())
+            {
+                found = true;
+            }
+        }
+
+        ASSERT_TRUE(found);
+    }
+}
+
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 } // namespace rtps
 } // namespace statistics
 } // namespace fastdds

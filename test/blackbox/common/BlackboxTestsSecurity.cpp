@@ -42,6 +42,7 @@ using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
@@ -49,7 +50,204 @@ enum communication_type
     DATASHARING
 };
 
+<<<<<<< HEAD
 class Security : public testing::TestWithParam<communication_type>
+=======
+enum reliability
+{
+    TEST_BEST_EFFORT,
+    TEST_RELIABLE
+};
+}  // namespace
+
+// A LogConsumer that just counts the number of entries consumed
+struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
+{
+    TestConsumer(
+            std::atomic_size_t& n_logs_ref)
+        : n_logs_(n_logs_ref)
+    {
+    }
+
+    void Consume(
+            const eprosima::fastdds::dds::Log::Entry&) override
+    {
+        ++n_logs_;
+    }
+
+private:
+
+    std::atomic_size_t& n_logs_;
+};
+
+static void fill_pub_auth(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainpubcert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainpubkey.pem");
+
+    // Select the key agreement algorithm based on process id
+    switch (static_cast<uint32_t>(GET_PID()) % 4u)
+    {
+        // Automatic selection
+        case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "AUTO");
+            break;
+        // Force DH
+        case 2u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
+            break;
+        // Force ECDH
+        case 3u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+            break;
+        // Leave default
+        case 0u:
+        default:
+            break;
+    }
+}
+
+static void fill_sub_auth(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainsubcert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainsubkey.pem");
+
+    // Select the key agreement algorithm based on process id
+    switch (static_cast<uint32_t>(GET_PID()) % 4u)
+    {
+        // Automatic selection
+        case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "AUTO");
+            break;
+        // Force DH
+        case 2u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
+            break;
+        // Force ECDH
+        case 3u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+            break;
+        // Leave default
+        case 0u:
+        default:
+            break;
+    }
+}
+
+static void fill_access(
+        PropertyPolicy& policy,
+        const std::string& governance_file = "governance_only_auth.smime",
+        const std::string& permissions_file = "permissions.smime",
+        const std::string& permissions_ca_file = "maincacert.pem")
+{
+    policy.properties().emplace_back("dds.sec.access.plugin", "builtin.Access-Permissions");
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/" + permissions_ca_file);
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file);
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file);
+}
+
+static void fill_crypto(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+}
+
+static void CommonPermissionsConfigureWriter(
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy pub_property_policy(extra_properties);
+    fill_pub_auth(pub_property_policy);
+    fill_access(pub_property_policy, governance_file, permissions_file);
+    fill_crypto(pub_property_policy);
+
+    writer.property_policy(pub_property_policy);
+}
+
+static void CommonPermissionsConfigureReader(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy sub_property_policy(extra_properties);
+    fill_sub_auth(sub_property_policy);
+    fill_access(sub_property_policy, governance_file, permissions_file);
+    fill_crypto(sub_property_policy);
+
+    reader.property_policy(sub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubReader<HelloWorldPubSubType>& reader,
+        PubSubWriter<HelloWorldPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties = PropertyPolicy())
+{
+    CommonPermissionsConfigureReader(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigureWriter(writer, governance_file, permissions_file, extra_properties);
+}
+
+static void CommonPermissionsConfigureWriter(
+        PubSubWriter<Data1mbPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy pub_property_policy(extra_properties);
+
+    fill_pub_auth(pub_property_policy);
+    fill_access(pub_property_policy, governance_file, permissions_file);
+    fill_crypto(pub_property_policy);
+
+    writer.property_policy(pub_property_policy);
+}
+
+static void CommonPermissionsConfigureReader(
+        PubSubReader<Data1mbPubSubType>& reader,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties)
+{
+    PropertyPolicy sub_property_policy(extra_properties);
+    fill_sub_auth(sub_property_policy);
+    fill_access(sub_property_policy, governance_file, permissions_file);
+    fill_crypto(sub_property_policy);
+
+    reader.property_policy(sub_property_policy);
+}
+
+static void CommonPermissionsConfigure(
+        PubSubReader<Data1mbPubSubType>& reader,
+        PubSubWriter<Data1mbPubSubType>& writer,
+        const std::string& governance_file,
+        const std::string& permissions_file,
+        const PropertyPolicy& extra_properties = PropertyPolicy())
+{
+    CommonPermissionsConfigureReader(reader, governance_file, permissions_file, extra_properties);
+    CommonPermissionsConfigureWriter(writer, governance_file, permissions_file, extra_properties);
+}
+
+class Security : public testing::TestWithParam<std::tuple<communication_type, reliability>>
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 {
 public:
 

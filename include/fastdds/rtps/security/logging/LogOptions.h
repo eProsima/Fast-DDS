@@ -34,11 +34,11 @@ namespace security {
 struct LogOptions
 {
     //! Whether the log events should be distributed over DDS
-    bool distribute;
+    bool distribute = false;
 
     //! Level at which log messages will be logged.
     //! Messages at or below the log_level are logged.
-    LoggingLevel log_level;
+    LoggingLevel log_level = LoggingLevel::EMERGENCY_LEVEL;
 
     //! Full path to a local file
     std::string log_file;

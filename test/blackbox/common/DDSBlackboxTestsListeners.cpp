@@ -39,12 +39,14 @@ using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4Transpo
         std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSStatus : public testing::TestWithParam<communication_type>
 {
