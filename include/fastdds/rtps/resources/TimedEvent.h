@@ -106,10 +106,22 @@ public:
      * @param callback Callback called when the event expires.
      * @param milliseconds Expiration time in milliseconds.
      */
-    TimedEvent(
+    explicit TimedEvent(
             ResourceEvent& service,
             std::function<bool()> callback,
             double milliseconds);
+
+    /*!
+     * @brief Construct with an expiration time expressed directly in microseconds.
+     *
+     * @param service ResourceEvent object that will operate with the event.
+     * @param callback Callback called when the event expires.
+     * @param interval Expiration time in std::chrono::microseconds.
+     */
+    explicit TimedEvent(
+            ResourceEvent& service,
+            std::function<bool()> callback,
+            std::chrono::microseconds interval);
 
     //! Default destructor.
     virtual ~TimedEvent();

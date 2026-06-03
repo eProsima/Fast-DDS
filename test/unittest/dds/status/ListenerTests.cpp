@@ -37,6 +37,10 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
+#include <rtps/participant/RTPSParticipantImpl.hpp>
+#include <rtps/writer/BaseWriter.hpp>
+#include <rtps/reader/BaseReader.hpp>
+
 
 using ::testing::StrictMock;
 using ::testing::NiceMock;
@@ -112,9 +116,7 @@ class RTPSWriterMock : public eprosima::fastrtps::rtps::RTPSWriter
 {
 public:
 
-    RTPSWriterMock()
-    {
-    }
+    RTPSWriterMock() = default;
 
     virtual ~RTPSWriterMock() = default;
 
@@ -553,6 +555,10 @@ protected:
         RTPSDomain::writer_ = &writer_mock_;
         RTPSDomain::reader_ = &reader_mock_;
 
+        // BaseWriter::get_participant_impl() must return non-null; some code
+        // paths (e.g. get_publication_builtin_topic_data) assert on it.
+        writer_mock_.mp_RTPSParticipant = &participant_impl_mock_;
+
         // Create the DDS entities with the user listeners
         participant_ =
                 DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT,
@@ -603,6 +609,7 @@ protected:
     NiceMock<RTPSParticipantMock> participant_mock_;
     NiceMock<RTPSWriterMock> writer_mock_;
     NiceMock<RTPSReaderMock> reader_mock_;
+    eprosima::fastdds::rtps::RTPSParticipantImpl participant_impl_mock_;
 
     // User listeners are strick, we want to track unexpected calls
     StrictMock<CustomParticipantListener> participant_listener_;

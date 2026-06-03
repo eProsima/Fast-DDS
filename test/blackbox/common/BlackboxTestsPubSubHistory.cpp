@@ -28,12 +28,14 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 using test_params = std::tuple<communication_type, rtps::MemoryManagementPolicy>;
 
