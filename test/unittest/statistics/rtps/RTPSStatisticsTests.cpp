@@ -60,20 +60,36 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
+<<<<<<< HEAD
 class RTPSParticipantMock : public fastrtps::rtps::RTPSParticipant
 {
 
 public:
 
     fastrtps::rtps::RTPSParticipantImpl* get_impl()
+=======
+namespace {
+
+// Accessor to RTPSParticipantImpl* from RTPSParticipant
+using RTPSParticipantImplPtr = fastdds::rtps::RTPSParticipantImpl * fastdds::rtps::RTPSParticipant::*;
+
+RTPSParticipantImplPtr get_rtps_part_impl();
+
+template<RTPSParticipantImplPtr P>
+struct RTPSParticipantImplAccessor
+{
+    friend RTPSParticipantImplPtr get_rtps_part_impl()
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
     {
-        return mp_impl;
+        return P;
     }
 
-private:
-
-    ~RTPSParticipantMock();
 };
+
+template struct RTPSParticipantImplAccessor<&fastdds::rtps::RTPSParticipant::mp_impl>;
+
+} // namespace
+
 
 struct MockListener : IListener
 {
@@ -1410,8 +1426,7 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
     // match writer and reader on a dummy topic
     match_endpoints(false, "string", "test_topic_name");
 
-    auto participant_mock = static_cast<RTPSParticipantMock*>(participant_);
-    auto part_impl = participant_mock->get_impl();
+    eprosima::fastdds::rtps::RTPSParticipantImpl* part_impl = participant_->*get_rtps_part_impl();
 
     part_impl->get_entity_connections(reader_->getGuid(), conns_reader);
     part_impl->get_entity_connections(writer_->getGuid(), conns_writer);

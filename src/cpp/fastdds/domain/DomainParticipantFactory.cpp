@@ -40,7 +40,15 @@
 #include <utils/shared_memory/SharedMemWatchdog.hpp>
 #include <utils/SystemInfo.hpp>
 
+<<<<<<< HEAD
 using namespace eprosima::fastrtps::xmlparser;
+=======
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+
+using namespace eprosima::fastdds::xmlparser;
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 
 using eprosima::fastrtps::ParticipantAttributes;
 using eprosima::fastdds::dds::Log;
@@ -162,12 +170,20 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
-    DomainParticipant* dom_part = new DomainParticipant(mask);
 #ifndef FASTDDS_STATISTICS
+<<<<<<< HEAD
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
 #else
     eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
             new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
+=======
+    DomainParticipant* dom_part = new DomainParticipant(mask);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listener);
+#else
+    statistics::dds::DomainParticipant* dom_part = new statistics::dds::DomainParticipant(mask);
+    statistics::dds::DomainParticipantImpl* dom_part_impl =
+            new statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 #endif // FASTDDS_STATISTICS
 
     if (fastrtps::rtps::GUID_t::unknown() != dom_part_impl->guid())

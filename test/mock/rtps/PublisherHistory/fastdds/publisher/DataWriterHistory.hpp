@@ -78,6 +78,41 @@ class DataWriterHistory : public WriterHistory
 {
 public:
 
+<<<<<<< HEAD:test/mock/rtps/PublisherHistory/fastdds/publisher/DataWriterHistory.hpp
+=======
+    static HistoryAttributes to_history_attributes(
+            const HistoryQosPolicy& history_qos,
+            const ResourceLimitsQosPolicy& resource_limits_qos,
+            const rtps::TopicKind_t& topic_kind,
+            uint32_t payloadMaxSize,
+            MemoryManagementPolicy_t mempolicy)
+    {
+        auto initial_samples = resource_limits_qos.allocated_samples;
+        auto max_samples = resource_limits_qos.max_samples;
+        auto extra_samples = resource_limits_qos.extra_samples;
+
+        if (history_qos.kind != KEEP_ALL_HISTORY_QOS)
+        {
+            max_samples = history_qos.depth;
+            if (topic_kind != NO_KEY)
+            {
+                if (0 < resource_limits_qos.max_instances)
+                {
+                    max_samples *= resource_limits_qos.max_instances;
+                }
+                else
+                {
+                    max_samples = -1;
+                }
+            }
+
+            initial_samples = std::min(initial_samples, max_samples);
+        }
+
+        return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples, extra_samples);
+    }
+
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386)):test/mock/dds/DataWriterHistory/fastdds/publisher/DataWriterHistory.hpp
     DataWriterHistory(
             const TopicAttributes& topic_att,
             uint32_t payloadMaxSize,
@@ -91,17 +126,17 @@ public:
     {
         if (resource_limited_qos_.max_samples <= 0)
         {
-            resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_samples = -1;
         }
 
         if (resource_limited_qos_.max_instances <= 0)
         {
-            resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_instances = -1;
         }
 
         if (resource_limited_qos_.max_samples_per_instance <= 0)
         {
-            resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_samples_per_instance = -1;
         }
     }
 
