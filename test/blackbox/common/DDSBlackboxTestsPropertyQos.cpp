@@ -31,12 +31,14 @@ const std::string INTERNAL_PROPERTY_VALUE = "Other Value";
 
 using namespace eprosima::fastdds;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class PropertyQos : public testing::TestWithParam<communication_type>
 {
