@@ -119,39 +119,63 @@ public:
 
 };
 
-class DomainParticipantImplTest : public DomainParticipantImpl
+namespace {
+
+// Accessor to DomainParticipantImpl* from DomainParticipant
+using DomainParticipantImplPtr =
+        eprosima::fastdds::dds::DomainParticipantImpl * eprosima::fastdds::dds::DomainParticipant::*;
+
+DomainParticipantImplPtr get_domain_participant_impl_ptr();
+
+template<DomainParticipantImplPtr P>
+struct DomainParticipantImplAccessor
 {
-public:
-
-    eprosima::fastdds::dds::Publisher* get_builtin_publisher() const
+    friend DomainParticipantImplPtr get_domain_participant_impl_ptr()
     {
-        return builtin_publisher_;
-    }
-
-    PublisherImpl* get_builtin_publisher_impl() const
-    {
-        return builtin_publisher_impl_;
-    }
-
-    bool monitoring_status(
-            fastdds::rtps::GUID_t guid,
-            statistics::MonitorServiceData& status)
-    {
-        return get_monitoring_status(guid, status);
+        return P;
     }
 
 };
 
-class DomainParticipantTest : public eprosima::fastdds::dds::DomainParticipant
-{
-public:
+template struct DomainParticipantImplAccessor<&eprosima::fastdds::dds::DomainParticipant::impl_>;
 
-    eprosima::fastdds::dds::DomainParticipantImpl* get_impl() const
+// Accessor to builtin_publisher_impl_ from statistics DomainParticipantImpl
+using BuiltinPublisherImplPtr = PublisherImpl * DomainParticipantImpl::*;
+
+BuiltinPublisherImplPtr get_builtin_publisher_impl_ptr();
+
+template<BuiltinPublisherImplPtr P>
+struct BuiltinPublisherImplAccessor
+{
+    friend BuiltinPublisherImplPtr get_builtin_publisher_impl_ptr()
     {
-        return impl_;
+        return P;
     }
 
 };
+
+template struct BuiltinPublisherImplAccessor<&DomainParticipantImpl::builtin_publisher_impl_>;
+
+// Accessor to protected get_monitoring_status() member function
+using GetMonitoringStatusFn = bool (DomainParticipantImpl::*)(
+    const fastdds::rtps::GUID_t&,
+    statistics::MonitorServiceData&);
+
+GetMonitoringStatusFn get_monitoring_status_fn();
+
+template<GetMonitoringStatusFn F>
+struct GetMonitoringStatusAccessor
+{
+    friend GetMonitoringStatusFn get_monitoring_status_fn()
+    {
+        return F;
+    }
+
+};
+
+template struct GetMonitoringStatusAccessor<&DomainParticipantImpl::get_monitoring_status>;
+
+} // namespace
 
 TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_incompatible_qos)
 {
@@ -165,18 +189,15 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-
+    DomainParticipantImpl* statistics_participant_impl_test = static_cast<DomainParticipantImpl*>(
+        participant->*get_domain_participant_impl_ptr());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
 
     fastdds::dds::TypeSupport type(new TopicDataTypeMock());
     type.register_type(statistics_participant);
 
-    auto publisher = participant_test->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    auto topic = participant_test->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
+    auto publisher = participant->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
+    auto topic = participant->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
 
     //! Create DataWriters
     EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
@@ -195,8 +216,8 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
     incomp_qos_status_dw_1.incompatible_qos_status(IncompatibleQoSStatus_s{});
     MonitorServiceData incomp_qos_status_dw_2;
     incomp_qos_status_dw_2.incompatible_qos_status(IncompatibleQoSStatus_s{});
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), incomp_qos_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), incomp_qos_status_dw_2));
+    ASSERT_TRUE((statistics_participant_impl_test->*get_monitoring_status_fn())(dw1->guid(), incomp_qos_status_dw_1));
+    ASSERT_TRUE((statistics_participant_impl_test->*get_monitoring_status_fn())(dw2->guid(), incomp_qos_status_dw_2));
 
     //! Expect incompatibilities
     ASSERT_EQ(1u, incomp_qos_status_dw_1.incompatible_qos_status().total_count());
@@ -228,18 +249,15 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-
+    DomainParticipantImpl* statistics_participant_impl_test = static_cast<DomainParticipantImpl*>(
+        participant->*get_domain_participant_impl_ptr());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
 
     fastdds::dds::TypeSupport type(new TopicDataTypeMock());
     type.register_type(statistics_participant);
 
-    auto publisher = participant_test->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    auto topic = participant_test->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
+    auto publisher = participant->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
+    auto topic = participant->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
 
     //! Create DataWriters
     EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
@@ -258,8 +276,8 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
     liv_lost_status_dw_1.liveliness_lost_status(LivelinessLostStatus_s{});
     MonitorServiceData liv_lost_status_dw_2;
     liv_lost_status_dw_2.liveliness_lost_status(LivelinessLostStatus_s{});
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), liv_lost_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), liv_lost_status_dw_2));
+    ASSERT_TRUE((statistics_participant_impl_test->*get_monitoring_status_fn())(dw1->guid(), liv_lost_status_dw_1));
+    ASSERT_TRUE((statistics_participant_impl_test->*get_monitoring_status_fn())(dw2->guid(), liv_lost_status_dw_2));
 
     //! Expect incompatibilities
     ASSERT_EQ(1u, liv_lost_status_dw_1.liveliness_lost_status().total_count());
@@ -287,18 +305,15 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
     DomainParticipant* statistics_participant = DomainParticipant::narrow(participant);
     ASSERT_NE(statistics_participant, nullptr);
 
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
-
+    DomainParticipantImpl* statistics_participant_impl_test = static_cast<DomainParticipantImpl*>(
+        participant->*get_domain_participant_impl_ptr());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
 
     fastdds::dds::TypeSupport type(new TopicDataTypeMock());
     type.register_type(statistics_participant);
 
-    auto publisher = participant_test->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
-    auto topic = participant_test->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
+    auto publisher = participant->create_publisher(fastdds::dds::PUBLISHER_QOS_DEFAULT);
+    auto topic = participant->create_topic(TEST_TOPIC, "footype", fastdds::dds::TOPIC_QOS_DEFAULT);
 
     //! Create DataWriters
     EXPECT_CALL(*publisher, create_datawriter_mock()).WillRepeatedly(testing::Return(false));
@@ -317,8 +332,10 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
     deadline_missed_status_dw_1.deadline_missed_status(DeadlineMissedStatus_s{});
     MonitorServiceData deadline_missed_status_dw_2;
     deadline_missed_status_dw_2.deadline_missed_status(DeadlineMissedStatus_s{});
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), deadline_missed_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), deadline_missed_status_dw_2));
+    ASSERT_TRUE((statistics_participant_impl_test->*get_monitoring_status_fn())(dw1->guid(),
+            deadline_missed_status_dw_1));
+    ASSERT_TRUE((statistics_participant_impl_test->*get_monitoring_status_fn())(dw2->guid(),
+            deadline_missed_status_dw_2));
 
     //! Expect incompatibilities
     ASSERT_EQ(1u, deadline_missed_status_dw_1.deadline_missed_status().total_count());

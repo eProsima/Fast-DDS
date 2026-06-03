@@ -42,12 +42,14 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer

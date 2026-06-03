@@ -68,7 +68,11 @@ public:
                 }
                 else
                 {
+<<<<<<< HEAD
                     max_samples = LENGTH_UNLIMITED;
+=======
+                    max_samples = -1;
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
                 }
             }
 
@@ -96,17 +100,17 @@ public:
     {
         if (resource_limited_qos_.max_samples <= 0)
         {
-            resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_samples = -1;
         }
 
         if (resource_limited_qos_.max_instances <= 0)
         {
-            resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_instances = -1;
         }
 
         if (resource_limited_qos_.max_samples_per_instance <= 0)
         {
-            resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
+            resource_limited_qos_.max_samples_per_instance = -1;
         }
     }
 

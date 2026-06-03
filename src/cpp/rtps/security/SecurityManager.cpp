@@ -328,10 +328,15 @@ bool SecurityManager::init(
                     {
                         crypto_plugin_->set_logger(logging_plugin_, exception);
 
+                        // When no access control plugin is configured, local_permissions_handle_ is null
+                        NilHandle nil_permissions_handle;
+                        const PermissionsHandle& permissions_handle = (local_permissions_handle_ != nullptr) ?
+                                *local_permissions_handle_ : nil_permissions_handle;
+
                         local_participant_crypto_handle_ =
                                 crypto_plugin_->cryptokeyfactory()->register_local_participant(
                             *local_identity_handle_,
-                            *local_permissions_handle_,
+                            permissions_handle,
                             participant_properties.properties(),
                             attributes,
                             exception);
