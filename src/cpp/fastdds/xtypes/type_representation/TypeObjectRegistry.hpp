@@ -83,6 +83,10 @@ struct TypeRegistryEntry
 // Class which holds the TypeObject registry, including every TypeIdentifier (plain and non-plain types), every
 // non-plain TypeObject and the non-plain TypeObject serialized sizes.
 // Exported so shared-library test targets can instantiate thin helper subclasses on Windows.
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4251)
+#endif // _MSC_VER
 class FASTDDS_EXPORTED_API TypeObjectRegistry : public ITypeObjectRegistry
 {
 
@@ -1119,6 +1123,9 @@ protected:
     std::mutex type_object_registry_mutex_;
 
 };
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif // _MSC_VER
 
 } // namespace xtypes
 } // namespace dds
