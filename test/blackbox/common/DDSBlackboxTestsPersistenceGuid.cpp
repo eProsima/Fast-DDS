@@ -32,12 +32,14 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class PersistenceGuid : public ::testing::TestWithParam<communication_type>
 {

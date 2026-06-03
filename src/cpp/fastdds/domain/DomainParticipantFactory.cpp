@@ -40,6 +40,10 @@
 #include <utils/shared_memory/SharedMemWatchdog.hpp>
 #include <utils/SystemInfo.hpp>
 
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+#endif // ifdef FASTDDS_STATISTICS
+
 using namespace eprosima::fastrtps::xmlparser;
 
 using eprosima::fastrtps::ParticipantAttributes;
@@ -162,10 +166,11 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
-    DomainParticipant* dom_part = new DomainParticipant(mask);
 #ifndef FASTDDS_STATISTICS
+    DomainParticipant* dom_part = new DomainParticipant(mask);
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
 #else
+    eprosima::fastdds::statistics::dds::DomainParticipant* dom_part = new eprosima::fastdds::statistics::dds::DomainParticipant(mask);
     eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
             new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
 #endif // FASTDDS_STATISTICS

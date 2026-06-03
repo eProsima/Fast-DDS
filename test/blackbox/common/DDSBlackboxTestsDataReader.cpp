@@ -43,12 +43,14 @@ using namespace eprosima::fastrtps::rtps;
         std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSDataReader : public testing::TestWithParam<communication_type>
 {
@@ -690,4 +692,3 @@ GTEST_INSTANTIATE_TEST_MACRO(DDSDataReader,
             }
 
         });
-
