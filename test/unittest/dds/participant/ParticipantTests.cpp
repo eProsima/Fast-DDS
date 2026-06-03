@@ -688,17 +688,23 @@ TEST(ParticipantTests, ChangePSMDomainParticipantQos)
 
 }
 
-class DomainParticipantTest : public DomainParticipant
-{
-public:
+namespace {
 
-    const DomainParticipantImpl* get_impl() const
+using DomainParticipantImplPtr = DomainParticipantImpl * DomainParticipant::*;
+
+DomainParticipantImplPtr get_domain_participant_impl_ptr();
+
+template<DomainParticipantImplPtr P>
+struct DomainParticipantImplAccessor
+{
+    friend DomainParticipantImplPtr get_domain_participant_impl_ptr()
     {
-        return impl_;
+        return P;
     }
 
 };
 
+<<<<<<< HEAD
 void get_rtps_attributes(
         const DomainParticipant* participant,
         fastrtps::rtps::RTPSParticipantAttributes& att)
@@ -708,6 +714,27 @@ void get_rtps_attributes(
     const DomainParticipantImpl* participant_impl = participant_test->get_impl();
     ASSERT_NE(nullptr, participant_impl);
     att = participant_impl->get_rtps_participant()->getRTPSParticipantAttributes();
+=======
+template struct DomainParticipantImplAccessor<&DomainParticipant::impl_>;
+
+} // namespace
+
+fastdds::rtps::RTPSParticipantAttributes get_rtps_attributes(
+        const DomainParticipant* participant)
+{
+    EXPECT_NE(nullptr, participant);
+    if (participant == nullptr)
+    {
+        return {};
+    }
+    const DomainParticipantImpl* participant_impl = participant->*get_domain_participant_impl_ptr();
+    EXPECT_NE(nullptr, participant_impl);
+    if (participant_impl == nullptr)
+    {
+        return {};
+    }
+    return participant_impl->get_rtps_participant()->copy_attributes();
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 }
 
 void helper_wait_for_at_least_entries(

@@ -22,7 +22,16 @@
 
 #include <string>
 
+<<<<<<< HEAD
+=======
+#include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
@@ -52,6 +61,13 @@ namespace dds {
 class DomainParticipant : public eprosima::fastdds::dds::DomainParticipant
 {
     DomainParticipant() = delete;
+
+protected:
+
+    DomainParticipant(
+            const eprosima::fastdds::dds::StatusMask& mask);
+
+    friend class eprosima::fastdds::dds::DomainParticipantFactory;
 
 public:
 

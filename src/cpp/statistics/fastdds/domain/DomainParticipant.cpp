@@ -31,7 +31,17 @@ namespace fastdds {
 namespace statistics {
 namespace dds {
 
+<<<<<<< HEAD
 ReturnCode_t DomainParticipant::enable_statistics_datawriter(
+=======
+DomainParticipant::DomainParticipant(
+        const eprosima::fastdds::dds::StatusMask& mask)
+    : eprosima::fastdds::dds::DomainParticipant(mask)
+{
+}
+
+fastdds::dds::ReturnCode_t DomainParticipant::enable_statistics_datawriter(
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
         const std::string& topic_name,
         const eprosima::fastdds::dds::DataWriterQos& dwqos)
 {

@@ -77,7 +77,11 @@ public:
     void set_writer(
             fastrtps::rtps::RTPSWriter* writer)
     {
+<<<<<<< HEAD
         status_writer_ = static_cast<fastrtps::rtps::StatefulWriter*>(writer);
+=======
+        status_writer_ = writer;
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
     }
 
     ~MonitorService();
@@ -243,7 +247,11 @@ private:
 
     MonitorServiceListener* listener_;
 
+<<<<<<< HEAD
     fastrtps::rtps::StatefulWriter* status_writer_;
+=======
+    fastdds::rtps::RTPSWriter* status_writer_;
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
 
     std::unique_ptr<fastrtps::rtps::WriterHistory> status_writer_history_;
 
@@ -264,4 +272,3 @@ private:
 } // namespace eprosima
 
 #endif // _STATISTICS_RTPS_MONITOR_SERVICE_MONITORSERVICE_HPP_
-

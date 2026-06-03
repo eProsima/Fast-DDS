@@ -38,6 +38,13 @@ public:
     {
     }
 
+    TimedEvent(
+            ResourceEvent&,
+            std::function<bool()>,
+            std::chrono::microseconds)
+    {
+    }
+
     MOCK_METHOD0(restart_timer, void());
     MOCK_METHOD1(restart_timer, void(const std::chrono::steady_clock::time_point& timeout));
     MOCK_METHOD0(cancel_timer, void());
@@ -52,5 +59,9 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
+<<<<<<< HEAD:test/mock/rtps/TimedEvent/fastdds/rtps/resources/TimedEvent.h
 #endif // _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
 
+=======
+#endif // FASTDDS_RTPS_RESOURCES__TIMEDEVENT_H
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386)):test/mock/rtps/TimedEvent/rtps/resources/TimedEvent.h
