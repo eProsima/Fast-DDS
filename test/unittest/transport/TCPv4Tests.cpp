@@ -1559,7 +1559,7 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     ASSERT_TRUE(sender_unbound_channel_resources.size() == 1u);
     auto sender_channel_resource =
-            std::static_pointer_cast<TCPChannelResourceBasic>(
+            std::static_pointer_cast<TCPChannelResourceSecure>(
         sender_unbound_channel_resources[0]);
 
     // Prepare the message

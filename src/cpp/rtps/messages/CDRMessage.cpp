@@ -501,6 +501,11 @@ void CDRMessage::copyToBuffer(
         const uint32_t length,
         bool reverse)
 {
+    if (length == 0)
+    {
+        return;
+    }
+
     if (reverse)
     {
         for (uint32_t i = 0; i < length; i++)

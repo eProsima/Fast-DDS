@@ -46,12 +46,14 @@
 
 using namespace eprosima::fastdds;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSDataWriter : public testing::TestWithParam<communication_type>
 {
@@ -755,7 +757,8 @@ bool validate_subscription_builtin_topic_data(
     ret &= (subdata.destination_order == dr_qos.destination_order());
     ret &= (
         (subdata.user_data.size() == dr_qos.user_data().size()) &&
-        (0 == memcmp(subdata.user_data.data(), dr_qos.user_data().data(), subdata.user_data.size())));
+        (subdata.user_data.size() == 0 ||
+        0 == memcmp(subdata.user_data.data(), dr_qos.user_data().data(), subdata.user_data.size())));
     // time based filter not implemented
 
     // Subscriber Qos

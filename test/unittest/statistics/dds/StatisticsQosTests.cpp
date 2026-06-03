@@ -39,33 +39,53 @@ namespace fastdds {
 namespace statistics {
 namespace dds {
 
+#ifdef FASTDDS_STATISTICS
+namespace {
+
+// Accessor to DomainParticipantImpl* from DomainParticipant
+using DomainParticipantImplPtr = efd::DomainParticipantImpl * efd::DomainParticipant::*;
+
+DomainParticipantImplPtr get_domain_participant_impl_ptr();
+
+template<DomainParticipantImplPtr P>
+struct DomainParticipantImplAccessor
+{
+    friend DomainParticipantImplPtr get_domain_participant_impl_ptr()
+    {
+        return P;
+    }
+
+};
+
+template struct DomainParticipantImplAccessor<&efd::DomainParticipant::impl_>;
+
+// Accessor to builtin_publisher_ from statistics DomainParticipantImpl
+using BuiltinPublisherPtr =
+        efd::Publisher * eprosima::fastdds::statistics::dds::DomainParticipantImpl::*;
+
+BuiltinPublisherPtr get_builtin_publisher_ptr();
+
+template<BuiltinPublisherPtr P>
+struct BuiltinPublisherAccessor
+{
+    friend BuiltinPublisherPtr get_builtin_publisher_ptr()
+    {
+        return P;
+    }
+
+};
+
+template struct BuiltinPublisherAccessor<
+    & eprosima::fastdds::statistics::dds::DomainParticipantImpl::builtin_publisher_>;
+
+} // namespace
+#endif // ifdef FASTDDS_STATISTICS
+
 class StatisticsFromXMLProfileTests : public ::testing::Test
 {
 public:
 
 #ifdef FASTDDS_STATISTICS
-    class TestDomainParticipant : public eprosima::fastdds::statistics::dds::DomainParticipant
-    {
-    public:
-
-        DomainParticipantImpl* get_domain_participant_impl()
-        {
-            return static_cast<DomainParticipantImpl*>(impl_);
-        }
-
-    };
-
-    class TestDomainParticipantImpl : public eprosima::fastdds::statistics::dds::DomainParticipantImpl
-    {
-    public:
-
-        efd::Publisher*  get_publisher()
-        {
-            return builtin_publisher_;
-        }
-
-    };
-
     eprosima::fastdds::statistics::dds::DomainParticipant* statistics_participant = nullptr;
     eprosima::fastdds::dds::Publisher* statistics_publisher = nullptr;
 
@@ -89,24 +109,18 @@ public:
                 eprosima::fastdds::statistics::dds::DomainParticipant::narrow(participant);
         ASSERT_NE(_statistics_participant, nullptr);
 
-        // Static conversion to child class TestDomainParticipant
-        TestDomainParticipant* test_statistics_participant =
-                static_cast<TestDomainParticipant*>(_statistics_participant);
-        ASSERT_NE(test_statistics_participant, nullptr);
+        // Get DomainParticipantImpl via accessor (no UB downcast)
+        efd::DomainParticipantImpl* base_impl =
+                _statistics_participant->*get_domain_participant_impl_ptr();
+        ASSERT_NE(base_impl, nullptr);
 
-        // Get DomainParticipantImpl
         eprosima::fastdds::statistics::dds::DomainParticipantImpl* domain_statistics_participant_impl =
-                test_statistics_participant->get_domain_participant_impl();
+                static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(base_impl);
         ASSERT_NE(domain_statistics_participant_impl, nullptr);
 
-        // Static conversion to child class TestDomainParticipantImpl
-        TestDomainParticipantImpl* test_statistics_domain_participant_impl =
-                static_cast<TestDomainParticipantImpl*>(domain_statistics_participant_impl);
-        ASSERT_NE(test_statistics_domain_participant_impl, nullptr);
-
-        // Get Publisher
+        // Get Publisher via accessor
         statistics_pub =
-                test_statistics_domain_participant_impl->get_publisher();
+                domain_statistics_participant_impl->*get_builtin_publisher_ptr();
         ASSERT_NE(statistics_pub, nullptr);
     }
 

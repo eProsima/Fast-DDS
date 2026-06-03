@@ -86,7 +86,7 @@ public:
     void set_writer(
             fastdds::rtps::RTPSWriter* writer)
     {
-        status_writer_ = static_cast<fastdds::rtps::StatefulWriter*>(writer);
+        status_writer_ = writer;
     }
 
     ~MonitorService();
@@ -276,7 +276,7 @@ private:
 
     MonitorServiceListener* listener_;
 
-    fastdds::rtps::StatefulWriter* status_writer_;
+    fastdds::rtps::RTPSWriter* status_writer_;
 
     std::unique_ptr<fastdds::rtps::WriterHistory> status_writer_history_;
 
@@ -302,4 +302,3 @@ private:
 } // namespace eprosima
 
 #endif // _STATISTICS_RTPS_MONITOR_SERVICE_MONITORSERVICE_HPP_
-
