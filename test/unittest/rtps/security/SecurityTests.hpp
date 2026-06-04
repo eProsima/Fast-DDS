@@ -68,6 +68,20 @@ public:
 
 typedef HandleImpl<MockParticipantCrypto, SecurityTest> MockParticipantCryptoHandle;
 
+struct SecurityTestsGlobalDefaultValues
+{
+    // Default Values
+    RTPSParticipantAttributes pattr;
+
+    SecurityTestsGlobalDefaultValues()
+    {
+        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
+    }
+
+};
+
+static SecurityTestsGlobalDefaultValues g_security_default_values_;
+
 class SecurityTest : public ::testing::Test
 {
 protected:
@@ -141,7 +155,7 @@ public:
         , stateless_reader_(nullptr)
         , volatile_writer_(nullptr)
         , volatile_reader_(nullptr)
-        , manager_(&participant_, plugin_factory_)
+        , manager_(&participant_, g_security_default_values_.pattr, plugin_factory_)
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {
@@ -216,19 +230,5 @@ public:
     }
 
 };
-
-struct SecurityTestsGlobalDefaultValues
-{
-    // Default Values
-    RTPSParticipantAttributes pattr;
-
-    SecurityTestsGlobalDefaultValues()
-    {
-        ::testing::DefaultValue<const RTPSParticipantAttributes&>::Set(pattr);
-    }
-
-};
-
-static SecurityTestsGlobalDefaultValues g_security_default_values_;
 
 #endif // __TEST_UNITTEST_RTPS_SECURITY_SECURITYTESTS_HPP__

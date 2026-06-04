@@ -58,8 +58,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER START ------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
-            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
-            " --------------------");
+            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid()
+                                    << " --------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "PDP Server Message received: " << change_in->instanceHandle);
 
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(pdp_server()->builtin_endpoints_.get());
@@ -149,7 +149,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 return;
             }
 
-            const auto& pattr = pdp_server()->getRTPSParticipant()->getAttributes();
+            const auto pattr = pdp_server()->getRTPSParticipant()->copy_attributes();
             fastdds::rtps::network::external_locators::filter_remote_locators(participant_data,
                     pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
                     pattr.ignore_non_matching_locators);
@@ -438,8 +438,8 @@ void PDPServerListener::onNewCacheChangeAdded(
     // happens at this point
 
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER,
-            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid() <<
-            " --------------------");
+            "-------------------- " << pdp_server()->mp_RTPSParticipant->getGuid()
+                                    << " --------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "------------------ PDP SERVER LISTENER END ------------------");
     EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "");
 }

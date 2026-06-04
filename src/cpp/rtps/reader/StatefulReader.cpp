@@ -182,10 +182,10 @@ void StatefulReader::init(
         RTPSParticipantImpl* pimpl,
         const ReaderAttributes& att)
 {
-    const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
-        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_));
+        matched_writers_pool_.push_back(new WriterProxy(this, pimpl->get_const_attributes().allocation.locators,
+                proxy_changes_config_));
     }
 }
 
@@ -255,13 +255,14 @@ bool StatefulReader::matched_writer_add(
             size_t max_readers = matched_writers_pool_.max_size();
             if (getMatchedWritersSize() + matched_writers_pool_.size() < max_readers)
             {
-                const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-                wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
+                wp = new WriterProxy(this, mp_RTPSParticipant->get_const_attributes().allocation.locators,
+                                proxy_changes_config_);
             }
             else
             {
-                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers << \
-                        ") reached for writer " << m_guid);
+                EPROSIMA_LOG_WARNING(RTPS_READER, "Maximum number of reader proxies (" << max_readers \
+                                                                                       << ") reached for writer "
+                                                                                       << m_guid);
                 return false;
             }
         }
@@ -719,8 +720,8 @@ bool StatefulReader::processDataFragMsg(
         if (!pWP->change_was_received(incomingChange->sequenceNumber))
         {
             EPROSIMA_LOG_INFO(RTPS_MSG_IN,
-                    IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: " <<
-                    getGuid().entityId);
+                    IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() << " TO reader: "
+                                                       << getGuid().entityId);
 
             size_t changes_up_to = pWP->unknown_missing_changes_up_to(incomingChange->sequenceNumber);
             bool will_never_be_accepted = false;
@@ -1110,8 +1111,8 @@ bool StatefulReader::change_received(
 
                 EPROSIMA_LOG_INFO(RTPS_READER,
                         "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                << a_change->sequenceNumber <<
-                        " skipped. Higher sequence numbers have been received.");
+                                                << a_change->sequenceNumber
+                                                << " skipped. Higher sequence numbers have been received.");
                 return false;
             }
         }
@@ -1320,8 +1321,8 @@ bool StatefulReader::nextUntakenCache(
         else
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                    " because is no longer paired");
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID
+                                       << " because is no longer paired");
             it = mp_history->remove_change(it);
         }
 
@@ -1379,8 +1380,8 @@ bool StatefulReader::nextUnreadCache(
         else
         {
             EPROSIMA_LOG_WARNING(RTPS_READER,
-                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID <<
-                    " because is no longer paired");
+                    "Removing change " << (*it)->sequenceNumber << " from " << (*it)->writerGUID
+                                       << " because is no longer paired");
             it = mp_history->remove_change(it);
             continue;
         }

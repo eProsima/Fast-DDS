@@ -149,7 +149,7 @@ public:
             const EntityId_t& entityId, bool isBuiltin, bool enable));
     // *INDENT-ON*
 
-    MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex* ());
+    MOCK_CONST_METHOD0(getParticipantMutex, std::recursive_mutex * ());
 
     bool createWriter(
             RTPSWriter** writer,
@@ -299,12 +299,27 @@ public:
         return attr_;
     }
 
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
+    {
+        return const_attr_;
+    }
+
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const
+    {
+        return RTPSParticipantMutableAttributes{attr_};
+    }
+
+    RTPSParticipantAttributes copy_attributes() const
+    {
+        return attr_;
+    }
+
     void get_sending_locators(
             rtps::LocatorList_t& /*locators*/) const
     {
     }
 
-    template <EndpointKind_t kind, octet no_key, octet with_key>
+    template<EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t&,
             std::atomic<uint32_t>&,
@@ -341,6 +356,7 @@ private:
     ResourceEvent events_;
 
     RTPSParticipantAttributes attr_;
+    RTPSParticipantConstantAttributes const_attr_;
 
     std::map<GUID_t, Endpoint*> endpoints_;
 

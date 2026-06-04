@@ -105,12 +105,10 @@ void PDPClient::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data); // TODO: Remember that the PDP version USES security
 
-    if (
-        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
-        != DiscoveryProtocol_t::CLIENT
-        &&
-        getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol
-        != DiscoveryProtocol_t::SUPER_CLIENT    )
+    const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
+
+    if ((DiscoveryProtocol::CLIENT != discovery_config.discoveryProtocol) &&
+            (DiscoveryProtocol::SUPER_CLIENT != discovery_config.discoveryProtocol))
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP, "Using a PDP client object with another user's settings");
     }
@@ -981,7 +979,8 @@ bool load_environment_server_info(
     const static std::regex ROS2_IPV6_ADDRESSPORT_PATTERN(
         R"(^\[?((?:[0-9a-fA-F]{0,4}\:){0,7}[0-9a-fA-F]{0,4})?(?:\])?:?(?:(\d+))?$)");
     // Regex to handle DNS and UDPv4/6 expressions
-    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(R"(^(UDPv[46]?:\[[\w\.:-]{0,63}\]|[\w\.-]{0,63}):?(?:(\d+))?$)");
+    const static std::regex ROS2_DNS_DOMAINPORT_PATTERN(
+        R"(^(UDPv[46]?:\[[\w\.:-]{0,63}\]|[\w\.-]{0,63}):?(?:(\d+))?$)");
     // Regex to handle TCPv4/6 expressions
     const static std::regex ROS2_DNS_DOMAINPORT_PATTERN_TCP(
         R"(^(TCPv[46]?:\[[\w\.:-]{0,63}\]):?(?:(\d+))?$)");

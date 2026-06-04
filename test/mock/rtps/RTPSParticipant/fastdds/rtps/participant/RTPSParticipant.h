@@ -148,7 +148,7 @@ public:
     MOCK_CONST_METHOD0(disable_monitor_service, bool());
 
     MOCK_METHOD0(is_monitor_service_created, bool());
-    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver* (
+    MOCK_METHOD1(create_monitor_service, fastdds::statistics::rtps::IStatusObserver * (
                 fastdds::statistics::rtps::IStatusQueryable&));
 
 #endif // FASTDDS_STATISTICS
@@ -183,7 +183,7 @@ public:
         return mp_event_thr;
     }
 
-    MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager* ());
+    MOCK_CONST_METHOD0(typelookup_manager, fastdds::dds::builtin::TypeLookupManager * ());
 
     MOCK_METHOD3(registerWriter, bool(
                 RTPSWriter * Writer,
@@ -204,7 +204,7 @@ public:
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos,
-                const fastdds::rtps::ContentFilterProperty* content_filter));
+                const fastdds::rtps::ContentFilterProperty * content_filter));
 
     MOCK_METHOD3(updateReader, bool(
                 RTPSReader * Reader,
@@ -218,7 +218,7 @@ public:
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos,
-                const fastdds::rtps::ContentFilterProperty* content_filter));
+                const fastdds::rtps::ContentFilterProperty * content_filter));
 
     std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const
     {
@@ -226,6 +226,21 @@ public:
     }
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
+    {
+        return attributes_;
+    }
+
+    const RTPSParticipantConstantAttributes& get_const_attributes() const
+    {
+        return const_attributes_;
+    }
+
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const
+    {
+        return RTPSParticipantMutableAttributes{attributes_};
+    }
+
+    RTPSParticipantAttributes copy_attributes() const
     {
         return attributes_;
     }
@@ -251,6 +266,7 @@ public:
     const GUID_t m_guid;
     mutable ResourceEvent mp_event_thr;
     RTPSParticipantAttributes attributes_;
+    RTPSParticipantConstantAttributes const_attributes_;
 };
 
 } /* namespace rtps */

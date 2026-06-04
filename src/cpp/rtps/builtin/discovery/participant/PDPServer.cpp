@@ -510,11 +510,10 @@ void PDPServer::initializeParticipantProxyData(
 {
     PDP::initializeParticipantProxyData(participant_data);
 
-    if (getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol_t::SERVER
-            &&
-            getRTPSParticipant()->getAttributes().builtin.discovery_config.discoveryProtocol !=
-            DiscoveryProtocol_t::BACKUP)
+    const auto& discovery_config = getRTPSParticipant()->get_const_attributes().builtin.discovery_config;
+
+    if (discovery_config.discoveryProtocol != DiscoveryProtocol::SERVER &&
+            discovery_config.discoveryProtocol != DiscoveryProtocol::BACKUP)
     {
         EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Using a PDP Server object with another user's settings");
     }
@@ -556,7 +555,7 @@ void PDPServer::match_reliable_pdp_endpoints(
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
     uint32_t endp = pdata.m_availableBuiltinEndpoints;
-    bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
+    bool use_multicast_locators = !mp_RTPSParticipant->get_const_attributes().builtin.avoid_builtin_multicast ||
             pdata.metatraffic_locators.unicast.empty();
 
     // only SERVER and CLIENT participants will be received. All builtin must be there
@@ -918,7 +917,8 @@ void PDPServer::announceParticipantState(
                     // but the routine thread has not consumed it yet.
                     // This would happen when the routine thread is busy in initializing, i.e. it already has other
                     // DATA(P) to parse before the own one is inserted by update.
-                    EPROSIMA_LOG_WARNING(RTPS_PDP_SERVER, "Local Server DATA(p) uninitialized before local on announcement. "
+                    EPROSIMA_LOG_WARNING(RTPS_PDP_SERVER,
+                            "Local Server DATA(p) uninitialized before local on announcement. "
                             << "It will be sent in next announce iteration.");
                     return;
                 }
@@ -1272,7 +1272,8 @@ History::iterator PDPServer::process_change_acknowledgement(
                     // Remove the entry from writer history, but do not release the cache.
                     // This CacheChange will only be released in the case that is substituted by a DATA(Up|Uw|Ur).
                     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Removing change " << c->instanceHandle
-                                                                          << " from history as it has been acked for everyone");
+                                                                          <<
+                            " from history as it has been acked for everyone");
                     return writer_history->remove_change(cit, false);
                 }
             }
@@ -1563,8 +1564,8 @@ bool PDPServer::pending_ack()
 
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "PDP writer history length " << endpoints->writer.history_->getHistorySize());
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
-            "is server " << endpoints->writer.writer_->getGuid() << " acked by all? " <<
-            discovery_db_.server_acked_by_all());
+            "is server " << endpoints->writer.writer_->getGuid() << " acked by all? "
+                         << discovery_db_.server_acked_by_all());
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Are there pending changes? " << ret);
     return ret;
 }

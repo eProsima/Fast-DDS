@@ -134,7 +134,8 @@ bool EDPStatic::initEDP(
     }
 
     // Check there is a Participant's property changing the exchange format.
-    for (auto& property : mp_RTPSParticipant->getAttributes().properties.properties())
+    const auto& properties = mp_RTPSParticipant->get_const_attributes().properties.properties();
+    for (const auto& property : properties)
     {
         if (0 == property.name().compare(exchange_format_property_name))
         {
@@ -478,8 +479,9 @@ void EDPStatic::assignRemoteEndpoints(
             else
             {
                 EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPStaticProperty with type: " << staticproperty.m_endpointType
-                                                                               << " and status " << staticproperty.m_status <<
-                        " not recognized");
+                                                                               << " and status "
+                                                                               << staticproperty.m_status
+                                                                               << " not recognized");
             }
         }
         else

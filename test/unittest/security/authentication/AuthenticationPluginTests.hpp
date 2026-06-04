@@ -112,7 +112,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_validation_ok)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -141,7 +141,7 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_wrong_validation)
     result = plugin.validate_local_identity(&local_identity_handle,
                     adjusted_participant_key,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key,
                     exception);
 
@@ -171,7 +171,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     result = plugin.validate_local_identity(&local_identity_handle1,
                     adjusted_participant_key1,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key1,
                     exception);
 
@@ -183,7 +183,7 @@ TEST_F(AuthenticationPluginTest, handshake_process_ok)
     result = plugin.validate_local_identity(&local_identity_handle2,
                     adjusted_participant_key2,
                     domain_id,
-                    participant_attr,
+                    participant_attr.properties,
                     candidate_participant_key2,
                     exception);
 

@@ -41,7 +41,7 @@ PDPStatelessWriter::PDPStatelessWriter(
         WriterHistory* history,
         WriterListener* listener)
     : StatelessWriter(participant, guid, attributes, flow_controller, history, listener)
-    , interested_readers_(participant->getRTPSParticipantAttributes().allocation.participants)
+    , interested_readers_(participant->get_const_attributes().allocation.participants)
 {
 }
 

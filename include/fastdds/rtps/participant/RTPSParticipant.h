@@ -211,10 +211,32 @@ public:
     std::vector<std::string> getParticipantNames() const;
 
     /**
-     * Get a copy of the actual state of the RTPSParticipantParameters
-     * @return RTPSParticipantAttributes copy of the params.
+     * Get a reference of the current state of the RTPSParticipantAttributes.
+     * @warning The returned reference is not thread safe. It is recommended to use copy_attributes()
+     * instead to get a thread safe copy of the attributes.
+     * @return RTPSParticipantAttributes reference.
      */
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const;
+
+    /**
+     * @brief Get a const reference of RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const reference to the internal constant attributes.
+     * @return A const reference to the RTPSParticipantConstantAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantConstantAttributes& get_const_attributes() const;
+
+    /**
+     * @brief Get a const copy of RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     * This method is thread safe because it returns a const copy of the internal mutable attributes.
+     * @return A const copy of the RTPSParticipantMutableAttributes of this RTPSParticipantImpl.
+     */
+    const RTPSParticipantMutableAttributes get_mutable_attributes() const;
+
+    /**
+     * Get a copy of the current state of the RTPSParticipantAttributes.
+     * @return RTPSParticipantAttributes copy.
+     */
+    RTPSParticipantAttributes copy_attributes() const;
 
     /**
      * Retrieves the maximum message size.
