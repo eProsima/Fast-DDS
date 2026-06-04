@@ -66,7 +66,7 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds_branch }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
@@ -230,7 +230,7 @@ jobs:
           # Show the result
           gc $hostfile
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
