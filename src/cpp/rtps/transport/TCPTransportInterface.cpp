@@ -1175,6 +1175,55 @@ void TCPTransportInterface::perform_listen_operation(
     }
 
     EPROSIMA_LOG_INFO(RTCP, "End PerformListenOperation " << channel->locator());
+
+    // If we get here, the channel has been disconnected. We might need to clean it up if
+    // the remote endpoint is the one that initiated the disconnection.
+    // We only delete acceptor channels, as connect channels need to be kept in channel_resources_ to restart the connection
+    if (channel && channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_ACCEPT_TYPE)
+    {
+        // Defer the erase to io_context_ so the TCPChannelResource destructor runs off the listener thread that is about to exit.
+        // Weak_ptr is used to avoid keeping the channel alive if it has already been removed from the maps by another thread.
+        asio::post(io_context_, [this, channel_weak]()
+                {
+                    auto ch = channel_weak.lock();
+                    if (!ch)
+                    {
+                        return;
+                    }
+                    {
+                        // Channel resources map case
+                        std::unique_lock<std::mutex> scoped_lock(sockets_map_mutex_);
+                        bool erased = false;
+                        // There might be multiple entries with the same channel. Delete them all
+                        for (auto it = channel_resources_.begin(); it != channel_resources_.end(); )
+                        {
+                            if (it->second == ch)
+                            {
+                                it = channel_resources_.erase(it);
+                                erased = true;
+                            }
+                            else
+                            {
+                                ++it;
+                            }
+                        }
+                        if (erased)
+                        {
+                            return;
+                        }
+                    }
+                    // Unbound channel resources map case
+                    std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+                    auto it = std::find(unbound_channel_resources_.begin(),
+                    unbound_channel_resources_.end(), ch);
+                    if (it != unbound_channel_resources_.end())
+                    {
+                        unbound_channel_resources_.erase(it);
+                    }
+                });
+        // Drop the listener's reference so the destructor cannot run on this thread
+        channel.reset();
+    }
 }
 
 bool TCPTransportInterface::read_body(
@@ -1658,6 +1707,48 @@ void TCPTransportInterface::keep_alive()
         auto timeout_next_event = (last_activity <= last_ka_sent) ? timeout_time : clock::time_point::max();
         local_next_event = std::min(local_next_event, std::min(next_send_allowed, timeout_next_event));
     }
+
+    // Close any channel that has been waiting for a BindConnectionRequest longer than keep_alive_timeout_ms.
+    std::vector<std::shared_ptr<TCPChannelResource>> unbounded_to_close;
+    {
+        std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+        auto now = clock::now();
+        auto it = unbound_channel_resources_.begin();
+        while (it != unbound_channel_resources_.end())
+        {
+            auto& ch = *it;
+            const auto last_activity = ch->get_last_activity_ns_();
+            if (now - last_activity < timeout)
+            {
+                local_next_event = std::min(local_next_event, last_activity + timeout);
+                ++it;
+                continue;
+            }
+            // By changing the connection status we avoid racing with bind_socket()
+            if (ch->try_claim_for_purge())
+            {
+                unbounded_to_close.push_back(std::move(*it));
+                it = unbound_channel_resources_.erase(it);
+            }
+            else if (ch->disconnected())
+            {
+                // Listening thread already tore down the channel; drop the lingering entry.
+                it = unbound_channel_resources_.erase(it);
+            }
+            else
+            {
+                // The channel is actively being claimed by bind_socket()
+                ++it;
+            }
+        }
+    }
+    for (auto& ch : unbounded_to_close)
+    {
+        EPROSIMA_LOG_WARNING(RTCP,
+                "Closing unbound TCP channel: no BindConnectionRequest received within keep_alive_timeout.");
+        close_tcp_socket(ch);
+    }
+
     // Update next event time
     next_event_time_ = local_next_event;
 }
@@ -1721,6 +1812,24 @@ void TCPTransportInterface::select_locators(
     }
 }
 
+void TCPTransportInterface::reschedule_unbound_purge()
+{
+    if (!keep_alive_running_.load(std::memory_order_acquire))
+    {
+        return;
+    }
+    auto now = std::chrono::steady_clock::now();
+    asio::post(io_context_timers_, [this, now]()
+            {
+                const auto timeout = std::chrono::milliseconds(configuration()->keep_alive_timeout_ms);
+                if (next_event_time_ > now + timeout)
+                {
+                    next_event_time_ = now + timeout;
+                    keep_alive_timer_.cancel_one();
+                }
+            });
+}
+
 void TCPTransportInterface::SocketAccepted(
         std::shared_ptr<asio::ip::tcp::socket> socket,
         const Locator& locator,
@@ -1742,6 +1851,7 @@ void TCPTransportInterface::SocketAccepted(
             channel->set_options(configuration());
             channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
             create_listening_thread(channel);
+            reschedule_unbound_purge();
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
                     << local_endpoint_to_locator(channel) << ", remote: "
@@ -1786,6 +1896,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             secure_channel->set_options(configuration());
             secure_channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
             create_listening_thread(secure_channel);
+            reschedule_unbound_purge();
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
                     << local_endpoint_to_locator(secure_channel) << ", remote: "

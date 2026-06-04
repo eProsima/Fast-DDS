@@ -253,6 +253,14 @@ protected:
      */
     void schedule_keep_alive_event();
 
+    /**
+     * @brief Advance the keep-alive timer so that keep_alive() runs no later than
+     * keep_alive_timeout_ms from now. Used when a new unbound channel is accepted
+     * to ensure stale entries are purged even if bound channels stay active and
+     * never trigger a keep-alive timeout themselves.
+     */
+    void reschedule_unbound_purge();
+
 public:
 
     friend class RTCPMessageManager;
@@ -569,6 +577,8 @@ public:
      * @brief Keep-alive mechanism to detect dead connections.
      * It checks all connected channels of channel_resources_ map and sends
      * keep-alive messages to those that have been idle for the keep alive period.
+     * It also purges stale unbound channels that have exceeded the keep alive timeout
+     * without transitioning to a bound state.
      */
     void keep_alive();
 

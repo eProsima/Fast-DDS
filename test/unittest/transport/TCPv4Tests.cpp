@@ -2432,6 +2432,191 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
     }
 }
 
+// This test verifies the CAS invariant that the keep_alive sweep relies on to coexist safely with
+// a concurrent BindConnectionRequest. That is, verify that TCPChannelResource::try_claim_for_purge()
+//  and TCPChannelResource::process_bind_request() are mutually exclusive on the channel's
+// connection_status_. Whoever wins the CAS excludes the other. This is the only protection
+// that keeps bind_socket's assert from firing when a bind request lands on a channel the
+// sweep has already removed from unbound_channel_resources_.
+TEST_F(TCPv4Tests, unbound_channel_purge_and_bind_request_are_mutually_exclusive)
+{
+    uint16_t port = g_default_port;
+
+    TCPv4TransportDescriptor serverDescriptor;
+    serverDescriptor.add_listener_port(port);
+    // Disable keep_alive so the auto sweep does not interfere with our manual checks.
+    serverDescriptor.keep_alive_frequency_ms = 0;
+    serverDescriptor.keep_alive_timeout_ms = 0;
+    MockTCPv4Transport server(serverDescriptor);
+    ASSERT_TRUE(server.init());
+
+    Locator_t serverLoc;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", port, serverLoc);
+    asio::io_context io_context;
+    asio::ip::tcp::resolver resolver(io_context);
+    auto endpoints = resolver.resolve(
+        IPLocator::ip_to_string(serverLoc),
+        std::to_string(IPLocator::getPhysicalPort(serverLoc)));
+
+    auto wait_for_unbound_size = [&server](size_t expected)
+            {
+                auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(1000);
+                while (server.get_unbound_channel_resources().size() < expected &&
+                        std::chrono::steady_clock::now() < deadline)
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                }
+            };
+
+    Locator_t dummyRemote;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", 0, dummyRemote);
+
+    // Case 1: sweep claims first -> a subsequent bind request must be rejected.
+    asio::ip::tcp::socket socket_1(io_context);
+    std::error_code ec;
+    asio::connect(socket_1, endpoints, ec);
+    ASSERT_FALSE(ec);
+
+    wait_for_unbound_size(1u);
+    auto unbound_1 = server.get_unbound_channel_resources();
+    ASSERT_EQ(unbound_1.size(), 1u);
+    auto channel_1 = unbound_1.back();
+
+    EXPECT_TRUE(channel_1->try_claim_for_purge());
+    EXPECT_EQ(channel_1->process_bind_request(dummyRemote), RETCODE_SERVER_ERROR);
+
+    // Case 2: bind request CASs first -> a subsequent sweep claim must fail.
+    asio::ip::tcp::socket socket_2(io_context);
+    asio::connect(socket_2, endpoints, ec);
+    ASSERT_FALSE(ec);
+
+    // Case 1's channel is still in the vector (we bypassed the sweep), so wait for size == 2
+    // and pick the most recent entry.
+    wait_for_unbound_size(2u);
+    auto unbound_2 = server.get_unbound_channel_resources();
+    ASSERT_EQ(unbound_2.size(), 2u);
+    auto channel_2 = unbound_2.back();
+    ASSERT_NE(channel_2, channel_1);
+
+    EXPECT_EQ(channel_2->process_bind_request(dummyRemote), RETCODE_OK);
+    EXPECT_FALSE(channel_2->try_claim_for_purge());
+
+    socket_1.close(ec);
+    socket_2.close(ec);
+}
+
+// Regression test #24549: connections that never send a BindConnectionRequest must be purged from
+// unbound_channel_resources_ after keep_alive_timeout_ms to avoid application memory usage to grow
+// boundlessly.
+TEST_F(TCPv4Tests, unbound_channels_purged_after_keep_alive_timeout)
+{
+    uint16_t port = g_default_port;
+
+    TCPv4TransportDescriptor serverDescriptor;
+    serverDescriptor.add_listener_port(port);
+    serverDescriptor.keep_alive_frequency_ms = 1000;
+    serverDescriptor.keep_alive_timeout_ms = 2000;
+    MockTCPv4Transport server(serverDescriptor);
+    ASSERT_TRUE(server.init());
+
+    const size_t num_connections = 5;
+    Locator_t serverLoc;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", port, serverLoc);
+    asio::io_context io_context;
+    asio::ip::tcp::resolver resolver(io_context);
+    auto endpoints = resolver.resolve(
+        IPLocator::ip_to_string(serverLoc),
+        std::to_string(IPLocator::getPhysicalPort(serverLoc)));
+
+    std::vector<std::unique_ptr<asio::ip::tcp::socket>> sockets;
+    std::error_code ec;
+    for (size_t i = 0; i < num_connections; ++i)
+    {
+        std::unique_ptr<asio::ip::tcp::socket> sock(new asio::ip::tcp::socket(io_context));
+        asio::connect(*sock, endpoints, ec);
+        ASSERT_FALSE(ec);
+        sockets.push_back(std::move(sock));
+    }
+
+    // Wait for the server to accept every connection.
+    auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(1000);
+    while (server.get_unbound_channel_resources().size() < num_connections &&
+            std::chrono::steady_clock::now() < deadline)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+    ASSERT_EQ(server.get_unbound_channel_resources().size(), num_connections);
+
+    // Wait long enough for the periodic sweep to purge stale channels.
+    deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(2000);
+    while (!server.get_unbound_channel_resources().empty() &&
+            std::chrono::steady_clock::now() < deadline)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+    EXPECT_TRUE(server.get_unbound_channel_resources().empty());
+
+    for (auto& s : sockets)
+    {
+        s->close(ec);
+    }
+}
+
+// This test verifies that TCP channels of type ACCEPT are correctly removed from the channel resources map when
+// the channel is disabled by asio. This is the case when a client disconnects from the server. There is no need
+// maintain the channel resource of a disconnected client because new connections will generate new channel resources
+// and no unbind operation is needed at destruction time for a removed participant (eDisconnected channel).
+TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
+{
+    // Server
+    TCPv4TransportDescriptor serverDescriptor;
+    serverDescriptor.add_listener_port(g_default_port);
+    serverDescriptor.keep_alive_frequency_ms = 1000;
+    serverDescriptor.keep_alive_timeout_ms    = 2000;
+    MockTCPv4Transport server(serverDescriptor);
+    ASSERT_TRUE(server.init());
+
+    // Client
+    {
+        TCPv4TransportDescriptor clientDescriptor;
+        auto client = std::unique_ptr<TCPv4Transport>(new TCPv4Transport(clientDescriptor));
+        ASSERT_TRUE(client->init());
+
+        Locator_t outputLocator;
+        outputLocator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+        IPLocator::setPhysicalPort(outputLocator, g_default_port);
+        IPLocator::setLogicalPort(outputLocator, 7410);
+
+        SendResourceList send_resource_list;
+        ASSERT_TRUE(client->OpenOutputChannel(send_resource_list, outputLocator));
+
+        // Wait for the server to finish the BindConnectionRequest handshake
+        auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+        while (server.get_channel_resources().empty() &&
+                std::chrono::steady_clock::now() < deadline)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        }
+        // Ensure there are channel resources in the server. Bind socket adds an entry per interface available, so there could be more than one.
+        ASSERT_GT(server.get_channel_resources().size(), 0u);
+
+        // Tear down the client: closes the TCP socket
+        client.reset();
+    }
+
+    // Check that the server correctly removes the channel resource of type ACCEPT after the client disconnection
+    auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+    while (!server.get_channel_resources().empty() &&
+            std::chrono::steady_clock::now() < deadline)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    EXPECT_TRUE(server.get_channel_resources().empty());
+    EXPECT_TRUE(server.get_unbound_channel_resources().empty());
+}
+
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);

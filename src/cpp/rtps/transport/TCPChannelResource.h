@@ -175,6 +175,19 @@ public:
     ResponseCode process_bind_request(
             const Locator& locator);
 
+    /**
+     * @brief Attempt to atomically claim an unbound channel for purge.
+     * Change channel status to eUnbinding, avoiding the use of this channel in other
+     * threads.
+     *
+     * @return true if the channel was claimed, false otherwise.
+     */
+    bool try_claim_for_purge()
+    {
+        eConnectionStatus expected = eConnectionStatus::eWaitingForBind;
+        return connection_status_.compare_exchange_strong(expected, eConnectionStatus::eUnbinding);
+    }
+
     // Socket related methods
     virtual void connect(
             const std::shared_ptr<TCPChannelResource>& myself) = 0;
