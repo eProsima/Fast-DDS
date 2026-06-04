@@ -22,6 +22,19 @@ if(TINYXML2_INCLUDE_DIR)
     include_directories(${TINYXML2_INCLUDE_DIR})
 endif(TINYXML2_INCLUDE_DIR)
 
+# These tests narrow a base DomainParticipant to statistics::dds::DomainParticipant and call members
+# on it. That is intentional UB (the object is never constructed as the derived type, to avoid
+# emitting its vtable and breaking ABI), so disable the vptr (bad-downcast) check for just these
+# translation units
+if(SANITIZER STREQUAL "UNDEFINED")
+    set_source_files_properties(
+        StatisticsDomainParticipantTests.cpp
+        StatisticsQosTests.cpp
+        StatisticsDomainParticipantStatusQueryableTests.cpp
+        StatisticsDomainParticipantMockTests.cpp
+        PROPERTIES COMPILE_OPTIONS "-fno-sanitize=vptr")
+endif()
+
 ## StatisticsDomainParticipantTests
 set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
     StatisticsDomainParticipantTests.cpp
