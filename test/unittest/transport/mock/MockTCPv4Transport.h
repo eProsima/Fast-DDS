@@ -40,6 +40,12 @@ public:
         return channel_resources_;
     }
 
+    size_t get_channel_resources_size() const
+    {
+        std::lock_guard<std::mutex> lock(sockets_map_mutex_);
+        return unbound_channel_resources_.size();
+    }
+
     const std::vector<std::shared_ptr<TCPChannelResource>> get_unbound_channel_resources() const
     {
         return unbound_channel_resources_;

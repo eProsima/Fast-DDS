@@ -2461,7 +2461,7 @@ TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
 
         // Wait for the server to finish the BindConnectionRequest handshake
         auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-        while (server.get_channel_resources().empty() &&
+        while (server.get_channel_resources_size() != 0 &&
                 std::chrono::steady_clock::now() < deadline)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -2476,7 +2476,7 @@ TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
 
     // Check that the server correctly removes the channel resource of type ACCEPT after the client disconnection
     auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
-    while (!server.get_channel_resources().empty() &&
+    while (server.get_channel_resources_size() != 0 &&
             std::chrono::steady_clock::now() < deadline)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
