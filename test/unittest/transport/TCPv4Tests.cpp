@@ -2469,7 +2469,8 @@ TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
         // Ensure there are channel resources in the server. Bind socket adds an entry per interface available, so there could be more than one.
         ASSERT_GT(server.get_channel_resources().size(), 0u);
 
-        // Tear down the client: closes the TCP socket
+        // Tear down the client: clean send_resource_list and then close the TCP socket.
+        send_resource_list.clear();
         client.reset();
     }
 
