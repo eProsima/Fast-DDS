@@ -39,10 +39,6 @@
 #include <xmlparser/XMLEndpointParser.h>
 #include <xmlparser/XMLProfileManager.h>
 
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
-#endif // ifdef FASTDDS_STATISTICS
-
 using namespace eprosima::fastdds::xmlparser;
 
 using eprosima::fastdds::rtps::RTPSDomain;
@@ -161,13 +157,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
-#ifndef FASTDDS_STATISTICS
     DomainParticipant* dom_part = new DomainParticipant(mask);
+#ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listener);
 #else
-    statistics::dds::DomainParticipant* dom_part = new statistics::dds::DomainParticipant(mask);
-    statistics::dds::DomainParticipantImpl* dom_part_impl =
-            new statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
+    statistics::dds::DomainParticipantImpl* dom_part_impl = new statistics::dds::DomainParticipantImpl(dom_part, did,
+                    pqos, listener);
 #endif // FASTDDS_STATISTICS
 
     if (fastdds::rtps::GUID_t::unknown() != dom_part_impl->guid())

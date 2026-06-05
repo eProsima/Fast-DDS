@@ -143,6 +143,17 @@ set(DDS_BLACKBOXTESTS_SOURCE
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/cpp/rtps/messages/CDRMessage.cpp
     )
 
+# These statistics tests narrow a base DomainParticipant to statistics::dds::DomainParticipant
+# and call members on it. That is intentional UB (the object is never constructed as the derived
+# type, to avoid emitting its vtable and breaking ABI), so disable the vptr (bad-downcast) check
+# for just these translation units
+if(SANITIZER STREQUAL "UNDEFINED")
+    set_source_files_properties(
+        ${CMAKE_CURRENT_SOURCE_DIR}/common/DDSBlackboxTestsStatistics.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/common/DDSBlackboxTestsMonitorService.cpp
+        PROPERTIES COMPILE_OPTIONS "-fno-sanitize=vptr")
+endif()
+
 # Prepare static discovery xml file for blackbox tests.
 string(RANDOM LENGTH 4 ALPHABET 0123456789 TOPIC_RANDOM_NUMBER)
 math(EXPR TOPIC_RANDOM_NUMBER "${TOPIC_RANDOM_NUMBER} + 0") # Remove extra leading 0s.
