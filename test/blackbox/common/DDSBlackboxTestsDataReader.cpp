@@ -1421,6 +1421,9 @@ TEST(DDSDataReader, reception_timestamp_for_resent_samples)
     // Wait for the reception of all samples
     ASSERT_EQ(reader.block_for_all(std::chrono::seconds(5)), 3u);
 
+    // Avoid data race between the destructor and on_data_available
+    reader.destroy();
+
     // Check timestamps. reception_timestamps map is accesed by index of HelloWorld data
     ASSERT_EQ(reader.reception_timestamps.size(), 3u);
     auto reception_ts_1 = reader.reception_timestamps[1];
