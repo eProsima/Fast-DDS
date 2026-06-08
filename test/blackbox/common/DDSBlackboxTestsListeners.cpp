@@ -1306,57 +1306,59 @@ TEST(DDSStatus, sample_lost_re_dw_re_persistence_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_be_dw_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
-    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
+        writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+        reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+
+        sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
                 {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 3 == status.total_count && 3 == status.total_count_change)
                     {
-                        ++test_step;
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        if (0 == test_step && 3 == status.total_count && 3 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (1 == test_step && 4 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (2 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (3 == test_step && 7 == status.total_count && 2 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else
+                        {
+                            test_step = 0;
+                        }
                     }
-                    else if (1 == test_step && 4 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (2 == test_step && 5 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 7 == status.total_count && 2 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else
-                    {
-                        test_step = 0;
-                    }
-                }
 
-                test_step_cv.notify_all();
-            });
+                    test_step_cv.notify_all();
+                });
 
 
-    auto data = default_helloworld_data_generator(13);
+        auto data = default_helloworld_data_generator(13);
 
-    reader.startReception(data);
-    writer.send(data, 100);
+        reader.startReception(data);
+        writer.send(data, 100);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_step]()
-            {
-                return 4 == test_step;
-            });
+        std::unique_lock<std::mutex> lock(test_step_mtx);
+        test_step_cv.wait(lock, [&test_step]()
+                {
+                    return 4 == test_step;
+                });
+    }
 }
 
 /*!
@@ -1365,60 +1367,62 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
-    sample_lost_test_dw_init(writer);
-
-    auto data = default_helloworld_data_generator(4);
-    writer.send(data, 50);
-
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
-    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
+    {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+        sample_lost_test_dw_init(writer);
+
+        auto data = default_helloworld_data_generator(4);
+        writer.send(data, 50);
+
+        reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+        sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
                 {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
                     {
-                        ++test_step;
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else
+                        {
+                            test_step = 0;
+                        }
                     }
-                    else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else
-                    {
-                        test_step = 0;
-                    }
-                }
 
-                test_step_cv.notify_all();
-            });
+                    test_step_cv.notify_all();
+                });
 
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
 
-    data = default_helloworld_data_generator(9);
+        data = default_helloworld_data_generator(9);
 
-    reader.startReception(data);
-    writer.send(data, 100);
+        reader.startReception(data);
+        writer.send(data, 100);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_step]()
-            {
-                return 3 == test_step;
-            });
+        std::unique_lock<std::mutex> lock(test_step_mtx);
+        test_step_cv.wait(lock, [&test_step]()
+                {
+                    return 3 == test_step;
+                });
+    }
 }
 
 /*!
@@ -1426,39 +1430,41 @@ TEST(DDSStatus, sample_lost_waitset_be_dw_lj_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_re_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     int32_t test_count = 0;
     int32_t test_count_change_accum = 0;
 
-    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
+    {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+        reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+        sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
                 {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    test_count = status.total_count;
-                    test_count_change_accum += status.total_count_change;
-                }
+                    {
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        test_count = status.total_count;
+                        test_count_change_accum += status.total_count_change;
+                    }
 
-                test_step_cv.notify_all();
-            });
+                    test_step_cv.notify_all();
+                });
 
-    auto data = default_helloworld_data_generator(13);
+        auto data = default_helloworld_data_generator(13);
 
-    reader.startReception(data);
-    writer.send(data, 100);
+        reader.startReception(data);
+        writer.send(data, 100);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
-            {
-                return 7 == test_count && 7 == test_count_change_accum;
-            });
+        std::unique_lock<std::mutex> lock(test_step_mtx);
+        test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
+                {
+                    return 7 == test_count && 7 == test_count_change_accum;
+                });
+    }
 }
 
 /*!
@@ -1467,48 +1473,50 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_re_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    sample_lost_test_dw_init(writer);
-
-    auto data = default_helloworld_data_generator(4);
-    writer.send(data, 50);
-
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     int32_t test_count = 0;
     int32_t test_count_change_accum = 0;
 
-    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
+    {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+        sample_lost_test_dw_init(writer);
+
+        auto data = default_helloworld_data_generator(4);
+        writer.send(data, 50);
+
+        reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+        sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_count, &test_count_change_accum](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
                 {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    test_count = status.total_count;
-                    test_count_change_accum += status.total_count_change;
-                }
+                    {
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        test_count = status.total_count;
+                        test_count_change_accum += status.total_count_change;
+                    }
 
-                test_step_cv.notify_all();
-            });
+                    test_step_cv.notify_all();
+                });
 
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Make sure the GAP message are received for the fourth sample.
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Make sure the GAP message are received for the fourth sample.
 
-    data = default_helloworld_data_generator(9);
+        data = default_helloworld_data_generator(9);
 
-    reader.startReception(data);
-    writer.send(data, 100);
+        reader.startReception(data);
+        writer.send(data, 100);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
-            {
-                return 4 == test_count && 4 == test_count_change_accum;
-            });
+        std::unique_lock<std::mutex> lock(test_step_mtx);
+        test_step_cv.wait(lock, [&test_count, &test_count_change_accum]()
+                {
+                    return 4 == test_count && 4 == test_count_change_accum;
+                });
+    }
 }
 
 /*!
@@ -1516,56 +1524,58 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_lj_re_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
-
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
+    {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+        reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+
+        sample_lost_test_init(reader, writer, [&test_step_mtx, &test_step_cv, &test_step](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
                 {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 3 == status.total_count && 3 == status.total_count_change)
                     {
-                        ++test_step;
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        if (0 == test_step && 3 == status.total_count && 3 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (1 == test_step && 4 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (2 == test_step && 5 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (3 == test_step && 7 == status.total_count && 2 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else
+                        {
+                            test_step = 0;
+                        }
                     }
-                    else if (1 == test_step && 4 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (2 == test_step && 5 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (3 == test_step && 7 == status.total_count && 2 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else
-                    {
-                        test_step = 0;
-                    }
-                }
 
-                test_step_cv.notify_all();
-            });
+                    test_step_cv.notify_all();
+                });
 
-    auto data = default_helloworld_data_generator(13);
+        auto data = default_helloworld_data_generator(13);
 
-    reader.startReception(data);
-    writer.send(data, 100);
+        reader.startReception(data);
+        writer.send(data, 100);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_step]()
-            {
-                return 4 == test_step;
-            });
+        std::unique_lock<std::mutex> lock(test_step_mtx);
+        test_step_cv.wait(lock, [&test_step]()
+                {
+                    return 4 == test_step;
+                });
+    }
 }
 
 /*!
@@ -1574,60 +1584,62 @@ TEST(DDSStatus, sample_lost_waitset_re_dw_be_dr)
  */
 TEST(DDSStatus, sample_lost_waitset_re_dw_lj_be_dr)
 {
-    PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-
-    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
-    sample_lost_test_dw_init(writer);
-
-    auto data = default_helloworld_data_generator(4);
-    writer.send(data, 50);
-
     std::mutex test_step_mtx;
     std::condition_variable test_step_cv;
     uint8_t test_step = 0;
 
-    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
-    sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
-                const eprosima::fastdds::dds::SampleLostStatus& status)
-            {
+    {
+        PubSubReaderWithWaitsets<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+        PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+        writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+        sample_lost_test_dw_init(writer);
+
+        auto data = default_helloworld_data_generator(4);
+        writer.send(data, 50);
+
+        reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+        sample_lost_test_dr_init(reader, [&test_step_mtx, &test_step_cv, &test_step](
+                    const eprosima::fastdds::dds::SampleLostStatus& status)
                 {
-                    std::unique_lock<std::mutex> lock(test_step_mtx);
-                    if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
                     {
-                        ++test_step;
+                        std::unique_lock<std::mutex> lock(test_step_mtx);
+                        if (0 == test_step && 1 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
+                        {
+                            ++test_step;
+                        }
+                        else
+                        {
+                            test_step = 0;
+                        }
                     }
-                    else if (1 == test_step && 2 == status.total_count && 1 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else if (2 == test_step && 4 == status.total_count && 2 == status.total_count_change)
-                    {
-                        ++test_step;
-                    }
-                    else
-                    {
-                        test_step = 0;
-                    }
-                }
 
-                test_step_cv.notify_all();
-            });
+                    test_step_cv.notify_all();
+                });
 
-    // Wait for discovery.
-    writer.wait_discovery();
-    reader.wait_discovery();
+        // Wait for discovery.
+        writer.wait_discovery();
+        reader.wait_discovery();
 
-    data = default_helloworld_data_generator(9);
+        data = default_helloworld_data_generator(9);
 
-    reader.startReception(data);
-    writer.send(data, 100);
+        reader.startReception(data);
+        writer.send(data, 100);
 
-    std::unique_lock<std::mutex> lock(test_step_mtx);
-    test_step_cv.wait(lock, [&test_step]()
-            {
-                return 3 == test_step;
-            });
+        std::unique_lock<std::mutex> lock(test_step_mtx);
+        test_step_cv.wait(lock, [&test_step]()
+                {
+                    return 3 == test_step;
+                });
+    }
 }
 
 /*
