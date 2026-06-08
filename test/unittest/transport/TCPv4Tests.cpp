@@ -2439,8 +2439,6 @@ TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
     // Server
     TCPv4TransportDescriptor serverDescriptor;
     serverDescriptor.add_listener_port(g_default_port);
-    serverDescriptor.keep_alive_frequency_ms = 1000;
-    serverDescriptor.keep_alive_timeout_ms    = 2000;
     MockTCPv4Transport server(serverDescriptor);
     ASSERT_TRUE(server.init());
 
@@ -2461,13 +2459,13 @@ TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
 
         // Wait for the server to finish the BindConnectionRequest handshake
         auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-        while (server.get_channel_resources_size() != 0 &&
+        while (server.get_channel_resources_size() == 0 &&
                 std::chrono::steady_clock::now() < deadline)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
         }
         // Ensure there are channel resources in the server. Bind socket adds an entry per interface available, so there could be more than one.
-        ASSERT_GT(server.get_channel_resources().size(), 0u);
+        ASSERT_GT(server.get_channel_resources_size(), 0u);
 
         // Tear down the client: clean send_resource_list and then close the TCP socket.
         send_resource_list.clear();
@@ -2481,8 +2479,8 @@ TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    EXPECT_TRUE(server.get_channel_resources().empty());
-    EXPECT_TRUE(server.get_unbound_channel_resources().empty());
+    EXPECT_EQ(server.get_channel_resources_size(), 0u);
+    EXPECT_EQ(server.get_unbound_channel_resources_size(), 0u);
 }
 
 
