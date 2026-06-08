@@ -54,7 +54,10 @@ void sorted_vector_insert(
     {
         it = std::lower_bound(collection.begin(), collection.end(), item, pred);
     }
-    collection.insert(it, item);
+    // Use emplace to avoid the self-aliasing branch in libc++'s
+    // insert(const_iterator, const_reference) overload, which triggers a
+    // false-positive -Warray-bounds when inlined under QNX 8.0's toolchain.
+    collection.emplace(it, item);
 }
 
 } // namespace collections

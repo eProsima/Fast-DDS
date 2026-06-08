@@ -252,10 +252,28 @@ public:
      * @param [in,out] array_bound_seq Sequence with the array bounds.
      * @param [in] dimension_bound Dimension bound to be added into the sequence.
      */
-    template<typename element>
     static void add_array_dimension(
-            std::vector<element>& array_bound_seq,
-            element dimension_bound)
+            std::vector<SBound>& array_bound_seq,
+            SBound dimension_bound)
+#if defined(__GNUC__) && __GNUC__ == 12
+    __attribute__(
+            (noinline))
+#endif // if defined(__GNUC__) && __GNUC__ == 12
+    {
+        if (dimension_bound == INVALID_SBOUND)
+        {
+            throw InvalidArgumentError("bound parameter must be greater than 0");
+        }
+        array_bound_seq.push_back(dimension_bound);
+    }
+
+    static void add_array_dimension(
+            std::vector<LBound>& array_bound_seq,
+            LBound dimension_bound)
+#if defined(__GNUC__) && __GNUC__ == 12
+    __attribute__(
+            (noinline))
+#endif // if defined(__GNUC__) && __GNUC__ == 12
     {
         if (dimension_bound == INVALID_LBOUND)
         {

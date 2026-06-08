@@ -191,6 +191,7 @@ bool parseIfaddr(
 {
     int family, s;
     char host[NI_MAXHOST];
+    size_t addr_len = 0;
 
     IPFinder::IPTYPE ip_type;
     bool ipv4; // Binary discriminator to distinguish between IP4/IP4_LOCAL and IP6/IP6_LOCAL types
@@ -199,11 +200,13 @@ bool parseIfaddr(
     {
         ip_type = IPFinder::IP4;
         ipv4 = true;
+        addr_len = sizeof(struct sockaddr_in);
     }
     else if (family == AF_INET6)
     {
         ip_type = IPFinder::IP6;
         ipv4 = false;
+        addr_len = sizeof(struct sockaddr_in6);
     }
     else
     {
@@ -215,7 +218,7 @@ bool parseIfaddr(
     info.dev = std::string(ifaddr->ifa_name);
 
     // Get interface name
-    s = getnameinfo(ifaddr->ifa_addr, ipv4 ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+    s = getnameinfo(ifaddr->ifa_addr, addr_len,
                     host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
     if (s != 0)
     {
@@ -224,8 +227,16 @@ bool parseIfaddr(
     }
     info.name = std::string(host);
 
+    // Create a modifiable copy of the netmask to ensure sa_family is populated
+    struct sockaddr_storage temp_mask;
+    memset(&temp_mask, 0, sizeof(temp_mask));
+    memcpy(&temp_mask, ifaddr->ifa_netmask, addr_len);
+
+    // Force the netmask family to match the IP address family
+    temp_mask.ss_family = family;
+
     // Get interface network mask
-    s = getnameinfo(ifaddr->ifa_netmask, ipv4 ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+    s = getnameinfo((struct sockaddr*)&temp_mask, addr_len,
                     host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
     if (s != 0)
     {

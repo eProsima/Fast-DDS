@@ -162,6 +162,28 @@ public:
     }
 
     /**
+     * Emplace value before pos.
+     *
+     * @param pos   iterator before which the content will be emplaced. pos may be the end() iterator.
+     * @param args The arguments args... are forwarded to the constructor to create the new element in place.
+     *
+     * @return Iterator pointing to the emplaced value. end() if emplacement couldn't be done due to collection limits.
+     */
+    template<class ... Args>
+    iterator emplace(
+            const_iterator pos,
+            Args&&... args)
+    {
+        auto dist = std::distance(collection_.cbegin(), pos);
+        if (!ensure_capacity())
+        {
+            return end();
+        }
+
+        return collection_.insert(collection_.cbegin() + dist, std::forward<Args>(args)...);
+    }
+
+    /**
      * Add element at the end.
      *
      * Adds a new element at the end of the vector, after its current last element.

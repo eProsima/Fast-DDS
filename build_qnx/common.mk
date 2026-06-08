@@ -23,9 +23,22 @@ ALL_DEPENDENCIES = Fast-DDS_all
 .PHONY: Fast-DDS_all install check clean
 
 CFLAGS += $(FLAGS)
+# GCC on QNX 8.0 raises false-positive -Walloc-size-larger-than warnings while
+# inlining libc++ std::vector::__vallocate (size synthesised as (size_t)-4).
+# Combined with -Werror this fails the build, so suppress the diagnostic here.
+CFLAGS += -Wno-alloc-size-larger-than
 LDFLAGS += -Wl,--build-id=md5
 
+JLEVEL ?= 8
+
 include $(MKFILES_ROOT)/qtargets.mk
+
+# QNX 8.0 moved inotify_* out of libc into libfsnotify; thirdparty/filewatch
+# pulls those symbols in under __unix__ and they end up in libfastdds. QNX 7.1
+# still has them in libc, so this wildcard is empty there and no flag is added.
+ifneq ($(wildcard $(QNX_TARGET)/$(CPUVARDIR)/lib/libfsnotify.so),)
+LDFLAGS += -lfsnotify
+endif
 
 FAST-DDS_DIST_DIR = $(PROJECT_ROOT)/../
 
@@ -42,7 +55,7 @@ CMAKE_ARGS += -DBUILD_SHARED_LIBS=ON \
              -DCMAKE_INSTALL_PREFIX=$(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr \
              -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
              -DEXTRA_CMAKE_C_FLAGS="$(CFLAGS)" \
-             -DEXTRA_CMAKE_CXX_FLAGS="$(CFLAGS)" \
+             -DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS="$(CFLAGS)" \
              -DEXTRA_CMAKE_ASM_FLAGS="$(FLAGS)" \
              -DEXTRA_CMAKE_LINKER_FLAGS="$(LDFLAGS)" \
              -DCPUVARDIR=$(CPUVARDIR) \
@@ -67,7 +80,7 @@ MAKE_ARGS_ASIO = CXX=$(QNX_HOST)/usr/bin/q++ CC=$(QNX_HOST)/usr/bin/qcc
 ifndef NO_TARGET_OVERRIDE
 dependencies:
 	@cd $(ASIO_ROOT) && aclocal && autoconf && automake --add-missing
-	@cd $(ASIO_ROOT) && $(CONFIGURE_ASIO) && JLEVEL=8 make VERBOSE=1 install $(MAKE_ARGS_ASIO)
+	@cd $(ASIO_ROOT) && $(CONFIGURE_ASIO) && make -j$(JLEVEL) VERBOSE=1 install $(MAKE_ARGS_ASIO)
 	@rm -rf $(FAST-DDS_INSTALL_ROOT)/usr/include/asio $(FAST-DDS_INSTALL_ROOT)/usr/include/asio.hpp
 	@mkdir -p $(FAST-DDS_INSTALL_ROOT)/usr/include
 	@mv $(FAST-DDS_INSTALL_ROOT)/include/asio.hpp $(FAST-DDS_INSTALL_ROOT)/usr/include
@@ -75,29 +88,29 @@ dependencies:
 
 	@mkdir -p build/build_fastcdr
 	@cd build/build_fastcdr && cmake $(CMAKE_ARGS) $(FASTCDR_ROOT)
-	@cd build/build_fastcdr && JLEVEL=8 make VERBOSE=1 all
-	@cd build/build_fastcdr && JLEVEL=8 make VERBOSE=1 install
+	@cd build/build_fastcdr && make -j$(JLEVEL) VERBOSE=1 all
+	@cd build/build_fastcdr && make -j$(JLEVEL) VERBOSE=1 install
 
 	@mkdir -p build/build_foonathan_memory
 	@cd build/build_foonathan_memory && cmake $(CMAKE_ARGS) $(FOONATHAN_MEMORY_ROOT)
-	@cd build/build_foonathan_memory && JLEVEL=8 make VERBOSE=1 all
-	@cd build/build_foonathan_memory && JLEVEL=8 make VERBOSE=1 install
+	@cd build/build_foonathan_memory && make -j$(JLEVEL) VERBOSE=1 all
+	@cd build/build_foonathan_memory && make -j$(JLEVEL) VERBOSE=1 install
 
 	@mkdir -p build/build_googletest
 	@cd build/build_googletest && cmake $(CMAKE_ARGS) $(GOOGLETEST_ROOT)
-	@cd build/build_googletest && JLEVEL=8 make VERBOSE=1 all
-	@cd build/build_googletest && JLEVEL=8 make VERBOSE=1 install
+	@cd build/build_googletest && make -j$(JLEVEL) VERBOSE=1 all
+	@cd build/build_googletest && make -j$(JLEVEL) VERBOSE=1 install
 
 	@mkdir -p build/build_tinyxml2
 	@cd build/build_tinyxml2 && cmake $(CMAKE_ARGS) $(TINYXML2_ROOT)
-	@cd build/build_tinyxml2 && JLEVEL=8 make VERBOSE=1 all
-	@cd build/build_tinyxml2 && JLEVEL=8 make VERBOSE=1 install
+	@cd build/build_tinyxml2 && make -j$(JLEVEL) VERBOSE=1 all
+	@cd build/build_tinyxml2 && make -j$(JLEVEL) VERBOSE=1 install
 	@cp $(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr/lib/cmake/tinyxml2/tinyxml2Config.cmake $(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR)/usr/lib/cmake/tinyxml2/TinyXML2Config.cmake
 
 Fast-DDS_all: dependencies
 	@mkdir -p build/build_fast-dds
 	@cd build/build_fast-dds && cmake $(FAST-DDS_CMAKE_ARGS) $(FAST-DDS_DIST_DIR)
-	@cd build/build_fast-dds && JLEVEL=8 make VERBOSE=1 install
+	@cd build/build_fast-dds && make -j$(JLEVEL) VERBOSE=1 install
 
 install check: Fast-DDS_all
 	@echo Done.
