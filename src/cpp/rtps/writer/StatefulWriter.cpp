@@ -445,11 +445,14 @@ bool StatefulWriter::intraprocess_heartbeat(
         bool liveliness)
 {
     bool returned_value = false;
+    std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
     LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
+    lockW.unlock();
 
     if (local_reader)
     {
-        std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
+        // std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
+        lockW.lock();
         SequenceNumber_t first_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();
 
