@@ -2601,6 +2601,7 @@ public:
 
     ~PubSubReaderWithWaitsets() override
     {
+        waitset_thread_.stop();
     }
 
     void createSubscriber() override
