@@ -1794,6 +1794,7 @@ public:
 
     unsigned int get_participants_matched() const
     {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
@@ -2208,7 +2209,7 @@ protected:
     eprosima::fastdds::rtps::GUID_t datawriter_guid_;
     bool initialized_;
     bool use_domain_id_from_profile_;
-    std::mutex mutexDiscovery_;
+    mutable std::mutex mutexDiscovery_;
     std::condition_variable cv_;
     std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;

@@ -1973,6 +1973,7 @@ public:
 
     unsigned int get_participants_matched() const
     {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
@@ -2272,7 +2273,7 @@ protected:
     std::list<type> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
-    std::mutex mutexDiscovery_;
+    mutable std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
