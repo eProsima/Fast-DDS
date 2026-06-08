@@ -2577,7 +2577,7 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! Number of times deadline was missed
-        unsigned int times_deadline_missed_ = 0;
+        std::atomic<unsigned int> times_deadline_missed_ {0};
 
         //! The timeout for the wait operation
         eprosima::fastdds::dds::Duration_t timeout_;

@@ -20,6 +20,7 @@
 #ifndef _TEST_BLACKBOX_PUBSUBWRITER_HPP_
 #define _TEST_BLACKBOX_PUBSUBWRITER_HPP_
 
+#include <atomic>
 #include <condition_variable>
 #include <list>
 #include <map>
@@ -2421,10 +2422,10 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! The number of times deadline was missed
-        unsigned int times_deadline_missed_ = 0;
+        std::atomic<unsigned int> times_deadline_missed_ {0};
 
         //! The number of times liveliness was lost
-        unsigned int times_liveliness_lost_ = 0;
+        std::atomic<unsigned int> times_liveliness_lost_ {0};
 
         //! The timeout for the wait operation
         eprosima::fastdds::dds::Duration_t timeout_;
