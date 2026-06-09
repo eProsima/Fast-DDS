@@ -31,6 +31,8 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/ReadCondition.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/CustomTopicManager.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/common/Guid.hpp>
@@ -439,6 +441,16 @@ public:
     void set_type_support_context(
             const std::shared_ptr<TopicDataType::Context>& context);
 
+    /**
+     * @brief Set the custom topic manager to be used by this DataReader.
+     *
+     * @param topic_manager Shared pointer to the custom topic manager to be used by this DataReader.
+     *
+     * @pre The DataReader must not be enabled.
+     */
+    void set_custom_topic_manager(
+            const std::shared_ptr<CustomTopicManager>& topic_manager);
+
 protected:
 
     //!Subscriber
@@ -611,6 +623,9 @@ protected:
 
     // Context to use when calling type support methods
     std::shared_ptr<TopicDataType::Context> type_support_context_ {};
+
+    // Custom topic manager to use when deserializing data
+    std::shared_ptr<CustomTopicManager> custom_topic_manager_ {};
 
     ReturnCode_t check_collection_preconditions_and_calc_max_samples(
             LoanableCollection& data_values,

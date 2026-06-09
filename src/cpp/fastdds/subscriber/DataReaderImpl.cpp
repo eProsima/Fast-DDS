@@ -2437,6 +2437,12 @@ void DataReaderImpl::set_type_support_context(
     type_support_context_ = context;
 }
 
+void DataReaderImpl::set_custom_topic_manager(
+        const std::shared_ptr<CustomTopicManager>& topic_manager)
+{
+    custom_topic_manager_ = topic_manager;
+}
+
 }  // namespace dds
 }  // namespace fastdds
 }  // namespace eprosima

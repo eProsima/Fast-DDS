@@ -503,6 +503,18 @@ ReturnCode_t DataReader::set_type_support_context(
     return RETCODE_OK;
 }
 
+ReturnCode_t DataReader::set_custom_topic_manager(
+        const std::shared_ptr<CustomTopicManager>& topic_manager)
+{
+    if (enable_)
+    {
+        return RETCODE_ILLEGAL_OPERATION;
+    }
+
+    impl_->set_custom_topic_manager(topic_manager);
+    return RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

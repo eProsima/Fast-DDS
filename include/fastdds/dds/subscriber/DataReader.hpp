@@ -38,6 +38,7 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/subscriber/ReadCondition.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/CustomTopicManager.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
@@ -1120,6 +1121,17 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t set_type_support_context(
             const std::shared_ptr<TopicDataType::Context>& context);
+
+    /**
+     * @brief Set the custom topic manager to be used by this DataReader. Cannot be called on an enabled DataReader.
+     *
+     * @param [in] topic_manager Shared pointer to the CustomTopicManager to be used by this DataReader.
+     *
+     * @return RETCODE_OK if the custom topic manager is set successfully.
+     *         RETCODE_ILLEGAL_OPERATION if this entity is enabled.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_custom_topic_manager(
+            const std::shared_ptr<CustomTopicManager>& topic_manager);
 
 protected:
 
