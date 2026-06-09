@@ -21,6 +21,7 @@
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <unordered_map>
 #if defined(__has_include) && __has_include(<version>)
 #   include <version>
 #endif // if defined(__has_include) && __has_include(<version>)
@@ -35,7 +36,9 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/topic/CustomTopicManager.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/rtps/builtin/data/TopicDescription.hpp>
@@ -43,7 +46,6 @@
 #include <fastdds/rtps/participant/RTPSParticipant.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
-#include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/ReadConditionImpl.hpp>
@@ -169,6 +171,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     history_.reset(new detail::DataReaderHistory(type_, type_support_context_, *topic_, qos_));
 
+    std::string topic_name = topic_->get_impl()->get_rtps_topic_name();
     ReaderAttributes att;
 
     // TODO(eduponz): Encapsulate this in QosConverters.cpp
@@ -197,7 +200,7 @@ ReturnCode_t DataReaderImpl::enable()
     // Insert topic_name and partitions
     Property property;
     property.name("topic_name");
-    property.value(topic_->get_impl()->get_rtps_topic_name().c_str());
+    property.value(topic_name.c_str());
     att.endpoint.properties.properties().push_back(std::move(property));
 
     std::string* endpoint_partitions = PropertyPolicyHelper::find_property(qos_.properties(), "partitions");
@@ -245,8 +248,9 @@ ReturnCode_t DataReaderImpl::enable()
     }
 
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
+    RTPSParticipant* rtps_participant = subscriber_->rtps_participant();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
-        subscriber_->rtps_participant(),
+        rtps_participant,
         guid_.entityId,
         att, pool,
         static_cast<ReaderHistory*>(history_.get()),
@@ -270,7 +274,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     configure_deadline_timer_();
 
-    lifespan_timer_ = new TimedEvent(subscriber_->rtps_participant()->get_resource_event(),
+    lifespan_timer_ = new TimedEvent(rtps_participant->get_resource_event(),
                     [&]() -> bool
                     {
                         return lifespan_expired();
@@ -279,7 +283,7 @@ ReturnCode_t DataReaderImpl::enable()
 
     // Register the reader
     fastdds::rtps::TopicDescription topic_desc;
-    topic_desc.topic_name = topic_->get_impl()->get_rtps_topic_name();
+    topic_desc.topic_name = topic_name;
     topic_desc.type_name = topic_->get_type_name();
     subscriber_->get_participant_impl()->fill_type_information(type_, topic_desc.type_information);
 
@@ -290,13 +294,20 @@ ReturnCode_t DataReaderImpl::enable()
         return RETCODE_ERROR;
     }
 
+    CustomTopicManager::CustomTopicsMap custom_topics;
+    if (custom_topic_manager_)
+    {
+        custom_topics = custom_topic_manager_->on_local_reader_enabled(*user_datareader_, subscription_data.user_data);
+        qos_.user_data(subscription_data.user_data);
+    }
+
     rtps::ContentFilterProperty* filter_property = nullptr;
     if (nullptr != content_topic && !content_topic->filter_property.filter_expression.empty())
     {
         filter_property = &content_topic->filter_property;
     }
 
-    ReturnCode_t register_reader_code = subscriber_->rtps_participant()->register_reader(reader_, topic_desc,
+    ReturnCode_t register_reader_code = rtps_participant->register_reader(reader_, topic_desc,
                     subscription_data,
                     filter_property);
     if (register_reader_code != RETCODE_OK)
@@ -305,6 +316,10 @@ ReturnCode_t DataReaderImpl::enable()
 
         reader_->set_listener(nullptr);
         stop();
+    }
+    else
+    {
+        // TODO: Handle custom topics
     }
 
     return register_reader_code;
