@@ -334,6 +334,26 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
     access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
+TEST_F(CryptographyPluginTest, exchange_DeserializeMalformedKeyMaterial)
+{
+    using namespace eprosima::fastdds::rtps::security;
+
+    KeyMaterial_AES_GCM_GMAC result;
+
+    // master_salt sequence length larger than the 32-byte destination array
+    std::vector<uint8_t> oversized_salt {0, 0, 0, 1, 0, 0, 0, 0xFF};
+    oversized_salt.insert(oversized_salt.end(), 300, 0x41);
+    ASSERT_FALSE(CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &oversized_salt));
+
+    // truncated token: announces a non-empty transformation kind but carries no key material
+    std::vector<uint8_t> truncated {0, 0, 0, 1};
+    ASSERT_FALSE(CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &truncated));
+
+    // well-formed empty key material is still accepted
+    std::vector<uint8_t> empty_material {0, 0, 0, 0};
+    ASSERT_TRUE(CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &empty_material));
+}
+
 TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
 {
     using namespace eprosima::fastdds::rtps::security;
