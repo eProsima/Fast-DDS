@@ -384,6 +384,10 @@ if(ANDROID)
     endif()
 endif()
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+    list(APPEND ${PROJECT_NAME}_source_files utils/Win32Dll.cpp)
+endif()
+
 # Option to enable strict real-time. In this case, several API functions have a real-time behaviour.
 # * Publisher::write() - Uses ReliabilityQosPolicy.max_blocking_time
 # * Subscriber::takeNextData() - Uses ReliabilityQosPolicy.max_blocking_time
