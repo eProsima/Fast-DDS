@@ -299,6 +299,13 @@ public:
         return qos_;
     }
 
+    ReturnCode_t get_qos(
+            DataWriterQos& qos) const
+    {
+        qos = qos_;
+        return ReturnCode_t::RETCODE_OK;
+    }
+
     Topic* get_topic() const
     {
         return topic_;
