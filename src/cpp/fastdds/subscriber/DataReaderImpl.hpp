@@ -744,7 +744,35 @@ private:
     DataReaderQos get_datareader_qos_from_settings(
             const DataReaderQos& qos);
 
+    /**
+     * @brief Creates a custom topic reader with the given topic name and type support context.
+     *
+     * @param topic_name The name of the topic.
+     * @param type_support_context The context for the type support.
+     *
+     * @return The return code indicating the success or failure of the operation.
+     */
+    ReturnCode_t create_custom_topic_reader(
+            const std::string& topic_name,
+            const std::shared_ptr<TopicDataType::Context>& type_support_context);
+
+    /**
+     * @brief Registers a custom reader to be used for deserialization of data.
+     *
+     * @param custom_reader The custom reader to register.
+     */
+    void register_custom_reader(
+            DataReaderImpl* custom_reader);
+
+    /**
+     * @brief Clears the list of custom readers.
+     *
+     * Called when the DataReader is being disabled or deleted to ensure that no dangling pointers to custom readers remain.
+     */
+    void clear_custom_readers();
+
     bool is_data_sharing_compatible_ = false;
+    std::vector<std::unique_ptr<DataReaderImpl>> custom_readers_;
 
 };
 

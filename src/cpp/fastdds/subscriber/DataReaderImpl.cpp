@@ -165,6 +165,84 @@ DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(
     return return_qos;
 }
 
+ReturnCode_t DataReaderImpl::create_custom_topic_reader(
+        const std::string& topic_name,
+        const std::shared_ptr<TopicDataType::Context>& type_support_context)
+{
+    std::string type_name = topic_->get_type_name();
+    DomainParticipant* participant = topic_->get_participant();
+    Topic* topic = participant->create_topic(topic_name, type_name, TOPIC_QOS_DEFAULT);
+    bool topic_created = (nullptr != topic);
+    TopicDescription* topic_desc = topic;
+    if (nullptr == topic_desc)
+    {
+        topic_desc = participant->lookup_topicdescription(topic_name);
+        topic = dynamic_cast<Topic*>(topic_desc);
+        if ((nullptr == topic) || (topic->get_type_name() != type_name))
+        {
+            EPROSIMA_LOG_ERROR(DATA_READER,
+                    "Topic description with name " << topic_name << " already exists but has a different type");
+            return RETCODE_ERROR;
+        }
+    }
+
+    if (nullptr == topic_desc)
+    {
+        EPROSIMA_LOG_ERROR(DATA_READER, "Could not create or find topic description for custom topic " << topic_name);
+        return RETCODE_ERROR;
+    }
+
+    std::shared_ptr<IPayloadPool> pool {};
+    if (is_custom_payload_pool_)
+    {
+        pool = payload_pool_;
+    }
+
+    ReturnCode_t ret_val = RETCODE_ERROR;
+    DataReaderImpl* reader = subscriber_->create_datareader_impl(type_, topic_desc, qos_, listener_, pool);
+    if (nullptr != reader)
+    {
+        reader->user_datareader_ = user_datareader_;
+        reader->set_type_support_context(type_support_context);
+        ret_val = reader->enable();
+
+        if (RETCODE_OK == ret_val)
+        {
+            register_custom_reader(reader);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DATA_READER, "Failed to enable DataReader for custom topic " << topic_name);
+            delete reader;
+        }
+    }
+
+    if (RETCODE_OK != ret_val && topic_created)
+    {
+        participant->delete_topic(topic);
+    }
+
+    return ret_val;
+}
+
+void DataReaderImpl::register_custom_reader(
+        DataReaderImpl* custom_reader)
+{
+    custom_reader->get_topicdescription()->get_impl()->reference();
+    custom_readers_.emplace_back(custom_reader);
+}
+
+void DataReaderImpl::clear_custom_readers()
+{
+    for (const auto& custom_reader : custom_readers_)
+    {
+        custom_reader->get_topicdescription()->get_impl()->dereference();
+        custom_reader->set_listener(nullptr);
+        custom_reader->user_datareader_ = nullptr;
+    }
+    custom_readers_.clear();
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
@@ -307,22 +385,31 @@ ReturnCode_t DataReaderImpl::enable()
         filter_property = &content_topic->filter_property;
     }
 
-    ReturnCode_t register_reader_code = rtps_participant->register_reader(reader_, topic_desc,
-                    subscription_data,
-                    filter_property);
-    if (register_reader_code != RETCODE_OK)
+    ReturnCode_t ret_val = rtps_participant->register_reader(reader_, topic_desc, subscription_data, filter_property);
+    if (ret_val == RETCODE_OK)
     {
-        EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
-
-        reader_->set_listener(nullptr);
-        stop();
+        for (const auto& custom_topic : custom_topics)
+        {
+            ret_val = create_custom_topic_reader(custom_topic.first, custom_topic.second);
+            if (ret_val != RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(DATA_READER, "Could not create DataReader for custom topic " << custom_topic.first);
+                break;
+            }
+        }
     }
     else
     {
-        // TODO: Handle custom topics
+        EPROSIMA_LOG_ERROR(DATA_READER, "Could not register reader on discovery protocols");
     }
 
-    return register_reader_code;
+    if (ret_val != RETCODE_OK)
+    {
+        reader_->set_listener(nullptr);
+        stop();
+    }
+
+    return ret_val;
 }
 
 void DataReaderImpl::disable()
@@ -336,6 +423,8 @@ void DataReaderImpl::disable()
 
 void DataReaderImpl::stop()
 {
+    clear_custom_readers();
+
     delete lifespan_timer_;
     delete deadline_timer_;
 
