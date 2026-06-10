@@ -164,7 +164,7 @@ TEST_F(RefCountedPointerTests, refcountedpointer_inactive)
     }
 
     // The entity should have been processed only once
-    ASSERT_EQ(1, entity_.n_times_data_processed);
+    ASSERT_EQ(std::size_t{1}, entity_.n_times_data_processed.load());
 }
 
 TEST_F(RefCountedPointerTests, refcounterpointer_deactivate_waits_for_no_references)
@@ -224,7 +224,7 @@ TEST_F(RefCountedPointerTests, refcounterpointer_deactivate_waits_for_no_referen
 
     std::cout << "Elapsed time: " << elapsed << " ms" << std::endl;
     ASSERT_GT(elapsed, 50); // destroy should have taken at least 50 ms. Being strict it should be 100, but we allow some margin
-    ASSERT_EQ(entity_.n_times_data_processed, 5);
+    ASSERT_EQ(std::size_t{5}, entity_.n_times_data_processed.load());
 }
 
 } // namespace fastdds

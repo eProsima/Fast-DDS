@@ -312,7 +312,7 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     // .reliability
     EXPECT_EQ(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS, wqos.reliability().kind);
     EXPECT_EQ(100, wqos.reliability().max_blocking_time.seconds);
-    EXPECT_EQ(1, wqos.reliability().max_blocking_time.nanosec);
+    EXPECT_EQ(1u, wqos.reliability().max_blocking_time.nanosec);
     // .destination_order
     EXPECT_EQ(eprosima::fastdds::dds::BY_RECEPTION_TIMESTAMP_DESTINATIONORDER_QOS, wqos.destination_order().kind);
     // .history
@@ -397,9 +397,9 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
     EXPECT_EQ(2, wqos.endpoint().entity_id);
     EXPECT_EQ(eprosima::fastdds::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, wqos.endpoint().history_memory_policy);
     // . writer_resource_limits
-    EXPECT_EQ(30, wqos.writer_resource_limits().matched_subscriber_allocation.initial);
-    EXPECT_EQ(300, wqos.writer_resource_limits().matched_subscriber_allocation.maximum);
-    EXPECT_EQ(400, wqos.writer_resource_limits().matched_subscriber_allocation.increment);
+    EXPECT_EQ(30ul, wqos.writer_resource_limits().matched_subscriber_allocation.initial);
+    EXPECT_EQ(300ul, wqos.writer_resource_limits().matched_subscriber_allocation.maximum);
+    EXPECT_EQ(400ul, wqos.writer_resource_limits().matched_subscriber_allocation.increment);
     // . data_sharing
     EXPECT_EQ(eprosima::fastdds::dds::ON, wqos.data_sharing().kind());
     EXPECT_EQ(0, wqos.data_sharing().shm_directory().compare("/"));

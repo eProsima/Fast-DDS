@@ -1004,7 +1004,7 @@ TEST_P(TransportTCP, send_resource_cleanup)
                 }
                 return tcp_send_resources;
             };
-    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1u);
 
     // Release TCP client resources.
     client.reset();
@@ -1025,7 +1025,7 @@ TEST_P(TransportTCP, send_resource_cleanup)
     // Check that the send_resource_list has size 0. This means that the send resource
     // for the  client has been removed.
     send_resource_list = server_chaining_transport->get_send_resource_list();
-    EXPECT_EQ(tcp_send_resources(send_resource_list), 0);
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 0u);
     send_resource_list.clear();
 }
 
@@ -1148,7 +1148,7 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
                 }
                 return tcp_send_resources;
             };
-    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1u);
 
     // Release TCP client resources.
     server.reset();
@@ -1169,7 +1169,7 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
     // Check that the send_resource_list has size 1. This means that the send resource
     // for the first client hasn't been removed because it was created from an initial_peer.
     send_resource_list = client_chaining_transport->get_send_resource_list();
-    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1u);
     send_resource_list.clear();
 
     // If relaunching the server, the client should connect again.
@@ -1596,8 +1596,8 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
 
         EXPECT_TRUE(locators == locators2);
         // LocatorList size depends on the number of interfaces. Different address but same port.
-        ASSERT_GT(locators.size(), 0);
-        ASSERT_GT(locators2.size(), 0);
+        ASSERT_GT(locators.size(), 0u);
+        ASSERT_GT(locators2.size(), 0u);
         auto locator1 = locators.begin();
         auto locator2 = locators2.begin();
         EXPECT_EQ(IPLocator::getPhysicalPort(*locator1), IPLocator::getPhysicalPort(*locator2));
@@ -1626,8 +1626,8 @@ TEST_P(TransportTCP, tcp_unique_network_flows_init)
 
         EXPECT_FALSE(locators == locators2);
         // LocatorList size depends on the number of interfaces. Different address but same port.
-        ASSERT_GT(locators.size(), 0);
-        ASSERT_GT(locators2.size(), 0);
+        ASSERT_GT(locators.size(), 0u);
+        ASSERT_GT(locators2.size(), 0u);
         auto locator1 = locators.begin();
         auto locator2 = locators2.begin();
         EXPECT_EQ(IPLocator::getPhysicalPort(*locator1), IPLocator::getPhysicalPort(*locator2));

@@ -423,7 +423,7 @@ protected:
             ReturnCode_t expected_ret;
             expected_ret = expected_samples == 0 ? RETCODE_NO_DATA : RETCODE_OK;
             EXPECT_EQ(expected_ret, reader->take(recv_data, recv_info));
-            EXPECT_EQ(recv_data.length(), expected_samples);
+            EXPECT_EQ(static_cast<uint64_t>(recv_data.length()), expected_samples);
             for (HelloWorldSeq::size_type i = 0;
                     i < recv_data.length() && static_cast<uint32_t>(i) < expected_samples;
                     ++i)
@@ -580,7 +580,7 @@ protected:
         if (!state.transient_local)
         {
             // Ensure reader is in clean state
-            EXPECT_EQ(reader->get_unread_count(), 0);
+            EXPECT_EQ(reader->get_unread_count(), 0ull);
         }
 
         // Send data

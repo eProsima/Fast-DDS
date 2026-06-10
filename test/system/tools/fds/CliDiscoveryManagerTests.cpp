@@ -505,7 +505,7 @@ TEST_F(CliDiscoveryManagerTest, GetRemoteServersWithDomainParam)
     LocatorList_t serverList;
     load_environment_server_info(servers, serverList);
 
-    EXPECT_EQ(serverList.size(), 2);
+    EXPECT_EQ(serverList.size(), 2u);
     PortParameters port_params;
     std::vector<uint16_t> expected_ports({7402, port_params.get_discovery_server_port(1)});
     for (Locator_t& locator : serverList)
@@ -532,14 +532,14 @@ TEST_F(CliDiscoveryManagerTest, SetServerQos)
 {
     manager.set_server_qos(7402);
     DomainParticipantQos qos = manager.getServerQos();
-    EXPECT_EQ(qos.wire_protocol().builtin.metatrafficUnicastLocatorList.size(), 1);
+    EXPECT_EQ(qos.wire_protocol().builtin.metatrafficUnicastLocatorList.size(), 1u);
     for (const Locator_t& locator : qos.wire_protocol().builtin.metatrafficUnicastLocatorList)
     {
         compareLocator(locator, "0.0.0.0", 7402, false, false);
     }
     EXPECT_FALSE(qos.transport().use_builtin_transports);
     EXPECT_EQ(qos.wire_protocol().builtin.discovery_config.discoveryProtocol, DiscoveryProtocol::SERVER);
-    ASSERT_EQ(qos.transport().user_transports.size(), 1);
+    ASSERT_EQ(qos.transport().user_transports.size(), 1u);
     EXPECT_TRUE(nullptr != dynamic_cast<UDPv4TransportDescriptor*>(qos.transport().user_transports[0].get()));
 }
 
@@ -773,8 +773,8 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
                     }
                     EXPECT_TRUE(manager.is_server_running(server.domain_id));
                 }
-                EXPECT_EQ(expected_ports.size(), 0);
-                EXPECT_EQ(expected_domains.size(), 0);
+                EXPECT_EQ(expected_ports.size(), 0u);
+                EXPECT_EQ(expected_domains.size(), 0u);
             };
 
     // Use MockCliDiscoveryManager overwritten method to get the listening ports
@@ -790,7 +790,7 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         // Simulate the creation of the DS with the mocked listening port
         manager.mocked_ports.push_back(7402);
         servers = manager.get_local_servers();
-        EXPECT_EQ(servers.size(), 1);
+        EXPECT_EQ(servers.size(), 1u);
         verify_servers(servers, {port}, {domain});
     }
 
@@ -810,7 +810,7 @@ TEST_F(CliDiscoveryManagerTest, GetLocalServers)
         manager.mocked_ports.push_back(7402);
         manager.mocked_ports.push_back(7652);
         servers = manager.get_local_servers();
-        EXPECT_EQ(servers.size(), 2);
+        EXPECT_EQ(servers.size(), 2u);
         verify_servers(servers, {p0, p1}, {d0, d1});
     }
 }

@@ -524,7 +524,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     //    + indexing by id
     DynamicTypeMembersById members_by_id;
     EXPECT_EQ(RETCODE_OK, struct_type_builder->get_all_members(members_by_id));
-    EXPECT_EQ(2, members_by_id.size());
+    EXPECT_EQ(2u, members_by_id.size());
 
     auto dm3 = members_by_id[3];
     ASSERT_TRUE(dm3);
@@ -543,7 +543,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     //    + indexing by name
     DynamicTypeMembersByName members_by_name;
     EXPECT_EQ(RETCODE_OK, struct_type_builder->get_all_members_by_name(members_by_name));
-    EXPECT_EQ(2, members_by_name.size());
+    EXPECT_EQ(2u, members_by_name.size());
 
     dm3 = members_by_name["int32"];
     ASSERT_EQ(RETCODE_OK, dm3->get_descriptor(md));
@@ -565,7 +565,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     ASSERT_EQ(RETCODE_OK, struct_type_builder->add_member(md));
 
     EXPECT_EQ(RETCODE_OK, struct_type_builder->get_all_members(members_by_id));
-    ASSERT_EQ(3, members_by_id.size());
+    ASSERT_EQ(3u, members_by_id.size());
 
     MemberDescriptor::_ref_type tmp = traits<MemberDescriptor>::make_shared();
     auto dm = members_by_id[3];
@@ -950,7 +950,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
 
     uint64_t uTest64;
     EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(uTest64, 1);
+    EXPECT_EQ(uTest64, 1ull);
 
     double fTest64;
     EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
@@ -1794,7 +1794,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
 
     uint64_t uTest64;
     EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(1, uTest64);
+    EXPECT_EQ(1ull, uTest64);
 
     float fTest32;
     EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
@@ -3740,7 +3740,7 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
 
     uint64_t uTest64 {1};
     EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(0, uTest64);
+    EXPECT_EQ(0ull, uTest64);
 
     float fTest32 {1};
     EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
@@ -4868,7 +4868,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
 
     uint64_t uTest64;
     EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    EXPECT_EQ(uTest64, 2);
+    EXPECT_EQ(uTest64, 2ull);
 
     double fTest64;
     EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
@@ -8016,15 +8016,15 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
     EXPECT_EQ(data->set_uint64_value(4, 5), RETCODE_OK);
     uint64_t test1 {0};
     EXPECT_EQ(data->get_uint64_value(test1, 0), RETCODE_OK);
-    EXPECT_EQ(1, test1);
+    EXPECT_EQ(1ull, test1);
     EXPECT_EQ(data->get_uint64_value(test1, 1), RETCODE_OK);
-    EXPECT_EQ(2, test1);
+    EXPECT_EQ(2ull, test1);
     EXPECT_EQ(data->get_uint64_value(test1, 2), RETCODE_OK);
-    EXPECT_EQ(3, test1);
+    EXPECT_EQ(3ull, test1);
     EXPECT_EQ(data->get_uint64_value(test1, 3), RETCODE_OK);
-    EXPECT_EQ(4, test1);
+    EXPECT_EQ(4ull, test1);
     EXPECT_EQ(data->get_uint64_value(test1, 4), RETCODE_OK);
-    EXPECT_EQ(5, test1);
+    EXPECT_EQ(5ull, test1);
 
     UInt64Seq test_all {{1, 2, 3, 4, 5}};
     UInt64Seq test_less {{3, 4, 5}};

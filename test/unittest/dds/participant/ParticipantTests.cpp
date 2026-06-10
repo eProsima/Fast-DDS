@@ -1235,7 +1235,7 @@ TEST(ParticipantTests, NoBuiltinMetatrafficMulticastForClients)
 
     fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::CLIENT);
-    EXPECT_EQ(attributes.builtin.metatrafficMulticastLocatorList.size(), 0);
+    EXPECT_EQ(attributes.builtin.metatrafficMulticastLocatorList.size(), 0u);
 
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
@@ -1592,7 +1592,7 @@ TEST(ParticipantTests, EasyModeParticipantCheckConfigurationPriority)
     // Verify that the localhost Discovery Server is created and the configured remote IP
     // is the one set by the QoS (i.e., ROS2_EASY_MODE environment variable is ignored).
     rtps::RTPSParticipantAttributes rtps_attr = get_rtps_attributes(participant);
-    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1);
+    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1u);
 
     rtps::Locator_t expected_locator;
     rtps::IPLocator::setIPv4(expected_locator, "127.0.0.1");
@@ -1627,7 +1627,7 @@ TEST(ParticipantTests, EasyModeIPConfigFromXML)
     // Verify that the localhost Discovery Server is created and the configured remote IP
     // is the one set by the QoS
     rtps::RTPSParticipantAttributes rtps_attr = get_rtps_attributes(participant);
-    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1);
+    ASSERT_EQ(rtps_attr.builtin.discovery_config.m_DiscoveryServers.size(), 1u);
 
     rtps::Locator_t expected_locator;
     rtps::IPLocator::setIPv4(expected_locator, "127.0.0.1");
