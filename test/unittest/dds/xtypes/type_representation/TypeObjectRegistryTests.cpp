@@ -21,13 +21,24 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/xtypes/common.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+
+#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace xtypes {
+
+class TestTypeObjectRegistry : public TypeObjectRegistry
+{
+
+public:
+
+    using TypeObjectRegistry::set_annotation_parameter_value;
+};
 
 // Test TypeObjectRegistry::register_type_object
 TEST(TypeObjectRegistryTests, register_type_object)
@@ -328,6 +339,42 @@ TEST(TypeObjectRegistryTests, get_type_information)
 
     TypeInformation type_info;
     EXPECT_EQ(RETCODE_OK, registry.get_type_information(type_ids, type_info, false));
+}
+
+// (MacOS) Regression test for clang/libc++ builds: empty char8 annotation
+// parameters must not route through the string overload
+// and must produce a null character default value instead
+TEST(TypeObjectRegistryTests, set_annotation_parameter_value_empty_char8)
+{
+    TestTypeObjectRegistry registry;
+    AnnotationParameterValue param_value;
+    // Build the primitive char8 type explicitly so the conversion logic is exercised on the
+    // single-character annotation path instead of the string one
+    auto char8_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8);
+
+    ASSERT_NE(nullptr, char8_type);
+    // An empty textual value for a char8 annotation must still succeed and yield the default
+    // null character rather than being treated as a string payload.
+    EXPECT_EQ(RETCODE_OK, registry.set_annotation_parameter_value(char8_type, "", param_value));
+    EXPECT_EQ(TK_CHAR8, param_value._d());
+    EXPECT_EQ('\0', param_value.char_value());
+}
+
+// (MacOS) Regression test for clang/libc++ builds: non empty char8 annotation
+TEST(TypeObjectRegistryTests, set_annotation_parameter_value_non_empty_char8_uses_first_character)
+{
+    TestTypeObjectRegistry registry;
+    AnnotationParameterValue param_value;
+    // Use the same primitive char8 path to verify how textual input is narrowed into a single
+    // annotation character
+    auto char8_type = DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_CHAR8);
+
+    ASSERT_NE(nullptr, char8_type);
+    // For char8 annotations only the first character is significant, even if the provided text
+    // contains more bytes
+    EXPECT_EQ(RETCODE_OK, registry.set_annotation_parameter_value(char8_type, "FastDDS", param_value));
+    EXPECT_EQ(TK_CHAR8, param_value._d());
+    EXPECT_EQ('F', param_value.char_value());
 }
 
 } // xtypes

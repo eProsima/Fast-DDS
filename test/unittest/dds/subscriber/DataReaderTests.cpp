@@ -1684,9 +1684,9 @@ TEST_F(DataReaderTests, get_unread_count)
     ASSERT_EQ(SampleStateKind::READ_SAMPLE_STATE, sample_info.sample_state);
 
     // All variants should then return 0
-    EXPECT_EQ(0, data_reader_->get_unread_count(true));
-    EXPECT_EQ(0, data_reader_->get_unread_count(false));
-    EXPECT_EQ(0, data_reader_->get_unread_count());
+    EXPECT_EQ(0ull, data_reader_->get_unread_count(true));
+    EXPECT_EQ(0ull, data_reader_->get_unread_count(false));
+    EXPECT_EQ(0ull, data_reader_->get_unread_count());
 }
 
 template<typename DataType>
@@ -2950,7 +2950,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_SampleStateMask)
     bw.join();
 
     // Check the data is there
-    EXPECT_EQ(data_reader.get_unread_count(), 1);
+    EXPECT_EQ(data_reader.get_unread_count(), 1ull);
 
     // Check the conditions triggered were the expected ones
     ASSERT_FALSE(read_cond->get_trigger_value());
@@ -3062,7 +3062,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_ViewStateMask)
     bw.join();
 
     // Check the data is there
-    EXPECT_EQ(data_reader.get_unread_count(), 1);
+    EXPECT_EQ(data_reader.get_unread_count(), 1ull);
 
     // Check the conditions triggered were the expected ones
     ASSERT_TRUE(view_cond->get_trigger_value());
@@ -3167,7 +3167,7 @@ TEST_F(DataReaderTests, read_conditions_wait_on_InstanceStateMask)
     bw.join();
 
     // Check the data is there
-    EXPECT_EQ(data_reader.get_unread_count(), 1);
+    EXPECT_EQ(data_reader.get_unread_count(), 1ull);
 
     // Check the conditions triggered were the expected ones
     ASSERT_TRUE(alive_cond->get_trigger_value());

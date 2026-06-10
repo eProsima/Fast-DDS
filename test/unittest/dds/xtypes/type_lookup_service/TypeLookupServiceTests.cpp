@@ -228,7 +228,7 @@ public:
         cv_.notify_all();
     }
 
-    size_t wait_for_entries(
+    int wait_for_entries(
             uint32_t amount,
             int max_wait)
     {
@@ -237,7 +237,7 @@ public:
                 {
                     return mEntriesConsumed.size() >= amount;
                 });
-        return mEntriesConsumed.size();
+        return static_cast<int>(mEntriesConsumed.size());
     }
 
 private:
@@ -453,7 +453,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_wrong_EntityId)
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -473,7 +473,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_malformed_Reply)
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 }
 
 TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
@@ -497,7 +497,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNSUPPORTED)
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
 
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -524,7 +524,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_INVALID_ARGUMEN
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
 
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -550,7 +550,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_OUT_OF_RESOURCE
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -576,7 +576,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_OPERATI
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -602,7 +602,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupReplyListener_REMOTE_EX_UNKNOWN_EXCEPTI
             .WillOnce(testing::DoAll(testing::SetArgReferee<1>(expectedReply), testing::Return(true)));
 
     reply_listener_->on_new_cache_change_added(&stateful_reader_, &change);
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -806,7 +806,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_wrong_EntityId)
 
     request_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
-    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0);
+    EXPECT_EQ(reply_listener_->get_replies_queue()->size(), 0u);
 
     Log::Flush();
     EXPECT_EQ(log_consumer->wait_for_entries(1, 1), 1);
@@ -825,7 +825,7 @@ TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_malformed_Request)
 
     request_listener_->on_new_cache_change_added(&stateful_reader_, change);
 
-    EXPECT_EQ(request_listener_->get_requests_queue()->size(), 0);
+    EXPECT_EQ(request_listener_->get_requests_queue()->size(), 0u);
 }
 
 TEST_F(TypeLookupServiceTests, TypeLookupRequestListener_wrong_requestid)

@@ -3140,7 +3140,7 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_parameter_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, color_param));
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation_parameter(param_seq, color_param), InvalidArgumentError);
-    EXPECT_EQ(3, param_seq.size());
+    EXPECT_EQ(3u, param_seq.size());
     EXPECT_EQ(get_dependencies_param, param_seq[0]);
     EXPECT_EQ(color_param, param_seq[1]);
     EXPECT_EQ(shapesize_param, param_seq[2]);
@@ -3230,7 +3230,7 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
     EXPECT_NO_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, second_annotation));
     EXPECT_THROW(TypeObjectUtils::add_applied_annotation(applied_annotation_seq, second_annotation),
             InvalidArgumentError);
-    EXPECT_EQ(3, applied_annotation_seq.size());
+    EXPECT_EQ(3u, applied_annotation_seq.size());
     // Ordered by Annotation TypeIdentifier
     EXPECT_TRUE(applied_annotation_seq[0].annotation_typeid().equivalence_hash() <
             applied_annotation_seq[1].annotation_typeid().equivalence_hash());
@@ -3273,7 +3273,7 @@ TEST(TypeObjectUtilsTests, add_to_complete_struct_member_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, second));
     EXPECT_THROW(TypeObjectUtils::add_complete_struct_member(member_seq, second), InvalidArgumentError);
-    EXPECT_EQ(3, member_seq.size());
+    EXPECT_EQ(3u, member_seq.size());
     EXPECT_EQ(third, member_seq[0]);
     EXPECT_EQ(first, member_seq[1]);
     EXPECT_EQ(second, member_seq[2]);
@@ -3284,12 +3284,12 @@ TEST(TypeObjectUtilsTests, add_to_union_case_label_seq)
 {
     UnionCaseLabelSeq labels;
     EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 3));
-    EXPECT_EQ(1, labels.size());
+    EXPECT_EQ(1u, labels.size());
     EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 3));
-    EXPECT_EQ(1, labels.size());
+    EXPECT_EQ(1u, labels.size());
     EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 1));
     EXPECT_NO_THROW(TypeObjectUtils::add_union_case_label(labels, 2));
-    EXPECT_EQ(3, labels.size());
+    EXPECT_EQ(3u, labels.size());
     EXPECT_EQ(1, labels[0]);
     EXPECT_EQ(2, labels[1]);
     EXPECT_EQ(3, labels[2]);
@@ -3331,7 +3331,7 @@ TEST(TypeObjectUtilsTests, add_to_complete_union_member_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_union_member(member_seq, second_member));
     EXPECT_THROW(TypeObjectUtils::add_complete_union_member(member_seq, second_member), InvalidArgumentError);
-    EXPECT_EQ(3, member_seq.size());
+    EXPECT_EQ(3u, member_seq.size());
     EXPECT_EQ(third_member, member_seq[0]);
     EXPECT_EQ(first_member, member_seq[1]);
     EXPECT_EQ(second_member, member_seq[2]);
@@ -3361,7 +3361,7 @@ TEST(TypeObjectUtilsTests, add_to_complete_annotation_parameter_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, second_param));
     EXPECT_THROW(TypeObjectUtils::add_complete_annotation_parameter(param_seq, second_param), InvalidArgumentError);
-    EXPECT_EQ(3, param_seq.size());
+    EXPECT_EQ(3u, param_seq.size());
     EXPECT_EQ(first_param, param_seq[0]);
     EXPECT_EQ(second_param, param_seq[1]);
     EXPECT_EQ(third_param, param_seq[2]);
@@ -3395,7 +3395,7 @@ TEST(TypeObjectUtils, add_to_complete_enumerated_literal_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, second_literal));
     EXPECT_THROW(TypeObjectUtils::add_complete_enumerated_literal(literal_seq, second_literal), InvalidArgumentError);
-    EXPECT_EQ(3, literal_seq.size());
+    EXPECT_EQ(3u, literal_seq.size());
     EXPECT_EQ(first_literal, literal_seq[0]);
     EXPECT_EQ(second_literal, literal_seq[1]);
     EXPECT_EQ(third_literal, literal_seq[2]);
@@ -3427,7 +3427,7 @@ TEST(TypeObjectUtilsTests, add_to_complete_bitflag_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, second_bitflag));
     EXPECT_THROW(TypeObjectUtils::add_complete_bitflag(bitflag_seq, second_bitflag), InvalidArgumentError);
-    EXPECT_EQ(3, bitflag_seq.size());
+    EXPECT_EQ(3u, bitflag_seq.size());
     EXPECT_EQ(first_bitflag, bitflag_seq[0]);
     EXPECT_EQ(second_bitflag, bitflag_seq[1]);
     EXPECT_EQ(third_bitflag, bitflag_seq[2]);
@@ -3459,7 +3459,7 @@ TEST(TypeObjectUtilsTests, add_to_complete_bitfield_seq)
             InvalidArgumentError);
     EXPECT_NO_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, second_bitfield));
     EXPECT_THROW(TypeObjectUtils::add_complete_bitfield(bitfield_seq, second_bitfield), InvalidArgumentError);
-    EXPECT_EQ(3, bitfield_seq.size());
+    EXPECT_EQ(3u, bitfield_seq.size());
     EXPECT_EQ(first_bitfield, bitfield_seq[0]);
     EXPECT_EQ(second_bitfield, bitfield_seq[1]);
     EXPECT_EQ(third_bitfield, bitfield_seq[2]);

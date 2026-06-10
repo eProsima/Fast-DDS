@@ -2141,7 +2141,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
     ASSERT_EQ("Square", out.content_filter.related_topic_name.to_string());
     ASSERT_EQ("DDSSQL", out.content_filter.filter_class_name.to_string());
     ASSERT_EQ("x > %0 and x < %1 and y > %2 and y < %3", out.content_filter.filter_expression);
-    ASSERT_EQ(4, out.content_filter.expression_parameters.size());
+    ASSERT_EQ(4u, out.content_filter.expression_parameters.size());
     ASSERT_EQ("100", out.content_filter.expression_parameters[0].to_string());
     ASSERT_EQ("200", out.content_filter.expression_parameters[1].to_string());
     ASSERT_EQ("100", out.content_filter.expression_parameters[2].to_string());
@@ -2206,7 +2206,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
         msg.pos = 0;
         EXPECT_TRUE(out.read_from_cdr_message(&msg));
 
-        ASSERT_EQ(100, out.content_filter.expression_parameters.size());
+        ASSERT_EQ(100u, out.content_filter.expression_parameters.size());
 
         CDRMessage_t msg_fault(5000);
         EXPECT_TRUE(fastdds::dds::ParameterList::writeEncapsulationToCDRMsg(&msg_fault));
