@@ -79,7 +79,7 @@ class ReadConditionImpl;
  * Class DataReader, contains the actual implementation of the behaviour of the Subscriber.
  *  @ingroup FASTDDS_MODULE
  */
-class DataReaderImpl
+class DataReaderImpl : private DataReaderListener
 {
     friend struct detail::ReadTakeCommand;
     friend class detail::ReadConditionImpl;
@@ -770,6 +770,18 @@ private:
      * Called when the DataReader is being disabled or deleted to ensure that no dangling pointers to custom readers remain.
      */
     void clear_custom_readers();
+
+    /**
+     * @name DataReaderListener proxy methods.
+     * This DataReaderImpl acts as a proxy DataReaderListener for the custom readers.
+     * Each callback is forwarded to the listener that would handle it for this DataReader.
+     */
+    ///@{
+
+    void on_data_available(
+            DataReader* reader) override;
+
+    ///@}
 
     bool is_data_sharing_compatible_ = false;
     std::vector<std::unique_ptr<DataReaderImpl>> custom_readers_;

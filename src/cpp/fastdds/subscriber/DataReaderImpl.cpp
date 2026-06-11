@@ -199,10 +199,11 @@ ReturnCode_t DataReaderImpl::create_custom_topic_reader(
     }
 
     ReturnCode_t ret_val = RETCODE_ERROR;
-    DataReaderImpl* reader = subscriber_->create_datareader_impl(type_, topic_desc, qos_, listener_, pool);
+    DataReaderImpl* reader = subscriber_->create_datareader_impl(type_, topic_desc, qos_, this, pool);
     if (nullptr != reader)
     {
-        reader->user_datareader_ = user_datareader_;
+        DataReader* user_reader = new DataReader(reader, StatusMask::all());
+        reader->user_datareader_ = user_reader;
         reader->set_type_support_context(type_support_context);
         ret_val = reader->enable();
 
@@ -238,9 +239,18 @@ void DataReaderImpl::clear_custom_readers()
     {
         custom_reader->get_topicdescription()->get_impl()->dereference();
         custom_reader->set_listener(nullptr);
-        custom_reader->user_datareader_ = nullptr;
     }
     custom_readers_.clear();
+}
+
+void DataReaderImpl::on_data_available(
+        DataReader* reader)
+{
+    static_cast<void>(reader);
+    assert(reader_ != nullptr);
+
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    set_read_communication_status(true);
 }
 
 ReturnCode_t DataReaderImpl::enable()
