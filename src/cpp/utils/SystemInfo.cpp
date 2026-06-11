@@ -139,10 +139,12 @@ fastdds::dds::ReturnCode_t SystemInfo::get_username(
     return fastdds::dds::RETCODE_OK;
 #else
     uid_t user_id = geteuid();
-    struct passwd* pwd = getpwuid(user_id);
-    if (pwd != nullptr)
+    struct passwd pwd {};
+    struct passwd* result = nullptr;
+    char buf[1024];
+    if (getpwuid_r(user_id, &pwd, buf, sizeof(buf), &result) == 0 && result != nullptr)
     {
-        username = pwd->pw_name;
+        username = pwd.pw_name;
         if (!username.empty())
         {
             return fastdds::dds::RETCODE_OK;
