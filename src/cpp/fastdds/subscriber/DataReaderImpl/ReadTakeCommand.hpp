@@ -80,6 +80,7 @@ struct ReadTakeCommand
         , handle_(instance->first)
         , single_instance_(single_instance)
         , loop_for_data_(loop_for_data)
+        , type_support_context_(reader.type_support_context_)
     {
         assert(0 <= remaining_samples_);
 
@@ -330,6 +331,7 @@ private:
     InstanceHandle_t handle_;
     bool single_instance_;
     bool loop_for_data_;
+    std::shared_ptr<TopicDataType::Context> type_support_context_;
 
     bool finished_ = false;
     ReturnCode_t return_value_ = RETCODE_NO_DATA;
@@ -421,7 +423,7 @@ private:
         if (data_values_.has_ownership())
         {
             // perform deserialization
-            return type_->deserialize(*payload, data_values_.buffer()[current_slot_]);
+            return type_->deserialize_ctx(type_support_context_, *payload, data_values_.buffer()[current_slot_]);
         }
         else
         {
