@@ -678,6 +678,18 @@ ReturnCode_t DataReaderImpl::read_or_take(
         return code;
     }
 
+    // First try to read/take from custom readers, if any
+    code = RETCODE_NO_DATA;
+    for (const auto& custom_reader : custom_readers_)
+    {
+        code = custom_reader->read_or_take(data_values, sample_infos, max_samples, handle,
+                        sample_states, view_states, instance_states, exact_instance, single_instance, should_take);
+        if (code == RETCODE_OK)
+        {
+            break;
+        }
+    }
+
 #if HAVE_STRICT_REALTIME
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -691,8 +703,17 @@ ReturnCode_t DataReaderImpl::read_or_take(
     std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
 
+    // Always mark communication status as false (required by the standard)
     set_read_communication_status(false);
 
+    // If a custom reader had data, return it directly.
+    if (code == RETCODE_OK)
+    {
+        try_notify_read_conditions();
+        return code;
+    }
+
+    // Try with the main reader
     auto it = history_->lookup_available_instance(handle, exact_instance);
     if (!it.first)
     {
@@ -833,6 +854,16 @@ ReturnCode_t DataReaderImpl::return_loan(
         return RETCODE_OK;
     }
 
+    // Try with custom readers, if any
+    for (const auto& custom_reader : custom_readers_)
+    {
+        ReturnCode_t code = custom_reader->return_loan(data_values, sample_infos);
+        if (code == RETCODE_OK)
+        {
+            return RETCODE_OK;
+        }
+    }
+
     std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
     // Check if they were loaned by this reader
@@ -871,6 +902,17 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return RETCODE_NOT_ENABLED;
     }
 
+    // First try to read/take from custom readers, if any
+    ReturnCode_t code = RETCODE_NO_DATA;
+    for (const auto& custom_reader : custom_readers_)
+    {
+        code = custom_reader->read_or_take_next_sample(data, info, should_take);
+        if (code == RETCODE_OK)
+        {
+            break;
+        }
+    }
+
 #if HAVE_STRICT_REALTIME
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -885,8 +927,17 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
     std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
 
+    // Always mark communication status as false (required by the standard)
     set_read_communication_status(false);
 
+    // If a custom reader had data, return it directly.
+    if (code == RETCODE_OK)
+    {
+        try_notify_read_conditions();
+        return code;
+    }
+
+    // Try with the main reader
     auto it = history_->lookup_available_instance(HANDLE_NIL, false);
     if (!it.first)
     {
@@ -904,7 +955,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         cmd.add_instance(should_take);
     }
 
-    ReturnCode_t code = cmd.return_value();
+    code = cmd.return_value();
     if (RETCODE_OK == code)
     {
         *info = sample_infos[0];
