@@ -59,6 +59,7 @@ target_include_directories(BuiltinAESGCMGMAC PRIVATE
     ${Asio_INCLUDE_DIR}
     ${OPENSSL_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityPluginFactory/rtps
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedSecretHandle
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )

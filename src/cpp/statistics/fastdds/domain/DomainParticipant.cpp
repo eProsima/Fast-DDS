@@ -76,7 +76,7 @@ DomainParticipant* DomainParticipant::narrow(
         eprosima::fastdds::dds::DomainParticipant* domain_participant)
 {
 #ifdef FASTDDS_STATISTICS
-    return static_cast<DomainParticipant*>(domain_participant);
+    return reinterpret_cast<DomainParticipant*>(domain_participant);
 #else
     (void)domain_participant;
     return nullptr;
@@ -87,7 +87,7 @@ const DomainParticipant* DomainParticipant::narrow(
         const eprosima::fastdds::dds::DomainParticipant* domain_participant)
 {
 #ifdef FASTDDS_STATISTICS
-    return static_cast<const DomainParticipant*>(domain_participant);
+    return reinterpret_cast<const DomainParticipant*>(domain_participant);
 #else
     (void)domain_participant;
     return nullptr;

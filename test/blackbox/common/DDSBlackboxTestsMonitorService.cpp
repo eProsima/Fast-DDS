@@ -36,12 +36,14 @@ using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 using MonitorServiceType = eprosima::fastdds::statistics::MonitorServiceStatusDataPubSubType;
 using GUIDList = std::vector<GUID_t>;

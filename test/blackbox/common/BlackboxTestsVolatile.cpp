@@ -28,12 +28,14 @@
 
 using namespace eprosima::fastdds;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class Volatile : public testing::TestWithParam<communication_type>
 {

@@ -34,12 +34,14 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class PubSubBasic : public testing::TestWithParam<std::tuple<communication_type, bool>>
 {

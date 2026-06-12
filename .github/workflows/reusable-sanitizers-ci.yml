@@ -23,6 +23,10 @@ on:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
         type: boolean
+      run-ubsan-fastdds:
+        description: 'Run Undefined Behavior Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
       colcon-build-args:
         description: 'Optional colcon build arguments'
         required: false
@@ -504,3 +508,258 @@ jobs:
 #        run: |
 #          Write-Host ${{ steps.report_summary.outcome }}
 #          exit 1
+
+  ubsan_fastdds_build:
+    runs-on:
+      - ${{ inputs.runner }}
+      - linux
+      - x64
+      - Ubuntu
+    container:
+      image: ${{ inputs.docker-image }}
+      volumes:
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
+        - /var/lib/jenkins/.ccache:/ccache
+    if: ${{ inputs.run-ubsan-fastdds == true }}
+    steps:
+
+      - name: Add WORKSPACE variable to env context
+        run: |
+          echo "WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds-pro-branch }}
+
+      - name: Install apt dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: |
+            cmake
+            libasio-dev
+            libbz2-dev
+            libtinyxml2-dev
+            libssl-dev
+            python3
+            python3-pip
+            python3-venv
+            zlib1g-dev
+          update: true
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        with:
+          path: /vdev
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: |
+            vcstool
+            xmlschema
+          path: /vdev
+          upgrade: false
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
+
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr-branch }}
+
+      - name: Download Fast CDR
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
+
+      - name: Fetch Fast DDS Pro dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ env.WORKSPACE }}/src/fastdds/fastdds.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS Pro CI dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/fastdds_test.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Show .meta file
+        id: show_meta
+        run: |
+          cat ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/ubsan.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/config/ubsan.meta
+          colcon_build_args: ${{ inputs.colcon-build-args }} --packages-ignore bzip2 zlib --packages-up-to fastdds
+          cmake_args: ${{ inputs.cmake-args }} ${{ inputs.use-ccache == true && '-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache' || ''}}
+          cmake_args_default: ''
+          cmake_build_type: 'Debug'
+          workspace: ${{ env.WORKSPACE }}
+
+      - name: Show CCache statistics
+        if: ${{ inputs.use-ccache == true }}
+        run: |
+          ccache --show-stats
+
+      - name: Store build artifacts
+        uses: eProsima/eProsima-CI/ubuntu/store-artifact@v0
+        with:
+          name: fastdds_pro_ubsan_build_${{ inputs.label }}_${{ github.run_id }}
+          artifact-path: |
+            build
+            install
+          destination-folder-path: /tmp/artifacts
+
+      - name: Clean workspace
+        run: |
+          find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf -- {} +
+        if: ${{ always() }}
+
+  ubsan_fastdds_test:
+    if: ${{ inputs.run-ubsan-fastdds == true }}
+    needs: ubsan_fastdds_build
+    runs-on:
+      - ${{ inputs.runner }}
+      - linux
+      - x64
+      - Ubuntu
+    container:
+      image: ${{ inputs.docker-image }}
+      options: --shm-size=2g
+      volumes:
+        - /shares/github_artifacts/fastdds-pro:/tmp/artifacts
+        - /var/lib/jenkins/.ccache:/ccache
+    env:
+      UBSAN_OPTIONS: halt_on_error=1:abort_on_error=1:print_stacktrace=1
+    steps:
+
+      - name: Add WORKSPACE variable to env context
+        run: |
+          echo "WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      - name: Sync eProsima/Fast-DDS-Pro repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastdds
+          submodules: true
+          ref: ${{ inputs.fastdds-pro-branch }}
+
+      - name: Get build artifacts
+        uses: eProsima/eProsima-CI/ubuntu/get-artifact@v0
+        with:
+          name: fastdds_pro_ubsan_build_${{ inputs.label }}_${{ github.run_id }}
+          artifacts-folder-path: /tmp/artifacts
+          destination-folder-path: ${{ env.WORKSPACE }}
+
+      - name: Add FASTDDSHOME variable to env context
+        run: |
+          echo "FASTDDSHOME=${{ env.WORKSPACE }}/src/fastdds/.github/license" >> $GITHUB_ENV
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: |
+            cmake
+            libasio-dev
+            libbz2-dev
+            libtinyxml2-dev
+            libssl-dev
+            python3
+            python3-pip
+            python3-venv
+            zlib1g-dev
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+        with:
+          path: /vdev
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: |
+            gcovr
+            jsondiff
+            pandas
+            psutil
+            tomark
+            vcstool
+            xmlschema
+            xmltodict
+          path: /vdev
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/ubuntu/get-ccache@v0
+        if: ${{ inputs.use-ccache == true }}
+        with:
+          ccache-folder: /ccache
+          workspace: ${{ env.WORKSPACE }}
+
+      - name: Set up hosts file for DNS testing
+        run: |
+          echo "" | tee -a /etc/hosts
+          echo "127.0.0.1 localhost.test" | tee -a /etc/hosts
+          echo "::1 localhost.test" | tee -a /etc/hosts
+          echo "154.56.134.194 www.eprosima.com.test" | tee -a /etc/hosts
+          echo "216.58.215.164 www.acme.com.test" | tee -a /etc/hosts
+          echo "2a00:1450:400e:803::2004 www.acme.com.test" | tee -a /etc/hosts
+          echo "140.82.121.4 www.foo.com.test" | tee -a /etc/hosts
+          echo "140.82.121.3 www.foo.com.test" | tee -a /etc/hosts
+          echo "ff1e::ffff:efff:1 acme.org.test" | tee -a /etc/hosts
+
+      - name: Colcon test
+        id: test
+        continue-on-error: true
+        uses: eProsima/eProsima-CI/ubuntu/colcon_test@v0
+        with:
+          colcon_args_default: ''
+          colcon_test_args: ${{ inputs.colcon-test-args }}
+          colcon_test_args_default: --event-handlers=console_direct+ --return-code-on-test-failure --packages-ignore bzip2 zlib
+          ctest_args: ${{ inputs.ctest-args }} -E "v6|pkcs"
+          ctest_args_default: '--timeout 300 --label-exclude "xfail"'
+          packages_names: fastdds
+          venv_path: /vdev
+          workspace: ${{ env.WORKSPACE }}
+          workspace_dependencies: ${{ env.WORKSPACE }}/install
+          test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
+          upload_test_report_artifact: 'false'
+
+      - name: Report sanitizer errors
+        run: |
+          # UBSan finding header lines look like:
+          #   <file>:<line>:<col>: runtime error: <description>
+          # Filter on ": runtime error:" so we keep one line per finding (the header)
+          bash ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
+            ": runtime error:" \
+            ${{ env.WORKSPACE }}/log/latest_test/fastdds/stdout_stderr.log \
+            ${{ env.WORKSPACE }}/_tmp_specific_error_file.log
+
+          python3 ${{ env.WORKSPACE }}/src/fastdds/.github/workflows/utils/log_parser.py \
+            --log-file ${{ env.WORKSPACE }}/log/latest_test/fastdds/stdout_stderr.log \
+            --specific-error-file ${{ env.WORKSPACE }}/_tmp_specific_error_file.log \
+            --output-file $GITHUB_STEP_SUMMARY  \
+            --sanitizer ubsan
+
+      - name: Clean workspace
+        run: |
+          find ${{ env.WORKSPACE }} -mindepth 1 -maxdepth 1 ! -name src -exec rm -rf -- {} +
+        if: ${{ always() }}

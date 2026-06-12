@@ -35,6 +35,10 @@ on:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
         type: boolean
+      run-ubsan-fastdds:
+        description: 'Run Undefined Behavior Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
       use-ccache:
         description: 'Use CCache to speed up the build'
         required: false
@@ -72,3 +76,4 @@ jobs:
       fastdds-pro-branch: ${{ inputs.fastdds-pro-branch || github.ref || 'main' }}
       run-asan-fastdds: ${{ ((inputs.run-asan-fastdds == true) && true) || github.event_name == 'pull_request' }}
       run-tsan-fastdds: ${{ ((inputs.run-tsan-fastdds == true) && true) || github.event_name == 'pull_request' }}
+      run-ubsan-fastdds: ${{ ((inputs.run-ubsan-fastdds == true) && true) || github.event_name == 'pull_request' }}
