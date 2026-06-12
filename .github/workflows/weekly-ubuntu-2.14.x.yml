@@ -12,7 +12,7 @@ jobs:
       matrix:
         fastcdr-branch:
           - '1.1.x'
-          - '2.x'
+          - '2.3.x'
         security:
           - true
           - false
