@@ -209,8 +209,7 @@ const DataWriterQos& DataWriter::get_qos() const
 ReturnCode_t DataWriter::get_qos(
         DataWriterQos& qos) const
 {
-    qos = impl_->get_qos();
-    return RETCODE_OK;
+    return impl_->get_qos(qos);
 }
 
 ReturnCode_t DataWriter::set_listener(
