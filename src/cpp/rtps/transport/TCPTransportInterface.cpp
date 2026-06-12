@@ -1221,6 +1221,55 @@ void TCPTransportInterface::perform_listen_operation(
     }
 
     EPROSIMA_LOG_INFO(RTCP, "End PerformListenOperation " << channel->locator());
+
+    // If we get here, the channel has been disconnected. We might need to clean it up if
+    // the remote endpoint is the one that initiated the disconnection.
+    // We only delete acceptor channels, as connect channels need to be kept in channel_resources_ to restart the connection
+    if (channel && channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_ACCEPT_TYPE)
+    {
+        // Defer the erase to io_context_ so the TCPChannelResource destructor runs off the listener thread that is about to exit.
+        // Weak_ptr is used to avoid keeping the channel alive if it has already been removed from the maps by another thread.
+        asio::post(io_context_, [this, channel_weak]()
+                {
+                    auto ch = channel_weak.lock();
+                    if (!ch)
+                    {
+                        return;
+                    }
+                    {
+                        // Channel resources map case
+                        std::unique_lock<std::mutex> scoped_lock(sockets_map_mutex_);
+                        bool erased = false;
+                        // There might be multiple entries with the same channel. Delete them all
+                        for (auto it = channel_resources_.begin(); it != channel_resources_.end(); )
+                        {
+                            if (it->second == ch)
+                            {
+                                it = channel_resources_.erase(it);
+                                erased = true;
+                            }
+                            else
+                            {
+                                ++it;
+                            }
+                        }
+                        if (erased)
+                        {
+                            return;
+                        }
+                    }
+                    // Unbound channel resources map case
+                    std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
+                    auto it = std::find(unbound_channel_resources_.begin(),
+                    unbound_channel_resources_.end(), ch);
+                    if (it != unbound_channel_resources_.end())
+                    {
+                        unbound_channel_resources_.erase(it);
+                    }
+                });
+        // Drop the listener's reference so the destructor cannot run on this thread
+        channel.reset();
+    }
 }
 
 bool TCPTransportInterface::read_body(
