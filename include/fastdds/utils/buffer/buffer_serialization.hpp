@@ -20,6 +20,7 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 #include <fastdds/utils/buffer/buffer.hpp>
+#include <fastdds/utils/buffer/BufferAwareContext.hpp>
 
 namespace eprosima {
 namespace fastcdr {
@@ -30,6 +31,16 @@ inline size_t calculate_serialized_size(
         const eprosima::fastdds::Buffer<uint8_t>& data,
         size_t& current_alignment)
 {
+    // Try to use BufferAwareContext if available.
+    // This allows custom backends to provide optimized size calculations without copying to CPU memory, or
+    // to provide the size of the custom serialization if they implement it themselves.
+    auto context = calculator.get_context();
+    auto buffer_aware_context = std::dynamic_pointer_cast<eprosima::fastdds::BufferAwareContext>(context);
+    if (buffer_aware_context)
+    {
+        return buffer_aware_context->calculate_serialized_size(calculator, data, current_alignment);
+    }
+
     if (data.get_backend_type() == "cpu")
     {
         // For CPU buffers, we can directly calculate size from the underlying vector
@@ -68,7 +79,15 @@ inline void serialize(
         eprosima::fastcdr::Cdr& cdr,
         const eprosima::fastdds::Buffer<uint8_t>& data)
 {
-    if (data.get_backend_type() == "cpu")
+    // Try to use BufferAwareContext if available.
+    auto context = cdr.get_context();
+    auto buffer_aware_context = std::dynamic_pointer_cast<eprosima::fastdds::BufferAwareContext>(context);
+    if (buffer_aware_context)
+    {
+        // Perform custom serialization using the context.
+        buffer_aware_context->serialize(cdr, data);
+    }
+    else if (data.get_backend_type() == "cpu")
     {
         // For CPU buffers, we can directly serialize from the underlying vector
         const std::vector<uint8_t>& vec = static_cast<const std::vector<uint8_t>&>(data);
@@ -87,7 +106,15 @@ inline void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::Buffer<uint8_t>& data)
 {
-    if (data.get_backend_type() == "cpu")
+    // Try to use BufferAwareContext if available.
+    auto context = cdr.get_context();
+    auto buffer_aware_context = std::dynamic_pointer_cast<eprosima::fastdds::BufferAwareContext>(context);
+    if (buffer_aware_context)
+    {
+        // Perform custom deserialization using the context.
+        buffer_aware_context->deserialize(cdr, data);
+    }
+    else if (data.get_backend_type() == "cpu")
     {
         // For CPU buffers, we can directly deserialize into the underlying vector
         std::vector<uint8_t>& vec = static_cast<std::vector<uint8_t>&>(data);

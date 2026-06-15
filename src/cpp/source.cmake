@@ -221,6 +221,7 @@ set(${PROJECT_NAME}_source_files
     ${CMAKE_CURRENT_SOURCE_DIR}/statistics/fastdds/domain/DomainParticipant.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/statistics/fastdds/publisher/qos/DataWriterQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/statistics/fastdds/subscriber/qos/DataReaderQos.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils/buffer/BufferAwareContext.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/Host.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/IPFinder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/IPLocator.cpp
