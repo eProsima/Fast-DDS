@@ -136,6 +136,7 @@ jobs:
         with:
           remote_repository: eProsima/Fast-CDR
           fallback_branch: ${{ inputs.fastcdr-branch }}
+          skip_base: true
 
       - name: Download Fast CDR
         uses: eProsima/eProsima-CI/external/checkout@v0
