@@ -1924,7 +1924,7 @@ public:
         return status;
     }
 
-    const eprosima::fastdds::dds::LivelinessChangedStatus& liveliness_changed_status()
+    eprosima::fastdds::dds::LivelinessChangedStatus liveliness_changed_status()
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
