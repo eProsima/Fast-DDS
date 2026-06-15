@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <algorithm>
+#include <atomic>
 #include <future>
 #include <thread>
 
@@ -35,7 +36,7 @@ class TestCondition : public Condition
 {
 public:
 
-    volatile bool trigger_value = false;
+    std::atomic<bool> trigger_value {false};
 
     bool get_trigger_value() const override
     {
