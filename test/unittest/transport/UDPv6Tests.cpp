@@ -277,6 +277,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_ports)
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
+    msg_recv->setCallback(nullptr);
 }
 
 TEST_F(UDPv6Tests, send_to_loopback)
@@ -342,6 +343,7 @@ TEST_F(UDPv6Tests, send_to_loopback)
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
+    msg_recv->setCallback(nullptr);
 }
 #endif // ifndef __APPLE__
 
@@ -591,6 +593,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_localhost)
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     senderThread->join();
     sem.wait();
+    msg_recv->setCallback(nullptr);
 }
 
 TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast)
@@ -657,6 +660,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast)
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         senderThread->join();
         sem.wait();
+        msg_recv->setCallback(nullptr);
     }
 }
 
@@ -724,6 +728,7 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
         senderThread->join();
         sem.wait();
+        msg_recv->setCallback(nullptr);
     }
 }
 
