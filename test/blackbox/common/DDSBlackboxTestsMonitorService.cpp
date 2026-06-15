@@ -686,6 +686,7 @@ public:
 
     unsigned int get_participants_matched()
     {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
