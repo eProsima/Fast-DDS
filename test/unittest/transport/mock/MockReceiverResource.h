@@ -17,6 +17,7 @@
 
 #include <atomic>
 #include <functional>
+#include <mutex>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/ReceiverResource.h>
@@ -64,6 +65,7 @@ public:
     void setCallback(
             std::function<void()> cb);
     std::atomic<octet*> data;
+    std::mutex callback_mutex;
     std::function<void()> callback;
 };
 
