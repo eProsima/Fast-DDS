@@ -1,0 +1,23 @@
+// Regression test IDL: enum members inside deeply-nested modules must be stored
+// under their plain identifier, not their fully-scoped name.
+module outer
+{
+    module inner
+    {
+        enum NestedEnum
+        {
+            VALUE_A,
+            VALUE_B,
+            VALUE_C
+        };
+    };
+};
+
+module outer
+{
+    @extensibility(APPENDABLE)
+    struct NestedEnumStruct
+    {
+        outer::inner::NestedEnum value;
+    };
+};

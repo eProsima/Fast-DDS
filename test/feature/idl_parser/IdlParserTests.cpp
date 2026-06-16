@@ -3115,6 +3115,24 @@ TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
     ASSERT_EQ(declared_types, expected_type_names);
 }
 
+// Regression test: enum members inside nested modules must be stored under their plain identifier
+// (e.g. "VALUE_A"), not their fully-scoped name (e.g. "outer::inner::VALUE_A").
+TEST_F(IdlParserTests, enum_in_nested_module)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> empty_include_paths;
+
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri(
+        "IDL/enum_in_nested_module.idl",
+        "outer::inner::NestedEnum",
+        empty_include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member_by_name(member, "VALUE_A"), RETCODE_OK);
+    EXPECT_EQ(builder->get_member_by_name(member, "VALUE_B"), RETCODE_OK);
+    EXPECT_EQ(builder->get_member_by_name(member, "VALUE_C"), RETCODE_OK);
+}
+
 int main(
         int argc,
         char** argv)

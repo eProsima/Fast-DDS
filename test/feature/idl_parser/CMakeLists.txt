@@ -86,5 +86,6 @@ file(COPY
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/try_construct_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/value_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_literal_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/enum_in_nested_module.idl
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/IDL
 )
