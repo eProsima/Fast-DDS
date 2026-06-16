@@ -1,9 +1,20 @@
 Forthcoming
 -----------
 
-* Add `fastdds.discovery_server.send_period` QoS property to configure the Discovery Server's send rate limiter. When set to a positive value (integer milliseconds, e.g. "1000"), sends are throttled to this interval, letting changes accumulate so that sends contain more complete discovery data, reducing redundant retransmissions in large-scale scenarios. Default: not set (disabled, original behaviour).
-* ResourceLimitsQosPolicy maximum limits default values changed to LENGTH_UNLIMITED (i.e. infinite).
+Version v3.6.2.1
+----------------
+
 * Writer-side content filtering on late joiners.
+
+Version v3.6.0.1
+----------------
+
+* Add `fastdds.discovery_server.send_period` QoS property to configure the Discovery Server's send rate limiter. When set to a positive value (integer milliseconds, e.g. "1000"), sends are throttled to this interval, letting changes accumulate so that sends contain more complete discovery data, reducing redundant retransmissions in large-scale scenarios. Default: not set (disabled, original behaviour).
+
+Version v3.5.0
+--------------
+
+* ResourceLimitsQosPolicy maximum limits default values changed to LENGTH_UNLIMITED (i.e. infinite).
 
 Version v3.4.0
 --------------
