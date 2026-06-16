@@ -307,7 +307,7 @@ struct type_declarator;
 struct typedef_dcl : seq<kw_typedef, type_declarator> {};
 struct native_dcl : seq<kw_native, simple_declarator> {};
 struct annotation_appl;
-struct enumerator : seq<star<annotation_appl>, identifier> {};
+struct enumerator : seq<star<annotation_appl>, scoped_name> {};
 struct enum_dcl : seq<kw_enum, identifier, open_brace, enumerator, star<comma, enumerator>, close_brace> {};
 struct union_forward_dcl : seq<kw_union, identifier> {};
 struct element_spec : seq<star<annotation_appl>, type_spec, declarator> {};

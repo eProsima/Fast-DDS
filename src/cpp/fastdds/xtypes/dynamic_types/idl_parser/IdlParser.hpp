@@ -84,9 +84,7 @@ struct action<identifier>
             std::map<std::string, std::string>& state,
             std::vector<traits<DynamicData>::ref_type>& /*operands*/)
     {
-        auto module = ctx->modules().current();
         const std::string identifier_name = in.string();
-        const std::string scoped_identifier_name = module->create_scoped_name(identifier_name);
 
         if (state.count("enum_name"))
         {
@@ -106,19 +104,11 @@ struct action<identifier>
                     // identifier is an annotation's parameter name, and handled in action<annotation_appl_param>. Do nothing
                     return;
                 }
-                else
-                {
-                    state["enum_member_names"] +=  scoped_identifier_name + ";";
-                    if (state.count("annotation_names") && !state["annotation_names"].empty())
-                    {
-                        state["annotation_member_name"] = identifier_name;
-                        if (!ctx->annotations().update_pending_annotations(state))
-                        {
-                            EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum member");
-                            return;
-                        }
-                    }
-                }
+
+                // Enum literals are parsed as scoped_name, even when they are unqualified.
+                // Let action<scoped_name> consume the full token so persisted IDLs that contain
+                // fully-qualified enum literals round-trip through the parser.
+                return;
             }
         }
         else if (state.count("struct_name"))
@@ -339,6 +329,33 @@ struct action<scoped_name>
             return;
         }
 
+        if (state.count("enum_name") && !state["enum_name"].empty())
+        {
+            std::string enum_member_name = identifier_name;
+            if (identifier_name.find("::") == std::string::npos)
+            {
+                enum_member_name = module->create_scoped_name(identifier_name);
+            }
+
+            state["enum_member_names"] += enum_member_name + ";";
+
+            if (state.count("annotation_names") && !state["annotation_names"].empty())
+            {
+                const auto last_scope_separator = identifier_name.rfind("::");
+                state["annotation_member_name"] = last_scope_separator == std::string::npos ?
+                        identifier_name :
+                        identifier_name.substr(last_scope_separator + 2);
+
+                if (!ctx->annotations().update_pending_annotations(state))
+                {
+                    EPROSIMA_LOG_ERROR(IDLPARSER, "Error annotating enum member");
+                    return;
+                }
+            }
+
+            return;
+        }
+
         if (state["type"] == "sequence" && state["element_type"].empty())
         {
             // <scoped_name> is the element type of a sequence (previously declared)
@@ -349,7 +366,7 @@ struct action<scoped_name>
             return;
         }
 
-        if (state.count("enum_name") && !state["enum_name"].empty())
+        if (state.count("union_name") && !state["union_name"].empty())
         {
             if (state["union_discriminant"].empty())
             {
@@ -1616,8 +1633,10 @@ struct action<enum_dcl>
         for (size_t i = 0; i < tokens.size(); i++)
         {
             const std::string& member_name = tokens[i];
+            const auto sep = member_name.rfind("::");
+            const std::string plain_name = (sep == std::string::npos) ? member_name : member_name.substr(sep + 2);
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-            member_descriptor->name(member_name);
+            member_descriptor->name(plain_name);
 
             if (type_descriptor->literal_type())
             {
