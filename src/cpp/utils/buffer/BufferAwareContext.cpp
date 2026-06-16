@@ -57,14 +57,49 @@ size_t BufferAwareContext::calculate_serialized_size(
         const eprosima::fastdds::Buffer<uint8_t>& data,
         size_t& current_alignment) const
 {
-    if (data.get_backend_type() == "cpu")
+    const std::string backend_type = data.get_backend_type();
+
+    // For CPU buffers, we can directly calculate size from the underlying vector
+    if (backend_type == "cpu")
     {
-        // For CPU buffers, we can directly calculate size from the underlying vector
         const std::vector<uint8_t>& vec = static_cast<const std::vector<uint8_t>&>(data);
         return calculator.calculate_serialized_size(vec, current_alignment);
     }
 
-    // TODO: Handle non-CPU backends. For now, we will convert to CPU memory and calculate size that way.
+    // For non-CPU buffers, we check if a backend is registered for the buffer's type
+    std::shared_ptr<BufferBackend> backend;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        auto it = backends_.find(backend_type);
+        if (it != backends_.end())
+        {
+            backend = it->second;
+        }
+    }
+
+    // If we have a registered backend, use it to calculate the serialized size
+    if (backend)
+    {
+        size_t initial_alignment{ current_alignment };
+
+        // Align for the marker fields
+        current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(uint32_t));
+
+        // Add size for the two markers
+        current_alignment += sizeof(uint32_t) * 2;
+
+        // Add size for the backend type string
+        current_alignment += calculator.calculate_serialized_size(backend_type, current_alignment);
+
+        // Add size for the buffer data using the backend's method
+        const BufferImplBase<uint8_t>* impl = data.get_impl();
+        current_alignment += backend->calculate_serialized_size(calculator, *impl, current_alignment);
+
+        // Return the total size added
+        return current_alignment - initial_alignment;
+    }
+
+    // If not, fall back to the default behavior.
     if (fastcdr::CdrVersion::XCDRv1 == calculator.get_cdr_version())
     {
         // For non-CPU buffers and XCDRv1, we can calculate size directly from the buffer size
@@ -92,15 +127,41 @@ void BufferAwareContext::serialize(
         const eprosima::fastdds::Buffer<uint8_t>& data) const
 {
     const std::string backend_type = data.get_backend_type();
+
+    // For CPU buffers, we can directly serialize from the underlying vector
     if (backend_type == "cpu")
     {
-        // For CPU buffers, we can directly serialize from the underlying vector
         const std::vector<uint8_t>& vec = static_cast<const std::vector<uint8_t>&>(data);
         cdr << vec;
         return;
     }
 
-    // TODO: Handle non-CPU backends. For now, we will convert to CPU memory and serialize that.
+    // For non-CPU buffers, we check if a backend is registered for the buffer's type
+    std::shared_ptr<BufferBackend> backend;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        auto it = backends_.find(backend_type);
+        if (it != backends_.end())
+        {
+            backend = it->second;
+        }
+    }
+
+    // If we have a registered backend, use it to serialize the buffer
+    if (backend)
+    {
+        // Write the markers to indicate that this is a custom serialized buffer
+        cdr << kBufferDescriptorMarker1;
+        cdr << kBufferDescriptorMarker2;
+        // Write the backend type as a string
+        cdr << backend_type;
+        // Serialize the buffer using the backend's serialization method
+        const BufferImplBase<uint8_t>* impl = data.get_impl();
+        backend->serialize(cdr, *impl);
+        return;
+    }
+
+    // If not, convert to CPU memory and serialize that.
     std::vector<uint8_t> vec = data.to_vector();
     cdr << vec;
 }
@@ -111,6 +172,7 @@ void BufferAwareContext::deserialize(
 {
     auto state = cdr.get_state();
 
+    // Check for the custom serialization markers
     uint32_t length = 0;
     bool is_custom_serialized = false;
     cdr >> length;
@@ -130,12 +192,28 @@ void BufferAwareContext::deserialize(
         return;
     }
 
+    // This is a custom serialized buffer, so we read the backend type and use the appropriate backend to deserialize
     std::string backend_type;
     cdr >> backend_type;
 
-    // TODO: Handle non-CPU backends. For now, we will throw an exception.
-    throw eprosima::fastcdr::exception::BadParamException(
-              "Deserialization of non-CPU buffers is not implemented yet.");
+    // Look up the backend for the given type
+    std::shared_ptr<BufferBackend> backend;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        auto it = backends_.find(backend_type);
+        if (it == backends_.end())
+        {
+            // If no backend is registered for this type, throw an exception
+            throw eprosima::fastcdr::exception::BadParamException(
+                      "Could not find backend for received type");
+        }
+        backend = it->second;
+    }
+
+    // Create a new buffer implementation using the backend's deserialization method
+    std::unique_ptr<BufferImplBase<uint8_t>> impl = backend->deserialize(cdr);
+    // Set the buffer's implementation to the deserialized backend-specific implementation
+    data = eprosima::fastdds::Buffer<uint8_t>(std::move(impl));
 }
 
 }  // namespace fastdds
