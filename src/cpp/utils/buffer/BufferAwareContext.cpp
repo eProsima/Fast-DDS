@@ -10,7 +10,10 @@
 #include <fastdds/utils/buffer/BufferAwareContext.hpp>
 
 #include <cstdint>
+#include <memory>
+#include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <fastcdr/Cdr.h>
@@ -19,12 +22,35 @@
 #include <fastcdr/exceptions/BadParamException.h>
 
 #include <fastdds/utils/buffer/buffer.hpp>
+#include <fastdds/utils/buffer/BufferBackend.hpp>
+#include <fastdds/utils/buffer/buffer_impl_base.hpp>
 
 namespace eprosima {
 namespace fastdds {
 
 constexpr uint32_t kBufferDescriptorMarker1 = 0xFFFFFFFFu;
 constexpr uint32_t kBufferDescriptorMarker2 = 0x524F5332u;  // "ROS2" in ASCII
+
+
+void BufferAwareContext::register_backend(
+        const std::string& backend_type,
+        const std::shared_ptr<BufferBackend>& backend)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    backends_[backend_type] = backend;
+}
+
+std::shared_ptr<BufferBackend> BufferAwareContext::get_backend(
+        const std::string& backend_type) const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = backends_.find(backend_type);
+    if (it != backends_.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
 
 size_t BufferAwareContext::calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,

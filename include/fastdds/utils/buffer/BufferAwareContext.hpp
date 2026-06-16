@@ -10,6 +10,10 @@
 #define FASTDDS_UTILS_BUFFER__BUFFERAWARECONTEXT_HPP_
 
 #include <cstdint>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <unordered_map>
 
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrContext.hpp>
@@ -18,16 +22,40 @@
 #include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/utils/buffer/buffer.hpp>
+#include <fastdds/utils/buffer/BufferBackend.hpp>
 
 namespace eprosima {
 namespace fastdds {
 
 /**
  * @brief A CdrContext that is aware of eprosima::fastdds::Buffer and can serialize/deserialize it.
+ *
+ * It is also a registry for BufferBackend instances, allowing different backends to be registered
+ * and used for serialization/deserialization.
  */
-struct FASTDDS_EXPORTED_API BufferAwareContext : public eprosima::fastcdr::CdrContext
+struct BufferAwareContext : public eprosima::fastcdr::CdrContext
 {
-    ~BufferAwareContext() override = default;
+    FASTDDS_EXPORTED_API ~BufferAwareContext() override = default;
+
+    /**
+     * @brief Registers a BufferBackend for a specific backend type.
+     *
+     * @param backend_type  The type of the backend (e.g., "cpu", "cuda", "demo").
+     * @param backend       A shared pointer to the BufferBackend instance to register.
+     */
+    FASTDDS_EXPORTED_API void register_backend(
+            const std::string& backend_type,
+            const std::shared_ptr<BufferBackend>& backend);
+
+    /**
+     * @brief Retrieves a registered BufferBackend for a specific backend type.
+     *
+     * @param backend_type  The type of the backend to retrieve.
+     *
+     * @return A shared pointer to the registered BufferBackend instance, or nullptr if not found.
+     */
+    FASTDDS_EXPORTED_API std::shared_ptr<BufferBackend> get_backend(
+            const std::string& backend_type) const;
 
     /**
      * @brief Calculates the serialized size of a Buffer<uint8_t> instance.
@@ -38,7 +66,7 @@ struct FASTDDS_EXPORTED_API BufferAwareContext : public eprosima::fastcdr::CdrCo
      *
      * @return The serialized size of the Buffer<uint8_t> instance.
      */
-    size_t calculate_serialized_size(
+    FASTDDS_EXPORTED_API size_t calculate_serialized_size(
             eprosima::fastcdr::CdrSizeCalculator& calculator,
             const eprosima::fastdds::Buffer<uint8_t>& data,
             size_t& current_alignment) const;
@@ -49,7 +77,7 @@ struct FASTDDS_EXPORTED_API BufferAwareContext : public eprosima::fastcdr::CdrCo
      * @param cdr The Cdr stream to serialize into.
      * @param data The Buffer<uint8_t> instance to serialize.
      */
-    void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr,
             const eprosima::fastdds::Buffer<uint8_t>& data) const;
 
@@ -59,10 +87,14 @@ struct FASTDDS_EXPORTED_API BufferAwareContext : public eprosima::fastcdr::CdrCo
      * @param cdr The Cdr stream to deserialize from.
      * @param data The Buffer<uint8_t> instance to deserialize into.
      */
-    void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr,
             eprosima::fastdds::Buffer<uint8_t>& data) const;
 
+private:
+
+    mutable std::mutex mutex_;
+    std::unordered_map<std::string, std::shared_ptr<BufferBackend>> backends_;
 };
 
 }  // namespace fastdds
