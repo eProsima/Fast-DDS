@@ -27,7 +27,7 @@ on:
         description: 'Branch or tag of Fast CDR repository (https://github.com/eProsima/Fast-CDR)'
         required: false
         type: string
-        default: 'master'
+        default: '2.3.x'
       cmake-config:
         description: 'CMake configuration to use'
         required: false
@@ -110,6 +110,7 @@ jobs:
         with:
           remote_repository: eProsima/Fast-CDR
           fallback_branch: ${{ inputs.fastcdr_branch }}
+          skip_base: true
 
       - name: Download Fast CDR
         uses: eProsima/eProsima-CI/external/checkout@v0
