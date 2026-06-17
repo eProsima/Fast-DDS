@@ -58,6 +58,24 @@ struct BufferAwareContext : public eprosima::fastcdr::CdrContext
             const std::string& backend_type) const;
 
     /**
+     * @brief Iterates over all registered backends and applies a provided function to each.
+     *
+     * @param func  A callable that takes two parameters:
+     *              - the backend type (std::string).
+     *              - a shared pointer to the BufferBackend.
+     */
+    template<typename _Func>
+    inline void for_each_backend(
+            _Func&& func) const
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        for (const auto& pair : backends_)
+        {
+            func(pair.first, pair.second);
+        }
+    }
+
+    /**
      * @brief Calculates the serialized size of a Buffer<uint8_t> instance.
      *
      * @param calculator The CdrSizeCalculator to use for size calculation.
