@@ -32,7 +32,7 @@ using namespace tao::TAO_PEGTL_NAMESPACE;
 struct line_comment : seq<star<space>, seq<one<'/'>, one<'/'>>, until<eolf>> {};
 struct block_comment : seq<star<space>, seq<one<'/'>, one<'*'>>, until<seq<one<'*'>, one<'/'>>>, star<space>> {};
 struct comment : sor<line_comment, block_comment> {};
-struct ws : sor<comment, plus<space>> {};
+struct ws : plus<sor<comment, plus<space>>> {};
 
 // octal digits
 struct odigit : range<'0', '7'> {};
