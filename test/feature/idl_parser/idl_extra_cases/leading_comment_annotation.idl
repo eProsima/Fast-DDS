@@ -1,0 +1,9 @@
+// Regenerate Fast DDS type support from this directory with:
+//   fastddsgen -d . LeadingCommentIdl.idl
+
+@final
+struct LeadingCommentIdl
+{
+    unsigned long index;
+    string message;
+};

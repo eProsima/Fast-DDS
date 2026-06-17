@@ -3133,6 +3133,23 @@ TEST_F(IdlParserTests, enum_in_nested_module)
     EXPECT_EQ(builder->get_member_by_name(member, "VALUE_C"), RETCODE_OK);
 }
 
+TEST_F(IdlParserTests, leading_comment_before_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> empty_include_paths;
+
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri(
+        "IDL/leading_comment_annotation.idl",
+        "LeadingCommentIdl",
+        empty_include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member_by_name(member, "index"), RETCODE_OK);
+    EXPECT_EQ(builder->get_member_by_name(member, "message"), RETCODE_OK);
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+}
+
 int main(
         int argc,
         char** argv)
