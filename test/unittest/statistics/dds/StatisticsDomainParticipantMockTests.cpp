@@ -48,32 +48,61 @@ public:
 
 };
 
-class DomainParticipantImplTest : public DomainParticipantImpl
+namespace {
+
+// Accessor to DomainParticipantImpl* from DomainParticipant
+using DomainParticipantImplPtr =
+        eprosima::fastdds::dds::DomainParticipantImpl * eprosima::fastdds::dds::DomainParticipant::*;
+
+DomainParticipantImplPtr get_domain_participant_impl_ptr();
+
+template<DomainParticipantImplPtr P>
+struct DomainParticipantImplAccessor
 {
-public:
-
-    eprosima::fastdds::dds::Publisher* get_builtin_publisher() const
+    friend DomainParticipantImplPtr get_domain_participant_impl_ptr()
     {
-        return builtin_publisher_;
-    }
-
-    PublisherImpl* get_builtin_publisher_impl() const
-    {
-        return builtin_publisher_impl_;
+        return P;
     }
 
 };
 
-class DomainParticipantTest : public eprosima::fastdds::dds::DomainParticipant
-{
-public:
+template struct DomainParticipantImplAccessor<&eprosima::fastdds::dds::DomainParticipant::impl_>;
 
-    eprosima::fastdds::dds::DomainParticipantImpl* get_impl() const
+// Accessor to builtin_publisher_ from statistics DomainParticipantImpl
+using BuiltinPublisherPtr = eprosima::fastdds::dds::Publisher * DomainParticipantImpl::*;
+
+BuiltinPublisherPtr get_builtin_publisher_ptr();
+
+template<BuiltinPublisherPtr P>
+struct BuiltinPublisherAccessor
+{
+    friend BuiltinPublisherPtr get_builtin_publisher_ptr()
     {
-        return impl_;
+        return P;
     }
 
 };
+
+template struct BuiltinPublisherAccessor<&DomainParticipantImpl::builtin_publisher_>;
+
+// Accessor to builtin_publisher_impl_ from statistics DomainParticipantImpl
+using BuiltinPublisherImplPtr = PublisherImpl * DomainParticipantImpl::*;
+
+BuiltinPublisherImplPtr get_builtin_publisher_impl_ptr();
+
+template<BuiltinPublisherImplPtr P>
+struct BuiltinPublisherImplAccessor
+{
+    friend BuiltinPublisherImplPtr get_builtin_publisher_impl_ptr()
+    {
+        return P;
+    }
+
+};
+
+template struct BuiltinPublisherImplAccessor<&DomainParticipantImpl::builtin_publisher_impl_>;
+
+} // namespace
 
 /**
  * This test checks that enable_statistics_datawriter fails returning eprosima::fastdds::dds::RETCODE_ERROR when create_datawriter fails
@@ -106,12 +135,10 @@ TEST_F(StatisticsDomainParticipantMockTests, EnableStatisticsDataWriterFailureCr
     ASSERT_NE(statistics_participant, nullptr);
 
     // 2. Mock create_datawriter
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
+    DomainParticipantImpl* statistics_participant_impl_test = static_cast<DomainParticipantImpl*>(
+        participant->*get_domain_participant_impl_ptr());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
-    PublisherImpl* builtin_pub_impl = statistics_participant_impl_test->get_builtin_publisher_impl();
+    PublisherImpl* builtin_pub_impl = statistics_participant_impl_test->*get_builtin_publisher_impl_ptr();
     EXPECT_CALL(*builtin_pub_impl, create_datawriter_mock()).WillOnce(testing::Return(true));
 
     // 3. enable_statistics_datawriter
@@ -155,14 +182,12 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     ASSERT_NE(statistics_participant, nullptr);
 
     // 2. Mock delete_datawriter
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
+    DomainParticipantImpl* statistics_participant_impl_test = static_cast<DomainParticipantImpl*>(
+        participant->*get_domain_participant_impl_ptr());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
+    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->*get_builtin_publisher_ptr();
     ASSERT_NE(nullptr, builtin_pub);
-    PublisherImpl* builtin_pub_impl = statistics_participant_impl_test->get_builtin_publisher_impl();
+    PublisherImpl* builtin_pub_impl = statistics_participant_impl_test->*get_builtin_publisher_impl_ptr();
     ASSERT_NE(nullptr, builtin_pub_impl);
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(true));
     EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillOnce(testing::Return(false));
@@ -211,14 +236,12 @@ TEST_F(StatisticsDomainParticipantMockTests, DisableStatisticsDataWriterFailureD
     ASSERT_NE(statistics_participant, nullptr);
 
     // 2. Mock delete_topic
-    DomainParticipantTest* participant_test = static_cast<DomainParticipantTest*>(participant);
-    ASSERT_NE(nullptr, participant_test);
-    DomainParticipantImplTest* statistics_participant_impl_test = static_cast<DomainParticipantImplTest*>(
-        participant_test->get_impl());
+    DomainParticipantImpl* statistics_participant_impl_test = static_cast<DomainParticipantImpl*>(
+        participant->*get_domain_participant_impl_ptr());
     ASSERT_NE(nullptr, statistics_participant_impl_test);
-    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->get_builtin_publisher();
+    eprosima::fastdds::dds::Publisher* builtin_pub = statistics_participant_impl_test->*get_builtin_publisher_ptr();
     ASSERT_NE(nullptr, builtin_pub);
-    PublisherImpl* builtin_pub_impl = statistics_participant_impl_test->get_builtin_publisher_impl();
+    PublisherImpl* builtin_pub_impl = statistics_participant_impl_test->*get_builtin_publisher_impl_ptr();
     ASSERT_NE(nullptr, builtin_pub_impl);
     EXPECT_CALL(*statistics_participant_impl_test, delete_topic_mock()).WillOnce(testing::Return(true));
     EXPECT_CALL(*builtin_pub, delete_datawriter_mock()).WillOnce(testing::Return(false));

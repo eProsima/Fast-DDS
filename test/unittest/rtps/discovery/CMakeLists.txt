@@ -111,6 +111,12 @@ set(TCPTransportInterface_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
+<<<<<<< HEAD
+=======
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv4Transport.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPv6Transport.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TransportInterface.cpp
+>>>>>>> 25a43a7c3 (Add UBSan workflow and solve its errors (#6386))
     )
 if(TLS_FOUND)
     set(TCPTransportInterface_SOURCE
