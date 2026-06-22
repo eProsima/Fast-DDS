@@ -57,6 +57,7 @@ namespace fastdds {
 namespace rtps {
 
 struct PublicationBuiltinTopicData;
+class CongestionControlListener;
 class RTPSParticipantImpl;
 class RTPSParticipantListener;
 class RTPSWriter;
@@ -307,6 +308,17 @@ public:
      */
     void set_listener(
             RTPSParticipantListener* listener);
+
+    /**
+     * @brief Sets the user listener that observes congestion-control meta-information.
+     *
+     * Congestion control is participant-scoped; this listener observes all reliable
+     * writers of the participant. The listener object must outlive the participant.
+     *
+     * @param listener Listener to notify, or nullptr to detach.
+     */
+    void set_congestion_control_listener(
+            CongestionControlListener* listener);
 
     /**
      * @brief Retrieves the DomainId.

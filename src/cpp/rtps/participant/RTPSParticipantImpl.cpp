@@ -490,8 +490,22 @@ void RTPSParticipantImpl::configure_congestion_control()
         return;
     }
 
+    // Apply any user listener that was set before congestion control was configured.
+    congestion_control_->set_congestion_control_listener(cc_listener_);
+
     // Set the congestion control implementation as the StatefulWriterListener to receive congestion control events
     stateful_writer_listener_ = congestion_control_.get();
+}
+
+void RTPSParticipantImpl::set_congestion_control_listener(
+        CongestionControlListener* listener)
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    cc_listener_ = listener;
+    if (congestion_control_)
+    {
+        congestion_control_->set_congestion_control_listener(listener);
+    }
 }
 
 void RTPSParticipantImpl::setup_guids(

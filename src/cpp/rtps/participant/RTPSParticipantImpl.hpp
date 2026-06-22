@@ -371,6 +371,17 @@ public:
         mp_participantListener = listener;
     }
 
+    /**
+     * @brief Sets the user listener that observes congestion-control meta-information.
+     *
+     * The pointer is forwarded to the participant's congestion controller (if any) and
+     * cached so it is also applied if congestion control is configured later.
+     *
+     * @param listener Listener to notify, or nullptr to detach.
+     */
+    void set_congestion_control_listener(
+            CongestionControlListener* listener);
+
     std::vector<std::string> getParticipantNames() const;
 
     /**
@@ -724,6 +735,9 @@ private:
     bool match_local_endpoints_ = true;
 
     std::unique_ptr<ICongestionControl> congestion_control_;
+
+    //! Cached user CC listener, applied to the controller once it is configured.
+    CongestionControlListener* cc_listener_ = nullptr;
 
     void configure_congestion_control();
 

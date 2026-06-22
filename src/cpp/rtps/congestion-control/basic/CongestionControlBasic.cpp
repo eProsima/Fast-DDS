@@ -16,6 +16,8 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
 #include <fastdds/rtps/builtin/data/SubscriptionBuiltinTopicData.hpp>
+#include <fastdds/rtps/congestion-control/CongestionControlInfoCodes.hpp>
+#include <fastdds/rtps/congestion-control/CongestionControlListener.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 
 #include <rtps/congestion-control/CongestionControlParameters.hpp>
@@ -226,8 +228,11 @@ void CongestionControlBasic::remove_reader(
         const SubscriptionBuiltinTopicData& info)
 {
     std::lock_guard<std::mutex> lock(readers_mutex_);
-    if (readers_.erase(info.guid) > 0)
+    auto it = readers_.find(info.guid);
+    if (it != readers_.end())
     {
+        readers_.erase(it);
+
         // Unregister the reader from the flow controller
         flow_controller_.load()->unregister_remote_reader(info.guid);
     }
@@ -238,11 +243,14 @@ void CongestionControlBasic::flow_controller_limitations_update(
 {
     std::lock_guard<std::mutex> lock(readers_mutex_);
 
+    CongestionControlListener* listener = get_congestion_control_listener();
+
     std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
     for (auto& reader : readers_)
     {
         // Calculate the new limitation based on acked and resent bytes
         ReaderInfo& reader_info = reader.second;
+        const uint32_t prev_limitation = reader_info.current_limitation;
         bool increase = false;
         if (should_update_limitation(reader_info, now, increase))
         {
@@ -269,6 +277,53 @@ void CongestionControlBasic::flow_controller_limitations_update(
             // Update the flow controller with the new limitation
             GrainedFlowController* fc = flow_controller_.load();
             fc->update_remote_reader_bytes_per_period(reader.first, reader_info.current_limitation);
+
+            if (listener != nullptr && reader_info.current_limitation != prev_limitation)
+            {
+                CongestionControlLimitUpdateStatus status;
+                status.reader_guid = reader.first;
+                status.previous_limit = prev_limitation;
+                status.new_limit = reader_info.current_limitation;
+                status.direction = reader_info.current_limitation > prev_limitation
+                        ? CongestionControlLimitDirection::INCREASE
+                        : CongestionControlLimitDirection::DECREASE;
+                listener->on_cc_limit_update(status);
+            }
+        }
+
+        if (listener != nullptr)
+        {
+            auto elapsed_s = std::chrono::duration_cast<std::chrono::seconds>(
+                now - reader_info.last_update_time).count();
+            const uint64_t acked_bps = (elapsed_s > 0)
+                    ? reader_info.total_acked_bytes / static_cast<uint64_t>(elapsed_s)
+                    : 0;
+
+            // Algorithm-specific info: acked bytes and bandwidth utilization.
+            CongestionControlInfoStatus acks_info;
+            acks_info.reader_guid = reader.first;
+            acks_info.code = static_cast<int32_t>(CongestionControlBasicInfoCode::ACKS_RECEIVED);
+            acks_info.value = static_cast<int32_t>(reader_info.total_acked_bytes);
+            listener->on_cc_info(acks_info);
+
+            CongestionControlInfoStatus pct_info;
+            pct_info.reader_guid = reader.first;
+            pct_info.code = static_cast<int32_t>(CongestionControlBasicInfoCode::BANDWIDTH_USED_PERCENT);
+            pct_info.value = (reader_info.current_limitation > 0)
+                    ? static_cast<int32_t>(acked_bps * 100 / reader_info.current_limitation)
+                    : 0;
+            listener->on_cc_info(pct_info);
+
+            // Periodic per-reader snapshot (before counters are reset below).
+            CongestionControlStatus status;
+            status.reader_guid = reader.first;
+            status.current_limit = reader_info.current_limitation;
+            status.period_sent_bytes = 0;
+            status.period_acked_bytes = reader_info.total_acked_bytes;
+            status.period_resent_bytes = reader_info.total_resent_bytes;
+            status.acked_bps = acked_bps;
+            status.period_duration_ms = parameters_.period_duration_ms;
+            listener->on_cc_status_check(status);
         }
 
         reader_info.total_acked_bytes = 0;

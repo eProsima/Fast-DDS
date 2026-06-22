@@ -193,6 +193,12 @@ void RTPSParticipant::set_listener(
     mp_impl->set_listener(listener);
 }
 
+void RTPSParticipant::set_congestion_control_listener(
+        CongestionControlListener* listener)
+{
+    mp_impl->set_congestion_control_listener(listener);
+}
+
 uint32_t RTPSParticipant::get_domain_id() const
 {
     return mp_impl->get_domain_id();

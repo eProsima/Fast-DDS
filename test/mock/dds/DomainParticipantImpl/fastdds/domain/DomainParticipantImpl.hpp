@@ -157,6 +157,12 @@ public:
         return RETCODE_OK;
     }
 
+    ReturnCode_t set_congestion_control_listener(
+            fastdds::rtps::CongestionControlListener* /*listener*/)
+    {
+        return RETCODE_OK;
+    }
+
     const DomainParticipantListener* get_listener() const
     {
         return listener_;

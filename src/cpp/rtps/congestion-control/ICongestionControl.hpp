@@ -10,6 +10,7 @@
 #ifndef RTPS_CONGESTION_CONTROL__ICONGESTIONCONTROL_HPP_
 #define RTPS_CONGESTION_CONTROL__ICONGESTIONCONTROL_HPP_
 
+#include <atomic>
 #include <cstdint>
 
 #include <fastdds/rtps/attributes/WriterAttributes.hpp>
@@ -24,6 +25,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+class CongestionControlListener;
 class FlowControllerFactory;
 class RTPSParticipantImpl;
 
@@ -82,6 +84,35 @@ public:
     virtual void notify_reader_discovery(
             ReaderDiscoveryStatus reason,
             const SubscriptionBuiltinTopicData& info) = 0;
+
+    /**
+     * @brief Set the user listener that observes congestion-control meta-information.
+     *
+     * Thread-safe and lock-free: the pointer is published with a single atomic store and
+     * read by the evaluation thread with a single atomic load.
+     *
+     * @param listener  Listener to notify, or nullptr to detach.
+     */
+    void set_congestion_control_listener(
+            CongestionControlListener* listener)
+    {
+        listener_.store(listener, std::memory_order_release);
+    }
+
+protected:
+
+    /**
+     * @brief Get the currently registered user listener (may be nullptr).
+     */
+    CongestionControlListener* get_congestion_control_listener() const
+    {
+        return listener_.load(std::memory_order_acquire);
+    }
+
+private:
+
+    //! User listener for congestion-control meta-information. Owned by the application.
+    std::atomic<CongestionControlListener*> listener_{nullptr};
 
 };
 

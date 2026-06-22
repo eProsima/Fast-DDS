@@ -52,6 +52,7 @@ class DomainParticipant;
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+class CongestionControlListener;
 class ResourceEvent;
 } // namespace rtps
 
@@ -173,6 +174,22 @@ public:
             DomainParticipantListener* listener,
             const StatusMask& mask,
             const std::chrono::seconds timeout);
+
+    /**
+     * @brief Sets the listener that observes congestion-control meta-information.
+     *
+     * Congestion control is participant-scoped (one controller per participant covering
+     * all reliable writers, evaluated per remote reader). The listener is purely
+     * observational and does not change congestion-control behavior; it only takes effect
+     * when congestion control is enabled through the participant's properties.
+     *
+     * @param listener New congestion-control listener, or nullptr to detach.
+     * @return RETCODE_OK if successful.
+     *
+     * @warning The listener object must outlive the participant; it is not copied.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t set_congestion_control_listener(
+            fastdds::rtps::CongestionControlListener* listener);
 
     /**
      * @brief This operation enables the DomainParticipant

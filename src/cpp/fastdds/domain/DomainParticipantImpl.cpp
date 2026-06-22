@@ -366,6 +366,12 @@ ReturnCode_t DomainParticipantImpl::enable()
             {
                 return find_type(type_name).get() != nullptr;
             });
+
+        // Apply any congestion-control listener that was set before enabling.
+        if (cc_listener_ != nullptr)
+        {
+            part->set_congestion_control_listener(cc_listener_);
+        }
     }
 
     if (qos_.entity_factory().autoenable_created_entities)
@@ -473,6 +479,18 @@ const DomainParticipantQos& DomainParticipantImpl::get_qos() const
 {
     std::lock_guard<std::mutex> _(mtx_gs_);
     return qos_;
+}
+
+ReturnCode_t DomainParticipantImpl::set_congestion_control_listener(
+        fastdds::rtps::CongestionControlListener* listener)
+{
+    std::lock_guard<std::mutex> _(mtx_gs_);
+    cc_listener_ = listener;
+    if (rtps_participant_ != nullptr)
+    {
+        rtps_participant_->set_congestion_control_listener(listener);
+    }
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_publisher(

@@ -100,6 +100,12 @@ ReturnCode_t DomainParticipant::set_listener(
     return ret_val;
 }
 
+ReturnCode_t DomainParticipant::set_congestion_control_listener(
+        fastdds::rtps::CongestionControlListener* listener)
+{
+    return impl_->set_congestion_control_listener(listener);
+}
+
 ReturnCode_t DomainParticipant::enable()
 {
     if (enable_)

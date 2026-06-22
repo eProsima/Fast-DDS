@@ -62,6 +62,7 @@ struct SubscriptionBuiltinTopicData;
 
 namespace rtps {
 
+class CongestionControlListener;
 struct PublicationBuiltinTopicData;
 class RTPSParticipantImpl;
 class RTPSParticipantListener;
@@ -101,6 +102,11 @@ public:
     {
         listener_ = listener;
         return true;
+    }
+
+    void set_congestion_control_listener(
+            CongestionControlListener* /*listener*/)
+    {
     }
 
 #ifdef FASTDDS_STATISTICS

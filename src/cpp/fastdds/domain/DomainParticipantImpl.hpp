@@ -51,6 +51,7 @@ namespace fastdds {
 
 namespace rtps {
 
+class CongestionControlListener;
 struct PublicationBuiltinTopicData;
 class RTPSParticipant;
 struct SubscriptionBuiltinTopicData;
@@ -141,6 +142,13 @@ public:
         std::lock_guard<std::mutex> _(mtx_gs_);
         return listener_;
     }
+
+    /**
+     * Set the user listener that observes congestion-control meta-information. Cached and
+     * forwarded to the RTPS participant; re-applied on enable() if set beforehand.
+     */
+    ReturnCode_t set_congestion_control_listener(
+            fastdds::rtps::CongestionControlListener* listener);
 
     /**
      * Create a Publisher in this Participant.
@@ -908,6 +916,9 @@ protected:
 
     //!Participant Listener
     DomainParticipantListener* listener_;
+
+    //! User congestion-control listener (owned by the application).
+    fastdds::rtps::CongestionControlListener* cc_listener_ = nullptr;
 
     //! getter/setter mutex
     mutable std::mutex mtx_gs_;

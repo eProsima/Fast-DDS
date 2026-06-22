@@ -7,10 +7,13 @@
  * https://www.eprosima.com/licenses/LICENSE-REV03
  */
 
+#include <chrono>
 #include <cstdint>
 #include <iostream>
+#include <mutex>
 #include <thread>
-#include <chrono>
+#include <utility>
+#include <vector>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -23,12 +26,15 @@
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/SequenceNumber.hpp>
+#include <fastdds/rtps/congestion-control/CongestionControlInfoCodes.hpp>
+#include <fastdds/rtps/congestion-control/CongestionControlListener.hpp>
+#include <fastdds/rtps/congestion-control/CongestionControlStatus.hpp>
 #include <fastdds/rtps/reader/ReaderDiscoveryStatus.hpp>
 
+#include <rtps/congestion-control/basic/CongestionControlBasic.hpp>
 #include <rtps/congestion-control/CongestionControlFactory.hpp>
 #include <rtps/congestion-control/CongestionControlParameters.hpp>
 #include <rtps/congestion-control/ICongestionControl.hpp>
-#include <rtps/congestion-control/basic/CongestionControlBasic.hpp>
 
 #include <rtps/flowcontrol/FlowControllerFactory.hpp>
 #include <rtps/flowcontrol/GrainedFlowController.hpp>
@@ -689,6 +695,306 @@ TEST(CongestionControlBasic, negative_tests)
         CongestionControlBasic uut;
         EXPECT_CALL(participant, getMaxDataSize).WillRepeatedly(testing::Return(max_data_size));
         EXPECT_FALSE(uut.initialize(participant, flow_controller_factory, params));
+    }
+}
+
+/**
+ * @brief Recording CongestionControlListener used by the listener tests.
+ */
+class RecordingCCListener : public CongestionControlListener
+{
+public:
+
+    void on_cc_limit_update(
+            const CongestionControlLimitUpdateStatus& status) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        limit_updates_.push_back(status);
+    }
+
+    void on_cc_status_check(
+            const CongestionControlStatus& status) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        status_checks_.push_back(status);
+    }
+
+    void on_cc_info(
+            const CongestionControlInfoStatus& status) override
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        infos_.push_back(status);
+    }
+
+    std::vector<CongestionControlLimitUpdateStatus> take_limit_updates()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return std::move(limit_updates_);
+    }
+
+    std::vector<CongestionControlStatus> take_status_checks()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return std::move(status_checks_);
+    }
+
+    std::vector<CongestionControlInfoStatus> take_infos()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return std::move(infos_);
+    }
+
+private:
+
+    std::mutex mutex_;
+    std::vector<CongestionControlLimitUpdateStatus> limit_updates_;
+    std::vector<CongestionControlStatus> status_checks_;
+    std::vector<CongestionControlInfoStatus> infos_;
+};
+
+/**
+ * @brief Find the value of the first @c on_cc_info with the given basic-algorithm code.
+ *
+ * @param infos  Captured info statuses.
+ * @param code   Basic-algorithm info code to look for.
+ * @param[out] value  Value carried by the matching info, if any.
+ * @return True if an info with @p code was found.
+ */
+static bool find_info_value(
+        const std::vector<CongestionControlInfoStatus>& infos,
+        CongestionControlBasicInfoCode code,
+        int32_t& value)
+{
+    for (const CongestionControlInfoStatus& info : infos)
+    {
+        if (info.code == static_cast<int32_t>(code))
+        {
+            value = info.value;
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Verifies the three CongestionControlListener callbacks emitted by the basic
+ * algorithm: the common @c on_cc_limit_update / @c on_cc_status_check and the
+ * algorithm-specific @c on_cc_info codes.
+ */
+TEST(CongestionControlBasic, listener_callbacks)
+{
+    using namespace std::chrono_literals;
+
+    constexpr uint32_t max_data_size = 64000;
+    constexpr uint32_t initial_target_bps = max_data_size * 4;  // 256000
+    constexpr uint32_t period_duration_ms = 1200;
+
+    using ParticipantMock = testing::NiceMock<RTPSParticipantImpl>;
+    using FlowControllerMock = testing::NiceMock<GrainedFlowController>;
+
+    ParticipantMock participant;
+
+    FlowControllerFactory flow_controller_factory;
+    flow_controller_factory.register_flow_controller_type<FlowControllerMock>(
+        "GrainedFlowController",
+        ThreadSettings{},
+        max_data_size,
+        1000);
+
+    GUID_t writer_guid;
+    writer_guid.guidPrefix.value[0] = 0x01;
+    writer_guid.entityId = 0x00000402;
+
+    SubscriptionBuiltinTopicData reader_info;
+    GUID_t reader_guid;
+    reader_guid.guidPrefix.value[0] = 0x01;
+    reader_guid.entityId = 0x00000401;
+    reader_info.guid = reader_guid;
+
+    CongestionControlParameters params { period_duration_ms, initial_target_bps, 1.5f, 0.5f };
+    CongestionControlBasic uut;
+
+    RecordingCCListener listener;
+    uut.set_congestion_control_listener(&listener);
+
+    EXPECT_CALL(participant, getMaxDataSize).WillRepeatedly(testing::Return(max_data_size));
+    EXPECT_TRUE(uut.initialize(participant, flow_controller_factory, params));
+    uut.notify_reader_discovery(ReaderDiscoveryStatus::DISCOVERED_READER, reader_info);
+
+    TimeWaiter time_waiter(period_duration_ms, 100);
+    SequenceNumber_t seq_num(1);
+    LocatorList empty_locators;
+    LocatorSelectorEntry locators = LocatorSelectorEntry::create_fully_selected_entry(empty_locators, empty_locators);
+
+    // Period 1: enough acked bytes to force a limit increase (256000 -> 384000).
+    {
+        const uint32_t acked_bytes = initial_target_bps * 4;
+        uut.on_writer_data_acknowledged(writer_guid, reader_guid, seq_num, acked_bytes, 100ms, locators);
+        time_waiter.wait_for_next_period("limit increase, status check and info on acked bytes");
+
+        auto limit_updates = listener.take_limit_updates();
+        auto status_checks = listener.take_status_checks();
+        auto infos = listener.take_infos();
+
+        // on_cc_limit_update fires once, reporting the increase.
+        ASSERT_EQ(limit_updates.size(), 1u);
+        EXPECT_EQ(limit_updates[0].reader_guid, reader_guid);
+        EXPECT_EQ(limit_updates[0].previous_limit, initial_target_bps);
+        EXPECT_EQ(limit_updates[0].new_limit, static_cast<uint32_t>(initial_target_bps * 1.5f));
+        EXPECT_EQ(limit_updates[0].direction, CongestionControlLimitDirection::INCREASE);
+
+        // on_cc_status_check fires once with the post-update snapshot.
+        ASSERT_EQ(status_checks.size(), 1u);
+        const CongestionControlStatus& status = status_checks[0];
+        EXPECT_EQ(status.reader_guid, reader_guid);
+        EXPECT_EQ(status.current_limit, static_cast<uint32_t>(initial_target_bps * 1.5f));
+        EXPECT_EQ(status.period_sent_bytes, 0u);
+        EXPECT_EQ(status.period_acked_bytes, acked_bytes);
+        EXPECT_EQ(status.period_resent_bytes, 0u);
+        EXPECT_EQ(status.period_duration_ms, period_duration_ms);
+
+        // Basic algorithm emits ACKS_RECEIVED and BANDWIDTH_USED_PERCENT (never RESENT_BYTES).
+        int32_t acks_value = 0;
+        int32_t pct_value = 0;
+        ASSERT_TRUE(find_info_value(infos, CongestionControlBasicInfoCode::ACKS_RECEIVED, acks_value));
+        ASSERT_TRUE(find_info_value(infos, CongestionControlBasicInfoCode::BANDWIDTH_USED_PERCENT, pct_value));
+        int32_t unused = 0;
+        EXPECT_FALSE(find_info_value(infos, CongestionControlBasicInfoCode::RESENT_BYTES, unused));
+
+        // ACKS_RECEIVED carries the acked bytes; the percentage is consistent with the snapshot.
+        EXPECT_EQ(acks_value, static_cast<int32_t>(status.period_acked_bytes));
+        const int32_t expected_pct = (status.current_limit > 0)
+                ? static_cast<int32_t>(status.acked_bps * 100 / status.current_limit)
+                : 0;
+        EXPECT_EQ(pct_value, expected_pct);
+    }
+
+    // Period 2: resent bytes force a limit decrease (384000 -> 192000).
+    {
+        seq_num++;
+        const uint32_t prev_limit = static_cast<uint32_t>(initial_target_bps * 1.5f);
+        // First resend of a sequence number is not accounted; the second one is.
+        uut.on_writer_resend_data(writer_guid, reader_guid, seq_num, 1, locators);
+        uut.on_writer_resend_data(writer_guid, reader_guid, seq_num, 1, locators);
+        time_waiter.wait_for_next_period("limit decrease on resent bytes");
+
+        auto limit_updates = listener.take_limit_updates();
+        auto status_checks = listener.take_status_checks();
+        auto infos = listener.take_infos();
+
+        ASSERT_EQ(limit_updates.size(), 1u);
+        EXPECT_EQ(limit_updates[0].previous_limit, prev_limit);
+        EXPECT_EQ(limit_updates[0].new_limit, static_cast<uint32_t>(prev_limit * 0.5f));
+        EXPECT_EQ(limit_updates[0].direction, CongestionControlLimitDirection::DECREASE);
+
+        ASSERT_EQ(status_checks.size(), 1u);
+        EXPECT_EQ(status_checks[0].current_limit, static_cast<uint32_t>(prev_limit * 0.5f));
+        EXPECT_EQ(status_checks[0].period_acked_bytes, 0u);
+        EXPECT_EQ(status_checks[0].period_resent_bytes, 1u);
+        EXPECT_EQ(status_checks[0].acked_bps, 0u);
+
+        int32_t acks_value = -1;
+        int32_t pct_value = -1;
+        ASSERT_TRUE(find_info_value(infos, CongestionControlBasicInfoCode::ACKS_RECEIVED, acks_value));
+        ASSERT_TRUE(find_info_value(infos, CongestionControlBasicInfoCode::BANDWIDTH_USED_PERCENT, pct_value));
+        EXPECT_EQ(acks_value, 0);
+        EXPECT_EQ(pct_value, 0);
+    }
+
+    // Period 3: no activity. The limit does not change, but status_check and info still fire.
+    {
+        const uint32_t stable_limit = static_cast<uint32_t>(initial_target_bps * 1.5f * 0.5f);
+        time_waiter.wait_for_next_period("status check without limit change");
+
+        auto limit_updates = listener.take_limit_updates();
+        auto status_checks = listener.take_status_checks();
+        auto infos = listener.take_infos();
+
+        // on_cc_limit_update must NOT fire when the limit is unchanged.
+        EXPECT_TRUE(limit_updates.empty());
+
+        ASSERT_EQ(status_checks.size(), 1u);
+        EXPECT_EQ(status_checks[0].current_limit, stable_limit);
+        EXPECT_EQ(status_checks[0].period_acked_bytes, 0u);
+        EXPECT_EQ(status_checks[0].period_resent_bytes, 0u);
+
+        int32_t value = -1;
+        EXPECT_TRUE(find_info_value(infos, CongestionControlBasicInfoCode::ACKS_RECEIVED, value));
+        EXPECT_TRUE(find_info_value(infos, CongestionControlBasicInfoCode::BANDWIDTH_USED_PERCENT, value));
+    }
+}
+
+/**
+ * @brief Verifies that the listener pointer is honored: callbacks are only delivered while
+ * a listener is registered, detaching with nullptr stops them, and a replacement listener
+ * starts receiving them.
+ */
+TEST(CongestionControlBasic, listener_registration_and_detach)
+{
+    using namespace std::chrono_literals;
+
+    constexpr uint32_t max_data_size = 64000;
+    constexpr uint32_t initial_target_bps = max_data_size * 4;
+    constexpr uint32_t period_duration_ms = 1200;
+
+    using ParticipantMock = testing::NiceMock<RTPSParticipantImpl>;
+    using FlowControllerMock = testing::NiceMock<GrainedFlowController>;
+
+    ParticipantMock participant;
+
+    FlowControllerFactory flow_controller_factory;
+    flow_controller_factory.register_flow_controller_type<FlowControllerMock>(
+        "GrainedFlowController",
+        ThreadSettings{},
+        max_data_size,
+        1000);
+
+    SubscriptionBuiltinTopicData reader_info;
+    GUID_t reader_guid;
+    reader_guid.guidPrefix.value[0] = 0x01;
+    reader_guid.entityId = 0x00000401;
+    reader_info.guid = reader_guid;
+
+    CongestionControlParameters params { period_duration_ms, initial_target_bps, 1.5f, 0.5f };
+    CongestionControlBasic uut;
+
+    RecordingCCListener listener_a;
+    RecordingCCListener listener_b;
+
+    EXPECT_CALL(participant, getMaxDataSize).WillRepeatedly(testing::Return(max_data_size));
+    EXPECT_TRUE(uut.initialize(participant, flow_controller_factory, params));
+
+    // Register the first listener before discovering the reader.
+    uut.set_congestion_control_listener(&listener_a);
+    uut.notify_reader_discovery(ReaderDiscoveryStatus::DISCOVERED_READER, reader_info);
+
+    TimeWaiter time_waiter(period_duration_ms, 100);
+
+    // With listener_a registered, the periodic status check is delivered to it.
+    {
+        time_waiter.wait_for_next_period("callbacks delivered to registered listener");
+        EXPECT_FALSE(listener_a.take_status_checks().empty());
+    }
+
+    // Detaching with nullptr must stop all callbacks.
+    {
+        uut.set_congestion_control_listener(nullptr);
+        // Drain anything captured so far so the assertions only see post-detach activity.
+        (void)listener_a.take_status_checks();
+        (void)listener_a.take_limit_updates();
+        (void)listener_a.take_infos();
+        time_waiter.wait_for_next_period("no callbacks after detach");
+        EXPECT_TRUE(listener_a.take_status_checks().empty());
+        EXPECT_TRUE(listener_a.take_limit_updates().empty());
+        EXPECT_TRUE(listener_a.take_infos().empty());
+    }
+
+    // A replacement listener starts receiving callbacks. The old one stays silent.
+    {
+        uut.set_congestion_control_listener(&listener_b);
+        time_waiter.wait_for_next_period("callbacks delivered to replacement listener");
+        EXPECT_FALSE(listener_b.take_status_checks().empty());
+        EXPECT_TRUE(listener_a.take_status_checks().empty());
     }
 }
 
