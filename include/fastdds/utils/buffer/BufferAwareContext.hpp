@@ -16,11 +16,11 @@
 #include <unordered_map>
 
 #include <fastcdr/Cdr.h>
-#include <fastcdr/CdrContext.hpp>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include <fastdds/fastdds_dll.hpp>
 
+#include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/utils/buffer/buffer.hpp>
 #include <fastdds/utils/buffer/BufferBackend.hpp>
 
@@ -33,7 +33,7 @@ namespace fastdds {
  * It is also a registry for BufferBackend instances, allowing different backends to be registered
  * and used for serialization/deserialization.
  */
-struct BufferAwareContext : public eprosima::fastcdr::CdrContext
+struct BufferAwareContext : public dds::TopicDataType::Context
 {
     FASTDDS_EXPORTED_API ~BufferAwareContext() override = default;
 
