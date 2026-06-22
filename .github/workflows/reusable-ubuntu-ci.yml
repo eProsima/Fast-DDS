@@ -98,7 +98,7 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds-branch }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -191,7 +191,7 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -294,7 +294,7 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -381,7 +381,7 @@ jobs:
           name: fastdds_python_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -476,7 +476,7 @@ jobs:
           name: fastdds_python_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -592,7 +592,7 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -677,7 +677,7 @@ jobs:
           name: fastdds_build_${{ inputs.label }}
           path: ${{ github.workspace }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'

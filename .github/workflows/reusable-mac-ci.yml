@@ -62,7 +62,7 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds-branch }}
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
@@ -171,7 +171,7 @@ jobs:
           find ${{ github.workspace }}/build -type f -name "*" -exec chmod +x {} \;
           find ${{ github.workspace }}/install -type f -name "*" -exec chmod +x {} \;
 
-      - name: Install Fix Python version
+      - name: Install Fixed Python version
         if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
