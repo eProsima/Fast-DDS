@@ -48,10 +48,7 @@ concurrency:
 
 jobs:
   mac-ci:
-    if: ${{ (
-              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-              !contains(github.event.pull_request.labels.*.name, 'conflicts')
-            ) }}
+    if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
     uses: ./.github/workflows/reusable-mac-ci.yml
     with:
       label: ${{ inputs.label || 'mac-ci' }}
@@ -60,4 +57,11 @@ jobs:
       ctest-args: ${{ inputs.ctest-args }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '3.2.x' }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
-      run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
+      run-build: ${{ !(github.event_name == 'pull_request') ||
+                     !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+      run-tests: ${{ (inputs.run-tests == true) ||
+                     (
+                       (github.event_name == 'pull_request') &&
+                       (!contains(github.event.pull_request.labels.*.name, 'no-test')) &&
+                       (!contains(github.event.pull_request.labels.*.name, 'skip-ci'))
+                     ) }}

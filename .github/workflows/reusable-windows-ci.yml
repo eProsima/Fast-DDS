@@ -33,6 +33,11 @@ on:
         required: false
         type: string
         default: 'RelWithDebInfo'
+      run-build:
+        description: 'Build Fast DDS (CI skipped otherwise)'
+        required: false
+        type: boolean
+        default: true
       run-tests:
         description: 'Run test suite of Fast DDS'
         required: false
@@ -54,6 +59,7 @@ jobs:
           - 'v143'
     steps:
       - name: Sync eProsima/Fast-DDS repository
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastdds
@@ -61,21 +67,25 @@ jobs:
           ref: ${{ inputs.fastdds_branch }}
 
       - name: Install Fix Python version
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
       - name: Get minimum supported version of CMake
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install OpenSSL
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
         with:
           version: '3.1.1'
 
       - name: Update OpenSSL environment variables
+        if: ${{ inputs.run-build == true }}
         run: |
           # Update the environment
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
@@ -97,21 +107,25 @@ jobs:
           }
 
       - name: Install colcon
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Install Python dependencies
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
           packages: vcstool xmlschema psutil
 
       - name: Get Fast CDR branch
         id: get_fastcdr_branch
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
         with:
           remote_repository: eProsima/Fast-CDR
           fallback_branch: ${{ inputs.fastcdr_branch }}
 
       - name: Download Fast CDR
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           repository: eProsima/Fast-CDR
@@ -119,6 +133,7 @@ jobs:
           ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
 
       - name: Fetch Fast DDS dependencies
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}\src\fastdds\fastdds.repos
@@ -126,6 +141,7 @@ jobs:
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/vcs_import@v0
         with:
           vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.repos
@@ -135,6 +151,7 @@ jobs:
       - name: Build
         id: build
         continue-on-error: false
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
@@ -146,7 +163,7 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Upload build artifacts
-        if: ${{ inputs.run-tests == true }}
+        if: ${{ inputs.run-build == true && inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/external/upload-artifact@v0
         with:
           name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
@@ -264,8 +281,8 @@ jobs:
 
       #Build Windows examples testing docker image
       - name: Build with example testing
-        if: ${{ inputs.run-tests == true && matrix.test_filter == 'examples' }}
         continue-on-error: false
+        if: ${{ inputs.run-tests == true && matrix.test_filter == 'examples' }}
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
@@ -277,8 +294,8 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Test
-        if: ${{ inputs.run-tests == true }}
         id: test
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
