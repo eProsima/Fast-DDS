@@ -16,3 +16,6 @@ set(fastdds_FOUND TRUE)
 
 add_subdirectory(C++/fuzz_XMLProfiles)
 add_subdirectory(C++/fuzz_processCDRMsg)
+add_subdirectory(C++/fuzz_ProxyData)
+add_subdirectory(C++/fuzz_CDRMessages)
+add_subdirectory(C++/fuzz_TypeLookupTypes)
