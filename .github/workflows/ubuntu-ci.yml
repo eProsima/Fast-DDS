@@ -66,7 +66,16 @@ jobs:
       ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
       security: ${{ ((inputs.security == true) && true) || github.event_name == 'pull_request' }}
-      run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
-      run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test')) }}
+      run-build: ${{ !(github.event_name == 'pull_request') ||
+                     !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+      run-tests: ${{ (inputs.run-tests == true) ||
+                     (
+                       (github.event_name == 'pull_request') &&
+                       (!contains(github.event.pull_request.labels.*.name, 'no-test')) &&
+                       (!contains(github.event.pull_request.labels.*.name, 'skip-ci'))
+                     ) }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
-      add-label: ${{ (github.event_name == 'pull_request') && (github.event.pull_request.head.repo.full_name == github.repository) && true || false }}
+      add-label: ${{ (github.event_name == 'pull_request') &&
+                     (github.event.pull_request.head.repo.full_name == github.repository) &&
+                     (!contains(github.event.pull_request.labels.*.name, 'skip-ci')) &&
+                     true || false }}
