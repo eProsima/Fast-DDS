@@ -140,7 +140,12 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     }
 
     KeyMaterial_AES_GCM_GMAC keymat;
-    KeyMaterialCDRDeserialize(keymat, &plaintext);
+    if (!KeyMaterialCDRDeserialize(keymat, &plaintext))
+    {
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
+        exception = SecurityException("Malformed CryptoToken");
+        return false;
+    }
     remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
 
     return true;
@@ -285,7 +290,12 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         }
 
         KeyMaterial_AES_GCM_GMAC keymat;
-        KeyMaterialCDRDeserialize(keymat, &plaintext);
+        if (!KeyMaterialCDRDeserialize(keymat, &plaintext))
+        {
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
+            exception = SecurityException("Malformed CryptoToken");
+            return false;
+        }
         remote_reader->Entity2RemoteKeyMaterial.push_back(keymat);
 
         remote_reader_lock.unlock();
@@ -353,7 +363,12 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         }
 
         KeyMaterial_AES_GCM_GMAC keymat;
-        KeyMaterialCDRDeserialize(keymat, &plaintext);
+        if (!KeyMaterialCDRDeserialize(keymat, &plaintext))
+        {
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Malformed CryptoToken");
+            exception = SecurityException("Malformed CryptoToken");
+            return false;
+        }
 
         remote_writer->Entity2RemoteKeyMaterial.push_back(keymat);
 
@@ -457,7 +472,7 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(
     return buffer;
 }
 
-void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
+bool AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
         KeyMaterial_AES_GCM_GMAC& buffer,
         std::vector<uint8_t>* CDR)
 {
@@ -466,9 +481,14 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
     buffer.master_sender_key.fill(0);
     buffer.master_receiver_specific_key.fill(0);
 
-    // transformation kind is always 0 0 0 n
-    // TODO: Check 0 values
+    const size_t cdr_size = CDR->size();
     const uint8_t* data = CDR->data();
+
+    // transformation kind is always 0 0 0 n
+    if (cdr_size < 4)
+    {
+        return false;
+    }
     uint8_t kind = data[3];
     buffer.transformation_kind[3] = kind;
     if (kind == 0)
@@ -476,57 +496,81 @@ void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
         // empty key material
         buffer.sender_key_id.fill(0);
         buffer.receiver_specific_key_id.fill(0);
+        return true;
     }
-    else
+
+    // 128 bits for kinds 1 and 2. 256 bits for kinds 3 and 4.
+    uint8_t key_len;
+    size_t pos;
+
+    // master_salt : sequence<octet,32>
+    //    seq_len would always be 0 0 0 n
+    pos = 4 + 3;  // 4 - transformation_kind. 3 - 0's
+    if (pos >= cdr_size)
     {
-        // 128 bits for kinds 1 and 2. 256 bits for kinds 3 and 4.
-        // TODO: Check desired length
-        // uint8_t desired_key_len = kind <= 2 ? 16 : 32;
-
-        uint8_t key_len;
-        uint8_t pos;
-
-        // master_salt : sequence<octet,32>
-        //    seq_len would always be 0 0 0 n
-        //    TODO: check 0 values
-        pos = 4 + 3;  // 4 - transformation_kind. 3 - 0's
-        key_len = data[pos++];
-        // TODO: check key_len
-        memcpy(buffer.master_salt.data(), &data[pos], key_len);
-        pos += key_len;
-
-        // sender_key_id : octet[4]
-        memcpy(buffer.sender_key_id.data(), &data[pos], 4);
-        pos += 4;
-
-        // master_sender_key : sequence<octet,32>
-        //    seq_len would always be 0 0 0 n
-        //    TODO: check 0 values
-        pos += 3;
-        key_len = data[pos++];
-        // TODO: check key_len
-        memcpy(buffer.master_sender_key.data(), &data[pos], key_len);
-        pos += key_len;
-
-        // receiver_specific_key_id : octet[4]
-        uint8_t has_specific_key = 0;
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            buffer.receiver_specific_key_id[i] = data[pos++];
-            has_specific_key |= buffer.receiver_specific_key_id[i];
-        }
-
-        if (has_specific_key != 0)
-        {
-            // master_receiver_specific_key : sequence<octet,32>
-            //    seq_len would always be 0 0 0 n
-            //    TODO: check 0 values
-            pos += 3;
-            key_len = data[pos++];
-            // TODO: check key_len
-            memcpy(buffer.master_receiver_specific_key.data(), &data[pos], key_len);
-        }
+        return false;
     }
+    key_len = data[pos++];
+    if (static_cast<size_t>(key_len) > buffer.master_salt.size() || pos + key_len > cdr_size)
+    {
+        return false;
+    }
+    memcpy(buffer.master_salt.data(), &data[pos], key_len);
+    pos += key_len;
+
+    // sender_key_id : octet[4]
+    if (pos + 4 > cdr_size)
+    {
+        return false;
+    }
+    memcpy(buffer.sender_key_id.data(), &data[pos], 4);
+    pos += 4;
+
+    // master_sender_key : sequence<octet,32>
+    //    seq_len would always be 0 0 0 n
+    pos += 3;
+    if (pos >= cdr_size)
+    {
+        return false;
+    }
+    key_len = data[pos++];
+    if (static_cast<size_t>(key_len) > buffer.master_sender_key.size() || pos + key_len > cdr_size)
+    {
+        return false;
+    }
+    memcpy(buffer.master_sender_key.data(), &data[pos], key_len);
+    pos += key_len;
+
+    // receiver_specific_key_id : octet[4]
+    if (pos + 4 > cdr_size)
+    {
+        return false;
+    }
+    uint8_t has_specific_key = 0;
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        buffer.receiver_specific_key_id[i] = data[pos++];
+        has_specific_key |= buffer.receiver_specific_key_id[i];
+    }
+
+    if (has_specific_key != 0)
+    {
+        // master_receiver_specific_key : sequence<octet,32>
+        //    seq_len would always be 0 0 0 n
+        pos += 3;
+        if (pos >= cdr_size)
+        {
+            return false;
+        }
+        key_len = data[pos++];
+        if (static_cast<size_t>(key_len) > buffer.master_receiver_specific_key.size() || pos + key_len > cdr_size)
+        {
+            return false;
+        }
+        memcpy(buffer.master_receiver_specific_key.data(), &data[pos], key_len);
+    }
+
+    return true;
 }
 
 /*
