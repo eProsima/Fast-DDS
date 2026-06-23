@@ -57,5 +57,11 @@ jobs:
       ctest-args: ${{ inputs.ctest-args }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
       use-ccache: ${{ ((inputs.use-ccache == true) && true) || false }}
-      run-build: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
-      run-tests: ${{ ((inputs.run-tests == true) && true) || (github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-test') && !contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+      run-build: ${{ !(github.event_name == 'pull_request') ||
+                     !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+      run-tests: ${{ (inputs.run-tests == true) ||
+                     (
+                       (github.event_name == 'pull_request') &&
+                       (!contains(github.event.pull_request.labels.*.name, 'no-test')) &&
+                       (!contains(github.event.pull_request.labels.*.name, 'skip-ci'))
+                     ) }}
