@@ -80,7 +80,13 @@ if __name__ == '__main__':
         choices=['on', 'off'],
         help='Explicitly enable/disable shared memory transport. (Defaults: Fast DDS default settings)',
         required=False
-        )
+    )
+    parser.add_argument(
+        '--number_of_subscribers',
+        help='Number of subscribers',
+        required=False,
+        default='1',
+    )
 
     # Parse arguments
     args = parser.parse_args()
@@ -102,6 +108,17 @@ if __name__ == '__main__':
             )
         )
         exit(1)  # Exit with error
+
+    # Check that subscribers is positive
+    if str.isdigit(args.number_of_subscribers) and int(args.number_of_subscribers) > 0:
+        number_of_subscribers = str(args.number_of_subscribers)
+    else:
+        print(
+            '"number_of_subscribers" must be a positive integer, NOT {}'.format(
+                args.number_of_subscribers
+            )
+        )
+        exit(1) # Exit with error
 
     # Demands files options
     demands_options = []
@@ -199,6 +216,8 @@ if __name__ == '__main__':
             'publisher',
             '--samples',
             samples,
+            '--subscribers',
+            number_of_subscribers,
             '--export_raw_data',
         ]
         # Base of test command for subscriber agent
@@ -246,14 +265,17 @@ if __name__ == '__main__':
 
         # Spawn processes
         publisher = subprocess.Popen(pub_command)
-        subscriber = subprocess.Popen(sub_command)
+        subscribers = []
+        for _ in range(int(number_of_subscribers)):
+            subscribers.append(subprocess.Popen(sub_command))
         # Wait until finish
-        subscriber.communicate()
-        publisher.communicate()
+        for subscriber in subscribers:
+            subscriber.communicate()
+            if subscriber.returncode != 0:
+                exit(subscriber.returncode)
 
-        if subscriber.returncode != 0:
-            exit(subscriber.returncode)
-        elif publisher.returncode != 0:
+        publisher.communicate()
+        if publisher.returncode != 0:
             exit(publisher.returncode)
     else:
         # Base of test command to execute
