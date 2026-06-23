@@ -183,7 +183,7 @@ public:
         return statistics_part_->disable_monitor_service();
     }
 
-    const uint32_t& get_cb_count(
+    uint32_t get_cb_count(
             CallbackIndex cb_idx)
     {
         return listener_.get_cb_count_of(cb_idx);
@@ -460,7 +460,7 @@ protected:
             std::cout << "on_sample_lost " << reader->guid() << " total_count " << status.total_count << std::endl;
         }
 
-        const uint32_t& get_cb_count_of(
+        uint32_t get_cb_count_of(
                 CallbackIndex cb_idx)
         {
             std::unique_lock<std::mutex> lock(mtx_);
@@ -686,6 +686,7 @@ public:
 
     unsigned int get_participants_matched()
     {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 

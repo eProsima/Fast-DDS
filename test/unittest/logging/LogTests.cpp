@@ -218,7 +218,7 @@ TEST_F(LogTests, validate_single_flush_call)
           the back queue will grow so large while the front one is cleared, that the test will probably timeout.
      */
 
-    bool done = false;
+    std::atomic<bool> done {false};
     int commited_before_flush = 0;
     // std::atomic<int> committed = 0; // only works on msvc and icc
     std::atomic<int> committed;
@@ -291,7 +291,7 @@ TEST_F(LogTests, validate_multithread_flush_calls)
           the back queue will grow so large while the front one is cleared, that the test will probably timeout.
      */
 
-    bool done = false;
+    std::atomic<bool> done {false};
     // std::atomic<int> committed = 0; // only works on msvc and icc
     std::atomic<int> committed;
     committed = 0;
