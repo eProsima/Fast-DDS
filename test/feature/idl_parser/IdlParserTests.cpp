@@ -3115,6 +3115,49 @@ TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
     ASSERT_EQ(declared_types, expected_type_names);
 }
 
+// Regression test: enum with many members inside deeply-nested modules causes add_member to fail
+TEST_F(IdlParserTests, enum_in_nested_module_large)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> empty_include_paths;
+
+    DynamicTypeBuilder::_ref_type enum_builder = factory->create_type_w_uri(
+        "IDL/remoteclimateinteraction_Reply.idl",
+        "vwg::services::remoteclimateinteraction::datatypes::DT_RemoteClimateInteraction_interactionClimateControl_returnValue",
+        empty_include_paths);
+    ASSERT_TRUE(enum_builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(enum_builder->get_member_by_name(member, "accepted"), RETCODE_OK);
+    EXPECT_EQ(enum_builder->get_member_by_name(member, "denied"), RETCODE_OK);
+    EXPECT_EQ(enum_builder->get_member_by_name(member, "deniedFromOVAPI"), RETCODE_OK);
+
+    DynamicTypeBuilder::_ref_type struct_builder = factory->create_type_w_uri(
+        "IDL/remoteclimateinteraction_Reply.idl",
+        "vwg::services::remoteclimateinteraction::remoteclimateinteraction_Reply",
+        empty_include_paths);
+    ASSERT_TRUE(struct_builder);
+    EXPECT_EQ(struct_builder->get_member_by_name(member, "reply"), RETCODE_OK);
+    DynamicType::_ref_type type = struct_builder->build();
+    ASSERT_TRUE(type);
+}
+
+TEST_F(IdlParserTests, leading_comment_before_annotation)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> empty_include_paths;
+
+    DynamicTypeBuilder::_ref_type builder = factory->create_type_w_uri(
+        "IDL/leading_comment_annotation.idl",
+        "SalutationsMyGoodFellow",
+        empty_include_paths);
+    ASSERT_TRUE(builder);
+    DynamicTypeMember::_ref_type member;
+    EXPECT_EQ(builder->get_member_by_name(member, "index"), RETCODE_OK);
+    EXPECT_EQ(builder->get_member_by_name(member, "message"), RETCODE_OK);
+    DynamicType::_ref_type type = builder->build();
+    ASSERT_TRUE(type);
+}
+
 int main(
         int argc,
         char** argv)

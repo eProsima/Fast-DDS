@@ -1,0 +1,10 @@
+// SalutationsMyGoodFellow IDL for the integration_test_poc.
+// Regenerate Fast DDS type support from this directory with:
+//   fastddsgen -d . SalutationsMyGoodFellow.idl
+
+@final
+struct SalutationsMyGoodFellow
+{
+    unsigned long index;
+    string message;
+};

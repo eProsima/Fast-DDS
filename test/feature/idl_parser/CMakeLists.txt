@@ -86,5 +86,7 @@ file(COPY
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/try_construct_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/value_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/default_literal_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/remoteclimateinteraction_Reply.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/leading_comment_annotation.idl
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/IDL
 )

@@ -1,0 +1,368 @@
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            module datatypes
+            {
+                enum DT_RemoteClimateInteraction_interactionClimateControl_returnValue
+                {
+                    accepted,
+                    denied,
+                    GO_TO_DENIED_1,
+                    GO_TO_DENIED_2,
+                    GO_TO_DENIED_3,
+                    DUMMY_5,
+                    DUMMY_6,
+                    DUMMY_7,
+                    DUMMY_8,
+                    DUMMY_9,
+                    DUMMY_10,
+                    DUMMY_11,
+                    DUMMY_12,
+                    DUMMY_13,
+                    DUMMY_14,
+                    DUMMY_15,
+                    DUMMY_16,
+                    DUMMY_17,
+                    DUMMY_18,
+                    DUMMY_19,
+                    DUMMY_20,
+                    DUMMY_21,
+                    DUMMY_22,
+                    DUMMY_23,
+                    DUMMY_24,
+                    DUMMY_25,
+                    DUMMY_26,
+                    DUMMY_27,
+                    DUMMY_28,
+                    DUMMY_29,
+                    DUMMY_30,
+                    DUMMY_31,
+                    DUMMY_32,
+                    DUMMY_33,
+                    DUMMY_34,
+                    DUMMY_35,
+                    DUMMY_36,
+                    DUMMY_37,
+                    DUMMY_38,
+                    DUMMY_39,
+                    DUMMY_40,
+                    DUMMY_41,
+                    DUMMY_42,
+                    DUMMY_43,
+                    DUMMY_44,
+                    DUMMY_45,
+                    DUMMY_46,
+                    DUMMY_47,
+                    DUMMY_48,
+                    DUMMY_49,
+                    DUMMY_50,
+                    DUMMY_51,
+                    DUMMY_52,
+                    DUMMY_53,
+                    DUMMY_54,
+                    DUMMY_55,
+                    DUMMY_56,
+                    DUMMY_57,
+                    DUMMY_58,
+                    DUMMY_59,
+                    DUMMY_60,
+                    DUMMY_61,
+                    DUMMY_62,
+                    DUMMY_63,
+                    DUMMY_64,
+                    DUMMY_65,
+                    DUMMY_66,
+                    DUMMY_67,
+                    DUMMY_68,
+                    DUMMY_69,
+                    DUMMY_70,
+                    DUMMY_71,
+                    DUMMY_72,
+                    DUMMY_73,
+                    DUMMY_74,
+                    DUMMY_75,
+                    DUMMY_76,
+                    DUMMY_77,
+                    DUMMY_78,
+                    DUMMY_79,
+                    DUMMY_80,
+                    DUMMY_81,
+                    DUMMY_82,
+                    DUMMY_83,
+                    DUMMY_84,
+                    DUMMY_85,
+                    DUMMY_86,
+                    DUMMY_87,
+                    DUMMY_88,
+                    DUMMY_89,
+                    DUMMY_90,
+                    DUMMY_91,
+                    DUMMY_92,
+                    DUMMY_93,
+                    DUMMY_94,
+                    DUMMY_95,
+                    DUMMY_96,
+                    DUMMY_97,
+                    DUMMY_98,
+                    DUMMY_99,
+                    DUMMY_100,
+                    DUMMY_101,
+                    DUMMY_102,
+                    DUMMY_103,
+                    DUMMY_104,
+                    DUMMY_105,
+                    DUMMY_106,
+                    DUMMY_107,
+                    DUMMY_108,
+                    DUMMY_109,
+                    DUMMY_110,
+                    DUMMY_111,
+                    DUMMY_112,
+                    DUMMY_113,
+                    DUMMY_114,
+                    DUMMY_115,
+                    DUMMY_116,
+                    DUMMY_117,
+                    DUMMY_118,
+                    DUMMY_119,
+                    DUMMY_120,
+                    DUMMY_121,
+                    DUMMY_122,
+                    DUMMY_123,
+                    DUMMY_124,
+                    DUMMY_125,
+                    DUMMY_126,
+                    DUMMY_127,
+                    DUMMY_128,
+                    DUMMY_129,
+                    DUMMY_130,
+                    DUMMY_131,
+                    DUMMY_132,
+                    DUMMY_133,
+                    DUMMY_134,
+                    DUMMY_135,
+                    DUMMY_136,
+                    DUMMY_137,
+                    DUMMY_138,
+                    DUMMY_139,
+                    DUMMY_140,
+                    DUMMY_141,
+                    DUMMY_142,
+                    DUMMY_143,
+                    DUMMY_144,
+                    DUMMY_145,
+                    DUMMY_146,
+                    DUMMY_147,
+                    DUMMY_148,
+                    DUMMY_149,
+                    DUMMY_150,
+                    DUMMY_151,
+                    DUMMY_152,
+                    DUMMY_153,
+                    DUMMY_154,
+                    DUMMY_155,
+                    DUMMY_156,
+                    DUMMY_157,
+                    DUMMY_158,
+                    DUMMY_159,
+                    DUMMY_160,
+                    DUMMY_161,
+                    DUMMY_162,
+                    DUMMY_163,
+                    DUMMY_164,
+                    DUMMY_165,
+                    DUMMY_166,
+                    DUMMY_167,
+                    DUMMY_168,
+                    DUMMY_169,
+                    DUMMY_170,
+                    DUMMY_171,
+                    DUMMY_172,
+                    DUMMY_173,
+                    DUMMY_174,
+                    DUMMY_175,
+                    DUMMY_176,
+                    DUMMY_177,
+                    DUMMY_178,
+                    DUMMY_179,
+                    DUMMY_180,
+                    DUMMY_181,
+                    DUMMY_182,
+                    DUMMY_183,
+                    DUMMY_184,
+                    DUMMY_185,
+                    DUMMY_186,
+                    DUMMY_187,
+                    DUMMY_188,
+                    DUMMY_189,
+                    DUMMY_190,
+                    DUMMY_191,
+                    DUMMY_192,
+                    DUMMY_193,
+                    DUMMY_194,
+                    DUMMY_195,
+                    DUMMY_196,
+                    DUMMY_197,
+                    DUMMY_198,
+                    DUMMY_199,
+                    DUMMY_200,
+                    DUMMY_201,
+                    DUMMY_202,
+                    DUMMY_203,
+                    DUMMY_204,
+                    DUMMY_205,
+                    DUMMY_206,
+                    DUMMY_207,
+                    DUMMY_208,
+                    DUMMY_209,
+                    DUMMY_210,
+                    DUMMY_211,
+                    DUMMY_212,
+                    DUMMY_213,
+                    DUMMY_214,
+                    DUMMY_215,
+                    DUMMY_216,
+                    DUMMY_217,
+                    DUMMY_218,
+                    DUMMY_219,
+                    DUMMY_220,
+                    DUMMY_221,
+                    DUMMY_222,
+                    DUMMY_223,
+                    DUMMY_224,
+                    DUMMY_225,
+                    DUMMY_226,
+                    DUMMY_227,
+                    DUMMY_228,
+                    DUMMY_229,
+                    DUMMY_230,
+                    DUMMY_231,
+                    DUMMY_232,
+                    DUMMY_233,
+                    DUMMY_234,
+                    DUMMY_235,
+                    DUMMY_236,
+                    DUMMY_237,
+                    DUMMY_238,
+                    DUMMY_239,
+                    DUMMY_240,
+                    DUMMY_241,
+                    DUMMY_242,
+                    DUMMY_243,
+                    DUMMY_244,
+                    DUMMY_245,
+                    DUMMY_246,
+                    DUMMY_247,
+                    DUMMY_248,
+                    DUMMY_249,
+                    DUMMY_250,
+                    DUMMY_251,
+                    deniedFromOVAPI,
+                    anomalyRaceConditionCheckNotPassed,
+                    payloadCheckNotPassed,
+                    plausibilityIntrinsicCheckNotPassed
+                };
+            };
+        };
+    };
+};
+
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            @extensibility(APPENDABLE)
+            struct interactionClimateControl_Result
+            {
+                vwg::services::remoteclimateinteraction::datatypes::DT_RemoteClimateInteraction_interactionClimateControl_returnValue returnValue;
+            };
+        };
+    };
+};
+
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            module datatypes
+            {
+                @extensibility(APPENDABLE)
+                struct DT_statusClimateControl_struct
+                {
+                    @optional uint8 elementId;
+                    @optional uint8 setTemperature;
+                    @optional uint8 actualTemperature;
+                    @optional boolean isAutoModeOn;
+                };
+            };
+        };
+    };
+};
+
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            module datatypes
+            {
+                typedef sequence<vwg::services::remoteclimateinteraction::datatypes::DT_statusClimateControl_struct> DT_statusClimateControl_vector;
+            };
+        };
+    };
+};
+
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            @extensibility(APPENDABLE)
+            struct statusClimateControl_Getter_Result
+            {
+                vwg::services::remoteclimateinteraction::datatypes::DT_statusClimateControl_vector value;
+            };
+        };
+    };
+};
+
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            union remoteclimateinteraction_Return switch (long)
+            {
+                case 608315:
+                    vwg::services::remoteclimateinteraction::interactionClimateControl_Result interactionclimatecontrol;
+                case -576833019:
+                    vwg::services::remoteclimateinteraction::statusClimateControl_Getter_Result statusclimatecontrol_Getter;
+            };
+        };
+    };
+};
+
+module vwg
+{
+    module services
+    {
+        module remoteclimateinteraction
+        {
+            @extensibility(APPENDABLE)
+            struct remoteclimateinteraction_Reply
+            {
+                vwg::services::remoteclimateinteraction::remoteclimateinteraction_Return reply;
+            };
+        };
+    };
+};
