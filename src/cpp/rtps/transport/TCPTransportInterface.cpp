@@ -1379,7 +1379,18 @@ bool TCPTransportInterface::Receive(
         {
             tcp_header.valid_endianness(msg_endian);
 
-            size_t body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::size());
+            // Validate header length and calculate body size
+            size_t body_size = 0;
+            if (tcp_header.length >= TCPHeader::size())
+            {
+                body_size = tcp_header.length - static_cast<uint32_t>(TCPHeader::size());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(RTCP_MSG_IN, "Invalid TCP header length: " << tcp_header.length);
+                close_tcp_socket(channel);
+                success = false;
+            }
 
             if (body_size > receive_buffer_capacity)
             {
@@ -1390,16 +1401,19 @@ bool TCPTransportInterface::Receive(
                 // Drop the message
                 size_t to_read = body_size;
                 size_t read_block = receive_buffer_capacity;
-                uint32_t readed;
-                while (read_block > 0)
+                while ((read_block > 0) && !channel->disconnected())
                 {
-                    read_body(receive_buffer, receive_buffer_capacity, &readed, channel,
-                            read_block);
-                    to_read -= readed;
+                    uint32_t num_read;
+                    if (!read_body(receive_buffer, receive_buffer_capacity, &num_read, channel, read_block))
+                    {
+                        // Error message already shown by read_body method.
+                        break;
+                    }
+                    to_read -= num_read;
                     read_block = (to_read >= receive_buffer_capacity) ? receive_buffer_capacity : to_read;
                 }
             }
-            else
+            else if (success)
             {
                 EPROSIMA_LOG_INFO(RTCP_MSG_IN, "Received RTCP MSG. Logical Port " << tcp_header.logical_port);
                 success = read_body(receive_buffer, receive_buffer_capacity, &receive_buffer_size,

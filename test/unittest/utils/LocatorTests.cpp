@@ -130,7 +130,10 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
     }
 
     {
-        // Std string with 0 forwarding number
+#ifdef WIN32
+        ASSERT_FALSE(IPLocator::setIPv4(locator, "01.002.0003.000104"));
+#else
+        // Std string with 0 forwarding number -> should fall back to dns resolution so last octet becomes 68 (104u -> 68)
         ASSERT_TRUE(IPLocator::setIPv4(locator, "01.002.0003.000104"));
         std::vector<unsigned int> vec{1, 2, 3, 104};
 
@@ -140,8 +143,9 @@ TEST_F(IPLocatorTests, setIPv4_from_string)
         }
         for (int i = 0; i < 4; i++)
         {
-            ASSERT_EQ(locator.address[i + 12], vec[i]);
+            ASSERT_EQ(locator.address[i + 12], i < 3 ? vec[i] : 0104u);
         }
+#endif // WIN32
     }
 
     {
