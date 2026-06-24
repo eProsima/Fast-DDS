@@ -45,6 +45,8 @@ if(ANDROID)
 endif()
 
 
+set(SERIALIZEDPAYLOADTESTS_SOURCE SerializedPayloadTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp)
 set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
@@ -99,6 +101,16 @@ target_link_libraries(GuidUtilsTests
     $<$<BOOL:${QNX}>:socket>
     )
 gtest_discover_tests(GuidUtilsTests)
+
+add_executable(SerializedPayloadTests ${SERIALIZEDPAYLOADTESTS_SOURCE})
+target_compile_definitions(SerializedPayloadTests PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(SerializedPayloadTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+target_link_libraries(SerializedPayloadTests GTest::gtest)
+gtest_discover_tests(SerializedPayloadTests)
 
 add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
 target_compile_definitions(SequenceNumberTests PRIVATE
