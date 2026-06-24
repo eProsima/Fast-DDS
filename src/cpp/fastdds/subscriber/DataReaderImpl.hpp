@@ -749,6 +749,12 @@ private:
      * Notifies listeners that a deadline has been missed.
      */
     void notify_deadline_missed_nts_();
+
+    /**
+     * @brief Notifies listeners that SampleRejectedStatus has been updated.
+     */
+    void notify_sample_rejected_nts();
+
     void update_rtps_reader_qos();
 
     DataReaderQos get_datareader_qos_from_settings(
@@ -802,6 +808,10 @@ private:
     void on_sample_lost(
             DataReader* reader,
             const SampleLostStatus& status) override;
+
+    void on_sample_rejected(
+            DataReader* reader,
+            const SampleRejectedStatus& status) override;
 
     ///@}
 

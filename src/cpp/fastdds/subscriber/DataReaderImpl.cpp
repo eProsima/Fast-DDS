@@ -289,6 +289,21 @@ void DataReaderImpl::on_sample_lost(
     reader_listener_.on_sample_lost(reader_, status.total_count_change);
 }
 
+void DataReaderImpl::on_sample_rejected(
+        DataReader* reader,
+        const SampleRejectedStatus& status)
+{
+    static_cast<void>(reader);
+    assert(reader_ != nullptr);
+
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    sample_rejected_status_.last_instance_handle = status.last_instance_handle;
+    sample_rejected_status_.last_reason = status.last_reason;
+    sample_rejected_status_.total_count += status.total_count_change;
+    sample_rejected_status_.total_count_change += status.total_count_change;
+    notify_sample_rejected_nts();
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
@@ -1253,17 +1268,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
         const CacheChange_t* const change_in)
 {
     data_reader_->update_sample_rejected_status(reason, change_in);
-    StatusMask notify_status = StatusMask::sample_rejected();
-    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        SampleRejectedStatus callback_status;
-        if (data_reader_->get_sample_rejected_status(callback_status) == RETCODE_OK)
-        {
-            listener->on_sample_rejected(data_reader_->user_datareader_, callback_status);
-        }
-    }
-    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    data_reader_->notify_sample_rejected_nts();
 }
 
 #ifdef FASTDDS_STATISTICS
@@ -1571,6 +1576,21 @@ void DataReaderImpl::notify_deadline_missed_nts_()
     reader_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
 #endif // FASTDDS_STATISTICS
 
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+void DataReaderImpl::notify_sample_rejected_nts()
+{
+    StatusMask notify_status = StatusMask::sample_rejected();
+    DataReaderListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        SampleRejectedStatus callback_status;
+        if (get_sample_rejected_status(callback_status) == RETCODE_OK)
+        {
+            listener->on_sample_rejected(user_datareader_, callback_status);
+        }
+    }
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
