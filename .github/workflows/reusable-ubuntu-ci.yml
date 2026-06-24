@@ -911,12 +911,8 @@ jobs:
           rm -rf build install log src/osrf_testing_tools_cpp
 
       - name: No security colcon build
-<<<<<<< HEAD
         continue-on-error: true
-=======
-        continue-on-error: false
         if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
@@ -927,22 +923,14 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Clean workspace - No security
-<<<<<<< HEAD
-        if: ${{ always() }}
-=======
-        if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
+        if: ${{ !cancelled() && inputs.run-build == true }}
         run: |
           cd ${{ github.workspace }}
           rm -rf build install log
 
       - name: No statistics colcon build
-<<<<<<< HEAD
         continue-on-error: true
-        if: ${{ always() }}
-=======
-        if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
+        if: ${{ !cancelled() && inputs.run-build == true }}
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
@@ -953,23 +941,15 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Clean workspace - No statistics
-<<<<<<< HEAD
-        if: ${{ always() }}
-=======
-        if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
+        if: ${{ !cancelled() && inputs.run-build == true }}
         run: |
           cd ${{ github.workspace }}
           rm -rf build install log
 
       # No .metas file, so FASTDDS_ENFORCE_LOG_INFO is set OFF by default. Missed important args are manually included
       - name: No enforcing log info colcon build
-<<<<<<< HEAD
         continue-on-error: true
-        if: ${{ always() }}
-=======
-        if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
+        if: ${{ !cancelled() && inputs.run-build == true }}
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ''
@@ -980,22 +960,14 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Clean workspace - No enforce log info
-<<<<<<< HEAD
-        if: ${{ always() }}
-=======
-        if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
+        if: ${{ !cancelled() && inputs.run-build == true }}
         run: |
           cd ${{ github.workspace }}
           rm -rf build install log
 
       - name: No shared libs colcon build
-<<<<<<< HEAD
         continue-on-error: true
-        if: ${{ always() }}
-=======
-        if: ${{ inputs.run-build == true }}
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
+        if: ${{ !cancelled() && inputs.run-build == true }}
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_build.meta
@@ -1006,30 +978,14 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Clean workspace - No shared libs
-        if: ${{ inputs.run-build == true }}
+        if: ${{ !cancelled() && inputs.run-build == true }}
         run: |
           cd ${{ github.workspace }}
           rm -rf build install log
           
       - name: Vanilla colcon build
-        if: ${{ inputs.run-build == true }}
+        if: ${{ !cancelled() && inputs.run-build == true }}
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
-<<<<<<< HEAD
-=======
-
-      - name: Clean workspace - Vanilla build
-        if: ${{ inputs.run-build == true }}
-        run: |
-          cd ${{ github.workspace }}
-          rm -rf build install log
-
-      - name: GCC latest colcon build
-        if: ${{ inputs.run-build == true }}
-        run: |
-          cd ${{ github.workspace }}/src/fastdds/.github/workflows/docker/ubuntu/alternative_builds
-          docker build -t fastdds_gcc_latest -f fastdds_gcc_latest.Dockerfile .
-          docker run --rm -v ${{ github.workspace }}:/root fastdds_gcc_latest
->>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
