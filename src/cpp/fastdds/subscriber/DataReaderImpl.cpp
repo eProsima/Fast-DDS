@@ -941,6 +941,8 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         RTPSReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
+    std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
+
     data_reader_->update_subscription_matched_status(info);
 
     StatusMask notify_status = StatusMask::subscription_matched();
