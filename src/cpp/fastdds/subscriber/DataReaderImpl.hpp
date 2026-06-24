@@ -799,6 +799,10 @@ private:
             DataReader* reader,
             const RequestedDeadlineMissedStatus& status) override;
 
+    void on_sample_lost(
+            DataReader* reader,
+            const SampleLostStatus& status) override;
+
     ///@}
 
     bool is_data_sharing_compatible_ = false;

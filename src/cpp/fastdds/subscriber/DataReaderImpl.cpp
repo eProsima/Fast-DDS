@@ -278,6 +278,17 @@ void DataReaderImpl::on_requested_deadline_missed(
     aggregate_deadline_missed_nts(status.total_count_change, status.last_instance_handle);
 }
 
+void DataReaderImpl::on_sample_lost(
+        DataReader* reader,
+        const SampleLostStatus& status)
+{
+    static_cast<void>(reader);
+    assert(reader_ != nullptr);
+
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    reader_listener_.on_sample_lost(reader_, status.total_count_change);
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
