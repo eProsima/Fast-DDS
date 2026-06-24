@@ -33,6 +33,19 @@ on:
         required: false
         type: string
         default: 'RelWithDebInfo'
+<<<<<<< HEAD
+=======
+      run-build:
+        description: 'Build Fast DDS (CI skipped otherwise)'
+        required: false
+        type: boolean
+        default: true
+      run-tests:
+        description: 'Run test suite of Fast DDS'
+        required: false
+        type: boolean
+        default: true
+>>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
 
 defaults:
   run:
@@ -51,6 +64,7 @@ jobs:
           - 'v143'
     steps:
       - name: Sync eProsima/Fast-DDS repository
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastrtps
@@ -58,21 +72,25 @@ jobs:
           ref: ${{ inputs.fastdds_branch }}
 
       - name: Install Fix Python version
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/setup-python@v0
         with:
           python-version: '3.11'
 
       - name: Get minimum supported version of CMake
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
           cmakeVersion: '3.22.6'
 
       - name: Install OpenSSL
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
         with:
           version: '3.1.1'
 
       - name: Update OpenSSL environment variables
+        if: ${{ inputs.run-build == true }}
         run: |
           # Update the environment
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
@@ -94,13 +112,103 @@ jobs:
           }
 
       - name: Install colcon
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
       - name: Install Python dependencies
+        if: ${{ inputs.run-build == true }}
         uses: eProsima/eProsima-CI/windows/install_python_packages@v0
         with:
           packages: vcstool xmlschema psutil
 
+<<<<<<< HEAD
+=======
+      - name: Get Fast CDR branch
+        id: get_fastcdr_branch
+        if: ${{ inputs.run-build == true }}
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Fast-CDR
+          fallback_branch: ${{ inputs.fastcdr_branch }}
+
+      - name: Download Fast CDR
+        if: ${{ inputs.run-build == true }}
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-CDR
+          path: ${{ github.workspace }}/src/fastcdr
+          ref: ${{ steps.get_fastcdr_branch.outputs.deduced_branch }}
+
+      - name: Fetch Fast DDS dependencies
+        if: ${{ inputs.run-build == true }}
+        uses: eProsima/eProsima-CI/windows/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}\src\fastdds\fastdds.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS CI dependencies
+        if: ${{ inputs.run-build == true }}
+        uses: eProsima/eProsima-CI/windows/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Build
+        id: build
+        continue-on-error: false
+        if: ${{ inputs.run-build == true }}
+        uses: eProsima/eProsima-CI/windows/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastdds\.github\workflows\config\fastdds_test.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          # The following Fast DDS CMake options need to be specified here instead of in the meta files
+          # because they vary from platform to platform
+          cmake_args_default: ${{ inputs.cmake-args }} -T ${{ matrix.vs-toolset }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DCOMPILE_EXAMPLES=ON -DCMAKE_CXX_FLAGS_INIT="/MP /WX"
+          cmake_build_type: ${{ inputs.cmake-config }}
+          workspace: ${{ github.workspace }}
+
+      - name: Upload build artifacts
+        if: ${{ inputs.run-build == true && inputs.run-tests == true }}
+        uses: eProsima/eProsima-CI/external/upload-artifact@v0
+        with:
+          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          path: ${{ github.workspace }}
+
+  fastdds_test:
+    needs: fastdds_build
+    name: fastdds_test (${{ matrix.cmake_build_type }}, ${{ matrix.test_filter }}), ${{ matrix.vs-toolset }}
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        vs-toolset:
+          - 'v142'
+          - 'v143'
+        cmake_build_type:
+          - ${{ inputs.cmake-config }}
+        test_filter:
+          - 'blackbox'
+          - 'unittest-I'
+          - 'unittest-II'
+          - 'examples'
+        filter_expression_blackbox:
+          - 'BlackboxTests|ParticipantTests|SecureDiscoverServer|SimpleCommunication|system.'
+        filter_expression_examples:
+          - 'example_tests'
+        filter_expression_unittests_I:
+          - 'DDSSQLFilterValue'
+
+    steps:
+      - name: Download build artifacts
+        if: ${{ inputs.run-tests == true }}
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: fastdds_build_${{ inputs.label }}_${{ matrix.vs-toolset }}
+          path: ${{ github.workspace }}
+
+>>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         run: |
@@ -157,9 +265,15 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
+<<<<<<< HEAD
       - name: Build
         id: build
+=======
+      #Build Windows examples testing docker image
+      - name: Build with example testing
+>>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
         continue-on-error: false
+        if: ${{ inputs.run-tests == true && matrix.test_filter == 'examples' }}
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_build.meta ${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_test.meta
@@ -171,8 +285,12 @@ jobs:
           workspace: ${{ github.workspace }}
 
       - name: Test
+<<<<<<< HEAD
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+=======
+>>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
         id: test
+        if: ${{ inputs.run-tests == true }}
         uses: eProsima/eProsima-CI/windows/colcon_test@v0
         with:
           colcon_meta_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\fastdds_test.meta

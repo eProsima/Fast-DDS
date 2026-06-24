@@ -38,14 +38,23 @@ concurrency:
 
 jobs:
   windows-ci:
-    if: ${{ (
-              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
-              !contains(github.event.pull_request.labels.*.name, 'conflicts')
-            ) }}
+    if: ${{ !(github.event_name == 'pull_request') || !contains(github.event.pull_request.labels.*.name, 'conflicts') }}
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
       label: ${{ inputs.label || 'windows-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
       ctest-args: ${{ inputs.ctest-args }}
+<<<<<<< HEAD
       fastdds_branch: ${{ inputs.fastdds_branch || github.ref || '2.14.x' }}
+=======
+      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || '3.2.x' }}
+      run-build: ${{ !(github.event_name == 'pull_request') ||
+                     !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+      run-tests: ${{ ((inputs.run-tests == true) && true) ||
+                     (
+                       (github.event_name == 'pull_request') &&
+                       (!contains(github.event.pull_request.labels.*.name, 'no-test')) &&
+                       (!contains(github.event.pull_request.labels.*.name, 'skip-ci'))
+                     ) }}
+>>>>>>> 7894ec40 (Make `skip-ci` label report required statuses as pass (#6442) (#6443))
