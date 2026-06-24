@@ -1083,6 +1083,31 @@ private:
             {
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                                   << port_id << " Zombie. Reset the port");
+                std::unique_ptr<RobustExclusiveLock> lock_read_exclusive;
+                if (open_mode == Port::OpenMode::ReadExclusive)
+                {
+                    lock_read_exclusive = Port::lock_read_exclusive(port_id, domain_name_);
+                }
+                // Try to open the segment of port, if it exists, there is a possibility that this segment
+                // is being used by other participants in a 'write' mode. Therefore, before deleting, it's
+                // necessary to invalidate this port to prevent other participants from mistakenly using
+                // the segment with the same name but has been deleted.
+                auto segment = std::shared_ptr<SharedMemSegment>(
+                    new SharedMemSegment(boost::interprocess::open_only, port_segment_name.c_str()));
+
+                if (segment->check_sanity())
+                {
+                    auto node = segment->get().find<PortNode>(
+                        ("port_node_abi" + std::to_string(CURRENT_ABI_VERSION)).c_str()).first;
+
+                    if (node)
+                    {
+                        // Set is_port_ok to false to prompt other participants to regenerate ports
+                        node->is_port_ok = false;
+                        node = nullptr;
+                        segment.reset();
+                    }
+                }
 
                 SharedMemSegment::remove(port_segment_name.c_str());
 
