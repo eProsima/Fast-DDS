@@ -267,6 +267,17 @@ void DataReaderImpl::on_subscription_matched(
     reader_listener_.on_reader_matched(reader_, matching_info);
 }
 
+void DataReaderImpl::on_requested_deadline_missed(
+        DataReader* reader,
+        const RequestedDeadlineMissedStatus& status)
+{
+    static_cast<void>(reader);
+    assert(reader_ != nullptr);
+
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    aggregate_deadline_missed_nts(status.total_count_change, status.last_instance_handle);
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
@@ -1510,6 +1521,31 @@ void DataReaderImpl::configure_deadline_timer_()
     deadline_timer_->update_interval_millisec(qos_.deadline().period.to_ns() * 1e-6);
 }
 
+void DataReaderImpl::aggregate_deadline_missed_nts(
+        uint32_t count,
+        const InstanceHandle_t& instance_handle)
+{
+    // If we already reached the max, do not update the status nor notify the listener to avoid spamming
+    if (deadline_missed_status_.total_count == (std::numeric_limits<uint32_t>::max)())
+    {
+        return;
+    }
+
+    // Update the status with the new counts, but make sure not to overflow
+    uint32_t remaining = (std::numeric_limits<uint32_t>::max)() - deadline_missed_status_.total_count;
+    if (count > remaining)
+    {
+        count = remaining;
+    }
+
+    deadline_missed_status_.total_count += count;
+    deadline_missed_status_.total_count_change += count;
+    deadline_missed_status_.last_instance_handle = instance_handle;
+
+    // Notify the listener with the updated status
+    notify_deadline_missed_nts_();
+}
+
 void DataReaderImpl::notify_deadline_missed_nts_()
 {
     StatusMask notify_status = StatusMask::requested_deadline_missed();
@@ -1533,11 +1569,7 @@ bool DataReaderImpl::deadline_missed()
 
     assert(qos_.deadline().period != dds::c_TimeInfinite);
 
-    deadline_missed_status_.total_count++;
-    deadline_missed_status_.total_count_change++;
-    deadline_missed_status_.last_instance_handle = timer_owner_;
-
-    notify_deadline_missed_nts_();
+    aggregate_deadline_missed_nts(1, timer_owner_);
 
     // If we just reached the max -> log ONCE, stop timer, and bail
     if (deadline_missed_status_.total_count == (std::numeric_limits<uint32_t>::max)())

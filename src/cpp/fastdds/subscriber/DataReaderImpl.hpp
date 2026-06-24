@@ -736,6 +736,16 @@ private:
     void configure_deadline_timer_();
 
     /**
+     * Aggregates the deadline missed status for the given instance handle and count.
+     *
+     * @param count            The number of deadlines missed to aggregate.
+     * @param instance_handle  The instance handle for which the deadlines were missed.
+     */
+    void aggregate_deadline_missed_nts(
+            uint32_t count,
+            const InstanceHandle_t& instance_handle);
+
+    /**
      * Notifies listeners that a deadline has been missed.
      */
     void notify_deadline_missed_nts_();
@@ -784,6 +794,10 @@ private:
     void on_subscription_matched(
             DataReader* reader,
             const fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+    void on_requested_deadline_missed(
+            DataReader* reader,
+            const RequestedDeadlineMissedStatus& status) override;
 
     ///@}
 
