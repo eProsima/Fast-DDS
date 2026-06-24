@@ -328,6 +328,9 @@ public:
 
     const DataWriterQos& get_qos() const;
 
+    ReturnCode_t get_qos(
+            DataWriterQos& qos) const;
+
     Topic* get_topic() const;
 
     const DataWriterListener* get_listener() const;
@@ -407,6 +410,9 @@ protected:
     Topic* topic_ = nullptr;
 
     DataWriterQos qos_;
+
+    //! Mutex to protect qos_
+    mutable std::mutex qos_mutex_;
 
     //! DataWriterListener
     DataWriterListener* listener_ = nullptr;
@@ -513,6 +519,8 @@ protected:
     std::unique_ptr<ReaderFilterCollection> reader_filters_;
 
     DataRepresentationId_t data_representation_ {DEFAULT_DATA_REPRESENTATION};
+
+    mutable std::mutex filters_mtx_;
 
     ReturnCode_t check_write_preconditions(
             void* data,
