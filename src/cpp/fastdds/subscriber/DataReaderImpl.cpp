@@ -253,6 +253,20 @@ void DataReaderImpl::on_data_available(
     set_read_communication_status(true);
 }
 
+void DataReaderImpl::on_subscription_matched(
+        DataReader* reader,
+        const fastdds::dds::SubscriptionMatchedStatus& info)
+{
+    static_cast<void>(reader);
+    assert((info.current_count_change == 1) || (info.current_count_change == -1));
+    assert(reader_ != nullptr);
+
+    MatchingInfo matching_info;
+    matching_info.status = (info.current_count_change == 1) ? MATCHED_MATCHING : REMOVED_MATCHING;
+    matching_info.remoteEndpointGuid = static_cast<GUID_t>(info.last_publication_handle);
+    reader_listener_.on_reader_matched(reader_, matching_info);
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);

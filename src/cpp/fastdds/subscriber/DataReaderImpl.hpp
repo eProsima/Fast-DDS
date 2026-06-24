@@ -781,6 +781,10 @@ private:
     void on_data_available(
             DataReader* reader) override;
 
+    void on_subscription_matched(
+            DataReader* reader,
+            const fastdds::dds::SubscriptionMatchedStatus& info) override;
+
     ///@}
 
     bool is_data_sharing_compatible_ = false;
