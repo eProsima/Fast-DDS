@@ -304,6 +304,26 @@ void DataReaderImpl::on_sample_rejected(
     notify_sample_rejected_nts();
 }
 
+void DataReaderImpl::on_requested_incompatible_qos(
+        DataReader* reader,
+        const RequestedIncompatibleQosStatus& status)
+{
+    static_cast<void>(reader);
+    assert(reader_ != nullptr);
+
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    requested_incompatible_qos_status_.total_count += status.total_count;
+    requested_incompatible_qos_status_.total_count_change += status.total_count_change;
+    requested_incompatible_qos_status_.last_policy_id = status.last_policy_id;
+    size_t min_size = (std::min)(requested_incompatible_qos_status_.policies.size(), status.policies.size());
+    for (size_t i = 0; i < min_size; i++)
+    {
+        assert(requested_incompatible_qos_status_.policies[i].policy_id == status.policies[i].policy_id);
+        requested_incompatible_qos_status_.policies[i].count += status.policies[i].count;
+    }
+    notify_requested_incompatible_qos_nts();
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
@@ -1221,22 +1241,7 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         PolicyMask qos)
 {
     data_reader_->update_requested_incompatible_qos(qos);
-    StatusMask notify_status = StatusMask::requested_incompatible_qos();
-    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        RequestedIncompatibleQosStatus callback_status;
-        if (data_reader_->get_requested_incompatible_qos_status(callback_status) == RETCODE_OK)
-        {
-            listener->on_requested_incompatible_qos(data_reader_->user_datareader_, callback_status);
-        }
-    }
-
-#ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::StatusKind::INCOMPATIBLE_QOS);
-#endif // FASTDDS_STATISTICS
-
-    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    data_reader_->notify_requested_incompatible_qos_nts();
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
@@ -1591,6 +1596,26 @@ void DataReaderImpl::notify_sample_rejected_nts()
             listener->on_sample_rejected(user_datareader_, callback_status);
         }
     }
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+void DataReaderImpl::notify_requested_incompatible_qos_nts()
+{
+    StatusMask notify_status = StatusMask::requested_incompatible_qos();
+    DataReaderListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        RequestedIncompatibleQosStatus callback_status;
+        if (get_requested_incompatible_qos_status(callback_status) == RETCODE_OK)
+        {
+            listener->on_requested_incompatible_qos(user_datareader_, callback_status);
+        }
+    }
+
+#ifdef FASTDDS_STATISTICS
+    reader_listener_.notify_status_observer(statistics::StatusKind::INCOMPATIBLE_QOS);
+#endif // FASTDDS_STATISTICS
+
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 

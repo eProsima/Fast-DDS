@@ -755,6 +755,11 @@ private:
      */
     void notify_sample_rejected_nts();
 
+    /**
+     * @brief Notifies listeners that 
+     */
+    void notify_requested_incompatible_qos_nts();
+
     void update_rtps_reader_qos();
 
     DataReaderQos get_datareader_qos_from_settings(
@@ -812,6 +817,10 @@ private:
     void on_sample_rejected(
             DataReader* reader,
             const SampleRejectedStatus& status) override;
+
+    void on_requested_incompatible_qos(
+            DataReader* reader,
+            const RequestedIncompatibleQosStatus& status) override;
 
     ///@}
 
