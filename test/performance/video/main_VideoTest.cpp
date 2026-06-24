@@ -414,8 +414,14 @@ int main(
             option::printUsage(fwrite, stdout, usage, columns);
             return -1;
         }
+<<<<<<< HEAD
 
         sub_part_property_policy.properties().emplace_back(eprosima::fastrtps::rtps::Property("dds.sec.auth.plugin",
+=======
+        // Subscriber
+        // Auth
+        sub_part_property_policy.properties().emplace_back(eprosima::fastdds::rtps::Property("dds.sec.auth.plugin",
+>>>>>>> a1d550b29 (Update security tests to use governance-based encryption configuration (#6277))
                 "builtin.PKI-DH"));
         sub_part_property_policy.properties().emplace_back(eprosima::fastrtps::rtps::Property(
                     "dds.sec.auth.builtin.PKI-DH.identity_ca",
@@ -428,11 +434,26 @@ int main(
                     "file://" + certs_path + "/mainsubkey.pem"));
         sub_part_property_policy.properties().emplace_back(eprosima::fastrtps::rtps::Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
-        sub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-        sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-        sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+        // Access
+        sub_part_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        sub_part_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + certs_path + "/maincacert.pem"));
+        sub_part_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.governance",
+                    "file://" + certs_path + "/governance_performance_tests.smime"));
+        sub_part_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions",
+                    "file://" + certs_path + "/permissions_performance_tests.smime"));
 
+<<<<<<< HEAD
         pub_part_property_policy.properties().emplace_back(eprosima::fastrtps::rtps::Property("dds.sec.auth.plugin",
+=======
+        // Publisher
+        // Auth
+        pub_part_property_policy.properties().emplace_back(eprosima::fastdds::rtps::Property("dds.sec.auth.plugin",
+>>>>>>> a1d550b29 (Update security tests to use governance-based encryption configuration (#6277))
                 "builtin.PKI-DH"));
         pub_part_property_policy.properties().emplace_back(eprosima::fastrtps::rtps::Property(
                     "dds.sec.auth.builtin.PKI-DH.identity_ca",
@@ -445,9 +466,18 @@ int main(
                     "file://" + certs_path + "/mainpubkey.pem"));
         pub_part_property_policy.properties().emplace_back(eprosima::fastrtps::rtps::Property("dds.sec.crypto.plugin",
                 "builtin.AES-GCM-GMAC"));
-        pub_part_property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
-        pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
-        pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
+        // Access
+        pub_part_property_policy.properties().emplace_back(Property("dds.sec.access.plugin",
+                "builtin.Access-Permissions"));
+        pub_part_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+                    "file://" + certs_path + "/maincacert.pem"));
+        pub_part_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.governance",
+                    "file://" + certs_path + "/governance_performance_tests.smime"));
+        pub_part_property_policy.properties().emplace_back(Property(
+                    "dds.sec.access.builtin.Access-Permissions.permissions",
+                    "file://" + certs_path + "/permissions_performance_tests.smime"));
     }
 #endif // if HAVE_SECURITY
 
