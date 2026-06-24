@@ -30,6 +30,15 @@ SerializedPayload_t& SerializedPayload_t::operator = (
         return *this;
     }
 
+    if (payload_owner != nullptr)
+    {
+        payload_owner->release_payload(*this); 
+    }
+    else if (data != nullptr)
+    {
+        free(data);
+    }
+
     encapsulation = other.encapsulation;
     length = other.length;
     data = other.data;
