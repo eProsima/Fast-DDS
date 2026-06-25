@@ -746,9 +746,19 @@ private:
             const InstanceHandle_t& instance_handle);
 
     /**
-     * Notifies listeners that a deadline has been missed.
+     * @brief Notifies listeners that SubscriptionMatchedStatus has been updated.
      */
-    void notify_deadline_missed_nts_();
+    void notify_subscription_matched_nts();
+
+    /**
+     * @brief Notifies listeners that RequestedDeadlineMissedStatus has been updated.
+     */
+    void notify_deadline_missed_nts();
+
+    /**
+     * @brief Notifies listeners that SampleLostStatus has been updated.
+     */
+    void notify_sample_lost_nts();
 
     /**
      * @brief Notifies listeners that SampleRejectedStatus has been updated.
@@ -760,6 +770,9 @@ private:
      */
     void notify_requested_incompatible_qos_nts();
 
+    /**
+     * @brief Notifies listeners that LivelinessChangedStatus has been updated.
+     */
     void notify_liveliness_changed_nts();
 
     void update_rtps_reader_qos();

@@ -1211,18 +1211,7 @@ void DataReaderImpl::InnerDataReaderListener::on_reader_matched(
     std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
 
     data_reader_->update_subscription_matched_status(info);
-
-    StatusMask notify_status = StatusMask::subscription_matched();
-    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        SubscriptionMatchedStatus callback_status;
-        if (RETCODE_OK == data_reader_->get_subscription_matched_status(callback_status))
-        {
-            listener->on_subscription_matched(data_reader_->user_datareader_, callback_status);
-        }
-    }
-    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    data_reader_->notify_subscription_matched_nts();
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
@@ -1246,22 +1235,7 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_lost(
         int32_t sample_lost_since_last_update)
 {
     data_reader_->update_sample_lost_status(sample_lost_since_last_update);
-    StatusMask notify_status = StatusMask::sample_lost();
-    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        SampleLostStatus callback_status;
-        if (data_reader_->get_sample_lost_status(callback_status) == RETCODE_OK)
-        {
-            listener->on_sample_lost(data_reader_->user_datareader_, callback_status);
-        }
-    }
-
-#ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::StatusKind::SAMPLE_LOST);
-#endif // FASTDDS_STATISTICS
-
-    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    data_reader_->notify_sample_lost_nts();
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
@@ -1532,7 +1506,7 @@ void DataReaderImpl::configure_deadline_timer_()
             "Deadline period is 0, it will be ignored from now on.");
 
         // Bump once and notify listener exactly once.
-        notify_deadline_missed_nts_();
+        notify_deadline_missed_nts();
         return;
     }
 
@@ -1561,10 +1535,25 @@ void DataReaderImpl::aggregate_deadline_missed_nts(
     deadline_missed_status_.last_instance_handle = instance_handle;
 
     // Notify the listener with the updated status
-    notify_deadline_missed_nts_();
+    notify_deadline_missed_nts();
 }
 
-void DataReaderImpl::notify_deadline_missed_nts_()
+void DataReaderImpl::notify_subscription_matched_nts()
+{
+    StatusMask notify_status = StatusMask::subscription_matched();
+    DataReaderListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        SubscriptionMatchedStatus callback_status;
+        if (RETCODE_OK == get_subscription_matched_status(callback_status))
+        {
+            listener->on_subscription_matched(user_datareader_, callback_status);
+        }
+    }
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+void DataReaderImpl::notify_deadline_missed_nts()
 {
     StatusMask notify_status = StatusMask::requested_deadline_missed();
     auto listener = get_listener_for(notify_status);
@@ -1576,6 +1565,26 @@ void DataReaderImpl::notify_deadline_missed_nts_()
 
 #ifdef FASTDDS_STATISTICS
     reader_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
+#endif // FASTDDS_STATISTICS
+
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
+void DataReaderImpl::notify_sample_lost_nts()
+{
+    StatusMask notify_status = StatusMask::sample_lost();
+    DataReaderListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        SampleLostStatus callback_status;
+        if (get_sample_lost_status(callback_status) == RETCODE_OK)
+        {
+            listener->on_sample_lost(user_datareader_, callback_status);
+        }
+    }
+
+#ifdef FASTDDS_STATISTICS
+    reader_listener_.notify_status_observer(statistics::StatusKind::SAMPLE_LOST);
 #endif // FASTDDS_STATISTICS
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
