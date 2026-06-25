@@ -1,0 +1,26 @@
+// Appendable struct with optional and required members.
+@appendable
+struct optional_runtime_appendable
+{
+    @optional long optional_field;
+    @optional string optional_str;
+    long required_field;
+};
+
+// Mutable struct with optional and required members.
+@mutable
+struct optional_runtime_mutable
+{
+    @optional string optional_str;
+    long required_field;
+    @optional long optional_field;
+};
+
+// Final struct with optional and required members.
+@final
+struct optional_runtime_final
+{
+    long required_field;
+    @optional long optional_field;
+    @optional string optional_str;
+};

@@ -112,11 +112,12 @@ ReturnCode_t json_deserialize_aggregate(
         return RETCODE_BAD_PARAMETER;
     }
 
-    if (j.size() != data->enclosing_type()->get_member_count())
+    auto json_element_count = j.size();
+    if (json_element_count > data->enclosing_type()->get_member_count())
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while deserializing " << kind_str << ": size is " << j.size() << ", "
-                                                         << "but the expected number of members is "
+                "Error encountered while deserializing " << kind_str << ": JSON has " << json_element_count
+                                                         << " members, but the type only has "
                                                          << data->enclosing_type()->get_member_count()
                                                          << ".");
         return RETCODE_BAD_PARAMETER;
@@ -134,6 +135,18 @@ ReturnCode_t json_deserialize_aggregate(
             break;
         }
 
+        // Handle null JSON values for optional members: clear the member to make it absent.
+        if (it.value().is_null())
+        {
+            --json_element_count;
+            auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member);
+            if (member_impl && member_impl->get_descriptor().is_optional())
+            {
+                data->clear_value(member_impl->get_descriptor().id());
+                continue;
+            }
+        }
+
         if (RETCODE_OK != (ret = json_deserialize_member(it.value(), type_member, format, data)))
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
@@ -141,6 +154,17 @@ ReturnCode_t json_deserialize_aggregate(
             break;
         }
     }
+
+    if (json_element_count != data->get_item_count())
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS,
+                "Error encountered while deserializing " << kind_str << ": size is " << json_element_count << ", "
+                                                         << "but at least the expected number of members is "
+                                                         << data->get_item_count()
+                                                         << ".");
+        ret = RETCODE_BAD_PARAMETER;
+    }
+
     return ret;
 }
 

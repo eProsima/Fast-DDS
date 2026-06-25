@@ -121,6 +121,13 @@ ReturnCode_t json_serialize_member(
             member_id = member_desc.id();
         }
 
+        // Absent optional members are serialized as JSON null.
+        if (member_desc.is_optional() && !data->is_member_present(member_id))
+        {
+            json_insert(type_member->get_name().to_string(), nullptr, output);
+            return RETCODE_OK;
+        }
+
         return json_serialize_member(data, member_id,
                        traits<DynamicType>::narrow<DynamicTypeImpl>(
                            member_desc.type())->resolve_alias_enclosed_type()->get_kind(),
@@ -910,7 +917,7 @@ ReturnCode_t json_serialize_map_member(
         DynamicDataJsonFormat format) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
-    nlohmann::json j_map;
+    nlohmann::json j_map = nlohmann::json::object();
     const TypeDescriptorImpl& map_desc = data->enclosing_type()->get_descriptor();
     traits<DynamicTypeImpl>::ref_type key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
         map_desc.key_element_type())->resolve_alias_enclosed_type();

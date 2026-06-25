@@ -14383,7 +14383,377 @@ TEST_F(DynamicTypesTests, SequenceBoundsEnforced)
         }
 
     }
+}
 
+// Helper: build a struct of the specified extensibility with one required int32 and one optional int32 member.
+static DynamicType::_ref_type build_struct_with_optional(
+        ExtensibilityKind extensibility = ExtensibilityKind::APPENDABLE)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name("OptionalTestStruct");
+    type_descriptor->extensibility_kind(extensibility);
+
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+
+    // Member 0: required int32
+    MemberDescriptor::_ref_type required_member {traits<MemberDescriptor>::make_shared()};
+    required_member->name("required_field");
+    required_member->type(factory->get_primitive_type(TK_INT32));
+    EXPECT_EQ(builder->add_member(required_member), RETCODE_OK);
+
+    // Member 1: optional int32
+    MemberDescriptor::_ref_type optional_member {traits<MemberDescriptor>::make_shared()};
+    optional_member->name("optional_field");
+    optional_member->type(factory->get_primitive_type(TK_INT32));
+    optional_member->is_optional(true);
+    EXPECT_EQ(builder->add_member(optional_member), RETCODE_OK);
+
+    return builder->build();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_presence)
+{
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        DynamicType::_ref_type type {build_struct_with_optional(extensibility)};
+        ASSERT_TRUE(type);
+
+        DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+        ASSERT_TRUE(data);
+
+        // After construction, optional members should be absent.
+        // Only the required member is present.
+        EXPECT_EQ(data->get_item_count(), 1u);
+
+        // Getting the required member should succeed.
+        int32_t value {0};
+        MemberId required_id {data->get_member_id_by_name("required_field")};
+        MemberId optional_id {data->get_member_id_by_name("optional_field")};
+        EXPECT_NE(required_id, MEMBER_ID_INVALID);
+        EXPECT_NE(optional_id, MEMBER_ID_INVALID);
+
+        EXPECT_EQ(data->get_int32_value(value, required_id), RETCODE_OK);
+        EXPECT_EQ(value, 0);
+
+        // Getting absent optional member should return RETCODE_NO_DATA.
+        EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_NO_DATA);
+
+        // Setting a value on the absent optional should make it present.
+        EXPECT_EQ(data->set_int32_value(optional_id, 42), RETCODE_OK);
+        EXPECT_EQ(data->get_item_count(), 2u);
+
+        // Now getting it should succeed.
+        EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_OK);
+        EXPECT_EQ(value, 42);
+
+        // Clearing the optional member should make it absent again.
+        EXPECT_EQ(data->clear_value(optional_id), RETCODE_OK);
+        EXPECT_EQ(data->get_item_count(), 1u);
+        EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_NO_DATA);
+
+        // Clearing an already-absent optional should succeed.
+        EXPECT_EQ(data->clear_value(optional_id), RETCODE_OK);
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_clear_all)
+{
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        DynamicType::_ref_type type {build_struct_with_optional(extensibility)};
+        ASSERT_TRUE(type);
+
+        DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+        ASSERT_TRUE(data);
+
+        MemberId optional_id {data->get_member_id_by_name("optional_field")};
+
+        // Set the optional member.
+        EXPECT_EQ(data->set_int32_value(optional_id, 99), RETCODE_OK);
+        EXPECT_EQ(data->get_item_count(), 2u);
+
+        // clear_all_values should make optional members absent.
+        EXPECT_EQ(data->clear_all_values(), RETCODE_OK);
+        EXPECT_EQ(data->get_item_count(), 1u);
+        int32_t value;
+        EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_NO_DATA);
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_clone_equals)
+{
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        DynamicType::_ref_type type {build_struct_with_optional(extensibility)};
+        ASSERT_TRUE(type);
+
+        DynamicData::_ref_type data1 {DynamicDataFactory::get_instance()->create_data(type)};
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(type)};
+        ASSERT_TRUE(data1);
+        ASSERT_TRUE(data2);
+
+        //MemberId required_id {data1->get_member_id_by_name("required_field")};
+        MemberId optional_id {data1->get_member_id_by_name("optional_field")};
+
+        // Both have absent optional - should be equal.
+        EXPECT_TRUE(data1->equals(data2));
+
+        // Set optional in data1 only - should not be equal.
+        EXPECT_EQ(data1->set_int32_value(optional_id, 42), RETCODE_OK);
+        EXPECT_FALSE(data1->equals(data2));
+
+        // Set same value in data2 - should be equal again.
+        EXPECT_EQ(data2->set_int32_value(optional_id, 42), RETCODE_OK);
+        EXPECT_TRUE(data1->equals(data2));
+
+        // Clone should preserve optional presence.
+        DynamicData::_ref_type clone1 {data1->clone()};
+        EXPECT_TRUE(clone1->equals(data1));
+
+        // Clone of data with absent optional.
+        DynamicData::_ref_type data3 {DynamicDataFactory::get_instance()->create_data(type)};
+        DynamicData::_ref_type clone3 {data3->clone()};
+        EXPECT_TRUE(clone3->equals(data3));
+        EXPECT_EQ(clone3->get_item_count(), 1u);
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_loan_value)
+{
+    // Build struct with optional complex member (inner struct).
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        // Inner struct type.
+        TypeDescriptor::_ref_type inner_desc {traits<TypeDescriptor>::make_shared()};
+        inner_desc->kind(TK_STRUCTURE);
+        inner_desc->name("InnerOptStruct");
+        inner_desc->extensibility_kind(extensibility);
+        DynamicTypeBuilder::_ref_type inner_builder {factory->create_type(inner_desc)};
+        MemberDescriptor::_ref_type field {traits<MemberDescriptor>::make_shared()};
+        field->name("inner_value");
+        field->type(factory->get_primitive_type(TK_INT32));
+        EXPECT_EQ(inner_builder->add_member(field), RETCODE_OK);
+        DynamicType::_ref_type inner_type {inner_builder->build()};
+
+        // Outer struct with optional inner struct member.
+        TypeDescriptor::_ref_type outer_desc {traits<TypeDescriptor>::make_shared()};
+        outer_desc->kind(TK_STRUCTURE);
+        outer_desc->name("OuterOptStruct");
+        inner_desc->extensibility_kind(extensibility);
+        DynamicTypeBuilder::_ref_type outer_builder {factory->create_type(outer_desc)};
+
+        MemberDescriptor::_ref_type req {traits<MemberDescriptor>::make_shared()};
+        req->name("req");
+        req->type(factory->get_primitive_type(TK_INT32));
+        EXPECT_EQ(outer_builder->add_member(req), RETCODE_OK);
+
+        MemberDescriptor::_ref_type opt {traits<MemberDescriptor>::make_shared()};
+        opt->name("opt_inner");
+        opt->type(inner_type);
+        opt->is_optional(true);
+        EXPECT_EQ(outer_builder->add_member(opt), RETCODE_OK);
+
+        DynamicType::_ref_type outer_type {outer_builder->build()};
+        DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(outer_type)};
+
+        MemberId opt_id {data->get_member_id_by_name("opt_inner")};
+        EXPECT_EQ(data->get_item_count(), 1u);
+
+        // Loaning an absent optional should auto-create it.
+        DynamicData::_ref_type loaned {data->loan_value(opt_id)};
+        ASSERT_TRUE(loaned);
+        EXPECT_EQ(data->get_item_count(), 2u);
+
+        // Set value through loan.
+        MemberId inner_val_id {loaned->get_member_id_by_name("inner_value")};
+        EXPECT_EQ(loaned->set_int32_value(inner_val_id, 77), RETCODE_OK);
+
+        EXPECT_EQ(data->return_loaned_value(loaned), RETCODE_OK);
+
+        // Verify the value persists.
+        DynamicData::_ref_type complex_val;
+        EXPECT_EQ(data->get_complex_value(complex_val, opt_id), RETCODE_OK);
+        int32_t result {0};
+        EXPECT_EQ(complex_val->get_int32_value(result, inner_val_id), RETCODE_OK);
+        EXPECT_EQ(result, 77);
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_serialization)
+{
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        DynamicType::_ref_type type {build_struct_with_optional(extensibility)};
+        ASSERT_TRUE(type);
+
+        MemberId required_id, optional_id;
+
+        // Test with optional absent.
+        {
+            DynamicData::_ref_type encoding_data {DynamicDataFactory::get_instance()->create_data(type)};
+            DynamicData::_ref_type decoding_data {DynamicDataFactory::get_instance()->create_data(type)};
+            required_id = encoding_data->get_member_id_by_name("required_field");
+            optional_id = encoding_data->get_member_id_by_name("optional_field");
+
+            EXPECT_EQ(encoding_data->set_int32_value(required_id, 10), RETCODE_OK);
+
+            encoding_decoding_test(type, encoding_data, decoding_data, XCDR2_DATA_REPRESENTATION);
+            EXPECT_EQ(decoding_data->get_item_count(), 1u);
+            int32_t val;
+            EXPECT_EQ(decoding_data->get_int32_value(val, optional_id), RETCODE_NO_DATA);
+        }
+
+        // Test with optional present.
+        {
+            DynamicData::_ref_type encoding_data {DynamicDataFactory::get_instance()->create_data(type)};
+            DynamicData::_ref_type decoding_data {DynamicDataFactory::get_instance()->create_data(type)};
+            required_id = encoding_data->get_member_id_by_name("required_field");
+            optional_id = encoding_data->get_member_id_by_name("optional_field");
+
+            EXPECT_EQ(encoding_data->set_int32_value(required_id, 20), RETCODE_OK);
+            EXPECT_EQ(encoding_data->set_int32_value(optional_id, 42), RETCODE_OK);
+
+            encoding_decoding_test(type, encoding_data, decoding_data, XCDR2_DATA_REPRESENTATION);
+            EXPECT_EQ(decoding_data->get_item_count(), 2u);
+            int32_t val;
+            EXPECT_EQ(decoding_data->get_int32_value(val, optional_id), RETCODE_OK);
+            EXPECT_EQ(val, 42);
+        }
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_key_mutual_exclusivity)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_STRUCTURE);
+        type_descriptor->name("OptionalKeyTest");
+        type_descriptor->extensibility_kind(extensibility);
+
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+
+        // A member that is both optional and key should be rejected.
+        MemberDescriptor::_ref_type member {traits<MemberDescriptor>::make_shared()};
+        member->name("opt_key_field");
+        member->type(factory->get_primitive_type(TK_INT32));
+        member->is_optional(true);
+        member->is_key(true);
+        EXPECT_EQ(builder->add_member(member), RETCODE_BAD_PARAMETER);
+    }
+}
+
+TEST_F(DynamicTypesTests, DynamicType_optional_all_absent)
+{
+    // Struct where ALL members are optional.
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    const ExtensibilityKind extensibilities[] =
+    {
+        ExtensibilityKind::FINAL, ExtensibilityKind::APPENDABLE, ExtensibilityKind::MUTABLE
+    };
+
+    for (ExtensibilityKind extensibility : extensibilities)
+    {
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_STRUCTURE);
+        type_descriptor->name("AllOptionalStruct");
+        type_descriptor->extensibility_kind(extensibility);
+
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+
+        MemberDescriptor::_ref_type m1 {traits<MemberDescriptor>::make_shared()};
+        m1->name("opt1");
+        m1->type(factory->get_primitive_type(TK_INT32));
+        m1->is_optional(true);
+        EXPECT_EQ(builder->add_member(m1), RETCODE_OK);
+
+        MemberDescriptor::_ref_type m2 {traits<MemberDescriptor>::make_shared()};
+        m2->name("opt2");
+        m2->type(factory->get_primitive_type(TK_FLOAT64));
+        m2->is_optional(true);
+        EXPECT_EQ(builder->add_member(m2), RETCODE_OK);
+
+        DynamicType::_ref_type type {builder->build()};
+        ASSERT_TRUE(type);
+
+        DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+        ASSERT_TRUE(data);
+
+        // All absent: item count should be 0.
+        EXPECT_EQ(data->get_item_count(), 0u);
+
+        // Serialization roundtrip with all absent.
+        DynamicData::_ref_type decoding_data {DynamicDataFactory::get_instance()->create_data(type)};
+        encoding_decoding_test(type, data, decoding_data, XCDR2_DATA_REPRESENTATION);
+        EXPECT_EQ(decoding_data->get_item_count(), 0u);
+
+        // Set one, roundtrip.
+        MemberId opt1_id {data->get_member_id_by_name("opt1")};
+        EXPECT_EQ(data->set_int32_value(opt1_id, 123), RETCODE_OK);
+        EXPECT_EQ(data->get_item_count(), 1u);
+
+        DynamicData::_ref_type decoding_data2 {DynamicDataFactory::get_instance()->create_data(type)};
+        encoding_decoding_test(type, data, decoding_data2, XCDR2_DATA_REPRESENTATION);
+        EXPECT_EQ(decoding_data2->get_item_count(), 1u);
+        MemberId decoded_opt1_id = decoding_data2->get_member_id_at_index(0);
+        ASSERT_EQ(decoded_opt1_id, opt1_id);
+        int32_t i32_val {0};
+        EXPECT_EQ(decoding_data2->get_int32_value(i32_val, decoded_opt1_id), RETCODE_OK);
+        EXPECT_EQ(i32_val, 123);
+
+        // Set the other, roundtrip.
+        data->clear_all_values();
+        MemberId opt2_id {data->get_member_id_by_name("opt2")};
+        EXPECT_EQ(data->set_float64_value(opt2_id, 456), RETCODE_OK);
+        EXPECT_EQ(data->get_item_count(), 1u);
+
+        DynamicData::_ref_type decoding_data3 {DynamicDataFactory::get_instance()->create_data(type)};
+        encoding_decoding_test(type, data, decoding_data3, XCDR2_DATA_REPRESENTATION);
+        EXPECT_EQ(decoding_data3->get_item_count(), 1u);
+        MemberId decoded_opt2_id = decoding_data3->get_member_id_at_index(0);
+        ASSERT_EQ(decoded_opt2_id, opt2_id);
+        double f64_val {0};
+        EXPECT_EQ(decoding_data3->get_float64_value(f64_val, decoded_opt2_id), RETCODE_OK);
+        EXPECT_EQ(f64_val, 456.0);
+    }
 }
 
 int main(

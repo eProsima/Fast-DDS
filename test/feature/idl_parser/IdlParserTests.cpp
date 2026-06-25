@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/utils.hpp>
 #include <ScopedLogs.hpp>
 #include "IdlParserTests.hpp"
 
@@ -3113,6 +3120,180 @@ TEST_F(IdlParserTests, get_declared_type_names_w_early_stop)
     ASSERT_EQ(factory->for_each_type_w_uri("IDL/structures.idl", include_paths, store_declared_types), RETCODE_OK);
 
     ASSERT_EQ(declared_types, expected_type_names);
+}
+
+/**
+ * Helper: serialize data with XCDR2, deserialize into a fresh DynamicData, and
+ * verify the round-trip produces an equal object.  Also exercises JSON
+ * serialization and deserialization for both EPROSIMA and OMG formats.
+ */
+static void optional_encoding_decoding_test(
+        DynamicType::_ref_type type,
+        DynamicData::_ref_type encoding_data,
+        DynamicData::_ref_type decoding_data)
+{
+    TypeSupport pubsubType {new DynamicPubSubType(type)};
+    uint32_t payloadSize = static_cast<uint32_t>(
+        pubsubType.calculate_serialized_size(&encoding_data, XCDR2_DATA_REPRESENTATION));
+    SerializedPayload_t payload(payloadSize);
+    EXPECT_TRUE(pubsubType.serialize(&encoding_data, payload, XCDR2_DATA_REPRESENTATION));
+    EXPECT_EQ(payload.length, payloadSize);
+    EXPECT_TRUE(pubsubType.deserialize(payload, &decoding_data));
+    EXPECT_TRUE(decoding_data->equals(encoding_data));
+
+    // JSON round-trip
+    for (auto fmt : {DynamicDataJsonFormat::EPROSIMA, DynamicDataJsonFormat::OMG})
+    {
+        std::stringstream json_out;
+        EXPECT_EQ(json_serialize(encoding_data, fmt, json_out), RETCODE_OK);
+
+        DynamicData::_ref_type data_from_json;
+        EXPECT_EQ(json_deserialize(json_out.str(), type, fmt, data_from_json), RETCODE_OK);
+        EXPECT_TRUE(encoding_data->equals(data_from_json));
+    }
+}
+
+/**
+ * Parse a struct from optional_runtime.idl, then exercise the core optional
+ * runtime behaviour: presence tracking, set/get, clear, serialization and JSON.
+ */
+static void optional_runtime_test_for_type(
+        const std::string& type_name)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    std::vector<std::string> include_paths;
+
+    DynamicTypeBuilder::_ref_type builder {factory->create_type_w_uri(
+                                               "IDL/optional_runtime.idl", type_name, include_paths)};
+    ASSERT_TRUE(builder) << "Failed to parse type: " << type_name;
+    DynamicType::_ref_type type {builder->build()};
+    ASSERT_TRUE(type);
+
+    // Verify member descriptors: required_field is NOT optional,
+    // optional_field IS optional.
+    {
+        MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
+        DynamicTypeMember::_ref_type member;
+        EXPECT_EQ(builder->get_member_by_name(member, "required_field"), RETCODE_OK);
+        EXPECT_EQ(member->get_descriptor(md), RETCODE_OK);
+        EXPECT_FALSE(md->is_optional());
+
+        EXPECT_EQ(builder->get_member_by_name(member, "optional_field"), RETCODE_OK);
+        EXPECT_EQ(member->get_descriptor(md), RETCODE_OK);
+        EXPECT_TRUE(md->is_optional());
+
+        EXPECT_EQ(builder->get_member_by_name(member, "optional_str"), RETCODE_OK);
+        EXPECT_EQ(member->get_descriptor(md), RETCODE_OK);
+        EXPECT_TRUE(md->is_optional());
+    }
+
+    // -- Presence tracking --
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
+    ASSERT_TRUE(data);
+
+    constexpr uint32_t expected_required_count {1u};
+    MemberId required_id = data->get_member_id_by_name("required_field");
+    MemberId optional_id = data->get_member_id_by_name("optional_field");
+    MemberId optional_str_id = data->get_member_id_by_name("optional_str");
+    EXPECT_NE(required_id, MEMBER_ID_INVALID);
+    EXPECT_NE(optional_id, MEMBER_ID_INVALID);
+    EXPECT_NE(optional_str_id, MEMBER_ID_INVALID);
+
+    // Optional members start absent; only required member present.
+    EXPECT_EQ(data->get_item_count(), expected_required_count);
+
+    // Getting absent optional returns RETCODE_NO_DATA.
+    int32_t value {0};
+    EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_NO_DATA);
+    std::string str_value;
+    EXPECT_EQ(data->get_string_value(str_value, optional_str_id), RETCODE_NO_DATA);
+
+    // Setting a value makes it present.
+    EXPECT_EQ(data->set_int32_value(optional_id, 42), RETCODE_OK);
+    EXPECT_EQ(data->get_item_count(), expected_required_count + 1u);
+    EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_OK);
+    EXPECT_EQ(value, 42);
+
+    // Clearing removes it.
+    EXPECT_EQ(data->clear_value(optional_id), RETCODE_OK);
+    EXPECT_EQ(data->get_item_count(), expected_required_count);
+    EXPECT_EQ(data->get_int32_value(value, optional_id), RETCODE_NO_DATA);
+
+    // Clearing already-absent optional succeeds.
+    EXPECT_EQ(data->clear_value(optional_id), RETCODE_OK);
+
+    // -- Serialization round-trip with optional ABSENT --
+    {
+        DynamicData::_ref_type enc {DynamicDataFactory::get_instance()->create_data(type)};
+        DynamicData::_ref_type dec {DynamicDataFactory::get_instance()->create_data(type)};
+        EXPECT_EQ(enc->set_int32_value(required_id, 10), RETCODE_OK);
+
+        optional_encoding_decoding_test(type, enc, dec);
+        EXPECT_EQ(dec->get_item_count(), expected_required_count);
+        int32_t val;
+        EXPECT_EQ(dec->get_int32_value(val, optional_id), RETCODE_NO_DATA);
+        std::string str_val;
+        EXPECT_EQ(dec->get_string_value(str_val, optional_str_id), RETCODE_NO_DATA);
+    }
+
+    // -- Serialization round-trip with optional PRESENT --
+    {
+        DynamicData::_ref_type enc {DynamicDataFactory::get_instance()->create_data(type)};
+        DynamicData::_ref_type dec {DynamicDataFactory::get_instance()->create_data(type)};
+        EXPECT_EQ(enc->set_int32_value(required_id, 20), RETCODE_OK);
+        EXPECT_EQ(enc->set_int32_value(optional_id, 99), RETCODE_OK);
+
+        optional_encoding_decoding_test(type, enc, dec);
+        EXPECT_EQ(dec->get_item_count(), expected_required_count + 1u);
+        int32_t val;
+        EXPECT_EQ(dec->get_int32_value(val, optional_id), RETCODE_OK);
+        EXPECT_EQ(val, 99);
+    }
+
+    // -- Serialization round-trip with both optionals PRESENT --
+    {
+        DynamicData::_ref_type enc {DynamicDataFactory::get_instance()->create_data(type)};
+        DynamicData::_ref_type dec {DynamicDataFactory::get_instance()->create_data(type)};
+        EXPECT_EQ(enc->set_int32_value(required_id, 20), RETCODE_OK);
+        EXPECT_EQ(enc->set_int32_value(optional_id, 99), RETCODE_OK);
+        EXPECT_EQ(enc->set_string_value(optional_str_id, "testing"), RETCODE_OK);
+
+        optional_encoding_decoding_test(type, enc, dec);
+        EXPECT_EQ(dec->get_item_count(), expected_required_count + 2u);
+        int32_t val;
+        EXPECT_EQ(dec->get_int32_value(val, optional_id), RETCODE_OK);
+        EXPECT_EQ(val, 99);
+        std::string str_val;
+        EXPECT_EQ(dec->get_string_value(str_val, optional_str_id), RETCODE_OK);
+        EXPECT_EQ(str_val, "testing");
+    }
+
+    // -- clear_all_values removes optional members --
+    {
+        DynamicData::_ref_type dec {DynamicDataFactory::get_instance()->create_data(type)};
+        EXPECT_EQ(dec->set_int32_value(optional_id, 77), RETCODE_OK);
+        EXPECT_EQ(dec->clear_all_values(), RETCODE_OK);
+        EXPECT_EQ(dec->get_item_count(), expected_required_count);
+        int32_t val;
+        EXPECT_EQ(dec->get_int32_value(val, optional_id), RETCODE_NO_DATA);
+        std::string str_val;
+        EXPECT_EQ(dec->get_string_value(str_val, optional_str_id), RETCODE_NO_DATA);
+    }
+}
+
+TEST_F(IdlParserTests, optional_runtime_appendable)
+{
+    optional_runtime_test_for_type("optional_runtime_appendable");
+}
+
+TEST_F(IdlParserTests, optional_runtime_mutable)
+{
+    optional_runtime_test_for_type("optional_runtime_mutable");
+}
+
+TEST_F(IdlParserTests, optional_runtime_final)
+{
+    optional_runtime_test_for_type("optional_runtime_final");
 }
 
 int main(

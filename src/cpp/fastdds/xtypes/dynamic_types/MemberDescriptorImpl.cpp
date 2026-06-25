@@ -310,19 +310,17 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     }
 
     // Check is_optional built-in annotation.
-    if (is_optional_)
+    if (is_optional_ && TK_STRUCTURE != parent_kind_)
     {
-        if (TK_STRUCTURE != parent_kind_)
-        {
-            {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "is_optional is set but parent type of member is not TK_STRUCTURE.");
-                return false;
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "is_optional is not implemented yet.");
-        }
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "is_optional is set but parent type of member is not TK_STRUCTURE.");
+        return false;
+    }
+
+    // Check is_optional and is_key are not set at the same time.
+    if (is_optional_ && is_key_)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "is_optional and is_key cannot be set at the same time.");
+        return false;
     }
 
     // Check default_literal built-in annotation.

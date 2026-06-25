@@ -21,6 +21,8 @@
 #include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 
+#include <fastcdr/xcdr/optional.hpp>
+
 #include "DynamicTypeImpl.hpp"
 #include "TypeForKind.hpp"
 
@@ -58,6 +60,9 @@ class DynamicDataImpl : public traits<DynamicData>::base_type
 
     //! Points to the current selected member in the union.
     MemberId selected_union_member_ {MEMBER_ID_INVALID};
+
+    //! Auxiliary variable to know dynamic data is being deserialized;
+    bool deserialize_process_ {false};
 
     //}}}
 
@@ -412,6 +417,15 @@ public:
     traits<DynamicTypeImpl>::ref_type enclosing_type() noexcept;
 
     /*!
+     * Checks whether a member value is present in this DynamicData instance.
+     * For struct types, optional members that have not been set are absent.
+     * @param [in] id MemberId to check.
+     * @return true if the member has a value stored, false otherwise.
+     */
+    bool is_member_present(
+            MemberId id) const noexcept;
+
+    /*!
      * Auxiliary function to get a copy of the `key_to_id_` attribute.
      * Only valid for TK_MAP.
      * @note: This is a solution to allow the user to get the keys of a map, currently not supported by the public API.
@@ -537,6 +551,22 @@ private:
             TypeKind kind,
             std::shared_ptr<void> left,
             std::shared_ptr<void> right) const noexcept;
+
+    /*!
+     * Auxiliary function to create an absent optional member and insert it into value_.
+     * @param [in] id MemberId of the optional member to create.
+     * @return Iterator to the newly created entry in value_, or value_.end() on failure.
+     */
+    std::map<MemberId, std::shared_ptr<void>>::iterator create_optional_member(
+            MemberId id) noexcept;
+
+    /*!
+     * Auxiliary function to check if a member is optional.
+     * @param [in] id MemberId to check.
+     * @return true if the member exists in the type and is optional, false otherwise.
+     */
+    bool is_member_optional(
+            MemberId id) const noexcept;
 
     template<TypeKind TK>
     ReturnCode_t get_bitmask_bit(
@@ -721,6 +751,9 @@ private:
             const traits<DynamicTypeImpl>::ref_type type) const;
 
     //}}}
+
+    friend void eprosima::fastcdr::optional<fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type>::reset(
+            bool);
 
 };
 

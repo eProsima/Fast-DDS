@@ -100,10 +100,10 @@
             "my_ushort": 0,
             "my_wchar": "\u0000",
             "my_wstring": "",
-            "short_long_map": null,
+            "short_long_map": {},
             "short_sequence": [],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {},
+            "string_unbounded_map": {}
         },
         {
             "bitmask_sequence": [],
@@ -205,13 +205,13 @@
             "my_ushort": 0,
             "my_wchar": "\u0000",
             "my_wstring": "",
-            "short_long_map": null,
+            "short_long_map": {},
             "short_sequence": [],
-            "string_alias_unbounded_map": null,
-            "string_unbounded_map": null
+            "string_alias_unbounded_map": {},
+            "string_unbounded_map": {}
         }
     ],
-    "complex_map": null,
+    "complex_map": {},
     "complex_sequence": [],
     "index": 0,
     "inner_struct": {
@@ -314,9 +314,9 @@
         "my_ushort": 0,
         "my_wchar": "\u0000",
         "my_wstring": "",
-        "short_long_map": null,
+        "short_long_map": {},
         "short_sequence": [],
-        "string_alias_unbounded_map": null,
-        "string_unbounded_map": null
+        "string_alias_unbounded_map": {},
+        "string_unbounded_map": {}
     }
 }

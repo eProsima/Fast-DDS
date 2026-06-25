@@ -69,11 +69,40 @@ FASTDDS_EXPORTED_API void deserialize(
 
 //}}}
 
+template<> void optional<fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type>::reset(
+        bool initial_engaged)
+{
+    bool for_deserialize {false};
+    if (storage_.engaged_)
+    {
+        for_deserialize =
+                dynamic_cast<fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type&>(storage_.val_)->
+                        deserialize_process_;
+    }
+
+    if (!for_deserialize || !initial_engaged)
+    {
+        if (storage_.engaged_)
+        {
+            storage_.val_.~type();
+        }
+    }
+
+    storage_.engaged_ = initial_engaged;
+
+    if (!for_deserialize)
+    {
+        if (storage_.engaged_)
+        {
+            ::new(&storage_.val_)fastdds::dds::traits<fastdds::dds::DynamicDataImpl>::ref_type();
+        }
+    }
+}
+
 } // namespace fastcdr
 
 namespace fastdds {
 namespace dds {
-
 
 bool is_complex_kind(
         TypeKind kind)
@@ -162,6 +191,13 @@ DynamicDataImpl::DynamicDataImpl(
     {
         for (auto& member : enclosing_type_->get_all_members_by_index())
         {
+            // Optional members start absent (not stored in value_).
+            auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+            if (TK_STRUCTURE == type_kind && member_impl && member_impl->get_descriptor().is_optional())
+            {
+                continue;
+            }
+
             traits<DynamicData>::ref_type data = DynamicDataFactory::get_instance()->create_data(
                 member->get_descriptor().type());
             traits<DynamicDataImpl>::ref_type data_impl = traits<DynamicData>::narrow<DynamicDataImpl>(data);
@@ -262,10 +298,27 @@ ReturnCode_t DynamicDataImpl::clear_value(
                 const auto it = members.find(it_value->first);
                 assert(members.end() != it);
                 auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it->second);
-                auto data = std::static_pointer_cast<DynamicDataImpl>(it_value->second);
 
-                data->clear_all_values();
-                set_default_value(member, data);
+                if (member)
+                {
+                    // Optional members become absent when cleared.
+                    if (member->get_descriptor().is_optional())
+                    {
+                        value_.erase(it_value);
+                    }
+                    else
+                    {
+                        auto data = std::static_pointer_cast<DynamicDataImpl>(it_value->second);
+
+                        data->clear_all_values();
+                        set_default_value(member, data);
+                    }
+                    ret_val = RETCODE_OK;
+                }
+            }
+            else if (is_member_optional(id))
+            {
+                // Already absent optional member: clearing is a no-op.
                 ret_val = RETCODE_OK;
             }
         }
@@ -494,10 +547,14 @@ MemberId DynamicDataImpl::get_member_id_at_index(
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
-        traits<DynamicTypeMember>::ref_type member;
-        if (RETCODE_OK == enclosing_type_->get_member_by_index(member, index))
+        if (index < value_.size())
         {
-            ret_value = member->get_id();
+            auto it = std::next(value_.begin(), index);
+            ret_value = it->first;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting MemberId at index. Index out of bounds.");
         }
     }
     else if (TK_BITMASK == type_kind)
@@ -758,6 +815,10 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                     value = std::static_pointer_cast<DynamicData>(it->second)->clone();
                     return RETCODE_OK;
                 }
+                else if (is_member_optional(id))
+                {
+                    return RETCODE_NO_DATA;
+                }
                 else
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting complex value. MemberId not found.");
@@ -973,6 +1034,13 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
                     TK_UNION == type_kind)
             {
                 auto it = value_.find(id);
+
+                // Auto-create absent optional member on loan.
+                if (it == value_.end() && is_member_optional(id))
+                {
+                    it = create_optional_member(id);
+                }
+
                 if (it != value_.end())
                 {
                     auto sp = std::static_pointer_cast<DynamicData>(it->second);
@@ -1278,6 +1346,13 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
             if (TK_UNION != type_kind || 0 != id)
             {
                 auto it = value_.find(id);
+
+                // Auto-create absent optional member on set.
+                if (it == value_.end() && is_member_optional(id))
+                {
+                    it = create_optional_member(id);
+                }
+
                 if (it != value_.end())
                 {
                     auto data = std::static_pointer_cast<DynamicDataImpl>(it->second);
@@ -1571,6 +1646,12 @@ traits<DynamicTypeImpl>::ref_type DynamicDataImpl::enclosing_type() noexcept
     return enclosing_type_;
 }
 
+bool DynamicDataImpl::is_member_present(
+        MemberId id) const noexcept
+{
+    return value_.find(id) != value_.end();
+}
+
 ReturnCode_t DynamicDataImpl::get_keys(
         std::map<std::string, MemberId>& key_to_id) noexcept
 {
@@ -1644,7 +1725,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
                     auto member_type {traits<DynamicType>::narrow<DynamicTypeImpl>(
                                           member_impl->get_descriptor().type())};
 
-                    //TODO(richiware) For the future support of optionals. Optional member cannot be a keyed member.
+                    // Optional members cannot be keyed members (enforced at type-build time).
                     if (TK_MAP != member_type->resolve_alias_enclosed_type()->get_kind())
                     {
                         auto it = value_.find(member.first);
@@ -2513,18 +2594,26 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
             TK_UNION == type_kind)
     {
         const auto& members = enclosing_type_->get_all_members();
-        for (auto& value_element : value_)
+        for (auto value_it = value_.begin(); value_it != value_.end(); )
         {
-            const auto it = members.find(value_element.first);
+            const auto it = members.find(value_it->first);
             assert(members.end() != it);
             auto member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it->second);
             if (!only_non_keyed || !member->get_descriptor().is_key())
             {
-                auto data = std::static_pointer_cast<DynamicDataImpl>(value_element.second);
+                // Optional members become absent when cleared.
+                if (member->get_descriptor().is_optional())
+                {
+                    value_it = value_.erase(value_it);
+                    continue;
+                }
+
+                auto data = std::static_pointer_cast<DynamicDataImpl>(value_it->second);
 
                 data->clear_all_values();
                 set_default_value(member, data);
             }
+            ++value_it;
         }
     }
     else
@@ -3032,6 +3121,49 @@ bool DynamicDataImpl::compare_values(
         }
         default:
             break;
+    }
+    return false;
+}
+
+std::map<MemberId, std::shared_ptr<void>>::iterator DynamicDataImpl::create_optional_member(
+        MemberId id) noexcept
+{
+    const auto& members = enclosing_type_->get_all_members();
+    auto member_it = members.find(id);
+    if (members.end() == member_it)
+    {
+        return value_.end();
+    }
+
+    auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member_it->second);
+    if (!member_impl || !member_impl->get_descriptor().is_optional())
+    {
+        return value_.end();
+    }
+
+    traits<DynamicData>::ref_type data = DynamicDataFactory::get_instance()->create_data(
+        member_impl->get_descriptor().type());
+    traits<DynamicDataImpl>::ref_type data_impl = traits<DynamicData>::narrow<DynamicDataImpl>(data);
+
+    set_default_value(member_impl, data_impl);
+
+    return value_.emplace(id, data).first;
+}
+
+bool DynamicDataImpl::is_member_optional(
+        MemberId id) const noexcept
+{
+    if (TK_STRUCTURE != enclosing_type_->get_kind())
+    {
+        return false;
+    }
+
+    const auto& members = enclosing_type_->get_all_members();
+    auto it = members.find(id);
+    if (members.end() != it)
+    {
+        auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it->second);
+        return member_impl && member_impl->get_descriptor().is_optional();
     }
     return false;
 }
@@ -3860,6 +3992,10 @@ ReturnCode_t DynamicDataImpl::get_value(
                 ret_value =  std::static_pointer_cast<DynamicDataImpl>(it->second)->get_value<TK>(
                     value,
                     MEMBER_ID_INVALID);
+            }
+            else if (is_member_optional(id))
+            {
+                ret_value = RETCODE_NO_DATA;
             }
             else
             {
@@ -5029,6 +5165,13 @@ ReturnCode_t DynamicDataImpl::set_value(
             }
 
             auto it = value_.find(id);
+
+            // Auto-create absent optional member on set.
+            if (it == value_.end() && is_member_optional(id))
+            {
+                it = create_optional_member(id);
+            }
+
             if (it != value_.end())
             {
                 TypeForKind<TK> new_value {value};
@@ -5788,13 +5931,33 @@ size_t DynamicDataImpl::calculate_serialized_size(
 
             for (auto& member : type->get_all_members_by_index())
             {
-                it = value_.find(member->get_id());
+                auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+                bool is_opt = member_impl && member_impl->get_descriptor().is_optional();
+                auto member_it {value_.find(member->get_id())};
+                bool is_present = (member_it != value_.end());
 
-                if (it != value_.end())
+                if (is_opt)
                 {
-                    auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                    eprosima::fastcdr::optional<std::shared_ptr<DynamicDataImpl>> opt_aux;
+                    if (is_present)
+                    {
+                        opt_aux = std::static_pointer_cast<DynamicDataImpl>(member_it->second);
+                    }
+
+                    calculated_size += calculator.calculate_member_serialized_size(
+                        member->get_id(), opt_aux, current_alignment);
+                }
+                else if (is_present)
+                {
+                    auto member_data = std::static_pointer_cast<DynamicDataImpl>(member_it->second);
                     calculated_size += calculator.calculate_member_serialized_size(
                         member->get_id(), member_data, current_alignment);
+
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES,
+                            "Error calculating serialized size for  structure member because it is not found on DynamicData");
                 }
             }
 
@@ -6629,11 +6792,14 @@ bool DynamicDataImpl::deserialize(
                                 throw fastcdr::exception::BadParamException(
                                           "Member not found in DynamicTypeImpl");
                             }
-                            auto it = value_.find(member_impl->get_id());
 
-                            if (it != value_.end())
+                            // Handle optional member presence for non-mutable XCDR2.
+                            bool is_opt {member_impl->get_descriptor().is_optional()};
+                            auto member_it {value_.find(member_impl->get_id())};
+
+                            if (member_it != value_.end())
                             {
-                                member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                                member_data = std::static_pointer_cast<DynamicDataImpl>(member_it->second);
                             }
                             else
                             {
@@ -6644,7 +6810,25 @@ bool DynamicDataImpl::deserialize(
                                 value_.emplace(member_impl->get_id(), member_data);
                             }
 
-                            dcdr >> member_data;
+                            if (is_opt)
+                            {
+                                member_data->deserialize_process_ = true;
+                                eprosima::fastcdr::optional<std::shared_ptr<DynamicDataImpl>> opt_aux {member_data};
+
+                                cdr >> opt_aux;
+
+                                if (!opt_aux.has_value())
+                                {
+                                    value_.erase(member_impl->get_id());
+                                }
+
+                                member_data->deserialize_process_ = false;
+                            }
+                            else
+                            {
+                                value_.emplace(member_impl->get_id(), member_data);
+                                dcdr >> member_data;
+                            }
                         }
 
                         return ret_value;
@@ -7338,12 +7522,23 @@ void DynamicDataImpl::serialize(
 
             for (auto& member : type->get_all_members_by_index())
             {
-                auto it = value_.find(member->get_id());
+                auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+                bool is_opt = member_impl && member_impl->get_descriptor().is_optional();
+                auto member_it = value_.find(member->get_id());
+                bool is_present = (member_it != value_.end());
 
-                if (it != value_.end())
+                if (is_opt)
                 {
-                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
-
+                    eprosima::fastcdr::optional<std::shared_ptr<DynamicDataImpl>> opt_aux;
+                    if (is_present)
+                    {
+                        opt_aux = std::static_pointer_cast<DynamicDataImpl>(member_it->second);
+                    }
+                    cdr << eprosima::fastcdr::MemberId{member->get_id()} << opt_aux;
+                }
+                else if (is_present)
+                {
+                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(member_it->second)};
                     cdr << eprosima::fastcdr::MemberId{member->get_id()} << member_data;
                 }
                 else

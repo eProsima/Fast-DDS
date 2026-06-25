@@ -45,12 +45,14 @@ struct TreeNodeType
             const std::string& type_kind_name,
             const DynamicType::_ref_type& dynamic_type,
             const bool is_base = false,
-            const bool is_key = false)
+            const bool is_key = false,
+            const bool is_optional = false)
         : member_name(member_name)
         , type_kind_name(type_kind_name)
         , dynamic_type(dynamic_type)
         , is_base(is_base)
         , is_key(is_key)
+        , is_optional(is_optional)
     {
     }
 
@@ -59,6 +61,7 @@ struct TreeNodeType
     DynamicType::_ref_type dynamic_type;
     bool is_base;
     bool is_key;
+    bool is_optional;
 };
 
 inline std::ostream& operator <<(

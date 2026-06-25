@@ -79,6 +79,7 @@ file(COPY
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/key_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/mutable_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/optional_annotation.idl
+    ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/optional_runtime.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/position_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/bit_bound_annotation.idl
     ${PROJECT_SOURCE_DIR}/test/feature/idl_parser/idl_extra_cases/external_annotation.idl

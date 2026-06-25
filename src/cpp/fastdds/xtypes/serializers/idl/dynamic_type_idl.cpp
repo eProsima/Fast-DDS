@@ -24,9 +24,11 @@
 #include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 #include "dynamic_type_idl.hpp"
+#include "../../dynamic_types/DynamicTypeMemberImpl.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -128,6 +130,7 @@ ReturnCode_t dyn_type_to_tree(
             }
 
             child.info.is_key = member_descriptor->is_key();
+            child.info.is_optional = member_descriptor->is_optional();
 
             // Add each member with its name as a new child in a branch (recursion)
             node.add_branch(child);
@@ -1120,6 +1123,11 @@ ReturnCode_t node_to_idl(
     if (node.info.is_key)
     {
         idl << "@key ";
+    }
+
+    if (node.info.is_optional)
+    {
+        idl << "@optional ";
     }
 
     if (TK_ARRAY == node.info.dynamic_type->get_kind())

@@ -248,6 +248,8 @@ bool DynamicPubSubType::serialize(
         ser.serialize_encapsulation();
 
         ser << *data_ptr;
+
+        ser.set_dds_cdr_options({0, 0});
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
