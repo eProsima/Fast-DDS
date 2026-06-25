@@ -634,8 +634,9 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         return false;
     }
 
+    const uint32_t input_buffer_size = encoded_buffer.length - encoded_buffer.pos;
     eprosima::fastcdr::FastBuffer input_buffer((char*)&encoded_buffer.buffer[encoded_buffer.pos],
-            encoded_buffer.length - encoded_buffer.pos);
+            input_buffer_size);
     eprosima::fastcdr::Cdr decoder(input_buffer);
 
     SecureDataHeader header;
@@ -744,7 +745,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             body_align = static_cast<uint32_t>(decoder.alignment((decoder.get_current_position() + length) -
                     decoder.get_buffer_pointer(), sizeof(int32_t)));
 
+            if (body_length > input_buffer_size || length > input_buffer_size - body_length)
+            {
+                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "SecureDataBody length exceeds buffer size");
+                return false;
+            }
             body_length += length;
+
             decoder.jump(length + body_align);
 
             decoder >> id;
