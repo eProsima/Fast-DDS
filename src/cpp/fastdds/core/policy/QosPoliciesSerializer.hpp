@@ -481,12 +481,23 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
         uint32_t partition_size, alignment;
 
         valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &partition_size);
-        if (!valid)
+        if (!valid || cdr_message->pos + partition_size > cdr_message->length)
         {
             return false;
         }
 
-        qos_policy.push_back ((const char*)&cdr_message->buffer[cdr_message->pos]);
+        if (partition_size == 0)
+        {
+            qos_policy.push_back("");
+            continue;
+        }
+
+        const char* partition_str = reinterpret_cast<const char*>(&cdr_message->buffer[cdr_message->pos]);
+        if (partition_str[partition_size - 1] != '\0')
+        {
+            return false;
+        }
+        qos_policy.push_back(partition_str);
         alignment = ((partition_size + 3u) & ~3u) - partition_size;
         cdr_message->pos += (partition_size + alignment);
     }
@@ -693,7 +704,12 @@ inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::read_content_fro
 
     int16_t temp(0);
     uint32_t datasize(0);
-    bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &datasize);
+    if (!fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &datasize) ||
+            datasize > (parameter_length - sizeof(uint32_t)) / sizeof(int16_t))
+    {
+        return false;
+    }
+    bool valid = true;
     for (uint32_t i = 0; i < datasize; ++i)
     {
         valid &= fastrtps::rtps::CDRMessage::readInt16(cdr_message, &temp);
@@ -860,7 +876,8 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     uint32_t num_domains = 0;
     bool valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
 
-    if (!valid || (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
+    if (!valid || num_domains > (parameter_length - sizeof(uint32_t)) / sizeof(uint64_t) ||
+            (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
     {
         return false;
     }
@@ -1082,6 +1099,12 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cd
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
+        qos_policy.assigned(false);
+    }
+    catch (const std::bad_alloc&)
+    {
+        logWarning(QOS_POLICIES_SERIALIZER,
+                "PID_TYPE_INFORMATION rejected: wire-controlled sequence count would exhaust memory.");
         qos_policy.assigned(false);
     }
 

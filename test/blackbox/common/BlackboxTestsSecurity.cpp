@@ -43,6 +43,8 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
+using DatagramInjectionTransport = eprosima::fastdds::rtps::DatagramInjectionTransport;
+using DatagramInjectionTransportDescriptor = eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
 
 enum communication_type
 {
@@ -5443,6 +5445,74 @@ TEST(Security, RemoveParticipantAfterIdentityCertificateExpires)
     //! 12. C must not have decrypted any post-rekey message.
     ASSERT_EQ(expiring_reader->getReceivedCount(), 0u);
 
+}
+
+
+/**
+ * This test is a regression test for redmine issue #24565.
+ */
+TEST(Security, DatagramInjection_24565_gmac_body_length_oob)
+{
+    const std::string topic(
+        "Security/Security_SecurityPlugins_PermissionsDisableDiscoveryDisableAccessSign_validation_ok_disable_discovery_disable_access_sign/HelloWorldTopic_24565");
+    PubSubWriter<HelloWorldPubSubType> writer(topic);
+    PubSubReader<HelloWorldPubSubType> reader(topic);
+
+    CommonPermissionsConfigure(reader, writer,
+            "governance_disable_discovery_disable_access_sign.smime", "permissions.smime");
+
+    // Prepare datagram injection transport
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+
+    // Initialize entities and wait for discovery
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    auto receivers = transport->get_receivers();
+    ASSERT_FALSE(receivers.empty());
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Build malicious datagram: RTPS header + SRTPS_PREFIX + SecureDataBody with
+    // inflated length field (0xEDED) + SRTPS_POSTFIX
+    std::vector<uint8_t> datagram;
+
+    // RTPS header
+    datagram.insert(datagram.end(), {'R', 'T', 'P', 'S'});
+    datagram.insert(datagram.end(), {0x02, 0x03, 0x01, 0x0f});
+    datagram.resize(datagram.size() + 12, 0x00);
+
+    // SRTPS_PREFIX
+    datagram.insert(datagram.end(), {0x33, 0x01, 0x14, 0x00});
+    datagram.resize(datagram.size() + 20, 0xed);
+
+    // SecureDataBody: length claims 0xEDED bytes, only 8 follow
+    datagram.insert(datagram.end(), {0xed, 0x01, 0xed, 0xed});
+    datagram.resize(datagram.size() + 8, 0xed);
+
+    // SRTPS_POSTFIX
+    datagram.insert(datagram.end(), {0x34, 0x01, 0x14, 0x00});
+    datagram.resize(datagram.size() + 20, 0x00);
+
+    // Update datagram with sender GUID prefix
+    auto writer_guid = writer.datawriter_guid();
+    static constexpr size_t sender_prefix_offset = 8;
+    std::memcpy(&datagram[sender_prefix_offset], writer_guid.guidPrefix.value, GuidPrefix_t::size);
+
+    // Inject datagram
+    DatagramInjectionTransport::deliver_datagram(receivers, datagram.data(), datagram.size());
+
+    // Allow some time for processing
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    reader.destroy();
+    writer.destroy();
 }
 
 
