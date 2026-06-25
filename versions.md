@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* A Heartbeat message always precedes GAP messages now, limiting its processing.
+
 Version v3.6.2.1
 ----------------
 
