@@ -759,6 +759,11 @@ inline bool ParameterSerializer<ParameterPropertyList_t>::read_content_from_cdr_
         return false;
     }
 
+    if (num_properties > remain / 8)
+    {
+        return false;
+    }
+
     for (uint32_t i = 0; i < num_properties; ++i)
     {
         uint32_t property1_size = 0, alignment1 = 0, property2_size = 0, alignment2 = 0, str1_pos = 0, str2_pos = 0;

@@ -635,12 +635,23 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
         uint32_t partition_size, alignment;
 
         valid &= rtps::CDRMessage::readUInt32(cdr_message, &partition_size);
-        if (!valid)
+        if (!valid || cdr_message->pos + partition_size > cdr_message->length)
         {
             return false;
         }
 
-        qos_policy.push_back ((const char*)&cdr_message->buffer[cdr_message->pos]);
+        if (partition_size == 0)
+        {
+            qos_policy.push_back("");
+            continue;
+        }
+
+        const char* partition_str = reinterpret_cast<const char*>(&cdr_message->buffer[cdr_message->pos]);
+        if (partition_str[partition_size - 1] != '\0')
+        {
+            return false;
+        }
+        qos_policy.push_back(partition_str);
         alignment = ((partition_size + 3u) & ~3u) - partition_size;
         cdr_message->pos += (partition_size + alignment);
     }
@@ -847,7 +858,12 @@ inline bool QosPoliciesSerializer<DataRepresentationQosPolicy>::read_content_fro
 
     int16_t temp(0);
     uint32_t datasize(0);
-    bool valid = rtps::CDRMessage::readUInt32(cdr_message, &datasize);
+    if (!rtps::CDRMessage::readUInt32(cdr_message, &datasize) ||
+            datasize > (parameter_length - sizeof(uint32_t)) / sizeof(int16_t))
+    {
+        return false;
+    }
+    bool valid = true;
     for (uint32_t i = 0; i < datasize; ++i)
     {
         valid &= rtps::CDRMessage::readInt16(cdr_message, &temp);
@@ -1021,7 +1037,8 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
     uint32_t num_domains = 0;
     bool valid = rtps::CDRMessage::readUInt32(cdr_message, &num_domains);
 
-    if (!valid || (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
+    if (!valid || num_domains > (parameter_length - sizeof(uint32_t)) / sizeof(uint64_t) ||
+            (qos_policy.max_domains() != 0 && num_domains > qos_policy.max_domains()))
     {
         return false;
     }
@@ -1249,6 +1266,86 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_conten
 
     rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
+    // Check any DHEADERs
+    {
+        const uint8_t* p   = payload.data;
+        const uint8_t* end = payload.data + parameter_length;
+
+        std::function<bool(const uint8_t*, uint32_t)> check_dheaders =
+                [&](const uint8_t* pos, uint32_t available) -> bool
+                {
+                    // Every MUTABLE struct / sequence starts with a 4-byte DHEADER.
+                    if (available < sizeof(uint32_t))
+                    {
+                        return true;
+                    }
+                    uint32_t dheader = 0;
+                    std::memcpy(&dheader, pos, sizeof(dheader));
+                    if (dheader > parameter_length)
+                    {
+                        return false;
+                    }
+                    // Walk members inside this DHEADER region.
+                    const uint8_t* member = pos + sizeof(uint32_t);
+                    const uint8_t* member_end = pos + sizeof(uint32_t) + dheader;
+                    if (member_end > end)
+                    {
+                        return false;
+                    }
+                    while (member + sizeof(uint32_t) <= member_end)
+                    {
+                        uint32_t emheader = 0;
+                        std::memcpy(&emheader, member, sizeof(emheader));
+                        member += sizeof(uint32_t);
+                        uint8_t lc = (emheader >> 28) & 0x07;
+                        uint32_t member_size = 0;
+                        if (lc <= 4)
+                        {
+                            static const uint32_t lc_sizes[] = {1, 2, 4, 8, 4};
+                            member_size = lc_sizes[lc];
+                        }
+                        else if (lc == 5)
+                        {
+                            // NEXTINT holds the byte count
+                            if (member + sizeof(uint32_t) > member_end)
+                            {
+                                return false;
+                            }
+                            std::memcpy(&member_size, member, sizeof(member_size));
+                            member += sizeof(uint32_t);
+                        }
+                        else
+                        {
+                            // lc==6/7: NEXTINT + nested DHEADER — recurse
+                            if (member + sizeof(uint32_t) > member_end)
+                            {
+                                return false;
+                            }
+                            std::memcpy(&member_size, member, sizeof(member_size));
+                            member += sizeof(uint32_t);
+                            if (!check_dheaders(member,
+                                    static_cast<uint32_t>(member_end - member)))
+                            {
+                                return false;
+                            }
+                        }
+                        if (member + member_size > member_end)
+                        {
+                            return false;
+                        }
+                        member += member_size;
+                    }
+                    return true;
+                };
+
+        if (!check_dheaders(p, parameter_length))
+        {
+            EPROSIMA_LOG_WARNING(QOS_POLICIES_SERIALIZER,
+                    "PID_TYPE_INFORMATION rejected: DHEADER exceeds parameter_length.");
+            return true;
+        }
+    }
+
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::CdrVersion::XCDRv2);
     try
@@ -1258,6 +1355,12 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_conten
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
+        qos_policy.assigned(false);
+    }
+    catch (const std::bad_alloc&)
+    {
+        EPROSIMA_LOG_WARNING(QOS_POLICIES_SERIALIZER,
+                "PID_TYPE_INFORMATION rejected: wire-controlled sequence count would exhaust memory.");
         qos_policy.assigned(false);
     }
 
@@ -1529,9 +1632,14 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     uint32_t pos_ref = cdr_message->pos;
 
     // Unicast locator list
-    uint32_t locators_size;
-    bool valid = rtps::CDRMessage::readUInt32(cdr_message, &locators_size);
+    uint32_t locators_size = 0;
+    if (!rtps::CDRMessage::readUInt32(cdr_message, &locators_size) ||
+            locators_size > (cdr_message->length - cdr_message->pos) / PARAMETER_LOCATOR_LENGTH)
+    {
+        return false;
+    }
     qos_policy.unicast_locator_list.reserve(locators_size);
+    bool valid = true;
     for (uint32_t i = 0; i < locators_size; ++i)
     {
         rtps::Locator_t loc;
@@ -1540,7 +1648,12 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     }
 
     // Multicast locator list
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &locators_size);
+    locators_size = 0;
+    if (!rtps::CDRMessage::readUInt32(cdr_message, &locators_size) ||
+            locators_size > (cdr_message->length - cdr_message->pos) / PARAMETER_LOCATOR_LENGTH)
+    {
+        return false;
+    }
     qos_policy.multicast_locator_list.reserve(locators_size);
     for (uint32_t i = 0; i < locators_size; ++i)
     {
@@ -1550,7 +1663,12 @@ inline bool QosPoliciesSerializer<RTPSEndpointQos>::read_content_from_cdr_messag
     }
 
     // Remote locator list
-    valid &= rtps::CDRMessage::readUInt32(cdr_message, &locators_size);
+    locators_size = 0;
+    if (!rtps::CDRMessage::readUInt32(cdr_message, &locators_size) ||
+            locators_size > (cdr_message->length - cdr_message->pos) / PARAMETER_LOCATOR_LENGTH)
+    {
+        return false;
+    }
     qos_policy.remote_locator_list.reserve(locators_size);
     for (uint32_t i = 0; i < locators_size; ++i)
     {

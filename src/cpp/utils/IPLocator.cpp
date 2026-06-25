@@ -1235,6 +1235,11 @@ std::pair<std::set<std::string>, std::set<std::string>> IPLocator::resolveNameDN
 bool IPLocator::isIPv4(
         const std::string& address)
 {
+    if (address.size() > 15)
+    {
+        EPROSIMA_LOG_ERROR(IP_LOCATOR, "IPv4 " << address.substr(0, 15) << "... error format. Expected X.X.X.X");
+        return false;
+    }
     return std::regex_match(address, IPv4_REGEX);
 }
 

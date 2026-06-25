@@ -3516,6 +3516,388 @@ TEST(BuiltinDataSerializationTests, optional_qos_extensions_participant)
     ASSERT_EQ(in.wire_protocol.value(), out.wire_protocol.value());
 }
 
+// Regression test for redmine issue #24419.
+// A default-configured receiver (max_domains == 0) must reject the parameter without allocating.
+TEST(BuiltinDataSerializationTests, msg_datasharing_malformed_num_domains)
+{
+    uint8_t buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0xff,
+        // PID 0x1000, length 0
+        0x00, 0x10, 0x00, 0x00,
+        // PID_DATASHARING (0x8006), length 16
+        0x06, 0x80, 0x10, 0x00,
+        // num_domains = 0x00100000 (~1M); only 12 bytes of domain data follow
+        0x00, 0x00, 0x10, 0x00,
+        0x62, 0x62, 0x62, 0x62, 0x62, 0x62, 0x62, 0x62,
+        0x62, 0x62, 0x62, 0x62,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    // DATA(w)
+    {
+        CDRMessage_t msg(0);
+        msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+        msg.length = msg.max_size;
+
+        WriterProxyData out(max_unicast_locators, max_multicast_locators);
+        ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+        ASSERT_EQ(out.data_sharing.domain_ids().size(), 0u);
+    }
+
+    // DATA(r)
+    {
+        CDRMessage_t msg(0);
+        msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+        ASSERT_EQ(out.data_sharing.domain_ids().size(), 0u);
+    }
+}
+
+// Regression test for redmine issue #24419.
+// datasize is wire-attacker-controlled; without a bound against parameter_length the loop
+// exhausts memory via unbounded push_backs into m_value.
+TEST(BuiltinDataSerializationTests, msg_data_representation_malformed_datasize)
+{
+    uint8_t buffer[] =
+    {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+        // PID_DATA_REPRESENTATION (0x0073), length 8
+        0x73, 0x00, 0x08, 0x00,
+        // datasize = 0x00100000 (~1M); only 4 bytes of representation data follow
+        0x00, 0x00, 0x10, 0x00,
+        0x02, 0x00, 0x00, 0x00,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    // DATA(w)
+    {
+        CDRMessage_t msg(0);
+        msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+        msg.length = msg.max_size;
+
+        WriterProxyData out(max_unicast_locators, max_multicast_locators);
+        ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+        ASSERT_EQ(out.representation.m_value.size(), 0u);
+    }
+
+    // DATA(r)
+    {
+        CDRMessage_t msg(0);
+        msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+        msg.length = msg.max_size;
+
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+        ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+        ASSERT_EQ(out.representation.m_value.size(), 0u);
+    }
+}
+
+// Regression test for redmine issue #24471.
+// Covered for all three locator lists: unicast, multicast, and remote.
+TEST(BuiltinDataSerializationTests, msg_rtps_endpoint_malformed_locators_size)
+{
+    // Unicast locators_size malformed
+    {
+        uint8_t buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_RTPS_ENDPOINT (0x8010), length 32 (minimum accepted by the parameter_length < 32 guard)
+            0x10, 0x80, 0x20, 0x00,
+            // unicast locators_size = 0x00100000 (~1M); no actual locator data follows
+            0x00, 0x00, 0x10, 0x00,
+            // multicast locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // remote locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // external locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // ignore_non_matching_locators + padding
+            0x00, 0x00, 0x00, 0x00,
+            // user_defined_id + padding
+            0x00, 0x00, 0x00, 0x00,
+            // entity_id + padding
+            0x00, 0x00, 0x00, 0x00,
+            // history_memory_policy
+            0x00, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        // DATA(w)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+            msg.length = msg.max_size;
+
+            WriterProxyData out(max_unicast_locators, max_multicast_locators);
+            ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+            ASSERT_TRUE(!out.endpoint || out.endpoint.value().unicast_locator_list.empty());
+        }
+
+        // DATA(r)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+            msg.length = msg.max_size;
+
+            ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+            ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+            ASSERT_TRUE(!out.endpoint || out.endpoint.value().unicast_locator_list.empty());
+        }
+    }
+
+    // Multicast locators_size malformed
+    {
+        uint8_t buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_RTPS_ENDPOINT (0x8010), length 32
+            0x10, 0x80, 0x20, 0x00,
+            // unicast locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // multicast locators_size = 0x00100000 (~1M); no actual locator data follows
+            0x00, 0x00, 0x10, 0x00,
+            // remote locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // external locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // ignore_non_matching_locators + padding
+            0x00, 0x00, 0x00, 0x00,
+            // user_defined_id + padding
+            0x00, 0x00, 0x00, 0x00,
+            // entity_id + padding
+            0x00, 0x00, 0x00, 0x00,
+            // history_memory_policy
+            0x00, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        // DATA(w)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+            msg.length = msg.max_size;
+
+            WriterProxyData out(max_unicast_locators, max_multicast_locators);
+            ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+            ASSERT_TRUE(!out.endpoint || out.endpoint.value().multicast_locator_list.empty());
+        }
+
+        // DATA(r)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+            msg.length = msg.max_size;
+
+            ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+            ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+            ASSERT_TRUE(!out.endpoint || out.endpoint.value().multicast_locator_list.empty());
+        }
+    }
+
+    // Remote locators_size malformed
+    {
+        uint8_t buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_RTPS_ENDPOINT (0x8010), length 32
+            0x10, 0x80, 0x20, 0x00,
+            // unicast locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // multicast locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // remote locators_size = 0x00100000 (~1M); no actual locator data follows
+            0x00, 0x00, 0x10, 0x00,
+            // external locators_size = 0
+            0x00, 0x00, 0x00, 0x00,
+            // ignore_non_matching_locators + padding
+            0x00, 0x00, 0x00, 0x00,
+            // user_defined_id + padding
+            0x00, 0x00, 0x00, 0x00,
+            // entity_id + padding
+            0x00, 0x00, 0x00, 0x00,
+            // history_memory_policy
+            0x00, 0x00, 0x00, 0x00,
+            // Sentinel
+            0x01, 0x00, 0x00, 0x00
+        };
+
+        // DATA(w)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+            msg.length = msg.max_size;
+
+            WriterProxyData out(max_unicast_locators, max_multicast_locators);
+            ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+            ASSERT_TRUE(!out.endpoint || out.endpoint.value().remote_locator_list.empty());
+        }
+
+        // DATA(r)
+        {
+            CDRMessage_t msg(0);
+            msg.init(buffer, static_cast<uint32_t>(sizeof(buffer)));
+            msg.length = msg.max_size;
+
+            ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+            ASSERT_FALSE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+            ASSERT_TRUE(!out.endpoint || out.endpoint.value().remote_locator_list.empty());
+        }
+    }
+}
+
+// Regression test for redmine issue #24472.
+// PID_PARTITION push_back calls strlen on wire bytes with no NUL terminator -> heap OOB read.
+TEST(BuiltinDataSerializationTests, msg_partition_oob_strlen)
+{
+    // PL_CDR_BE: PID_PARTITION with num_partitions=1, partition_size=4, no NUL terminator.
+    // Partition string sits at the end of the allocation so strlen() reads past it.
+    const uint8_t header[] = {
+        0x00, 0x02, 0x00, 0x00,  // PL_CDR_BE encapsulation
+        0x00, 0x29, 0x00, 0x0c,  // PID_PARTITION, parameter_length=12
+        0x00, 0x00, 0x00, 0x01,  // num_partitions=1
+        0x00, 0x00, 0x00, 0x04,  // partition_size=4
+    };
+    const size_t header_size = sizeof(header);
+    const size_t data_size = 4;
+    std::vector<uint8_t> buffer(header_size + data_size);
+    std::memcpy(buffer.data(), header, header_size);
+    std::memset(buffer.data() + header_size, 0xa2, data_size);
+
+    CDRMessage_t msg(0);
+    msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+    msg.length = static_cast<uint32_t>(buffer.size());
+    msg.msg_endian = BIGEND;
+
+    ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+    ASSERT_NO_FATAL_FAILURE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+}
+
+// Regression test for redmine issue #24418.
+// easy_mode with ~50KB of leading zeros triggers catastrophic backtracking in the IPv4 regex.
+TEST(BuiltinDataSerializationTests, msg_wireprotocol_config_malformed_easy_mode)
+{
+    RTPSParticipantAllocationAttributes allocation;
+    ParticipantProxyData in(allocation);
+
+    dds::WireProtocolConfigQos wire_protocol_qos;
+    wire_protocol_qos.easy_mode("1.2.3.4");
+    in.wire_protocol = wire_protocol_qos;
+    in.should_send_optional_qos(true);
+
+    // Serialize a valid participant with a short easy_mode, then patch it
+    uint32_t msg_size = in.get_serialized_size(true);
+    std::vector<uint8_t> buffer(msg_size + 60000);
+    CDRMessage_t msg(0);
+    msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+    ASSERT_TRUE(in.write_to_cdr_message(&msg, true));
+
+    // Locate the easy_mode field: uint32_t(8) + "1.2.3.4\0"
+    const uint8_t needle[] = {0x08, 0x00, 0x00, 0x00, '1', '.', '2', '.', '3', '.', '4', '\0'};
+    uint8_t* pos = std::search(buffer.data(), buffer.data() + msg.length,
+                    needle, needle + sizeof(needle));
+    ASSERT_NE(pos, buffer.data() + msg.length);
+
+    // Build "000...01.000...01.000...01.000...01" (~50000 chars)
+    std::string evil_ip;
+    for (int octet = 0; octet < 4; octet++)
+    {
+        evil_ip += std::string(12499, '0') + "1";
+        if (octet < 3)
+        {
+            evil_ip += ".";
+        }
+    }
+    const uint32_t long_len = static_cast<uint32_t>(evil_ip.size());
+    const uint32_t old_field_size = 12;
+    const uint32_t new_field_size = (4 + long_len + 1 + 3) & ~3u;
+
+    *reinterpret_cast<uint32_t*>(pos) = long_len + 1;
+    std::memcpy(pos + 4, evil_ip.c_str(), long_len);
+    pos[4 + long_len] = '\0';
+    msg.length = msg.length - old_field_size + new_field_size;
+
+    // Update PID_WIREPROTOCOL_CONFIG parameter_length
+    const uint8_t pid[] = {0x00, 0x83};
+    uint8_t* pid_pos = std::search(buffer.data(), buffer.data() + msg.length, pid, pid + 2);
+    ASSERT_NE(pid_pos, buffer.data() + msg.length);
+    uint16_t old_param_len = *reinterpret_cast<uint16_t*>(pid_pos + 2);
+    *reinterpret_cast<uint16_t*>(pid_pos + 2) =
+            static_cast<uint16_t>(old_param_len - old_field_size + new_field_size);
+
+    msg.pos = 0;
+    ParticipantProxyData out(allocation);
+    ASSERT_FALSE(out.read_from_cdr_message(&msg, true, network, false, c_VendorId_eProsima));
+}
+
+// Regression test for redmine issue #24564.
+// sequence_length inside TypeInformation is wire-controlled; without a bound against
+// parameter_length, vector::resize drives a ~1.4 GB allocation.
+TEST(BuiltinDataSerializationTests, msg_type_information_oom_sequence_count)
+{
+    const uint8_t msg_data[] = {
+        // Encapsulation
+        0x00, 0x03, 0x00, 0x00,
+        // PID_TYPE_INFORMATION (0x0075), parameter_length=41
+        0x75, 0x00, 0x29, 0x00,
+        // TypeInformation payload: sequence count of ~26M TypeIdentfierWithSize elements
+        0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0x01, 0x10, 0x00, 0x50,
+        0x00, 0x01, 0x00, 0xcf, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f, 0x3f, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0x03, 0x00, 0x50, 0x75, 0x00, 0x29, 0x00, 0x11, 0x00,
+        // Sentinel
+        0x01, 0x00, 0x00, 0x00
+    };
+
+    std::vector<uint8_t> buffer(msg_data, msg_data + sizeof(msg_data));
+    CDRMessage_t msg(0);
+    msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+    msg.length = static_cast<uint32_t>(buffer.size());
+    msg.msg_endian = LITTLEEND;
+
+    ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+    ASSERT_NO_FATAL_FAILURE(out.read_from_cdr_message(&msg, c_VendorId_eProsima));
+}
+
+// Regression test for redmine issue #24473.
+TEST(BuiltinDataSerializationTests, msg_property_list_oversized_num_properties)
+{
+    std::vector<uint8_t> pid_payload;
+
+    pid_payload.insert(pid_payload.end(), {0xe8, 0x03, 0x00, 0x00});
+    pid_payload.insert(pid_payload.end(), {0x02, 0x00, 0x00, 0x00, 'a', 0x00, 0x00, 0x00});
+    pid_payload.insert(pid_payload.end(), {0x02, 0x00, 0x00, 0x00, 'b', 0x00, 0x00, 0x00});
+
+    uint16_t pid_length = static_cast<uint16_t>(pid_payload.size());
+
+    std::vector<uint8_t> buffer;
+    buffer.insert(buffer.end(), {0x00, 0x03, 0x00, 0x00});
+    buffer.insert(buffer.end(), {0x59, 0x00});
+    buffer.push_back(pid_length & 0xFF); buffer.push_back((pid_length >> 8) & 0xFF);
+    buffer.insert(buffer.end(), pid_payload.begin(), pid_payload.end());
+    buffer.insert(buffer.end(), {0x01, 0x00, 0x00, 0x00});
+
+    CDRMessage_t msg(0);
+    msg.init(buffer.data(), static_cast<uint32_t>(buffer.size()));
+    msg.length = static_cast<uint32_t>(buffer.size());
+
+    ParticipantProxyData out(RTPSParticipantAllocationAttributes{});
+    ASSERT_NO_FATAL_FAILURE(out.read_from_cdr_message(&msg, true, network, true));
+
+    EXPECT_EQ(0u, out.properties.size());
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
