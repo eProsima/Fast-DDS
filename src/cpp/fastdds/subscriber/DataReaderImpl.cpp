@@ -324,6 +324,18 @@ void DataReaderImpl::on_requested_incompatible_qos(
     notify_requested_incompatible_qos_nts();
 }
 
+void DataReaderImpl::on_liveliness_changed(
+        DataReader* reader,
+        const LivelinessChangedStatus& status)
+{
+    static_cast<void>(reader);
+    static_cast<void>(status);
+    assert(reader_ != nullptr);
+
+    std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
+    notify_liveliness_changed_nts();
+}
+
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
@@ -1218,22 +1230,7 @@ void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
         const LivelinessChangedStatus& status)
 {
     data_reader_->update_liveliness_status(status);
-    StatusMask notify_status = StatusMask::liveliness_changed();
-    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        LivelinessChangedStatus callback_status;
-        if (data_reader_->get_liveliness_changed_status(callback_status) == RETCODE_OK)
-        {
-            listener->on_liveliness_changed(data_reader_->user_datareader_, callback_status);
-        }
-    }
-
-#ifdef FASTDDS_STATISTICS
-    notify_status_observer(statistics::StatusKind::LIVELINESS_CHANGED);
-#endif // FASTDDS_STATISTICS
-
-    data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    data_reader_->notify_liveliness_changed_nts();
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
@@ -1619,6 +1616,26 @@ void DataReaderImpl::notify_requested_incompatible_qos_nts()
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
+void DataReaderImpl::notify_liveliness_changed_nts()
+{
+    StatusMask notify_status = StatusMask::liveliness_changed();
+    DataReaderListener* listener = get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        LivelinessChangedStatus callback_status;
+        if (get_liveliness_changed_status(callback_status) == RETCODE_OK)
+        {
+            listener->on_liveliness_changed(user_datareader_, callback_status);
+        }
+    }
+
+#ifdef FASTDDS_STATISTICS
+    reader_listener_.notify_status_observer(statistics::StatusKind::LIVELINESS_CHANGED);
+#endif // FASTDDS_STATISTICS
+
+    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+}
+
 bool DataReaderImpl::deadline_missed()
 {
     std::unique_lock<RecursiveTimedMutex> lock(reader_->getMutex());
@@ -1728,12 +1745,31 @@ ReturnCode_t DataReaderImpl::get_liveliness_changed_status(
         return RETCODE_NOT_ENABLED;
     }
 
+    // Get the status from the main reader
     {
         std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());
 
         status = liveliness_changed_status_;
         liveliness_changed_status_.alive_count_change = 0u;
         liveliness_changed_status_.not_alive_count_change = 0u;
+    }
+
+    // Aggregate the status from the custom readers, if any
+    for (const auto& custom_reader : custom_readers_)
+    {
+        LivelinessChangedStatus custom_status;
+        ReturnCode_t code = custom_reader->get_liveliness_changed_status(custom_status);
+        if (code == RETCODE_OK)
+        {
+            status.alive_count += custom_status.alive_count;
+            status.not_alive_count += custom_status.not_alive_count;
+            status.alive_count_change += custom_status.alive_count_change;
+            status.not_alive_count_change += custom_status.not_alive_count_change;
+            if (status.last_publication_handle == InstanceHandle_t())
+            {
+                status.last_publication_handle = custom_status.last_publication_handle;
+            }
+        }
     }
 
     user_datareader_->get_statuscondition().get_impl()->set_status(StatusMask::liveliness_changed(), false);
