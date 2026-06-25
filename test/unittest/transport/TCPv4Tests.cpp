@@ -2482,6 +2482,91 @@ TEST_F(RTCPMessageManagerTests, process_message_too_short)
     EXPECT_EQ(result, RETCODE_BAD_REQUEST);
 }
 
+// Regression test for redmine issue #24583.
+// This test verifies that the check for header length underflow before computing body_size
+// correctly prevents the receive thread from getting stuck on an underflowed body_size.
+TEST_F(TCPv4Tests, receive_header_length_underflow)
+{
+    std::atomic<bool> fixed{false};
+    std::thread watchdog([&fixed]()
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+                if (!fixed.load())
+                {
+                    std::cerr << "[receive_header_length_underflow] FAIL: "
+                        "receive thread stuck on underflowed body_size\n";
+                    std::terminate();
+                }
+            });
+    watchdog.detach();
+
+    {
+        TCPv4TransportDescriptor recv_descriptor;
+        recv_descriptor.add_listener_port(g_default_port);
+        recv_descriptor.check_crc = false;
+        TCPv4Transport recv_transport(recv_descriptor);
+        ASSERT_TRUE(recv_transport.init());
+
+        Locator_t input_locator;
+        input_locator.kind = LOCATOR_KIND_TCPv4;
+        input_locator.port = g_default_port;
+        IPLocator::setIPv4(input_locator, 127, 0, 0, 1);
+        IPLocator::setLogicalPort(input_locator, 7410);
+
+        MockReceiverResource receiver(recv_transport, input_locator);
+        MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+        ASSERT_TRUE(recv_transport.IsInputChannelOpen(input_locator));
+
+        TCPv4TransportDescriptor send_descriptor;
+        send_descriptor.check_crc = false;
+        MockTCPv4Transport send_transport(send_descriptor);
+        ASSERT_TRUE(send_transport.init());
+
+        Locator_t output_locator;
+        output_locator.kind = LOCATOR_KIND_TCPv4;
+        output_locator.port = g_default_port;
+        IPLocator::setIPv4(output_locator, 127, 0, 0, 1);
+        IPLocator::setLogicalPort(output_locator, 7410);
+
+        SendResourceList send_resource_list;
+        ASSERT_TRUE(send_transport.OpenOutputChannel(send_resource_list, output_locator));
+
+        LocatorList_t locator_list;
+        locator_list.push_back(input_locator);
+        octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+
+        Semaphore sem;
+        msg_recv->setCallback([&]()
+                {
+                    sem.post();
+                });
+
+        bool sent = false;
+        while (!sent)
+        {
+            Locators begin(locator_list.begin());
+            Locators end(locator_list.end());
+            sent = send_resource_list.at(0)->send(message, 5, &begin, &end,
+                            std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        sem.wait();
+
+        auto channel = send_transport.get_channel_resources().begin()->second;
+        auto basic_channel = std::static_pointer_cast<TCPChannelResourceBasic>(channel);
+        // Hold the socket shared_ptr so the sender transport cannot close it under us.
+        auto sock = basic_channel->socket();
+        asio::error_code ec;
+        TCPHeader bad_header;
+        bad_header.length = 0;
+        asio::write(*sock, asio::buffer(&bad_header, TCPHeader::size()), ec);
+        ASSERT_FALSE(ec) << ec.message();
+
+        recv_transport.CloseInputChannel(input_locator);
+    }
+    fixed.store(true);
+}
+
 int main(
         int argc,
         char** argv)
