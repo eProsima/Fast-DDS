@@ -517,11 +517,6 @@ protected:
                 SampleRejectedStatusKind reason,
                 const fastdds::rtps::CacheChange_t* const change) override;
 
-#ifdef FASTDDS_STATISTICS
-        void notify_status_observer(
-                const uint32_t& status_id);
-#endif //FASTDDS_STATISTICS
-
     private:
 
         DataReaderImpl* data_reader_;
@@ -774,6 +769,9 @@ private:
      * @brief Notifies listeners that LivelinessChangedStatus has been updated.
      */
     void notify_liveliness_changed_nts();
+
+    void notify_status_observer(
+            const uint32_t& status_id);
 
     void update_rtps_reader_qos();
 

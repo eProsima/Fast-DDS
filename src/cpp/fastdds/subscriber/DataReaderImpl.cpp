@@ -1247,22 +1247,24 @@ void DataReaderImpl::InnerDataReaderListener::on_sample_rejected(
     data_reader_->notify_sample_rejected_nts();
 }
 
-#ifdef FASTDDS_STATISTICS
-void DataReaderImpl::InnerDataReaderListener::notify_status_observer(
+void DataReaderImpl::notify_status_observer(
         const uint32_t& status_id)
 {
-    DomainParticipantImpl* pp_impl = data_reader_->subscriber_->get_participant_impl();
+#ifdef FASTDDS_STATISTICS
+    DomainParticipantImpl* pp_impl = subscriber_->get_participant_impl();
     auto statistics_pp_impl = static_cast<eprosima::fastdds::statistics::dds::DomainParticipantImpl*>(pp_impl);
     if (nullptr != statistics_pp_impl->get_status_observer())
     {
-        if (!statistics_pp_impl->get_status_observer()->on_local_entity_status_change(data_reader_->guid(), status_id))
+        if (!statistics_pp_impl->get_status_observer()->on_local_entity_status_change(guid(), status_id))
         {
             EPROSIMA_LOG_ERROR(DATA_READER, "Could not set entity status");
         }
     }
+#else
+    static_cast<void>(status_id);
+#endif // FASTDDS_STATISTICS
 }
 
-#endif // FASTDDS_STATISTICS
 
 bool DataReaderImpl::on_data_available(
         const fastdds::rtps::GUID_t& writer_guid,
@@ -1563,9 +1565,7 @@ void DataReaderImpl::notify_deadline_missed_nts()
         deadline_missed_status_.total_count_change = 0;
     }
 
-#ifdef FASTDDS_STATISTICS
-    reader_listener_.notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
-#endif // FASTDDS_STATISTICS
+    notify_status_observer(statistics::StatusKind::DEADLINE_MISSED);
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1583,9 +1583,7 @@ void DataReaderImpl::notify_sample_lost_nts()
         }
     }
 
-#ifdef FASTDDS_STATISTICS
-    reader_listener_.notify_status_observer(statistics::StatusKind::SAMPLE_LOST);
-#endif // FASTDDS_STATISTICS
+    notify_status_observer(statistics::StatusKind::SAMPLE_LOST);
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1618,9 +1616,7 @@ void DataReaderImpl::notify_requested_incompatible_qos_nts()
         }
     }
 
-#ifdef FASTDDS_STATISTICS
-    reader_listener_.notify_status_observer(statistics::StatusKind::INCOMPATIBLE_QOS);
-#endif // FASTDDS_STATISTICS
+    notify_status_observer(statistics::StatusKind::INCOMPATIBLE_QOS);
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
@@ -1638,9 +1634,7 @@ void DataReaderImpl::notify_liveliness_changed_nts()
         }
     }
 
-#ifdef FASTDDS_STATISTICS
-    reader_listener_.notify_status_observer(statistics::StatusKind::LIVELINESS_CHANGED);
-#endif // FASTDDS_STATISTICS
+    notify_status_observer(statistics::StatusKind::LIVELINESS_CHANGED);
 
     user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
