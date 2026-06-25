@@ -8,7 +8,7 @@
             <listening_ports>
                 <port>12345</port>
             </listening_ports>
-            <wan_addr>172.28.16.200</wan_addr>
+            <wan_addr>10.10.16.200</wan_addr>
             <keep_alive_frequency_ms>3000</keep_alive_frequency_ms>
             <keep_alive_timeout_ms>10000</keep_alive_timeout_ms>
         </transport_descriptor>

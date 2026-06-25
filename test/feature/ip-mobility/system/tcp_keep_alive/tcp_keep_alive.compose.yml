@@ -7,10 +7,10 @@
 # https://www.eprosima.com/licenses/LICENSE-REV03
 
 # Network topology:
-#                      "Public" / routed network (172.x)
+#                      "Public" / routed network (10.x)
 #        ┌───────────────────────────┐    ┌───────────────────────────┐
 #        │          ROUTER1          │<──>│          ROUTER2          │
-#        │  WAN: 172.28.16.200       │    │  WAN: 172.28.16.100       │
+#        │  WAN: 10.10.16.200       │    │  WAN: 10.10.16.100       │
 #        │  LAN: 192.168.20.1   (GW) │    │  LAN: 192.168.10.1   (GW) │
 #        └──────────────┬────────────┘    └──────────────┬────────────┘
 #                       │                                │
@@ -97,7 +97,7 @@ services:
       CLIENT_IP: 192.168.20.13
       TCP_PORTS: "12345"
       PEER_LAN_CIDR: 192.168.10.0/24
-      PEER_WAN_IP: 172.28.16.200
+      PEER_WAN_IP: 10.10.16.200
       TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
     command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router.bash"
     profiles: ["local"]
@@ -105,7 +105,7 @@ services:
       sender_lan:
         ipv4_address: 192.168.20.1
       backbone_net:
-        ipv4_address: 172.28.16.100
+        ipv4_address: 10.10.16.100
 
   router1_pro_wan:
     build:
@@ -122,7 +122,7 @@ services:
       CLIENT_IP: 192.168.20.13
       TCP_PORTS: "12345"
       PEER_LAN_CIDR: 192.168.10.0/24
-      PEER_WAN_IP: 172.28.16.200
+      PEER_WAN_IP: 10.10.16.200
       TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
     command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router_change_wan.bash"
     profiles: ["wan"]
@@ -130,7 +130,7 @@ services:
       sender_lan:
         ipv4_address: 192.168.20.1
       backbone_net:
-        ipv4_address: 172.28.16.100
+        ipv4_address: 10.10.16.100
 
   router1_pro_unplug:
     build:
@@ -147,7 +147,7 @@ services:
       CLIENT_IP: 192.168.20.13
       TCP_PORTS: "12345"
       PEER_LAN_CIDR: 192.168.10.0/24
-      PEER_WAN_IP: 172.28.16.200
+      PEER_WAN_IP: 10.10.16.200
       TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
     command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router_unplug.bash"
     profiles: ["unplug"]
@@ -155,7 +155,7 @@ services:
       sender_lan:
         ipv4_address: 192.168.20.1
       backbone_net:
-        ipv4_address: 172.28.16.100
+        ipv4_address: 10.10.16.100
 
   ###########################
   # TCP Server
@@ -203,22 +203,22 @@ services:
       CLIENT_IP: 192.168.10.13
       TCP_PORTS: "12345"
       PEER_LAN_CIDR: 192.168.20.0/24
-      PEER_WAN_IP: 172.28.16.100
+      PEER_WAN_IP: 10.10.16.100
       TCP_KA_DIR: @TCP_KA_DIR_COMPOSE@
     command: @SHELL_EXECUTABLE@ -c "bash $${TCP_KA_DIR}/launch_router.bash"
     networks:
       receiver_lan:
         ipv4_address: 192.168.10.1
       backbone_net:
-        ipv4_address: 172.28.16.200
+        ipv4_address: 10.10.16.200
 
 networks:
   backbone_net:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.28.16.0/24
-          gateway: 172.28.16.1
+        - subnet: 10.10.16.0/24
+          gateway: 10.10.16.1
 
   sender_lan:
     driver: bridge

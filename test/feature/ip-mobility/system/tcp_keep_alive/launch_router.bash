@@ -12,7 +12,7 @@ set -e
 # Note: This script is intended to be used in a privileged container, since it requires to bring down and up the eth0 interface.
 
 LAN_IFACE=${LAN_IFACE:-$(ip -o -4 addr show | awk '/192\.168\./ {print $2; exit}')}
-WAN_IFACE=${WAN_IFACE:-$(ip -o -4 addr show | awk '/172\.28\.16\./ {print $2; exit}')}
+WAN_IFACE=${WAN_IFACE:-$(ip -o -4 addr show | awk '/10\.10\.16\./ {print $2; exit}')}
 
 CLIENT_IP=${CLIENT_IP:-""}
 TCP_PORTS=${TCP_PORTS:-""}

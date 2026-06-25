@@ -129,7 +129,8 @@ public:
         }
         else
         {
-            force_reset_ = last_state_.size() != entries_.size();
+            // Preserve a force_reset_ already requested (e.g. by unselect())
+            force_reset_ = force_reset_ || (last_state_.size() != entries_.size());
             last_state_.clear();
             for (LocatorSelectorEntry* entry : entries_)
             {
@@ -235,6 +236,11 @@ public:
             if (it != selections_.end())
             {
                 selections_.erase(it);
+                // Need to mark the selection as dirty because selections_ has been mutated outside of the
+                // select_locators() flow, directly in the middle of message creation in RTPSMessageGroup::add_data/frag.
+                // This forces a reset to be sure the new state is properly applied. Otherwise, state_has_changed()
+                // could return false because it does not consider selections_, only entries_
+                force_reset_ = true;
             }
         }
     }

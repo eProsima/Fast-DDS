@@ -3,12 +3,12 @@ set -euo pipefail
 
 # change_wan_ip_sim.sh — change router "public" (WAN/backbone) IP without bringing link down
 
-BACKBONE_PREFIX="${BACKBONE_PREFIX:-172.28.16.}"   # backbone net prefix
+BACKBONE_PREFIX="${BACKBONE_PREFIX:-10.10.16.}"   # backbone net prefix
 WAN_IFACE="${WAN_IFACE:-$(ip -o -4 addr show | awk -v p="$BACKBONE_PREFIX" '$4 ~ "^"p {print $2; exit}')}"
 MASK="${MASK:-24}"
 
-IP_A="${IP_A:-172.28.16.100}"
-IP_B="${IP_B:-172.28.16.111}"
+IP_A="${IP_A:-10.10.16.100}"
+IP_B="${IP_B:-10.10.16.111}"
 
 MODE="${1:-toggle}"   # toggle | toA | toB | status
 

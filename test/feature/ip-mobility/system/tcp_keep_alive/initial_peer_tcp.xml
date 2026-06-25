@@ -23,7 +23,7 @@
                     <locator>
                         <tcpv4>
                             <physical_port>12345</physical_port>
-                            <address>172.28.16.200</address>
+                            <address>10.10.16.200</address>
                         </tcpv4>
                     </locator>
                 </initialPeersList>

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BACKBONE_PREFIX="${BACKBONE_PREFIX:-172.28.16.}"  # backbone net prefix
+BACKBONE_PREFIX="${BACKBONE_PREFIX:-10.10.16.}"  # backbone net prefix
 WAN_IFACE="${WAN_IFACE:-$(ip -o -4 addr show | awk -v p="$BACKBONE_PREFIX" '$4 ~ "^"p {print $2; exit}')}"
 MODE="${1:-toggle}"  # toggle | down | up | status
 

@@ -416,6 +416,61 @@ TEST_P(PubSubFlowControllers, BuiltinFlowControllerNotRegistered)
     ASSERT_FALSE(main_participant->init_participant());
 }
 
+// Regression test for the GrainedFlowController wedge (Refs #24363).
+//
+// A reliable writer using the congestion-control flow controller must keep delivering data
+// after a reader briefly exceeds its per-period byte budget.
+// The bug: data_exceeds_limitation() calls unselect() to drop the over-budget reader,
+// which empties LocatorSelector::selections_ without flagging the selector dirty.
+// Once the period reset re-arms allowed_to_send, state_has_changed() stays false, the
+// selection is never rebuilt, and the writer is wedged forever, avoiding subscription reception
+//
+// Intraprocess delivery is disabled on purpose as it bypasses the locator-selection path entirely
+TEST(PubSubFlowControllers, CongestionControlReliableRecoversAfterBudgetExceeded)
+{
+    // The locator-selection bug only manifests on the network (locator) data path.
+    eprosima::fastdds::LibrarySettings att;
+    att.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(att);
+
+    constexpr uint32_t num_samples = 10u;
+
+    PubSubReader<Data64kbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
+
+    reader.history_depth(num_samples).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Enable the (basic) congestion control on the writer participant.
+    // A low initial bandwidth makes the per-reader period budget fit only a
+    // couple of 64 kB samples, so the budget is exceeded within the first period and recovery must
+    // span several periods.
+    eprosima::fastdds::rtps::PropertyPolicy cc_property_policy;
+    cc_property_policy.properties().emplace_back("fastdds.congestion.plugin", "basic");
+    cc_property_policy.properties().emplace_back("fastdds.congestion.initial_bandwidth", "130000");
+    cc_property_policy.properties().emplace_back("fastdds.congestion.period", "1500");
+    writer.property_policy(cc_property_policy);
+
+    writer.history_depth(num_samples).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_data64kb_data_generator(num_samples);
+
+    reader.startReception(data);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+
+    // With the fix every sample is eventually delivered. Without the fix the writer wedges after the
+    // first EXCEEDED_LIMIT and this returns far fewer than num_samples once the wait times out.
+    EXPECT_EQ(reader.block_for_all(std::chrono::seconds(30)), num_samples);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else

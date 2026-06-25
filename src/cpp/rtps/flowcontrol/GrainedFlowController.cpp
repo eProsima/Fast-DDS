@@ -75,13 +75,22 @@ bool GrainedFlowControllerLimitedAsyncPublishMode::data_exceeds_limitation(
     bool ret_for = locator_sender.locator_selector.for_every_entry([&](LocatorSelectorEntry* entry, size_t index)
                     {
                         bool ret_value {true};
-                        if (entry->enabled && entry->allowed_to_send)
+                        if (entry->enabled)
                         {
                             auto it = remote_readers_.find(entry->remote_guid);
                             assert(it != remote_readers_.end());
                             if (it != remote_readers_.end())
                             {
-                                if (it->second.max_bytes_per_period <=
+                                if (!entry->allowed_to_send)
+                                {
+                                    // If selection was rebuilt due to a forced reset, we need to unselect
+                                    // the entries again, as they are added back regardless of their allowed_to_send state.
+                                    // The veto was already decided for this period. Re-apply it in case the
+                                    // selection was rebuilt by a forced reset (select_locators() re-adds
+                                    // entries purely from their 'enabled' flag, ignoring 'allowed_to_send').
+                                    locator_sender.locator_selector.unselect(index);
+                                }
+                                else if (it->second.max_bytes_per_period <=
                                 (it->second.current_bytes_per_period + size_to_add + pending_to_send))
                                 {
                                     if (locator_sender.locator_selector.initial_allow_to_send())
