@@ -474,7 +474,30 @@ public:
             }
             if (datawriter_ == nullptr)
             {
-                datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
+                if (nullptr == context_.get())
+                {
+                    datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
+                }
+                else
+                {
+                    // Ensure the datawriter is created disabled so that the context can be set before enabling it.
+                    auto pub_qos = publisher_->get_qos();
+                    bool was_auto_enable = pub_qos.entity_factory().autoenable_created_entities;
+                    pub_qos.entity_factory().autoenable_created_entities = false;
+                    publisher_->set_qos(pub_qos);
+                    // Create the datawriter disabled and set the context.
+                    datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
+                    if (datawriter_ != nullptr)
+                    {
+                        datawriter_->set_type_support_context(context_);
+                        if (was_auto_enable)
+                        {
+                            pub_qos.entity_factory().autoenable_created_entities = true;
+                            publisher_->set_qos(pub_qos);
+                            datawriter_->enable();
+                        }
+                    }
+                }
             }
 
             if (datawriter_ != nullptr)
@@ -1935,6 +1958,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& context(
+            const std::shared_ptr<eprosima::fastdds::dds::TopicDataType::Context>& context)
+    {
+        context_ = context;
+        return *this;
+    }
+
     eprosima::fastdds::dds::TypeSupport get_type_support()
     {
         return type_;
@@ -2203,6 +2233,7 @@ protected:
     eprosima::fastdds::dds::DataWriter* datawriter_;
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_;
     eprosima::fastdds::dds::StatusMask status_mask_;
+    std::shared_ptr<eprosima::fastdds::dds::TopicDataType::Context> context_;
     std::string topic_name_;
     eprosima::fastdds::rtps::GUID_t participant_guid_;
     eprosima::fastdds::rtps::GUID_t datawriter_guid_;
