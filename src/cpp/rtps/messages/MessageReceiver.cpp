@@ -47,6 +47,38 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
+struct NoOpPayloadPool : public IPayloadPool
+{
+    bool get_payload(
+        uint32_t size,
+        SerializedPayload_t& payload) override
+    {
+        static_cast<void>(payload);
+        static_cast<void>(size);
+        return false;
+    }
+
+    bool get_payload(
+            const SerializedPayload_t& data,
+            SerializedPayload_t& payload) override
+    {
+        static_cast<void>(data);
+        static_cast<void>(payload);
+        return false;
+    }
+
+    bool release_payload(
+            SerializedPayload_t& payload) override
+    {
+        if (payload.payload_owner == this)
+        {
+            payload.data = nullptr;
+            return true;
+        }
+        return false;
+    }
+};
+
 MessageReceiver::MessageReceiver(
         RTPSParticipantImpl* participant,
         uint32_t rec_buffer_size)
@@ -796,6 +828,7 @@ bool MessageReceiver::proc_Submsg_Data(
 
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
+    NoOpPayloadPool no_op_pool;
     CacheChange_t ch;
     ch.kind = ALIVE;
     ch.writerGUID.guidPrefix = source_guid_prefix_;
@@ -846,6 +879,7 @@ bool MessageReceiver::proc_Submsg_Data(
         ch.inline_qos.length = inlineQosSize;
         ch.inline_qos.encapsulation = endiannessFlag ? PL_CDR_LE : PL_CDR_BE;
         ch.inline_qos.pos = 0;
+        ch.inline_qos.payload_owner = &no_op_pool;
     }
 
     if (dataFlag || keyFlag)
@@ -872,6 +906,7 @@ bool MessageReceiver::proc_Submsg_Data(
             ch.serializedPayload.length = payload_size;
             ch.serializedPayload.max_size = payload_size;
             ch.serializedPayload.is_serialized_key = keyFlag;
+            ch.serializedPayload.payload_owner = &no_op_pool;
             msg->pos = next_pos;
         }
         else
@@ -896,16 +931,6 @@ bool MessageReceiver::proc_Submsg_Data(
 
     //Look for the correct reader to add the change
     process_data_message_function_(readerID, ch, was_decoded);
-
-    IPayloadPool* payload_pool = ch.serializedPayload.payload_owner;
-    if (payload_pool)
-    {
-        payload_pool->release_payload(ch.serializedPayload);
-    }
-
-    //TODO(Ricardo) If an exception is thrown (ex, by fastcdr), these lines are not executed -> segmentation fault
-    ch.serializedPayload.data = nullptr;
-    ch.inline_qos.data = nullptr;
 
     EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Sub Message DATA processed");
     return true;
@@ -960,6 +985,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
 
     //FOUND THE READER.
     //We ask the reader for a cachechange to store the information.
+    NoOpPayloadPool no_op_pool;
     CacheChange_t ch;
     ch.kind = ALIVE;
     ch.writerGUID.guidPrefix = source_guid_prefix_;
@@ -1024,6 +1050,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.inline_qos.length = inlineQosSize;
         ch.inline_qos.encapsulation = endiannessFlag ? PL_CDR_LE : PL_CDR_BE;
         ch.inline_qos.pos = 0;
+        ch.inline_qos.payload_owner = &no_op_pool;
     }
 
     uint32_t payload_size;
@@ -1047,6 +1074,7 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         ch.serializedPayload.length = payload_size;
         ch.serializedPayload.max_size = payload_size;
         ch.serializedPayload.is_serialized_key = keyFlag;
+        ch.serializedPayload.payload_owner = &no_op_pool;
         ch.setFragmentSize(fragmentSize);
 
         msg->pos = next_pos;
@@ -1071,8 +1099,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(
                                                            << associated_readers_.size());
     process_data_fragment_message_function_(readerID, ch, sampleSize, fragmentStartingNum, fragmentsInSubmessage,
             was_decoded);
-    ch.serializedPayload.data = nullptr;
-    ch.inline_qos.data = nullptr;
 
     EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Sub Message DATA_FRAG processed");
 
