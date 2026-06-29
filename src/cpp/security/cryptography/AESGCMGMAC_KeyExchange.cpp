@@ -68,15 +68,53 @@ bool AESGCMGMAC_KeyExchange::create_local_participant_crypto_tokens(
 
     //Participant2ParticipantKeyMaterial will be come RemoteParticipant2ParticipantKeyMaterial on the other side
     {
-        //Only the KeyMaterial used in conjunction with the remote_participant are tokenized. In this implementation only on Pariticipant2ParticipantKeyMaterial exists per matched Participant
+        {
+            KeyMaterial_AES_GCM_GMAC live;
+            {
+                std::unique_lock<std::mutex> local_lock(const_cast<std::mutex&>(local_participant->mutex_));
+                live = local_participant->ParticipantKeyMaterial;
+            }
+
+            std::unique_lock<std::mutex> remote_lock(remote_participant->mutex_);
+
+            if (!remote_participant->Participant2ParticipantKeyMaterial.empty() &&
+                    remote_participant->Participant2ParticipantKeyMaterial.back().sender_key_id
+                    != live.sender_key_id)
+            {
+                const KeyMaterial_AES_GCM_GMAC& current =
+                        remote_participant->Participant2ParticipantKeyMaterial.back();
+
+                KeyMaterial_AES_GCM_GMAC updated;
+                updated.transformation_kind          = live.transformation_kind;
+                updated.master_salt                  = live.master_salt;
+                updated.master_sender_key            = live.master_sender_key;
+                updated.sender_key_id                = live.sender_key_id;
+                updated.receiver_specific_key_id     = current.receiver_specific_key_id;
+                updated.master_receiver_specific_key = current.master_receiver_specific_key;
+
+                remote_participant->Participant2ParticipantKeyMaterial.push_back(updated);
+
+                while (remote_participant->Participant2ParticipantKeyMaterial.size() > KEY_MATERIAL_RING_SIZE)
+                {
+                    remote_participant->Participant2ParticipantKeyMaterial.erase(
+                        remote_participant->Participant2ParticipantKeyMaterial.begin());
+                }
+            }
+        }
+
+        if (remote_participant->Participant2ParticipantKeyMaterial.empty())
+        {
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "No participant key material to tokenize");
+            return false;
+        }
+
         ParticipantCryptoToken temp;
         temp.class_id() = std::string("DDS:Crypto:AES_GCM_GMAC");
         BinaryProperty prop;
         prop.name() = std::string("dds.cryp.keymat");
         std::vector<uint8_t> plaintext =
-                KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.at(
-                            0));
-        prop.value() = plaintext; //  aes_128_gcm_encrypt(plaintext, remote_participant->Participant2ParticipantKxKeyMaterial.at(0).master_sender_key);
+                KeyMaterialCDRSerialize(remote_participant->Participant2ParticipantKeyMaterial.back());
+        prop.value() = plaintext;
         prop.propagate(true);
 
         if (prop.value().size() == 0)
@@ -141,7 +179,14 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
 
     KeyMaterial_AES_GCM_GMAC keymat;
     KeyMaterialCDRDeserialize(keymat, &plaintext);
-    remote_participant->RemoteParticipant2ParticipantKeyMaterial.push_back(keymat);
+
+    auto& ring = remote_participant->RemoteParticipant2ParticipantKeyMaterial;
+    ring.push_back(keymat);
+
+    while (ring.size() > KEY_MATERIAL_RING_SIZE)
+    {
+        ring.erase(ring.begin());
+    }
 
     return true;
 }

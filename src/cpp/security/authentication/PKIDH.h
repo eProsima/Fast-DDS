@@ -19,6 +19,11 @@
 #ifndef _SECURITY_AUTHENTICATION_PKIDH_H_
 #define _SECURITY_AUTHENTICATION_PKIDH_H_
 
+#include <chrono>
+#include <memory>
+#include <mutex>
+#include <vector>
+
 #include <fastdds/rtps/attributes/PropertyPolicy.hpp>
 #include <rtps/security/authentication/Authentication.h>
 #include <security/artifact_providers/Pkcs11Provider.hpp>
@@ -27,6 +32,9 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+class ResourceEvent;
+
 namespace security {
 
 class PKIDH : public Authentication
@@ -122,6 +130,20 @@ public:
             const GUID_t& adjusted,
             const GUID_t& original) override;
 
+    std::chrono::system_clock::time_point get_identity_expiration(
+            const IdentityHandle& handle) const;
+
+    GUID_t get_participant_guid(
+            const IdentityHandle& handle) const override;
+
+    /*!
+     * Provide the plugin with the participant event scheduler used to arm
+     * the per-identity certificate-expiration timers. Must be called before
+     * @ref validate_local_identity for the local expiry timer to be armed.
+     */
+    void set_event_resource(
+            eprosima::fastdds::rtps::ResourceEvent& service) override;
+
     std::unique_ptr<detail::Pkcs11Provider> pkcs11_provider;
 
 private:
@@ -142,6 +164,29 @@ private:
             EVP_PKEY* private_key,
             EVP_PKEY* public_key,
             SecurityException& exception) const;
+
+    //! Decode an X.509 certificate's notAfter field into a system_clock time point.
+    //! Returns a default-constructed time_point on any failure (no cert / parse error).
+    static std::chrono::system_clock::time_point cert_expiration(
+            const X509* cert);
+
+    //! Arm (*handle)->expiry_event_ from its certificate's notAfter. No-op if the
+    //! event resource has not been injected, the handle is nil, or it has no expiry.
+    void arm_identity_expiry(
+            PKIIdentityHandle& handle);
+
+    //! Reap expiry timers that revoked themselves from within their own callback.
+    void drain_expired_timers();
+
+    AuthenticationListener* listener_ = nullptr;
+    std::mutex listener_mtx_;
+
+    eprosima::fastdds::rtps::ResourceEvent* event_resource_ = nullptr;
+
+    //! Graveyard for self-expired timers, destroyed outside their own callback to
+    //! avoid deleting a TimedEvent while it is firing (use-after-free).
+    std::vector<std::unique_ptr<eprosima::fastdds::rtps::TimedEvent>> expired_timers_;
+    std::mutex expired_timers_mtx_;
 };
 
 } //namespace security
