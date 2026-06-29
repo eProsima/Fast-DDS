@@ -168,6 +168,14 @@ ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
 
+    // Adapt payload max size in case we have a type support context
+    if (type_support_context_)
+    {
+        uint32_t type_max_size = type_->get_max_serialized_size_ctx(type_support_context_);
+        constexpr auto absolute_max = (std::numeric_limits<uint32_t>::max)();
+        history_.m_att.payloadMaxSize = (type_max_size > (absolute_max - 3u)) ? absolute_max : (type_max_size + 3u);
+    }
+
     ReaderAttributes att;
 
     // TODO(eduponz): Encapsulate this in QosConverters.cpp
