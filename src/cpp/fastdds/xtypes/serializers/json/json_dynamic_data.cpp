@@ -55,6 +55,19 @@ ReturnCode_t json_deserialize(
         DynamicDataJsonFormat format,
         DynamicData::_ref_type& data) noexcept
 {
+    FormatOptions options;
+    options.mapping = (format == DynamicDataJsonFormat::OMG)
+            ? DynamicDataJsonMapping::OMG
+            : DynamicDataJsonMapping::EPROSIMA;
+    return json_deserialize(j, dynamic_type, options, data);
+}
+
+ReturnCode_t json_deserialize(
+        const nlohmann::json& j,
+        const traits<DynamicTypeImpl>::ref_type& dynamic_type,
+        const FormatOptions& format,
+        DynamicData::_ref_type& data) noexcept
+{
     if (nullptr == dynamic_type)
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
@@ -101,7 +114,7 @@ ReturnCode_t json_deserialize(
 
 ReturnCode_t json_deserialize_aggregate(
         const nlohmann::json& j,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     std::string kind_str = (data->enclosing_type()->get_kind() == TK_STRUCTURE) ? "structure" : "bitset";
@@ -171,7 +184,7 @@ ReturnCode_t json_deserialize_aggregate(
 ReturnCode_t json_deserialize_member(
         const nlohmann::json& j,
         const traits<DynamicTypeMember>::ref_type& type_member,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)};
@@ -203,7 +216,7 @@ ReturnCode_t json_deserialize_member(
         const nlohmann::json& j,
         const MemberId& member_id,
         const TypeKind& member_kind,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     switch (member_kind)
@@ -274,7 +287,7 @@ ReturnCode_t json_deserialize_basic_member(
         const nlohmann::json& j,
         const MemberId& member_id,
         const TypeKind& member_kind,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     switch (member_kind)
@@ -682,7 +695,7 @@ ReturnCode_t json_deserialize_basic_member(
 ReturnCode_t json_deserialize_enum_member(
         const nlohmann::json& j,
         const MemberId& member_id,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
@@ -728,7 +741,7 @@ ReturnCode_t json_deserialize_enum_member(
     }
     TypeKind enclosing_kind = enclosing_type_impl->get_kind();
 
-    if (DynamicDataJsonFormat::OMG == format)
+    if (DynamicDataJsonMapping::OMG == format.mapping)
     {
         if (!j.is_string())
         {
@@ -737,7 +750,7 @@ ReturnCode_t json_deserialize_enum_member(
         }
         enum_name = j.get<std::string>();
     }
-    else if (DynamicDataJsonFormat::EPROSIMA == format)
+    else if (DynamicDataJsonMapping::EPROSIMA == format.mapping)
     {
         if (!j.is_object() || j.empty())
         {
@@ -837,7 +850,7 @@ ReturnCode_t json_deserialize_enum_member(
             if (it.first == enum_name)
             {
                 const auto value_from_name = std::stoi(enum_member_desc.literal_value());
-                if (DynamicDataJsonFormat::EPROSIMA == format && is_value_set)
+                if (DynamicDataJsonMapping::EPROSIMA == format.mapping && is_value_set)
                 {
                     // Check if value coincides with the one obtained from name
                     if (u32_value != static_cast<uint32_t>(value_from_name))
@@ -909,7 +922,7 @@ ReturnCode_t json_deserialize_member_with_loan(
         const MemberId& member_id,
         const std::string& kind_str,
         MemberDeserializer member_deserializer,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     traits<DynamicDataImpl>::ref_type st_data =
@@ -939,7 +952,7 @@ ReturnCode_t json_deserialize_member_with_loan(
 
 ReturnCode_t json_deserialize_union(
         const nlohmann::json& j,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     if (j.empty())
@@ -979,7 +992,7 @@ ReturnCode_t json_deserialize_union(
 
 ReturnCode_t json_deserialize_collection(
         const nlohmann::json& j,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     if (!j.is_array())
@@ -1035,7 +1048,7 @@ ReturnCode_t json_deserialize_array(
         TypeKind element_kind,
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     assert(j.is_array());
@@ -1079,7 +1092,7 @@ ReturnCode_t json_deserialize_array(
 
 ReturnCode_t json_deserialize_map(
         const nlohmann::json& j,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     if (j.empty())
@@ -1126,7 +1139,7 @@ ReturnCode_t json_deserialize_map(
 
 ReturnCode_t json_deserialize_bitmask(
         const nlohmann::json& j,
-        DynamicDataJsonFormat format,
+        const FormatOptions& format,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
@@ -1165,7 +1178,7 @@ ReturnCode_t json_deserialize_bitmask(
     std::string j_binary;
     std::vector<std::string> j_active_bits;
 
-    if (DynamicDataJsonFormat::OMG == format)
+    if (DynamicDataJsonMapping::OMG == format.mapping)
     {
         if (!j.is_number())
         {
@@ -1176,7 +1189,7 @@ ReturnCode_t json_deserialize_bitmask(
         j_value = j;
         has_value = true;
     }
-    else if (DynamicDataJsonFormat::EPROSIMA == format)
+    else if (DynamicDataJsonMapping::EPROSIMA == format.mapping)
     {
         if (!j.is_object() || j.empty())
         {

@@ -65,7 +65,19 @@ ReturnCode_t idl_serialize(
 
 ReturnCode_t json_serialize(
         const DynamicData::_ref_type& data,
-        const DynamicDataJsonFormat format,
+        DynamicDataJsonFormat format,
+        std::ostream& output) noexcept
+{
+    FormatOptions format_options;
+    format_options.mapping = (format == DynamicDataJsonFormat::OMG)
+            ? DynamicDataJsonMapping::OMG
+            : DynamicDataJsonMapping::EPROSIMA;
+    return json_serialize(data, format_options, output);
+}
+
+ReturnCode_t json_serialize(
+        const DynamicData::_ref_type& data,
+        const FormatOptions& format,
         std::ostream& output) noexcept
 {
     ReturnCode_t ret;
@@ -95,6 +107,19 @@ ReturnCode_t json_deserialize(
         const std::string& input,
         const DynamicType::_ref_type& dynamic_type,
         DynamicDataJsonFormat format,
+        DynamicData::_ref_type& data) noexcept
+{
+    FormatOptions format_options;
+    format_options.mapping = (format == DynamicDataJsonFormat::OMG)
+            ? DynamicDataJsonMapping::OMG
+            : DynamicDataJsonMapping::EPROSIMA;
+    return json_deserialize(input, dynamic_type, format_options, data);
+}
+
+ReturnCode_t json_deserialize(
+        const std::string& input,
+        const DynamicType::_ref_type& dynamic_type,
+        const FormatOptions& format,
         DynamicData::_ref_type& data) noexcept
 {
     nlohmann::json j;

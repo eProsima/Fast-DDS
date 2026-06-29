@@ -46,10 +46,57 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+// Build a compact label that replaces a collection data content
+// (usage example: collapse a collection exceeding a size threshold).
+static ReturnCode_t collection_label(
+        const DynamicType::_ref_type& collection_type,
+        uint32_t count,
+        std::string& out) noexcept
+{
+    if (nullptr == collection_type)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Failed to build collection label for null type.");
+        return RETCODE_BAD_PARAMETER;
+    }
+
+    const TypeKind kind = collection_type->get_kind();
+
+    if (TK_ARRAY == kind)
+    {
+        // type_to_string already renders "element[d1,d2,...]"; just wrap it.
+        std::string body;
+        ReturnCode_t ret = type_to_string(collection_type, body, 1);
+        if (RETCODE_OK == ret)
+        {
+            out = "<array: " + body + ">";
+        }
+        return ret;
+    }
+
+    if (TK_SEQUENCE == kind)
+    {
+        // Sequences report their runtime item count, which is not part of the type:
+        // describe the element and splice the count in -> "<sequence: N element>".
+        const auto element_type =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(
+            collection_type)->get_descriptor().element_type();
+        std::string element;
+        ReturnCode_t ret = type_to_string(element_type, element, 1);
+        if (RETCODE_OK == ret)
+        {
+            out = "<sequence: " + std::to_string(count) + " " + element + ">";
+        }
+        return ret;
+    }
+
+    EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Failed to build collection label for non-collection type (" << kind << ").");
+    return RETCODE_BAD_PARAMETER;
+}
+
 ReturnCode_t json_serialize(
         const traits<DynamicDataImpl>::ref_type& data,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     if (nullptr == data)
     {
@@ -67,10 +114,22 @@ ReturnCode_t json_serialize(
     return json_serialize_aggregate(data, output, format);
 }
 
-ReturnCode_t json_serialize_aggregate(
+ReturnCode_t json_serialize(
         const traits<DynamicDataImpl>::ref_type& data,
         nlohmann::json& output,
         DynamicDataJsonFormat format) noexcept
+{
+    FormatOptions options;
+    options.mapping = (format == DynamicDataJsonFormat::OMG)
+            ? DynamicDataJsonMapping::OMG
+            : DynamicDataJsonMapping::EPROSIMA;
+    return json_serialize(data, output, options);
+}
+
+ReturnCode_t json_serialize_aggregate(
+        const traits<DynamicDataImpl>::ref_type& data,
+        nlohmann::json& output,
+        const FormatOptions& format) noexcept
 {
     std::string kind_str = (data->enclosing_type()->get_kind() == TK_STRUCTURE) ? "structure" : "bitset";
     DynamicTypeMembersById members;
@@ -101,7 +160,7 @@ ReturnCode_t json_serialize_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const traits<DynamicTypeMember>::ref_type& type_member,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(type_member)};
 
@@ -143,7 +202,7 @@ ReturnCode_t json_serialize_member(
         TypeKind member_kind,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     switch (member_kind)
     {
@@ -217,7 +276,7 @@ ReturnCode_t json_serialize_member(
         MemberId member_id,
         TypeKind member_kind,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     return json_serialize_member(data, member_id, member_kind, "", output, format);
 }
@@ -228,7 +287,7 @@ ReturnCode_t json_serialize_basic_member(
         TypeKind member_kind,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     switch (member_kind)
     {
@@ -579,7 +638,7 @@ ReturnCode_t json_serialize_enum_member(
         MemberId member_id,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     // Get enumeration type to obtain the names of the different values, and also the underlying primitive type
     // NOTE: a different approach is required for collections and other "holder" types (e.g. structures),
@@ -701,11 +760,11 @@ ReturnCode_t json_serialize_enum_member(
     }
     if (RETCODE_OK == ret)
     {
-        if (DynamicDataJsonFormat::OMG == format)
+        if (DynamicDataJsonMapping::OMG == format.mapping)
         {
             json_insert(member_name, name, output);
         }
-        else if (DynamicDataJsonFormat::EPROSIMA == format)
+        else if (DynamicDataJsonMapping::EPROSIMA == format.mapping)
         {
             nlohmann::json enum_dict = {{"name", name}, {"value", j_value}};
             json_insert(member_name, enum_dict, output);
@@ -713,7 +772,7 @@ ReturnCode_t json_serialize_enum_member(
         else
         {
             EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                    "Error encountered while serializing TK_ENUM member to JSON: unsupported format.");
+                    "Error encountered while serializing TK_ENUM member to JSON: unsupported mapping.");
             return RETCODE_BAD_PARAMETER;
         }
     }
@@ -732,7 +791,7 @@ ReturnCode_t json_serialize_member_with_loan(
         MemberSerializer member_serializer,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     traits<DynamicDataImpl>::ref_type st_data =
             traits<DynamicData>::narrow<DynamicDataImpl>(data->loan_value(member_id));
@@ -763,7 +822,7 @@ ReturnCode_t json_serialize_aggregate_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     nlohmann::json j_struct;
     std::string kind_str = (data->enclosing_type()->get_kind() == TK_STRUCTURE) ? "structure" : "bitset";
@@ -786,7 +845,7 @@ ReturnCode_t json_serialize_union_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     nlohmann::json j_union;
     ReturnCode_t ret = RETCODE_OK;
@@ -824,14 +883,33 @@ ReturnCode_t json_serialize_collection_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
     const TypeDescriptorImpl& descriptor = data->enclosing_type()->get_descriptor();
-    auto element_kind =
-            traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type()
-                    ->get_kind();
-    if (TK_SEQUENCE == data->enclosing_type()->get_kind())
+    const auto dyn_type =
+            traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())->resolve_alias_enclosed_type();
+    auto element_kind = dyn_type->get_kind();
+    const bool is_sequence = (data->enclosing_type()->get_kind() == TK_SEQUENCE);
+
+    // If a max_collection_items limit is configured and the collection exceeds it,
+    // emit a compact label instead of the full element list.
+    if (format.max_collection_items > 0)
+    {
+        const uint32_t count = data->get_item_count();
+        if (count > format.max_collection_items)
+        {
+            std::string label;
+            if (RETCODE_OK != (ret = collection_label(data->enclosing_type(), count, label)))
+            {
+                return ret;
+            }
+            json_insert(member_name, label, output);
+            return ret;
+        }
+    }
+
+    if (is_sequence)
     {
         assert(descriptor.bound().size() == 1);
         auto count = data->get_item_count();
@@ -872,7 +950,7 @@ ReturnCode_t json_serialize_array(
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
         nlohmann::json& j_array,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     assert(j_array.is_array());
     ReturnCode_t ret = RETCODE_OK;
@@ -914,7 +992,7 @@ ReturnCode_t json_serialize_map_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
     nlohmann::json j_map = nlohmann::json::object();
@@ -981,7 +1059,7 @@ ReturnCode_t json_serialize_bitmask_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept
+        const FormatOptions& format) noexcept
 {
     ReturnCode_t ret = RETCODE_OK;
     traits<DynamicTypeImpl>::ref_type bitmask_type = data->enclosing_type();
@@ -990,7 +1068,7 @@ ReturnCode_t json_serialize_bitmask_member(
     // Get the bitmask bound to determine the value precision
     auto bound = bitmask_desc.bound().at(0);
 
-    if (DynamicDataJsonFormat::OMG == format)
+    if (DynamicDataJsonMapping::OMG == format.mapping)
     {
         if (9 > bound)
         {
@@ -1031,7 +1109,7 @@ ReturnCode_t json_serialize_bitmask_member(
                     "Error encountered while serializing bitmask member to JSON: failed to get value.");
         }
     }
-    else if (DynamicDataJsonFormat::EPROSIMA == format)
+    else if (DynamicDataJsonMapping::EPROSIMA == format.mapping)
     {
         nlohmann::json bitmask_dict;
         uint64_t u64_value{0}; // Auxiliar variable to check active bits afterwards
@@ -1113,7 +1191,7 @@ ReturnCode_t json_serialize_bitmask_member(
     else
     {
         EPROSIMA_LOG_ERROR(XTYPES_UTILS,
-                "Error encountered while serializing bitmask member to JSON: unsupported format.");
+                "Error encountered while serializing bitmask member to JSON: unsupported mapping.");
         return RETCODE_BAD_PARAMETER;
     }
     return ret;
@@ -1133,6 +1211,204 @@ void json_insert(
     {
         j[key] = value;
     }
+}
+
+ReturnCode_t type_to_string(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& out,
+        int depth) noexcept
+{
+    ReturnCode_t ret = RETCODE_OK;
+
+    const auto kind = dyn_type->get_kind();
+
+    switch (kind)
+    {
+        case TK_BOOLEAN:
+        {
+            out = "boolean";
+            break;
+        }
+        case TK_BYTE:
+        {
+            out = "octet";
+            break;
+        }
+        case TK_INT8:
+        {
+            out = "int8";
+            break;
+        }
+        case TK_INT16:
+        {
+            out = "short";
+            break;
+        }
+        case TK_INT32:
+        {
+            out = "long";
+            break;
+        }
+        case TK_INT64:
+        {
+            out = "long long";
+            break;
+        }
+        case TK_UINT8:
+        {
+            out = "uint8";
+            break;
+        }
+        case TK_UINT16:
+        {
+            out = "unsigned short";
+            break;
+        }
+        case TK_UINT32:
+        {
+            out = "unsigned long";
+            break;
+        }
+        case TK_UINT64:
+        {
+            out = "unsigned long long";
+            break;
+        }
+        case TK_FLOAT32:
+        {
+            out = "float";
+            break;
+        }
+        case TK_FLOAT64:
+        {
+            out = "double";
+            break;
+        }
+        case TK_FLOAT128:
+        {
+            out = "long double";
+            break;
+        }
+        case TK_CHAR8:
+        {
+            out = "char";
+            break;
+        }
+        case TK_CHAR16:
+        {
+            out = "wchar";
+            break;
+        }
+        case TK_STRING8:
+        {
+            out = "string";
+            break;
+        }
+        case TK_STRING16:
+        {
+            out = "wstring";
+            break;
+        }
+        case TK_ARRAY:
+        case TK_SEQUENCE:
+        {
+            // Nested collections (depth exhausted) are reported by their kind word only.
+            if (0 > depth)
+            {
+                out = (TK_SEQUENCE == kind) ? "sequence" : "array";
+                break;
+            }
+
+            // The element type and (multidimensional) bounds are reachable from
+            // the type descriptor, so no extra arguments are needed.
+            const TypeDescriptorImpl& descriptor =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(dyn_type)->get_descriptor();
+            const auto element_type =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())
+                            ->resolve_alias_enclosed_type();
+            std::string element_str;
+            if (RETCODE_OK != (ret = type_to_string(element_type, element_str, depth - 1)))
+            {
+                break;
+            }
+
+            if (TK_SEQUENCE == kind)
+            {
+                // sequence<element>, e.g. "sequence<long>".
+                out = "sequence<" + element_str + ">";
+            }
+            else
+            {
+                // element[d1,d2,...], e.g. "long[3,4]".
+                std::string bounds_str;
+                for (const auto& bound : descriptor.bound())
+                {
+                    bounds_str += (bounds_str.empty() ? "" : ",") + std::to_string(bound);
+                }
+                out = element_str + "[" + bounds_str + "]";
+            }
+            break;
+        }
+        case TK_MAP:
+        {
+            if (0 > depth)
+            {
+                out = "map";
+                break;
+            }
+
+            const TypeDescriptorImpl& descriptor =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(dyn_type)->get_descriptor();
+            const auto key_type =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.key_element_type())
+                            ->resolve_alias_enclosed_type();
+            const auto value_type =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(descriptor.element_type())
+                            ->resolve_alias_enclosed_type();
+            std::string key_str;
+            std::string value_str;
+            if (RETCODE_OK != (ret = type_to_string(key_type, key_str, depth - 1)) ||
+                    RETCODE_OK != (ret = type_to_string(value_type, value_str, depth - 1)))
+            {
+                break;
+            }
+            // map<key, value>, e.g. "map<long, string>".
+            out = "map<" + key_str + ", " + value_str + ">";
+            break;
+        }
+        case TK_ALIAS:
+        {
+            // Resolve through the alias chain so the label reflects the underlying type.
+            // Alias resolution does not count against the recursion budget.
+            auto resolved =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(dyn_type)->resolve_alias_enclosed_type();
+            ret = type_to_string(resolved, out, depth);
+            break;
+        }
+        case TK_BITMASK:
+        case TK_BITSET:
+        case TK_ENUM:
+        case TK_STRUCTURE:
+        case TK_UNION:
+        {
+            // Named constructs are described by their own type name.
+            out = dyn_type->get_name().to_string();
+            break;
+        }
+        case TK_NONE:
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Failed to convert TK_NONE to string.");
+            ret = RETCODE_UNSUPPORTED;
+            break;
+        }
+        default:
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_UTILS, "Failed to convert unknown type (" << kind << ") to string.");
+            ret = RETCODE_BAD_PARAMETER;
+            break;
+        }
+    }
+    return ret;
 }
 
 } // namespace dds

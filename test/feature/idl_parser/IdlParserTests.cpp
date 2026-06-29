@@ -3141,9 +3141,13 @@ static void optional_encoding_decoding_test(
     EXPECT_TRUE(pubsubType.deserialize(payload, &decoding_data));
     EXPECT_TRUE(decoding_data->equals(encoding_data));
 
+    FormatOptions fmt;
+    fmt.max_collection_items = 0;
+
     // JSON round-trip
-    for (auto fmt : {DynamicDataJsonFormat::EPROSIMA, DynamicDataJsonFormat::OMG})
+    for (auto mapping : {DynamicDataJsonMapping::EPROSIMA, DynamicDataJsonMapping::OMG})
     {
+        fmt.mapping = mapping;
         std::stringstream json_out;
         EXPECT_EQ(json_serialize(encoding_data, fmt, json_out), RETCODE_OK);
 

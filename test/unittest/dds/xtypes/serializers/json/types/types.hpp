@@ -46,7 +46,7 @@ eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicData>::ref_type fi
 
 template<DataTypeKind Data>
 std::string get_expected_json(
-        const eprosima::fastdds::dds::DynamicDataJsonFormat& format,
+        const eprosima::fastdds::dds::FormatOptions& format,
         bool filled,
         const unsigned int& index = 0);
 

@@ -40,18 +40,23 @@ namespace dds {
 ReturnCode_t json_serialize(
         const traits<DynamicDataImpl>::ref_type& data,
         nlohmann::json& output,
+        const FormatOptions& format) noexcept;
+
+ReturnCode_t json_serialize(
+        const traits<DynamicDataImpl>::ref_type& data,
+        nlohmann::json& output,
         DynamicDataJsonFormat format) noexcept;
 
 ReturnCode_t json_serialize_aggregate(
         const traits<DynamicDataImpl>::ref_type& data,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const traits<DynamicTypeMember>::ref_type& type_member,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_member(
         const traits<DynamicDataImpl>::ref_type& data,
@@ -59,14 +64,14 @@ ReturnCode_t json_serialize_member(
         TypeKind member_kind,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_member(
         const traits<DynamicDataImpl>::ref_type& data,
         MemberId member_id,
         TypeKind member_kind,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_basic_member(
         const traits<DynamicDataImpl>::ref_type& data,
@@ -74,14 +79,14 @@ ReturnCode_t json_serialize_basic_member(
         TypeKind member_kind,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_enum_member(
         const traits<DynamicDataImpl>::ref_type& data,
         MemberId member_id,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 // WARNING: Enforcing noexcept here throws a warning in C++11, and in fact causes no effect (i.e. compilation does not
 // fail when executing a method with this signature from a noexcept one) -> manually ensure all serializers are noexcept
@@ -89,7 +94,7 @@ using MemberSerializer = ReturnCode_t (*)(
     const traits<DynamicDataImpl>::ref_type& data,
     const std::string& member_name,
     nlohmann::json& output,
-    DynamicDataJsonFormat format);
+    const FormatOptions& format);
 
 ReturnCode_t json_serialize_member_with_loan(
         const traits<DynamicDataImpl>::ref_type& data,
@@ -98,25 +103,25 @@ ReturnCode_t json_serialize_member_with_loan(
         MemberSerializer member_serializer,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_aggregate_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_union_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_collection_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_array(
         const traits<DynamicDataImpl>::ref_type& data,
@@ -124,25 +129,33 @@ ReturnCode_t json_serialize_array(
         unsigned int& index,
         const std::vector<unsigned int>& bounds,
         nlohmann::json& j_array,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_map_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 ReturnCode_t json_serialize_bitmask_member(
         const traits<DynamicDataImpl>::ref_type& data,
         const std::string& member_name,
         nlohmann::json& output,
-        DynamicDataJsonFormat format) noexcept;
+        const FormatOptions& format) noexcept;
 
 template<typename T>
 void json_insert(
         const std::string& key,
         const T& value,
         nlohmann::json& j);
+
+// Describe a type as an IDL-like string. A collection shows its element type
+// (and array bounds): at depth 0 a nested collection element collapses to its
+// kind word ("sequence<sequence>"); higher depths recurse that many extra levels.
+ReturnCode_t type_to_string(
+        const DynamicType::_ref_type& dyn_type,
+        std::string& out,
+        int depth = 0) noexcept;
 
 } // namespace dds
 } // namespace fastdds

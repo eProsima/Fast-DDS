@@ -387,15 +387,15 @@ traits<DynamicData>::ref_type create_dynamic_data<DataTypeKind::COMPREHENSIVE_TY
 
 template<>
 std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
-        const DynamicDataJsonFormat& format,
+        const FormatOptions& format,
         bool filled,
         const unsigned int& index)
 {
     std::string json;
 
-    switch (format)
+    switch (format.mapping)
     {
-        case DynamicDataJsonFormat::EPROSIMA:
+        case DynamicDataJsonMapping::EPROSIMA:
             if (filled)
             {
                 switch (index)
@@ -419,7 +419,7 @@ std::string get_expected_json<DataTypeKind::COMPREHENSIVE_TYPE>(
             }
             break;
 
-        case DynamicDataJsonFormat::OMG:
+        case DynamicDataJsonMapping::OMG:
             if (filled)
             {
                 switch (index)
