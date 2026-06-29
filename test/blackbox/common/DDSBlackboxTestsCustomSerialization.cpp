@@ -283,7 +283,7 @@ public:
             deser >> *p_type;
 
             // Check that the options are correct
-            auto options = deser.get_dds_cdr_options();
+            std::array<uint8_t, 2> options = deser.get_dds_cdr_options();
             EXPECT_EQ(options[0], p_type->data);
         }
         catch (eprosima::fastcdr::exception::Exception& /*exception*/)
@@ -311,12 +311,11 @@ public:
 
         try
         {
-            eprosima::fastcdr::CdrSizeCalculator calculator(
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+            eprosima::fastcdr::CdrSizeCalculator calculator(context,
+                    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                    eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
             size_t current_alignment {0};
-            const ::Data64kb* p_type =
-                    static_cast<const ::Data64kb*>(data);
+            const CustomData* p_type = static_cast<const CustomData*>(data);
             auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
             return static_cast<uint32_t>(calc_size) + rtps::SerializedPayload_t::representation_header_size;
         }
@@ -421,7 +420,7 @@ public:
     }
 
     bool is_bounded_ctx(
-            const std::shared_ptr<Context>& context) const
+            const std::shared_ptr<Context>& context) const override
     {
         was_called(custom_calls_.is_bounded);
         CustomContext::check_context(context);
@@ -489,7 +488,7 @@ public:
         return custom_calls_;
     }
 
-private:
+protected:
 
     void was_called(
             bool& flag) const
@@ -500,6 +499,21 @@ private:
 
     mutable std::mutex mutex_;
     mutable CustomTypeSupportCalls custom_calls_;
+};
+
+class CustomTypeSupportUnbounded : public CustomTypeSupport
+{
+public:
+
+    bool is_bounded_ctx(
+            const std::shared_ptr<Context>& context) const override
+    {
+        was_called(custom_calls_.is_bounded);
+        CustomContext::check_context(context);
+
+        return false;
+    }
+
 };
 
 TEST(CustomSerializationTests, XCDRv1_plain)
@@ -634,8 +648,8 @@ TEST(CustomSerializationTests, XCDRv2_not_plain)
 {
     auto context = CustomContext::instance();
 
-    PubSubWriter<CustomTypeSupport> writer(TEST_TOPIC_NAME);
-    PubSubReader<CustomTypeSupport> reader(TEST_TOPIC_NAME);
+    PubSubWriter<CustomTypeSupportUnbounded> writer(TEST_TOPIC_NAME);
+    PubSubReader<CustomTypeSupportUnbounded> reader(TEST_TOPIC_NAME);
     CustomTypeSupport* writer_type = nullptr;
     CustomTypeSupport* reader_type = nullptr;
     CustomData sent_data;
@@ -693,6 +707,7 @@ TEST(CustomSerializationTests, XCDRv2_not_plain)
         auto expected_calls = writer_type->get_calls();
         expected_calls.compute_key_data = true;
         expected_calls.serialize = true;
+        expected_calls.calculate_serialized_size = true;
 
         EXPECT_TRUE(writer.send_sample(sent_data));
 
