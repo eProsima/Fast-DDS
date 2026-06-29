@@ -14,6 +14,7 @@
 
 
 #include <cstdint>
+#include <cstring>
 #include <limits>
 #include <memory>
 
@@ -22,14 +23,15 @@
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
 
+#include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/utils/md5.hpp>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-#include <fastdds/rtps/common/SerializedPayload.hpp>
-#include <cstring>
-#include <fastdds/utils/md5.hpp>
 
 //{ Type and context definitions
 
@@ -45,6 +47,13 @@ struct CustomData
 {
     uint8_t data;
 };
+
+bool operator ==(
+        const CustomData& lhs,
+        const CustomData& rhs)
+{
+    return lhs.data == rhs.data;
+}
 
 /**
  * @brief CustomContext type that will be used in the custom serialization tests.
@@ -454,7 +463,9 @@ public:
 
     void register_type_object_representation() override
     {
-        register_type_object_representation_ctx(nullptr);
+        // Note this is called from the participant when the type is registered.
+        // Adding the context, since we don't have access to the context here.
+        register_type_object_representation_ctx(CustomContext::instance());
     }
 
     void register_type_object_representation_ctx(
@@ -490,6 +501,260 @@ private:
     mutable std::mutex mutex_;
     mutable CustomTypeSupportCalls custom_calls_;
 };
+
+TEST(CustomSerializationTests, XCDRv1_plain)
+{
+    auto context = CustomContext::instance();
+
+    PubSubWriter<CustomTypeSupport> writer(TEST_TOPIC_NAME);
+    PubSubReader<CustomTypeSupport> reader(TEST_TOPIC_NAME);
+    CustomTypeSupport* writer_type = nullptr;
+    CustomTypeSupport* reader_type = nullptr;
+    CustomData sent_data;
+    sent_data.data = 42;
+
+    // Check reader initialization calls
+    {
+        CustomTypeSupport::CustomTypeSupportCalls expected_calls {};
+        expected_calls.get_max_serialized_size = true;
+        expected_calls.register_type_object_representation = true;
+        expected_calls.is_bounded = true;
+        expected_calls.is_plain = true;
+
+        reader.reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .data_representation({ eprosima::fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION })
+                .context(context)
+                .init();
+        ASSERT_TRUE(reader.isInitialized());
+        reader_type = dynamic_cast<CustomTypeSupport*>(reader.get_type_support().get());
+        ASSERT_NE(reader_type, nullptr);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check writer initialization calls
+    {
+        CustomTypeSupport::CustomTypeSupportCalls expected_calls {};
+        expected_calls.get_max_serialized_size = true;
+        expected_calls.register_type_object_representation = true;
+        expected_calls.is_bounded = true;
+        expected_calls.is_plain = true;
+
+        writer.reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .data_representation({ eprosima::fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION })
+                .context(context)
+                .init();
+        ASSERT_TRUE(writer.isInitialized());
+        writer_type = dynamic_cast<CustomTypeSupport*>(writer.get_type_support().get());
+        ASSERT_NE(writer_type, nullptr);
+
+        EXPECT_EQ(writer_type->get_calls(), expected_calls);
+    }
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    DataReader& data_reader = reader.get_native_reader();
+    DataWriter& data_writer = writer.get_native_writer();
+
+    // Check calls after loaning and discarding a sample
+    {
+        auto expected_calls = writer_type->get_calls();
+        expected_calls.construct_sample = true;
+
+        void* loaned_sample = nullptr;
+        ReturnCode_t loan_result = data_writer.loan_sample(
+            loaned_sample, DataWriter::LoanInitializationKind::CONSTRUCTED_LOAN_INITIALIZATION);
+        EXPECT_EQ(loan_result, RETCODE_OK);
+        EXPECT_EQ(data_writer.discard_loan(loaned_sample), RETCODE_OK);
+
+        EXPECT_EQ(writer_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after sending a sample
+    {
+        auto expected_calls = writer_type->get_calls();
+        expected_calls.compute_key_data = true;
+        expected_calls.serialize = true;
+
+        EXPECT_TRUE(writer.send_sample(sent_data));
+
+        EXPECT_EQ(writer_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after a message is received but before it is read or taken
+    {
+        auto expected_calls = reader_type->get_calls();
+        // This is not called since the writer transmits the instance handle along with the data
+        expected_calls.compute_key_payload = false;
+
+        EXPECT_TRUE(data_reader.wait_for_unread_message({1, 0}));
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after reading with loans
+    {
+        auto expected_calls = reader_type->get_calls();
+        // No calls are added since the data is not deserialized
+
+        FASTDDS_SEQUENCE(DataSeq, CustomData);
+        DataSeq data_seq;
+        SampleInfoSeq info_seq;
+        EXPECT_EQ(data_reader.read(data_seq, info_seq), RETCODE_OK);
+        EXPECT_EQ(data_seq.length(), 1u);
+        EXPECT_EQ(info_seq.length(), 1u);
+        EXPECT_TRUE(info_seq[0].valid_data);
+        EXPECT_EQ(data_reader.return_loan(data_seq, info_seq), RETCODE_OK);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after taking without loans
+    {
+        auto expected_calls = reader_type->get_calls();
+        expected_calls.deserialize = true;
+
+        StackAllocatedSequence<CustomData, 1> data_seq_take;
+        SampleInfoSeq info_seq_take(1);
+        EXPECT_EQ(data_reader.take(data_seq_take, info_seq_take), RETCODE_OK);
+        EXPECT_EQ(data_seq_take.length(), 1u);
+        EXPECT_EQ(info_seq_take.length(), 1u);
+        EXPECT_TRUE(info_seq_take[0].valid_data);
+        EXPECT_EQ(sent_data, data_seq_take[0]);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+}
+
+TEST(CustomSerializationTests, XCDRv2_not_plain)
+{
+    auto context = CustomContext::instance();
+
+    PubSubWriter<CustomTypeSupport> writer(TEST_TOPIC_NAME);
+    PubSubReader<CustomTypeSupport> reader(TEST_TOPIC_NAME);
+    CustomTypeSupport* writer_type = nullptr;
+    CustomTypeSupport* reader_type = nullptr;
+    CustomData sent_data;
+    sent_data.data = 42;
+
+    // Check reader initialization calls
+    {
+        CustomTypeSupport::CustomTypeSupportCalls expected_calls{};
+        expected_calls.get_max_serialized_size = true;
+        expected_calls.register_type_object_representation = true;
+        expected_calls.is_bounded = true;
+        expected_calls.is_plain = true;
+
+        reader.reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .data_representation({ eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION })
+                .resource_limits_allocated_samples(0)
+                .context(context)
+                .init();
+        ASSERT_TRUE(reader.isInitialized());
+        reader_type = dynamic_cast<CustomTypeSupport*>(reader.get_type_support().get());
+        ASSERT_NE(reader_type, nullptr);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check writer initialization calls
+    {
+        CustomTypeSupport::CustomTypeSupportCalls expected_calls{};
+        expected_calls.get_max_serialized_size = true;
+        expected_calls.register_type_object_representation = true;
+        expected_calls.is_bounded = true;
+        expected_calls.is_plain = true;
+
+        writer.reliability(eprosima::fastdds::dds::ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .data_representation({ eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION })
+                .context(context)
+                .init();
+        ASSERT_TRUE(writer.isInitialized());
+        writer_type = dynamic_cast<CustomTypeSupport*>(writer.get_type_support().get());
+        ASSERT_NE(writer_type, nullptr);
+
+        EXPECT_EQ(writer_type->get_calls(), expected_calls);
+    }
+
+    // Wait for discovery
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    DataReader& data_reader = reader.get_native_reader();
+
+    // Check calls after sending a sample
+    {
+        auto expected_calls = writer_type->get_calls();
+        expected_calls.compute_key_data = true;
+        expected_calls.serialize = true;
+
+        EXPECT_TRUE(writer.send_sample(sent_data));
+
+        EXPECT_EQ(writer_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after a message is received but before it is read or taken
+    {
+        auto expected_calls = reader_type->get_calls();
+        // This is not called since the writer transmits the instance handle along with the data
+        expected_calls.compute_key_payload = false;
+
+        EXPECT_TRUE(data_reader.wait_for_unread_message({ 1, 0 }));
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after reading with loans
+    {
+        auto expected_calls = reader_type->get_calls();
+        expected_calls.create_data = true;
+        expected_calls.deserialize = true;
+        expected_calls.delete_data = false; // Data is kept in the loan manager until the reader is destroyed.
+
+        FASTDDS_SEQUENCE(DataSeq, CustomData);
+        DataSeq data_seq;
+        SampleInfoSeq info_seq;
+        EXPECT_EQ(data_reader.read(data_seq, info_seq), RETCODE_OK);
+        EXPECT_EQ(data_seq.length(), 1u);
+        EXPECT_EQ(info_seq.length(), 1u);
+        EXPECT_TRUE(info_seq[0].valid_data);
+        EXPECT_EQ(data_reader.return_loan(data_seq, info_seq), RETCODE_OK);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after taking without loans
+    {
+        auto expected_calls = reader_type->get_calls();
+        expected_calls.deserialize = true;
+
+        StackAllocatedSequence<CustomData, 1> data_seq_take;
+        SampleInfoSeq info_seq_take(1);
+        EXPECT_EQ(data_reader.take(data_seq_take, info_seq_take), RETCODE_OK);
+        EXPECT_EQ(data_seq_take.length(), 1u);
+        EXPECT_EQ(info_seq_take.length(), 1u);
+        EXPECT_TRUE(info_seq_take[0].valid_data);
+        EXPECT_EQ(sent_data, data_seq_take[0]);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    // Check calls after destroying the reader
+    {
+        auto expected_calls = reader_type->get_calls();
+        expected_calls.delete_data = true;
+
+        reader.destroy();
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+}
 
 }  // namespace custom_serialization_test
 }  // namespace dds
