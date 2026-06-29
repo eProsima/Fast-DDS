@@ -188,7 +188,7 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::do_allocate(
     catch (const std::bad_alloc&)
     {
     }
-    
+
     if (payload != nullptr)
     {
         payload->data_index(static_cast<uint32_t>(all_payloads_.size()));
