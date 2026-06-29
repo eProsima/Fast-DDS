@@ -148,6 +148,40 @@ class CustomTypeSupport : public TopicDataType
 {
 public:
 
+    struct CustomTypeSupportCalls
+    {
+        bool serialize = false;
+        bool deserialize = false;
+        bool calculate_serialized_size = false;
+        bool create_data = false;
+        bool delete_data = false;
+        bool compute_key_payload = false;
+        bool compute_key_data = false;
+        bool is_bounded = false;
+        bool is_plain = false;
+        bool construct_sample = false;
+        bool register_type_object_representation = false;
+        bool get_max_serialized_size = false;
+
+        bool operator ==(
+                const CustomTypeSupportCalls& other) const
+        {
+            return serialize == other.serialize &&
+                   deserialize == other.deserialize &&
+                   calculate_serialized_size == other.calculate_serialized_size &&
+                   create_data == other.create_data &&
+                   delete_data == other.delete_data &&
+                   compute_key_payload == other.compute_key_payload &&
+                   compute_key_data == other.compute_key_data &&
+                   is_bounded == other.is_bounded &&
+                   is_plain == other.is_plain &&
+                   construct_sample == other.construct_sample &&
+                   register_type_object_representation == other.register_type_object_representation &&
+                   get_max_serialized_size == other.get_max_serialized_size;
+        }
+
+    };
+
     typedef CustomData type;
 
     CustomTypeSupport()
@@ -172,6 +206,7 @@ public:
             rtps::SerializedPayload_t& payload,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
     {
+        was_called(custom_calls_.serialize);
         CustomContext::check_context(context);
 
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
@@ -217,6 +252,7 @@ public:
             rtps::SerializedPayload_t& payload,
             void* data) override
     {
+        was_called(custom_calls_.deserialize);
         CustomContext::check_context(context);
 
         try
@@ -261,6 +297,7 @@ public:
             const void* const data,
             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override
     {
+        was_called(custom_calls_.calculate_serialized_size);
         CustomContext::check_context(context);
 
         try
@@ -288,6 +325,7 @@ public:
     void* create_data_ctx(
             const std::shared_ptr<Context>& context)
     {
+        was_called(custom_calls_.create_data);
         CustomContext::check_context(context);
         return new CustomData();
     }
@@ -302,6 +340,7 @@ public:
             const std::shared_ptr<Context>& context,
             void* data)
     {
+        was_called(custom_calls_.delete_data);
         CustomContext::check_context(context);
         delete static_cast<CustomData*>(data);
     }
@@ -320,6 +359,7 @@ public:
             rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override
     {
+        was_called(custom_calls_.compute_key_payload);
         CustomData data;
         if (deserialize_ctx(context, payload, &data))
         {
@@ -342,6 +382,7 @@ public:
             rtps::InstanceHandle_t& ihandle,
             bool force_md5 = false) override
     {
+        was_called(custom_calls_.compute_key_data);
         CustomContext::check_context(context);
 
         const CustomData* p_type = static_cast<const CustomData*>(data);
@@ -373,6 +414,7 @@ public:
     bool is_bounded_ctx(
             const std::shared_ptr<Context>& context) const
     {
+        was_called(custom_calls_.is_bounded);
         CustomContext::check_context(context);
 
         return true;
@@ -388,6 +430,7 @@ public:
             const std::shared_ptr<Context>& context,
             DataRepresentationId_t representation) const override
     {
+        was_called(custom_calls_.is_plain);
         CustomContext::check_context(context);
         return eprosima::fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION == representation;
     }
@@ -402,6 +445,7 @@ public:
             const std::shared_ptr<Context>& context,
             void* memory) const override
     {
+        was_called(custom_calls_.construct_sample);
         CustomContext::check_context(context);
         CustomData* p_type = static_cast<CustomData*>(memory);
         new (p_type) CustomData();
@@ -416,16 +460,35 @@ public:
     void register_type_object_representation_ctx(
             const std::shared_ptr<Context>& context) override
     {
+        was_called(custom_calls_.register_type_object_representation);
         CustomContext::check_context(context);
     }
 
     uint32_t get_max_serialized_size_ctx(
             const std::shared_ptr<Context>& context)
     {
+        was_called(custom_calls_.get_max_serialized_size);
         CustomContext::check_context(context);
         return max_serialized_type_size;
     }
 
+    CustomTypeSupportCalls get_calls() const
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return custom_calls_;
+    }
+
+private:
+
+    void was_called(
+            bool& flag) const
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        flag = true;
+    }
+
+    mutable std::mutex mutex_;
+    mutable CustomTypeSupportCalls custom_calls_;
 };
 
 }  // namespace custom_serialization_test
