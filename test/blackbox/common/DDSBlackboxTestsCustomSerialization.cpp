@@ -80,3 +80,54 @@ struct CustomContext : public TopicDataType::Context
 
 //}
 
+//{ Custom serialization methods
+
+namespace eprosima {
+namespace fastcdr {
+
+namespace test = eprosima::fastdds::dds::custom_serialization_test;
+
+template<>
+size_t calculate_serialized_size(
+        CdrSizeCalculator& calculator,
+        const test::CustomData& data,
+        size_t& current_alignment)
+{
+    auto ctx = calculator.get_context();
+    test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
+
+    // We directly encode the data inside the representation header, so we don't need to add any size for the data.
+    static_cast<void>(data);
+    return current_alignment;
+}
+
+template<>
+void serialize(
+        Cdr& scdr,
+        const test::CustomData& data)
+{
+    auto ctx = scdr.get_context();
+    test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
+
+    // We directly encode the data inside the representation header, so we don't need to serialize any data.
+    static_cast<void>(data);
+}
+
+template<>
+void deserialize(
+        Cdr& dcdr,
+        test::CustomData& data)
+{
+    auto ctx = dcdr.get_context();
+    test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
+
+    // We directly encode the data inside the representation header.
+    auto options = dcdr.get_dds_cdr_options();
+    data.data = options[0];
+}
+
+}  // namespace fastcdr
+}  // namespace eprosima
+
+//}
+
