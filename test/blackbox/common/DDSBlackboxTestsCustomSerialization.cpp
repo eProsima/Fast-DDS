@@ -103,10 +103,8 @@ size_t calculate_serialized_size(
         const test::CustomData& data,
         size_t& current_alignment)
 {
-    auto ctx = calculator.get_context();
-    test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
-
     // We directly encode the data inside the representation header, so we don't need to add any size for the data.
+    static_cast<void>(calculator);
     static_cast<void>(data);
     return current_alignment;
 }
@@ -116,10 +114,8 @@ void serialize(
         Cdr& scdr,
         const test::CustomData& data)
 {
-    auto ctx = scdr.get_context();
-    test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
-
     // We directly encode the data inside the representation header, so we don't need to serialize any data.
+    static_cast<void>(scdr);
     static_cast<void>(data);
 }
 
@@ -128,9 +124,6 @@ void deserialize(
         Cdr& dcdr,
         test::CustomData& data)
 {
-    auto ctx = dcdr.get_context();
-    test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
-
     // We directly encode the data inside the representation header.
     std::array<uint8_t, 2> options = dcdr.get_dds_cdr_options();
     data.data = options[0];
@@ -221,7 +214,7 @@ public:
 
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.max_size);
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fastbuffer, context, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
                 data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
                 eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
@@ -274,7 +267,7 @@ public:
             eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
 
             // Object that deserializes the data.
-            eprosima::fastcdr::Cdr deser(fastbuffer, context, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
+            eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
             // Deserialize encapsulation.
             deser.read_encapsulation();
@@ -312,7 +305,7 @@ public:
 
         try
         {
-            eprosima::fastcdr::CdrSizeCalculator calculator(context,
+            eprosima::fastcdr::CdrSizeCalculator calculator(
                     data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
                     eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
             size_t current_alignment {0};
