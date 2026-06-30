@@ -46,22 +46,30 @@ using fastdds::RecursiveTimedMutex;
 
 static HistoryAttributes to_history_attributes(
         const TypeSupport& type,
+        const std::shared_ptr<TopicDataType::Context>& context,
         const DataReaderQos& qos)
 {
     auto initial_samples = qos.resource_limits().allocated_samples;
     auto max_samples = qos.resource_limits().max_samples;
 
     auto mempolicy = qos.endpoint().history_memory_policy;
-    auto payloadMaxSize = type->max_serialized_type_size + 3; // possible alignment
+    uint32_t type_max_size = type->max_serialized_type_size;
+    if (context)
+    {
+        type_max_size = type->get_max_serialized_size_ctx(context);
+    }
+    constexpr auto absolute_max = (std::numeric_limits<uint32_t>::max)();
+    uint32_t payloadMaxSize = (type_max_size > (absolute_max - 3u)) ? absolute_max : (type_max_size + 3u);
 
     return HistoryAttributes(mempolicy, payloadMaxSize, initial_samples, max_samples);
 }
 
 DataReaderHistory::DataReaderHistory(
         const TypeSupport& type,
+        const std::shared_ptr<TopicDataType::Context>& context,
         const TopicDescription& topic,
         const DataReaderQos& qos)
-    : ReaderHistory(to_history_attributes(type, qos))
+    : ReaderHistory(to_history_attributes(type, context, qos))
     , key_writers_allocation_(qos.reader_resource_limits().matched_publisher_allocation)
     , history_qos_(qos.history())
     , resource_limited_qos_(qos.resource_limits())
@@ -69,6 +77,7 @@ DataReaderHistory::DataReaderHistory(
     , type_name_(topic.get_type_name())
     , has_keys_(type->is_compute_key_provided)
     , type_(type.get())
+    , context_(context)
 {
     if (resource_limited_qos_.max_samples <= 0)
     {
@@ -154,7 +163,7 @@ DataReaderHistory::DataReaderHistory(
 #if HAVE_SECURITY
                         is_key_protected = mp_reader->getAttributes().security_attributes().is_key_protected;
 #endif // if HAVE_SECURITY
-                        return type_->compute_key(a_change->serializedPayload, a_change->instanceHandle,
+                        return type_->compute_key_ctx(context_, a_change->serializedPayload, a_change->instanceHandle,
                                        is_key_protected);
                     }
 

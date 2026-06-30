@@ -68,7 +68,7 @@ struct ReadTakeCommand
             bool loop_for_data)
         : type_(reader.type_)
         , loan_manager_(reader.loan_manager_)
-        , history_(reader.history_)
+        , history_(*reader.history_)
         , reader_(reader.reader_)
         , info_pool_(reader.sample_info_pool_)
         , sample_pool_(reader.sample_pool_)

@@ -456,7 +456,7 @@ protected:
     DataReaderQos qos_;
 
     //!History
-    detail::DataReaderHistory history_;
+    std::unique_ptr<detail::DataReaderHistory> history_ {};
 
     //!Listener
     DataReaderListener* listener_ = nullptr;

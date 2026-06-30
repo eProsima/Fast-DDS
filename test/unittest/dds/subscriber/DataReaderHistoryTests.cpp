@@ -79,7 +79,7 @@ TEST(DataReaderHistory, exclusive_ownership_non_keyed_sample_reception)
     DataReaderQos qos;
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    DataReaderHistory history(type, topic, qos);
+    DataReaderHistory history(type, nullptr, topic, qos);
     eprosima::fastdds::RecursiveTimedMutex mutex;
     eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
     std::vector<std::unique_ptr<eprosima::fastdds::rtps::CacheChange_t>> changes;
@@ -139,7 +139,7 @@ TEST(DataReaderHistory, exclusive_ownership_keyed_sample_reception)
     DataReaderQos qos;
     qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     qos.history().kind = KEEP_ALL_HISTORY_QOS;
-    DataReaderHistory history(type, topic, qos);
+    DataReaderHistory history(type, nullptr, topic, qos);
     eprosima::fastdds::RecursiveTimedMutex mutex;
     eprosima::fastdds::rtps::StatelessReader reader(&history, &mutex);
     std::vector<std::unique_ptr<eprosima::fastdds::rtps::CacheChange_t>> changes;
