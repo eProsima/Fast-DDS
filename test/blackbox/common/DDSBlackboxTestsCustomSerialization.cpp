@@ -32,6 +32,7 @@
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "UDPMessageSender.hpp"
 
 //{ Type and context definitions
 
@@ -639,6 +640,64 @@ TEST(CustomSerializationTests, XCDRv1_plain)
         EXPECT_EQ(info_seq_take.length(), 1u);
         EXPECT_TRUE(info_seq_take[0].valid_data);
         EXPECT_EQ(sent_data, data_seq_take[0]);
+
+        EXPECT_EQ(reader_type->get_calls(), expected_calls);
+    }
+
+    {
+        auto expected_calls = reader_type->get_calls();
+        expected_calls.compute_key_payload = true;
+        expected_calls.compute_key_data = true;
+
+        struct PacketNoInlineQos
+        {
+            std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+            std::array<uint8_t, 2> protocol_version{ {2, 3} };
+            std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+            rtps::GuidPrefix_t sender_prefix{};
+
+            struct DataSubMsg
+            {
+                uint8_t submessage_id = 0x15; // DATA
+    #if FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint8_t flags = 0x04;         // D=1
+    #else
+                uint8_t flags = 0x05;         // E=1, D=1
+    #endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint16_t octets_to_next_header = 24;
+                uint16_t extra_flags = 0;
+                uint16_t octets_to_inline_qos = 16;
+                rtps::EntityId_t reader_id{};
+                rtps::EntityId_t writer_id{};
+                rtps::SequenceNumber_t sn{ 0, 2u };
+                // Minimal serialized payload: just the CDR_LE encapsulation header.
+                std::array<uint8_t, 4> serialized_payload{ {0x00, 0x01, 24u, 0x00} };
+            }
+            data;
+        };
+
+        rtps::LocatorList locators;
+        if ((RETCODE_OK == data_reader.get_listening_locators(locators)) && !locators.empty())
+        {
+            UDPMessageSender msg_sender;
+            PacketNoInlineQos packet;
+            packet.sender_prefix = data_writer.guid().guidPrefix;
+            packet.data.writer_id = data_writer.guid().entityId;
+            packet.data.reader_id = data_reader.guid().entityId;
+
+            CDRMessage_t msg(0);
+            uint32_t msg_len = static_cast<uint32_t>(sizeof(packet));
+            msg.init(reinterpret_cast<octet*>(&packet), msg_len);
+            msg.length = msg_len;
+            msg.pos = msg_len;
+
+            for (const auto& locator : locators)
+            {
+                msg_sender.send(msg, locator);
+            }
+        }
+
+        EXPECT_TRUE(data_reader.wait_for_unread_message({ 1, 0 }));
 
         EXPECT_EQ(reader_type->get_calls(), expected_calls);
     }
