@@ -483,8 +483,11 @@ public:
                     // Ensure the datawriter is created disabled so that the context can be set before enabling it.
                     auto pub_qos = publisher_->get_qos();
                     bool was_auto_enable = pub_qos.entity_factory().autoenable_created_entities;
-                    pub_qos.entity_factory().autoenable_created_entities = false;
-                    publisher_->set_qos(pub_qos);
+                    if (was_auto_enable)
+                    {
+                        pub_qos.entity_factory().autoenable_created_entities = false;
+                        publisher_->set_qos(pub_qos);
+                    }
                     // Create the datawriter disabled and set the context.
                     datawriter_ = publisher_->create_datawriter(topic_, datawriter_qos_, &listener_, status_mask_);
                     if (datawriter_ != nullptr)

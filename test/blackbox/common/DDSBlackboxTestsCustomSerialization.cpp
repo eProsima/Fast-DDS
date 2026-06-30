@@ -132,7 +132,7 @@ void deserialize(
     test::CustomContext::check_context(std::dynamic_pointer_cast<test::CustomContext>(ctx));
 
     // We directly encode the data inside the representation header.
-    auto options = dcdr.get_dds_cdr_options();
+    std::array<uint8_t, 2> options = dcdr.get_dds_cdr_options();
     data.data = options[0];
 }
 

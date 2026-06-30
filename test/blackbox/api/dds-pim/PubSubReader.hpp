@@ -540,8 +540,11 @@ public:
                     // Ensure the datareader is created disabled so that the context can be set before enabling it.
                     auto sub_qos = subscriber_->get_qos();
                     bool was_auto_enable = sub_qos.entity_factory().autoenable_created_entities;
-                    sub_qos.entity_factory().autoenable_created_entities = false;
-                    subscriber_->set_qos(sub_qos);
+                    if (was_auto_enable)
+                    {
+                        sub_qos.entity_factory().autoenable_created_entities = false;
+                        subscriber_->set_qos(sub_qos);
+                    }
                     // Create the datareader disabled and set the context.
                     datareader_ = subscriber_->create_datareader(topic_desc, datareader_qos_, &listener_, status_mask_);
                     if (datareader_ != nullptr)
