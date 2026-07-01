@@ -1412,7 +1412,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     // the environment
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Modify environment file
-#ifndef __APPLE__
+#if FILEWATCH_ENABLED
     std::ofstream file(filename);
     file
         <<
@@ -1429,7 +1429,7 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     output.push_back(locator);
 
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
-#endif // APPLE
+#endif // FILEWATCH_ENABLED
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -1686,7 +1686,7 @@ TEST(ParticipantTests, ServerParticipantReplaceRemoteServerListConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-#ifndef __APPLE__
+#if FILEWATCH_ENABLED
     fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.discoveryProtocol, fastdds::rtps::DiscoveryProtocol::SERVER);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
@@ -1704,7 +1704,7 @@ TEST(ParticipantTests, ServerParticipantReplaceRemoteServerListConfiguration)
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
-#endif // APPLE
+#endif // FILEWATCH_ENABLED
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -1738,7 +1738,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
     // Try adding a new remote server
-#ifndef __APPLE__
+#if FILEWATCH_ENABLED
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;192.168.1.133:64863\"}";
@@ -1746,7 +1746,7 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
-#endif // APPLE
+#endif // FILEWATCH_ENABLED
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -1767,13 +1767,13 @@ TEST(ParticipantTests, RepeatEnvironmentFileConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-#ifndef __APPLE__
+#if FILEWATCH_ENABLED
     set_and_check_with_environment_file(participant, {"172.17.0.5:4321", "192.168.1.133:64863"}, filename);
     set_and_check_with_environment_file(participant, {"172.17.0.5:64863", "192.168.1.133:4321"}, filename);
     set_and_check_with_environment_file(participant, {"172.17.0.5:64863", "192.168.1.133:4321"}, filename);
     set_and_check_with_environment_file(participant,
             {"172.17.0.5:64863", "192.168.1.133:4321", "192.168.5.15:1234"}, filename);
-#endif // APPLE
+#endif // FILEWATCH_ENABLED
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
     std::remove(filename.c_str());
 }
@@ -1805,7 +1805,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant);
-#ifndef __APPLE__
+#if FILEWATCH_ENABLED
     fastdds::rtps::RTPSParticipantAttributes attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Add new server through environment file
@@ -1852,7 +1852,7 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     output.push_back(locator);
     attributes = get_rtps_attributes(participant);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
-#endif // APPLE
+#endif // FILEWATCH_ENABLED
     result_qos = participant->get_qos();
     EXPECT_EQ(RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));

@@ -232,7 +232,7 @@ FileWatchHandle SystemInfo::watch_file(
         const fastdds::rtps::ThreadSettings& watch_thread_config,
         const fastdds::rtps::ThreadSettings& callback_thread_config)
 {
-#if defined(_WIN32) || defined(__unix__)
+#if FILEWATCH_ENABLED
     return FileWatchHandle (new filewatch::FileWatch<std::string>(filename,
                    [callback](const std::string& /*path*/, const filewatch::Event change_type)
                    {
@@ -246,21 +246,21 @@ FileWatchHandle SystemInfo::watch_file(
                                break;
                        }
                    }, watch_thread_config, callback_thread_config));
-#else // defined(_WIN32) || defined(__unix__)
+#else // !FILEWATCH_ENABLED
     static_cast<void>(filename);
     static_cast<void>(callback);
     static_cast<void>(watch_thread_config);
     static_cast<void>(callback_thread_config);
     return FileWatchHandle();
-#endif // defined(_WIN32) || defined(__unix__)
+#endif // FILEWATCH_ENABLED
 }
 
 void SystemInfo::stop_watching_file(
         FileWatchHandle& handle)
 {
-#if defined(_WIN32) || defined(__unix__)
+#if FILEWATCH_ENABLED
     handle.reset();
-#endif // if defined(_WIN32) || defined(__unix__)
+#endif // FILEWATCH_ENABLED
     static_cast<void>(handle);
 }
 

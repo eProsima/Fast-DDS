@@ -21,28 +21,39 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
+#include <chrono>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/utils/IPFinder.hpp>
 #include <utils/Host.hpp>
 
-#if defined(_WIN32) || defined(__unix__)
+// The bundled FileWatch backend is only usable on Windows and Unix. It is disabled
+// on QNX (where it compiles but throws at runtime) and on any other platform.
+#if (defined(_WIN32) || defined(__unix__)) && !defined(__QNX__)
+#define FILEWATCH_ENABLED 1
+#else
+#define FILEWATCH_ENABLED 0
+#endif // FileWatch backend availability
+
+#if FILEWATCH_ENABLED
 #include <FileWatch.hpp>
-#endif // defined(_WIN32) || defined(__unix__)
+#endif // FILEWATCH_ENABLED
 
 namespace eprosima {
 
 using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
-#if defined(_WIN32) || defined(__unix__)
+#if FILEWATCH_ENABLED
 using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
 #else
 using FileWatchHandle = void*;
-#endif // defined(_WIN32) || defined(__unix__)
+#endif // FILEWATCH_ENABLED
 
 /**
  * This singleton serves as a centralized point from where to obtain platform dependent system information.

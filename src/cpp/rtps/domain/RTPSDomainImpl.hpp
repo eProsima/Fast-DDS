@@ -20,10 +20,6 @@
 #include <memory>
 #include <unordered_map>
 
-#if defined(_WIN32) || defined(__unix__)
-#include <FileWatch.hpp>
-#endif // defined(_WIN32) || defined(__unix__)
-
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/RTPSDomain.hpp>
@@ -219,7 +215,7 @@ private:
 
     std::unordered_map<uint32_t, ParticipantIDState> m_RTPSParticipantIDs;
 
-    FileWatchHandle file_watch_handle_;
+    FileWatchHandle file_watch_handle_ = nullptr;
     fastdds::rtps::ThreadSettings watch_thread_config_;
     fastdds::rtps::ThreadSettings callback_thread_config_;
 

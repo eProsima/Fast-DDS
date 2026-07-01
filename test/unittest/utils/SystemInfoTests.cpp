@@ -226,7 +226,7 @@ TEST_F(SystemInfoTests, EnvironmentFileTest)
     EXPECT_EQ(0, eprosima::SystemInfo::get_environment_file().compare(value));
 }
 
-#if defined(_WIN32) || defined(__unix__)
+#if FILEWATCH_ENABLED
 /**
  * This test checks the file watchers
  */
@@ -297,7 +297,7 @@ TEST_F(SystemInfoTests, FileWatchTest)
     EXPECT_EQ(times_called, times_called_);
 }
 
-#endif // defined(_WIN32) || defined(__unix__)
+#endif // FILEWATCH_ENABLED
 
 int main(
         int argc,
