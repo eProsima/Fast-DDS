@@ -325,7 +325,7 @@ public:
     }
 
     void* create_data_ctx(
-            const std::shared_ptr<Context>& context)
+            const std::shared_ptr<Context>& context) override
     {
         was_called(custom_calls_.create_data);
         CustomContext::check_context(context);
@@ -340,7 +340,7 @@ public:
 
     void delete_data_ctx(
             const std::shared_ptr<Context>& context,
-            void* data)
+            void* data) override
     {
         was_called(custom_calls_.delete_data);
         CustomContext::check_context(context);
@@ -469,7 +469,7 @@ public:
     }
 
     uint32_t get_max_serialized_size_ctx(
-            const std::shared_ptr<Context>& context)
+            const std::shared_ptr<Context>& context) override
     {
         was_called(custom_calls_.get_max_serialized_size);
         CustomContext::check_context(context);
