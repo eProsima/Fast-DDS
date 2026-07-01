@@ -74,12 +74,14 @@ public:
      * Constructor.
      * Requires information about the DataReader.
      *
-     * @param type  Type information. Needed to know if the type is keyed, as long as the maximum serialized size.
-     * @param topic Topic description. Topic and type name are used on debug messages.
-     * @param qos   DataReaderQoS policy. History related limits are taken from here.
+     * @param type     Type information. Needed to know if the type is keyed, as long as the maximum serialized size.
+     * @param context  Type support context. Used when calling type support methods that require a context.
+     * @param topic    Topic description. Topic and type name are used on debug messages.
+     * @param qos      DataReaderQoS policy. History related limits are taken from here.
      */
     DataReaderHistory(
             const TypeSupport& type,
+            const std::shared_ptr<TopicDataType::Context>& context,
             const TopicDescription& topic,
             const DataReaderQos& qos);
 
@@ -396,7 +398,9 @@ private:
     //!Whether the type has keys
     bool has_keys_;
     //!TopicDataType
-    fastdds::dds::TopicDataType* type_;
+    TopicDataType* type_;
+    //!Context for the TopicDataType
+    std::shared_ptr<TopicDataType::Context> context_;
 
     /// Function to compute the instance handle of a received change
     std::function<bool(CacheChange_t*)> compute_key_for_change_fn_;

@@ -531,7 +531,33 @@ public:
             }
             if (datareader_ == nullptr)
             {
-                datareader_ = subscriber_->create_datareader(topic_desc, datareader_qos_, &listener_, status_mask_);
+                if (nullptr == context_.get())
+                {
+                    datareader_ = subscriber_->create_datareader(topic_desc, datareader_qos_, &listener_, status_mask_);
+                }
+                else
+                {
+                    // Ensure the datareader is created disabled so that the context can be set before enabling it.
+                    auto sub_qos = subscriber_->get_qos();
+                    bool was_auto_enable = sub_qos.entity_factory().autoenable_created_entities;
+                    if (was_auto_enable)
+                    {
+                        sub_qos.entity_factory().autoenable_created_entities = false;
+                        subscriber_->set_qos(sub_qos);
+                    }
+                    // Create the datareader disabled and set the context.
+                    datareader_ = subscriber_->create_datareader(topic_desc, datareader_qos_, &listener_, status_mask_);
+                    if (datareader_ != nullptr)
+                    {
+                        datareader_->set_type_support_context(context_);
+                        if (was_auto_enable)
+                        {
+                            sub_qos.entity_factory().autoenable_created_entities = true;
+                            subscriber_->set_qos(sub_qos);
+                            datareader_->enable();
+                        }
+                    }
+                }
             }
 
             if (datareader_ != nullptr)
@@ -1772,6 +1798,13 @@ public:
         return *this;
     }
 
+    PubSubReader& context(
+            const std::shared_ptr<eprosima::fastdds::dds::TopicDataType::Context>& context)
+    {
+        context_ = context;
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {
@@ -2264,6 +2297,7 @@ protected:
     eprosima::fastdds::dds::DataReader* datareader_;
     eprosima::fastdds::dds::DataReaderQos datareader_qos_;
     eprosima::fastdds::dds::StatusMask status_mask_;
+    std::shared_ptr<eprosima::fastdds::dds::TopicDataType::Context> context_;
     std::string topic_name_;
     eprosima::fastdds::rtps::GUID_t participant_guid_;
     eprosima::fastdds::rtps::GUID_t datareader_guid_;
