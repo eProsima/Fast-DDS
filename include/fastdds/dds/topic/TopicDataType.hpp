@@ -23,6 +23,8 @@
 #include <memory>
 #include <string>
 
+#include <fastcdr/CdrContext.hpp>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/fastdds_dll.hpp>
@@ -66,10 +68,12 @@ public:
      *
      * This context can be used to store specific information of the data type that can be used during serialization and deserialization.
      * For example, it can be used to store the upper bounds of strings and sequences.
+     *
+     * It inherits from `fastcdr::CdrContext`, so it can be directly used in a fastcdr objects.
      */
-    struct FASTDDS_EXPORTED_API Context
+    struct FASTDDS_EXPORTED_API Context : public fastcdr::CdrContext
     {
-        virtual ~Context() = default;
+        ~Context() override = default;
     };
 
     /**

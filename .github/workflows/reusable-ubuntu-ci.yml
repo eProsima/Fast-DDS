@@ -784,6 +784,10 @@ jobs:
           workspace_dependencies: ${{ env.WORKSPACE }}/install
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
+      - name: Spelling check summary
+        if: ${{ !cancelled() && inputs.run-tests == true }}
+        run: find build -type f -iname "*.spelling" -exec cat {} \;
+
       - name: Fast DDS Docs test summary
         uses: eProsima/eProsima-CI/ubuntu/junit_summary@v0
         if: ${{ !cancelled() && inputs.run-tests == true }}

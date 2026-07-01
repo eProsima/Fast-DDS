@@ -111,7 +111,6 @@ DataReaderImpl::DataReaderImpl(
     , topic_(topic)
     , qos_(get_datareader_qos_from_settings(qos))
 #pragma warning (disable : 4355 )
-    , history_(type, *topic, qos_)
     , listener_(listener)
     , reader_listener_(this)
     , deadline_duration_us_(qos_.deadline().period.to_ns() * 1e-3)
@@ -167,6 +166,8 @@ DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(
 ReturnCode_t DataReaderImpl::enable()
 {
     assert(reader_ == nullptr);
+
+    history_.reset(new detail::DataReaderHistory(type_, type_support_context_, *topic_, qos_));
 
     ReaderAttributes att;
 
@@ -248,7 +249,7 @@ ReturnCode_t DataReaderImpl::enable()
         subscriber_->rtps_participant(),
         guid_.entityId,
         att, pool,
-        static_cast<ReaderHistory*>(&history_),
+        static_cast<ReaderHistory*>(history_.get()),
         static_cast<ReaderListener*>(&reader_listener_));
 
     if (reader == nullptr)
@@ -562,10 +563,10 @@ ReturnCode_t DataReaderImpl::read_or_take(
 
     set_read_communication_status(false);
 
-    auto it = history_.lookup_available_instance(handle, exact_instance);
+    auto it = history_->lookup_available_instance(handle, exact_instance);
     if (!it.first)
     {
-        if (exact_instance && !history_.is_instance_present(handle))
+        if (exact_instance && !history_->is_instance_present(handle))
         {
             return RETCODE_BAD_PARAMETER;
         }
@@ -756,7 +757,7 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
 
     set_read_communication_status(false);
 
-    auto it = history_.lookup_available_instance(HANDLE_NIL, false);
+    auto it = history_->lookup_available_instance(HANDLE_NIL, false);
     if (!it.first)
     {
         return RETCODE_NO_DATA;
@@ -806,7 +807,7 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
         return RETCODE_NOT_ENABLED;
     }
 
-    if (history_.get_first_untaken_info(*info))
+    if (history_->get_first_untaken_info(*info))
     {
         return RETCODE_OK;
     }
@@ -816,7 +817,7 @@ ReturnCode_t DataReaderImpl::get_first_untaken_info(
 uint64_t DataReaderImpl::get_unread_count(
         bool mark_as_read)
 {
-    uint64_t ret_val = reader_ ? history_.get_unread_count(mark_as_read) : 0;
+    uint64_t ret_val = reader_ ? history_->get_unread_count(mark_as_read) : 0;
     if (mark_as_read)
     {
         try_notify_read_conditions();
@@ -1077,7 +1078,7 @@ bool DataReaderImpl::on_data_available(
     {
         CacheChange_t* change = nullptr;
 
-        if (history_.get_change(seq, writer_guid, &change))
+        if (history_->get_change(seq, writer_guid, &change))
         {
             ret_val |= on_new_cache_change_added(change);
         }
@@ -1096,16 +1097,16 @@ bool DataReaderImpl::on_new_cache_change_added(
     CacheChange_t* new_change = const_cast<CacheChange_t*>(change);
     // Update the reception timestamp when the sample is added to the instance
     rtps::Time_t::now(new_change->reader_info.receptionTimestamp);
-    if (!history_.update_instance_nts(new_change))
+    if (!history_->update_instance_nts(new_change))
     {
-        history_.remove_change_sub(new_change);
+        history_->remove_change_sub(new_change);
         return false;
     }
 
     if (qos_.deadline().period.to_ns() > 0 && qos_.deadline().period != dds::c_TimeInfinite &&
             deadline_missed_status_.total_count < (std::numeric_limits<uint32_t>::max)())
     {
-        if (!history_.set_next_deadline(
+        if (!history_->set_next_deadline(
                     change->instanceHandle,
                     steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_)))
         {
@@ -1134,12 +1135,12 @@ bool DataReaderImpl::on_new_cache_change_added(
     // If so, remove it from the history and return false to avoid notifying the listener
     if (expiration_ts < current_ts)
     {
-        history_.remove_change_sub(new_change);
+        history_->remove_change_sub(new_change);
         return false;
     }
 
     CacheChange_t* earliest_change;
-    if (history_.get_earliest_change(&earliest_change))
+    if (history_->get_earliest_change(&earliest_change))
     {
         if (earliest_change == change)
         {
@@ -1177,7 +1178,7 @@ void DataReaderImpl::update_subscription_matched_status(
 
     if (count_change < 0)
     {
-        if (history_.writer_not_alive(status.remoteEndpointGuid))
+        if (history_->writer_not_alive(status.remoteEndpointGuid))
         {
             set_read_communication_status(true);
         }
@@ -1256,7 +1257,7 @@ bool DataReaderImpl::deadline_timer_reschedule()
     assert(deadline_missed_status_.total_count < (std::numeric_limits<uint32_t>::max)());
 
     steady_clock::time_point next_deadline_us;
-    if (!history_.get_next_deadline(timer_owner_, next_deadline_us))
+    if (!history_->get_next_deadline(timer_owner_, next_deadline_us))
     {
         EPROSIMA_LOG_ERROR(DATA_READER, "Could not get the next deadline from the history");
         return false;
@@ -1352,7 +1353,7 @@ bool DataReaderImpl::deadline_missed()
         return false; // do not reschedule
     }
 
-    if (!history_.set_next_deadline(
+    if (!history_->set_next_deadline(
                 timer_owner_,
                 steady_clock::now() + duration_cast<steady_clock::duration>(deadline_duration_us_), true))
     {
@@ -1389,7 +1390,7 @@ bool DataReaderImpl::lifespan_expired()
     fastdds::rtps::Time_t::now(current_ts);
 
     CacheChange_t* earliest_change;
-    while (history_.get_earliest_change(&earliest_change))
+    while (history_->get_earliest_change(&earliest_change))
     {
         fastdds::rtps::Time_t expiration_ts = earliest_change->sourceTimestamp + qos_.lifespan().duration;
 
@@ -1402,7 +1403,7 @@ bool DataReaderImpl::lifespan_expired()
         }
 
         // The earliest change has expired
-        history_.remove_change_sub(earliest_change);
+        history_->remove_change_sub(earliest_change);
 
         try_notify_read_conditions();
     }
@@ -1559,7 +1560,7 @@ LivelinessChangedStatus& DataReaderImpl::update_liveliness_status(
 {
     if (0 < status.not_alive_count_change)
     {
-        if (history_.writer_not_alive(iHandle2GUID(status.last_publication_handle)))
+        if (history_->writer_not_alive(iHandle2GUID(status.last_publication_handle)))
         {
             set_read_communication_status(true);
         }
@@ -1934,13 +1935,13 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
-    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
+    if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_->m_att.memoryPolicy &&
             (type_->is_bounded_ctx(type_support_context_) || is_plain))
     {
-        history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
+        history_->m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
     }
 
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+    PoolConfig config = PoolConfig::from_history_attributes(history_->m_att);
 
     if (!sample_pool_)
     {
@@ -1962,7 +1963,7 @@ void DataReaderImpl::release_payload_pool()
 
     if (!is_custom_payload_pool_)
     {
-        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+        PoolConfig config = PoolConfig::from_history_attributes(history_->m_att);
         std::shared_ptr<fastdds::rtps::ITopicPayloadPool> topic_payload_pool =
                 std::dynamic_pointer_cast<fastdds::rtps::ITopicPayloadPool>(payload_pool_);
         topic_payload_pool->release_history(config, true);
@@ -2095,7 +2096,7 @@ InstanceHandle_t DataReaderImpl::lookup_instance(
     {
         if (type_->compute_key_ctx(type_support_context_, const_cast<void*>(instance), handle, false))
         {
-            if (!history_.is_instance_present(handle) || !handle.isDefined())
+            if (!history_->is_instance_present(handle) || !handle.isDefined())
             {
                 handle = HANDLE_NIL;
             }
@@ -2286,7 +2287,7 @@ void DataReaderImpl::try_notify_read_conditions() noexcept
         std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
 
         auto old_mask = last_mask_state_;
-        last_mask_state_ = history_.get_mask_status();
+        last_mask_state_ = history_->get_mask_status();
         current_mask = last_mask_state_;
 
         notify = last_mask_state_.sample_states & ~old_mask.sample_states ||

@@ -282,6 +282,11 @@ ReturnCode_t DataWriterImpl::enable()
     {
         std::lock_guard<std::mutex> qos_guard(qos_mutex_);
 
+        // Set Datawriter's DataRepresentationId taking into account the QoS.
+        data_representation_ = qos_.representation().m_value.empty()
+                || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
+                        ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
+
         auto history_att = DataWriterHistory::to_history_attributes(
             qos_.history(),
             qos_.resource_limits(),
@@ -405,11 +410,6 @@ ReturnCode_t DataWriterImpl::enable()
 
         late_joiners_filtering_enabled = filtering_enabled &&
                 TRANSIENT_LOCAL_DURABILITY_QOS == qos_.durability().kind && qos_has_late_joiners_cft(qos_);
-
-        // Set Datawriter's DataRepresentationId taking into account the QoS.
-        data_representation_ = qos_.representation().m_value.empty()
-                || XCDR_DATA_REPRESENTATION == qos_.representation().m_value.at(0)
-                        ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
 
         lifespan_duration = qos_.lifespan().duration;
     }
