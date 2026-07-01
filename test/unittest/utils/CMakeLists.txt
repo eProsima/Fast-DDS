@@ -83,6 +83,7 @@ set(REF_COUNTED_POINTER_TESTS_SOURCE
 set(BUFFER_TEST_SOURCE
     buffer/test_buffer.cpp
     buffer/test_buffer_context.cpp
+    buffer/test_buffer_serialization.cpp
     buffer/test_main.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/buffer/BufferAwareContext.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/buffer/buffer_serialization.cpp
