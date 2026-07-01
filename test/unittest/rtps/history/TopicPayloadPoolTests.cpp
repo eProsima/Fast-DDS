@@ -17,6 +17,7 @@
 #include <rtps/history/TopicPayloadPool.hpp>
 #include <fastdds/rtps/common/CacheChange.hpp>
 
+#include <limits>
 #include <tuple>
 
 using namespace eprosima::fastdds::rtps;
@@ -481,6 +482,49 @@ TEST(TopicPayloalPoolTests, dynamic_reusable_memory_zero_size)
 {
     PoolConfig config{ DYNAMIC_REUSABLE_MEMORY_MODE, 128, 0, 1};
     do_dynamic_topic_payload_pool_zero_size_test(config);
+}
+
+//! Regression test for redmine issue #25475
+//! When the allocation of a new payload node fails, the pool must report the
+//! failure gracefully (returning false) instead of letting the std::bad_alloc
+//! thrown by the PayloadNode constructor propagate out of get_payload.
+//! Might require to be run in a constrained environment (i.e. container with limited memory)
+//! to actually trigger the allocation failure, but will not fail if the allocation succeeds.
+TEST(TopicPayloalPoolTests, bad_alloc_on_get_payload_is_handled)
+{
+    // An infinite history so that the pool is allowed to allocate on demand
+    // (otherwise allocate() would short-circuit on the maximum pool size).
+    PoolConfig config{ DYNAMIC_RESERVE_MEMORY_MODE, 128, 0, 0 };
+
+    std::unique_ptr<ITopicPayloadPool> pool = TopicPayloadPool::get(config);
+    ASSERT_NE(pool, nullptr);
+    pool->reserve_history(config, false);
+
+    // Request a payload so large that the underlying calloc is expected to fail,
+    // making the PayloadNode constructor throw std::bad_alloc.
+    constexpr uint32_t huge_size = (std::numeric_limits<uint32_t>::max)();
+
+    CacheChange_t change;
+    bool result = true;
+
+    // The pool must never let the exception escape.
+    EXPECT_NO_THROW(result = pool->get_payload(huge_size, change.serializedPayload));
+
+    if (result)
+    {
+        // On a platform able to satisfy such a large allocation, release it.
+        EXPECT_EQ(huge_size, change.serializedPayload.max_size);
+        pool->release_payload(change.serializedPayload);
+    }
+    else
+    {
+        // On allocation failure the payload must be left in a clean state.
+        EXPECT_EQ(change.serializedPayload.data, nullptr);
+        EXPECT_EQ(change.serializedPayload.max_size, 0u);
+        EXPECT_EQ(change.serializedPayload.payload_owner, nullptr);
+    }
+
+    pool->release_history(config, false);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
