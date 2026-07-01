@@ -24,103 +24,14 @@
 #include <fastdds/utils/buffer/buffer.hpp>
 #include <fastdds/utils/buffer/BufferAwareContext.hpp>
 #include <fastdds/utils/buffer/BufferBackend.hpp>
-#include <fastdds/utils/buffer/buffer_impl_base.hpp>
 #include <fastdds/utils/buffer/buffer_serialization.hpp>
-#include <fastdds/utils/buffer/cpu_buffer_impl.hpp>
 
+#include "mock_buffer_backend.hpp"
 #include "non_cpu_buffer_impl.hpp"
 
 using eprosima::fastdds::Buffer;
 using eprosima::fastdds::BufferAwareContext;
 using eprosima::fastdds::BufferBackend;
-using eprosima::fastdds::BufferImplBase;
-using eprosima::fastdds::CpuBufferImpl;
-
-namespace {
-
-/// Minimal non-CPU buffer implementation that actually holds data, so a
-/// registered backend can serialize/deserialize something meaningful.
-class MockBufferImpl : public BufferImplBase<uint8_t>
-{
-public:
-
-    explicit MockBufferImpl(
-            std::vector<uint8_t> data)
-        : data_(std::move(data))
-    {
-    }
-
-    std::string get_backend_type() const override
-    {
-        return "mock";
-    }
-
-    size_t size() const override
-    {
-        return data_.size();
-    }
-
-    std::unique_ptr<BufferImplBase<uint8_t>> to_cpu() const override
-    {
-        std::unique_ptr<CpuBufferImpl<uint8_t>> cpu(new CpuBufferImpl<uint8_t>());
-        cpu->get_storage() = data_;
-        return std::move(cpu);
-    }
-
-    std::unique_ptr<BufferImplBase<uint8_t>> clone() const override
-    {
-        return std::unique_ptr<MockBufferImpl>(new MockBufferImpl(data_));
-    }
-
-    const std::vector<uint8_t>& data() const
-    {
-        return data_;
-    }
-
-private:
-
-    std::vector<uint8_t> data_;
-};
-
-/// Backend that serializes/deserializes MockBufferImpl instances as a plain
-/// CDR sequence of uint8_t, so round trips can be checked against the
-/// original data.
-class MockBufferBackend : public BufferBackend
-{
-public:
-
-    size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const BufferImplBase<uint8_t>& data,
-            size_t& current_alignment) const override
-    {
-        const auto& mock = static_cast<const MockBufferImpl&>(data);
-        return calculator.calculate_serialized_size(mock.data(), current_alignment);
-    }
-
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr,
-            const BufferImplBase<uint8_t>& data) const override
-    {
-        const auto& mock = static_cast<const MockBufferImpl&>(data);
-        cdr << mock.data();
-        ++times_serialized;
-    }
-
-    std::unique_ptr<BufferImplBase<uint8_t>> deserialize(
-            eprosima::fastcdr::Cdr& cdr) const override
-    {
-        std::vector<uint8_t> vec;
-        cdr >> vec;
-        ++times_deserialized;
-        return std::unique_ptr<MockBufferImpl>(new MockBufferImpl(std::move(vec)));
-    }
-
-    mutable size_t times_serialized = 0;
-    mutable size_t times_deserialized = 0;
-};
-
-}  // namespace
 
 // ========== Backend registry ==========
 
