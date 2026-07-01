@@ -15,6 +15,7 @@
 /**
  * @file DataReaderImpl.cpp
  */
+
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 
 #include <cstdint>
@@ -263,7 +264,7 @@ void DataReaderImpl::on_subscription_matched(
 
     MatchingInfo matching_info;
     matching_info.status = (info.current_count_change == 1) ? MATCHED_MATCHING : REMOVED_MATCHING;
-    matching_info.remoteEndpointGuid = static_cast<GUID_t>(info.last_publication_handle);
+    matching_info.remoteEndpointGuid = static_cast<rtps::GUID_t>(info.last_publication_handle);
     reader_listener_.on_reader_matched(reader_, matching_info);
 }
 
