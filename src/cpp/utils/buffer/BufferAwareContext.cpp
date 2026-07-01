@@ -86,12 +86,14 @@ size_t BufferAwareContext::calculate_serialized_size(
         // Add size for the two markers
         current_alignment += sizeof(uint32_t) * 2;
 
-        // Add size for the backend type string
-        current_alignment += calculator.calculate_serialized_size(backend_type, current_alignment);
+        // Add size for the backend type string.
+        // NOTE: calculate_serialized_size() already advances current_alignment as a side effect,
+        // so its return value must not be added to current_alignment again (that would double-count it).
+        calculator.calculate_serialized_size(backend_type, current_alignment);
 
-        // Add size for the buffer data using the backend's method
+        // Add size for the buffer data using the backend's method (same side-effect caveat as above).
         const BufferImplBase<uint8_t>* impl = data.get_impl();
-        current_alignment += backend->calculate_serialized_size(calculator, *impl, current_alignment);
+        backend->calculate_serialized_size(calculator, *impl, current_alignment);
 
         // Return the total size added
         return current_alignment - initial_alignment;
