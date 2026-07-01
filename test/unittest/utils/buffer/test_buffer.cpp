@@ -1096,11 +1096,3 @@ TEST(TestBufferNonCpuDeathTest, free_swap_vector_buffer_terminates) {
     std::vector<uint8_t> vec{1, 2, 3};
     EXPECT_DEATH({using std::swap; swap(vec, buf);}, ".*");
 }
-
-int main(
-        int argc,
-        char ** argv)
-{
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

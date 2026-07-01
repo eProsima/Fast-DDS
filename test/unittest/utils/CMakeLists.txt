@@ -81,7 +81,8 @@ set(REF_COUNTED_POINTER_TESTS_SOURCE
     RefCountedPointerTests.cpp)
 
 set(BUFFER_TEST_SOURCE
-    test_buffer.cpp)
+    buffer/test_buffer.cpp
+    buffer/test_main.cpp)
 
 include_directories(mock/)
 
