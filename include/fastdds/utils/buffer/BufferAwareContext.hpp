@@ -28,7 +28,7 @@ namespace eprosima {
 namespace fastdds {
 
 /**
- * @brief A CdrContext that is aware of eprosima::fastdds::Buffer and can serialize/deserialize it.
+ * @brief A Context that is aware of eprosima::fastdds::Buffer and can serialize/deserialize it.
  *
  * It is also a registry for BufferBackend instances, allowing different backends to be registered
  * and used for serialization/deserialization.

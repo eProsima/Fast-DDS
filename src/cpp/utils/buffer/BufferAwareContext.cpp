@@ -6,7 +6,6 @@
 // You may obtain a copy of the License at
 // https://www.eprosima.com/licenses/LICENSE-REV03
 
-
 #include <fastdds/utils/buffer/BufferAwareContext.hpp>
 
 #include <cstdint>
@@ -30,7 +29,6 @@ namespace fastdds {
 
 constexpr uint32_t kBufferDescriptorMarker1 = 0xFFFFFFFFu;
 constexpr uint32_t kBufferDescriptorMarker2 = 0x524F5332u;  // "ROS2" in ASCII
-
 
 void BufferAwareContext::register_backend(
         const std::string& backend_type,
