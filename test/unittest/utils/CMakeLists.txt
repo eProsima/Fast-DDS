@@ -82,7 +82,12 @@ set(REF_COUNTED_POINTER_TESTS_SOURCE
 
 set(BUFFER_TEST_SOURCE
     buffer/test_buffer.cpp
-    buffer/test_main.cpp)
+    buffer/test_buffer_context.cpp
+    buffer/test_main.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/buffer/BufferAwareContext.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/buffer/buffer_serialization.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
 include_directories(mock/)
 
@@ -192,8 +197,9 @@ target_link_libraries(RefCountedPointerTests GTest::gtest)
 gtest_discover_tests(RefCountedPointerTests)
 
 add_executable(BufferTests ${BUFFER_TEST_SOURCE})
-target_include_directories(BufferTests PRIVATE ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(BufferTests GTest::gtest)
+target_include_directories(BufferTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(BufferTests fastcdr GTest::gtest)
 gtest_discover_tests(BufferTests)
 
 ###############################################################################
