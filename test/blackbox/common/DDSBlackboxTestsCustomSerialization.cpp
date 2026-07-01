@@ -306,8 +306,8 @@ public:
         try
         {
             eprosima::fastcdr::CdrSizeCalculator calculator(
-                    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-                    eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
             size_t current_alignment {0};
             const CustomData* p_type = static_cast<const CustomData*>(data);
             auto calc_size = calculator.calculate_serialized_size(*p_type, current_alignment);
