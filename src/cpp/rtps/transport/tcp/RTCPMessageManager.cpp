@@ -476,8 +476,8 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     {
         sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, RETCODE_INCOMPATIBLE_VERSION);
         EPROSIMA_LOG_WARNING(RTCP, "Rejected client due to INCOMPATIBLE_VERSION: Expected: " << c_rtcpProtocolVersion
-                                                                                             << " but received " <<
-                request.protocolVersion());
+                                                                                             << " but received "
+                                                                                             << request.protocolVersion());
         return RETCODE_INCOMPATIBLE_VERSION;
     }
 

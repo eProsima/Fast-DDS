@@ -101,6 +101,20 @@ public:
                 const GUID_t& participant_guid,
                 const GUID_t& reader_guid));
 
+    virtual bool pairing_reader_proxy_with_any_local_writer(
+            const GUID_t&,
+            ReaderProxyData*)
+    {
+        return true;
+    }
+
+    virtual bool pairing_writer_proxy_with_any_local_reader(
+            const GUID_t&,
+            WriterProxyData*)
+    {
+        return true;
+    }
+
 #if HAVE_SECURITY
     MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer,
             const GUID_t& remote_participant_guid, ReaderProxyData & rdata));

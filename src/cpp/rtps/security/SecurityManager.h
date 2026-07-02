@@ -19,6 +19,8 @@
 #define _RTPS_SECURITY_SECURITYMANAGER_H_
 
 #include <atomic>
+#include <chrono>
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -35,6 +37,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/security/authentication/Authentication.h>
 #include <fastdds/rtps/security/authentication/Handshake.h>
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
 #include <fastdds/rtps/writer/WriterListener.h>
@@ -68,7 +71,7 @@ struct EndpointSecurityAttributes;
  *
  * @ingroup SECURITY_MODULE
  */
-class SecurityManager : private WriterListener
+class SecurityManager : private WriterListener, public AuthenticationListener
 {
     static constexpr std::size_t PARTICIPANT_STATELESS_MESSAGE_PAYLOAD_DEFAULT_SIZE = 8192;
     static constexpr std::size_t PARTICIPANT_VOLATILE_MESSAGE_PAYLOAD_DEFAULT_SIZE = 1024;
@@ -633,6 +636,47 @@ private:
             const DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr);
 
     /**
+     * Removes the info for a remote participant
+     *
+     * @param auth_ptr Pointer to the remote participant info to remove.
+     * @param [out] exception Security exception.
+     * @return true if the participant info was removed, false otherwise.
+     */
+    bool remove_discovered_participant_info(
+            const DiscoveredParticipantInfo::AuthUniquePtr& auth_ptr,
+            SecurityException& exception);
+
+    /**
+     * Removes a participant from the manager without taking the mutex.
+     *
+     * @param remote_guid The GUID of the participant to remove.
+     */
+    void remove_participant_unlocked(
+            const GUID_t& remote_guid);
+
+    /**
+     * Removes a participant from the manager without taking the mutex.
+     *
+     * @param remote_guid The GUID of the participant to remove.
+     * @param exception SecurityException& reference to the exception object.
+     * @return true if the participant info was removed, false otherwise.
+     */
+    bool remove_participant_unlocked(
+            const GUID_t& remote_guid,
+            SecurityException& exception);
+
+    /**
+     * Revokes the identity of a remote participant.
+     *
+     * @param remote_guid The GUID of the participant to revoke.
+     * @param exception SecurityException& reference to the exception object.
+     * @return true if the participant info was removed, false otherwise.
+     */
+    bool revoke_remote_participant(
+            const GUID_t& remote_guid,
+            SecurityException& exception);
+
+    /**
      * Sets the specified info for a remote participant
      *
      * @pre SecurityManager mutex should not have been taken yet.
@@ -719,9 +763,26 @@ private:
      * @param remote_participant_crypto ParticipantCryptoHandle* handle to cryptographic data
      * @param remote_participant_guid GUID_t& remote participant id
      */
-    void exchange_participant_crypto(
+    bool exchange_participant_crypto(
             std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto,
             const GUID_t& remote_participant_guid);
+
+    bool send_token_message(
+            ParticipantGenericMessage& message);
+
+    bool exchange_writer_endpoint_crypto(
+            const GUID_t& local_writer_guid,
+            DatawriterCryptoHandle& writer_handle,
+            const GUID_t& remote_participant_guid,
+            const GUID_t& remote_reader_guid,
+            DatareaderCryptoHandle& reader_handle);
+
+    bool exchange_reader_endpoint_crypto(
+            const GUID_t& local_reader_guid,
+            DatareaderCryptoHandle& reader_handle,
+            const GUID_t& remote_participant_guid,
+            const GUID_t& remote_writer_guid,
+            DatawriterCryptoHandle& writer_handle);
 
     void process_participant_stateless_message(
             const CacheChange_t* const change);
@@ -803,6 +864,11 @@ private:
     void on_validation_failed(
             const ParticipantProxyData& participant_data,
             const SecurityException& exception) const;
+
+    bool on_revoke_identity(
+            Authentication& plugin,
+            const IdentityHandle& handle,
+            SecurityException& exception) override;
 
     RTPSParticipantImpl* participant_ = nullptr;
     StatelessWriter* participant_stateless_message_writer_ = nullptr;
