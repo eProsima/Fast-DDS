@@ -18,6 +18,8 @@
 
 #include <atomic>
 #include <algorithm>
+#include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <map>
 
@@ -48,6 +50,113 @@ enum communication_type
     INTRAPROCESS,
     DATASHARING
 };
+
+// A LogConsumer that just counts the number of entries consumed
+struct TestConsumer : public eprosima::fastdds::dds::LogConsumer
+{
+    TestConsumer(
+            std::atomic_size_t& n_logs_ref)
+        : n_logs_(n_logs_ref)
+    {
+    }
+
+    void Consume(
+            const eprosima::fastdds::dds::Log::Entry&) override
+    {
+        ++n_logs_;
+    }
+
+private:
+
+    std::atomic_size_t& n_logs_;
+};
+
+static void fill_pub_auth(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainpubcert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainpubkey.pem");
+
+    // Select the key agreement algorithm based on process id
+    switch (static_cast<uint32_t>(GET_PID()) % 4u)
+    {
+        // Automatic selection
+        case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "AUTO");
+            break;
+        // Force DH
+        case 2u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
+            break;
+        // Force ECDH
+        case 3u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+            break;
+        // Leave default
+        case 0u:
+        default:
+            break;
+    }
+}
+
+static void fill_sub_auth(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainsubcert.pem");
+    policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainsubkey.pem");
+
+    // Select the key agreement algorithm based on process id
+    switch (static_cast<uint32_t>(GET_PID()) % 4u)
+    {
+        // Automatic selection
+        case 1u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "AUTO");
+            break;
+        // Force DH
+        case 2u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "DH");
+            break;
+        // Force ECDH
+        case 3u:
+            policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.preferred_key_agreement", "ECDH");
+            break;
+        // Leave default
+        case 0u:
+        default:
+            break;
+    }
+}
+
+static void fill_access(
+        PropertyPolicy& policy,
+        const std::string& governance_file = "governance_only_auth.smime",
+        const std::string& permissions_file = "permissions.smime",
+        const std::string& permissions_ca_file = "maincacert.pem")
+{
+    policy.properties().emplace_back("dds.sec.access.plugin", "builtin.Access-Permissions");
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca",
+            "file://" + std::string(certs_path) + "/" + permissions_ca_file);
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.governance",
+            "file://" + std::string(certs_path) + "/" + governance_file);
+    policy.properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions",
+            "file://" + std::string(certs_path) + "/" + permissions_file);
+}
+
+static void fill_crypto(
+        PropertyPolicy& policy)
+{
+    policy.properties().emplace_back("dds.sec.crypto.plugin", "builtin.AES-GCM-GMAC");
+}
 
 class Security : public testing::TestWithParam<communication_type>
 {
@@ -123,7 +232,8 @@ public:
                 "% { $_.Matches.Groups[1].Value } | Out-File -FilePath softhsm_serial -Encoding ASCII\""));
 #else // We are running something with sh
         ASSERT_EQ(0,
-                std::system ("softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
+                std::system (
+                    "softhsm2-util --show-slots | grep -oP 'Serial number:\\s*\\K(\\d|\\w)+' > softhsm_serial"));
 #endif // _WIN32
         serial_stream << std::ifstream("softhsm_serial").rdbuf();
         std::remove ("softhsm_serial");
@@ -490,7 +600,7 @@ TEST(Security, BuiltinAuthenticationPlugin_second_participant_creation_loop)
 
         void reset()
         {
-            std::lock_guard < std::mutex> guard(mutex_);
+            std::lock_guard<std::mutex> guard(mutex_);
             message_sent_ = false;
         }
 
@@ -3378,7 +3488,7 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
     EXPECT_EQ(num_samples / 2u, reader_p_2.getReceivedCount());
 }
 
-template <typename DataType>
+template<typename DataType>
 void prepare_pkcs11_nodes(
         PubSubReader<DataType>& reader,
         PubSubWriter<DataType>& writer,
@@ -3632,7 +3742,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
     //!Lambda for configuring publisher participant qos and security properties
     auto secure_participant_pub_configurator = [&governance_file,
                     &permissions_file](const std::shared_ptr<PubSubWriter<HelloWorldPubSubType>>& part,
-                    const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
+            const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
             {
                 part->lease_duration(3, 1);
                 part->disable_builtin_transport().add_user_transport_to_pparams(interface);
@@ -3669,7 +3779,7 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
     //!Lambda for configuring subscriber participant qos and security properties
     auto secure_participant_sub_configurator = [&governance_file,
                     &permissions_file](const std::shared_ptr<PubSubReader<HelloWorldPubSubType>>& part,
-                    const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
+            const std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>& interface)
             {
                 part->lease_duration(3, 1);
                 part->disable_builtin_transport().add_user_transport_to_pparams(interface);
@@ -5178,6 +5288,161 @@ TEST(Security, DatagramInjectionOnReader_23836)
     security_datagram_injection_on_reader_test(
         "HelloWorldTopic_DatagramInjectionOnReader_23836",
         "datagrams/23836.bin");
+}
+
+/**
+ * This is a regression test for redmine issue #24414
+ */
+TEST(Security, RemoveParticipantAfterIdentityCertificateExpires)
+{
+    std::string permissions_file("permissions_modifiable_expiration.smime");
+    std::string governance_file("governance_helloworld_all_enable.smime");
+
+    // We generate the new file with the expiring certificate set to 20 seconds
+#ifdef _WIN32
+    std::string running_command = "python generate_expiring_ca.py";
+    FILE* pipe = _popen(running_command.c_str(), "r");
+#else
+    std::string running_command = "python3 generate_expiring_ca.py";
+    FILE* pipe = popen(running_command.c_str(), "r");
+#endif // _WIN32
+
+    int return_code_ = -1;
+    if (pipe)
+    {
+        char buffer[256];
+        while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
+        {
+            std::cout << buffer;
+        }
+#ifdef _WIN32
+        return_code_ = _pclose(pipe);
+#else
+        return_code_ = pclose(pipe);
+#endif // ifdef _WIN32
+    }
+
+    if (return_code_ != 0)
+    {
+        std::cout << "Error running system" << std::endl;
+    }
+
+    // Three participants:
+    //   A (pubsub_writer)
+    //   B (pubsub_reader)
+    //   C (expiring_reader)
+
+    std::string topic_name = "HelloWorldTopic";
+    auto pubsub_writer   = std::make_shared<PubSubWriter<HelloWorldPubSubType>>(topic_name);
+    auto pubsub_reader   = std::make_shared<PubSubReader<HelloWorldPubSubType>>(topic_name);
+    auto expiring_reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>(topic_name);
+
+    std::cout << "Initializing participants for topic " << topic_name << std::endl;
+
+    //! 1. Configure participant A
+    {
+        PropertyPolicy property_policy;
+        fill_pub_auth(property_policy);
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        pubsub_writer->lease_duration(3, 1);
+        pubsub_writer->property_policy(property_policy);
+    }
+
+    //! 2. Configure participant B
+    {
+        PropertyPolicy property_policy;
+        fill_sub_auth(property_policy);
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        pubsub_reader->lease_duration(3, 1);
+        pubsub_reader->property_policy(property_policy);
+    }
+
+    //! 3. Configure participant C
+    {
+        PropertyPolicy property_policy;
+        property_policy.properties().emplace_back("dds.sec.auth.plugin", "builtin.PKI-DH");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
+                "file://" + std::string(certs_path) + "/maincacert.pem");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+                "file://" + std::string(certs_path) + "/modifiablesubcert.pem");
+        property_policy.properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
+                "file://" + std::string(certs_path) + "/modifiablesubkey.pem");
+        fill_access(property_policy, governance_file, permissions_file);
+        fill_crypto(property_policy);
+        expiring_reader->lease_duration(3, 1);
+        expiring_reader->property_policy(property_policy);
+    }
+
+    pubsub_writer->init();
+    pubsub_reader->init();
+    expiring_reader->init();
+
+    ASSERT_TRUE(pubsub_writer->isInitialized());
+    ASSERT_TRUE(pubsub_reader->isInitialized());
+    ASSERT_TRUE(expiring_reader->isInitialized());
+
+    std::cout << std::endl << "Waiting for all three participants to authenticate." << std::endl;
+
+    //! 4. The participants must authorize both of its peers before proceeding.
+    pubsub_writer->waitAuthorized();
+    pubsub_reader->waitAuthorized();
+    expiring_reader->waitAuthorized();
+
+    //! 5. Wait for endpoint discovery.
+    pubsub_writer->wait_discovery(2, std::chrono::seconds(10));
+    pubsub_reader->wait_discovery();
+    expiring_reader->wait_discovery();
+
+    //! 6. Send an initial batch while all three participants are alive.
+    auto data = default_helloworld_data_generator();
+    pubsub_reader->startReception(data);
+    expiring_reader->startReception(data);
+    pubsub_writer->send(data);
+    pubsub_reader->block_for_all();
+    expiring_reader->block_for_all();
+
+    // Wait 30 seconds for the certificate to expire.
+    std::this_thread::sleep_for(std::chrono::seconds(30));
+
+    //! 7. A must have been notified that C was revoked.
+    pubsub_writer->waitUnauthorized();
+
+    //! 8. B must also have been notified that C was revoked.
+    pubsub_reader->waitUnauthorized();
+    ASSERT_GE(pubsub_reader->unauthorized_count(), 1u);
+
+    //! 9. C sees its own identity revoked.
+    expiring_reader->waitUnauthorized();
+    ASSERT_GE(expiring_reader->unauthorized_count(), 1u);
+
+    //! 10. C's endpoint must have been unmatched from A and B after revocation.
+    // A's writer had two matched readers (B and C); after C is revoked it should have exactly one.
+    pubsub_writer->wait_discovery(1, std::chrono::seconds(10));
+    ASSERT_EQ(pubsub_writer->get_matched(), 1u);
+    // B's reader had one matched writer (A); C was a pure reader so B's count stays at one.
+    ASSERT_EQ(pubsub_reader->get_matched(), 1u);
+    // C's reader had one matched writer (A); after revocation it should have zero.
+    ASSERT_EQ(expiring_reader->get_matched(), 0);
+
+    //! 12. After rekey, A and B must still be matched and able to exchange data.
+    ASSERT_TRUE(pubsub_writer->is_matched());
+    ASSERT_TRUE(pubsub_reader->is_matched());
+
+    auto post_rekey_data = default_helloworld_data_generator(5);
+
+    expiring_reader->startReception(post_rekey_data);
+
+    pubsub_reader->startReception(post_rekey_data);
+    pubsub_writer->send(post_rekey_data);
+
+    //! 13. B must receive all 5 post-rekey messages.
+    pubsub_reader->block_for_all(std::chrono::seconds(10));
+
+    //! 12. C must not have decrypted any post-rekey message.
+    ASSERT_EQ(expiring_reader->getReceivedCount(), 0u);
+
 }
 
 

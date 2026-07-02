@@ -1384,7 +1384,8 @@ bool DataWriterImpl::lifespan_expired()
         if (now - source_timestamp < lifespan_duration_us_)
         {
             auto interval = source_timestamp - now + lifespan_duration_us_;
-            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(
+                        interval).count()));
             return true;
         }
 
@@ -1404,7 +1405,8 @@ bool DataWriterImpl::lifespan_expired()
 
         if (interval.count() > 0)
         {
-            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(
+                        interval).count()));
             return true;
         }
     }
@@ -1715,10 +1717,11 @@ ReturnCode_t DataWriterImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         logWarning(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" << qos.resource_limits().max_samples_per_instance <<
-                "'. Consistency rule: depth <= max_samples_per_instance." <<
-                " Effectively using max_samples_per_instance as depth.");
+                "HISTORY DEPTH '" << qos.history().depth
+                                  << "' is inconsistent with max_samples_per_instance: '"
+                                  << qos.resource_limits().max_samples_per_instance
+                                  << "'. Consistency rule: depth <= max_samples_per_instance."
+                                  << " Effectively using max_samples_per_instance as depth.");
     }
     // Check for nanoseconds in all duration policies
     if (!utils::is_duration_consistent(qos.deadline().period))
@@ -1957,8 +1960,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                logError(DATA_WRITER, "Data sharing cannot be used with " <<
-                        (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
+                logError(DATA_WRITER, "Data sharing cannot be used with "
+                        << (type_.is_bounded() ? "memory policies other than PREALLOCATED" : "unbounded data types"));
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
@@ -1982,8 +1985,8 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
 
             if (!has_bound_payload_size)
             {
-                logInfo(DATA_WRITER, "Data sharing disabled because " <<
-                        (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
+                logInfo(DATA_WRITER, "Data sharing disabled because "
+                        << (type_.is_bounded() ? "memory policy is not PREALLOCATED" : "data type is not bounded"));
                 return ReturnCode_t::RETCODE_OK;
             }
 

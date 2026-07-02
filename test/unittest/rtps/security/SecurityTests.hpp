@@ -162,7 +162,10 @@ public:
         , stateless_reader_(nullptr)
         , volatile_writer_(nullptr)
         , volatile_reader_(nullptr)
-        , manager_([this, pattr]() { participant_.getAttributes() = pattr; return &participant_; }())
+        , manager_([this, pattr]()
+                {
+                    participant_.getAttributes() = pattr; return &participant_;
+                }())
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {

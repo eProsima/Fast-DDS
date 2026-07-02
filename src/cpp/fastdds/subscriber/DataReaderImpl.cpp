@@ -1105,7 +1105,8 @@ bool DataReaderImpl::lifespan_expired()
         if (now - source_timestamp < lifespan_duration_us_)
         {
             auto interval = source_timestamp - now + lifespan_duration_us_;
-            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(
+                        interval).count()));
             return true;
         }
 
@@ -1125,7 +1126,8 @@ bool DataReaderImpl::lifespan_expired()
 
         if (interval.count() > 0)
         {
-            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(interval).count()));
+            lifespan_timer_->update_interval_millisec(static_cast<double>(duration_cast<milliseconds>(
+                        interval).count()));
             return true;
         }
     }

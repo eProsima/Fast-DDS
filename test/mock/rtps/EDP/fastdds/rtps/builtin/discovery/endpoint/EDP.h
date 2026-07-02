@@ -32,23 +32,58 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+
 class EDP
 {
-    public:
+public:
+
+    virtual bool pairing_reader_proxy_with_any_local_writer(
+            const GUID_t&,
+            ReaderProxyData*)
+    {
+        return true;
+    }
+
+    virtual bool pairing_writer_proxy_with_any_local_reader(
+            const GUID_t&,
+            WriterProxyData*)
+    {
+        return true;
+    }
+
+    bool unpairWriterProxy(
+            const GUID_t& participant_guid,
+            const GUID_t& writer_guid,
+            bool removed_by_lease)
+    {
+        (void)participant_guid;
+        (void)writer_guid;
+        (void)removed_by_lease;
+        return true;
+    }
+
+    bool unpairReaderProxy(
+            const GUID_t& participant_guid,
+            const GUID_t& reader_guid)
+    {
+        (void)participant_guid;
+        (void)reader_guid;
+        return true;
+    }
 
 #if HAVE_SECURITY
-        MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer,
-                    const GUID_t& remote_participant_guid, ReaderProxyData& rdata));
+    MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer,
+            const GUID_t& remote_participant_guid, ReaderProxyData & rdata));
 
-        MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t& local_writer,
-                const ReaderProxyData& remote_reader_data));
+    MOCK_METHOD2(pairing_remote_reader_with_local_writer_after_security, bool(const GUID_t& local_writer,
+            const ReaderProxyData& remote_reader_data));
 
-        MOCK_METHOD3(pairing_writer_proxy_with_local_reader, bool(const GUID_t& local_reader,
-                    const GUID_t& remote_participant_guid, WriterProxyData& wdata));
+    MOCK_METHOD3(pairing_writer_proxy_with_local_reader, bool(const GUID_t& local_reader,
+            const GUID_t& remote_participant_guid, WriterProxyData & wdata));
 
-        MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security, bool(const GUID_t& local_reader,
-                const WriterProxyData& remote_writer_data));
-#endif
+    MOCK_METHOD2(pairing_remote_writer_with_local_reader_after_security, bool(const GUID_t& local_reader,
+            const WriterProxyData& remote_writer_data));
+#endif // if HAVE_SECURITY
 };
 
 } //namespace rtps

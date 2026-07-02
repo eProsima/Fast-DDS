@@ -863,6 +863,14 @@ public:
         std::cout << "Reader unauthorization finished..." << std::endl;
     }
 
+    unsigned int unauthorized_count()
+    {
+        mutexAuthentication_.lock();
+        unsigned int count = unauthorized_;
+        mutexAuthentication_.unlock();
+        return count;
+    }
+
 #endif // if HAVE_SECURITY
 
     size_t getReceivedCount() const
