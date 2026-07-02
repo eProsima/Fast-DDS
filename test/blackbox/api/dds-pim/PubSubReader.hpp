@@ -391,7 +391,11 @@ public:
             bool take = true,
             bool statistics = false,
             bool read = true)
-        : PubSubReader(topic_name, take, statistics, read)
+        : PubSubReader(
+                topic_name,
+                take,
+                statistics,
+                read)
     {
         filter_expression_ = filter_expression;
         expression_parameters_ = expression_parameters;
@@ -515,8 +519,8 @@ public:
 
             if (datareader_ != nullptr)
             {
-                std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
-                    topic_name_ << std::endl;
+                std::cout << "Created datareader " << datareader_->guid() << " for topic "
+                          << topic_name_ << std::endl;
                 initialized_ = true;
                 datareader_guid_ = datareader_->guid();
             }
@@ -923,6 +927,14 @@ public:
         }
 
         std::cout << "Reader unauthorization finished..." << std::endl;
+    }
+
+    unsigned int unauthorized_count()
+    {
+        mutexAuthentication_.lock();
+        unsigned int count = unauthorized_;
+        mutexAuthentication_.unlock();
+        return count;
     }
 
 #endif // if HAVE_SECURITY
@@ -2590,8 +2602,8 @@ public:
                 initialized_ = datareader_->is_enabled();
                 if (initialized_)
                 {
-                    std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
-                        topic_name_ << std::endl;
+                    std::cout << "Created datareader " << datareader_->guid() << " for topic "
+                              << topic_name_ << std::endl;
                 }
 
                 // Set the desired status condition mask and start the waitset thread

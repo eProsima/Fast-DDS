@@ -769,8 +769,12 @@ void AESGCMGMAC_KeyFactory::release_participant(
     {
         lock_guard<mutex> _(key->mutex_);
 
-        // De-register the IDs
         release_key_id(key->ParticipantKeyMaterial.sender_key_id);
+        for (auto& retired_id : key->retired_sender_key_ids)
+        {
+            release_key_id(retired_id);
+        }
+        key->retired_sender_key_ids.clear();
 
         // This method should be called from the shared_ptr deleter. The endpoints
         // can no longer lock() on the participant handle using their weak pointers
@@ -968,6 +972,63 @@ void AESGCMGMAC_KeyFactory::create_key(
 
     key.receiver_specific_key_id = c_transformKeyIdZero;
     key.master_receiver_specific_key.fill(0);
+}
+
+bool AESGCMGMAC_KeyFactory::regenerate_local_participant_key(
+        ParticipantCryptoHandle& participant_crypto,
+        SecurityException& /*exception*/)
+{
+    AESGCMGMAC_ParticipantCryptoHandle& local_participant =
+            AESGCMGMAC_ParticipantCryptoHandle::narrow(participant_crypto);
+
+    if (local_participant.nil())
+    {
+        return false;
+    }
+
+    std::unique_lock<std::mutex> lock(local_participant->mutex_);
+
+    KeyMaterial_AES_GCM_GMAC& live = local_participant->ParticipantKeyMaterial;
+
+    const bool use_256_bits =
+            (live.transformation_kind == c_transfrom_kind_aes256_gcm ||
+            live.transformation_kind == c_transfrom_kind_aes256_gmac);
+    const bool is_encrypted =
+            (live.transformation_kind == c_transfrom_kind_aes128_gcm ||
+            live.transformation_kind == c_transfrom_kind_aes256_gcm);
+
+    local_participant->retired_sender_key_ids.push_back(live.sender_key_id);
+    if (local_participant->retired_sender_key_ids.size() > KEY_MATERIAL_RING_SIZE)
+    {
+        release_key_id(local_participant->retired_sender_key_ids.front());
+        local_participant->retired_sender_key_ids.pop_front();
+    }
+
+    create_key(live, is_encrypted, use_256_bits);
+
+    const bool is_origin_auth =
+            (local_participant->ParticipantPluginAttributes &
+            PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED) != 0;
+
+    for (auto& p2p : local_participant->Participant2ParticipantKeyMaterial)
+    {
+        p2p.transformation_kind = live.transformation_kind;
+        p2p.master_salt         = live.master_salt;
+        p2p.master_sender_key   = live.master_sender_key;
+        p2p.sender_key_id       = live.sender_key_id;
+        if (!is_origin_auth)
+        {
+            p2p.receiver_specific_key_id = c_transformKeyIdZero;
+            p2p.master_receiver_specific_key.fill(0);
+        }
+    }
+
+    local_participant->Session.session_block_counter =
+            local_participant->max_blocks_per_session + 1;
+    RAND_bytes(reinterpret_cast<unsigned char*>(&local_participant->Session.session_id),
+            sizeof(uint32_t));
+
+    return true;
 }
 
 CryptoTransformKeyId AESGCMGMAC_KeyFactory::make_unique_KeyId()

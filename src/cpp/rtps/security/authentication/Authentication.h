@@ -32,6 +32,9 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+class ResourceEvent;
+
 namespace security {
 
 class Logging;
@@ -51,10 +54,14 @@ class Authentication;
 
 class AuthenticationListener
 {
+public:
+
+    virtual ~AuthenticationListener() = default;
     virtual bool on_revoke_identity(
             Authentication& plugin,
             const IdentityHandle& handle,
             SecurityException& exception) = 0;
+    // TODO: include on_status_change virtual declaration (implement with AuthStatusKind)
 };
 
 class Authentication
@@ -266,6 +273,29 @@ public:
 
         //! By default, return this comparison
         return adjusted == original;
+    }
+
+    /**
+     * Returns the participant GUID associated to an identity handle.
+     * @param handle Identity Handle to query
+     * @return the participant GUID, or GUID_t::unknown() if it cannot be resolved
+     */
+    virtual GUID_t get_participant_guid(
+            const IdentityHandle& handle) const
+    {
+        static_cast<void>(handle);
+        return GUID_t::unknown();
+    }
+
+    /**
+     * Provide the plugin with the participant event scheduler. Plugins that arm
+     * timers (e.g. for identity certificate expiration) use it; the default is a no-op.
+     * @param service Participant event resource
+     */
+    virtual void set_event_resource(
+            ResourceEvent& service)
+    {
+        static_cast<void>(service);
     }
 
     bool set_logger(

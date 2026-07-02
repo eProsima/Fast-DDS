@@ -65,6 +65,25 @@ static KeyMaterial_AES_GCM_GMAC* find_key(
     return nullptr;
 }
 
+static const KeyMaterial_AES_GCM_GMAC* find_key(
+        const KeyMaterial_AES_GCM_GMAC_Seq& keys,
+        const CryptoTransformIdentifier& id)
+{
+    for (const auto& it : keys)
+    {
+        if (it.transformation_kind == id.transformation_kind)
+        {
+            if ((it.sender_key_id == id.transformation_key_id) ||
+                    (it.receiver_specific_key_id == id.transformation_key_id))
+            {
+                return &it;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 AESGCMGMAC_Transform::AESGCMGMAC_Transform()
 {
 }
@@ -685,11 +704,18 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     uint32_t session_id;
     memcpy(&session_id, header.session_id.data(), 4);
 
+    const KeyMaterial_AES_GCM_GMAC* key_mat =
+            find_key(sending_participant->RemoteParticipant2ParticipantKeyMaterial,
+                    header.transform_identifier);
+    if (key_mat == nullptr)
+    {
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Key material not found in ring for decode_rtps_message");
+        return false;
+    }
+
     //Sessionkey
     std::array<uint8_t, 32> session_key{};
-    compute_sessionkey(session_key,
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0),
-            session_id);
+    compute_sessionkey(session_key, *key_mat, session_id);
     //IV
     std::array<uint8_t, 12> initialization_vector{};
     memcpy(initialization_vector.data(), header.session_id.data(), 4);
@@ -773,10 +799,10 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         SecurityException exception;
 
         if (!deserialize_SecureDataTag(decoder, tag,
-                sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind,
-                sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).receiver_specific_key_id,
-                sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_receiver_specific_key,
-                sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).master_salt,
+                key_mat->transformation_kind,
+                key_mat->receiver_specific_key_id,
+                key_mat->master_receiver_specific_key,
+                key_mat->master_salt,
                 initialization_vector, session_id, exception))
         {
             return false;
@@ -797,7 +823,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     uint32_t length = plain_buffer.max_size - plain_buffer.pos;
     if (!deserialize_SecureDataBody(decoder, is_encrypted ? body_state : protected_body_state, tag,
             is_encrypted ? body_length : body_length + 4,
-            sending_participant->RemoteParticipant2ParticipantKeyMaterial.at(0).transformation_kind,
+            key_mat->transformation_kind,
             session_key, initialization_vector,
             &plain_buffer.buffer[plain_buffer.pos], length))
     {
@@ -900,7 +926,17 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             continue;
         }
 
-        if (wKeyMats.at(0).sender_key_id == key_id)
+        bool writer_key_found = false;
+        for (const auto& km : wKeyMats)
+        {
+            if (km.sender_key_id == key_id)
+            {
+                writer_key_found = true;
+                break;
+            }
+        }
+
+        if (writer_key_found)
         {
             // Remote writer found
             secure_submessage_category = DATAWRITER_SUBMESSAGE;
@@ -937,7 +973,17 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             continue;
         }
 
-        if (rKeyMats.at(0).sender_key_id == key_id)
+        bool reader_key_found = false;
+        for (const auto& km : rKeyMats)
+        {
+            if (km.sender_key_id == key_id)
+            {
+                reader_key_found = true;
+                break;
+            }
+        }
+
+        if (reader_key_found)
         {
             // Remote reader found
             secure_submessage_category = DATAREADER_SUBMESSAGE;
@@ -1858,7 +1904,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
             continue;
         }
 
-        auto& keyMat = remote_participant->Participant2ParticipantKeyMaterial.at(0);
+        auto& keyMat = remote_participant->Participant2ParticipantKeyMaterial.back();
         if (keyMat.receiver_specific_key_id == c_transformKeyIdZero)
         {
             // This means origin authentication is disabled. As it is configured on the writer, we know all other
@@ -1884,7 +1930,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         //Obtain MAC using ReceiverSpecificKey and the same Initialization Vector as before
         int actual_size = 0, final_size = 0;
         EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
-        auto& trans_kind = remote_participant->Participant2ParticipantKeyMaterial.at(0).transformation_kind;
+        auto& trans_kind = remote_participant->Participant2ParticipantKeyMaterial.back().transformation_kind;
         if (trans_kind == c_transfrom_kind_aes128_gcm ||
                 trans_kind == c_transfrom_kind_aes128_gmac)
         {
@@ -1925,7 +1971,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
             EVP_CIPHER_CTX_free(e_ctx);
             continue;
         }
-        serializer << remote_participant->Participant2ParticipantKeyMaterial.at(0).receiver_specific_key_id;
+        serializer << remote_participant->Participant2ParticipantKeyMaterial.back().receiver_specific_key_id;
         EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, AES_BLOCK_SIZE, serializer.get_current_position());
         serializer.jump(16);
         EVP_CIPHER_CTX_free(e_ctx);
@@ -1945,8 +1991,8 @@ SecureDataHeader AESGCMGMAC_Transform::deserialize_SecureDataHeader(
 {
     SecureDataHeader header;
 
-    decoder >> header.transform_identifier.transformation_kind >> header.transform_identifier.transformation_key_id >>
-    header.session_id >> header.initialization_vector_suffix;
+    decoder >> header.transform_identifier.transformation_kind >> header.transform_identifier.transformation_key_id
+    >> header.session_id >> header.initialization_vector_suffix;
 
     return header;
 }

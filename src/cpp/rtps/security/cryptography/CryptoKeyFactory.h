@@ -147,6 +147,24 @@ public:
             SecurityException& exception) = 0;
 
     /**
+     * Regenerate the key material of an already registered local Participant, producing a new
+     * revision to be redistributed to the remaining authenticated Participants. Used when an
+     * identity is revoked. The default is a no-op returning false for plugins that do not
+     * support key regeneration.
+     * @param participant_crypto Returned by a prior call to register_local_participant
+     * @param [out] exception Security exception
+     * @return TRUE if successful
+     */
+    virtual bool regenerate_local_participant_key(
+            ParticipantCryptoHandle& participant_crypto,
+            SecurityException& exception)
+    {
+        static_cast<void>(participant_crypto);
+        static_cast<void>(exception);
+        return false;
+    }
+
+    /**
      * Releases resources associated with a DataWriter. The Crypto Handle may become unusable after this
      * @param datawriter_crypto_handle Belonging to the DataWriter that awaits termination
      * @param exception (out) Security exception

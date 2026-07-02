@@ -109,6 +109,10 @@ public:
             std::shared_ptr<ParticipantCryptoHandle>& participant_crypto_handle,
             SecurityException& exception) override;
 
+    bool regenerate_local_participant_key(
+            ParticipantCryptoHandle& participant_crypto,
+            SecurityException& exception) override;
+
     bool unregister_datawriter(
             std::shared_ptr<DatawriterCryptoHandle>& datawriter_crypto_handle,
             SecurityException& exception) override;

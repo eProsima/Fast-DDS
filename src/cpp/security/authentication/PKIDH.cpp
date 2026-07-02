@@ -31,6 +31,7 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/security/logging/Logging.h>
 #include <rtps/messages/CDRMessage.hpp>
 #include <security/authentication/PKIIdentityHandle.h>
@@ -58,6 +59,7 @@
 
 #include <cassert>
 #include <algorithm>
+#include <chrono>
 #include <utility>
 
 #define S1(x) #x
@@ -246,7 +248,8 @@ static bool verify_certificate(
             }
             else
             {
-                EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION, "Invalidation error of certificate  (" << X509_verify_cert_error_string(
+                EPROSIMA_LOG_WARNING(SECURITY_AUTHENTICATION,
+                        "Invalidation error of certificate  (" << X509_verify_cert_error_string(
                             errorCode) << ")");
             }
         }
@@ -1235,6 +1238,7 @@ ValidationResult_t PKIDH::validate_local_identity(
                                 if (generate_identity_token(*ih, transmit_legacy_algorithms))
                                 {
                                     (*ih)->participant_key_ = adjusted_participant_key;
+                                    arm_identity_expiry(*ih);
                                     *local_identity_handle = ih;
 
                                     return ValidationResult_t::VALIDATION_OK;
@@ -2323,6 +2327,8 @@ ValidationResult_t PKIDH::process_handshake_request(
             handshake_handle->handshake_message_ = std::move(final_message);
             *handshake_message_out = &handshake_handle->handshake_message_;
 
+            arm_identity_expiry(rih);
+
             return ValidationResult_t::VALIDATION_OK_WITH_FINAL_MESSAGE;
         }
     }
@@ -2517,6 +2523,8 @@ ValidationResult_t PKIDH::process_handshake_reply(
         (*handshake_handle->sharedsecret_)->data_.emplace_back(SharedSecret::BinaryData("Challenge2",
                 challenge2->value()));
 
+        arm_identity_expiry(rih);
+
         return ValidationResult_t::VALIDATION_OK;
     }
 
@@ -2549,10 +2557,129 @@ std::shared_ptr<SecretHandle> PKIDH::get_shared_secret(
 }
 
 bool PKIDH::set_listener(
-        AuthenticationListener* /*listener*/,
+        AuthenticationListener* listener,
         SecurityException& /*exception*/)
 {
-    return false;
+    std::lock_guard<std::mutex> lock(listener_mtx_);
+    listener_ = listener;
+    return true;
+}
+
+std::chrono::system_clock::time_point PKIDH::cert_expiration(
+        const X509* cert)
+{
+    if (cert == nullptr)
+    {
+        return std::chrono::system_clock::time_point{};
+    }
+
+    const ASN1_TIME* not_after = X509_get0_notAfter(cert);
+    if (not_after == nullptr)
+    {
+        return std::chrono::system_clock::time_point{};
+    }
+
+    std::tm t{};
+    if (ASN1_TIME_to_tm(not_after, &t) != 1)
+    {
+        return std::chrono::system_clock::time_point{};
+    }
+
+#ifdef _WIN32
+    return std::chrono::system_clock::from_time_t(_mkgmtime(&t));
+#else
+    return std::chrono::system_clock::from_time_t(timegm(&t));
+#endif // _WIN32
+}
+
+std::chrono::system_clock::time_point PKIDH::get_identity_expiration(
+        const IdentityHandle& handle) const
+{
+    const PKIIdentityHandle& ihandle = PKIIdentityHandle::narrow(handle);
+    if (ihandle.nil())
+    {
+        return std::chrono::system_clock::time_point{};
+    }
+    return cert_expiration((*ihandle)->cert_);
+}
+
+void PKIDH::set_event_resource(
+        eprosima::fastdds::rtps::ResourceEvent& service)
+{
+    event_resource_ = &service;
+}
+
+void PKIDH::drain_expired_timers()
+{
+    std::vector<std::unique_ptr<eprosima::fastdds::rtps::TimedEvent>> reaped;
+    {
+        std::lock_guard<std::mutex> lock(expired_timers_mtx_);
+        reaped.swap(expired_timers_);
+    }
+    // Destroyed here, outside any timer callback.
+}
+
+void PKIDH::arm_identity_expiry(
+        PKIIdentityHandle& handle)
+{
+    drain_expired_timers();
+
+    if (event_resource_ == nullptr || handle.nil() || (*handle)->cert_ == nullptr)
+    {
+        return;
+    }
+
+    const auto expiry = cert_expiration((*handle)->cert_);
+    if (expiry == std::chrono::system_clock::time_point{})
+    {
+        return;
+    }
+
+    const auto now = std::chrono::system_clock::now();
+    const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(expiry - now).count();
+
+    // Already-expired certs (e.g. clock skew) fire ASAP from the event thread, never
+    // inline. TimedEvent stores the interval as int64 microseconds, so even decade-long
+    // validities are well within range; no upper clamp is needed.
+    const double interval_ms = (ms <= 0) ? 1.0 : static_cast<double>(ms);
+
+    PKIIdentityHandle* ihandle = &handle;
+    (*handle)->expiry_event_.reset(new eprosima::fastdds::rtps::TimedEvent(
+                *event_resource_,
+                [this, ihandle]() -> bool
+                {
+                    // Move our own timer out of the handle BEFORE notifying, so that
+                    // on_revoke_identity returning the handle does not destroy the
+                    // TimedEvent currently firing (use-after-free).
+                    {
+                        std::lock_guard<std::mutex> g(expired_timers_mtx_);
+                        if ((*ihandle)->expiry_event_)
+                        {
+                            expired_timers_.push_back(std::move((*ihandle)->expiry_event_));
+                        }
+                    }
+
+                    std::lock_guard<std::mutex> l(listener_mtx_);
+                    if (listener_ != nullptr)
+                    {
+                        SecurityException ex;
+                        listener_->on_revoke_identity(*this, *ihandle, ex);
+                    }
+                    return false;   // one-shot
+                },
+                interval_ms));
+    (*handle)->expiry_event_->restart_timer();
+}
+
+GUID_t PKIDH::get_participant_guid(
+        const IdentityHandle& handle) const
+{
+    const PKIIdentityHandle& ihandle = PKIIdentityHandle::narrow(handle);
+    if (ihandle.nil())
+    {
+        return GUID_t::unknown();
+    }
+    return (*ihandle)->participant_key_;
 }
 
 bool PKIDH::get_identity_token(
