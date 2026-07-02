@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -228,6 +229,56 @@ TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
 
     // Block reader until reception finished or timeout.
     entities.block_for_all();
+}
+
+// Regression test for a lock-order-inversion (potential deadlock) reported by TSAN between a
+// writer's FlowControllerImpl mutex and its LocatorSelectorSender
+TEST(PubSubFlowControllers, AsyncPubSubReaderRemovalWhileDeliveringDoesNotDeadlock)
+{
+    std::string topic_name = "FlowControllerLockOrderInversion";
+
+    PubSubWriter<HelloWorldPubSubType> writer(topic_name);
+
+    writer.asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE)
+            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+            .history_depth(100)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    constexpr size_t n_loops = 20;
+
+    for (size_t i = 0; i < n_loops; ++i)
+    {
+        PubSubReader<HelloWorldPubSubType> reader(topic_name);
+        reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .durability_kind(eprosima::fastrtps::VOLATILE_DURABILITY_QOS)
+                .history_depth(100)
+                .init();
+        ASSERT_TRUE(reader.isInitialized());
+
+        writer.wait_discovery(1, std::chrono::seconds(10));
+        reader.wait_discovery();
+
+        std::atomic<bool> keep_sending{true};
+        std::thread sender(
+            [&writer, &keep_sending]()
+            {
+                while (keep_sending.load(std::memory_order_relaxed))
+                {
+                    auto data = default_helloworld_data_generator(1);
+                    writer.send(data, 0);
+                }
+            });
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        reader.destroy();
+
+        keep_sending.store(false, std::memory_order_relaxed);
+        sender.join();
+
+        writer.wait_reader_undiscovery();
+    }
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
