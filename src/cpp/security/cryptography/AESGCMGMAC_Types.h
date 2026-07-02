@@ -20,6 +20,7 @@
 #define _SECURITY_AUTHENTICATION_AESGCMGMAC_TYPES_H_
 
 #include <cassert>
+#include <deque>
 #include <functional>
 #include <limits>
 #include <mutex>
@@ -178,6 +179,8 @@ typedef HandleImpl<EntityKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_WriterCryp
 typedef HandleImpl<EntityKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_ReaderCryptoHandle;
 typedef HandleImpl<EntityKeyHandle, AESGCMGMAC_KeyFactory> AESGCMGMAC_EntityCryptoHandle;
 
+static constexpr size_t KEY_MATERIAL_RING_SIZE = 8;
+
 struct ParticipantKeyHandle
 {
     static const char* const class_id_;
@@ -193,12 +196,13 @@ struct ParticipantKeyHandle
     std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKeyMaterial;
     //Keymaterial used to Cypher CryptoTokens (inherited from the parent participant)
     std::vector<KeyMaterial_AES_GCM_GMAC> Participant2ParticipantKxKeyMaterial;
-    //(Reverse) ReceiverSpecific Keys - Inherently hold the master_key of the remote readers
     std::vector<KeyMaterial_AES_GCM_GMAC> RemoteParticipant2ParticipantKeyMaterial;
     //List of Pointers to the CryptoHandles of all matched Writers
     std::vector<std::shared_ptr<DatawriterCryptoHandle>> Writers;
     //List of Pointers to the CryptoHandles of all matched Readers
     std::vector<std::shared_ptr<DatareaderCryptoHandle>> Readers;
+
+    std::deque<CryptoTransformKeyId> retired_sender_key_ids;
 
     //Data used to store the current session keys and to determine when it has to be updated
     KeySessionData Session;

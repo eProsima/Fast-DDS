@@ -20,9 +20,11 @@
 
 #include <fastdds/rtps/common/Guid.hpp>
 #include <fastdds/rtps/common/Token.hpp>
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/security/common/Handle.h>
 
 #include <openssl/x509.h>
+#include <memory>
 #include <string>
 
 namespace eprosima {
@@ -92,6 +94,9 @@ public:
     bool there_are_crls_;
     IdentityToken identity_token_;
     PermissionsCredentialToken permissions_credential_token_;
+    //! One-shot timer that fires when this identity certificate expires.
+    //! Owned here so its lifetime is exactly the identity handle lifetime.
+    std::unique_ptr<TimedEvent> expiry_event_;
 };
 
 class PKIDH;
