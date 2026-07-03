@@ -147,7 +147,7 @@ protected:
             }
             else
             {
-                buffer = (octet*)calloc(size + sizeof(NodeInfo) - 1, sizeof(octet));
+                buffer = (octet*)calloc(size + data_offset, sizeof(octet));
             }
 
             if (buffer == nullptr)
