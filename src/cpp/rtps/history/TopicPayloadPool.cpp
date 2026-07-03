@@ -189,7 +189,14 @@ TopicPayloadPool::PayloadNode* TopicPayloadPool::allocate(
 TopicPayloadPool::PayloadNode* TopicPayloadPool::do_allocate(
         uint32_t size)
 {
-    PayloadNode* payload = new (std::nothrow) PayloadNode(size);
+    PayloadNode* payload = nullptr;
+    try
+    {
+        payload = new PayloadNode(size);
+    }
+    catch (const std::bad_alloc&)
+    {
+    }
 
     if (payload != nullptr)
     {
