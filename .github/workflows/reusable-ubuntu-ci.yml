@@ -315,6 +315,7 @@ jobs:
         with:
           remote_repository: eProsima/Fast-DDS-python
           fallback_branch: '1.0.x'
+          skip_base: true
 
       - name: Download Fast DDS Python repo
         uses: eProsima/eProsima-CI/external/checkout@v0

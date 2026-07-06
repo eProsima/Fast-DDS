@@ -406,8 +406,8 @@ public:
             if (datawriter_ != nullptr)
             {
                 datawriter_guid_ = datawriter_->guid();
-                std::cout << "Created datawriter " << datawriter_guid_ << " for topic " <<
-                    topic_name_ << std::endl;
+                std::cout << "Created datawriter " << datawriter_guid_ << " for topic "
+                          << topic_name_ << std::endl;
 
                 initialized_ = datawriter_->is_enabled();
             }
@@ -634,6 +634,35 @@ public:
                 });
 
         std::cout << "Writer removal finished..." << std::endl;
+    }
+
+    bool wait_reader_undiscovery(
+            std::chrono::seconds timeout,
+            unsigned int matched = 0)
+    {
+        bool ret_value = true;
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Writer is waiting removal..." << std::endl;
+
+        if (!cv_.wait_for(lock, timeout, [&]()
+                {
+                    return matched_ <= matched;
+                }))
+        {
+            ret_value = false;
+        }
+
+        if (ret_value)
+        {
+            std::cout << "Writer removal finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Writer removal finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
     }
 
     void wait_liveliness_lost(
@@ -992,6 +1021,13 @@ public:
     PubSubWriter& disable_builtin_transport()
     {
         participant_qos_.transport().use_builtin_transports = false;
+        return *this;
+    }
+
+    PubSubWriter& set_wire_protocol_qos(
+            const eprosima::fastdds::dds::WireProtocolConfigQos& qos)
+    {
+        participant_qos_.wire_protocol() = qos;
         return *this;
     }
 
@@ -2139,8 +2175,8 @@ public:
                 initialized_ = datawriter_->is_enabled();
                 if (initialized_)
                 {
-                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic " <<
-                        topic_name_ << std::endl;
+                    std::cout << "Created datawriter " << datawriter_->guid() << " for topic "
+                              << topic_name_ << std::endl;
 
                     // Set the desired status condition mask and start the waitset thread
                     datawriter_->get_statuscondition().set_enabled_statuses(status_mask_);

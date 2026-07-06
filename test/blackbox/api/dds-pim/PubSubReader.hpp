@@ -194,7 +194,8 @@ protected:
                 do
                 {
                     reader_.receive(datareader, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 
@@ -362,7 +363,11 @@ public:
             bool take = true,
             bool statistics = false,
             bool read = true)
-        : PubSubReader(topic_name, take, statistics, read)
+        : PubSubReader(
+                topic_name,
+                take,
+                statistics,
+                read)
     {
         filter_expression_ = filter_expression;
         expression_parameters_ = expression_parameters;
@@ -469,8 +474,8 @@ public:
 
             if (datareader_ != nullptr)
             {
-                std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
-                    topic_name_ << std::endl;
+                std::cout << "Created datareader " << datareader_->guid() << " for topic "
+                          << topic_name_ << std::endl;
                 initialized_ = true;
                 datareader_guid_ = datareader_->guid();
             }
@@ -481,6 +486,19 @@ public:
     bool isInitialized() const
     {
         return initialized_;
+    }
+
+    bool delete_datareader()
+    {
+        ReturnCode_t ret(ReturnCode_t::RETCODE_ERROR);
+
+        if (subscriber_ && datareader_)
+        {
+            ret = subscriber_->delete_datareader(datareader_);
+            datareader_ = nullptr;
+        }
+
+        return (ReturnCode_t::RETCODE_OK == ret);
     }
 
     virtual void destroy()
@@ -1070,6 +1088,13 @@ public:
     PubSubReader& disable_builtin_transport()
     {
         participant_qos_.transport().use_builtin_transports = false;
+        return *this;
+    }
+
+    PubSubReader& set_wire_protocol_qos(
+            const eprosima::fastdds::dds::WireProtocolConfigQos& qos)
+    {
+        participant_qos_.wire_protocol() = qos;
         return *this;
     }
 
@@ -2248,7 +2273,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
 
@@ -2277,7 +2303,8 @@ protected:
                     do
                     {
                         reader_.receive(reader_.datareader_, ret);
-                    } while (ret);
+                    }
+                    while (ret);
                 }
             }
         }
@@ -2366,8 +2393,8 @@ public:
                 initialized_ = datareader_->is_enabled();
                 if (initialized_)
                 {
-                    std::cout << "Created datareader " << datareader_->guid() << " for topic " <<
-                        topic_name_ << std::endl;
+                    std::cout << "Created datareader " << datareader_->guid() << " for topic "
+                              << topic_name_ << std::endl;
                 }
 
                 // Set the desired status condition mask and start the waitset thread
