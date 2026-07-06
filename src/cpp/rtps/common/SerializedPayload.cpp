@@ -32,8 +32,9 @@ SerializedPayload_t& SerializedPayload_t::operator = (
 
     if (payload_owner != nullptr)
     {
-        auto state =  payload_owner->release_payload(*this);
-        assert(state);
+        bool success =  payload_owner->release_payload(*this);
+        static_cast<void>(success);
+        assert(success);
         payload_owner = nullptr;
     }
     else if (data != nullptr)
@@ -64,8 +65,9 @@ SerializedPayload_t::~SerializedPayload_t()
 {
     if (payload_owner != nullptr)
     {
-        auto state = payload_owner->release_payload(*this);
-        assert(state);
+        bool success = payload_owner->release_payload(*this);
+        static_cast<void>(success);
+        assert(success);
         payload_owner = nullptr;
     }
     this->empty();
