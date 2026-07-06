@@ -384,6 +384,18 @@ public:
         receiving_.store(true);
     }
 
+    void startReception(
+            size_t expected_samples)
+    {
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            current_processed_count_ = 0;
+            number_samples_expected_ = expected_samples;
+            last_seq.clear();
+        }
+        receiving_.store(true);
+    }
+
     void stopReception()
     {
         receiving_.store(false);
