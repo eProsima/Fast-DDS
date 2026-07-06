@@ -1221,55 +1221,58 @@ bool StatefulWriter::matched_reader_remove(
 {
     ReaderProxy* rproxy = nullptr;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    std::unique_lock<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
-    std::unique_lock<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
-    for (ReaderProxyIterator it = matched_local_readers_.begin();
-            it != matched_local_readers_.end(); ++it)
     {
-        if ((*it)->guid() == reader_guid)
-        {
-            logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
-            rproxy = std::move(*it);
-            it = matched_local_readers_.erase(it);
-            break;
-        }
-    }
+        std::unique_lock<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+        std::unique_lock<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
-    if (rproxy == nullptr)
-    {
-        for (ReaderProxyIterator it = matched_datasharing_readers_.begin();
-                it != matched_datasharing_readers_.end(); ++it)
+        for (ReaderProxyIterator it = matched_local_readers_.begin();
+                it != matched_local_readers_.end(); ++it)
         {
             if ((*it)->guid() == reader_guid)
             {
                 logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
                 rproxy = std::move(*it);
-                it = matched_datasharing_readers_.erase(it);
+                it = matched_local_readers_.erase(it);
                 break;
             }
         }
-    }
 
-    if (rproxy == nullptr)
-    {
-        for (ReaderProxyIterator it = matched_remote_readers_.begin();
-                it != matched_remote_readers_.end(); ++it)
+        if (rproxy == nullptr)
         {
-            if ((*it)->guid() == reader_guid)
+            for (ReaderProxyIterator it = matched_datasharing_readers_.begin();
+                    it != matched_datasharing_readers_.end(); ++it)
             {
-                logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
-                rproxy = std::move(*it);
-                it = matched_remote_readers_.erase(it);
-                break;
+                if ((*it)->guid() == reader_guid)
+                {
+                    logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+                    rproxy = std::move(*it);
+                    it = matched_datasharing_readers_.erase(it);
+                    break;
+                }
             }
         }
-    }
 
-    locator_selector_general_.locator_selector.remove_entry(reader_guid);
-    locator_selector_async_.locator_selector.remove_entry(reader_guid);
-    update_reader_info(locator_selector_general_, false);
-    update_reader_info(locator_selector_async_, false);
+        if (rproxy == nullptr)
+        {
+            for (ReaderProxyIterator it = matched_remote_readers_.begin();
+                    it != matched_remote_readers_.end(); ++it)
+            {
+                if ((*it)->guid() == reader_guid)
+                {
+                    logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+                    rproxy = std::move(*it);
+                    it = matched_remote_readers_.erase(it);
+                    break;
+                }
+            }
+        }
+
+        locator_selector_general_.locator_selector.remove_entry(reader_guid);
+        locator_selector_async_.locator_selector.remove_entry(reader_guid);
+        update_reader_info(locator_selector_general_, false);
+        update_reader_info(locator_selector_async_, false);
+    }
 
     if (getMatchedReadersSize() == 0)
     {
@@ -1281,14 +1284,11 @@ bool StatefulWriter::matched_reader_remove(
         rproxy->stop();
         matched_readers_pool_.push_back(rproxy);
 
-        guard_locator_selector_async.unlock();
-        guard_locator_selector_general.unlock();
-
         check_acked_status();
 
         if (nullptr != mp_listener)
         {
-            // call the listener without locks taken
+            // listener is called without locks taken
             lock.unlock();
 
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
