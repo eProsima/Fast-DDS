@@ -163,7 +163,8 @@ private:
                 do
                 {
                     reader_.receive_one(sub, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 
@@ -334,8 +335,8 @@ public:
             if (subscriber_ != nullptr)
             {
                 subscriber_guid_ = subscriber_->getGuid();
-                std::cout << "Created subscriber " << subscriber_guid_ << " for topic " <<
-                    subscriber_attr_.topic.topicName << std::endl;
+                std::cout << "Created subscriber " << subscriber_guid_ << " for topic "
+                          << subscriber_attr_.topic.topicName << std::endl;
 
                 initialized_ = true;
             }
