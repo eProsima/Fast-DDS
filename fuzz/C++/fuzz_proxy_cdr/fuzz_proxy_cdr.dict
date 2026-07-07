@@ -1,0 +1,59 @@
+# libFuzzer dictionary for fuzz_proxy_cdr.
+# Comments start at column 0; inline comments break libFuzzer's parser.
+# 2-byte LE Parameter IDs that drive parameter-list dispatch.
+
+# Sentinels and encapsulation
+"\x01\x00\x00\x00"
+"\x00\x03\x00\x00"
+
+# Wire-attacker-controlled PIDs that go through unbounded-count loops
+"\x73\x00"
+"\x29\x00"
+"\x10\x80"
+"\x06\x80"
+
+# Other commonly hit PIDs
+"\x15\x00"
+"\x16\x00"
+"\x50\x00"
+"\x5a\x00"
+"\x05\x00"
+"\x07\x00"
+"\x59\x00"
+"\x69\x00"
+"\x72\x00"
+"\x75\x00"
+"\x40\x00"
+"\x41\x00"
+"\x77\x00"
+"\x14\x40"
+"\x55\x00"
+
+# Locator parameter PIDs (24-byte body)
+"\x2f\x00"
+"\x30\x00"
+"\x31\x00"
+"\x48\x00"
+"\x32\x00"
+"\x33\x00"
+
+# Length-field tokens commonly useful as oversize counts
+"\xff\xff\xff\xff"
+"\xff\xff\xff\x7f"
+"\x00\x00\x00\x80"
+"\x00\x10\x00\x00"
+"\x00\x00\x01\x00"
+"\x04\x00"
+"\xff\xff"
+
+# Selector bytes for our 3-way dispatch
+"\x00"
+"\x01"
+"\x02"
+
+# Locator kind values
+"\x01\x00\x00\x00"
+"\x02\x00\x00\x00"
+
+# Common port (RTPS metatraffic)
+"\xe8\x1c\x00\x00"
