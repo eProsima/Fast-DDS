@@ -163,7 +163,8 @@ private:
                 do
                 {
                     reader_.receive_one(sub, ret);
-                } while (ret);
+                }
+                while (ret);
             }
         }
 
@@ -334,8 +335,8 @@ public:
             if (subscriber_ != nullptr)
             {
                 subscriber_guid_ = subscriber_->getGuid();
-                std::cout << "Created subscriber " << subscriber_guid_ << " for topic " <<
-                    subscriber_attr_.topic.topicName << std::endl;
+                std::cout << "Created subscriber " << subscriber_guid_ << " for topic "
+                          << subscriber_attr_.topic.topicName << std::endl;
 
                 initialized_ = true;
             }
@@ -381,6 +382,18 @@ public:
         }
         while (ret);
 
+        receiving_.store(true);
+    }
+
+    void startReception(
+            size_t expected_samples)
+    {
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            current_processed_count_ = 0;
+            number_samples_expected_ = expected_samples;
+            last_seq.clear();
+        }
         receiving_.store(true);
     }
 

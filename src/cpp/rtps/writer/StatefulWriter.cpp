@@ -599,7 +599,8 @@ void StatefulWriter::send_heartbeat_to_all_readers()
             select_all_readers_nts(group, locator_selector_general_);
 
             assert(
-                (SequenceNumber_t::unknown() == get_seq_num_min() && SequenceNumber_t::unknown() == get_seq_num_max()) ||
+                (SequenceNumber_t::unknown() == get_seq_num_min() &&
+                SequenceNumber_t::unknown() == get_seq_num_max()) ||
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
@@ -1062,8 +1063,8 @@ bool StatefulWriter::matched_reader_add(
         }
         else
         {
-            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers <<
-                    ") reached for writer " << m_guid);
+            logWarning(RTPS_WRITER, "Maximum number of reader proxies (" << max_readers
+                                                                         << ") reached for writer " << m_guid);
             return false;
         }
     }
@@ -1200,8 +1201,8 @@ bool StatefulWriter::matched_reader_add(
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
                                          << rdata.remote_locators().unicast.size() << "(u)-"
-                                         << rdata.remote_locators().multicast.size() <<
-            "(m) locators");
+                                         << rdata.remote_locators().multicast.size()
+                                         << "(m) locators");
 
     if (nullptr != mp_listener)
     {
@@ -1220,55 +1221,58 @@ bool StatefulWriter::matched_reader_remove(
 {
     ReaderProxy* rproxy = nullptr;
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    std::unique_lock<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
-    std::unique_lock<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
-    for (ReaderProxyIterator it = matched_local_readers_.begin();
-            it != matched_local_readers_.end(); ++it)
     {
-        if ((*it)->guid() == reader_guid)
-        {
-            logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
-            rproxy = std::move(*it);
-            it = matched_local_readers_.erase(it);
-            break;
-        }
-    }
+        std::unique_lock<LocatorSelectorSender> guard_locator_selector_general(locator_selector_general_);
+        std::unique_lock<LocatorSelectorSender> guard_locator_selector_async(locator_selector_async_);
 
-    if (rproxy == nullptr)
-    {
-        for (ReaderProxyIterator it = matched_datasharing_readers_.begin();
-                it != matched_datasharing_readers_.end(); ++it)
+        for (ReaderProxyIterator it = matched_local_readers_.begin();
+                it != matched_local_readers_.end(); ++it)
         {
             if ((*it)->guid() == reader_guid)
             {
                 logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
                 rproxy = std::move(*it);
-                it = matched_datasharing_readers_.erase(it);
+                it = matched_local_readers_.erase(it);
                 break;
             }
         }
-    }
 
-    if (rproxy == nullptr)
-    {
-        for (ReaderProxyIterator it = matched_remote_readers_.begin();
-                it != matched_remote_readers_.end(); ++it)
+        if (rproxy == nullptr)
         {
-            if ((*it)->guid() == reader_guid)
+            for (ReaderProxyIterator it = matched_datasharing_readers_.begin();
+                    it != matched_datasharing_readers_.end(); ++it)
             {
-                logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
-                rproxy = std::move(*it);
-                it = matched_remote_readers_.erase(it);
-                break;
+                if ((*it)->guid() == reader_guid)
+                {
+                    logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+                    rproxy = std::move(*it);
+                    it = matched_datasharing_readers_.erase(it);
+                    break;
+                }
             }
         }
-    }
 
-    locator_selector_general_.locator_selector.remove_entry(reader_guid);
-    locator_selector_async_.locator_selector.remove_entry(reader_guid);
-    update_reader_info(locator_selector_general_, false);
-    update_reader_info(locator_selector_async_, false);
+        if (rproxy == nullptr)
+        {
+            for (ReaderProxyIterator it = matched_remote_readers_.begin();
+                    it != matched_remote_readers_.end(); ++it)
+            {
+                if ((*it)->guid() == reader_guid)
+                {
+                    logInfo(RTPS_WRITER, "Reader Proxy removed: " << reader_guid);
+                    rproxy = std::move(*it);
+                    it = matched_remote_readers_.erase(it);
+                    break;
+                }
+            }
+        }
+
+        locator_selector_general_.locator_selector.remove_entry(reader_guid);
+        locator_selector_async_.locator_selector.remove_entry(reader_guid);
+        update_reader_info(locator_selector_general_, false);
+        update_reader_info(locator_selector_async_, false);
+    }
 
     if (getMatchedReadersSize() == 0)
     {
@@ -1284,9 +1288,7 @@ bool StatefulWriter::matched_reader_remove(
 
         if (nullptr != mp_listener)
         {
-            // call the listener without locks taken
-            guard_locator_selector_async.unlock();
-            guard_locator_selector_general.unlock();
+            // listener is called without locks taken
             lock.unlock();
 
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
@@ -1490,7 +1492,8 @@ void StatefulWriter::check_acked_status()
                     mp_listener->onWriterChangeReceivedByAll(this, change);
 
                     // Stop if we got to either next_all_acked_notify_sequence_ or the first change
-                } while (seq > end_seq);
+                }
+                while (seq > end_seq);
             }
 
             next_all_acked_notify_sequence_ = min_low_mark + 1;
@@ -2040,10 +2043,11 @@ bool StatefulWriter::ack_timer_expired()
         do
         {
             last_sequence_number_++;
-        } while (!mp_history->get_change(
-            last_sequence_number_,
-            getGuid(),
-            &change) && last_sequence_number_ < next_sequence_number());
+        }
+        while (!mp_history->get_change(
+                    last_sequence_number_,
+                    getGuid(),
+                    &change) && last_sequence_number_ < next_sequence_number());
 
         if (!mp_history->get_change(
                     last_sequence_number_,
