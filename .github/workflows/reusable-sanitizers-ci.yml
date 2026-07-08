@@ -430,6 +430,18 @@ jobs:
           # The step fails on new deadlocks
           $LASTEXITCODE=$sd.count
 
+      # TEMPORARY verification aids for the log_path change; remove once validated.
+      - name: Inspect TSan report capture
+        if: always()
+        run: |
+          echo "## TSan capture check"
+          nfiles=$(ls -1 ${{ github.workspace }}/tsan_reports 2>/dev/null | wc -l)
+          in_files=$(cat ${{ github.workspace }}/tsan_reports/* 2>/dev/null | grep -c "WARNING: ThreadSanitizer:" || true)
+          in_stdout=$(grep -c "WARNING: ThreadSanitizer:" log/latest_test/fastdds/stdout_stderr.log 2>/dev/null || true)
+          echo "Per-process report files : $nfiles"
+          echo "Reports captured in files: $in_files"
+          echo "Reports left in stdout   : $in_stdout   (expected ~0; anything >0 = a process missed the option)"
+
       - name: Check on failures
         if: ${{ steps.report_summary.outcome == 'failure' }}
         shell: pwsh
