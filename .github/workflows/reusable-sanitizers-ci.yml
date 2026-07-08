@@ -236,7 +236,8 @@ jobs:
     if: ${{ inputs.run_tsan_fastdds == true }}
     runs-on: ubuntu-22.04
     env:
-      TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
+      # Use log_path so each instrumented process write its report to <log_path>.<pid>. Needed to avoid interleaving
+      TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000 log_path=${{ github.workspace }}/tsan_reports/tsan
       # GCC 13.2 (Ubuntu Noble default) produces several data races warnings
       # TODO: For now we keep it at GCC 12 and ubuntu 22 until we figure out what to do with them
       # Although hundreds of tests trigger them, these problems arise from approximately
@@ -329,6 +330,9 @@ jobs:
         run: |
           cat ${{ github.workspace }}/src/fastdds/.github/workflows/config/tsan.meta
 
+      - name: Create TSan reports directory
+        run: mkdir -p ${{ github.workspace }}/tsan_reports
+
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
@@ -381,8 +385,10 @@ jobs:
           }
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
-          # Parse the report files
-          $rp = Show-Tsan -Path ./stdout_stderr.log
+          # Parse the report files. Each process wrote its own tsan.<pid> file via
+          # TSAN_OPTIONS=log_path, so reports are never interleaved across processes.
+          $rp = Get-ChildItem -Path "${{ github.workspace }}/tsan_reports" -Filter 'tsan.*' -ErrorAction SilentlyContinue |
+            ForEach-Object { Show-Tsan -Path $_.FullName }
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
           # Export raw data
