@@ -100,3 +100,23 @@ target_link_libraries(WriterProxyAcknackTests foonathan_memory
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS})
 add_gtest(WriterProxyAcknackTests SOURCES ${WRITERPROXYACKNACKTESTS_SOURCE})
+
+###########################################################################
+# StatefulReaderTests
+###########################################################################
+set(STATEFULREADERTESTS_SOURCE StatefulReaderTests.cpp)
+
+add_executable(StatefulReaderTests ${STATEFULREADERTESTS_SOURCE})
+target_compile_definitions(StatefulReaderTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(StatefulReaderTests PRIVATE
+    ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/src/cpp)
+target_link_libraries(StatefulReaderTests fastcdr fastrtps foonathan_memory
+    GTest::gmock
+    ${CMAKE_DL_LIBS})
+add_gtest(StatefulReaderTests SOURCES ${STATEFULREADERTESTS_SOURCE})
