@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
 #include <climits>
 
 #include <gtest/gtest.h>
@@ -489,6 +490,24 @@ TEST(SequenceNumberSet, GetMaxSeqNumOperation)
     SequenceNumber_t expected_seq(11, 20);
 
     ASSERT_EQ(set.max(), expected_seq);
+}
+
+/*!
+ * @fn TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
+ * @brief This test checks the unknown sequence number is always lower than any other sequence number.
+ */
+TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
+{
+    SequenceNumber_t seq = SequenceNumber_t::unknown();
+    SequenceNumber_t seq_higher;
+    ASSERT_GT(seq_higher, seq);
+    ASSERT_EQ(std::max(seq_higher, seq), seq_higher);
+    seq_higher.high = 1;
+    ASSERT_GT(seq_higher, seq);
+    ASSERT_EQ(std::max(seq_higher, seq), seq_higher);
+    SequenceNumber_t seq_higher_low(0, 1);
+    ASSERT_GT(seq_higher_low, seq);
+    ASSERT_EQ(std::max(seq_higher_low, seq), seq_higher_low);
 }
 
 int main(
