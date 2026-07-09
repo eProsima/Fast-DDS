@@ -254,6 +254,7 @@ public:
         if (check == c_SequenceNumber_Unknown || check != cache_change.sequenceNumber)
         {
             // data override while processing
+            cache_change.serializedPayload.data = nullptr;
             return false;
         }
 
