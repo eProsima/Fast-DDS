@@ -113,7 +113,6 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
         , max_size(other.max_size)
         , pos(other.pos)
         , payload_owner(other.payload_owner)
-        , is_serialized_key(other.is_serialized_key)
     {
         other.encapsulation = CDR_BE;
         other.length = 0;
@@ -121,7 +120,6 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
         other.max_size = 0;
         other.pos = 0;
         other.payload_owner = nullptr;
-        other.is_serialized_key = false;
     }
 
     //!Move operator
