@@ -97,7 +97,7 @@ public:
         return DataSharingPayloadPool::release_payload(payload);
     }
 
-    template <typename T>
+    template<typename T>
     bool init_shared_segment(
             const GUID_t& writer_guid,
             const std::string& shared_dir)
@@ -254,6 +254,7 @@ public:
         if (check == c_SequenceNumber_Unknown || check != cache_change.sequenceNumber)
         {
             // data override while processing
+            cache_change.serializedPayload.data = nullptr;
             return false;
         }
 

@@ -101,10 +101,25 @@ struct FASTDDS_EXPORTED_API SerializedPayload_t
             const SerializedPayload_t& other) = delete;
 
     //!Move constructor
+    //!Directly moves the fields from \c other instead of calling the move assignment operator,
+    //!since the latter assumes the destination is already constructed (it may release the
+    //!currently owned payload). Using the move assignment operator here would read
+    //!uninitialized members of the newly constructed object.
     SerializedPayload_t(
             SerializedPayload_t&& other) noexcept
+        : encapsulation(other.encapsulation)
+        , length(other.length)
+        , data(other.data)
+        , max_size(other.max_size)
+        , pos(other.pos)
+        , payload_owner(other.payload_owner)
     {
-        *this = std::move(other);
+        other.encapsulation = CDR_BE;
+        other.length = 0;
+        other.data = nullptr;
+        other.max_size = 0;
+        other.pos = 0;
+        other.payload_owner = nullptr;
     }
 
     //!Move operator
