@@ -1210,6 +1210,13 @@ const std::string parameter_property_current_ds_version = "2.0";
 const char* const parameter_policy_physical_data_host = "fastdds.physical_data.host";
 
 /**
+ * Parameter property value for Hostname physical data
+ *
+ * @ingroup PARAMETER_MODULE
+ */
+const char* const parameter_policy_physical_data_hostname = "fastdds.physical_data.hostname";
+
+/**
  * Parameter property value for User physical data
  *
  * @ingroup PARAMETER_MODULE
