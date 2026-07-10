@@ -20,6 +20,7 @@
 #ifndef _TEST_BLACKBOX_PUBSUBWRITER_HPP_
 #define _TEST_BLACKBOX_PUBSUBWRITER_HPP_
 
+#include <atomic>
 #include <condition_variable>
 #include <list>
 #include <map>
@@ -1820,6 +1821,7 @@ public:
 
     unsigned int get_participants_matched() const
     {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
@@ -2242,7 +2244,7 @@ protected:
     eprosima::fastdds::rtps::GUID_t datawriter_guid_;
     bool initialized_;
     bool use_domain_id_from_profile_;
-    std::mutex mutexDiscovery_;
+    mutable std::mutex mutexDiscovery_;
     std::condition_variable cv_;
     std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
@@ -2454,10 +2456,10 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! The number of times deadline was missed
-        unsigned int times_deadline_missed_ = 0;
+        std::atomic<unsigned int> times_deadline_missed_ {0};
 
         //! The number of times liveliness was lost
-        unsigned int times_liveliness_lost_ = 0;
+        std::atomic<unsigned int> times_liveliness_lost_ {0};
 
         //! The timeout for the wait operation
         eprosima::fastdds::dds::Duration_t timeout_;

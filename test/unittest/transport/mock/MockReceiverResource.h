@@ -15,7 +15,9 @@
 #ifndef MOCK_RECEIVER_STUFF_H
 #define MOCK_RECEIVER_STUFF_H
 
+#include <atomic>
 #include <functional>
+#include <mutex>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/ReceiverResource.h>
@@ -45,7 +47,7 @@ public:
             const Locator_t& locator);
     ~MockReceiverResource();
     MessageReceiver* CreateMessageReceiver() override;
-    MockMessageReceiver* msg_receiver;
+    std::atomic<MockMessageReceiver*> msg_receiver;
 };
 
 class MockMessageReceiver : public MessageReceiver
@@ -62,7 +64,8 @@ public:
             CDRMessage_t* msg) override;
     void setCallback(
             std::function<void()> cb);
-    octet* data;
+    std::atomic<octet*> data;
+    std::mutex callback_mutex;
     std::function<void()> callback;
 };
 

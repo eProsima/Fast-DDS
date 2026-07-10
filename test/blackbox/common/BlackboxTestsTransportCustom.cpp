@@ -14,6 +14,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include <atomic>
 #include <string>
 
 #include <gtest/gtest.h>
@@ -371,12 +372,12 @@ const std::string BuiltinTransportsTest::env_var_name_ = "FASTDDS_BUILTIN_TRANSP
 
 TEST(ChainingTransportTests, basic_test)
 {
-    bool writer_init_function_called = false;
-    bool writer_receive_function_called = false;
-    bool writer_send_function_called = false;
-    bool reader_init_function_called = false;
-    bool reader_receive_function_called = false;
-    bool reader_send_function_called = false;
+    std::atomic<bool> writer_init_function_called {false};
+    std::atomic<bool> writer_receive_function_called {false};
+    std::atomic<bool> writer_send_function_called {false};
+    std::atomic<bool> reader_init_function_called {false};
+    std::atomic<bool> reader_receive_function_called {false};
+    std::atomic<bool> reader_send_function_called {false};
     eprosima::fastdds::rtps::PropertyPolicy test_property_policy;
     test_property_policy.properties().push_back({test_property_name, test_property_value});
     std::shared_ptr<UDPv4TransportDescriptor> udp_transport = std::make_shared<UDPv4TransportDescriptor>();

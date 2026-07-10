@@ -1965,7 +1965,7 @@ public:
         return status;
     }
 
-    const eprosima::fastdds::dds::LivelinessChangedStatus& liveliness_changed_status()
+    eprosima::fastdds::dds::LivelinessChangedStatus liveliness_changed_status()
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
@@ -2014,6 +2014,7 @@ public:
 
     unsigned int get_participants_matched() const
     {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
@@ -2314,7 +2315,7 @@ protected:
     std::list<type> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
-    std::mutex mutexDiscovery_;
+    mutable std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
@@ -2618,7 +2619,7 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! Number of times deadline was missed
-        unsigned int times_deadline_missed_ = 0;
+        std::atomic<unsigned int> times_deadline_missed_ {0};
 
         //! The timeout for the wait operation
         eprosima::fastdds::dds::Duration_t timeout_;
@@ -2643,6 +2644,7 @@ public:
 
     ~PubSubReaderWithWaitsets() override
     {
+        waitset_thread_.stop();
     }
 
     void createSubscriber() override
