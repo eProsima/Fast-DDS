@@ -20,6 +20,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <ctime>
 
 #if TIXML2_MAJOR_VERSION >= 6
 #define PRINTLINE(node) node->GetLineNum()
@@ -339,7 +340,11 @@ bool PermissionsParser::parse_validity(
 
                 if (!stream.fail())
                 {
-                    validity.not_before = std::mktime(&time);
+#ifdef _WIN32
+                    validity.not_before = _mkgmtime(&time);
+#else
+                    validity.not_before = timegm(&time);
+#endif // ifdef _WIN32
 #endif // if _MSC_VER != 1800
 
                 tinyxml2::XMLElement* old_node = node;
@@ -360,7 +365,11 @@ bool PermissionsParser::parse_validity(
 
                             if (!stream.fail())
                             {
-                                validity.not_after = std::mktime(&time);
+#ifdef _WIN32
+                                validity.not_after = _mkgmtime(&time);
+#else
+                                validity.not_after = timegm(&time);
+#endif // ifdef _WIN32
 #endif // if _MSC_VER != 1800
                             returned_value = true;
                         }
