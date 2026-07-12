@@ -12,10 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <string>
 
 #include <gtest/gtest.h>
+
+#include <security/accesscontrol/PermissionsParser.h>
 
 #include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/builtin/data/ReaderProxyData.hpp>
@@ -557,6 +561,98 @@ TEST_F(AccessControlTest, participant_creation_fail_with_empty_topic_expression_
     get_access_handle(subscriber_participant_attr, &access_handle, false);
 
 }
+
+/* Regression test for eProsima/Fast-DDS#6403.
+ *
+ * Verify that permission validity timestamps are interpreted as UTC
+ * regardless of the host timezone.
+ */
+#if _MSC_VER != 1800
+TEST(AccessControlTimestampTest, permission_timestamps_utc_independent_of_tz)
+{
+    struct TzGuard
+    {
+        std::string original;
+        TzGuard(
+                const std::string& tz_value)
+        {
+            const char* tz = std::getenv("TZ");
+            if (tz)
+            {
+                original = tz;
+            }
+#ifdef _WIN32
+            _putenv_s("TZ", tz_value.c_str());
+            _tzset();
+#else
+            setenv("TZ", tz_value.c_str(), 1);
+            tzset();
+#endif
+        }
+        ~TzGuard()
+        {
+            if (original.empty())
+            {
+#ifdef _WIN32
+                _putenv_s("TZ", "");
+#else
+                unsetenv("TZ");
+#endif
+            }
+            else
+            {
+#ifdef _WIN32
+                _putenv_s("TZ", original.c_str());
+#else
+                setenv("TZ", original.c_str(), 1);
+#endif
+            }
+#ifdef _WIN32
+            _tzset();
+#else
+            tzset();
+#endif
+        }
+    };
+
+    // Set a non-UTC timezone.
+    TzGuard tz_guard("UTC-8");
+
+    const char* xml =
+        "<dds>"
+        "<permissions>"
+        "<grant name=\"test_grant\">"
+        "<subject_name>CN=Test</subject_name>"
+        "<validity>"
+        "<not_before>2015-09-15T01:00:00</not_before>"
+        "<not_after>2025-09-15T01:00:00</not_after>"
+        "</validity>"
+        "<allow_rule>"
+        "<domains><id>0</id></domains>"
+        "<publish><topics><topic>test_topic</topic></topics></publish>"
+        "</allow_rule>"
+        "<default>ALLOW</default>"
+        "</grant>"
+        "</permissions>"
+        "</dds>";
+
+    PermissionsParser parser;
+    PermissionsData permissions;
+
+    ASSERT_TRUE(parser.parse_stream(xml, std::strlen(xml)));
+    parser.swap(permissions);
+
+    ASSERT_EQ(permissions.grants.size(), 1u);
+
+    // 2015-09-15T01:00:00 UTC = 1442278800
+    const std::time_t expected_not_before = 1442278800;
+    EXPECT_EQ(permissions.grants[0].validity.not_before, expected_not_before);
+
+    // 2025-09-15T01:00:00 UTC = 1757898000
+    const std::time_t expected_not_after = 1757898000;
+    EXPECT_EQ(permissions.grants[0].validity.not_after, expected_not_after);
+}
+#endif // _MSC_VER != 1800
 
 int main(
         int argc,
