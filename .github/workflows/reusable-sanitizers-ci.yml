@@ -554,7 +554,7 @@ jobs:
 
   ubsan_fastdds_build:
     if: ${{ inputs.run_ubsan_fastdds == true }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Free disk space
         uses: eProsima/eProsima-CI/ubuntu/free_disk_space@v0
@@ -574,7 +574,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.28.6'
+          cmakeVersion: '3.22.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -654,7 +654,7 @@ jobs:
   ubsan_fastdds_test:
     if: ${{ inputs.run_ubsan_fastdds == true }}
     needs: ubsan_fastdds_build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       UBSAN_OPTIONS: halt_on_error=1:abort_on_error=1:print_stacktrace=1
     steps:
@@ -680,7 +680,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.28.6'
+          cmakeVersion: '3.22.6'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
