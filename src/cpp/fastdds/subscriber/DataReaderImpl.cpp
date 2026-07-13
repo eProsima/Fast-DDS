@@ -941,6 +941,8 @@ void DataReaderImpl::InnerDataReaderListener::on_reader_matched(
         RTPSReader* /*reader*/,
         const MatchingInfo& info)
 {
+    std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
+
     data_reader_->update_subscription_matched_status(info);
 
     StatusMask notify_status = StatusMask::subscription_matched();
@@ -1615,11 +1617,11 @@ ReturnCode_t DataReaderImpl::check_qos(
             qos.history().depth > qos.resource_limits().max_samples_per_instance)
     {
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "HISTORY DEPTH '" << qos.history().depth <<
-                "' is inconsistent with max_samples_per_instance: '" <<
-                qos.resource_limits().max_samples_per_instance <<
-                "'. Consistency rule: depth <= max_samples_per_instance." <<
-                " Effectively using max_samples_per_instance as depth.");
+                "HISTORY DEPTH '" << qos.history().depth
+                                  << "' is inconsistent with max_samples_per_instance: '"
+                                  << qos.resource_limits().max_samples_per_instance
+                                  << "'. Consistency rule: depth <= max_samples_per_instance."
+                                  << " Effectively using max_samples_per_instance as depth.");
     }
     // Check for nanoseconds in all duration policies
     if (!utils::is_duration_consistent(qos.deadline().period))
