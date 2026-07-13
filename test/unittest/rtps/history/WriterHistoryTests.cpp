@@ -77,6 +77,10 @@ void cache_change_fragment(
     {
         ASSERT_EQ(result, 0);
     }
+
+    RTPSDomain::removeRTPSWriter(writer);
+    RTPSDomain::removeRTPSParticipant(participant);
+    delete history;
 }
 
 /**
