@@ -387,10 +387,37 @@ jobs:
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files. Each process wrote its own tsan.<pid> file via
           # TSAN_OPTIONS=log_path, so reports are never interleaved across processes.
-          $rp = Get-ChildItem -Path "${{ github.workspace }}/tsan_reports" -Filter 'tsan.*' -ErrorAction SilentlyContinue |
-            ForEach-Object { Show-Tsan -Path $_.FullName }
+          $reportsDir = "${{ github.workspace }}/tsan_reports"
+          $reportFiles = Get-ChildItem -Path $reportsDir -Filter 'tsan.*' -ErrorAction SilentlyContinue
+          $rp = $reportFiles | ForEach-Object { Show-Tsan -Path $_.FullName }
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
+          # Attribute every report to the test executable(s) that produced it, extracted from
+          # its own stack frames (the non-shared-object modules). This is self-contained per
+          # file and robust to interleaving, unlike deriving the test from the tsan.<pid> name.
+          $getTests = {
+              param($text)
+              @([regex]::Matches($text, '\(([^()+\s]+)\+0x[0-9a-fA-F]+\)') |
+                  % { $_.Groups[1].Value } | ? { $_ -notmatch '\.so(\.|$)' } | Sort-Object -Unique)
+          }
+          $rp | % {
+              Add-Member -InputObject $_ -NotePropertyName test `
+                  -NotePropertyValue ((& $getTests $_.report) -join ', ') -Force
+          }
+          # Detect crash reports (SEGV, heap-use-after-free, CHECK failed, ...). Show-Tsan only
+          # parses WARNING-delimited reports, so these ERROR reports are invisible to it and would
+          # otherwise let the job pass green. Scan the per-process files directly.
+          $crash = foreach ($f in $reportFiles) {
+              $content = Get-Content -Raw -Path $f.FullName
+              if ($content -notmatch '(?s)(?<blk>==\d+==ERROR: ThreadSanitizer:.*)') { continue }
+              $blk = $Matches.blk
+              $type = if ($blk -match 'ThreadSanitizer:\s*(?<t>[\w-]+)') { $Matches.t } else { 'crash' }
+              $sig  = if ($blk -match '(?m)^SUMMARY: ThreadSanitizer:.*$') { $Matches[0].Trim() } else { $type }
+              [PSCustomObject]@{ file=$f.Name; type=$type; signature=$sig;
+                                 tests=(& $getTests $blk); report=$blk }
+          }
+          # Keep one representative per distinct crash signature
+          $crash = @($crash | Group-Object signature | % { $_.Group[0] })
           # Export raw data
           $rp | Export-CliXML (Join-Path $exports all_reports.xml)
           # Group the reports by issue
@@ -401,11 +428,11 @@ jobs:
           # Simplified deadlock summary (only one representative report and tests associated)
           $sd = $gd | Sort-Object count -desc | select @{l="fuzzhash";e="name"}, count, `
               @{l="échantillon";e={$_.group[0].report}}, @{l="tests"; `
-                  e={$_.group.file | sls "(.*)\.\d+$" | % { $_.Matches.Groups[1].Value } | Sort-Object | get-unique}}
+                  e={$_.group.test | ? { $_ } | Sort-Object -Unique}}
           # Simplified race summary (only one representative report and tests associated)
           $sr = $gr | Sort-Object count -desc | select @{l="fuzzhash";e="name"}, count, `
               @{l="échantillon";e={$_.group[0].report}}, @{l="tests"; `
-                  e={$_.group.file | sls "(.*)\.\d+$" | % { $_.Matches.Groups[1].Value } | Sort-Object | get-unique}}
+                  e={$_.group.test | ? { $_ } | Sort-Object -Unique}}
           # Export simplified summaries
           $sd, $sr | Export-Clixml (Join-Path $exports summary_data.xml)
           # Export CSV summary of frequencies
@@ -415,32 +442,50 @@ jobs:
           & {$sd; $sr} | Sort-Object { [int]$_.fuzzhash} | % { $fuzzy=$_.fuzzhash;$_.tests |
             select @{l="fuzzhash";e={$fuzzy}}, @{l="test";e={$_}}} |
             Export-Csv (Join-Path $exports issue_test_map.csv)
-          # Keep a file per issue
+          # Keep a file per issue, prefixed with the test(s) that produced it
           $dir = New-Item -ItemType Directory -Path (Join-Path $exports reports)
-          & {$sd; $sr} | % { $_.échantillon | Out-File (Join-Path $dir "$($_.fuzzhash).tsan") }
+          & {$sd; $sr} | % {
+              "Test: $(@($_.tests) -join ', ')`n`n" + $_.échantillon |
+                  Out-File (Join-Path $dir "$($_.fuzzhash).tsan") }
+          # One file per distinct crash, likewise prefixed with the offending test(s)
+          for ($i = 0; $i -lt $crash.Count; $i++) {
+              "Test: $(@($crash[$i].tests) -join ', ')`n`n" + $crash[$i].report |
+                  Out-File (Join-Path $dir "crash_$i.tsan") }
           # Create a summary table
           @{Type="Deadlock";Failed=$sd.count;Hashes=$sd.fuzzhash},
-          @{Type="Data race";Failed=$sr.count;Hashes=$sr.fuzzhash} |
+          @{Type="Data race";Failed=$sr.count;Hashes=$sr.fuzzhash},
+          @{Type="Crash";Failed=$crash.count;Hashes=$crash.type} |
             % { $_.Summary = $_.Hashes | select -First 5  | Join-String -Separator ", "
                 if ($_.Hashes.count -gt 5 ) {
                     $_.Summary += ", ..." }; $_ } |
               % { [PSCustomObject]$_} |
               New-MDTable -Columns ([ordered]@{Failed=$null;Type=$null;Summary=$null}) |
               Out-File $Env:GITHUB_STEP_SUMMARY
-          # The step fails on new deadlocks
-          $LASTEXITCODE=$sd.count
+          # The step fails on new deadlocks and on any crash (SEGV, use-after-free, ...)
+          $LASTEXITCODE = @($sd).count + $crash.count
 
-      # TEMPORARY verification aids for the log_path change; remove once validated.
-      - name: Inspect TSan report capture
+      - name: Manual Inspection TSan report capture
         if: always()
         run: |
           echo "## TSan capture check"
           nfiles=$(ls -1 ${{ github.workspace }}/tsan_reports 2>/dev/null | wc -l)
           in_files=$(cat ${{ github.workspace }}/tsan_reports/* 2>/dev/null | grep -c "WARNING: ThreadSanitizer:" || true)
+          crashes=$(grep -l "ERROR: ThreadSanitizer:" ${{ github.workspace }}/tsan_reports/* 2>/dev/null | wc -l)
           in_stdout=$(grep -c "WARNING: ThreadSanitizer:" log/latest_test/fastdds/stdout_stderr.log 2>/dev/null || true)
           echo "Per-process report files : $nfiles"
           echo "Reports captured in files: $in_files"
-          echo "Reports left in stdout   : $in_stdout   (expected ~0; anything >0 = a process missed the option)"
+          echo "Crash (ERROR) report files: $crashes"
+          echo "Reports left in stdout   : $in_stdout"
+          echo ""
+          echo "## TSan report files dump"
+          echo ""
+          for f in ${{ github.workspace }}/tsan_reports/*; do
+            [ -e "$f" ] || { echo "(no report files found)"; break; }
+            echo "===== BEGIN $f ====="
+            cat "$f"
+            echo "===== END $f ====="
+            echo ""
+          done
 
       - name: Check on failures
         if: ${{ steps.report_summary.outcome == 'failure' }}
