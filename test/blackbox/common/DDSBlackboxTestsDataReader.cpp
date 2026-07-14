@@ -44,12 +44,14 @@ using namespace eprosima::fastdds::rtps;
         std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSDataReader : public testing::TestWithParam<communication_type>
 {
@@ -62,7 +64,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -80,7 +83,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -748,7 +752,8 @@ bool validate_publication_builtin_topic_data(
     ret &= (pubdata.lifespan == dw_qos.lifespan());
     ret &= (
         (pubdata.user_data.size() == dw_qos.user_data().size()) &&
-        (0 == memcmp(pubdata.user_data.data(), dw_qos.user_data().data(), pubdata.user_data.size())));
+        (pubdata.user_data.size() == 0 ||
+        0 == memcmp(pubdata.user_data.data(), dw_qos.user_data().data(), pubdata.user_data.size())));
     ret &= (pubdata.ownership == dw_qos.ownership());
     ret &= (pubdata.ownership_strength == dw_qos.ownership_strength());
     ret &= (pubdata.destination_order == dw_qos.destination_order());
@@ -1449,4 +1454,3 @@ GTEST_INSTANTIATE_TEST_MACRO(DDSDataReader,
             }
 
         });
-

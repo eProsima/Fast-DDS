@@ -39,11 +39,13 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS
 };
+}  // namespace
 
 class RTPS : public testing::TestWithParam<communication_type>
 {
@@ -771,8 +773,8 @@ TEST(RTPS, MultithreadedWriterCreation)
     using SchedulerPolicy_t = eprosima::fastdds::rtps::FlowControllerSchedulerPolicy;
     auto create_flow_controller =
             [](const char* name, SchedulerPolicy_t scheduler,
-                    int32_t max_bytes_per_period,
-                    uint64_t period_ms) -> std::shared_ptr<FlowControllerDescriptor_t>
+            int32_t max_bytes_per_period,
+            uint64_t period_ms) -> std::shared_ptr<FlowControllerDescriptor_t>
             {
                 std::shared_ptr<FlowControllerDescriptor_t> descriptor = std::make_shared<FlowControllerDescriptor_t>();
                 descriptor->name = name;

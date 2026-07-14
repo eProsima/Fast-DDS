@@ -625,7 +625,8 @@ TEST(ParticipantTests, CreateDomainParticipantWithExtendedQosFromProfile)
 
     // Test create_participant_with_profile using the default profile
     DomainParticipant* default_participant =
-            DomainParticipantFactory::get_instance()->create_participant_with_profile("test_default_participant_profile");
+            DomainParticipantFactory::get_instance()->create_participant_with_profile(
+        "test_default_participant_profile");
     ASSERT_NE(default_participant, nullptr);
     ASSERT_EQ(default_participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_extended_qos_from_profile(default_participant, "test_default_participant_profile");
@@ -998,27 +999,35 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
 
 }
 
-class DomainParticipantTest : public DomainParticipant
-{
-public:
+namespace {
 
-    const DomainParticipantImpl* get_impl() const
+using DomainParticipantImplPtr = DomainParticipantImpl * DomainParticipant::*;
+
+DomainParticipantImplPtr get_domain_participant_impl_ptr();
+
+template<DomainParticipantImplPtr P>
+struct DomainParticipantImplAccessor
+{
+    friend DomainParticipantImplPtr get_domain_participant_impl_ptr()
     {
-        return impl_;
+        return P;
     }
 
 };
 
+template struct DomainParticipantImplAccessor<&DomainParticipant::impl_>;
+
+} // namespace
+
 fastdds::rtps::RTPSParticipantAttributes get_rtps_attributes(
         const DomainParticipant* participant)
 {
-    const DomainParticipantTest* participant_test = static_cast<const DomainParticipantTest*>(participant);
-    EXPECT_NE(nullptr, participant_test);
-    if (participant_test == nullptr)
+    EXPECT_NE(nullptr, participant);
+    if (participant == nullptr)
     {
         return {};
     }
-    const DomainParticipantImpl* participant_impl = participant_test->get_impl();
+    const DomainParticipantImpl* participant_impl = participant->*get_domain_participant_impl_ptr();
     EXPECT_NE(nullptr, participant_impl);
     if (participant_impl == nullptr)
     {
@@ -1088,8 +1097,9 @@ void set_server_qos(
 }
 
 void set_environment_variable(
-        const std::string environment_servers = "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
-        )
+        const std::string environment_servers =
+        "84.22.253.128:8888;;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783"
+)
 {
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::DEFAULT_ROS2_MASTER_URI, environment_servers.c_str()));
@@ -1100,7 +1110,7 @@ void set_environment_variable(
 
 void set_easy_mode_environment_variable(
         const std::string ip = "127.0.0.1"
-        )
+)
 {
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(rtps::ROS2_EASY_MODE_URI, ip.c_str()));
@@ -1404,7 +1414,8 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     // Modify environment file
 #ifndef __APPLE__
     std::ofstream file(filename);
-    file <<
+    file
+        <<
         "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783\"}";
     file.close();
 
@@ -4433,7 +4444,8 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
     traits<TypeDescriptor>::ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name("mystruct");
-    traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      type_descriptor)};
     traits<MemberDescriptor>::ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
     member_descriptor->name("myuint");

@@ -76,7 +76,7 @@ bool SerializedPayload_t::operator == (
 {
     return ((encapsulation == other.encapsulation) &&
            (length == other.length) &&
-           (0 == memcmp(data, other.data, length)));
+           (length == 0 || 0 == memcmp(data, other.data, length)));
 }
 
 bool SerializedPayload_t::copy(

@@ -26,12 +26,14 @@
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class OwnershipQos : public testing::TestWithParam<communication_type>
 {
@@ -44,7 +46,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -62,7 +65,8 @@ public:
         {
             case INTRAPROCESS:
                 library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(
+                    library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -84,16 +88,20 @@ void exclusive_kind_non_keyed_sample_reception(
     PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -229,19 +237,24 @@ void exclusive_kind_keyed_sample_reception(
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer4.ownership_strength(4).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -453,16 +466,20 @@ void exclusive_kind_non_keyed_writers_same_guid(
     PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -557,19 +574,24 @@ void exclusive_kind_keyed_writers_same_guid(
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer4.ownership_strength(10).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -898,16 +920,20 @@ void exclusive_kind_non_keyed_undiscovered_writer(
     PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1031,19 +1057,24 @@ void exclusive_kind_keyed_undiscovered_writer(
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer4.ownership_strength(4).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1272,24 +1303,28 @@ void exclusive_kind_non_keyed_lost_liveliness(
             };
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .add_user_transport_to_pparams(testTransport1)
             .disable_builtin_transport()
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .add_user_transport_to_pparams(testTransport3)
             .disable_builtin_transport()
@@ -1436,31 +1471,36 @@ void exclusive_kind_keyed_lost_liveliness(
             };
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .add_user_transport_to_pparams(testTransport2)
             .disable_builtin_transport()
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .add_user_transport_to_pparams(testTransport3)
             .disable_builtin_transport()
             .lease_duration({1, 0}, {0, 500000000})
             .init();
     writer4.ownership_strength(4).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         )
             .add_user_transport_to_pparams(testTransport4)
             .disable_builtin_transport()
@@ -1681,19 +1721,24 @@ void exclusive_kind_keyed_unregistering_instance(
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer4.ownership_strength(4).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1902,19 +1947,24 @@ void exclusive_kind_keyed_disposing_instance(
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
     reader.ownership_exclusive().reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer1.ownership_strength(1).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer2.ownership_strength(2).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer3.ownership_strength(3).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
     writer4.ownership_strength(4).reliability(
-        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS : eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
+        reliable ? eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS :
+        eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS
         ).init();
 
     ASSERT_TRUE(reader.isInitialized());
