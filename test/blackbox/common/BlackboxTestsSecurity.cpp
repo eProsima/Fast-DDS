@@ -1327,8 +1327,8 @@ TEST(Security, SecureParticipantsDoNotLoseDiscoveryWithoutUserTraffic)
     const auto idle_timeout = std::chrono::seconds(6);
     const auto data_timeout = std::chrono::seconds(10);
     // Keep the lease short so loss of secure PDP liveliness shows up quickly
-    const auto lease_duration = eprosima::fastdds::dds::Duration_t(3, 0);
-    const auto announcement_period = eprosima::fastdds::dds::Duration_t(1, 0);
+    const auto lease_duration = eprosima::fastrtps::Duration_t(3, 0);
+    const auto announcement_period = eprosima::fastrtps::Duration_t(1, 0);
     // Use UDP transport to later block the fallback participant DATA(P) traffic
     auto reader_transport = std::make_shared<test_UDPv4TransportDescriptor>();
     auto writer_transport = std::make_shared<test_UDPv4TransportDescriptor>();
@@ -1401,8 +1401,7 @@ TEST(Security, SecureParticipantsDoNotLoseDiscoveryWithoutUserTraffic)
 
     // After the secure PDP endpoints are established, stop the unprotected participant DATA(P)
     // traffic, to depend on the secure liveliness maintenance path
-    reader_transport->test_transport_options->always_drop_participant_builtin_topic_data = true;
-    writer_transport->test_transport_options->always_drop_participant_builtin_topic_data = true;
+    test_UDPv4Transport::always_drop_participant_builtin_topic_data = true;
 
     // Exercise the idle scenario twice to catch both immediate loss and unstable recovery/rematch behavior
     ASSERT_NO_FATAL_FAILURE(assert_idle_period_keeps_discovery());

@@ -280,16 +280,7 @@ void PDPSimple::announceParticipantState(
 #endif // HAVE_SECURITY
 
         auto endpoints = dynamic_cast<fastdds::rtps::SimplePDPEndpoints*>(builtin_endpoints_.get());
-<<<<<<< HEAD
         RTPSWriter& writer = *(endpoints->writer.writer_);
-=======
-        assert(endpoints && endpoints->writer.history_);
-        if (!endpoints || !endpoints->writer.history_)
-        {
-            FASTDDS_UNREACHABLE();       // “cannot happen” invariant
-        }
-
->>>>>>> 910ac9907 (Assert liveliness with periodic heartbeats in secure participants (#6411))
         WriterHistory& history = *(endpoints->writer.history_);
         PDP::announceParticipantState(writer, history, new_change, dispose, wp);
 
