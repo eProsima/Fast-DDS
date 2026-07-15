@@ -320,6 +320,9 @@ public:
 
     const DataWriterQos& get_qos() const;
 
+    ReturnCode_t get_qos(
+            DataWriterQos& qos) const;
+
     Topic* get_topic() const;
 
     const DataWriterListener* get_listener() const;
@@ -435,6 +438,9 @@ protected:
     Topic* topic_ = nullptr;
 
     DataWriterQos qos_;
+
+    //! Mutex to protect qos_
+    mutable std::mutex qos_mutex_;
 
     //! DataWriterListener
     DataWriterListener* listener_ = nullptr;
