@@ -392,11 +392,16 @@ jobs:
           $rp = $reportFiles | ForEach-Object { Show-Tsan -Path $_.FullName }
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
-          # Attribute every report to the test executable(s) that produced it, extracted from
-          # its own stack frames (the non-shared-object modules). This is self-contained per
-          # file and robust to interleaving, unlike deriving the test from the tsan.<pid> name.
+          # Attribute every report to the test that produced it, extracted from its own stack
+          # frames. Self-contained per file and robust to interleaving. We prefer the googletest
+          # case name (present as "<Suite>_<Name>_Test::TestBody" in the thread creation stack);
+          # when there is none (e.g. communication subprocesses), we fall back to the test
+          # executable(s), i.e. the non-shared-object modules in the "(module+0x...)" frames.
           $getTests = {
               param($text)
+              $gtest = @([regex]::Matches($text, '([A-Za-z_][A-Za-z0-9_]*)_Test::') |
+                  % { $_.Groups[1].Value } | Sort-Object -Unique)
+              if ($gtest) { return $gtest }
               @([regex]::Matches($text, '\(([^()+\s]+)\+0x[0-9a-fA-F]+\)') |
                   % { $_.Groups[1].Value } | ? { $_ -notmatch '\.so(\.|$)' } | Sort-Object -Unique)
           }
@@ -418,6 +423,13 @@ jobs:
           }
           # Keep one representative per distinct crash signature
           $crash = @($crash | Group-Object signature | % { $_.Group[0] })
+          # Prepend the offending test(s) as the first line of every per-process report file, so
+          # the raw capture shows which test produced it. Done after parsing so it does not affect
+          # Show-Tsan or the crash scan above.
+          foreach ($f in $reportFiles) {
+              $content = Get-Content -Raw -Path $f.FullName
+              Set-Content -Path $f.FullName -Value "Test: $((& $getTests $content) -join ', ')`n`n$content"
+          }
           # Export raw data
           $rp | Export-CliXML (Join-Path $exports all_reports.xml)
           # Group the reports by issue
