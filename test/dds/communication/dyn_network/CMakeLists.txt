@@ -54,3 +54,6 @@ configure_file(launch_ds_no_interfaces.bash
 add_test(NAME dds.communication.ds_init_with_no_interfaces
          COMMAND ${DOCKER_EXECUTABLE} compose -f ${CMAKE_CURRENT_BINARY_DIR}/ds_init_no_interfaces.compose.yml up --exit-code-from server-pub-sub
          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()

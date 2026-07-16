@@ -20,7 +20,7 @@ set(build_dir "${fastdds_BINARY_DIR}/test/force_cxx")
 set(module_dir "${fastdds_SOURCE_DIR}/cmake/common")
 set(script "${CMAKE_CURRENT_LIST_DIR}/force_cxx/build.cmake")
 
-# The C++ sources use fold expressions which were introduced in C++17 
+# The C++ sources use fold expressions which were introduced in C++17
 
 # Tests that C++17 sources can be built enforcing C++17 through CMake
 add_test(NAME cmake.force_standard.positive.builtin
@@ -63,3 +63,6 @@ set_tests_properties(
     cmake.force_standard.negative.builtin
     cmake.force_standard.negative.manual
     PROPERTIES WILL_FAIL TRUE)
+
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()

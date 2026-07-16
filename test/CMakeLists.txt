@@ -48,6 +48,28 @@ endif()
 message(STATUS "EPROSIMA_TEST_DNS_NOT_SET_UP: '${EPROSIMA_TEST_DNS_NOT_SET_UP}'")
 
 ###############################################################################
+# ThreadSanitizer report attribution
+###############################################################################
+# Make every explicitly-added ctest test write its ThreadSanitizer reports to a file
+# named after the test. Applied only on ThreadSanitizer builds and only when
+# TSAN_REPORTS_DIR is set.
+function(tsan_name_reports)
+    if(NOT CMAKE_CXX_FLAGS MATCHES "sanitize=thread")
+        return()
+    endif()
+    if(NOT DEFINED ENV{TSAN_REPORTS_DIR})
+        return()
+    endif()
+    get_property(_tsan_tests DIRECTORY PROPERTY TESTS)
+    foreach(_tsan_test IN LISTS _tsan_tests)
+        # Sanitize characters that are invalid in a file name (e.g. '/' from parametrized names).
+        string(REGEX REPLACE "[^A-Za-z0-9._-]" "_" _tsan_safe "${_tsan_test}")
+        set_property(TEST ${_tsan_test} APPEND PROPERTY ENVIRONMENT_MODIFICATION
+            "TSAN_OPTIONS=string_append: log_path=$ENV{TSAN_REPORTS_DIR}/${_tsan_safe}")
+    endforeach()
+endfunction()
+
+###############################################################################
 # System tests
 ###############################################################################
 if(SYSTEM_TESTS)
