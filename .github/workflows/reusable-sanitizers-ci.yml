@@ -238,6 +238,8 @@ jobs:
     env:
       # Use log_path so each instrumented process write its report to <log_path>.<pid>. Needed to avoid interleaving
       TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000 log_path=${{ github.workspace }}/tsan_reports/tsan
+      # Base dir for per-test log_path override injected by tsan_name_reports()
+      TSAN_REPORTS_DIR: ${{ github.workspace }}/tsan_reports
       # GCC 13.2 (Ubuntu Noble default) produces several data races warnings
       # TODO: For now we keep it at GCC 12 and ubuntu 22 until we figure out what to do with them
       # Although hundreds of tests trigger them, these problems arise from approximately
@@ -385,18 +387,19 @@ jobs:
           }
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
-          # Parse the report files. Each process wrote its own tsan.<pid> file via
+          # Parse the report files. Each process wrote its own <base>.<pid> file via
           # TSAN_OPTIONS=log_path, so reports are never interleaved across processes.
           $reportsDir = "${{ github.workspace }}/tsan_reports"
-          $reportFiles = Get-ChildItem -Path $reportsDir -Filter 'tsan.*' -ErrorAction SilentlyContinue
+          # Every instrumented process writes <base>.<pid>
+          $reportFiles = Get-ChildItem -File -Path $reportsDir -ErrorAction SilentlyContinue |
+              Where-Object Name -match '\.\d+$'
           $rp = $reportFiles | ForEach-Object { Show-Tsan -Path $_.FullName }
           # filter duplicates
           $rp = $rp | group md5hash | % { $_.group[0] }
-          # Attribute every report to the test that produced it, extracted from its own stack
-          # frames. Self-contained per file and robust to interleaving. We prefer the googletest
-          # case name (present as "<Suite>_<Name>_Test::TestBody" in the thread creation stack);
-          # when there is none (e.g. communication subprocesses), we fall back to the test
-          # executable(s), i.e. the non-shared-object modules in the "(module+0x...)" frames.
+          # Attribute a report to its test. The file name is authoritative when it carries the
+          # ctest name. Otherwise (catch-all "tsan.<pid>")
+          # fall back to the report content: the googletest case ("<Suite>_<Name>_Test::TestBody"
+          # in the thread creation stack), else the test executable(s) (non-shared-object modules).
           $getTests = {
               param($text)
               $gtest = @([regex]::Matches($text, '([A-Za-z_][A-Za-z0-9_]*)_Test::') |
@@ -405,9 +408,14 @@ jobs:
               @([regex]::Matches($text, '\(([^()+\s]+)\+0x[0-9a-fA-F]+\)') |
                   % { $_.Groups[1].Value } | ? { $_ -notmatch '\.so(\.|$)' } | Sort-Object -Unique)
           }
+          $testOf = {
+              param($fileName, $text)
+              if ($fileName -match '^(?<t>.+)\.\d+$' -and $Matches.t -ne 'tsan') { return $Matches.t }
+              (& $getTests $text) -join ', '
+          }
           $rp | % {
               Add-Member -InputObject $_ -NotePropertyName test `
-                  -NotePropertyValue ((& $getTests $_.report) -join ', ') -Force
+                  -NotePropertyValue (& $testOf $_.file $_.report) -Force
           }
           # Detect crash reports (SEGV, heap-use-after-free, CHECK failed, ...). Show-Tsan only
           # parses WARNING-delimited reports, so these ERROR reports are invisible to it and would
@@ -419,7 +427,7 @@ jobs:
               $type = if ($blk -match 'ThreadSanitizer:\s*(?<t>[\w-]+)') { $Matches.t } else { 'crash' }
               $sig  = if ($blk -match '(?m)^SUMMARY: ThreadSanitizer:.*$') { $Matches[0].Trim() } else { $type }
               [PSCustomObject]@{ file=$f.Name; type=$type; signature=$sig;
-                                 tests=(& $getTests $blk); report=$blk }
+                                 tests=(& $testOf $f.Name $blk); report=$blk }
           }
           # Keep one representative per distinct crash signature
           $crash = @($crash | Group-Object signature | % { $_.Group[0] })
@@ -428,7 +436,7 @@ jobs:
           # Show-Tsan or the crash scan above.
           foreach ($f in $reportFiles) {
               $content = Get-Content -Raw -Path $f.FullName
-              Set-Content -Path $f.FullName -Value "Test: $((& $getTests $content) -join ', ')`n`n$content"
+              Set-Content -Path $f.FullName -Value "Test: $(& $testOf $f.Name $content)`n`n$content"
           }
           # Export raw data
           $rp | Export-CliXML (Join-Path $exports all_reports.xml)

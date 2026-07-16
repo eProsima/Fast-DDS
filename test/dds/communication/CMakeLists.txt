@@ -323,3 +323,6 @@ endif()
 if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
     add_subdirectory(dyn_network)
 endif()
+
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()

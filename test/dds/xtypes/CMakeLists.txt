@@ -137,3 +137,5 @@ if(Python3_Interpreter_FOUND)
     endforeach()
 endif()
 
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()
