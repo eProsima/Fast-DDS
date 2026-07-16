@@ -236,3 +236,6 @@ if(GST_FOUND)
 else()
     message(STATUS "GStreamer libraries not found. Could not compile VideoTests")
 endif()
+
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()

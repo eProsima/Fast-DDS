@@ -61,3 +61,6 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER) AND fastcdr_FOUND)
         endif()
     endif()
 endif()
+
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()

@@ -161,3 +161,6 @@ foreach(example_test ${examples_python_tests})
              COMMAND ${Python3_EXECUTABLE} -m pytest -vrP
              WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${example_name})
 endforeach()
+
+# Trace each TSan report back to the test that produced it (see tsan_name_reports).
+tsan_name_reports()
