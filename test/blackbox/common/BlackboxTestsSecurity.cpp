@@ -1319,6 +1319,97 @@ TEST_P(Security, RemoveParticipantProxyDataonSecurityManagerLeaseExpired_validat
 
 }
 
+// Regression test for secure PDP liveliness maintenance without user traffic.
+TEST(Security, SecureParticipantsDoNotLoseDiscoveryWithoutUserTraffic)
+{
+    PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic_secure_participant_liveliness");
+    PubSubWriter<HelloWorldPubSubType> writer("HelloWorldTopic_secure_participant_liveliness");
+    const auto idle_timeout = std::chrono::seconds(6);
+    const auto data_timeout = std::chrono::seconds(10);
+    // Keep the lease short so loss of secure PDP liveliness shows up quickly
+    const auto lease_duration = eprosima::fastrtps::Duration_t(3, 0);
+    const auto announcement_period = eprosima::fastrtps::Duration_t(1, 0);
+    // Use UDP transport to later block the fallback participant DATA(P) traffic
+    auto reader_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto writer_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    const std::string governance_file("governance_helloworld_all_enable.smime");
+    const std::string permissions_file("permissions_helloworld.smime");
+
+    CommonPermissionsConfigure(reader, writer, governance_file, permissions_file);
+    // Force the test through UDP to avoid local shortcuts masking the secure discovery behavior
+    reader.disable_builtin_transport().add_user_transport_to_pparams(reader_transport);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(writer_transport);
+
+    // Two secure participants that authenticate, discover each other, and exchange user data
+    reader.lease_duration(lease_duration, announcement_period)
+            .history_depth(10)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.lease_duration(lease_duration, announcement_period)
+            .history_depth(10)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_authorized();
+    writer.wait_authorized();
+
+    // Wait until both endpoints are matched
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Verify discovery state stayed stable
+    auto assert_still_discovered = [&reader, &writer]()
+            {
+                ASSERT_TRUE(reader.is_matched());
+                ASSERT_TRUE(writer.is_matched());
+                ASSERT_EQ(reader.get_matched(), 1u);
+                ASSERT_EQ(writer.get_matched(), 1u);
+
+                const auto reader_status = reader.get_subscription_matched_status();
+                const auto writer_status = writer.get_publication_matched_status();
+                ASSERT_EQ(reader_status.total_count, 1);
+                ASSERT_EQ(writer_status.total_count, 1);
+            };
+
+    // Check the secure participants must not be undiscovered just because user traffic stops
+    auto assert_idle_period_keeps_discovery = [&reader, &writer, &idle_timeout, &assert_still_discovered]()
+            {
+                ASSERT_FALSE(reader.wait_participant_undiscovery(idle_timeout));
+                ASSERT_FALSE(writer.wait_participant_undiscovery(idle_timeout));
+
+                assert_still_discovered();
+            };
+
+    // Discovery is only useful if data can still flow after the idle window
+    auto assert_data_flow = [&reader, &writer, &data_timeout, &assert_still_discovered]()
+            {
+                auto data = default_helloworld_data_generator(2);
+
+                reader.startReception(data);
+                writer.send(data);
+
+                ASSERT_TRUE(data.empty());
+                ASSERT_EQ(reader.block_for_all(data_timeout), 2u);
+                assert_still_discovered();
+            };
+
+    ASSERT_NO_FATAL_FAILURE(assert_still_discovered());
+
+    // After the secure PDP endpoints are established, stop the unprotected participant DATA(P)
+    // traffic, to depend on the secure liveliness maintenance path
+    test_UDPv4Transport::always_drop_participant_builtin_topic_data = true;
+
+    // Exercise the idle scenario twice to catch both immediate loss and unstable recovery/rematch behavior
+    ASSERT_NO_FATAL_FAILURE(assert_idle_period_keeps_discovery());
+    ASSERT_NO_FATAL_FAILURE(assert_data_flow());
+    ASSERT_NO_FATAL_FAILURE(assert_idle_period_keeps_discovery());
+    ASSERT_NO_FATAL_FAILURE(assert_data_flow());
+}
+
 TEST(Security, AllowUnauthenticatedParticipants_EntityCreationFailsIfRTPSProtectionIsNotNONE)
 {
     PubSubReader<HelloWorldPubSubType> reader("HelloWorldTopic");
