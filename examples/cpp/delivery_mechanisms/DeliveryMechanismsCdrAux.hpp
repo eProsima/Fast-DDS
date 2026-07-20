@@ -24,7 +24,7 @@
 
 #include "DeliveryMechanisms.hpp"
 
-constexpr uint32_t DeliveryMechanisms_max_cdr_typesize {40UL};
+constexpr uint32_t DeliveryMechanisms_max_cdr_typesize {36UL};
 constexpr uint32_t DeliveryMechanisms_max_key_cdr_typesize {0UL};
 
 

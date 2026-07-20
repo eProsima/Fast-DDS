@@ -49,7 +49,7 @@ void register_DeliveryMechanisms_type_identifier(
         "DeliveryMechanisms", type_ids_DeliveryMechanisms);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_DeliveryMechanisms)
     {
-        StructTypeFlag struct_flags_DeliveryMechanisms = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
+        StructTypeFlag struct_flags_DeliveryMechanisms = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
                 false, false);
         QualifiedTypeName type_name_DeliveryMechanisms = "DeliveryMechanisms";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_DeliveryMechanisms;

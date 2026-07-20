@@ -206,7 +206,7 @@ void register_AnnotationTest_type_identifier(
                 return;
             }
             MemberName name_enum_value = "enum_value";
-            AnnotationParameterValue param_value_enum_value = TypeObjectUtils::build_annotation_parameter_value_enum(AnnotationTest::InnerEnumHelper::ONE);
+            AnnotationParameterValue param_value_enum_value = TypeObjectUtils::build_annotation_parameter_value_enum(0);
 
             CompleteAnnotationParameter param_enum_value = TypeObjectUtils::build_complete_annotation_parameter(common_enum_value, name_enum_value, param_value_enum_value);
             TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_enum_value);
@@ -742,7 +742,7 @@ void register_AnnotationTest_type_identifier(
                 return;
             }
             MemberName name_enum_default_value = "enum_default_value";
-            AnnotationParameterValue param_value_enum_default_value = TypeObjectUtils::build_annotation_parameter_value_enum(AnnotationTest::InnerEnumHelper::TWO);
+            AnnotationParameterValue param_value_enum_default_value = TypeObjectUtils::build_annotation_parameter_value_enum(1);
 
             CompleteAnnotationParameter param_enum_default_value = TypeObjectUtils::build_complete_annotation_parameter(common_enum_default_value, name_enum_default_value, param_value_enum_default_value);
             TypeObjectUtils::add_complete_annotation_parameter(member_seq_AnnotationTest, param_enum_default_value);
@@ -866,7 +866,7 @@ void register_AnnotatedStruct_type_identifier(
 
         {
             NameHash paramname_hash_enum_value = TypeObjectUtils::name_hash("enum_value");
-            AnnotationParameterValue param_value_enum_value = TypeObjectUtils::build_annotation_parameter_value_enum(AnnotationTest::InnerEnumHelper::ONE);
+            AnnotationParameterValue param_value_enum_value = TypeObjectUtils::build_annotation_parameter_value_enum(0);
 
             AppliedAnnotationParameter applied_param_enum_value = TypeObjectUtils::build_applied_annotation_parameter(paramname_hash_enum_value,
                     param_value_enum_value);
@@ -1004,7 +1004,7 @@ void register_AnnotatedStruct_type_identifier(
 
         {
             NameHash paramname_hash_enum_default_value = TypeObjectUtils::name_hash("enum_default_value");
-            AnnotationParameterValue param_value_enum_default_value = TypeObjectUtils::build_annotation_parameter_value_enum(AnnotationTest::InnerEnumHelper::TWO);
+            AnnotationParameterValue param_value_enum_default_value = TypeObjectUtils::build_annotation_parameter_value_enum(1);
 
             AppliedAnnotationParameter applied_param_enum_default_value = TypeObjectUtils::build_applied_annotation_parameter(paramname_hash_enum_default_value,
                     param_value_enum_default_value);

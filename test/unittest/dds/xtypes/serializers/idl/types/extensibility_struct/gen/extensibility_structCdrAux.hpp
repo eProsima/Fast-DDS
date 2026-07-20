@@ -24,13 +24,13 @@
 
 #include "extensibility_struct.hpp"
 
-constexpr uint32_t MutableStruct_max_cdr_typesize {5UL};
+constexpr uint32_t MutableStruct_max_cdr_typesize {12UL};
 constexpr uint32_t MutableStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t ExtensibilityStruct_max_cdr_typesize {25UL};
 constexpr uint32_t ExtensibilityStruct_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t FinalStruct_max_cdr_typesize {5UL};
+constexpr uint32_t FinalStruct_max_cdr_typesize {1UL};
 constexpr uint32_t FinalStruct_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t AppendableStruct_max_cdr_typesize {5UL};
