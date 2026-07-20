@@ -65,7 +65,7 @@ bool FinalStructPubSubType::serialize(
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
 
     try
     {
@@ -207,8 +207,8 @@ bool MutableStructPubSubType::serialize(
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
     ser.set_encoding_flag(
         data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR :
-        eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
 
     try
     {

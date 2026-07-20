@@ -49,7 +49,7 @@ void register_FinalStruct_type_identifier(
         "FinalStruct", type_ids_FinalStruct);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_FinalStruct)
     {
-        StructTypeFlag struct_flags_FinalStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
+        StructTypeFlag struct_flags_FinalStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         QualifiedTypeName type_name_FinalStruct = "FinalStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_FinalStruct;
@@ -114,7 +114,7 @@ void register_MutableStruct_type_identifier(
         "MutableStruct", type_ids_MutableStruct);
     if (eprosima::fastdds::dds::RETCODE_OK != return_code_MutableStruct)
     {
-        StructTypeFlag struct_flags_MutableStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
+        StructTypeFlag struct_flags_MutableStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
                 false, false);
         QualifiedTypeName type_name_MutableStruct = "MutableStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_MutableStruct;
