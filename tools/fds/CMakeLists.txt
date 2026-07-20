@@ -89,13 +89,13 @@ install(TARGETS ${PROJECT_NAME}
         COMPONENT discovery
         )
 
-# symlink creation requires:
+# link creation requires:
 #   - install( CODE using generator expressions (legacy code is provided for all cmake versions)
-#   - on windows privileges to create symlinks (a .bat file is provided on unprivileged installations)
+#   - on windows a hard link avoids symbolic link privilege requirements
 if( WIN32 )
-    # Use powershell to generate the link
+    # Use powershell to generate the hard link
     install(
-      CODE "execute_process( COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}.exe -PathType Leaf ) { rm ${PROJECT_NAME}.exe } ; New-Item -ItemType SymbolicLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}.exe \" ERROR_QUIET RESULTS_VARIABLE SYMLINK_FAILED WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n if( SYMLINK_FAILED ) \n message(STATUS \"Windows requires admin installation rights to create symlinks. Build again with privileges to create symlink. Tool will try to find executable if no symlink is found.\") \n endif()"
+      CODE "execute_process( COMMAND PowerShell -Command \"if( test-path ${PROJECT_NAME}.exe -PathType Leaf ) { rm ${PROJECT_NAME}.exe } ; New-Item -ItemType HardLink -Target $<TARGET_FILE_NAME:${PROJECT_NAME}> -Path ${PROJECT_NAME}.exe \" ERROR_QUIET RESULTS_VARIABLE HARDLINK_FAILED WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}\") \n if( HARDLINK_FAILED ) \n message(STATUS \"Could not create Windows hard link. Tool will try to find executable if no link is found.\") \n endif()"
       COMPONENT discovery)
 else()
     # Use ln to create the symbolic link. We remove the version from the file name but keep the debug suffix
