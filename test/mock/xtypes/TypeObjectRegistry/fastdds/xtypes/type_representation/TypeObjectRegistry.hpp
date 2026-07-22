@@ -27,6 +27,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
 namespace std {
 template<>
