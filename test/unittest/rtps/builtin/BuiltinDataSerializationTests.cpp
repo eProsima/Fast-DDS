@@ -14,8 +14,11 @@
 
 #include <array>
 #include <cstdint>
+#include <fstream>
 #include <iostream>
 #include <set>
+#include <string>
+#include <vector>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -3896,6 +3899,81 @@ TEST(BuiltinDataSerializationTests, msg_property_list_oversized_num_properties)
     ASSERT_NO_FATAL_FAILURE(out.read_from_cdr_message(&msg, true, network, true));
 
     EXPECT_EQ(0u, out.properties.size());
+}
+
+// Loads the raw bytes of a minimized ClusterFuzz testcase from regressions/.
+// Returns the selector (0, 1, or 2) and the message with the bytes after the selector.
+void read_cdr_message_from_regression_file(
+        const std::string& filename,
+        uint8_t& selector,
+        CDRMessage_t& msg)
+{
+    // Read file
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    ASSERT_TRUE(file.is_open()) << "Could not open regression file: " << filename;
+
+    std::streamsize file_size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // Check file size
+    ASSERT_LE(file_size, std::numeric_limits<uint32_t>::max());
+    ASSERT_GE(file_size, 1u);
+    uint32_t payload_size = static_cast<uint32_t>(file_size) - 1u;
+
+    // Reserve payload
+    msg.reserve(payload_size);
+    ASSERT_NE(msg.buffer, nullptr);
+    ASSERT_EQ(msg.max_size, payload_size);
+    msg.length = payload_size;
+
+    // Read selector
+    ASSERT_TRUE(static_cast<bool>(file.read(reinterpret_cast<char*>(&selector), 1u)));
+    selector = selector % 3u;
+
+    // Read payload
+    ASSERT_TRUE(static_cast<bool>(file.read(reinterpret_cast<char*>(msg.buffer), msg.max_size)));
+}
+
+// Load and check the files from regressions/
+
+TEST(BuiltinDataSerializationTests, regressions)
+{
+    std::vector<std::string> test_files = {
+        "./regressions/25507.bin"           // Redmine issue #25507
+    };
+
+    uint8_t selector = 0;
+    std::vector<uint8_t> payload;
+
+    for (const auto& test_file : test_files)
+    {
+        CDRMessage_t msg(0);
+        read_cdr_message_from_regression_file(test_file, selector, msg);
+
+        // Dispatch on the same selector used by fuzz_proxy_cdr, exercising the exact
+        // deserialization path used when receiving PDP/SEDP discovery data.
+        switch (selector)
+        {
+            case 0:
+            {
+                ParticipantProxyData pdata(RTPSParticipantAllocationAttributes{});
+                EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, true, network, false, c_VendorId_eProsima));
+                break;
+            }
+            case 1:
+            {
+                ReaderProxyData pdata(max_unicast_locators, max_multicast_locators);
+                EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, c_VendorId_eProsima));
+                break;
+            }
+            default:
+            {
+                WriterProxyData pdata(max_unicast_locators, max_multicast_locators);
+                EXPECT_NO_THROW(pdata.read_from_cdr_message(&msg, c_VendorId_eProsima));
+                break;
+            }
+        }
+    }
 }
 
 } // namespace rtps
