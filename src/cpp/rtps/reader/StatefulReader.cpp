@@ -605,7 +605,8 @@ bool StatefulReader::process_data_msg(
                     NotifyChanges(pWP);
                     send_ack_if_datasharing(this, history_, pWP, change->sequenceNumber);
                 }
-                return false;
+                // Could process later when `will_never_be_accepted` is false
+                return will_never_be_accepted;
             }
 
             if (!fastdds::rtps::change_is_relevant_for_filter(*change, m_guid, data_filter_))
@@ -628,6 +629,7 @@ bool StatefulReader::process_data_msg(
                         IDSTRING
                         "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
                         << m_guid );
+                // Could process later when a cache is available
                 return false;
             }
 
@@ -647,7 +649,8 @@ bool StatefulReader::process_data_msg(
                     EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
                             << change->writerGUID);
                     change_pool_->release_cache(change_to_add);
-                    return false;
+                    // Matched in datasharing_listener_, but no datasharing pool available, irrecoverable error.
+                    return true;
                 }
                 datasharing_pool->get_datasharing_change(change->serializedPayload, *change_to_add);
             }
@@ -675,11 +678,12 @@ bool StatefulReader::process_data_msg(
                         << m_guid << " is "
                         << (fixed_payload_size_ > 0 ? fixed_payload_size_ : (std::numeric_limits<uint32_t>::max)()));
                 change_pool_->release_cache(change_to_add);
+                // Could process later when a payload is available
                 return false;
             }
 
             // Perform reception of cache change
-            if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to))
+            if (!change_received(change_to_add, pWP, unknown_missing_changes_up_to, will_never_be_accepted))
             {
                 EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                         IDSTRING "Change " << change_to_add->sequenceNumber << " not added to history");
@@ -688,14 +692,15 @@ bool StatefulReader::process_data_msg(
                     change_to_add->serializedPayload.payload_owner->release_payload(change_to_add->serializedPayload);
                 }
                 change_pool_->release_cache(change_to_add);
-                return false;
+                // Could process later when `will_never_be_accepted` is false
+                return will_never_be_accepted;
             }
         }
 
         return true;
     }
 
-    return false;
+    return true;
 }
 
 bool StatefulReader::process_data_frag_msg(
@@ -786,7 +791,7 @@ bool StatefulReader::process_data_frag_msg(
             // If this is the first time we have received fragments for this change, add it to history
             if (change_created != nullptr)
             {
-                if (!change_received(change_created, pWP, changes_up_to))
+                if (!change_received(change_created, pWP, changes_up_to, will_never_be_accepted))
                 {
                     EPROSIMA_LOG_INFO(RTPS_MSG_IN,
                             IDSTRING "MessageReceiver not add change " << change_created->sequenceNumber.to64long());
@@ -1086,8 +1091,11 @@ bool StatefulReader::change_removed_by_history(
 bool StatefulReader::change_received(
         CacheChange_t* a_change,
         WriterProxy* prox,
-        size_t unknown_missing_changes_up_to)
+        size_t unknown_missing_changes_up_to,
+        bool& will_never_be_accepted)
 {
+    will_never_be_accepted = true;
+
     //First look for WriterProxy in case is not provided
     if (prox == nullptr)
     {
@@ -1133,6 +1141,7 @@ bool StatefulReader::change_received(
                             }
                         }
 
+                        will_never_be_accepted = false;
                         return true;
                     }
                 }
@@ -1163,11 +1172,11 @@ bool StatefulReader::change_received(
 
     // NOTE: Depending on QoS settings, one change can be removed from history
     // inside the call to history_->received_change
+    will_never_be_accepted = false;
     fastdds::dds::SampleRejectedStatusKind rejection_reason;
     if (history_->received_change(a_change, unknown_missing_changes_up_to, rejection_reason))
     {
         auto payload_length = a_change->serializedPayload.length;
-
         bool ret = true;
 
         if (a_change->is_fully_assembled())
@@ -1183,8 +1192,8 @@ bool StatefulReader::change_received(
             {
                 prox->irrelevant_change_set(a_change->sequenceNumber);
                 send_ack_if_datasharing(this, history_, prox, a_change->sequenceNumber);
+                will_never_be_accepted = true;
                 ret = false;
-
             }
         }
 
@@ -1213,6 +1222,7 @@ bool StatefulReader::change_received(
             {
                 prox->irrelevant_change_set(a_change->sequenceNumber);
                 NotifyChanges(prox);
+                will_never_be_accepted = true;
             }
 
             /* Special case: rejected by REJECTED_BY_UNKNOWN_INSTANCE should never be received again.
@@ -1227,6 +1237,7 @@ bool StatefulReader::change_received(
                         " ignored. Could not compute key in keyed topic.");
                 prox->irrelevant_change_set(a_change->sequenceNumber);
                 NotifyChanges(prox);
+                will_never_be_accepted = true;
             }
         }
     }
