@@ -79,7 +79,7 @@ IdentityToken AuthenticationPluginTest::generate_remote_identity_token_ok(
 
     // dds.cert.sn
     property.name("dds.cert.sn");
-    X509_NAME* cert_sn = X509_get_subject_name(h->cert_);
+    const X509_NAME* cert_sn = X509_get_subject_name(h->cert_);
     char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
     property.value() = cert_sn_str;
     OPENSSL_free(cert_sn_str);
