@@ -481,7 +481,7 @@ inline bool QosPoliciesSerializer<PartitionQosPolicy>::read_content_from_cdr_mes
         uint32_t partition_size, alignment;
 
         valid &= fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &partition_size);
-        if (!valid || cdr_message->pos + partition_size > cdr_message->length)
+        if (!valid || partition_size > cdr_message->length - cdr_message->pos)
         {
             return false;
         }
