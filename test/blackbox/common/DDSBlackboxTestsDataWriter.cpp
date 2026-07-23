@@ -468,7 +468,8 @@ public:
         qos.resource_limits().max_samples = 1000;
         qos.transport_priority().value = 1;
         qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
-        qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        qos.representation().m_value.push_back(
+            eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
         qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
         qos.lifespan().duration = {5, 0};
     }
