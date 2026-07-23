@@ -115,9 +115,12 @@ public:
             WriterProxy** WP);
 
     /**
-     * Processes a new DATA message.
-     * @param change Pointer to the CacheChange_t.
-     * @return true if the reader accepts messages.
+     * @brief Process an incoming DATA message.
+     *
+     * @param change  Pointer to the incoming CacheChange_t.
+     *
+     * @return true if the reader processed the message.
+     * @return false if the reader could not process the message, but would be able to do so in the future.
      */
     bool process_data_msg(
             CacheChange_t* change) override;
