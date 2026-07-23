@@ -162,7 +162,7 @@ void DataSharingListener::process_new_data ()
 
         uint64_t last_payload = pool->end();
         bool has_new_payload = true;
-        while (has_new_payload)
+        while (has_new_payload && is_running_.load())
         {
             CacheChange_t ch;
             SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
