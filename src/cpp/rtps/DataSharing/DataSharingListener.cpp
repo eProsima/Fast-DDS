@@ -197,6 +197,12 @@ void DataSharingListener::process_new_data ()
                     pool->release_payload(ch.serializedPayload);
                     pool->advance_to_next_payload();
                 }
+                else
+                {
+                    // If the reader could not process the data, we will try again later
+                    notification_->notification_->new_data.store(true);
+                    break;
+                }
             }
 
             if (writer_pools_changed_.load(std::memory_order_relaxed))
