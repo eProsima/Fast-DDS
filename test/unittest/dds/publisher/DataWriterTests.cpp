@@ -1973,8 +1973,8 @@ struct DataWriterImplAccessor
 
 template struct DataWriterImplAccessor<&DataWriter::impl_>;
 
-// Accessor to DataWriterHistory unique ptr from DataWriterImpl
-using DataWriterHistoryPtr = std::unique_ptr<DataWriterHistory> DataWriterImpl::*;
+// Accessor to DataWriterHistory from DataWriterImpl
+using DataWriterHistoryPtr = DataWriterHistory DataWriterImpl::*;
 
 DataWriterHistoryPtr get_datawriter_history_ptr();
 
@@ -2055,7 +2055,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     // Access DataWriterHistory
     DataWriterImpl* datawriter_impl = instance_datawriter->*get_datawriter_impl_ptr();
     ASSERT_NE(nullptr, datawriter_impl);
-    DataWriterHistory* history = (datawriter_impl->*get_datawriter_history_ptr()).get();
+    DataWriterHistory* history = &(datawriter_impl->*get_datawriter_history_ptr());
     ASSERT_NE(nullptr, history);
 
     // 5. Calling wait_for_acknowledgments in a keyed topic with HANDLE_NIL returns

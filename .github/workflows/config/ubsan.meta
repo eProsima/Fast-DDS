@@ -1,5 +1,5 @@
 names:
-    fastdds:
+    fastrtps:
         cmake-args:
             - -DNO_TLS=OFF
             - -DSECURITY=ON

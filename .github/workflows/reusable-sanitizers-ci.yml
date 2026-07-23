@@ -562,7 +562,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          path: src/fastdds
+          path: src/fastrtps
           submodules: true
           ref: ${{ inputs.fastdds_ref }}
 
@@ -612,27 +612,27 @@ jobs:
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/fastdds_test.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/fastdds_test.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Show .meta file
         id: show_meta
         run: |
-          cat ${{ github.workspace }}/src/fastdds/.github/workflows/config/ubsan.meta
+          cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ubsan.meta
 
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/ubuntu/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ubsan.meta
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ubsan.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
           cmake_args: ${{ inputs.cmake_args }}
           cmake_args_default: ''
@@ -717,7 +717,7 @@ jobs:
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
           ctest_args: ${{ inputs.ctest_args }}
           ctest_args_default: '--timeout 300 --label-exclude "xfail"'
-          packages_names: fastdds
+          packages_names: fastrtps
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
           test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
@@ -727,13 +727,13 @@ jobs:
           # UBSan finding header lines look like:
           #   <file>:<line>:<col>: runtime error: <description>
           # Filter on ": runtime error:" so we keep one line per finding (the header)
-          bash src/fastdds/.github/workflows/utils/specific_errors_filter.sh \
+          bash src/fastrtps/.github/workflows/utils/specific_errors_filter.sh \
             ": runtime error:" \
-            log/latest_test/fastdds/stdout_stderr.log \
+            log/latest_test/fastrtps/stdout_stderr.log \
             _tmp_specific_error_file.log
 
-          python3 src/fastdds/.github/workflows/utils/log_parser.py \
-            --log-file log/latest_test/fastdds/stdout_stderr.log \
+          python3 src/fastrtps/.github/workflows/utils/log_parser.py \
+            --log-file log/latest_test/fastrtps/stdout_stderr.log \
             --specific-error-file _tmp_specific_error_file.log \
             --output-file $GITHUB_STEP_SUMMARY  \
             --sanitizer ubsan
