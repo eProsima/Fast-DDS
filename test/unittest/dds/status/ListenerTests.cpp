@@ -37,9 +37,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 
-#include <rtps/participant/RTPSParticipantImpl.hpp>
-#include <rtps/writer/BaseWriter.hpp>
-#include <rtps/reader/BaseReader.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 
 using ::testing::StrictMock;
@@ -609,7 +607,7 @@ protected:
     NiceMock<RTPSParticipantMock> participant_mock_;
     NiceMock<RTPSWriterMock> writer_mock_;
     NiceMock<RTPSReaderMock> reader_mock_;
-    eprosima::fastdds::rtps::RTPSParticipantImpl participant_impl_mock_;
+    eprosima::fastrtps::rtps::RTPSParticipantImpl participant_impl_mock_;
 
     // User listeners are strick, we want to track unexpected calls
     StrictMock<CustomParticipantListener> participant_listener_;

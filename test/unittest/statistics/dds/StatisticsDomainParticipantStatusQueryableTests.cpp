@@ -154,7 +154,7 @@ template struct BuiltinPublisherImplAccessor<&DomainParticipantImpl::builtin_pub
 
 // Accessor to protected get_monitoring_status() member function
 using GetMonitoringStatusFn = bool (DomainParticipantImpl::*)(
-    const fastdds::rtps::GUID_t&,
+    const fastrtps::rtps::GUID_t&,
     statistics::MonitorServiceData&);
 
 GetMonitoringStatusFn get_monitoring_status_fn();

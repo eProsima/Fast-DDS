@@ -77,7 +77,7 @@ struct RTPSParticipantImplAccessor
 
 };
 
-template struct RTPSParticipantImplAccessor<&fastdds::rtps::RTPSParticipant::mp_impl>;
+template struct RTPSParticipantImplAccessor<&fastrtps::rtps::RTPSParticipant::mp_impl>;
 
 } // namespace
 
@@ -1417,7 +1417,7 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
     // match writer and reader on a dummy topic
     match_endpoints(false, "string", "test_topic_name");
 
-    eprosima::fastdds::rtps::RTPSParticipantImpl* part_impl = participant_->*get_rtps_part_impl();
+    eprosima::fastrtps::rtps::RTPSParticipantImpl* part_impl = participant_->*get_rtps_part_impl();
 
     part_impl->get_entity_connections(reader_->getGuid(), conns_reader);
     part_impl->get_entity_connections(writer_->getGuid(), conns_writer);
