@@ -581,7 +581,8 @@ bool TCPTransportInterface::init(
     {
         auto ioContextTimersFunction = [&]()
                 {
-                    asio::executor_work_guard<asio::io_context::executor_type> work = make_work_guard(io_context_timers_.
+                    asio::executor_work_guard<asio::io_context::executor_type> work =
+                            make_work_guard(io_context_timers_.
                                             get_executor());
                     io_context_timers_.run();
                 };
@@ -1064,8 +1065,8 @@ bool TCPTransportInterface::OpenInputChannel(
             }
 
             EPROSIMA_LOG_INFO(RTCP, " OpenInputChannel (physical: " << IPLocator::getPhysicalPort(
-                        locator) << "; logical: " << \
-                    IPLocator::getLogicalPort(locator) << ")");
+                        locator) << "; logical: " \
+                                                                    << IPLocator::getLogicalPort(locator) << ")");
         }
     }
     return success;
@@ -1629,7 +1630,8 @@ bool TCPTransportInterface::send(
                 // Logical port might be under negotiation. Wait a little and check again. This prevents from
                 // losing first messages.
                 scoped_lock.unlock();
-                bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port, std::chrono::milliseconds(
+                bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port,
+                                std::chrono::milliseconds(
                                     configuration()->tcp_negotiation_timeout));
                 if (!logical_port_opened)
                 {
@@ -1651,8 +1653,9 @@ bool TCPTransportInterface::send(
 
                 if (sent != static_cast<uint32_t>(TCPHeader::size() + send_buffer_size) || ec)
                 {
-                    EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
-                            TCPHeader::size() + send_buffer_size << " b): " << ec.message());
+                    EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of "
+                                                                                << TCPHeader::size() +
+                            send_buffer_size << " b): " << ec.message());
                     success = false;
                 }
                 else
