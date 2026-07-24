@@ -2344,6 +2344,60 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
     }
 }
 
+// This test verifies that TCP channels of type ACCEPT are correctly removed from the channel resources map when
+// the channel is disabled by asio. This is the case when a client disconnects from the server. There is no need
+// maintain the channel resource of a disconnected client because new connections will generate new channel resources
+// and no unbind operation is needed at destruction time for a removed participant (eDisconnected channel).
+TEST_F(TCPv4Tests, remove_stale_channel_resources_of_server)
+{
+    // Server
+    TCPv4TransportDescriptor serverDescriptor;
+    serverDescriptor.add_listener_port(g_default_port);
+    MockTCPv4Transport server(serverDescriptor);
+    ASSERT_TRUE(server.init());
+
+    // Client
+    {
+        TCPv4TransportDescriptor clientDescriptor;
+        auto client = std::unique_ptr<TCPv4Transport>(new TCPv4Transport(clientDescriptor));
+        ASSERT_TRUE(client->init());
+
+        Locator_t outputLocator;
+        outputLocator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+        IPLocator::setPhysicalPort(outputLocator, g_default_port);
+        IPLocator::setLogicalPort(outputLocator, 7410);
+
+        SendResourceList send_resource_list;
+        ASSERT_TRUE(client->OpenOutputChannel(send_resource_list, outputLocator));
+
+        // Wait for the server to finish the BindConnectionRequest handshake
+        auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+        while (server.get_channel_resources_size() == 0 &&
+                std::chrono::steady_clock::now() < deadline)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        }
+        // Ensure there are channel resources in the server. Bind socket adds an entry per interface available, so there could be more than one.
+        ASSERT_GT(server.get_channel_resources_size(), 0u);
+
+        // Tear down the client: clean send_resource_list and then close the TCP socket.
+        send_resource_list.clear();
+        client.reset();
+    }
+
+    // Check that the server correctly removes the channel resource of type ACCEPT after the client disconnection
+    auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+    while (server.get_channel_resources_size() != 0 &&
+            std::chrono::steady_clock::now() < deadline)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    EXPECT_EQ(server.get_channel_resources_size(), 0u);
+    EXPECT_EQ(server.get_unbound_channel_resources_size(), 0u);
+}
+
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
