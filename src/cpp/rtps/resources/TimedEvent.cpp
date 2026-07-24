@@ -39,6 +39,17 @@ TimedEvent::TimedEvent(
     service_.register_timer(impl_);
 }
 
+TimedEvent::TimedEvent(
+        ResourceEvent& service,
+        std::function<bool()> callback,
+        std::chrono::microseconds interval)
+    : service_(service)
+    , impl_(nullptr)
+{
+    impl_ = new TimedEventImpl(callback, interval);
+    service_.register_timer(impl_);
+}
+
 TimedEvent::~TimedEvent()
 {
     service_.unregister_timer(impl_);

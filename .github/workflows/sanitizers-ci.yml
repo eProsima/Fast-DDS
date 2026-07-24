@@ -19,6 +19,10 @@ on:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
         type: boolean
+      run_ubsan_fastdds:
+        description: 'Run Undefined Behavior Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
       colcon_build_args:
         description: 'Optional colcon build arguments'
         required: false
@@ -75,6 +79,12 @@ jobs:
                                        !contains(github.event.pull_request.labels.*.name, 'no-test')
                                      ) }}
       run_tsan_fastdds: ${{ ((inputs.run_tsan_fastdds == true) && true) ||
+                            (
+                              (github.event_name == 'pull_request') &&
+                              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+                              !contains(github.event.pull_request.labels.*.name, 'no-test')
+                            ) }}
+      run_ubsan_fastdds: ${{ ((inputs.run_ubsan_fastdds == true) && true) ||
                             (
                               (github.event_name == 'pull_request') &&
                               !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&

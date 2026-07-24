@@ -41,12 +41,14 @@ using namespace eprosima::fastrtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSDataWriter : public testing::TestWithParam<communication_type>
 {
@@ -466,7 +468,8 @@ public:
         qos.resource_limits().max_samples = 1000;
         qos.transport_priority().value = 1;
         qos.ownership().kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
-        qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        qos.representation().m_value.push_back(
+            eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
         qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
         qos.lifespan().duration = {5, 0};
     }

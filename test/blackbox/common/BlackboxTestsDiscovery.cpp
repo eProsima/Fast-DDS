@@ -46,12 +46,14 @@ using namespace eprosima::fastrtps::rtps;
 using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4TransportDescriptor;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class Discovery : public testing::TestWithParam<communication_type>
 {
@@ -1005,7 +1007,7 @@ TEST_P(Discovery, PubSubAsReliableHelloworldEndpointUserData)
 }
 
 //! Auxiliar method for discovering participants tests
-template <typename ParticipantConfigurator>
+template<typename ParticipantConfigurator>
 static void discoverParticipantsTest(
         bool avoid_multicast,
         size_t n_participants,

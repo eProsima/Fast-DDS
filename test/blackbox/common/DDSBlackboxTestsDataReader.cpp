@@ -43,12 +43,14 @@ using namespace eprosima::fastrtps::rtps;
         std::string("incompatible_") + TEST_TOPIC_NAME)
 
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS,
     DATASHARING
 };
+}  // namespace
 
 class DDSDataReader : public testing::TestWithParam<communication_type>
 {
@@ -327,7 +329,8 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
     eprosima::fastdds::dds::SampleInfo info;
     for (size_t i = 0; i < 3; i++)
     {
-        ASSERT_NE(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK, reader.get_native_reader().get_first_untaken_info(
+        ASSERT_NE(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+                reader.get_native_reader().get_first_untaken_info(
                     &info));
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
@@ -690,4 +693,3 @@ GTEST_INSTANTIATE_TEST_MACRO(DDSDataReader,
             }
 
         });
-

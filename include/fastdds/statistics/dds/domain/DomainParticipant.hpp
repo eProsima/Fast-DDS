@@ -22,7 +22,9 @@
 
 #include <string>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/types/TypesBase.h>
@@ -52,6 +54,13 @@ namespace dds {
 class DomainParticipant : public eprosima::fastdds::dds::DomainParticipant
 {
     DomainParticipant() = delete;
+
+protected:
+
+    DomainParticipant(
+            const eprosima::fastdds::dds::StatusMask& mask);
+
+    friend class eprosima::fastdds::dds::DomainParticipantFactory;
 
 public:
 

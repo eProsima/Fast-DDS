@@ -26,11 +26,13 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
     INTRAPROCESS
 };
+}  // namespace
 
 class RTPSCustomPools : public testing::TestWithParam<communication_type>
 {
@@ -238,7 +240,7 @@ private:
     std::vector<octet*> free_payloads_;
 };
 
-template <class TData, class TType>
+template<class TData, class TType>
 void do_test(
         const std::string& topic_name,
         std::list<TData>& data,
