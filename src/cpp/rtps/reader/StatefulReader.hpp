@@ -184,7 +184,7 @@ public:
             CacheChange_t* a_change,
             WriterProxy* prox,
             size_t unknown_missing_changes_up_to,
-            bool& will_never_never_be_accepted);
+            bool& will_never_be_accepted);
 
     /**
      * Get the RTPS participant

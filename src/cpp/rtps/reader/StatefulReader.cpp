@@ -575,7 +575,7 @@ bool StatefulReader::process_data_msg(
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
     if (!is_alive_)
     {
-        return false;
+        return true;
     }
 
     if (acceptMsgFrom(change->writerGUID, &pWP))
