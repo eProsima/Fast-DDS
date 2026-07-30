@@ -162,7 +162,7 @@ void DataSharingListener::process_new_data ()
 
         uint64_t last_payload = pool->end();
         bool has_new_payload = true;
-        while (has_new_payload)
+        while (has_new_payload && is_running_.load())
         {
             CacheChange_t ch;
             SequenceNumber_t last_sequence = c_SequenceNumber_Unknown;
@@ -196,6 +196,12 @@ void DataSharingListener::process_new_data ()
                 {
                     pool->release_payload(ch.serializedPayload);
                     pool->advance_to_next_payload();
+                }
+                else
+                {
+                    // If the reader could not process the data, we will try again later
+                    notification_->notification_->new_data.store(true);
+                    break;
                 }
             }
 

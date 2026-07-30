@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <cstdlib>
 #include <fstream>
+#include <future>
 #include <sstream>
 #include <thread>
 
@@ -933,6 +936,91 @@ TEST(DDSDataSharing, acknack_reception_when_get_unread_count)
     // Check that the shared files are created on the correct directory
     ASSERT_FALSE(check_shared_file(".", reader.datareader_guid()));
     ASSERT_FALSE(check_shared_file(".", writer.datawriter_guid()));
+}
+
+/*!
+ * Regression test: deleting a data-sharing reader must not hang after one of its samples was
+ * rejected by the reader's own history (resource limits exhausted, nobody drained it).
+ *
+ * DataSharingListener::process_new_data() calls ReaderPool::get_next_unread_payload(), which
+ * returns a valid sample and immediately sets ReaderPool::last_sn_ to its sequence number --
+ * *before* the caller hands the sample to the reader. If DataReader::process_data_msg() then
+ * rejects it (history full), ReaderPool::advance_to_next_payload() is never called, so the very
+ * same slot is re-read on the next loop pass, with last_sn_ already equal to its sequence number.
+ * get_next_unread_payload() treats that as "this payload was overwritten by the writer, discard
+ * it" -- which used to discard without advancing, so it kept re-reading that same, unchanged slot
+ * forever. That spin never returns from get_next_unread_payload(), so DataSharingListener::stop()
+ * -- called from the reader destructor -- hangs forever on listening_thread_.join().
+ *
+ * We give the listener thread a brief moment to process the (accepted then rejected) samples, then destroy the
+ * reader under a watchdog so a hang fails the test instead of blocking the whole suite.
+ */
+TEST(DDSDataSharing, ReaderDeletionWithRejectedSampleDoesNotHang)
+{
+    // Force pure data-sharing (drop all network data messages).
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    testTransport->dropDataMessagesPercentage = 100;
+
+    PubSubReader<FixedSizedPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<FixedSizedPubSubType> writer(TEST_TOPIC_NAME);
+
+    // KEEP_ALL with room for a single sample, and the reader never calls take()/read(), so the
+    // second sample the listener thread tries to hand over is guaranteed to be rejected.
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .resource_limits_allocated_samples(1)
+            .resource_limits_max_samples(1)
+            .add_user_transport_to_pparams(testTransport)
+            .disable_builtin_transport()
+            .datasharing_on(".")
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .add_user_transport_to_pparams(testTransport)
+            .disable_builtin_transport()
+            .datasharing_on(".")
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    // Send more samples than the reader can ever hold; at least one is guaranteed to be rejected.
+    auto data = default_fixed_sized_data_generator(4);
+    writer.send(data);
+
+    // Give the listener thread time to process the accepted sample and then trip on the rejected
+    // one.
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+    // Destroying the reader must not hang. Run it on a watchdog thread so a hang fails the test
+    // instead of blocking the whole suite forever.
+    std::promise<void> destroyed_promise;
+    std::future<void> destroyed_future = destroyed_promise.get_future();
+    std::thread destroy_thread([&reader, &destroyed_promise]()
+            {
+                reader.destroy();
+                destroyed_promise.set_value();
+            });
+
+    const bool destroyed_in_time =
+            destroyed_future.wait_for(std::chrono::seconds(10)) == std::future_status::ready;
+
+    EXPECT_TRUE(destroyed_in_time)
+        << "Data-sharing reader destruction hung after a sample was rejected by the reader's own "
+        << "history (DataSharingListener::stop() starved on listening_thread_.join()).";
+
+    if (!destroyed_in_time)
+    {
+        // reader is wedged with participant_ still non-null: letting this function return would
+        // run ~PubSubReader() on the main thread, which calls destroy() again on that same
+        // participant and hangs a second time, unbounded. Bail out of the whole process now that
+        // the failure is already recorded, instead of risking a real, watchdog-less hang.
+        std::_Exit(1);
+    }
+
+    destroy_thread.join();
+    writer.destroy();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
