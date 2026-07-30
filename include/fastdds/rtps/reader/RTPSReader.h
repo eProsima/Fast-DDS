@@ -118,14 +118,14 @@ public:
     RTPS_DllAPI virtual bool matched_writer_is_matched(
             const GUID_t& writer_guid) = 0;
 
-     /**
-      * @brief Process an incoming DATA message.
-      *
-      * @param change  Pointer to the incoming CacheChange_t.
-      *
-      * @return true if the reader processed the message.
-      * @return false if the reader could not process the message, but would be able to do so in the future.
-      */
+    /**
+     * @brief Process an incoming DATA message.
+     *
+     * @param change  Pointer to the incoming CacheChange_t.
+     *
+     * @return true if the reader processed the message.
+     * @return false if the reader could not process the message, but would be able to do so in the future.
+     */
     RTPS_DllAPI virtual bool processDataMsg(
             CacheChange_t* change) = 0;
 

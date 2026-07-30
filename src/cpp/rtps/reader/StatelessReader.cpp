@@ -730,9 +730,9 @@ bool StatelessReader::processDataFragMsg(
             // Check if CacheChange was received.
             if (!thereIsUpperRecordOf(writer_guid, incomingChange->sequenceNumber))
             {
-                EPROSIMA_LOG_INFO(RTPS_MSG_IN,
-                        IDSTRING "Trying to add fragment " << incomingChange->sequenceNumber.to64long() <<
-                        " TO reader: " << m_guid);
+                EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Trying to add fragment "
+                        << incomingChange->sequenceNumber.to64long()
+                        << " TO reader: " << m_guid);
 
                 // Early return if we already know about a greater sequence number
                 CacheChange_t* work_change = writer.fragmented_change;
@@ -852,9 +852,8 @@ bool StatelessReader::processDataFragMsg(
                     }
                     else if (!change_received(change_completed))
                     {
-                        EPROSIMA_LOG_INFO(RTPS_MSG_IN,
-                                IDSTRING "MessageReceiver not add change " <<
-                                change_completed->sequenceNumber.to64long());
+                        EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "MessageReceiver not add change "
+                                << change_completed->sequenceNumber.to64long());
 
                         // Release CacheChange_t.
                         releaseCache(change_completed);
