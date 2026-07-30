@@ -603,7 +603,8 @@ bool StatelessReader::processDataMsg(
                 {
                     update_last_notified(change->writerGUID, change->sequenceNumber);
                 }
-                return false;
+                // Could process later when `will_never_be_accepted` is false
+                return will_never_be_accepted;
             }
 
             if (!fastdds::rtps::change_is_relevant_for_filter(*change, m_guid, data_filter_))
@@ -620,8 +621,8 @@ bool StatelessReader::processDataMsg(
                 EPROSIMA_LOG_WARNING(RTPS_MSG_IN,
                         IDSTRING
                         "Reached the maximum number of samples allowed by this reader's QoS. Rejecting change for reader: "
-                        <<
-                        m_guid );
+                        << m_guid );
+                // Could process later when a cache is available
                 return false;
             }
 
@@ -650,7 +651,8 @@ bool StatelessReader::processDataMsg(
                     EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Problem copying DataSharing CacheChange from writer "
                             << change->writerGUID);
                     change_pool_->release_cache(change_to_add);
-                    return false;
+                    // No datasharing pool available, irrecoverable error.
+                    return true;
                 }
 
                 datasharing_pool->get_payload(change->serializedPayload, payload_owner, *change_to_add);
@@ -676,6 +678,7 @@ bool StatelessReader::processDataMsg(
                         << m_guid << " is "
                         << (fixed_payload_size_ > 0 ? fixed_payload_size_ : (std::numeric_limits<uint32_t>::max)()));
                 change_pool_->release_cache(change_to_add);
+                // Could process later when a payload is available
                 return false;
             }
 
@@ -689,7 +692,8 @@ bool StatelessReader::processDataMsg(
                     change_to_add->payload_owner()->release_payload(*change_to_add);
                 }
                 change_pool_->release_cache(change_to_add);
-                return false;
+                // A change with a higher sequence number was already received, so this one is discarded forever
+                return true;
             }
         }
     }

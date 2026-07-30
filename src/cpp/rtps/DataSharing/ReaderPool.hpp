@@ -194,9 +194,10 @@ public:
                 continue;
             }
 
-            if (last_sn_ != c_SequenceNumber_Unknown && last_sn_ >= cache_change.sequenceNumber)
+            if (last_sn_ != c_SequenceNumber_Unknown && last_sn_ > cache_change.sequenceNumber)
             {
                 // Sequence number went backwards, it was most probably overriden.
+                advance(next_payload_);
                 continue;
             }
 
