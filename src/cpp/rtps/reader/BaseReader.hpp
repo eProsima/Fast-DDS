@@ -251,7 +251,8 @@ public:
      *
      * @param change  Pointer to the incoming CacheChange_t.
      *
-     * @return true if the reader accepts message.
+     * @return true if the reader processed the message.
+     * @return false if the reader could not process the message, but would be able to do so in the future.
      */
     virtual bool process_data_msg(
             fastdds::rtps::CacheChange_t* change) = 0;
