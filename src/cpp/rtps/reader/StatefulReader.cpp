@@ -1133,11 +1133,9 @@ bool StatefulReader::change_received(
                     }
                 }
 
-                EPROSIMA_LOG_INFO(RTPS_READER,
-                        "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                << a_change->sequenceNumber
-                                                <<
-                                    " skipped. Higher sequence numbers have been received.");
+                EPROSIMA_LOG_INFO(RTPS_READER, "Change received from "
+                        << a_change->writerGUID << " with sequence number: " << a_change->sequenceNumber
+                        << " skipped. Higher sequence numbers have been received.");
                 return false;
             }
         }
