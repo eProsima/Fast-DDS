@@ -1211,24 +1211,6 @@ bool StatefulReader::change_received(
                 NotifyChanges(prox);
                 will_never_be_accepted = true;
             }
-<<<<<<< HEAD
-=======
-
-            /* Special case: rejected by REJECTED_BY_UNKNOWN_INSTANCE should never be received again.
-             * Because the instance will still be unknown
-             */
-            if (fastdds::dds::REJECTED_BY_UNKNOWN_INSTANCE == rejection_reason)
-            {
-                EPROSIMA_LOG_ERROR(RTPS_READER,
-                        "Change received from " << a_change->writerGUID << " with sequence number: "
-                                                << a_change->sequenceNumber
-                                                <<
-                        " ignored. Could not compute key in keyed topic.");
-                prox->irrelevant_change_set(a_change->sequenceNumber);
-                NotifyChanges(prox);
-                will_never_be_accepted = true;
-            }
->>>>>>> e1872cab9 (Fix datasharing infinite loop (#6490))
         }
     }
 
