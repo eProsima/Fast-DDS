@@ -115,9 +115,12 @@ public:
             WriterProxy** WP);
 
     /**
-     * Processes a new DATA message.
-     * @param change Pointer to the CacheChange_t.
-     * @return true if the reader accepts messages.
+     * @brief Process an incoming DATA message.
+     *
+     * @param change  Pointer to the incoming CacheChange_t.
+     *
+     * @return true if the reader processed the message.
+     * @return false if the reader could not process the message, but would be able to do so in the future.
      */
     bool processDataMsg(
             CacheChange_t* change) override;
@@ -170,16 +173,19 @@ public:
     /**
      * This method is called when a new change is received. This method calls the received_change of the History
      * and depending on the implementation performs different actions.
-     * @param a_change Pointer of the change to add.
-     * @param prox Pointer to the WriterProxy that adds the Change.
-     * @param unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence number that
-     *                                      could potentially be received in the future.
-     * @return True if added.
+     * @param [in] a_change                      Pointer of the change to add.
+     * @param [in] prox                          Pointer to the WriterProxy that adds the Change.
+     * @param [in] unknown_missing_changes_up_to The number of changes from the same writer with a lower sequence
+     *                                           number that could potentially be received in the future.
+     * @param [out] will_never_be_accepted       A boolean indicating whether the change could be accepted in the
+     *                                           future or not. This is only relevant when the method returns false.
+     * @return True if added, false otherwise.
      */
     bool change_received(
             CacheChange_t* a_change,
             WriterProxy* prox,
-            size_t unknown_missing_changes_up_to);
+            size_t unknown_missing_changes_up_to,
+            bool& will_never_be_accepted);
 
     /**
      * Get the RTPS participant
