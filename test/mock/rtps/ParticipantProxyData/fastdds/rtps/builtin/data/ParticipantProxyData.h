@@ -33,6 +33,12 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class ReaderProxyData;
+class WriterProxyData;
+
+template<class Proxy>
+class ProxyHashTable;
+
 class ParticipantProxyData
 {
 public:
@@ -69,6 +75,8 @@ public:
     RemoteLocatorList metatraffic_locators;
     RemoteLocatorList default_locators;
     fastdds::rtps::VendorId_t m_VendorId;
+    ProxyHashTable<ReaderProxyData>* m_readers = nullptr;
+    ProxyHashTable<WriterProxyData>* m_writers = nullptr;
 #if HAVE_SECURITY
     IdentityToken identity_token_;
     PermissionsToken permissions_token_;
