@@ -1631,16 +1631,20 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
     if (!do_encryption)
     {
         // Auth only. SEC_BODY should not be created. Plain buffer should be copied instead.
+
+        // Account for padding to 4 bytes alignment
+        uint32_t final_aligned_len = submessage ? plain_buffer_len : (plain_buffer_len + 3) & ~3;
+        // Check output_buffer contains enough memory to copy the plain buffer and padding.
         if ((output_buffer.getBufferSize() - (serializer.get_current_position() - serializer.get_buffer_pointer())) <
-                plain_buffer_len)
+                final_aligned_len)
         {
             EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to copy payload");
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
-        memcpy(serializer.get_current_position(), plain_buffer, plain_buffer_len);
-        serializer.jump(plain_buffer_len);
-
+        // Copy the plain buffer to the output buffer
+        serializer.serialize_array(plain_buffer, plain_buffer_len);
+        // Update the cipher context with the plain buffer to compute the authentication tag
         if (!EVP_EncryptUpdate(e_ctx, nullptr, &actual_size, plain_buffer, static_cast<int>(plain_buffer_len)))
         {
             EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
@@ -1649,6 +1653,23 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
             return false;
         }
 
+        // Add padding to the output buffer (also taken into account for the authentication tag)
+        uint32_t aligned_len = plain_buffer_len;
+        while (aligned_len < final_aligned_len)
+        {
+            uint8_t pad = 0;
+            serializer << pad;
+            if (!EVP_EncryptUpdate(e_ctx, nullptr, &actual_size, &pad, 1))
+            {
+                EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
+                        "Unable to encode the payload. EVP_EncryptUpdate function returns an error");
+                EVP_CIPHER_CTX_free(e_ctx);
+                return false;
+            }
+            aligned_len++;
+        }
+
+        // Finalize the encryption (no output is expected since we are not encrypting)
         if (!EVP_EncryptFinal(e_ctx, nullptr, &final_size))
         {
             EPROSIMA_LOG_ERROR(SECURITY_CRYPTO,
