@@ -1284,6 +1284,237 @@ TEST_F(CryptographyPluginTest, transform_SerializedPayload)
     access_plugin.return_permissions_handle(&perm_handle, exception);
 }
 
+TEST_F(CryptographyPluginTest, transform_SerializedPayload_sign_only)
+{
+    using namespace eprosima::fastdds::rtps::security;
+
+    // Participant A owns Writer
+    // Participant B owns Reader
+
+    SecurityException exception;
+
+    PKIIdentityHandle& i_handle =
+            PKIIdentityHandle::narrow(*auth_plugin.get_identity_handle(exception));
+
+    AccessPermissionsHandle& perm_handle =
+            AccessPermissionsHandle::narrow(*access_plugin.get_permissions_handle(exception));
+
+    eprosima::fastdds::rtps::PropertySeq prop_handle;
+    ParticipantSecurityAttributes part_sec_attr;
+
+    EndpointSecurityAttributes sec_attrs;
+
+    std::shared_ptr<SecretHandle> secret =
+            auth_plugin.get_shared_secret(SharedSecretHandle::nil_handle, exception);
+
+    std::shared_ptr<SharedSecretHandle> shared_secret = std::dynamic_pointer_cast<SharedSecretHandle>(secret);
+
+    part_sec_attr.is_rtps_protected = true;
+    part_sec_attr.plugin_participant_attributes = PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ENCRYPTED |
+            PLUGIN_PARTICIPANT_SECURITY_ATTRIBUTES_FLAG_IS_RTPS_ORIGIN_AUTHENTICATED;
+
+    sec_attrs.is_submessage_protected = true;
+    sec_attrs.is_payload_protected = true;
+    sec_attrs.is_key_protected = true;
+    sec_attrs.plugin_endpoint_attributes = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED |
+            PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+
+    std::shared_ptr<ParticipantCryptoHandle> participant_A =
+            CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle, part_sec_attr,
+                    exception);
+    std::shared_ptr<ParticipantCryptoHandle> participant_B =
+            CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle, part_sec_attr,
+                    exception);
+
+    DatareaderCryptoHandle* reader =
+            CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    DatareaderCryptoHandle* writer =
+            CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
+
+    //Fill shared secret with dummy values
+    std::vector<uint8_t> dummy_data, challenge_1, challenge_2;
+    SharedSecret::BinaryData binary_data;
+    challenge_1.resize(32);
+    challenge_2.resize(32);
+
+    RAND_bytes(challenge_1.data(), 32);
+    binary_data.name("Challenge1");
+    binary_data.value(challenge_1);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    RAND_bytes(challenge_2.data(), 32);
+    binary_data.name("Challenge2");
+    binary_data.value(challenge_2);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    dummy_data.resize(32);
+    RAND_bytes(dummy_data.data(), 32);
+    binary_data.name("SharedSecret");
+    binary_data.value(dummy_data);
+    (*shared_secret)->data_.push_back(binary_data);
+
+    //Register a remote for both Participants
+    std::shared_ptr<ParticipantCryptoHandle> ParticipantA_remote =
+            CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A, i_handle, perm_handle,
+                    *shared_secret, exception);
+    std::shared_ptr<ParticipantCryptoHandle> ParticipantB_remote =
+            CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B, i_handle, perm_handle,
+                    *shared_secret, exception);
+
+    //Register DataReader with DataWriter
+    DatareaderCryptoHandle* remote_reader =
+            CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote,
+                    *shared_secret, false, exception);
+
+    //Register DataWriter with DataReader
+    DatawriterCryptoHandle* remote_writer =
+            CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote,
+                    *shared_secret, exception);
+
+    //Create CryptoTokens for both Participants
+    ParticipantCryptoTokenSeq ParticipantA_CryptoTokens, ParticipantB_CryptoTokens;
+
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A,
+            *ParticipantA_remote, exception);
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B,
+            *ParticipantB_remote, exception);
+
+    //Set ParticipantA token into ParticipantB and viceversa
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_A, *ParticipantA_remote,
+            ParticipantB_CryptoTokens, exception);
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B, *ParticipantB_remote,
+            ParticipantA_CryptoTokens, exception);
+
+    //Create CryptoTokens for the DataWriter and DataReader
+    DatawriterCryptoTokenSeq Writer_CryptoTokens, Reader_CryptoTokens;
+
+    CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader,
+            exception);
+    CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer,
+            exception);
+
+    //Exchange Datareader and Datawriter Cryptotokens
+    CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens,
+            exception);
+    CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens,
+            exception);
+
+    //Perform sample message exchange
+    eprosima::fastdds::rtps::SerializedPayload_t plain_payload(18); // Message will have 18 length.
+    eprosima::fastdds::rtps::SerializedPayload_t encoded_payload(100);
+    // Message will have 18 length + cipher block size.
+    eprosima::fastdds::rtps::SerializedPayload_t decoded_payload(18 + 32);
+
+    char message[] = "My goose is cooked"; //Length 18
+    memcpy(plain_payload.data, message, 18);
+    plain_payload.length = 18;
+
+    std::vector<uint8_t> inline_qos;
+
+    //Send message to intended participant
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload,
+            *writer, exception));
+    encoded_payload.pos = 0;
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos,
+            *reader, *remote_writer, exception));
+    ASSERT_TRUE(memcmp(plain_payload.data, decoded_payload.data, 18) == 0);
+    plain_payload.pos = 0;
+    encoded_payload.pos = 0;
+    encoded_payload.length = 0;
+    decoded_payload.pos = 0;
+    decoded_payload.length = 0;
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer, exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader, exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader, exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
+    //Lets do it with the 128 version
+    eprosima::fastdds::rtps::Property prop1;
+    prop1.name("dds.sec.crypto.keysize");
+    prop1.value("128");
+    prop_handle.push_back(prop1);
+    eprosima::fastdds::rtps::Property prop2;
+    prop2.name("dds.sec.crypto.maxblockspersession");
+    prop2.value("16");
+    prop_handle.push_back(prop2);
+
+    participant_A = CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle,
+                    part_sec_attr, exception);
+    participant_B = CryptoPlugin->keyfactory()->register_local_participant(i_handle, perm_handle, prop_handle,
+                    part_sec_attr, exception);
+
+    reader = CryptoPlugin->keyfactory()->register_local_datareader(*participant_A, prop_handle, sec_attrs, exception);
+    writer = CryptoPlugin->keyfactory()->register_local_datawriter(*participant_B, prop_handle, sec_attrs, exception);
+
+    //Register a remote for both Participants
+    ParticipantA_remote = CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_A, i_handle,
+                    perm_handle, *shared_secret,
+                    exception);
+    ParticipantB_remote = CryptoPlugin->keyfactory()->register_matched_remote_participant(*participant_B, i_handle,
+                    perm_handle, *shared_secret,
+                    exception);
+    //Register DataReader with DataWriter
+    remote_reader = CryptoPlugin->keyfactory()->register_matched_remote_datareader(*writer, *ParticipantB_remote,
+                    *shared_secret, false, exception);
+    //Register DataWriter with DataReader
+    remote_writer = CryptoPlugin->keyfactory()->register_matched_remote_datawriter(*reader, *ParticipantA_remote,
+                    *shared_secret, exception);
+
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantA_CryptoTokens, *participant_A,
+            *ParticipantA_remote, exception);
+    CryptoPlugin->keyexchange()->create_local_participant_crypto_tokens(ParticipantB_CryptoTokens, *participant_B,
+            *ParticipantB_remote, exception);
+
+    //Set ParticipantA token into ParticipantB and viceversa
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_A, *ParticipantA_remote,
+            ParticipantB_CryptoTokens, exception);
+    CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*participant_B, *ParticipantB_remote,
+            ParticipantA_CryptoTokens, exception);
+
+    //Create CryptoTokens for the DataWriter and DataReader
+    CryptoPlugin->keyexchange()->create_local_datawriter_crypto_tokens(Writer_CryptoTokens, *writer, *remote_reader,
+            exception);
+    CryptoPlugin->keyexchange()->create_local_datareader_crypto_tokens(Reader_CryptoTokens, *reader, *remote_writer,
+            exception);
+
+    //Exchange Datareader and Datawriter Cryptotokens
+    CryptoPlugin->keyexchange()->set_remote_datareader_crypto_tokens(*writer, *remote_reader, Reader_CryptoTokens,
+            exception);
+    CryptoPlugin->keyexchange()->set_remote_datawriter_crypto_tokens(*reader, *remote_writer, Writer_CryptoTokens,
+            exception);
+    //Perform sample message exchange
+
+    //Send message to intended participant
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->encode_serialized_payload(encoded_payload, inline_qos, plain_payload,
+            *writer, exception));
+    encoded_payload.pos = 0;
+    ASSERT_TRUE(CryptoPlugin->cryptotransform()->decode_serialized_payload(decoded_payload, encoded_payload, inline_qos,
+            *reader, *remote_writer, exception));
+    ASSERT_TRUE(memcmp(plain_payload.data, decoded_payload.data, 18) == 0);
+
+    CryptoPlugin->keyfactory()->unregister_datawriter(writer, exception);
+    CryptoPlugin->keyfactory()->unregister_datawriter(remote_writer, exception);
+
+    CryptoPlugin->keyfactory()->unregister_datareader(reader, exception);
+    CryptoPlugin->keyfactory()->unregister_datareader(remote_reader, exception);
+
+    CryptoPlugin->keyfactory()->unregister_participant(participant_A, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantA_remote, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(participant_B, exception);
+    CryptoPlugin->keyfactory()->unregister_participant(ParticipantB_remote, exception);
+
+    auth_plugin.return_identity_handle(&i_handle, exception);
+    auth_plugin.return_sharedsecret_handle(secret, exception);
+    access_plugin.return_permissions_handle(&perm_handle, exception);
+}
+
 TEST_F(CryptographyPluginTest, transform_Writer_Submesage)
 {
     using namespace eprosima::fastdds::rtps::security;
