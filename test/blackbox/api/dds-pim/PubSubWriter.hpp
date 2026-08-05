@@ -1821,7 +1821,7 @@ public:
 
     unsigned int get_participants_matched() const
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
@@ -1985,28 +1985,28 @@ protected:
 
     void participant_matched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         ++participant_matched_;
         cv_.notify_one();
     }
 
     void participant_unmatched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         --participant_matched_;
         cv_.notify_one();
     }
 
     void matched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         ++matched_;
         cv_.notify_one();
     }
 
     void unmatched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         --matched_;
         cv_.notify_one();
     }
@@ -2324,7 +2324,7 @@ protected:
             waitset_.attach_condition(writer_.datawriter_->get_statuscondition());
             waitset_.attach_condition(guard_condition_);
 
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
             if (nullptr == thread_)
             {
                 running_ = true;
