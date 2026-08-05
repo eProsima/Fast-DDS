@@ -356,6 +356,14 @@ set(${PROJECT_NAME}_sqlite3_source_files
     rtps/persistence/sqlite3.c
     )
 
+# SQLite's amalgamated flexible-array implementation intentionally allocates
+# more elements than its declared trailing array.  GCC's bounds-strict UBSan
+# check cannot model that allocation and reports false positives in SQLite.
+if(SANITIZER STREQUAL "UNDEFINED")
+    set_source_files_properties(rtps/persistence/sqlite3.c PROPERTIES
+        COMPILE_OPTIONS "-fno-sanitize=bounds-strict")
+endif()
+
 if(SQLITE3_SUPPORT)
     list(APPEND ${PROJECT_NAME}_source_files
         ${${PROJECT_NAME}_sqlite3_source_files}

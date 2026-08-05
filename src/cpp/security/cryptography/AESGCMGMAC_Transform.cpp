@@ -2327,6 +2327,11 @@ bool AESGCMGMAC_Transform::lookup_reader(
 {
     for (auto& readerHandle : participant->Readers)
     {
+        if (!readerHandle)
+        {
+            continue;
+        }
+
         AESGCMGMAC_ReaderCryptoHandle& reader = AESGCMGMAC_ReaderCryptoHandle::narrow(*readerHandle);
 
         if (reader->Remote2EntityKeyMaterial.empty())
@@ -2355,6 +2360,11 @@ bool AESGCMGMAC_Transform::lookup_writer(
 {
     for (auto& writerHandle : participant->Writers)
     {
+        if (!writerHandle)
+        {
+            continue;
+        }
+
         AESGCMGMAC_WriterCryptoHandle& writer = AESGCMGMAC_WriterCryptoHandle::narrow(*writerHandle);
 
         if (writer->Remote2EntityKeyMaterial.empty())

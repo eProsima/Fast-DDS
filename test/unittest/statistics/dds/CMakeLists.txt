@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if(SANITIZER STREQUAL "UNDEFINED")
+    set_source_files_properties(${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
+        PROPERTIES COMPILE_OPTIONS
+        "-fno-sanitize=bounds-strict")
+endif()
+
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
     add_definitions(-DNOMINMAX)
