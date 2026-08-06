@@ -44,12 +44,30 @@ else()
 endif()
 
 # Configure TinyXML2 library path if installed in user library path
-if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY)
-        AND TINYXML2_LIBRARY
-        AND IS_ABSOLUTE "${TINYXML2_LIBRARY}")
-    get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
-    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
-    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
+if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
+    # Newer TinyXML2 packages expose the library as an imported target instead
+    # of setting TINYXML2_LIBRARY to an absolute path.
+    if(TINYXML2_LIBRARY AND TARGET "${TINYXML2_LIBRARY}")
+        get_target_property(TINYXML2_LIBRARY_FILE "${TINYXML2_LIBRARY}" IMPORTED_LOCATION)
+        if(NOT TINYXML2_LIBRARY_FILE)
+            get_target_property(TINYXML2_LIBRARY_FILE "${TINYXML2_LIBRARY}" IMPORTED_LOCATION_RELEASE)
+        endif()
+        if(NOT TINYXML2_LIBRARY_FILE)
+            get_target_property(TINYXML2_LIBRARY_FILE "${TINYXML2_LIBRARY}" IMPORTED_LOCATION_NOCONFIG)
+        endif()
+    else()
+        set(TINYXML2_LIBRARY_FILE "${TINYXML2_LIBRARY}")
+    endif()
+
+    if(NOT TINYXML2_LIBRARY_FILE OR NOT IS_ABSOLUTE "${TINYXML2_LIBRARY_FILE}")
+        find_library(TINYXML2_LIBRARY_FILE NAMES tinyxml2)
+    endif()
+
+    if(TINYXML2_LIBRARY_FILE AND IS_ABSOLUTE "${TINYXML2_LIBRARY_FILE}")
+        get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY_FILE} DIRECTORY)
+        set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds:ro")
+        set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/fastdds")
+    endif()
 endif()
 
 configure_file(Dockerfile
