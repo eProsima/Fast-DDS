@@ -149,7 +149,8 @@ static sqlite3* open_or_create_database(
             else
             {
                 EPROSIMA_LOG_ERROR(RTPS_PERSISTENCE, "Old schema version " << db_version << " on database " << filename
-                                                                           << ". Set property dds.persistence.update_schema to force automatic schema upgrade");
+                                                                           <<
+                        ". Set property dds.persistence.update_schema to force automatic schema upgrade");
                 sqlite3_close(db);
                 return NULL;
             }
@@ -202,7 +203,8 @@ SQLite3PersistenceService::SQLite3PersistenceService(
     , update_reader_stmt_(NULL)
 {
     // Prepare writer statements
-    sqlite3_prepare_v3(db_, "SELECT seq_num, instance, payload, related_sample_guid, related_sample_seq_num, source_timestamp "
+    sqlite3_prepare_v3(db_,
+            "SELECT seq_num, instance, payload, related_sample_guid, related_sample_seq_num, source_timestamp "
             "FROM writers_histories WHERE guid=?;", -1,
             SQLITE_PREPARE_PERSISTENT,
             &load_writer_stmt_,
@@ -297,10 +299,16 @@ bool SQLite3PersistenceService::load_writer_from_storage(
             instance_size = (instance_size > 16) ? 16 : instance_size;
             change->kind = ALIVE;
             change->writerGUID = writer_guid;
-            memcpy(change->instanceHandle.value, sqlite3_column_blob(load_writer_stmt_, 1), instance_size);
+            if (instance_size > 0)
+            {
+                memcpy(change->instanceHandle.value, sqlite3_column_blob(load_writer_stmt_, 1), instance_size);
+            }
             change->sequenceNumber = identity.sequence_number();
             change->serializedPayload.length = size;
-            memcpy(change->serializedPayload.data, sqlite3_column_blob(load_writer_stmt_, 2), size);
+            if (size > 0)
+            {
+                memcpy(change->serializedPayload.data, sqlite3_column_blob(load_writer_stmt_, 2), size);
+            }
             change->writer_info.previous = nullptr;
             change->writer_info.next = nullptr;
             change->writer_info.num_sent_submessages = 0;

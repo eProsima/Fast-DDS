@@ -49,6 +49,7 @@ using test_UDPv4TransportDescriptor = eprosima::fastdds::rtps::test_UDPv4Transpo
 using DatagramInjectionTransport = eprosima::fastdds::rtps::DatagramInjectionTransport;
 using DatagramInjectionTransportDescriptor = eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
 
+namespace {
 enum communication_type
 {
     TRANSPORT,
@@ -60,6 +61,7 @@ enum reliability
     TEST_BEST_EFFORT,
     TEST_RELIABLE
 };
+}  // namespace
 
 // A LogConsumer that just counts the number of entries consumed
 struct TestConsumer : public eprosima::fastdds::dds::LogConsumer

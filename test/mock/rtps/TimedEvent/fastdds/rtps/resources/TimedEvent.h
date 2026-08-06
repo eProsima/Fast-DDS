@@ -38,6 +38,13 @@ public:
     {
     }
 
+    TimedEvent(
+            ResourceEvent&,
+            std::function<bool()>,
+            std::chrono::microseconds)
+    {
+    }
+
     MOCK_METHOD0(restart_timer, void());
     MOCK_METHOD1(restart_timer, void(const std::chrono::steady_clock::time_point& timeout));
     MOCK_METHOD0(cancel_timer, void());
@@ -53,4 +60,3 @@ public:
 } // namespace eprosima
 
 #endif // _FASTDDS_RTPS_RESOURCES_TIMEDEVENT_H_
-

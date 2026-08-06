@@ -449,8 +449,8 @@ public:
     LivelinessLostStatus liveliness_lost_status_;
     OfferedIncompatibleQosStatus offered_incompatible_qos_status_;
     std::chrono::duration<double, std::ratio<1, 1000000>> lifespan_duration_us_;
-    DataWriterHistory history_;
     fastrtps::TopicAttributes atts_;
+    DataWriterHistory history_;
 
 };
 
