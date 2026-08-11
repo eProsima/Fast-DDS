@@ -634,30 +634,31 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
    //-----------------------
    boost::interprocess::scoped_lock<mutex_type> guard(m_header);
    //-----------------------
-   imultiset_iterator ib(m_header.m_imultiset.begin()), ie(m_header.m_imultiset.end());
-
-   size_type free_memory = 0;
-
-   //Iterate through all blocks obtaining their size
-   for(; ib != ie; ++ib){
-      free_memory += (size_type)ib->m_size*Alignment;
-      algo_impl_t::assert_alignment(&*ib);
-      if(!algo_impl_t::check_alignment(&*ib))
-         return false;
-   }
 
    //Check allocated bytes are less than size
    if(m_header.m_allocated > m_header.m_size){
       return false;
    }
 
+   //Calculate the maximum free memory available in the segment
    size_type block1_off  =
       priv_first_block_offset_from_this(this, m_header.m_extra_hdr_bytes);
+   size_type max_free_memory = m_header.m_size - block1_off;
 
-   //Check free bytes are less than size
-   if(free_memory > (m_header.m_size - block1_off)){
-      return false;
+   //Iterate through all blocks obtaining their size
+   imultiset_iterator ib(m_header.m_imultiset.begin()), ie(m_header.m_imultiset.end());
+   size_type free_memory = 0;
+   for(; ib != ie; ++ib){
+      if(!algo_impl_t::check_alignment(&*ib)){
+         return false;
+      }
+      free_memory += (size_type)ib->m_size*Alignment;
+      //Check free bytes are less than size
+      if(free_memory > max_free_memory){
+         return false;
+      }
    }
+
    return true;
 }
 
