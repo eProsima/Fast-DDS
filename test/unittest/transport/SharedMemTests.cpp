@@ -1368,8 +1368,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 }
 
 // Reproduces a crash when opening a port whose segment holds damaged allocator
-// structures. Disabled because it currently fails by design: remove the
-// DISABLED_ prefix to observe it.
+// structures.
 //
 // open_port_internal validates an existing segment with check_sanity(), which
 // iterates the allocator's free-block tree through offset pointers stored inside
@@ -1383,7 +1382,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 //
 // On platforms without gtest's SEH handling this aborts the whole test binary
 // rather than failing one case, which is the other reason it ships disabled.
-TEST_F(SHMTransportTests, DISABLED_port_corrupt_segment_crashes_on_open)
+TEST_F(SHMTransportTests, port_corrupt_segment_crashes_on_open)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
