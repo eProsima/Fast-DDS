@@ -1391,16 +1391,25 @@ TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
 
     shared_mem_global->remove_port(0);
 
-    auto port = shared_mem_global->open_port(0, 1, 1000);
-    ASSERT_NO_THROW(port->healthy_check());
+    auto test_case = [&](uint8_t corrupt_byte)
+    {
+        auto port = shared_mem_global->open_port(0, 1, 1000);
+        ASSERT_NO_THROW(port->healthy_check());
 
-    // Damage the allocator structures the way an abruptly terminated peer can.
-    port_mocker.corrupt_segment_allocator(*port);
+        // Damage the allocator structures the way an abruptly terminated peer can.
+        port_mocker.corrupt_segment_allocator(*port, corrupt_byte);
 
-    // Opening the port again should not walk those structures.
-    auto recovered = shared_mem_global->open_port(0, 1, 1000);
-    ASSERT_TRUE(recovered != nullptr);
-    ASSERT_NO_THROW(recovered->healthy_check());
+        // Opening the port again should not walk those structures.
+        auto recovered = shared_mem_global->open_port(0, 1, 1000);
+        ASSERT_TRUE(recovered != nullptr);
+        ASSERT_NO_THROW(recovered->healthy_check());
+    };
+
+    for (uint8_t corrupt_byte = 0xFF; corrupt_byte > 0x00; corrupt_byte--)
+    {
+        test_case(corrupt_byte);
+    }
+    test_case(0x00);
 }
 
 TEST_F(SHMTransportTests, port_not_ok_listener_recover)

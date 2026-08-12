@@ -125,7 +125,8 @@ public:
      * free-block tree links that check_sanity() walks.
      */
     static void corrupt_segment_allocator(
-            SharedMemGlobal::Port& port)
+            SharedMemGlobal::Port& port,
+            uint8_t corrupt_value)
     {
         constexpr size_t keep_header_bytes = 0x100;
 
@@ -135,7 +136,7 @@ public:
 
         if (size > keep_header_bytes)
         {
-            std::memset(base + keep_header_bytes, 0xEF, size - keep_header_bytes);
+            std::memset(base + keep_header_bytes, corrupt_value, size - keep_header_bytes);
         }
     }
 
