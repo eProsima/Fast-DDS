@@ -1367,6 +1367,7 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
     thread_wait_deadlock.join();
 }
 
+// Regression test for https://github.com/eProsima/Fast-DDS/issues/6501
 // Reproduces a crash when opening a port whose segment holds damaged allocator
 // structures.
 //
@@ -1381,8 +1382,8 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 // segments: ownership does not protect the traversal.
 //
 // On platforms without gtest's SEH handling this aborts the whole test binary
-// rather than failing one case, which is the other reason it ships disabled.
-TEST_F(SHMTransportTests, port_corrupt_segment_crashes_on_open)
+// rather than failing one case.
+TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
@@ -1396,8 +1397,7 @@ TEST_F(SHMTransportTests, port_corrupt_segment_crashes_on_open)
     // Damage the allocator structures the way an abruptly terminated peer can.
     port_mocker.corrupt_segment_allocator(*port);
 
-    // Opening the port again should not walk those structures. Today it does,
-    // and this is where the process dies.
+    // Opening the port again should not walk those structures.
     auto recovered = shared_mem_global->open_port(0, 1, 1000);
     ASSERT_TRUE(recovered != nullptr);
     ASSERT_NO_THROW(recovered->healthy_check());
