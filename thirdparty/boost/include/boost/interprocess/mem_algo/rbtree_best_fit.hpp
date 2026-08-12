@@ -652,6 +652,10 @@ bool rbtree_best_fit<MutexFamily, VoidPointer, MemAlignment>::
       if(!algo_impl_t::check_alignment(&*ib)){
          return false;
       }
+      //A size of 0 is not allowed in the multiset
+      if(!ib->m_size){
+         return false;
+      }
       free_memory += (size_type)ib->m_size*Alignment;
       //Check free bytes are less than size
       if(free_memory > max_free_memory){
