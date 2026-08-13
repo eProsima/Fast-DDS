@@ -48,7 +48,7 @@ Please, open the issue in the corresponding repository:
 - [Shapes Demo](https://github.com/eProsima/ShapesDemo/issues/new)
 - [ROS 2 Fast DDS RMW](https://github.com/ros2/rmw_fastrtps/issues/new)
 - [Fast DDS Statistics Backend](https://github.com/eProsima/Fast-DDS-statistics-backend/issues/new)
-- [Fast DDS Monitor](https://github.com/eProsima/Fast-DDS-monitor/issues/new)
+- [DDS Monitor](https://github.com/eProsima/DDS-Monitor/issues/new)
 - [DDS Router](https://github.com/eProsima/DDS-Router/issues/new)
 
 Also, this project classifies user issues in the following categories.
