@@ -15,6 +15,8 @@
 #ifndef _FASTDDS_MOCKSHAREDMEM_GLOBAL_H_
 #define _FASTDDS_MOCKSHAREDMEM_GLOBAL_H_
 
+#include <cstring>
+
 #include <rtps/transport/shared_mem/SharedMemGlobal.hpp>
 
 namespace eprosima{
@@ -93,6 +95,39 @@ public:
         listener.release();
         port.node_->num_listeners++;
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Corrupt the allocator structures of a port segment in place.
+     *
+     * Writing the file on disk is unreliable for this: on Windows the segment
+     * may still be mapped or pending delete, so the bytes written are not
+     * necessarily the ones a later open sees. Scribbling directly on the
+     * mapping is unambiguous.
+     *
+     * The boost segment_manager header at the start is left alone so that
+     * open_only still succeeds -- damaging it only produces an exception, which
+     * open_port_internal already handles. What is destroyed here are the
+     * free-block tree links that check_sanity() walks.
+     */
+    static void corrupt_segment_allocator(
+            SharedMemGlobal::Port& port,
+            uint8_t corrupt_value)
+    {
+        constexpr size_t keep_header_bytes = 0x100;
+
+        auto& segment = port.port_segment_->get();
+        auto base = static_cast<char*>(segment.get_address());
+        auto size = static_cast<size_t>(segment.get_size());
+
+        if (size > keep_header_bytes)
+        {
+            std::memset(base + keep_header_bytes, corrupt_value, size - keep_header_bytes);
+        }
+    }
+
+>>>>>>> d79fed2ab (Fix shared-memory segment crash on port open (#6503))
 };
 
 } // namespace rtps
