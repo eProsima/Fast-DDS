@@ -451,7 +451,6 @@ bool StatefulWriter::intraprocess_heartbeat(
 
     if (local_reader)
     {
-        // std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
         lockW.lock();
         SequenceNumber_t first_seq = get_seq_num_min();
         SequenceNumber_t last_seq = get_seq_num_max();

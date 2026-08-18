@@ -570,7 +570,7 @@ public:
 
     std::list<type> data_not_received()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);
         return total_msgs_;
     }
 
@@ -920,7 +920,7 @@ private:
         {
             returnedValue = true;
 
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
 
             // Check order of changes.
             if (datareader == datareader_)

@@ -846,47 +846,47 @@ public:
 
     void pub_liveliness_lost()
     {
-        std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
+        std::lock_guard<std::mutex> lock(pub_liveliness_mutex_);
         pub_times_liveliness_lost_++;
         pub_liveliness_cv_.notify_one();
     }
 
     void sub_liveliness_lost()
     {
-        std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
+        std::lock_guard<std::mutex> lock(sub_liveliness_mutex_);
         sub_times_liveliness_lost_++;
         sub_liveliness_cv_.notify_one();
     }
 
     void sub_liveliness_recovered()
     {
-        std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
+        std::lock_guard<std::mutex> lock(sub_liveliness_mutex_);
         sub_times_liveliness_recovered_++;
         sub_liveliness_cv_.notify_one();
     }
 
     void data_received()
     {
-        std::unique_lock<std::mutex> lock(sub_data_mutex_);
+        std::lock_guard<std::mutex> lock(sub_data_mutex_);
         sub_times_data_received_++;
         sub_data_cv_.notify_one();
     }
 
     unsigned int pub_times_liveliness_lost()
     {
-        std::unique_lock<std::mutex> lock(pub_liveliness_mutex_);
+        std::lock_guard<std::mutex> lock(pub_liveliness_mutex_);
         return pub_times_liveliness_lost_;
     }
 
     unsigned int sub_times_liveliness_lost()
     {
-        std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
+        std::lock_guard<std::mutex> lock(sub_liveliness_mutex_);
         return sub_times_liveliness_lost_;
     }
 
     unsigned int sub_times_liveliness_recovered()
     {
-        std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
+        std::lock_guard<std::mutex> lock(sub_liveliness_mutex_);
         return sub_times_liveliness_recovered_;
     }
 
@@ -954,28 +954,28 @@ private:
 
     void pub_matched()
     {
-        std::unique_lock<std::mutex> lock(pub_mutex_);
+        std::lock_guard<std::mutex> lock(pub_mutex_);
         ++pub_matched_;
         pub_cv_.notify_one();
     }
 
     void pub_unmatched()
     {
-        std::unique_lock<std::mutex> lock(pub_mutex_);
+        std::lock_guard<std::mutex> lock(pub_mutex_);
         --pub_matched_;
         pub_cv_.notify_one();
     }
 
     void sub_matched()
     {
-        std::unique_lock<std::mutex> lock(sub_mutex_);
+        std::lock_guard<std::mutex> lock(sub_mutex_);
         ++sub_matched_;
         sub_cv_.notify_one();
     }
 
     void sub_unmatched()
     {
-        std::unique_lock<std::mutex> lock(sub_mutex_);
+        std::lock_guard<std::mutex> lock(sub_mutex_);
         --sub_matched_;
         sub_cv_.notify_one();
     }
