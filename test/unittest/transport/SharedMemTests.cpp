@@ -1353,6 +1353,51 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
     thread_wait_deadlock.join();
 }
 
+// Regression test for https://github.com/eProsima/Fast-DDS/issues/6501
+// Reproduces a crash when opening a port whose segment holds damaged allocator
+// structures.
+//
+// open_port_internal validates an existing segment with check_sanity(), which
+// iterates the allocator's free-block tree through offset pointers stored inside
+// the segment. When those links are inconsistent the traversal reads unmapped
+// memory and the process dies (0xC0000005 on Windows, SIGSEGV elsewhere). The
+// fault is not a C++ exception, so the catch(std::exception&) around the call
+// cannot intercept it.
+//
+// Note the port here is open and owned, so this is not about stale or leftover
+// segments: ownership does not protect the traversal.
+//
+// On platforms without gtest's SEH handling this aborts the whole test binary
+// rather than failing one case.
+TEST_F(SHMTransportTests, port_corrupt_segment_recovers_on_open)
+{
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+    MockPortSharedMemGlobal port_mocker;
+
+    shared_mem_global->remove_port(0);
+
+    auto test_case = [&](uint8_t corrupt_byte)
+            {
+                auto port = shared_mem_global->open_port(0, 1, 1000);
+                ASSERT_NO_THROW(port->healthy_check());
+
+                // Damage the allocator structures the way an abruptly terminated peer can.
+                port_mocker.corrupt_segment_allocator(*port, corrupt_byte);
+
+                // Opening the port again should not walk those structures.
+                auto recovered = shared_mem_global->open_port(0, 1, 1000);
+                ASSERT_TRUE(recovered != nullptr);
+                ASSERT_NO_THROW(recovered->healthy_check());
+            };
+
+    for (uint8_t corrupt_byte = 0xFF; corrupt_byte > 0x00; corrupt_byte--)
+    {
+        test_case(corrupt_byte);
+    }
+    test_case(0x00);
+}
+
 TEST_F(SHMTransportTests, port_not_ok_listener_recover)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
