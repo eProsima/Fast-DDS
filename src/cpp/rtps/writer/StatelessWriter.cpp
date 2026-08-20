@@ -317,6 +317,7 @@ bool StatelessWriter::intraprocess_delivery(
         CacheChange_t* change,
         ReaderLocator& reader_locator)
 {
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     LocalReaderPointer::Instance local_reader = reader_locator.local_reader();
 
     if (local_reader &&

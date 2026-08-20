@@ -67,12 +67,16 @@ ReturnCode_t StatusConditionImpl::set_enabled_statuses(
 const StatusMask& StatusConditionImpl::get_enabled_statuses() const
 {
     std::lock_guard<std::mutex> guard(mutex_);
+    FASTDDS_TODO_BEFORE(4, 0, "Same issue as get_raw_status, reference escapes the lock.");
     return mask_;
 }
 
 const StatusMask& StatusConditionImpl::get_raw_status() const
 {
     std::lock_guard<std::mutex> guard(mutex_);
+    FASTDDS_TODO_BEFORE(4, 0,
+            "Returning a reference to a member protected by a mutex that escapes the lock is a data race. "
+            "Fix requires changing the return type to StatusMask (by value), which is an API break.");
     return status_;
 }
 

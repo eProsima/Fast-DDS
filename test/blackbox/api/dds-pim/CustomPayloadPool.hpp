@@ -20,6 +20,7 @@
 #define DDS_CUSTOM_PAYLOAD_POOL_HPP
 
 #include <assert.h>
+#include <atomic>
 #include <cstdint>
 #include <stdio.h>
 #include <string.h>
@@ -95,8 +96,8 @@ public:
         return true;
     }
 
-    uint32_t requested_payload_count = 0;
-    uint32_t returned_payload_count = 0;
+    std::atomic<uint32_t> requested_payload_count {0};
+    std::atomic<uint32_t> returned_payload_count {0};
 
 };
 

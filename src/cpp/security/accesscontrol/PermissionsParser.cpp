@@ -17,9 +17,15 @@
 
 #include <cstring>
 #include <cassert>
+#include <ctime>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <iomanip>
+
+namespace {
+std::mutex mktime_mutex;
+} // namespace
 
 #if TIXML2_MAJOR_VERSION >= 6
 #define PRINTLINE(node) node->GetLineNum()
@@ -339,7 +345,10 @@ bool PermissionsParser::parse_validity(
 
                 if (!stream.fail())
                 {
-                    validity.not_before = std::mktime(&time);
+                    {
+                        std::lock_guard<std::mutex> lock(mktime_mutex);
+                        validity.not_before = std::mktime(&time);
+                    }
 #endif // if _MSC_VER != 1800
 
                 tinyxml2::XMLElement* old_node = node;
@@ -360,7 +369,10 @@ bool PermissionsParser::parse_validity(
 
                             if (!stream.fail())
                             {
-                                validity.not_after = std::mktime(&time);
+                                {
+                                    std::lock_guard<std::mutex> lock(mktime_mutex);
+                                    validity.not_after = std::mktime(&time);
+                                }
 #endif // if _MSC_VER != 1800
                             returned_value = true;
                         }

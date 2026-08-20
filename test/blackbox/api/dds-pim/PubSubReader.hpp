@@ -609,7 +609,7 @@ public:
 
     std::list<type> data_not_received()
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);
         return total_msgs_;
     }
 
@@ -639,7 +639,7 @@ public:
             size_t expected_samples)
     {
         {
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
             current_processed_count_ = 0;
             number_samples_expected_ = expected_samples;
             last_seq.clear();
@@ -1965,7 +1965,7 @@ public:
         return status;
     }
 
-    const eprosima::fastdds::dds::LivelinessChangedStatus& liveliness_changed_status()
+    eprosima::fastdds::dds::LivelinessChangedStatus liveliness_changed_status()
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
@@ -2014,6 +2014,7 @@ public:
 
     unsigned int get_participants_matched() const
     {
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         return participant_matched_;
     }
 
@@ -2138,7 +2139,7 @@ protected:
         {
             returnedValue = true;
 
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
 
             // Check order of changes.
             LastSeqInfo seq_info{ info.instance_handle, info.sample_identity.writer_guid() };
@@ -2182,7 +2183,7 @@ protected:
         }
 
         // Traverse the collection
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::lock_guard<std::mutex> lock(mutex_);
         for (int32_t i = 0; i < datas.length(); ++i)
         {
             type& data = datas[i];
@@ -2248,28 +2249,28 @@ protected:
 
     void participant_matched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         ++participant_matched_;
         cvDiscovery_.notify_one();
     }
 
     void participant_unmatched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         --participant_matched_;
         cvDiscovery_.notify_one();
     }
 
     void matched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         ++matched_;
         cvDiscovery_.notify_one();
     }
 
     void unmatched()
     {
-        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+        std::lock_guard<std::mutex> lock(mutexDiscovery_);
         --matched_;
         cvDiscovery_.notify_one();
     }
@@ -2314,7 +2315,7 @@ protected:
     std::list<type> total_msgs_;
     std::mutex mutex_;
     std::condition_variable cv_;
-    std::mutex mutexDiscovery_;
+    mutable std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
     std::atomic<unsigned int> matched_;
     unsigned int participant_matched_;
@@ -2426,7 +2427,7 @@ protected:
             waitset_.attach_condition(reader_.subscriber_->get_statuscondition());
             waitset_.attach_condition(guard_condition_);
 
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
             if (nullptr == thread_)
             {
                 running_ = true;
@@ -2618,7 +2619,7 @@ protected:
         eprosima::fastdds::dds::GuardCondition guard_condition_;
 
         //! Number of times deadline was missed
-        unsigned int times_deadline_missed_ = 0;
+        std::atomic<unsigned int> times_deadline_missed_ {0};
 
         //! The timeout for the wait operation
         eprosima::fastdds::dds::Duration_t timeout_;
@@ -2643,6 +2644,7 @@ public:
 
     ~PubSubReaderWithWaitsets() override
     {
+        waitset_thread_.stop();
     }
 
     void createSubscriber() override
