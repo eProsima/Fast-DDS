@@ -511,7 +511,9 @@ jobs:
         if: ${{ steps.report_summary.outcome == 'failure' }}
         shell: pwsh
         run: |
-          Write-Host ${{ steps.report_summary.outcome }}
+          $msg = 'Failure: check "Process sanitizer reports" step to see errors'
+          Write-Host "::error title=TSan report::$msg"
+          Write-Host $msg
           exit 1
 
   ubsan_fastdds_build:
