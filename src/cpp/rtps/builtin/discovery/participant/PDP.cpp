@@ -134,12 +134,18 @@ PDP::~PDP()
 {
     delete resend_participant_info_event_;
 
-    builtin_endpoints_->disable_pdp_readers(mp_RTPSParticipant);
+    if (builtin_endpoints_)
+    {
+        builtin_endpoints_->disable_pdp_readers(mp_RTPSParticipant);
+    }
 
     delete mp_EDP;
 
-    builtin_endpoints_->delete_pdp_endpoints(mp_RTPSParticipant);
-    builtin_endpoints_.reset();
+    if (builtin_endpoints_)
+    {
+        builtin_endpoints_->delete_pdp_endpoints(mp_RTPSParticipant);
+        builtin_endpoints_.reset();
+    }
 
     for (ParticipantProxyData* it : participant_proxies_)
     {
