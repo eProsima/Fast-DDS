@@ -488,10 +488,11 @@ jobs:
         if: always()
         run: |
           echo "## TSan capture check"
-          nfiles=$(ls -1 ${{ github.workspace }}/tsan_reports 2>/dev/null | wc -l)
+          nfiles=$(ls -1 ${{ github.workspace }}/tsan_reports 2>/dev/null | wc -l || true)
           in_files=$(cat ${{ github.workspace }}/tsan_reports/* 2>/dev/null | grep -c "WARNING: ThreadSanitizer:" || true)
-          crashes=$(grep -l "ERROR: ThreadSanitizer:" ${{ github.workspace }}/tsan_reports/* 2>/dev/null | wc -l)
+          crashes=$(grep -l "ERROR: ThreadSanitizer:" ${{ github.workspace }}/tsan_reports/* 2>/dev/null | wc -l || true)
           in_stdout=$(grep -c "WARNING: ThreadSanitizer:" log/latest_test/fastdds/stdout_stderr.log 2>/dev/null || true)
+          in_stdout=${in_stdout:-0}
           echo "Per-process report files : $nfiles"
           echo "Reports captured in files: $in_files"
           echo "Crash (ERROR) report files: $crashes"
