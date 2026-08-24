@@ -154,6 +154,8 @@ void XMLEndpointParser::loadXMLParticipantEndpoint(
 {
     tinyxml2::XMLNode* xml_RTPSParticipant_child = xml_endpoint;
     tinyxml2::XMLElement* element = xml_RTPSParticipant_child->FirstChildElement();
+    m_endpointIds.clear();
+    m_entityIds.clear();
 
     while (element != nullptr)
     {
@@ -793,10 +795,11 @@ XMLP_ret XMLEndpointParser::lookforReader(
         ReaderProxyData** rdataptr,
         uint32_t& position)
 {
+    std::string participant_name(partname);
     for (std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
             pit != m_RTPSParticipants.end(); ++pit)
     {
-        if ((*pit)->m_RTPSParticipantName == partname || true) //it doenst matter the name fo the RTPSParticipant, only for organizational purposes
+        if ((*pit)->m_RTPSParticipantName == participant_name.substr(0, participant_name.find_first_of('#')))
         {
             position = 0;
             for (std::vector<ReaderProxyData*>::iterator rit = (*pit)->m_readers.begin();
@@ -824,10 +827,11 @@ XMLP_ret XMLEndpointParser::lookforWriter(
         WriterProxyData** wdataptr,
         uint32_t& position)
 {
+    std::string participant_name(partname);
     for (std::vector<StaticRTPSParticipantInfo*>::iterator pit = m_RTPSParticipants.begin();
             pit != m_RTPSParticipants.end(); ++pit)
     {
-        if ((*pit)->m_RTPSParticipantName == partname || true) //it doenst matter the name fo the RTPSParticipant, only for organizational purposes
+        if ((*pit)->m_RTPSParticipantName == participant_name.substr(0, participant_name.find_first_of('#')))
         {
             position = 0;
             for (std::vector<WriterProxyData*>::iterator wit = (*pit)->m_writers.begin();
