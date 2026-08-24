@@ -157,3 +157,6 @@ target_link_libraries(
     ${CMAKE_DL_LIBS})
 
 gtest_discover_tests(${CLI_MANAGER_TESTS_EXEC})
+
+# Trace each TSan report. No-op if TSan is not enabled
+tsan_name_reports()

@@ -83,8 +83,11 @@ PDPServer::PDPServer(
 
 PDPServer::~PDPServer()
 {
-    // Stop timed events
-    routine_->cancel_timer();
+    // Stop timed events.
+    if (nullptr != routine_)
+    {
+        routine_->cancel_timer();
+    }
 
     // Disable database
     discovery_db_.disable();
