@@ -14,7 +14,7 @@
 
 # Require C++ 14 for testing as both GTest v1.14.0 and ROS 2 Jazzy require it anyways
 set(FORCE_CXX "14")
-check_stdcxx(${FORCE_CXX})
+check_stdcxx(${FORCE_CXX} run_fallback_test)
 
 option(PERFORMANCE_TESTS "Activate the building and execution of performance tests" OFF)
 option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)

@@ -109,7 +109,7 @@ endif()
 include(${PROJECT_SOURCE_DIR}/cmake/common/check_configuration.cmake)
 
 set(FORCE_CXX "11" CACHE STRING "C++ standard fulfillment selection")
-check_stdcxx(${FORCE_CXX})
+check_stdcxx(${FORCE_CXX} run_fallback_test)
 
 check_endianness()
 
