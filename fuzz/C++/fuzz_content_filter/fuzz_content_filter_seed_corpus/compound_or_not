@@ -1,0 +1,1 @@
+(int16_field < 0) OR (uint32_field >= 7) OR NOT (char_field = 'x')
