@@ -1,0 +1,3 @@
+int32_field BETWEEN %0 AND %1
+-5
+5
