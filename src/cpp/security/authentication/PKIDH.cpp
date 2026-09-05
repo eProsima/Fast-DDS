@@ -510,7 +510,7 @@ static bool adjust_participant_key(
 {
     assert(cert != nullptr);
 
-    X509_NAME* cert_sn = X509_get_subject_name(cert);
+    OPENSSL_CONST X509_NAME* cert_sn = X509_get_subject_name(cert);
     assert(cert_sn != nullptr);
 
     unsigned char md[SHA256_DIGEST_LENGTH];
@@ -1206,7 +1206,7 @@ ValidationResult_t PKIDH::validate_local_identity(
         if ((*ih)->cert_ != nullptr)
         {
             // Get subject name.
-            X509_NAME* cert_sn = X509_get_subject_name((*ih)->cert_);
+            OPENSSL_CONST X509_NAME* cert_sn = X509_get_subject_name((*ih)->cert_);
             assert(cert_sn != nullptr);
             char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
             assert(cert_sn_str != nullptr);
@@ -1510,7 +1510,7 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
+    OPENSSL_CONST X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
     assert(cert_sn != nullptr);
     char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
     assert(cert_sn_str != nullptr);
@@ -1935,7 +1935,7 @@ ValidationResult_t PKIDH::process_handshake_request(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
-    X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
+    OPENSSL_CONST X509_NAME* cert_sn = X509_get_subject_name(rih->cert_);
     assert(cert_sn != nullptr);
     char* cert_sn_str = X509_NAME_oneline(cert_sn, 0, 0);
     assert(cert_sn_str != nullptr);
