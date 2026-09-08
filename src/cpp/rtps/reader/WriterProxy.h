@@ -163,22 +163,21 @@ public:
         // Cap start sequence number
         SequenceNumber_t initial_seq = std::max(gap_start, first_allowed_gap);
 
-        // Default maximum allowed GAP is low mark + 256
-        SequenceNumber_t max_allowed_gap = changes_from_writer_low_mark_ + 256u;
+        // Cap the GAP to the maximum sequence number the writer has announced through a
+        // Heartbeat, which is is guaranteed to precede every GAP.
+        // If no Heartbeat has been processed yet, max_sequence_number_ equals
+        // changes_from_writer_low_mark_, so initial_seq >= max_allowed_gap and nothing is
+        // processed (the GAP is ignored until a Heartbeat sets the range).
+        SequenceNumber_t max_allowed_gap = max_sequence_number_ + 1u;
 
-        // Special case when initial_seq is exactly the first allowed GAP
         if (initial_seq == first_allowed_gap)
         {
-            max_allowed_gap = gap_list.base() + 256u;
-
-            // Do not exceed max sequence number when known from a heartbeat
-            if (max_sequence_number_ > changes_from_writer_low_mark_)
-            {
-                max_allowed_gap = max_sequence_number_ + 1;
-            }
+            // Special case for datasharing where no GAP is emitted from the writer's side,
+            // but created locally by the reader for initial positioning
+            max_allowed_gap = std::max(max_allowed_gap, gap_list.base());
         }
 
-        // Early exit if gap_start is beyond allowed range
+        // Early exit if gap_start is beyond the announced range
         if (gap_start > max_allowed_gap)
         {
             return;
@@ -195,7 +194,7 @@ public:
             }
         }
 
-        // Early exit if the entire gap_list is beyond allowed range
+        // Early exit if the entire gap_list is beyond the announced range
         if (gap_list.base() > max_allowed_gap)
         {
             return;

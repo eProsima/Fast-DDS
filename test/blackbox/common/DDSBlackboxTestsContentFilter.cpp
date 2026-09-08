@@ -1250,6 +1250,88 @@ TEST(DDSContentFilter, ShouldNotFailWithTooManySubExpressionsDiscovered)
     }
 }
 
+/*
+ * Regression test for Redmine issue #24631
+ *
+ * This test checks that a late-joining VOLATILE (by default) subscriber is able to properly synchronize its
+ * state with a reliable publisher that has a content filter applied, and receive the data that matches the filter.
+ */
+TEST(DDSContentFilter, LateJointerSubWithCFTMustReceiveData)
+{
+    // Create writer
+    PubSubWriter<HelloWorldPubSubType> writer("ShortT");
+    std::shared_ptr<eprosima::fastdds::rtps::UDPv4TransportDescriptor> udp_descriptor =
+            std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+    writer.disable_builtin_transport().add_user_transport_to_pparams(udp_descriptor);
+    writer.datasharing_off();
+    writer.reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(1000).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Create reader
+    const std::string expression = "index BETWEEN " + std::to_string(1) + " AND " +
+            std::to_string(300);
+    auto reader = std::make_shared<PubSubReader<HelloWorldPubSubType>>("ShortT", expression,
+                    std::vector<std::string>{});
+    reader->reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS).durability_kind(
+        DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS);
+    reader->datasharing_off();
+    reader->history_depth(1000).init();
+    ASSERT_TRUE(reader->isInitialized());
+    reader->wait_discovery();
+
+    // Wait for discovery before start to publish
+    writer.wait_discovery(1u);
+
+    // Start samples reception
+    reader->startReception(300);
+
+    auto data = default_helloworld_data_generator(500);
+
+    // Send up to sample 300, which will be received by the first reader
+    uint16_t index = 0;
+    for (auto data_sample : data)
+    {
+        if (++index > 300)
+        {
+            break;
+        }
+        ASSERT_TRUE(writer.send_sample(data_sample));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    ASSERT_EQ(300u, reader->block_for_all(std::chrono::seconds(10)));
+    // Do not destroy reader 1 to avoid the writer removing its history
+
+    // Create a fresh second reader with an expression to only receive new samples
+    const std::string expression_2 = "index > " + std::to_string(300);
+    auto reader_2 = std::make_shared<PubSubReader<HelloWorldPubSubType>>("ShortT", expression_2,
+                    std::vector<std::string>{});
+    reader_2->reliability(ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS);
+    reader_2->datasharing_off();
+    reader_2->history_depth(500).init();
+    ASSERT_TRUE(reader_2->isInitialized());
+
+    reader_2->wait_discovery();
+    writer.wait_discovery(2u);
+
+    reader_2->startReception(200);
+
+    // Send the remaining samples (index 301..500)
+    index = 0;
+    for (auto data_sample : data)
+    {
+        if (++index <= 300)
+        {
+            continue;
+        }
+        ASSERT_TRUE(writer.send_sample(data_sample));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    ASSERT_EQ(200u, reader_2->block_for_all(std::chrono::seconds(10)));
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
@@ -1282,4 +1364,3 @@ GTEST_INSTANTIATE_TEST_MACRO(DDSContentFilter,
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
-
