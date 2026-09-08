@@ -1,15 +1,15 @@
-name: Fast DDS Sanitizers CI (nightly 2.14.x)
+name: Fast DDS Sanitizers CI (weekly 2.14.x)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 22 * * *' # At 22:00 GMT
+    - cron: '0 20 * * 0' # Run at minute 0 on Sunday
 
 jobs:
-  nightly-sanitizers-ci-2_14_x:
+  weekly-sanitizers-ci-2_14_x:
     uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.14.x
     with:
-      label: 'nightly-sec-sanitizers-ci-2.14.x'
+      label: 'weekly-sec-sanitizers-ci-2.14.x'
       run_asan_fastdds: true
       run_asan_discovery_server: true
       run_tsan_fastdds: true
