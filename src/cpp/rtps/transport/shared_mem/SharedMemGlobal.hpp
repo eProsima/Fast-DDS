@@ -804,7 +804,8 @@ public:
                             node_->listeners_status[i].is_processing)
                     {
                         buffer_descriptor = node_->listeners_status[i].descriptor;
-                        listener_processing_stop(i);
+                        // Already holding empty_cv_mutex: clear in place
+                        node_->listeners_status[i].is_processing = false;
                         return true;
                     }
                 }
