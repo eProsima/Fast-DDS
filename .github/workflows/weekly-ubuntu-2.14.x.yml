@@ -3,7 +3,7 @@ name: Fast DDS Ubuntu CI (weekly 2.14.x)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * 1' # Run at minute 0 on Monday
+    - cron: '0 20 * * 0' # Run at minute 0 on Sunday
 
 jobs:
   weekly-ubuntu-ci-2_14_x:
