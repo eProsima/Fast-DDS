@@ -43,7 +43,8 @@
 
 #if TLS_FOUND
 #include <rtps/transport/TCPAcceptorSecure.h>
-#include <asio/ssl.hpp>
+#include <asio/ssl/context.hpp>
+#include <asio/ssl/stream.hpp>
 #endif // if TLS_FOUND
 
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
