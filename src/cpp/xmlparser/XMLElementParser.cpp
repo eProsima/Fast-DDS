@@ -4284,21 +4284,21 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
         {
             // userDefinedID - int16type
             int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 32767 || i < 0)
             {
                 return XMLP_ret::XML_ERROR;
             }
-            publisher.setUserDefinedID(static_cast<uint8_t>(i));
+            publisher.setUserDefinedID(static_cast<int16_t>(i));
         }
         else if (strcmp(name, ENTITY_ID) == 0)
         {
             // entityID - int16Type
             int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 32767 || i < 0)
             {
                 return XMLP_ret::XML_ERROR;
             }
-            publisher.setEntityID(static_cast<uint8_t>(i));
+            publisher.setEntityID(static_cast<int16_t>(i));
         }
         else if (strcmp(name, MATCHED_SUBSCRIBERS_ALLOCATION) == 0)
         {
@@ -4453,21 +4453,21 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
         {
             // userDefinedID - int16Type
             int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 32767 || i < 0)
             {
                 return XMLP_ret::XML_ERROR;
             }
-            subscriber.setUserDefinedID(static_cast<uint8_t>(i));
+            subscriber.setUserDefinedID(static_cast<int16_t>(i));
         }
         else if (strcmp(name, ENTITY_ID) == 0)
         {
             // entityID - int16Type
             int i = 0;
-            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 255)
+            if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &i, ident) || i > 32767 || i < 0)
             {
                 return XMLP_ret::XML_ERROR;
             }
-            subscriber.setEntityID(static_cast<uint8_t>(i));
+            subscriber.setEntityID(static_cast<int16_t>(i));
         }
         else if (strcmp(name, MATCHED_PUBLISHERS_ALLOCATION) == 0)
         {
