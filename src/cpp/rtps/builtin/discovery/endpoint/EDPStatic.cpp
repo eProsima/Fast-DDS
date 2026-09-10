@@ -268,9 +268,15 @@ bool EDPStaticProperty::fromProperty(
         int a, b, c, d;
         char ch;
         ss >> a >> ch >> b >> ch >> c >> ch >> d;
-        m_entityId.value[0] = (octet)a; m_entityId.value[1] = (octet)b;
-        m_entityId.value[2] = (octet)c; m_entityId.value[3] = (octet)d;
-        return true;
+        bool success = !ss.fail() && ss.eof();
+        if (success)
+        {
+            m_entityId.value[0] = (octet)a;
+            m_entityId.value[1] = (octet)b;
+            m_entityId.value[2] = (octet)c;
+            m_entityId.value[3] = (octet)d;
+        }
+        return success;
     }
     else if (0 == prop.first.compare(0, 4, "EDS_"))
     {
@@ -304,20 +310,33 @@ bool EDPStaticProperty::fromProperty(
         ss >> m_userId;
         ss.clear();
         ss.str(std::string());
-        ss << prop.second;
         size_t count = std::count(prop.second.begin(), prop.second.end(), '.');
-        int value = 0;
-        char ch = 0;
-        for (size_t it = 0; it <= count; ++it)
+        // At most 4 octets in an EntityId_t, so at most 3 dots.
+        if (count > 3)
         {
-            ss >> value;
-            m_entityId.value[3 - (count - it)] = (octet)value;
-            if (it != count)
-            {
-                ss >> ch;
-            }
+            return false;
         }
-        return true;
+        // Left-pad with zero octets until a full 'a.b.c.d' representation is formed, and then
+        // parse it the same way as done above for the 'eProsimaEDPStatic' properties. This way,
+        // any other malformed input (consecutive dots, leading/trailing dots, non-numeric
+        // characters...) is rejected instead of being silently accepted.
+        for (size_t i = count; i < 3; ++i)
+        {
+            ss << "0.";
+        }
+        ss << prop.second;
+        int a, b, c, d;
+        char ch;
+        ss >> a >> ch >> b >> ch >> c >> ch >> d;
+        bool success = !ss.fail() && ss.eof();
+        if (success)
+        {
+            m_entityId.value[0] = (octet)a;
+            m_entityId.value[1] = (octet)b;
+            m_entityId.value[2] = (octet)c;
+            m_entityId.value[3] = (octet)d;
+        }
+        return success;
     }
     return false;
 }
