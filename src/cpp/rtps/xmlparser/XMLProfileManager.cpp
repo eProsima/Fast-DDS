@@ -521,6 +521,11 @@ XMLP_ret XMLProfileManager::extractParticipantProfile(
     std::string profile_name = "";
 
     p_node_participant_t node_part = dynamic_cast<p_node_participant_t>(profile.get());
+    if (node_part == nullptr)
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': unexpected node type");
+        return XMLP_ret::XML_ERROR;
+    }
     node_att_map_cit_t it = node_part->getAttributes().find(PROFILE_NAME);
     if (it == node_part->getAttributes().end() || it->second.empty())
     {
@@ -554,6 +559,11 @@ XMLP_ret XMLProfileManager::extractPublisherProfile(
     std::string profile_name = "";
 
     p_node_publisher_t node_part = dynamic_cast<p_node_publisher_t>(profile.get());
+    if (node_part == nullptr)
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': unexpected node type");
+        return XMLP_ret::XML_ERROR;
+    }
     node_att_map_cit_t it = node_part->getAttributes().find(PROFILE_NAME);
     if (it == node_part->getAttributes().end() || it->second.empty())
     {
@@ -587,6 +597,11 @@ XMLP_ret XMLProfileManager::extractSubscriberProfile(
     std::string profile_name = "";
 
     p_node_subscriber_t node_part = dynamic_cast<p_node_subscriber_t>(profile.get());
+    if (node_part == nullptr)
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': unexpected node type");
+        return XMLP_ret::XML_ERROR;
+    }
     node_att_map_cit_t it = node_part->getAttributes().find(PROFILE_NAME);
     if (it == node_part->getAttributes().end() || it->second.empty())
     {
@@ -677,6 +692,11 @@ XMLP_ret XMLProfileManager::extractTopicProfile(
     std::string profile_name = "";
 
     p_node_topic_t node_topic = dynamic_cast<p_node_topic_t>(profile.get());
+    if (node_topic == nullptr)
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': unexpected node type");
+        return XMLP_ret::XML_ERROR;
+    }
     node_att_map_cit_t it = node_topic->getAttributes().find(PROFILE_NAME);
     if (it == node_topic->getAttributes().end() || it->second.empty())
     {
@@ -710,6 +730,11 @@ XMLP_ret XMLProfileManager::extractRequesterProfile(
     std::string profile_name = "";
 
     p_node_requester_t node_requester = dynamic_cast<p_node_requester_t>(profile.get());
+    if (node_requester == nullptr)
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': unexpected node type");
+        return XMLP_ret::XML_ERROR;
+    }
     node_att_map_cit_t it = node_requester->getAttributes().find(PROFILE_NAME);
     if (it == node_requester->getAttributes().end() || it->second.empty())
     {
@@ -738,6 +763,11 @@ XMLP_ret XMLProfileManager::extractReplierProfile(
     std::string profile_name = "";
 
     p_node_replier_t node_replier = dynamic_cast<p_node_replier_t>(profile.get());
+    if (node_replier == nullptr)
+    {
+        logError(XMLPARSER, "Error adding profile from file '" << filename << "': unexpected node type");
+        return XMLP_ret::XML_ERROR;
+    }
     node_att_map_cit_t it = node_replier->getAttributes().find(PROFILE_NAME);
     if (it == node_replier->getAttributes().end() || it->second.empty())
     {
