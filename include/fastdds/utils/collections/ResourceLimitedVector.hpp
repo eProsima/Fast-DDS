@@ -25,6 +25,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace eprosima {
@@ -224,7 +225,7 @@ public:
         }
 
         // Construct new element at the end of the collection
-        collection_.emplace_back(args ...);
+        collection_.emplace_back(std::forward<Args>(args)...);
 
         // Return pointer to newly created element
         return &collection_.back();
