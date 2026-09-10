@@ -37,8 +37,10 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -962,4 +964,97 @@ TEST(DDSDiscovery, WriterAndReaderMatchUsingDynamicReusableMemoryMode)
 
     ASSERT_TRUE(writer.wait_reader_undiscovery(std::chrono::seconds(3)));
 
+}
+
+//! Regression test for redmine issue 25485.
+//! A participant using STATIC EDP parses 'EDS_*' properties received from any discovered
+//! participant (regardless of the discovery protocol used by that remote participant) to learn
+//! about its statically discovered endpoints. Such a property encodes an EntityId_t (at most 4
+//! octets, i.e. at most 3 dots) as a dot-separated string. A malformed property with more dots
+//! than that used to cause an out-of-bounds write while being parsed. Check that the victim
+//! participant safely survives such a malformed property, and keeps working normally afterwards.
+TEST(DDSDiscovery, static_edp_malformed_entity_id_property)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastrtps::rtps;
+
+    /* Victim listener: keeps track of participant discovery */
+    class DiscoveryListener : public DomainParticipantListener
+    {
+    public:
+
+        void on_participant_discovery(
+                DomainParticipant*,
+                ParticipantDiscoveryInfo&& info) override
+        {
+            if (ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == info.status)
+            {
+                std::lock_guard<std::mutex> lock(mtx_);
+                participant_discovered_ = true;
+                cv_.notify_all();
+            }
+        }
+
+        bool wait_participant_discovery()
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            return cv_.wait_for(lock, std::chrono::seconds(5), [this]()
+                           {
+                               return participant_discovered_;
+                           });
+        }
+
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
+
+        std::mutex mtx_;
+        std::condition_variable cv_;
+        bool participant_discovered_ = false;
+    };
+
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+    uint32_t domain_id = (uint32_t)GET_PID() % 230;
+
+    /* Victim: uses STATIC EDP with an empty configuration, so it will try to parse 'EDS_*'
+     * properties advertised by any discovered participant. */
+    DomainParticipantQos victim_qos = PARTICIPANT_QOS_DEFAULT;
+    victim_qos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = false;
+    victim_qos.wire_protocol().builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol = true;
+    victim_qos.wire_protocol().builtin.discovery_config.static_edp_xml_config(
+        "data://<staticdiscovery></staticdiscovery>");
+
+    DiscoveryListener victim_listener;
+    DomainParticipant* victim = factory->create_participant(domain_id, victim_qos, &victim_listener);
+    ASSERT_NE(nullptr, victim);
+
+    /* Attacker: announces a malformed EDS_ property. An EntityId_t only has 4 octets, so at most
+     * 3 dots are expected in the property value. This one has way more than that. */
+    DomainParticipantQos attacker_qos = PARTICIPANT_QOS_DEFAULT;
+    {
+        Property malformed;
+        malformed.name("EDS_RA_5");
+        std::string malformed_value = "66";
+        for (size_t i = 0; i < 300; ++i)
+        {
+            malformed_value += ".66";
+        }
+        malformed.value(malformed_value);
+        malformed.propagate(true);
+        attacker_qos.properties().properties().push_back(malformed);
+    }
+
+    DiscoveryListener attacker_listener;
+    DomainParticipant* attacker = factory->create_participant(domain_id, attacker_qos, &attacker_listener);
+    ASSERT_NE(nullptr, attacker);
+
+    /* If the parsing bug were still present, the victim would either crash while processing the
+     * malformed property, or silently drop it and be unable to react to further discovery
+     * traffic. Check that it stays alive and discovers the attacker normally. */
+    ASSERT_TRUE(victim_listener.wait_participant_discovery());
+    ASSERT_TRUE(attacker_listener.wait_participant_discovery());
+
+    /* Clean up */
+    factory->delete_participant(attacker);
+    factory->delete_participant(victim);
 }
