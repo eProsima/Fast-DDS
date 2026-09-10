@@ -551,16 +551,20 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         }
 
         // Check if is the expected echo message
-        uint32_t dyn_value_in {0};
-        uint32_t dyn_value_out {0};
+        uint32_t value_in {0};
+        uint32_t value_out {1u};
         if (pub->dynamic_types_)
         {
-            (*pub->dynamic_data_in_)->get_uint32_value(dyn_value_in, 0);
-            (*pub->dynamic_data_out_)->get_uint32_value(dyn_value_out, 0);
+            (*pub->dynamic_data_in_)->get_uint32_value(value_in, 0);
+            (*pub->dynamic_data_out_)->get_uint32_value(value_out, 0);
+        }
+        else if ((nullptr != pub->latency_data_in_) && (nullptr != pub->latency_data_out_))
+        {
+            value_in = pub->latency_data_in_->seqnum;
+            value_out = pub->latency_data_out_->seqnum;
         }
 
-        if ((pub->dynamic_types_ && dyn_value_in != dyn_value_out)
-                || (!pub->dynamic_types_ && pub->latency_data_in_->seqnum != pub->latency_data_out_->seqnum))
+        if (value_in != value_out)
         {
             EPROSIMA_LOG_INFO(LatencyTest, "Echo message received is not the expected one");
         }
