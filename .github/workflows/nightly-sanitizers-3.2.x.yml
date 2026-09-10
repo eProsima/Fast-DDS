@@ -13,6 +13,7 @@ jobs:
       run_asan_fastdds: true
       run_asan_discovery_server: true
       run_tsan_fastdds: true
+      run_ubsan_fastdds: true
       colcon_build_args: ''
       colcon_test_args: ''
       cmake_args: ''
