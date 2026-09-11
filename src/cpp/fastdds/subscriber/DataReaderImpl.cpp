@@ -941,12 +941,12 @@ void DataReaderImpl::InnerDataReaderListener::on_data_available(
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_reader_matched(
-        RTPSReader* /*reader*/,
+        RTPSReader* reader,
         const MatchingInfo& info)
 {
     std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
 
-    data_reader_->update_subscription_matched_status(info);
+    data_reader_->update_subscription_matched_status(reader, info);
 
     StatusMask notify_status = StatusMask::subscription_matched();
     DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
@@ -1164,17 +1164,27 @@ bool DataReaderImpl::on_new_cache_change_added(
 }
 
 void DataReaderImpl::update_subscription_matched_status(
+        RTPSReader* reader,
         const MatchingInfo& status)
 {
     auto count_change = status.status == MATCHED_MATCHING ? 1 : -1;
-    subscription_matched_status_.current_count += count_change;
-    subscription_matched_status_.current_count_change += count_change;
-    if (count_change > 0)
+
     {
-        subscription_matched_status_.total_count += count_change;
-        subscription_matched_status_.total_count_change += count_change;
+        // get_subscription_matched_status() reads and resets these counters while
+        // holding the reader mutex, so updating them needs the same protection.
+        // Scoped to the counters only: the calls below notify user listeners and
+        // read conditions, which must not run with the reader mutex held.
+        std::lock_guard<RecursiveTimedMutex> status_lock(reader->getMutex());
+
+        subscription_matched_status_.current_count += count_change;
+        subscription_matched_status_.current_count_change += count_change;
+        if (count_change > 0)
+        {
+            subscription_matched_status_.total_count += count_change;
+            subscription_matched_status_.total_count_change += count_change;
+        }
+        subscription_matched_status_.last_publication_handle = status.remoteEndpointGuid;
     }
-    subscription_matched_status_.last_publication_handle = status.remoteEndpointGuid;
 
     if (count_change < 0)
     {
