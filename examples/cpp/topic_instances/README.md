@@ -25,7 +25,7 @@ Refer to the [Topic, keys and instances](https://fast-dds.docs.eprosima.com/en/s
 The publisher registers an instance for each key value, and sends a dispose message of each instance when all the instance's related samples have been sent.
 An instance disposal informs other subscribers that no additional samples will be sent from the writer related to that specific topic key, but allows late-joining subscribers to receive samples that were previously sent.
 
-Both publisher and subscriber are configured as `KEEP_LAST_HISTORY_QOS`, with a _depth_ depending of the amount of samples given my CLI command (if no _samples_ limit provided, the _max_samples_per_instance_ value is considered, which is `400` by default) **plus one** (so it has enough space to allocate the disposal message too).
+Both publisher and subscriber are configured as `KEEP_LAST_HISTORY_QOS`, with a _depth_ depending of the amount of samples given my CLI command (if no _samples_ limit provided, a default _depth_ of `400` is considered) **plus one** (so it has enough space to allocate the disposal message too).
 
 To simulate a late-join scenario when a specific number of samples is provided, the publisher application does not stop after sending all the expected samples but after a waiting period, which by default is 10 seconds.
 That allows to perform a late-join check scenario: During this time, if a new subscriber matches with the publisher after it has finished sending its samples, this subscriber will receive all the samples for each instance. This occurs even if the total number of samples received exceeds the set History QoS depth because the History QoS depth is configured independently for each instance.
