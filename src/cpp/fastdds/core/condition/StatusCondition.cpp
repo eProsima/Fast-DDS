@@ -21,6 +21,7 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 
+#include <fastdds/core/condition/ConditionNotifier.hpp>
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 
 namespace eprosima {
@@ -37,6 +38,8 @@ StatusCondition::StatusCondition(
 
 StatusCondition::~StatusCondition()
 {
+    // See the note in GuardCondition::~GuardCondition().
+    notifier_->will_be_deleted(*this);
 }
 
 bool StatusCondition::get_trigger_value() const
