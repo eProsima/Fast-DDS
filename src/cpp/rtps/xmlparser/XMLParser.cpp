@@ -1511,7 +1511,13 @@ XMLP_ret XMLParser::parseXMLConsumer(
 
     if (p_element != nullptr)
     {
-        std::string classStr = p_element->GetText();
+        const char* classText = p_element->GetText();
+        if (classText == nullptr)
+        {
+            logError(XMLPARSER, "Error parsing log consumer: <class> element has no text content");
+            return XMLP_ret::XML_ERROR;
+        }
+        std::string classStr = classText;
 
         if (std::strcmp(classStr.c_str(), "StdoutConsumer") == 0)
         {
@@ -1545,7 +1551,15 @@ XMLP_ret XMLParser::parseXMLConsumer(
                     if (nullptr != (p_auxName = property->FirstChildElement(NAME)))
                     {
                         // Get property name
-                        std::string s = p_auxName->GetText();
+                        const char* nameText = p_auxName->GetText();
+                        if (nameText == nullptr)
+                        {
+                            logError(XMLPARSER, "Error parsing StdoutErrConsumer property: <name> has no text content");
+                            ret = XMLP_ret::XML_NOK;
+                            property = property->NextSiblingElement(PROPERTY);
+                            continue;
+                        }
+                        std::string s = nameText;
 
                         if (std::strcmp(s.c_str(), "stderr_threshold") == 0)
                         {
@@ -1568,7 +1582,16 @@ XMLP_ret XMLParser::parseXMLConsumer(
                             if (nullptr != (p_auxValue = property->FirstChildElement(VALUE)))
                             {
                                 // Get property value and use it to set the threshold.
-                                std::string threshold_str = p_auxValue->GetText();
+                                const char* valueText = p_auxValue->GetText();
+                                if (valueText == nullptr)
+                                {
+                                    logError(XMLPARSER,
+                                            "Error parsing StdoutErrConsumer property: <value> has no text content");
+                                    ret = XMLP_ret::XML_NOK;
+                                    property = property->NextSiblingElement(PROPERTY);
+                                    continue;
+                                }
+                                std::string threshold_str = valueText;
                                 if (std::strcmp(threshold_str.c_str(), "Log::Kind::Error") == 0)
                                 {
                                     threshold = Log::Kind::Error;
@@ -1625,7 +1648,15 @@ XMLP_ret XMLParser::parseXMLConsumer(
                     // name - stringType
                     if (nullptr != (p_auxName = property->FirstChildElement(NAME)))
                     {
-                        std::string s = p_auxName->GetText();
+                        const char* propNameText = p_auxName->GetText();
+                        if (propNameText == nullptr)
+                        {
+                            logError(XMLPARSER, "Error parsing FileConsumer property: <name> has no text content");
+                            ret = XMLP_ret::XML_NOK;
+                            property = property->NextSiblingElement(PROPERTY);
+                            continue;
+                        }
+                        std::string s = propNameText;
 
                         if (std::strcmp(s.c_str(), "filename") == 0)
                         {
