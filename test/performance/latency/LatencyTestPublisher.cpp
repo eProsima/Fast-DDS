@@ -586,15 +586,90 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
                 ++pub->received_count_;
             }
 
+<<<<<<< HEAD
             // Reset seqnum from out data
             if (pub->dynamic_types_)
             {
                 (*pub->dynamic_data_out_)->set_uint32_value(0, 0);
+=======
+            if (!info.valid_data)
+            {
+                // No valid data, continue to next sample
+                continue;
+            }
+        }
+
+        // Atomic management of the sample
+        bool notify = false;
+        LatencyType* loaned_data_in = nullptr;
+        // This loop allows us to the scope of the lock_guard without using goto.
+        // We need this to avoid calling return_loan() while the mutex is locked, as it
+        // may cause an ABBA deadlock.
+        while (true)
+        {
+            std::lock_guard<std::mutex> lock(pub->mutex_);
+
+            if (pub->data_loans_)
+            {
+                // we have requested a single sample
+                assert(infos.length() == 1 && data_seq.length() == 1);
+                // we have already released the former loan
+                assert(loaned_data_in == nullptr);
+                // check if the sample is valid
+                if (!infos[0].valid_data)
+                {
+                    // Avoid processing when the sample does not have data
+                    break;
+                }
+                // reference the loaned data
+                loaned_data_in = &data_seq[0];
+                // retrieve the bounce time
+                bounce_time = std::chrono::duration<uint32_t, std::nano>(loaned_data_in->bounce);
+            }
+
+            // Check if is the expected echo message
+            uint32_t value_in {0};
+            uint32_t value_out {1u};
+            if (pub->dynamic_types_)
+            {
+                (*pub->dynamic_data_in_)->get_uint32_value(value_in, 0);
+                (*pub->dynamic_data_out_)->get_uint32_value(value_out, 0);
+            }
+            else if ((nullptr != pub->latency_data_in_) && (nullptr != pub->latency_data_out_))
+            {
+                value_in = pub->latency_data_in_->seqnum;
+                value_out = pub->latency_data_out_->seqnum;
+            }
+            else if (pub->data_loans_ &&
+                    (nullptr != loaned_data_in) && (nullptr != pub->latency_data_out_))
+            {
+                value_in = loaned_data_in->seqnum;
+                value_out = pub->latency_data_out_->seqnum;
+            }
+
+            if (value_in != value_out)
+            {
+                EPROSIMA_LOG_INFO(LatencyTest, "Echo message received is not the expected one");
+>>>>>>> f637688 (Avoid using `latency_data_in_` when using loans in LatencyTestPublisher (#6536))
             }
             else
             {
                 pub->latency_data_out_->seqnum = 0;
             }
+<<<<<<< HEAD
+=======
+
+            if (pub->data_loans_)
+            {
+                loaned_data_in = nullptr;
+            }
+
+            ++pub->data_msg_count_;
+            notify = pub->data_msg_count_ >= pub->subscribers_;
+
+            // Break the loop (i.e. exit the lock_guard scope)
+            break;
+>>>>>>> f637688 (Avoid using `latency_data_in_` when using loans in LatencyTestPublisher (#6536))
         }
 
         if (pub->data_loans_)
@@ -790,14 +865,13 @@ bool LatencyTestPublisher::test(
             // loan each sample
             if (data_loans_)
             {
-                latency_data_in_ = nullptr;
+                assert(latency_data_in_ == nullptr);
                 int trials = 10;
                 bool loaned = false;
 
                 while (trials-- != 0 && !loaned)
                 {
-                    loaned = (RETCODE_OK
-                            ==  data_writer_->loan_sample(
+                    loaned = (RETCODE_OK ==  data_writer_->loan_sample(
                                 data,
                                 DataWriter::LoanInitializationKind::NO_LOAN_INITIALIZATION));
 
