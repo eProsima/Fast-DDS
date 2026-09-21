@@ -224,7 +224,27 @@ bool UDPTransportInterface::OpenAndBindInputSockets(
         (void)e;
         EPROSIMA_LOG_INFO(TRANSPORT_UDP, "UDPTransport Error binding at port: ("
                 << IPLocator::getPhysicalPort(locator) << ")" << " with msg: " << e.what());
-        mInputSockets.erase(IPLocator::getPhysicalPort(locator));
+
+        // Take ownership of the channels already created for this port, so they can be released
+        std::vector<UDPChannelResource*> channel_resources;
+        auto it = mInputSockets.find(IPLocator::getPhysicalPort(locator));
+        if (it != mInputSockets.end())
+        {
+            channel_resources = std::move(it->second);
+            mInputSockets.erase(it);
+        }
+
+        // Release the lock, as disabling the channels waits for their listening threads to finish
+        scopedLock.unlock();
+
+        for (UDPChannelResource* channel : channel_resources)
+        {
+            channel->disable();
+            channel->release();
+            channel->clear();
+            delete channel;
+        }
+
         return false;
     }
 

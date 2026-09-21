@@ -839,6 +839,79 @@ TEST_F(UDPv4Tests, double_binding_fails)
     EXPECT_FALSE(default_transport.IsInputChannelOpen(locator));
 }
 
+/** @test A bind failure on one of the allowed interfaces must not leak the channels
+ *  already opened for the previous ones.
+ */
+TEST_F(UDPv4Tests, opening_input_channel_releases_sockets_on_bind_failure)
+{
+    std::vector<IPFinder::info_IP> ip_list;
+    IPFinder::getIPs(&ip_list);
+
+    std::string other_interface;
+    for (const IPFinder::info_IP& ip : ip_list)
+    {
+        if (IPFinder::IP4 == ip.type && ip.name != "127.0.0.1")
+        {
+            other_interface = ip.name;
+            break;
+        }
+    }
+
+    if (other_interface.empty())
+    {
+        // At least two interfaces are needed for the transport to open more than one input socket
+        GTEST_SKIP() << "Skipping because only one interface was found";
+        return;
+    }
+
+    const std::vector<std::string> allowed_interfaces{ "127.0.0.1", other_interface };
+    const uint16_t port = g_default_port + 1;
+
+    // The binding order is decided by the transport, so the scenario is run once per interface to
+    // make sure the failing one is not always the first (and thus the only) socket being bound.
+    for (const std::string& blocked_interface : allowed_interfaces)
+    {
+        asio::io_context io_context;
+
+        // Take the port on one of the interfaces, so the transport fails to bind on it
+        asio::ip::udp::socket blocking_socket(io_context);
+        blocking_socket.open(asio::ip::udp::v4());
+        ASSERT_NO_THROW(blocking_socket.bind(asio::ip::udp::endpoint(
+                    asio::ip::make_address_v4(blocked_interface), port)));
+
+        auto allowlist_descriptor = descriptor;
+        for (const std::string& iface : allowed_interfaces)
+        {
+            allowlist_descriptor.interface_allowlist.emplace_back(iface);
+        }
+        UDPv4Transport transport(allowlist_descriptor);
+        transport.init();
+
+        Locator_t locator;
+        IPLocator::createLocator(LOCATOR_KIND_UDPv4, "127.0.0.1", port, locator);
+
+        EXPECT_FALSE(transport.OpenInputChannel(locator, nullptr, 0x8FFF));
+        EXPECT_FALSE(transport.IsInputChannelOpen(locator));
+
+        // Sockets bound before the failure must have been released
+        for (const std::string& iface : allowed_interfaces)
+        {
+            if (iface == blocked_interface)
+            {
+                continue;
+            }
+
+            asio::ip::udp::socket test_socket(io_context);
+            test_socket.open(asio::ip::udp::v4());
+            EXPECT_NO_THROW(test_socket.bind(asio::ip::udp::endpoint(
+                        asio::ip::make_address_v4(iface), port)));
+            test_socket.close();
+        }
+
+        blocking_socket.close();
+    }
+}
+
 void UDPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.maxMessageSize = 5;
