@@ -15,7 +15,7 @@
 # Workaround for GCC 13 false positive with GoogleTest EXPECT_CALL matchers
 # GCC 13 incorrectly reports uninitialized variables in GoogleTest's EXPECT_CALL
 # when using matchers like _. This is fixed in GCC 14.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
    CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0 AND
    CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14.0)
     add_compile_options(-Wno-error=uninitialized)
@@ -49,6 +49,7 @@ if(NOT QNX)
     add_subdirectory(rtps/flowcontrol)
 endif()
 add_subdirectory(rtps/history)
+add_subdirectory(rtps/messages)
 add_subdirectory(rtps/network)
 add_subdirectory(rtps/participant)
 add_subdirectory(rtps/persistence)
