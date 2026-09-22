@@ -1443,6 +1443,280 @@ TEST(TransportUDP, MaliciousDataFragSubmsgLengthUnderflowIgnore)
     EXPECT_EQ(0u, reader.block_for_all(std::chrono::milliseconds(500)));
 }
 
+TEST(TransportUDP, MaliciousDataFragZeroFragmentSizeStaleMemory)
+{
+    // Force using UDP transport
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    struct MaliciousDataFragZeroFragmentSize
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        struct DataFragSubMsg
+        {
+            uint8_t submessage_id = 0x16;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+            uint8_t flags = 0x00;
+#else
+            uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+            uint16_t octets_to_next_header = 36;
+            uint16_t extra_flags = 0;
+            uint16_t octets_to_inline_qos = 0x1C;
+            EntityId_t reader_id{};
+            EntityId_t writer_id{};
+            SequenceNumber_t sn{ 2 };
+            uint32_t fragment_starting_num = 1;
+            uint16_t fragments_in_submessage = 1;
+            uint16_t fragment_size = 0;
+            uint32_t sample_size = 25;
+            std::array<uint8_t, 4> payload{ {0, 0, 0, 0} };
+        }
+        data;
+    };
+
+    UDPMessageSender fake_msg_sender;
+
+    // Set common QoS. PREALLOCATED forces reuse of the buffer freed by the legitimate sample
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
+            .mem_policy(eprosima::fastdds::rtps::PREALLOCATED_MEMORY_MODE)
+            .datasharing_off()
+            .history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    writer.history_depth(10).reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+
+    // Set custom reader locator so we can send malicious data to a known location
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    // Initialize and wait for discovery
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // A second sample would be a leaked duplicate
+    reader.startReception(2);
+
+    // Seed the payload pool with a recognizable sample and let it be consumed and released
+    auto data = default_helloworld_data_generator(1);
+    writer.send(data);
+    ASSERT_TRUE(data.empty());
+    reader.block_for_at_least(1);
+
+    // Send malicious data
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        MaliciousDataFragZeroFragmentSize malicious_packet{};
+        malicious_packet.sender_prefix = writer_guid.guidPrefix;
+        malicious_packet.data.writer_id = writer_guid.entityId;
+        malicious_packet.data.reader_id = reader.datareader_guid().entityId;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(malicious_packet));
+        msg.init(reinterpret_cast<octet*>(&malicious_packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Leaked sample should not have been delivered.
+    EXPECT_EQ(1u, reader.block_for_all(std::chrono::milliseconds(500)));
+}
+
+// Regression for the StatelessReader fragment-reuse heap overflow. Detected by AddressSanitizer.
+TEST(TransportUDP, MaliciousDataFragReuseHeapOverflow)
+{
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    struct MaliciousDataFrag
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        struct DataFragSubMsg
+        {
+            struct Header
+            {
+                uint8_t submessage_id = 0x16;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint8_t flags = 0x00;
+#else
+                uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint16_t octets_to_next_header = 532;   // 32-byte DATA_FRAG header + 500-byte payload
+                uint16_t extra_flags = 0;
+                uint16_t octets_to_inline_qos = 0x1C;
+                EntityId_t reader_id{};
+                EntityId_t writer_id{};
+                SequenceNumber_t sn{ 1 };
+                uint32_t fragment_starting_num = 1;
+                uint16_t fragments_in_submessage = 1;
+                uint16_t fragment_size = 500;
+                uint32_t sample_size = 1000;
+            };
+
+            Header header;
+            std::array<uint8_t, 500> payload{};
+        }
+        data;
+    };
+
+    UDPMessageSender fake_msg_sender;
+
+    // BEST_EFFORT selects the StatelessReader; DYNAMIC_RESERVE sizes the buffer to sample_size
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
+            .mem_policy(eprosima::fastdds::rtps::DYNAMIC_RESERVE_MEMORY_MODE)
+            .datasharing_off()
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    reader.startReception(1);
+
+    auto writer_guid = writer.datawriter_guid();
+
+    auto send_fragment = [&](const SequenceNumber_t& sn, uint16_t fragment_size)
+            {
+                MaliciousDataFrag packet{};
+                packet.sender_prefix = writer_guid.guidPrefix;
+                packet.data.header.writer_id = writer_guid.entityId;
+                packet.data.header.reader_id = reader.datareader_guid().entityId;
+                packet.data.header.sn = sn;
+                packet.data.header.fragment_size = fragment_size;
+
+                CDRMessage_t msg(0);
+                uint32_t msg_len = static_cast<uint32_t>(sizeof(packet));
+                msg.init(reinterpret_cast<octet*>(&packet), msg_len);
+                msg.length = msg_len;
+                msg.pos = msg_len;
+                fake_msg_sender.send(msg, reader_locator);
+            };
+
+    // First fragment leaves a pending change; the second reuses its buffer
+    send_fragment({ 0, 1 }, 500);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    send_fragment({ 0, 2 }, 999);
+
+    // Reuse must not overflow the buffer.
+    EXPECT_EQ(0u, reader.block_for_all(std::chrono::milliseconds(500)));
+}
+
+// Regression for the single-fragment tiny-sample heap overflow. Detected by AddressSanitizer.
+TEST(TransportUDP, MaliciousDataFragTinySampleHeapOverflow)
+{
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    struct MaliciousDataFrag
+    {
+        std::array<char, 4> rtps_id{ {'R', 'T', 'P', 'S'} };
+        std::array<uint8_t, 2> protocol_version{ {2, 3} };
+        std::array<uint8_t, 2> vendor_id{ {0x01, 0x0F} };
+        GuidPrefix_t sender_prefix{};
+
+        struct DataFragSubMsg
+        {
+            struct Header
+            {
+                uint8_t submessage_id = 0x16;
+#if FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint8_t flags = 0x00;
+#else
+                uint8_t flags = 0x01;
+#endif  // FASTDDS_IS_BIG_ENDIAN_TARGET
+                uint16_t octets_to_next_header = 35;    // 32-byte DATA_FRAG header + 3-byte payload
+                uint16_t extra_flags = 0;
+                uint16_t octets_to_inline_qos = 0x1C;
+                EntityId_t reader_id{};
+                EntityId_t writer_id{};
+                SequenceNumber_t sn{ 1 };
+                uint32_t fragment_starting_num = 1;
+                uint16_t fragments_in_submessage = 1;
+                uint16_t fragment_size = 3;
+                uint32_t sample_size = 3;
+            };
+
+            Header header;
+            std::array<uint8_t, 3> payload{};
+        }
+        data;
+    };
+
+    UDPMessageSender fake_msg_sender;
+
+    // DYNAMIC_RESERVE sizes the buffer to sample_size, yielding a sub-4-byte reassembly buffer
+    reader.disable_builtin_transport().add_user_transport_to_pparams(udp_transport)
+            .mem_policy(eprosima::fastdds::rtps::DYNAMIC_RESERVE_MEMORY_MODE)
+            .datasharing_off()
+            .reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+
+    Locator_t reader_locator;
+    ASSERT_TRUE(IPLocator::setIPv4(reader_locator, "127.0.0.1"));
+    reader_locator.port = 7000;
+    reader.add_to_unicast_locator_list("127.0.0.1", 7000);
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    reader.startReception(1);
+
+    {
+        auto writer_guid = writer.datawriter_guid();
+
+        MaliciousDataFrag packet{};
+        packet.sender_prefix = writer_guid.guidPrefix;
+        packet.data.header.writer_id = writer_guid.entityId;
+        packet.data.header.reader_id = reader.datareader_guid().entityId;
+
+        CDRMessage_t msg(0);
+        uint32_t msg_len = static_cast<uint32_t>(sizeof(packet));
+        msg.init(reinterpret_cast<octet*>(&packet), msg_len);
+        msg.length = msg_len;
+        msg.pos = msg_len;
+        fake_msg_sender.send(msg, reader_locator);
+    }
+
+    // Reserving a tiny buffer must not overflow it.
+    EXPECT_EQ(0u, reader.block_for_all(std::chrono::milliseconds(500)));
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
