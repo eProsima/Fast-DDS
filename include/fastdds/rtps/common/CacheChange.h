@@ -353,9 +353,16 @@ struct RTPS_DllAPI CacheChange_t
             uint16_t fragment_size,
             uint32_t& min_required_size)
     {
-        if ((0 == fragment_size) || (payload_size <= fragment_size))
+        if (0 == fragment_size)
         {
             min_required_size = payload_size;
+            return true;
+        }
+
+        if (payload_size <= fragment_size)
+        {
+            // Reserve room for the fragment index written for the single fragment
+            min_required_size = payload_size < 4u ? 4u : payload_size;
             return true;
         }
 
