@@ -791,8 +791,11 @@ bool StatelessReader::process_data_frag_msg(
                             }
                         }
 
-                        // Pending change should be dropped. Check if it can be reused
-                        if (sampleSize <= work_change->serializedPayload.max_size)
+                        // Pending change should be dropped. Check if the new fragmentation fits the buffer
+                        uint32_t min_required_size = 0;
+                        if (CacheChange_t::calculate_required_fragmented_payload_size(
+                                    sampleSize, change_to_add->getFragmentSize(), min_required_size) &&
+                                min_required_size <= work_change->serializedPayload.max_size)
                         {
                             // Sample fits inside pending change. Reuse it.
                             work_change->copy_not_memcpy(change_to_add);
