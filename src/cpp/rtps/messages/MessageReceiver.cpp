@@ -965,6 +965,13 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         return false;
     }
 
+    // A DATA_FRAG with any of these fields set to zero can never be legitimately assembled
+    if (fragmentSize == 0 || sampleSize == 0 || fragmentsInSubmessage == 0 || fragmentStartingNum == 0)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid message received, bad DATA_FRAG geometry");
+        return false;
+    }
+
     //Jump ahead if more parameters are before inlineQos (not in this version, maybe if further minor versions.)
     if (octetsToInlineQos > RTPSMESSAGE_OCTETSTOINLINEQOS_DATAFRAGSUBMSG)
     {
@@ -1004,8 +1011,6 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         return false;
     }
     payload_size = smh->submessageLength - submsg_no_payload_size;
-
-    // Validations??? XXX TODO
 
     if (!keyFlag)
     {
