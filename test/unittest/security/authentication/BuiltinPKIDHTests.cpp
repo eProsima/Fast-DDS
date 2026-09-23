@@ -16,13 +16,21 @@
 // suppresses the warnings until true OpenSSL 3.0 APIs can be used.
 #define OPENSSL_API_COMPAT 10101
 
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <vector>
+
 #include "AuthenticationPluginTests.hpp"
 
+#include <fastdds/rtps/common/BinaryProperty.h>
 #include <security/authentication/PKIIdentityHandle.h>
 #include <security/authentication/PKIHandshakeHandle.h>
 #include <fastrtps/rtps/messages/CDRMessage.h>
 
 #include <openssl/opensslv.h>
+#include <openssl/pem.h>
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #define IS_OPENSSL_1_1 1
@@ -30,13 +38,18 @@
 #define IS_OPENSSL_1_1 0
 #endif // if OPENSSL_VERSION_NUMBER >= 0x10100000L
 
-#include <iostream>
-#include <openssl/pem.h>
-
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
 static const char* certs_path = nullptr;
+
+//! Read a PEM certificate from certs_path into the byte layout used by c.id.
+static std::vector<uint8_t> read_certificate_pem(
+        const std::string& filename)
+{
+    std::ifstream file(std::string(certs_path) + "/" + filename, std::ios::binary);
+    return std::vector<uint8_t>(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+}
 
 PropertyPolicy AuthenticationPluginTest::get_valid_policy()
 {
@@ -674,6 +687,136 @@ TEST_F(AuthenticationPluginTest, validate_local_identity_expired_certificate)
     ASSERT_TRUE(result == ValidationResult_t::VALIDATION_FAILED);
     ASSERT_TRUE(local_identity_handle == nullptr);
     ASSERT_TRUE(adjusted_participant_key == GUID_t::unknown());
+}
+
+/**
+ * @test Regression for a crash in begin_handshake_reply triggered by a peer
+ * certificate with an empty Subject (zero RDNs).
+ */
+TEST_F(AuthenticationPluginTest, begin_handshake_reply_empty_subject_certificate)
+{
+    SecurityException exception;
+    uint32_t domain_id = 0;
+
+    // Local (victim/replier) identity from the valid in-tree certs.
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    GUID_t candidate_participant_key;
+    RTPSParticipantAttributes participant_attr;
+    fill_candidate_participant_key(candidate_participant_key);
+    participant_attr.properties = get_valid_policy();
+
+    ASSERT_EQ(plugin.validate_local_identity(&local_identity_handle, adjusted_participant_key,
+            domain_id, participant_attr, candidate_participant_key, exception),
+            ValidationResult_t::VALIDATION_OK);
+    ASSERT_NE(local_identity_handle, nullptr);
+
+    // Remote (attacker/initiator) identity. validate_remote_identity forces cert_sn_ empty.
+    IdentityHandle* remote_identity_handle = nullptr;
+    IdentityToken remote_identity_token = generate_remote_identity_token_ok(*local_identity_handle);
+    GUID_t remote_participant_key;
+    plugin.validate_remote_identity(&remote_identity_handle, *local_identity_handle,
+            std::move(remote_identity_token), remote_participant_key, exception);
+    ASSERT_NE(remote_identity_handle, nullptr);
+
+    // Malicious +Req carrying a certificate with an empty Subject in c.id.
+    std::vector<uint8_t> empty_subject_cert = read_certificate_pem("emptysubjectcert.pem");
+    ASSERT_FALSE(empty_subject_cert.empty());
+    HandshakeMessageToken handshake_message_in;
+    handshake_message_in.class_id("DDS:Auth:PKI-DH:1.0+Req");
+    BinaryProperty c_id;
+    c_id.name("c.id");
+    c_id.value(std::move(empty_subject_cert));
+    c_id.propagate(true);
+    handshake_message_in.binary_properties().push_back(std::move(c_id));
+
+    // Non-empty participant data (only its length is checked before the sink).
+    ParticipantProxyData participant_data(c_default_RTPSParticipantAllocationAttributes);
+    participant_data.m_guid = adjusted_participant_key;
+    CDRMessage_t cdr_participant_data(RTPSMESSAGE_DEFAULT_SIZE);
+    cdr_participant_data.msg_endian = BIGEND;
+    ASSERT_TRUE(participant_data.writeToCDRMessage(&cdr_participant_data, false));
+
+    HandshakeHandle* handshake_handle = nullptr;
+    HandshakeMessageToken* handshake_message_out = nullptr;
+
+    // Must never crash. The empty-subject certificate must be rejected.
+    ValidationResult_t result = plugin.begin_handshake_reply(&handshake_handle, &handshake_message_out,
+                    std::move(handshake_message_in), *remote_identity_handle, *local_identity_handle,
+                    cdr_participant_data, exception);
+
+    ASSERT_EQ(result, ValidationResult_t::VALIDATION_FAILED);
+
+    ASSERT_TRUE(plugin.return_identity_handle(remote_identity_handle, exception));
+    ASSERT_TRUE(plugin.return_identity_handle(local_identity_handle, exception));
+}
+
+/**
+ * @test Regression for a crash in process_handshake_request triggered by a peer
+ * certificate with an empty Subject (zero RDNs).
+ */
+TEST_F(AuthenticationPluginTest, process_handshake_request_empty_subject_certificate)
+{
+    SecurityException exception;
+    uint32_t domain_id = 0;
+
+    // Local (victim/initiator) identity from the valid in-tree certs.
+    IdentityHandle* local_identity_handle = nullptr;
+    GUID_t adjusted_participant_key;
+    GUID_t candidate_participant_key;
+    RTPSParticipantAttributes participant_attr;
+    fill_candidate_participant_key(candidate_participant_key);
+    participant_attr.properties = get_valid_policy();
+
+    ASSERT_EQ(plugin.validate_local_identity(&local_identity_handle, adjusted_participant_key,
+            domain_id, participant_attr, candidate_participant_key, exception),
+            ValidationResult_t::VALIDATION_OK);
+    ASSERT_NE(local_identity_handle, nullptr);
+
+    // Remote (attacker/replier) identity. validate_remote_identity forces cert_sn_ empty.
+    IdentityHandle* remote_identity_handle = nullptr;
+    IdentityToken remote_identity_token = generate_remote_identity_token_ok(*local_identity_handle);
+    GUID_t remote_participant_key;
+    plugin.validate_remote_identity(&remote_identity_handle, *local_identity_handle,
+            std::move(remote_identity_token), remote_participant_key, exception);
+    ASSERT_NE(remote_identity_handle, nullptr);
+
+    // Start the handshake as initiator, so the handle expects a +Reply.
+    ParticipantProxyData participant_data(c_default_RTPSParticipantAllocationAttributes);
+    participant_data.m_guid = adjusted_participant_key;
+    CDRMessage_t cdr_participant_data(RTPSMESSAGE_DEFAULT_SIZE);
+    cdr_participant_data.msg_endian = BIGEND;
+    ASSERT_TRUE(participant_data.writeToCDRMessage(&cdr_participant_data, false));
+
+    HandshakeHandle* handshake_handle = nullptr;
+    HandshakeMessageToken* handshake_message_request = nullptr;
+    ASSERT_EQ(plugin.begin_handshake_request(&handshake_handle, &handshake_message_request,
+            *local_identity_handle, *remote_identity_handle, cdr_participant_data, exception),
+            ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_MESSAGE);
+    ASSERT_NE(handshake_handle, nullptr);
+
+    // Malicious +Reply carrying a certificate with an empty Subject in c.id.
+    std::vector<uint8_t> empty_subject_cert = read_certificate_pem("emptysubjectcert.pem");
+    ASSERT_FALSE(empty_subject_cert.empty());
+    HandshakeMessageToken handshake_message_in;
+    handshake_message_in.class_id("DDS:Auth:PKI-DH:1.0+Reply");
+    BinaryProperty c_id;
+    c_id.name("c.id");
+    c_id.value(std::move(empty_subject_cert));
+    c_id.propagate(true);
+    handshake_message_in.binary_properties().push_back(std::move(c_id));
+
+    HandshakeMessageToken* handshake_message_out = nullptr;
+
+    // Must never crash. The empty-subject certificate must be rejected.
+    ValidationResult_t result = plugin.process_handshake(&handshake_message_out,
+                    std::move(handshake_message_in), *handshake_handle, exception);
+
+    ASSERT_EQ(result, ValidationResult_t::VALIDATION_FAILED);
+
+    ASSERT_TRUE(plugin.return_handshake_handle(handshake_handle, exception));
+    ASSERT_TRUE(plugin.return_identity_handle(remote_identity_handle, exception));
+    ASSERT_TRUE(plugin.return_identity_handle(local_identity_handle, exception));
 }
 
 int main(
