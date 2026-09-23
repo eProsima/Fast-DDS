@@ -19,6 +19,7 @@
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+<<<<<<< HEAD
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -38,6 +39,12 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <fastdds/rtps/history/WriterHistory.h>
+=======
+#include <algorithm>
+#include <mutex>
+#include <stdexcept>
+#include <vector>
+>>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
@@ -496,7 +503,8 @@ bool StatefulWriter::intraprocess_gap(
 
 bool StatefulWriter::intraprocess_heartbeat(
         ReaderProxy* reader_proxy,
-        bool liveliness)
+        bool liveliness,
+        bool gap_preceded)
 {
     bool returned_value = false;
 
@@ -518,7 +526,7 @@ bool StatefulWriter::intraprocess_heartbeat(
         }
 
         if ((first_seq != c_SequenceNumber_Unknown && last_seq != c_SequenceNumber_Unknown) &&
-                (liveliness || reader_proxy->has_changes()))
+                (liveliness || gap_preceded || reader_proxy->has_changes()))
         {
             incrementHBCount();
             returned_value =
@@ -542,7 +550,59 @@ bool StatefulWriter::change_removed_by_history(
     // Take note of biggest removed sequence number to improve sending of gaps
     if (sequence_number > biggest_removed_sequence_number_)
     {
+<<<<<<< HEAD
         biggest_removed_sequence_number_ = sequence_number;
+=======
+
+        // Take note of biggest removed sequence number to improve sending of gaps
+        if (sequence_number > biggest_removed_sequence_number_)
+        {
+            biggest_removed_sequence_number_ = sequence_number;
+        }
+
+        // Flush pending irrelevant GAPs for any remote reader before the change is erased from history
+        for (ReaderProxy* reader : matched_remote_readers_)
+        {
+            if (SequenceNumber_t::unknown() != reader->first_irrelevant_removed() &&
+                    reader->first_irrelevant_removed() <= sequence_number)
+            {
+                try
+                {
+                    RTPSMessageGroup group(mp_RTPSParticipant, this, reader->message_sender());
+                    send_heartbeat_nts_(1u, group, true);  // Final Heartbeat
+                    add_gaps_for_removed_irrelevants(*reader, group);
+                }
+                catch (const RTPSMessageGroup::timeout&)
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_WRITER, "Max blocking time reached");
+                }
+            }
+        }
+
+        // Invalidate CacheChange pointer in ReaderProxies.
+        for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+                [sequence_number](ReaderProxy* reader)
+                {
+                    reader->change_has_been_removed(sequence_number);
+                    return false;
+                }
+                );
+
+        // remove from datasharing pool history
+        if (is_datasharing_compatible())
+        {
+            auto pool = std::dynamic_pointer_cast<WriterPool>(history_->get_payload_pool());
+            assert (pool != nullptr);
+
+            pool->remove_from_shared_history(a_change);
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
+        }
+
+        may_remove_change_ = 2;
+        may_remove_change_cond_.notify_one();
+
+        ret_value = true;
+>>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
     }
 
     // Invalidate CacheChange pointer in ReaderProxies.
@@ -604,9 +664,14 @@ void StatefulWriter::send_heartbeat_to_all_readers()
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
+<<<<<<< HEAD
             add_gaps_for_holes_in_history_(group);
 
+=======
+>>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
             send_heartbeat_nts_(locator_selector_general_.all_remote_readers.size(), group, disable_positive_acks_);
+
+            add_gaps_for_holes_in_history(group);
         }
     }
 }
@@ -625,6 +690,8 @@ void StatefulWriter::deliver_sample_to_intraprocesses(
             // send it a personal GAP.
             if (SequenceNumber_t::unknown() != gap_seq)
             {
+                // Force the heartbeat. The reader may have no pending changes but still needs the HB to apply the GAP
+                intraprocess_heartbeat(remoteReader, false, true);
                 intraprocess_gap(remoteReader, gap_seq, change->sequenceNumber);
                 remoteReader->acked_changes_set(change->sequenceNumber);
             }
@@ -699,6 +766,19 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         {
             SequenceNumber_t gap_seq;
             FragmentNumber_t next_unsent_frag = 0;
+<<<<<<< HEAD
+=======
+
+            if (SequenceNumber_t::unknown() != (*remote_reader)->first_irrelevant_removed())
+            {
+                // Send GAP with irrelevant changes that are not in history.
+                group.sender(this, (*remote_reader)->message_sender());
+                send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                add_gaps_for_removed_irrelevants(**remote_reader, group);
+                group.sender(this, &locator_selector);             // This makes the flush_and_reset().
+            }
+
+>>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
             if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq, get_seq_num_min(),
                     need_reactivate_periodic_heartbeat) &&
                     (0 == n_fragments || min_unsent_fragment >= next_unsent_frag))
@@ -741,9 +821,9 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                     if (gap_seq_for_all != gap_seq)     // If it is an individual GAP, sent it to repective reader.
                     {
                         group.sender(this, (*remote_reader)->message_sender());
+                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
                         group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber),
                                 (*remote_reader)->guid());
-                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
                         group.sender(this, &locator_selector);     // This makes the flush_and_reset().
                     }
                 }
@@ -766,6 +846,7 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
 
         if (should_send_global_gap) // Send GAP for all readers
         {
+            send_heartbeat_nts_(locator_selector.all_remote_readers.size(), group, disable_positive_acks_);
             group.add_gap(gap_seq_for_all, SequenceNumberSet_t(change->sequenceNumber));
         }
 
@@ -1125,6 +1206,17 @@ bool StatefulWriter::matched_reader_add(
         SequenceNumber_t last_seq = get_seq_num_max();
         RTPSMessageGroup group(mp_RTPSParticipant, this, rp->message_sender());
 
+        // Force the intraprocess Heartbeat in case a VOLATILE local reader has no pending changes, but it
+        // still needs the range to apply the positioning GAP.
+        if (rp->is_local_reader())
+        {
+            intraprocess_heartbeat(rp, false, true);
+        }
+        else
+        {
+            send_heartbeat_nts_(1u, group, disable_positive_acks_);
+        }
+
         // History not empty
         if (min_seq != SequenceNumber_t::unknown())
         {
@@ -1183,13 +1275,8 @@ bool StatefulWriter::matched_reader_add(
             }
         }
 
-        if (rp->is_local_reader())
+        if (!rp->is_local_reader())
         {
-            intraprocess_heartbeat(rp);
-        }
-        else
-        {
-            send_heartbeat_nts_(1u, group, disable_positive_acks_);
             group.flush_and_reset();
         }
     }
@@ -1754,6 +1841,9 @@ void StatefulWriter::send_heartbeat_to_nts(
             try
             {
                 RTPSMessageGroup group(mp_RTPSParticipant, this, remoteReaderProxy.message_sender());
+
+                send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
+
                 SequenceNumber_t firstSeq = get_seq_num_min();
                 SequenceNumber_t lastSeq = get_seq_num_max();
 
@@ -1765,8 +1855,6 @@ void StatefulWriter::send_heartbeat_to_nts(
                         add_gaps_for_holes_in_history_(group);
                     }
                 }
-
-                send_heartbeat_nts_(1u, group, disable_positive_acks_, liveliness);
             }
             catch (const RTPSMessageGroup::timeout&)
             {
@@ -1915,6 +2003,21 @@ bool StatefulWriter::process_acknack(
                                 {
                                     // Prepare GAP for requested  samples that are not in history or are irrelevants.
                                     RTPSMessageGroup group(mp_RTPSParticipant, this, remote_reader->message_sender());
+
+                                    // A VOLATILE reader may be requesting changes below the position we assumed for it when
+                                    // it matched if its one-shot positioning GAP was lost.
+                                    // Here we re-send a GAP covering [base, low_mark] on every ACKNACK that reveals the
+                                    // reader is still behind. Base is computed as the maximum of the requested base and
+                                    // the lowest sequence number in history to avoid GAPs for changes already removed
+                                    SequenceNumber_t assumed_low_mark = remote_reader->changes_low_mark();
+                                    SequenceNumber_t gap_from = std::max(sn_set.base(), get_seq_num_min());
+                                    if (gap_from <= assumed_low_mark)
+                                    {
+                                        send_heartbeat_nts_(1u, group, true);
+                                        group.add_gap(gap_from, SequenceNumberSet_t(assumed_low_mark + 1),
+                                        remote_reader->guid());
+                                    }
+
                                     RTPSGapBuilder gap_builder(group);
 
                                     if (remote_reader->requested_changes_set(sn_set, gap_builder, get_seq_num_min()))

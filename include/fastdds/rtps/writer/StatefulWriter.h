@@ -168,9 +168,23 @@ public:
             const SequenceNumber_t& first_seq,
             const SequenceNumber_t& last_seq);
 
+<<<<<<< HEAD:include/fastdds/rtps/writer/StatefulWriter.h
+=======
+    /**
+     * @brief Sends a heartbeat directly to an intraprocess reader.
+     *
+     * @param reader_proxy  Pointer to the proxy representing the reader to deliver the heartbeat to.
+     * @param liveliness    True if the heartbeat is a liveliness one.
+     * @param gap_preceded  True to send the heartbeat even when the reader has no changes pending.
+     *                      Used to position a late-joining reader (e.g. VOLATILE) before a GAP.
+     *
+     * @return True on success.
+     */
+>>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542)):src/cpp/rtps/writer/StatefulWriter.hpp
     bool intraprocess_heartbeat(
             ReaderProxy* reader_proxy,
-            bool liveliness = false);
+            bool liveliness = false,
+            bool gap_preceded = false);
 
     //!Increment the HB count.
     inline void incrementHBCount()
