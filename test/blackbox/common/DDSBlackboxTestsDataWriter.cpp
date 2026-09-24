@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
 #include <chrono>
 #include <set>
+#include <thread>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -2178,6 +2181,138 @@ TEST(DDSDataWriter, type_support_context_end_to_end)
     EXPECT_EQ(RETCODE_OK, participant->delete_publisher(publisher));
     EXPECT_EQ(RETCODE_OK, participant->delete_subscriber(subscriber));
     EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
+}
+
+/**
+ * @test Regression test for a data race on publication_matched_status_.
+ *
+ * get_publication_matched_status() reads the status and resets its change counters under
+ * the writer mutex, while the discovery thread used to update the same struct holding only
+ * InnerDataWriterListener::matching_info_mutex_. Poll the status from a user thread while
+ * DataReaders are created and destroyed, so on_writer_matched() keeps running on the
+ * discovery thread concurrently with the polling.
+ *
+ * The race is only observable under a sanitizer; this test is here for the TSan job.
+ */
+TEST(DDSDataWriter, publication_matched_status_concurrent_with_discovery)
+{
+    using namespace eprosima::fastdds::dds;
+
+    const auto churn_duration = std::chrono::seconds(5);
+
+    auto factory = DomainParticipantFactory::get_instance();
+    uint32_t domain_id = static_cast<uint32_t>(GET_PID()) % 230;
+
+    DomainParticipant* pub_participant = factory->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, pub_participant);
+    DomainParticipant* sub_participant = factory->create_participant(domain_id, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(nullptr, sub_participant);
+
+    TypeSupport type(new HelloWorldPubSubType());
+    ASSERT_EQ(RETCODE_OK, type.register_type(pub_participant));
+    ASSERT_EQ(RETCODE_OK, type.register_type(sub_participant));
+
+    Topic* pub_topic = pub_participant->create_topic(TEST_TOPIC_NAME, type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(nullptr, pub_topic);
+    Topic* sub_topic = sub_participant->create_topic(TEST_TOPIC_NAME, type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(nullptr, sub_topic);
+
+    Publisher* publisher = pub_participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, publisher);
+    DataWriter* writer = publisher->create_datawriter(pub_topic, DATAWRITER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, writer);
+
+    Subscriber* subscriber = sub_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(nullptr, subscriber);
+
+    // Let the participants discover each other and confirm a reader can match,
+    // otherwise the churn below would never reach on_writer_matched().
+    {
+        DataReader* warmup = subscriber->create_datareader(sub_topic, DATAREADER_QOS_DEFAULT);
+        ASSERT_NE(nullptr, warmup);
+        PublicationMatchedStatus status;
+        auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+        do
+        {
+            ASSERT_EQ(RETCODE_OK, writer->get_publication_matched_status(status));
+            if (status.current_count > 0)
+            {
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        while (std::chrono::steady_clock::now() < deadline);
+        ASSERT_GT(status.current_count, 0);
+        ASSERT_EQ(RETCODE_OK, subscriber->delete_datareader(warmup));
+    }
+
+    std::atomic<bool> stop{ false };
+    std::atomic<uint64_t> polls{ 0 };
+    std::atomic<int32_t> matches{ 0 };
+
+    std::thread poller([&]()
+            {
+                while (!stop.load(std::memory_order_relaxed))
+                {
+                    PublicationMatchedStatus status;
+                    writer->get_publication_matched_status(status);
+                    matches.fetch_add(status.total_count_change, std::memory_order_relaxed);
+                    polls.fetch_add(1, std::memory_order_relaxed);
+                }
+            });
+
+    // Churn a batch at a time so matches and unmatches keep arriving densely.
+    // Assertions are deferred so that the poller thread is always joined.
+    constexpr size_t batch_size = 10;
+    uint64_t churned = 0;
+    bool create_failed = false;
+    bool delete_failed = false;
+    auto until = std::chrono::steady_clock::now() + churn_duration;
+    while (std::chrono::steady_clock::now() < until && !create_failed && !delete_failed)
+    {
+        std::vector<DataReader*> readers;
+        for (size_t i = 0; i < batch_size; ++i)
+        {
+            DataReader* reader = subscriber->create_datareader(sub_topic, DATAREADER_QOS_DEFAULT);
+            if (nullptr == reader)
+            {
+                create_failed = true;
+                break;
+            }
+            readers.push_back(reader);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+        for (DataReader* reader : readers)
+        {
+            if (RETCODE_OK != subscriber->delete_datareader(reader))
+            {
+                delete_failed = true;
+                break;
+            }
+            ++churned;
+        }
+    }
+
+    stop.store(true);
+    poller.join();
+
+    EXPECT_FALSE(create_failed);
+    EXPECT_FALSE(delete_failed);
+    EXPECT_GT(churned, 0u);
+    EXPECT_GT(polls.load(), 0u);
+    // The churn must actually have driven matches through the discovery thread,
+    // otherwise this test would exercise nothing.
+    EXPECT_GT(matches.load(), 0);
+
+    EXPECT_EQ(RETCODE_OK, publisher->delete_datawriter(writer));
+    EXPECT_EQ(RETCODE_OK, pub_participant->delete_publisher(publisher));
+    EXPECT_EQ(RETCODE_OK, pub_participant->delete_topic(pub_topic));
+    EXPECT_EQ(RETCODE_OK, sub_participant->delete_subscriber(subscriber));
+    EXPECT_EQ(RETCODE_OK, sub_participant->delete_topic(sub_topic));
+    EXPECT_EQ(RETCODE_OK, factory->delete_participant(pub_participant));
+    EXPECT_EQ(RETCODE_OK, factory->delete_participant(sub_participant));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
