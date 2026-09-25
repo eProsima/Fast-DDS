@@ -35,6 +35,11 @@ Long Term Supported branches keep receiving security fixes after their standard 
 Branches that have reached EOL are out of scope.
 If you find an issue on an EOL branch, please check whether it reproduces on a supported branch before reporting it; if it does not, the remedy is to upgrade.
 
+Fast DDS is a communications library, and the attack surface this program is concerned with is the data that reaches it from the network.
+We only consider vulnerabilities that can be triggered remotely, by data that a Fast DDS application receives over a network transport from an endpoint the deployment does not control.
+Issues that require the attacker to run code on the same host, to drive the library through its own API, or to modify the application's configuration files are not in scope.
+If the same defect can also be reached by data arriving over the network, please describe that path in your report, as it is the one we will assess.
+
 The following activities are not authorized under this policy, and therefore fall outside the Safe Harbor described below:
 
 - Denial of service, resource exhaustion, or any other form of stress testing.
