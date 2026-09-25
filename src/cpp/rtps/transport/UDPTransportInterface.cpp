@@ -626,8 +626,8 @@ bool UDPTransportInterface::send(
 
         (void)bytesSent;
         EPROSIMA_LOG_INFO(TRANSPORT_UDP,
-                "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint <<
-                " FROM " << getSocketPtr(socket)->local_endpoint());
+                "UDPTransport: " << bytesSent << " bytes TO endpoint: " << destinationEndpoint
+                                 << " FROM " << getSocketPtr(socket)->local_endpoint());
         success = true;
     }
 
