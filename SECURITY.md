@@ -30,6 +30,11 @@ This includes the configuration of our software: where a setting widens access t
 This does not exclude defects in our software itself, such as a resource being created with weaker permissions than its documented or configured value.
 Reports of that kind are in scope.
 
+We accept reports against the release branches listed as currently supported in [RELEASE_SUPPORT.md](https://github.com/eProsima/Fast-DDS/blob/master/RELEASE_SUPPORT.md), and against the development branch.
+Long Term Supported branches keep receiving security fixes after their standard support ends, until the end of life (EOL) date given in that document.
+Branches that have reached EOL are out of scope.
+If you find an issue on an EOL branch, please check whether it reproduces on a supported branch before reporting it; if it does not, the remedy is to upgrade.
+
 The following activities are not authorized under this policy, and therefore fall outside the Safe Harbor described below:
 
 - Denial of service, resource exhaustion, or any other form of stress testing.
