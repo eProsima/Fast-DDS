@@ -14,8 +14,8 @@ For this repository it replaces the [organization-wide security policy](https://
 ## Scope
 
 The Vulnerability Disclosure Program outlined here covers the code in this repository and the eProsima Fast DDS releases built from it.
-An increasing number of companies are using our DDS based solutions, and during this growth period we anticipate vulnerabilities to be identified in products before vendors have an established vulnerability reporting program.
-We will work with you on a best-effort basis to help connect you with responsible parties best suited to address your concerns.
+A vulnerability in a DDS implementation often reaches the projects that embed it, and sometimes other implementations of the same specification.
+If a report you send us turns out to affect code we do not maintain, we will help you reach the projects that do, on a best-effort basis.
 
 ## Out of scope
 
