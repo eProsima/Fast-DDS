@@ -426,10 +426,14 @@ eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
     if (is_multicast)
     {
         getSocketPtr(socket)->set_option(ip::udp::socket::reuse_address(true));
-#if defined(__QNX__)
+        // QNX and Apple require SO_REUSEPORT for multiple processes to all
+        // receive the same multicast datagrams; SO_REUSEADDR alone makes the
+        // second bind fail (EADDRINUSE) on Darwin. Linux deliberately omitted:
+        // there SO_REUSEPORT load-balances instead of duplicating delivery.
+#if defined(__QNX__) || defined(__APPLE__)
         getSocketPtr(socket)->set_option(asio::detail::socket_option::boolean<
                     ASIO_OS_DEF(SOL_SOCKET), SO_REUSEPORT>(true));
-#endif // if defined(__QNX__)
+#endif // if defined(__QNX__) || defined(__APPLE__)
     }
     else
     {
