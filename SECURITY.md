@@ -40,6 +40,17 @@ We only consider vulnerabilities that can be triggered remotely, by data that a 
 Issues that require the attacker to run code on the same host, to drive the library through its own API, or to modify the application's configuration files are not in scope.
 If the same defect can also be reached by data arriving over the network, please describe that path in your report, as it is the one we will assess.
 
+A DDS domain with security disabled is an open network by design.
+Any participant able to reach the domain may discover the endpoints in it, publish on any topic, and subscribe to any topic.
+The OMG DDS Security specification, version 1.1, defines the mechanisms that address these threats, and Fast DDS implements them: authentication of remote participants, access control over domains and topics, and cryptographic protection of the data exchanged.
+
+Reports describing threats addressed by that specification, demonstrated against a deployment that does not enable the DDS Security plugins, are out of scope.
+Unauthorized subscription, unauthorized publication, tampering with or replaying messages, and reading data in transit are expected behaviour in a domain without security, and the mitigation is to enable it.
+See the [Security section](https://fast-dds.docs.eprosima.com/en/latest/fastdds/security/security.html) of the Fast DDS documentation.
+
+This exclusion does not extend to the plugins themselves.
+A defect that allows any of those protections to be bypassed while security is enabled, such as a permissions grant that is not enforced, a flaw in the authentication handshake, or a weakness in how cryptographic material is handled, is a vulnerability in Fast DDS and we want to hear about it.
+
 The following activities are not authorized under this policy, and therefore fall outside the Safe Harbor described below:
 
 - Denial of service, resource exhaustion, or any other form of stress testing.
