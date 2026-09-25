@@ -1,6 +1,6 @@
 # Security Policy
 
-*Last updated: 2026-09-16*
+*Last updated: 2026-09-25*
 
 ## Motivation
 
@@ -8,19 +8,18 @@ As a proud member of the open source community, eProsima takes the security of i
 As such, we would like to be informed when a security bug is found so that it can be fixed and disclosed as quickly as possible.
 The rest of the document outlines what is covered by this policy and how to report security vulnerabilities.
 
+This policy applies to eProsima Fast DDS.
+For this repository it replaces the [organization-wide security policy](https://github.com/eProsima/.github/blob/main/SECURITY.md); where the two differ, the terms below apply.
+
 ## Scope
 
-The Vulnerability Disclosure Program outlined here covers all code within our publicly available products.
+The Vulnerability Disclosure Program outlined here covers the code in this repository and the eProsima Fast DDS releases built from it.
 An increasing number of companies are using our DDS based solutions, and during this growth period we anticipate vulnerabilities to be identified in products before vendors have an established vulnerability reporting program.
 We will work with you on a best-effort basis to help connect you with responsible parties best suited to address your concerns.
 
-This program does not cover repositories in this organization that are forks of third-party projects.
-Vulnerabilities in upstream code should be reported to the corresponding upstream project, following its own security policy.
-If the vulnerability is specific to changes made by eProsima in the fork, please report it to us using the channels described below.
-
 ## Out of scope
 
-This program covers the source code and released artifacts of the products described above.
+This program covers the source code and released artifacts described above.
 eProsima's web sites, cloud services and corporate infrastructure, including eprosima.com, are not part of this program, and this policy does not authorize any testing against them.
 
 Our software is a component of a larger system, and its security depends on the environment in which that system runs.
@@ -49,7 +48,7 @@ eProsima will not engage in legal action against individuals who act in good fai
 Research or testing against DDS systems without the consent of the owner/operator is in violation of this policy and strongly discouraged due to potential health and human safety concerns.
 
 This policy may be revised from time to time.
-The version of this policy in effect at the time your research is carried out is the version that applies to it; previous versions remain available in this file's [commit history](https://github.com/eProsima/.github/commits/main/SECURITY.md).
+The version of this policy in effect at the time your research is carried out is the version that applies to it; previous versions remain available in this file's [commit history](https://github.com/eProsima/Fast-DDS/commits/master/SECURITY.md).
 
 If at any time you have concerns about whether your activities are consistent with this policy, please contact us at support@eprosima.com.
 
@@ -57,11 +56,10 @@ If at any time you have concerns about whether your activities are consistent wi
 
 Please report security vulnerabilities using GitHub Security Advisories whenever possible.
 
-If the affected repository has private vulnerability reporting enabled, please use the **Report a vulnerability** option in the repository's **Security** section.
+Open a private report with the [**Report a vulnerability**](https://github.com/eProsima/Fast-DDS/security/advisories/new) form for this repository.
+The same form is reachable from the **Security** tab of the repository.
 This creates a private security advisory that can be used to discuss, triage, and resolve the vulnerability without disclosing sensitive information publicly.
-
-If GitHub Security Advisories are not available in the affected repository, please report the vulnerability using the security advisory mechanism of the [eProsima/policies](https://github.com/eProsima/policies) repository.
-Clearly indicate which eProsima project and versions are affected.
+Please state which Fast DDS versions are affected.
 
 If you are unable to use GitHub Security Advisories, you may instead submit the vulnerability by emailing support@eprosima.com.
 In that case, we kindly ask you to encrypt your report using the PGP public key [vulnerability-public.key](https://github.com/eProsima/policies/blob/main/vulnerability-public.key) contained in the [eProsima/policies](https://github.com/eProsima/policies) repository.
