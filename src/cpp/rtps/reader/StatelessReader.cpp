@@ -350,13 +350,13 @@ bool StatelessReader::change_received(
         }
 
         // Update Ownership strength.
-        if (EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind)
+        if ((EXCLUSIVE_OWNERSHIP_QOS == m_att.ownershipKind) && (matched_writers_.end() != writer))
         {
-            assert(matched_writers_.end() != writer);
             change->reader_info.writer_ownership_strength = writer->ownership_strength;
         }
         else
         {
+            // Non-exclusive ownership, or a change accepted from a non-matched writer. No ownership arbitration applies.
             change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
         }
 

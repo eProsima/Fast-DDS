@@ -127,6 +127,65 @@ TEST(StatelessReaderTests, EmptyPayloadUnregisterDisposeProcessing)
     RTPSDomain::removeRTPSReader(reader);
 }
 
+/**
+ * @test Regression for Redmine issue #25677.
+ */
+TEST(StatelessReaderTests, ExclusiveOwnershipUnmatchedWriterProcessing)
+{
+    RTPSParticipantAttributes part_attrs;
+    RTPSParticipant* part = RTPSDomain::createParticipant(0, false, part_attrs, nullptr);
+
+    HistoryAttributes hatt{};
+    ReaderHistory reader_history(hatt);
+
+    ReaderAttributes reader_att{};
+    reader_att.endpoint.endpointKind = READER;
+    reader_att.endpoint.reliabilityKind = BEST_EFFORT;  // BEST_EFFORT -> StatelessReader
+    reader_att.endpoint.durabilityKind = VOLATILE;
+    reader_att.endpoint.ownershipKind = fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+
+    RTPSReader* reader = RTPSDomain::createRTPSReader(part, reader_att, &reader_history, nullptr);
+    StatelessReader* uut = dynamic_cast<StatelessReader*>(reader);
+    ASSERT_NE(uut, nullptr);
+
+    TopicAttributes topic_desc;
+    topic_desc.topicKind = rtps::NO_KEY;
+    topic_desc.topicName = "topic";
+    topic_desc.topicDataType = "string";
+    part->registerReader(reader, topic_desc, fastdds::dds::ReaderQos());
+
+    // Accept the sample although the writer is never matched.
+    reader->enableMessagesFromUnkownWriters(true);
+
+    // A writer GUID with a valid entityId that is NOT in matched_writers_.
+    GUID_t unmatched_writer;
+    unmatched_writer.guidPrefix.value[0] = 1;
+    unmatched_writer.entityId.value[2] = 0x02;
+    unmatched_writer.entityId.value[3] = 0x03;
+    ASSERT_FALSE(uut->matched_writer_is_matched(unmatched_writer));
+
+    // Minimal ALIVE change with payload so it reaches change_received.
+    uint8_t payload[4] = {0x00, 0x01, 0x00, 0x00};
+    CacheChange_t change;
+    change.writerGUID = unmatched_writer;
+    change.sequenceNumber = {0, 1};
+    change.kind = ChangeKind_t::ALIVE;
+    change.serializedPayload.data = payload;
+    change.serializedPayload.length = sizeof(payload);
+    change.serializedPayload.max_size = sizeof(payload);
+
+    // Sample must be accepted and processed
+    EXPECT_TRUE(uut->processDataMsg(&change));
+
+    // Detach the stack payload so the CacheChange_t destructor does not touch the reader pool.
+    change.serializedPayload.data = nullptr;
+    change.serializedPayload.length = 0;
+    change.serializedPayload.max_size = 0;
+    change.payload_owner(nullptr);
+
+    RTPSDomain::removeRTPSReader(reader);
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
