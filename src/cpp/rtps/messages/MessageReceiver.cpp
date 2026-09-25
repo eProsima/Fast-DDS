@@ -769,6 +769,13 @@ bool MessageReceiver::proc_Submsg_Data(
         return false;
     }
 
+    // writerId is mandatory in messages originated from a Writer
+    if (c_EntityId_Unknown == ch.writerGUID.entityId)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Data submessage with unknown writerId, ignoring");
+        return false;
+    }
+
     if (ch.sequenceNumber <= SequenceNumber_t())
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Invalid message received, bad sequence Number");
@@ -944,6 +951,13 @@ bool MessageReceiver::proc_Submsg_DataFrag(
         return false;
     }
 
+    // writerId is mandatory in messages originated from a Writer
+    if (c_EntityId_Unknown == ch.writerGUID.entityId)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "DataFrag submessage with unknown writerId, ignoring");
+        return false;
+    }
+
     // READ FRAGMENT NUMBER
     uint32_t fragmentStartingNum {0};
     valid &= CDRMessage::readUInt32(msg, &fragmentStartingNum);
@@ -1101,6 +1115,14 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
     CDRMessage::readEntityId(msg, &readerGUID.entityId);
     writerGUID.guidPrefix = source_guid_prefix_;
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
+
+    // writerId is mandatory in messages originated from a Writer
+    if (c_EntityId_Unknown == writerGUID.entityId)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Heartbeat submessage with unknown writerId, ignoring");
+        return false;
+    }
+
     SequenceNumber_t firstSN;
     SequenceNumber_t lastSN;
     CDRMessage::readSequenceNumber(msg, &firstSN);
@@ -1170,6 +1192,13 @@ bool MessageReceiver::proc_Submsg_Acknack(
     writerGUID.guidPrefix = dest_guid_prefix_;
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
 
+    // readerId is mandatory in messages originated from a Reader
+    if (c_EntityId_Unknown == readerGUID.entityId)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Acknack submessage with unknown readerId, ignoring");
+        return false;
+    }
+
     SequenceNumberSet_t SNSet = CDRMessage::readSequenceNumberSet(msg);
     uint32_t Ackcount {0};
     if (!CDRMessage::readUInt32(msg, &Ackcount))
@@ -1225,6 +1254,14 @@ bool MessageReceiver::proc_Submsg_Gap(
     CDRMessage::readEntityId(msg, &readerGUID.entityId);
     writerGUID.guidPrefix = source_guid_prefix_;
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
+
+    // writerId is mandatory in messages originated from a Writer
+    if (c_EntityId_Unknown == writerGUID.entityId)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Gap submessage with unknown writerId, ignoring");
+        return false;
+    }
+
     SequenceNumber_t gapStart;
     CDRMessage::readSequenceNumber(msg, &gapStart);
     SequenceNumberSet_t gapList = CDRMessage::readSequenceNumberSet(msg);
@@ -1364,6 +1401,13 @@ bool MessageReceiver::proc_Submsg_NackFrag(
     CDRMessage::readEntityId(msg, &readerGUID.entityId);
     writerGUID.guidPrefix = dest_guid_prefix_;
     CDRMessage::readEntityId(msg, &writerGUID.entityId);
+
+    // readerId is mandatory in messages originated from a Reader
+    if (c_EntityId_Unknown == readerGUID.entityId)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "NackFrag submessage with unknown readerId, ignoring");
+        return false;
+    }
 
     SequenceNumber_t writerSN;
     CDRMessage::readSequenceNumber(msg, &writerSN);
