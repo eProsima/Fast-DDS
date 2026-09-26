@@ -391,3 +391,27 @@ install(FILES ${PROJECT_BINARY_DIR}/cmake/config/${PROJECT_NAME}-config.cmake
     DESTINATION ${INSTALL_DESTINATION_PATH}
     COMPONENT cmake
     )
+
+###############################################################################
+# Create pkg-config file
+###############################################################################
+cmake_path(APPEND includedir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
+cmake_path(APPEND libdir_for_pc_file "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
+
+set(private_requires_for_pc_file)
+if (LINK_SSL)
+    list(APPEND private_requires_for_pc_file openssl)
+endif()
+if (TARGET tinyxml2::tinyxml2)
+    list(APPEND private_requires_for_pc_file tinyxml2)
+endif()
+list(JOIN private_requires_for_pc_file ", " private_requires_for_pc_file)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/fastdds.pc.in"
+    "${PROJECT_BINARY_DIR}/fastdds.pc"
+    @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/fastdds.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    COMPONENT pkgconfig
+    )
