@@ -318,7 +318,7 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
 
     std::vector<uint8_t> serialized = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
     KeyMaterial_AES_GCM_GMAC result;
-    CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized);
+    ASSERT_TRUE(CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized));
     ASSERT_TRUE(
         (base.transformation_kind == result.transformation_kind) &&
         (base.master_salt == result.master_salt) &&
@@ -332,6 +332,119 @@ TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize){
 
     auth_plugin.return_identity_handle(&i_handle, exception);
     access_plugin.return_permissions_handle(&perm_handle, exception);
+}
+
+TEST_F(CryptographyPluginTest, exchange_CDRSerializenDeserialize_AllKinds)
+{
+    using namespace eprosima::fastdds::rtps::security;
+
+    for (uint8_t kind = 0; kind <= 4; ++kind)
+    {
+        for (bool has_specific_key : {false, true})
+        {
+            KeyMaterial_AES_GCM_GMAC base;
+            base.transformation_kind = {0, 0, 0, kind};
+            if (kind != 0)
+            {
+                uint8_t key_len = kind <= 2 ? 16 : 32;
+                for (uint8_t i = 0; i < key_len; ++i)
+                {
+                    base.master_salt[i] = static_cast<uint8_t>(i + 1);
+                    base.master_sender_key[i] = static_cast<uint8_t>(i + 2);
+                    base.master_receiver_specific_key[i] = has_specific_key ? static_cast<uint8_t>(i + 3) : 0;
+                }
+                base.sender_key_id = {1, 2, 3, 4};
+                base.receiver_specific_key_id = has_specific_key ?
+                        CryptoTransformKeyId{5, 6, 7, 8} : CryptoTransformKeyId{0, 0, 0, 0};
+            }
+
+            std::vector<uint8_t> serialized = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
+            KeyMaterial_AES_GCM_GMAC result;
+            ASSERT_TRUE(CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &serialized));
+            EXPECT_EQ(base.transformation_kind, result.transformation_kind);
+            EXPECT_EQ(base.master_salt, result.master_salt);
+            EXPECT_EQ(base.sender_key_id, result.sender_key_id);
+            EXPECT_EQ(base.master_sender_key, result.master_sender_key);
+            EXPECT_EQ(base.receiver_specific_key_id, result.receiver_specific_key_id);
+            EXPECT_EQ(base.master_receiver_specific_key, result.master_receiver_specific_key);
+        }
+    }
+}
+
+TEST_F(CryptographyPluginTest, exchange_CDRDeserialize_MalformedInput)
+{
+    using namespace eprosima::fastdds::rtps::security;
+
+    auto deserialize = [this](std::vector<uint8_t> input)
+            {
+                KeyMaterial_AES_GCM_GMAC result;
+                return CryptoPlugin->keyexchange()->KeyMaterialCDRDeserialize(result, &input);
+            };
+
+    // Well-formed AES256_GCM key material with a receiver specific key.
+    KeyMaterial_AES_GCM_GMAC base;
+    base.transformation_kind = c_transfrom_kind_aes256_gcm;
+    base.master_salt.fill(0x11);
+    base.sender_key_id = {1, 2, 3, 4};
+    base.master_sender_key.fill(0x22);
+    base.receiver_specific_key_id = {5, 6, 7, 8};
+    base.master_receiver_specific_key.fill(0x33);
+    const std::vector<uint8_t> valid = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
+    ASSERT_TRUE(deserialize(valid));
+
+    // Positions of the length byte of each sequence<octet,32> in the valid buffer.
+    const size_t salt_len_pos = 4 + 3;
+    const size_t sender_key_len_pos = salt_len_pos + 1 + 32 + 4 + 3;
+    const size_t receiver_key_len_pos = sender_key_len_pos + 1 + 32 + 4 + 3;
+    ASSERT_EQ(32u, valid[salt_len_pos]);
+    ASSERT_EQ(32u, valid[sender_key_len_pos]);
+    ASSERT_EQ(32u, valid[receiver_key_len_pos]);
+
+    // Empty input and every truncation of the valid buffer must be rejected.
+    ASSERT_FALSE(deserialize({}));
+    for (size_t len = 1; len < valid.size(); ++len)
+    {
+        EXPECT_FALSE(deserialize(std::vector<uint8_t>(valid.begin(), valid.begin() + len))) << "length " << len;
+    }
+
+    base.receiver_specific_key_id.fill(0);
+    const std::vector<uint8_t> no_specific_key = CryptoPlugin->keyexchange()->KeyMaterialCDRSerialize(base);
+    ASSERT_TRUE(deserialize(no_specific_key));
+    for (size_t len = 1; len < no_specific_key.size(); ++len)
+    {
+        EXPECT_FALSE(deserialize(std::vector<uint8_t>(no_specific_key.begin(), no_specific_key.begin() + len)))
+            << "no receiver-specific key, length " << len;
+    }
+    std::vector<uint8_t> nonempty_unused_key = no_specific_key;
+    nonempty_unused_key.back() = 16;
+    EXPECT_FALSE(deserialize(nonempty_unused_key));
+
+    // Sequence lengths that do not match the transformation kind must be rejected.
+    for (size_t len_pos : {salt_len_pos, sender_key_len_pos, receiver_key_len_pos})
+    {
+        for (uint8_t bad_len : {uint8_t(0), uint8_t(16), uint8_t(31), uint8_t(33), uint8_t(255)})
+        {
+            std::vector<uint8_t> input = valid;
+            input[len_pos] = bad_len;
+            EXPECT_FALSE(deserialize(input)) << "position " << len_pos << " length " << int(bad_len);
+        }
+
+        // Non-zero upper bytes of the sequence length.
+        std::vector<uint8_t> input = valid;
+        input[len_pos - 1] = 1;
+        EXPECT_FALSE(deserialize(input)) << "position " << len_pos;
+    }
+
+    // Unknown transformation kinds must be rejected.
+    for (uint8_t bad_kind : {uint8_t(5), uint8_t(255)})
+    {
+        std::vector<uint8_t> input = valid;
+        input[3] = bad_kind;
+        EXPECT_FALSE(deserialize(input)) << "kind " << int(bad_kind);
+    }
+    std::vector<uint8_t> input = valid;
+    input[0] = 1;
+    EXPECT_FALSE(deserialize(input));
 }
 
 TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
@@ -434,6 +547,15 @@ TEST_F(CryptographyPluginTest, exchange_ParticipantCryptoTokens)
     ASSERT_TRUE(Participant_B_remote->Participant2ParticipantKeyMaterial.at(
                 0).master_sender_key == Participant_A_remote->RemoteParticipant2ParticipantKeyMaterial.at(
                 0).master_sender_key);
+
+    ParticipantCryptoTokenSeq malformed_tokens = ParticipantB_CryptoTokens;
+    auto& malformed_key_material = malformed_tokens.at(0).binary_properties().at(0).value();
+    ASSERT_GT(malformed_key_material.size(), 4u);
+    malformed_key_material.resize(4);
+    malformed_key_material[3] = 4;
+    EXPECT_FALSE(CryptoPlugin->keyexchange()->set_remote_participant_crypto_tokens(*ParticipantA,
+            *ParticipantA_remote, malformed_tokens, exception));
+    EXPECT_EQ(1u, Participant_A_remote->RemoteParticipant2ParticipantKeyMaterial.size());
 
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantA, exception);
     CryptoPlugin->keyfactory()->unregister_participant(ParticipantB, exception);

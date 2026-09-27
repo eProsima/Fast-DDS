@@ -178,7 +178,12 @@ bool AESGCMGMAC_KeyExchange::set_remote_participant_crypto_tokens(
     }
 
     KeyMaterial_AES_GCM_GMAC keymat;
-    KeyMaterialCDRDeserialize(keymat, &plaintext);
+    if (!KeyMaterialCDRDeserialize(keymat, &plaintext))
+    {
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "MalformedCryptoToken");
+        exception = SecurityException("Malformed CryptoToken key material");
+        return false;
+    }
 
     auto& ring = remote_participant->RemoteParticipant2ParticipantKeyMaterial;
     ring.push_back(keymat);
@@ -330,7 +335,12 @@ bool AESGCMGMAC_KeyExchange::set_remote_datareader_crypto_tokens(
         }
 
         KeyMaterial_AES_GCM_GMAC keymat;
-        KeyMaterialCDRDeserialize(keymat, &plaintext);
+        if (!KeyMaterialCDRDeserialize(keymat, &plaintext))
+        {
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "MalformedCryptoToken");
+            exception = SecurityException("Malformed CryptoToken key material");
+            return false;
+        }
         remote_reader->Entity2RemoteKeyMaterial.push_back(keymat);
 
         remote_reader_lock.unlock();
@@ -398,7 +408,12 @@ bool AESGCMGMAC_KeyExchange::set_remote_datawriter_crypto_tokens(
         }
 
         KeyMaterial_AES_GCM_GMAC keymat;
-        KeyMaterialCDRDeserialize(keymat, &plaintext);
+        if (!KeyMaterialCDRDeserialize(keymat, &plaintext))
+        {
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "MalformedCryptoToken");
+            exception = SecurityException("Malformed CryptoToken key material");
+            return false;
+        }
 
         remote_writer->Entity2RemoteKeyMaterial.push_back(keymat);
 
@@ -502,76 +517,96 @@ std::vector<uint8_t> AESGCMGMAC_KeyExchange::KeyMaterialCDRSerialize(
     return buffer;
 }
 
-void AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
+bool AESGCMGMAC_KeyExchange::KeyMaterialCDRDeserialize(
         KeyMaterial_AES_GCM_GMAC& buffer,
         std::vector<uint8_t>* CDR)
 {
     buffer.transformation_kind.fill(0);
     buffer.master_salt.fill(0);
+    buffer.sender_key_id.fill(0);
     buffer.master_sender_key.fill(0);
+    buffer.receiver_specific_key_id.fill(0);
     buffer.master_receiver_specific_key.fill(0);
 
-    // transformation kind is always 0 0 0 n
-    // TODO: Check 0 values
+    if (CDR == nullptr)
+    {
+        return false;
+    }
+
     const uint8_t* data = CDR->data();
-    uint8_t kind = data[3];
-    buffer.transformation_kind[3] = kind;
+    const size_t size = CDR->size();
+    size_t pos = 0;
+
+    // Copies len bytes from the input into dst, checking the input bounds.
+    auto read_octets = [&](uint8_t* dst, size_t len) -> bool
+            {
+                if (len > size - pos)
+                {
+                    return false;
+                }
+                if (len > 0)
+                {
+                    memcpy(dst, &data[pos], len);
+                }
+                pos += len;
+                return true;
+            };
+
+    // Reads a sequence<octet,32> whose length must be exactly expected_len.
+    auto read_key = [&](std::array<uint8_t, 32>& dst, uint8_t expected_len) -> bool
+            {
+                std::array<uint8_t, 4> seq_len;
+                if (!read_octets(seq_len.data(), seq_len.size()) ||
+                        seq_len[0] != 0 || seq_len[1] != 0 || seq_len[2] != 0 ||
+                        seq_len[3] != expected_len)
+                {
+                    return false;
+                }
+                return read_octets(dst.data(), expected_len);
+            };
+
+    // transformation kind is always 0 0 0 n
+    if (!read_octets(buffer.transformation_kind.data(), buffer.transformation_kind.size()) ||
+            buffer.transformation_kind[0] != 0 || buffer.transformation_kind[1] != 0 ||
+            buffer.transformation_kind[2] != 0)
+    {
+        return false;
+    }
+
+    uint8_t kind = buffer.transformation_kind[3];
     if (kind == 0)
     {
         // empty key material
-        buffer.sender_key_id.fill(0);
-        buffer.receiver_specific_key_id.fill(0);
+        return true;
     }
-    else
+    if (kind > 4)
     {
-        // 128 bits for kinds 1 and 2. 256 bits for kinds 3 and 4.
-        // TODO: Check desired length
-        // uint8_t desired_key_len = kind <= 2 ? 16 : 32;
-
-        uint8_t key_len;
-        uint8_t pos;
-
-        // master_salt : sequence<octet,32>
-        //    seq_len would always be 0 0 0 n
-        //    TODO: check 0 values
-        pos = 4 + 3;  // 4 - transformation_kind. 3 - 0's
-        key_len = data[pos++];
-        // TODO: check key_len
-        memcpy(buffer.master_salt.data(), &data[pos], key_len);
-        pos += key_len;
-
-        // sender_key_id : octet[4]
-        memcpy(buffer.sender_key_id.data(), &data[pos], 4);
-        pos += 4;
-
-        // master_sender_key : sequence<octet,32>
-        //    seq_len would always be 0 0 0 n
-        //    TODO: check 0 values
-        pos += 3;
-        key_len = data[pos++];
-        // TODO: check key_len
-        memcpy(buffer.master_sender_key.data(), &data[pos], key_len);
-        pos += key_len;
-
-        // receiver_specific_key_id : octet[4]
-        uint8_t has_specific_key = 0;
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            buffer.receiver_specific_key_id[i] = data[pos++];
-            has_specific_key |= buffer.receiver_specific_key_id[i];
-        }
-
-        if (has_specific_key != 0)
-        {
-            // master_receiver_specific_key : sequence<octet,32>
-            //    seq_len would always be 0 0 0 n
-            //    TODO: check 0 values
-            pos += 3;
-            key_len = data[pos++];
-            // TODO: check key_len
-            memcpy(buffer.master_receiver_specific_key.data(), &data[pos], key_len);
-        }
+        return false;
     }
+
+    // 128 bits for kinds 1 and 2. 256 bits for kinds 3 and 4.
+    uint8_t key_len = kind <= 2 ? 16 : 32;
+
+    // master_salt : sequence<octet,32>
+    // sender_key_id : octet[4]
+    // master_sender_key : sequence<octet,32>
+    // receiver_specific_key_id : octet[4]
+    if (!read_key(buffer.master_salt, key_len) ||
+            !read_octets(buffer.sender_key_id.data(), buffer.sender_key_id.size()) ||
+            !read_key(buffer.master_sender_key, key_len) ||
+            !read_octets(buffer.receiver_specific_key_id.data(), buffer.receiver_specific_key_id.size()))
+    {
+        return false;
+    }
+
+    uint8_t has_specific_key = 0;
+    for (uint8_t id_byte : buffer.receiver_specific_key_id)
+    {
+        has_specific_key |= id_byte;
+    }
+
+    // master_receiver_specific_key : sequence<octet,32>
+    return read_key(buffer.master_receiver_specific_key, has_specific_key != 0 ? key_len : 0);
 }
 
 /*
