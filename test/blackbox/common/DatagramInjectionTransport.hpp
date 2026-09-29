@@ -13,8 +13,10 @@
 // limitations under the License.
 
 #include <fstream>
+#include <functional>
 #include <mutex>
 #include <set>
+#include <vector>
 
 #include <fastdds/rtps/transport/ChainingTransport.h>
 #include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
@@ -32,6 +34,8 @@ class DatagramInjectionTransportDescriptor : public ChainingTransportDescriptor
 
 public:
 
+    using DatagramMutator = std::function<void (std::vector<uint8_t>&)>;
+
     DatagramInjectionTransportDescriptor(
             std::shared_ptr<TransportDescriptorInterface> low_level);
 
@@ -47,11 +51,18 @@ public:
 
     std::set<SenderResource*> get_send_resource_list();
 
+    // Sets a callback that edits every received datagram in place before it is processed.
+    void set_datagram_mutator(
+            DatagramMutator mutator);
+
+    DatagramMutator get_datagram_mutator();
+
 private:
 
     std::mutex mtx_;
     std::set<TransportReceiverInterface*> receivers_;
     std::set<SenderResource*> send_resource_list_;
+    DatagramMutator datagram_mutator_;
 };
 
 class DatagramInjectionTransport : public ChainingTransport
@@ -89,7 +100,18 @@ public:
             const eprosima::fastrtps::rtps::Locator_t& local_locator,
             const eprosima::fastrtps::rtps::Locator_t& remote_locator) override
     {
-        next_receiver->OnDataReceived(receive_buffer, receive_buffer_size, local_locator, remote_locator);
+        auto mutator = parent_->get_datagram_mutator();
+        if (mutator)
+        {
+            std::vector<uint8_t> mutable_buffer(receive_buffer, receive_buffer + receive_buffer_size);
+            mutator(mutable_buffer);
+            next_receiver->OnDataReceived(mutable_buffer.data(), static_cast<uint32_t>(mutable_buffer.size()),
+                    local_locator, remote_locator);
+        }
+        else
+        {
+            next_receiver->OnDataReceived(receive_buffer, receive_buffer_size, local_locator, remote_locator);
+        }
     }
 
     bool OpenInputChannel(
