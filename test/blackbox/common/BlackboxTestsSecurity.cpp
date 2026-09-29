@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <map>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -5291,6 +5292,189 @@ TEST(Security, DatagramInjectionOnReader_23836)
         "HelloWorldTopic_DatagramInjectionOnReader_23836",
         "datagrams/23836.bin");
 }
+
+#if defined(__SANITIZE_ADDRESS__)
+/**
+ * @test Regression for redmine issue #25676: lookup_reader() walks the Readers vector while
+ * another thread registering a DataReader may reallocate it.
+ * Run this test under AddressSanitizer to detect the resulting invalid memory access.
+ */
+TEST(Security, ConcurrentLocalReaderRegistration_25676)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    // Leave room for built-in readers before the vector reaches a capacity of 256.
+    // Register more readers while traffic flows to trigger several reallocations.
+    static constexpr unsigned int n_dummy_before = 245;
+    static constexpr unsigned int n_trigger = 1800;
+
+
+    std::string topic_name = "HelloWorldTopic_ConcurrentLocalReaderRegistration_25676";
+
+    // Built by hand, not with PubSubReader, to control the order readers are registered in.
+    PropertyPolicy reader_property_policy;
+    fill_sub_auth(reader_property_policy);
+    fill_access(reader_property_policy,
+            "governance_helloworld_all_enable.smime", "permissions_helloworld.smime");
+    fill_crypto(reader_property_policy);
+
+    DomainParticipantQos pqos;
+    pqos.properties() = reader_property_policy;
+
+    auto* factory = DomainParticipantFactory::get_instance();
+    DomainParticipant* participant = factory->create_participant(
+        static_cast<uint32_t>(GET_PID()) % 230, pqos);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new HelloWorldPubSubType());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->register_type(type));
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    // Dummy readers registered before the real one.
+    for (unsigned int i = 0; i < n_dummy_before; ++i)
+    {
+        std::string dummy_topic_name = topic_name + "_before_" + std::to_string(i);
+        Topic* topic = participant->create_topic(dummy_topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+        ASSERT_NE(topic, nullptr);
+
+        DataReader* dummy_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+        ASSERT_NE(dummy_reader, nullptr);
+    }
+
+    // The real reader goes last, so every lookup walks past all dummies. Its topic needs the
+    // same hostname+pid suffix PubSubWriter adds, so the two match.
+    std::ostringstream real_topic_suffix;
+    real_topic_suffix << "_" << asio::ip::host_name() << "_" << GET_PID();
+    std::string real_topic_name = topic_name + real_topic_suffix.str();
+    Topic* real_topic = participant->create_topic(real_topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(real_topic, nullptr);
+
+    DataReader* real_reader = subscriber->create_datareader(real_topic, DATAREADER_QOS_DEFAULT);
+    ASSERT_NE(real_reader, nullptr);
+
+    PubSubWriter<HelloWorldPubSubType> writer(topic_name);
+    CommonPermissionsConfigure(writer,
+            "governance_helloworld_all_enable.smime", "permissions_helloworld.smime");
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+    writer.wait_discovery();
+
+    std::atomic_bool stop(false);
+
+    // Keep the reader decoding protected submessages, which calls lookup_reader().
+    std::thread traffic_thread([&]()
+            {
+                HelloWorld hello;
+                hello.index(0);
+                hello.message("ConcurrentLocalReaderRegistration_25676");
+                while (!stop.load())
+                {
+                    writer.send_sample(hello);
+                    hello.index(static_cast<uint16_t>(hello.index() + 1));
+                }
+            });
+
+    // Register readers while traffic flows, reallocating the vector.
+    for (unsigned int i = 0; i < n_trigger; ++i)
+    {
+        std::string dummy_topic_name = topic_name + "_trigger_" + std::to_string(i);
+        Topic* topic = participant->create_topic(dummy_topic_name, "HelloWorld", TOPIC_QOS_DEFAULT);
+        ASSERT_NE(topic, nullptr);
+
+        DataReader* dummy_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
+        ASSERT_NE(dummy_reader, nullptr);
+    }
+
+    stop.store(true);
+    traffic_thread.join();
+    writer.destroy();
+    participant->delete_contained_entities();
+    factory->delete_participant(participant);
+}
+
+#endif // defined(__SANITIZE_ADDRESS__)
+
+#if defined(__SANITIZE_ADDRESS__)
+/**
+ * @test Regression for redmine issue #25675: a huge protected_len in a SecureDataBody must be
+ * rejected, not overflow the length check.
+ * Run this test under AddressSanitizer to detect the resulting invalid memory access.
+ */
+TEST(Security, ProtectedLenOverflowOOB_25675)
+{
+    const std::string topic_name("HelloWorldTopic_ProtectedLenOverflowOOB_25675");
+
+    PubSubWriter<HelloWorldPubSubType> writer(topic_name);
+    PubSubReader<HelloWorldPubSubType> reader(topic_name);
+
+    // Submessage protection only, so protected_len is visible on the wire.
+    CommonPermissionsConfigure(reader, writer,
+            "governance_disable_rtps_helloworld_all_enable.smime", "permissions_helloworld.smime");
+
+    // No mutator yet, so discovery and key exchange complete normally.
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(transport);
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    // Set protected_len in the next received datagram to 0xFFFFFFFF. The ciphertext can stay as
+    // is, because the overflow happens before the GCM tag is checked.
+    transport->set_datagram_mutator(
+        [](std::vector<uint8_t>& datagram)
+        {
+            static constexpr uint8_t sec_prefix_id = 0x31;
+            static constexpr size_t rtps_header_size = 20;
+            static constexpr size_t secure_data_header_size = 20;
+
+            size_t pos = rtps_header_size;
+            while (pos + 4 <= datagram.size())
+            {
+                uint8_t id = datagram[pos];
+                bool little_endian = (datagram[pos + 1] & 0x1) != 0;
+                uint16_t length = little_endian ?
+                static_cast<uint16_t>(datagram[pos + 2] | (datagram[pos + 3] << 8)) :
+                static_cast<uint16_t>((datagram[pos + 2] << 8) | datagram[pos + 3]);
+
+                if (id == sec_prefix_id)
+                {
+                    // SEC_PREFIX header + SecureDataHeader + SEC_BODY header.
+                    size_t protected_len_pos = pos + 4 + secure_data_header_size + 4;
+                    if (protected_len_pos + 4 <= datagram.size())
+                    {
+                        datagram[protected_len_pos + 0] = 0xFF;
+                        datagram[protected_len_pos + 1] = 0xFF;
+                        datagram[protected_len_pos + 2] = 0xFF;
+                        datagram[protected_len_pos + 3] = 0xFF;
+                    }
+                    return;
+                }
+
+                pos += 4 + length;
+            }
+        });
+
+    auto data = default_helloworld_data_generator(1);
+    writer.send(data);
+    EXPECT_TRUE(data.empty());
+
+    // Give the reader time to process the tampered datagram.
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    reader.destroy();
+    writer.destroy();
+}
+
+#endif // defined(__SANITIZE_ADDRESS__)
 
 /**
  * This is a regression test for redmine issue #24414
