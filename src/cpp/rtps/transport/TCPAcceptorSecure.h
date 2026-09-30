@@ -17,6 +17,8 @@
 
 #define OPENSSL_API_COMPAT 10101
 
+#include <cstdint>
+
 #include <asio/ssl.hpp>
 #include <rtps/transport/TCPAcceptor.h>
 #include <rtps/transport/TCPChannelResourceSecure.h>
@@ -67,6 +69,9 @@ public:
     void accept(
             TCPTransportInterface* parent,
             asio::ssl::context&);
+
+    //! Maximum time for an accepted connection to complete the TLS handshake before it is closed.
+    static constexpr uint32_t handshake_timeout_ms = 10000;
 
 };
 

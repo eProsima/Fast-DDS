@@ -684,6 +684,12 @@ public:
         return *this;
     }
 
+    // Data-sharing is not available on the deprecated API, so it is always off.
+    PubSubReader& datasharing_off()
+    {
+        return *this;
+    }
+
     PubSubReader& deadline_period(
             const eprosima::fastrtps::Duration_t deadline_period)
     {

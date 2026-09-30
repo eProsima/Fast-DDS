@@ -1506,8 +1506,30 @@ void TCPTransportInterface::SocketAccepted(
 
 #if TLS_FOUND
 void TCPTransportInterface::SecureSocketAccepted(
-        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         const Locator& locator,
+        const asio::error_code& error)
+{
+    if (alive_.load())
+    {
+        if (error.value())
+        {
+            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
+            std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
+        }
+
+        if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
+        {
+            std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
+            if (acceptor != nullptr)
+            {
+                dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
+            }
+        }
+    }
+}
+
+void TCPTransportInterface::SecureSocketHandshakeCompleted(
+        std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
         const asio::error_code& error)
 {
     if (alive_.load())
@@ -1535,17 +1557,7 @@ void TCPTransportInterface::SecureSocketAccepted(
         }
         else
         {
-            logInfo(RTCP, " Accepting connection (" << error.message() << ")");
-            std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
-        }
-
-        if (error.value() != eSocketErrorCodes::eConnectionAborted) // Operation Aborted
-        {
-            std::shared_ptr<TCPAcceptor> acceptor = acceptors_[locator];
-            if (acceptor != nullptr)
-            {
-                dynamic_cast<TCPAcceptorSecure*>(acceptor.get())->accept(this, ssl_context_);
-            }
+            logInfo(RTCP_TLS, " TLS handshake failed (" << error.message() << ")");
         }
     }
 }
@@ -1714,6 +1726,29 @@ bool TCPTransportInterface::apply_tls_config()
 
         const TCPTransportDescriptor::TLSConfig* config = &descriptor->tls_config;
         using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+
+        // Set on the context so it applies before every handshake, both accepted and connected streams.
+        using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+        if (config->verify_mode != TLSVerifyMode::UNUSED)
+        {
+            ssl::verify_mode vm = ssl::verify_none;
+            if (!config->get_verify_mode(TLSVerifyMode::VERIFY_NONE))
+            {
+                if (config->get_verify_mode(TLSVerifyMode::VERIFY_PEER))
+                {
+                    vm |= ssl::verify_peer;
+                }
+                if (config->get_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT))
+                {
+                    vm |= ssl::verify_fail_if_no_peer_cert;
+                }
+                if (config->get_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE))
+                {
+                    vm |= ssl::verify_client_once;
+                }
+            }
+            ssl_context_.set_verify_mode(vm);
+        }
 
         if (!config->password.empty())
         {

@@ -211,7 +211,9 @@ protected:
     void shutdown() override;
 
     /**
-     * Applies TLS configuration to ssl_context
+     * Applies TLS configuration to ssl_context.
+     * The verification mode is set on the context, so every secure stream created from it (accepted or connected)
+     * inherits it before its handshake starts.
      *
      * @return true if everything worked fine, false otherwise.
      */
@@ -402,10 +404,32 @@ public:
             const asio::error_code& error);
 
 #if TLS_FOUND
-    //! Callback called each time that an incoming connection is accepted (secure).
+    /**
+     * Callback called each time that a secure acceptor finishes an accept operation, before the TLS handshake.
+     *
+     * The TLS handshake of an accepted connection is started by the acceptor and its result is reported
+     * through @ref SecureSocketHandshakeCompleted. This method only re-arms the acceptor, so new connections
+     * are accepted while previous handshakes are still in progress.
+     *
+     * @param [in] locator Locator of the acceptor that finished the accept operation.
+     * @param [in] error Result of the accept operation. On error, it waits a little before re-arming.
+     *                   The acceptor is not re-armed if the operation was aborted.
+     */
     void SecureSocketAccepted(
-            std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
             const Locator& locator,
+            const asio::error_code& error);
+
+    /**
+     * Callback called each time that the TLS handshake of an accepted connection finishes.
+     *
+     * On success, a new unbound secure channel is created for the socket and its listening thread is started.
+     * On failure (including a handshake timeout), the connection is discarded and no channel is created.
+     *
+     * @param [in] socket Secure stream of the accepted connection.
+     * @param [in] error Result of the TLS handshake.
+     */
+    void SecureSocketHandshakeCompleted(
+            std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
             const asio::error_code& error);
 #endif // if TLS_FOUND
 
