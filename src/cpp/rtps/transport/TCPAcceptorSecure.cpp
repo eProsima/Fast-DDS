@@ -14,6 +14,9 @@
 
 #include <rtps/transport/TCPAcceptorSecure.h>
 
+#include <chrono>
+
+#include <asio/steady_timer.hpp>
 #include <fastdds/utils/IPLocator.hpp>
 #include <rtps/transport/TCPTransportInterface.h>
 
@@ -42,6 +45,8 @@ TCPAcceptorSecure::TCPAcceptorSecure(
 {
 }
 
+constexpr uint32_t TCPAcceptorSecure::handshake_timeout_ms;
+
 void TCPAcceptorSecure::accept(
         TCPTransportInterface* parent,
         ssl::context& ssl_context)
@@ -52,11 +57,12 @@ void TCPAcceptorSecure::accept(
     using asio::ip::tcp;
     using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
     const Locator_t locator = locator_;
+    io_context* context = io_context_;
 
     try
     {
         acceptor_.async_accept(
-            [locator, parent, &ssl_context](const std::error_code& error, tcp::socket socket)
+            [locator, parent, &ssl_context, context](const std::error_code& error, tcp::socket socket)
             {
                 if (!error)
                 {
@@ -69,17 +75,36 @@ void TCPAcceptorSecure::accept(
                     std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket =
                     std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(std::move(socket), ssl_context);
 
-                    secure_socket->async_handshake(role,
-                    [secure_socket, locator, parent](const std::error_code& error)
+                    // Close the socket if the handshake does not finish in time. This aborts the pending handshake.
+                    std::shared_ptr<asio::steady_timer> handshake_timer =
+                    std::make_shared<asio::steady_timer>(*context);
+                    handshake_timer->expires_after(std::chrono::milliseconds(handshake_timeout_ms));
+                    handshake_timer->async_wait([secure_socket](const std::error_code& timer_error)
                     {
-                        //EPROSIMA_LOG_ERROR(RTCP_TLS, "Handshake: " << error.message());
-                        parent->SecureSocketAccepted(secure_socket, locator, error);
+                        if (asio::error::operation_aborted != timer_error)
+                        {
+                            EPROSIMA_LOG_WARNING(RTCP_TLS, "TLS handshake timeout. Closing the connection.");
+                            std::error_code ec;
+                            secure_socket->lowest_layer().close(ec);
+                        }
+                    });
+
+                    secure_socket->async_handshake(role,
+                    [secure_socket, handshake_timer, parent](const std::error_code& handshake_error)
+                    {
+                        handshake_timer->cancel();
+                        std::error_code result = handshake_error;
+                        if (!result && !secure_socket->lowest_layer().is_open())
+                        {
+                            // Timeout closed the socket right after the handshake finished
+                            result = asio::error::timed_out;
+                        }
+                        parent->SecureSocketHandshakeCompleted(secure_socket, result);
                     });
                 }
-                else
-                {
-                    parent->SecureSocketAccepted(nullptr, locator, error); // This method manages errors too.
-                }
+
+                // Accept next connection without waiting for the handshake to finish
+                parent->SecureSocketAccepted(locator, error);
             });
     }
     catch (std::error_code& error)
