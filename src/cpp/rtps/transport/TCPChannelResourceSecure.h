@@ -78,9 +78,6 @@ public:
     void set_options(
             const TCPTransportDescriptor* options) override;
 
-    void set_tls_verify_mode(
-            const TCPTransportDescriptor* options);
-
     void set_tls_sni(
             const TCPTransportDescriptor* options);
 

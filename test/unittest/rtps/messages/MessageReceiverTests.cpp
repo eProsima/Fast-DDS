@@ -15,54 +15,42 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/attributes/HistoryAttributes.hpp>
-#include <fastdds/rtps/attributes/ReaderAttributes.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
-#include <fastdds/rtps/attributes/WriterAttributes.hpp>
-#include <fastdds/rtps/common/CacheChange.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/EntityId_t.hpp>
-#include <fastdds/rtps/common/FragmentNumber.hpp>
-#include <fastdds/rtps/common/Guid.hpp>
-#include <fastdds/rtps/common/Locator.hpp>
-#include <fastdds/rtps/common/SequenceNumber.hpp>
-#include <fastdds/rtps/common/Types.hpp>
-#include <fastdds/rtps/history/ReaderHistory.hpp>
-#include <fastdds/rtps/history/WriterHistory.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.hpp>
-#include <fastdds/rtps/RTPSDomain.hpp>
+#include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/DeliveryRetCode.hpp>
+#include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <rtps/domain/RTPSDomainImpl.hpp>
 #include <rtps/flowcontrol/FlowController.hpp>
-#include <rtps/messages/MessageReceiver.h>
-#include <rtps/messages/RTPSMessageCreator.hpp>
-#include <rtps/reader/StatelessReader.hpp>
-#include <rtps/writer/BaseWriter.hpp>
-#include <rtps/writer/DeliveryRetCode.hpp>
-#include <rtps/writer/LocatorSelectorSender.hpp>
-
-#ifdef FASTDDS_STATISTICS
-
-void register_monitorservice_types_type_objects()
-{
-}
-
-void register_types_type_objects()
-{
-}
-
-#endif  // FASTDDS_STATISTICS
+#include <rtps/RTPSDomainImpl.hpp>
 
 namespace eprosima {
-namespace fastdds {
+namespace fastrtps {
 namespace rtps {
 
 //! Flow controller doing nothing, needed to build a writer outside of the participant.
-class NullFlowController : public FlowController
+class NullFlowController : public fastdds::rtps::FlowController
 {
 public:
 
@@ -71,17 +59,17 @@ public:
     }
 
     void register_writer(
-            BaseWriter*) override
+            RTPSWriter*) override
     {
     }
 
     void unregister_writer(
-            BaseWriter*) override
+            RTPSWriter*) override
     {
     }
 
     bool add_new_sample(
-            BaseWriter*,
+            RTPSWriter*,
             CacheChange_t*,
             const std::chrono::time_point<std::chrono::steady_clock>&) override
     {
@@ -89,7 +77,7 @@ public:
     }
 
     bool add_old_sample(
-            BaseWriter*,
+            RTPSWriter*,
             CacheChange_t*) override
     {
         return true;
@@ -123,14 +111,14 @@ public:
     {
     }
 
-    bool process_data_msg(
+    bool processDataMsg(
             CacheChange_t*) override
     {
         ++data_count;
         return true;
     }
 
-    bool process_data_frag_msg(
+    bool processDataFragMsg(
             CacheChange_t*,
             uint32_t,
             uint32_t,
@@ -140,24 +128,24 @@ public:
         return true;
     }
 
-    bool process_heartbeat_msg(
+    bool processHeartbeatMsg(
             const GUID_t&,
             uint32_t,
             const SequenceNumber_t&,
             const SequenceNumber_t&,
             bool,
             bool,
-            VendorId_t) override
+            fastdds::rtps::VendorId_t) override
     {
         ++heartbeat_count;
         return true;
     }
 
-    bool process_gap_msg(
+    bool processGapMsg(
             const GUID_t&,
             const SequenceNumber_t&,
             const SequenceNumberSet_t&,
-            VendorId_t) override
+            fastdds::rtps::VendorId_t) override
     {
         ++gap_count;
         return true;
@@ -170,8 +158,8 @@ public:
 };
 
 //! Writer counting the submessages the MessageReceiver forwards to it.
-//! It derives from BaseWriter because the concrete writers mark the processing methods as final.
-class SpyWriter : public BaseWriter
+//! It derives from RTPSWriter to avoid the side effects of the concrete writers.
+class SpyWriter : public RTPSWriter
 {
 public:
 
@@ -179,9 +167,9 @@ public:
             RTPSParticipantImpl* pimpl,
             const GUID_t& guid,
             const WriterAttributes& att,
-            FlowController* controller,
+            fastdds::rtps::FlowController* controller,
             WriterHistory* history)
-        : BaseWriter(pimpl, guid, att, controller, history, nullptr)
+        : RTPSWriter(pimpl, guid, att, controller, history, nullptr)
         , locator_selector_(*this, att.matched_readers_allocation)
     {
     }
@@ -193,7 +181,7 @@ public:
             const SequenceNumberSet_t&,
             bool,
             bool& result,
-            VendorId_t) override
+            fastdds::rtps::VendorId_t) override
     {
         ++acknack_count;
         result = true;
@@ -205,9 +193,9 @@ public:
             const GUID_t&,
             uint32_t,
             const SequenceNumber_t&,
-            const FragmentNumberSet_t&,
+            const FragmentNumberSet_t,
             bool& result,
-            VendorId_t) override
+            fastdds::rtps::VendorId_t) override
     {
         ++nack_frag_count;
         result = true;
@@ -218,6 +206,12 @@ public:
     unsigned int nack_frag_count = 0;
 
     // Remaining pure virtual methods are not exercised by the MessageReceiver.
+
+    bool matched_reader_add(
+            const ReaderProxyData&) override
+    {
+        return true;
+    }
 
     bool matched_reader_remove(
             const GUID_t&) override
@@ -232,54 +226,18 @@ public:
     }
 
     void reader_data_filter(
-            IReaderDataFilter*) override
+            fastdds::rtps::IReaderDataFilter*) override
     {
     }
 
-    const IReaderDataFilter* reader_data_filter() const override
+    const fastdds::rtps::IReaderDataFilter* reader_data_filter() const override
     {
         return nullptr;
     }
 
-    bool has_been_fully_delivered(
-            const SequenceNumber_t&) const override
+    void updateAttributes(
+            const WriterAttributes&) override
     {
-        return true;
-    }
-
-    bool is_acked_by_all(
-            const SequenceNumber_t&) const override
-    {
-        return true;
-    }
-
-    bool wait_for_all_acked(
-            const dds::Duration_t&) override
-    {
-        return true;
-    }
-
-    bool get_disable_positive_acks() const override
-    {
-        return false;
-    }
-
-    bool matched_readers_guids(
-            std::vector<GUID_t>&) const override
-    {
-        return true;
-    }
-
-    bool get_connections(
-            fastdds::statistics::rtps::ConnectionList&) override
-    {
-        return true;
-    }
-
-    bool matched_reader_add_edp(
-            const ReaderProxyData&) override
-    {
-        return true;
     }
 
     void unsent_change_added_to_history(
@@ -294,6 +252,15 @@ public:
     {
         return true;
     }
+
+#ifdef FASTDDS_STATISTICS
+    bool get_connections(
+            fastdds::statistics::rtps::ConnectionList&) override
+    {
+        return true;
+    }
+
+#endif // ifdef FASTDDS_STATISTICS
 
     DeliveryRetCode deliver_sample_nts(
             CacheChange_t*,
@@ -348,7 +315,7 @@ protected:
         participant_ = RTPSDomain::createParticipant(0, false, part_attrs, nullptr);
         ASSERT_NE(nullptr, participant_);
 
-        participant_impl_ = RTPSDomainImpl::get_instance()->find_participant(participant_->getGuid());
+        participant_impl_ = RTPSDomainImpl::find_local_participant(participant_->getGuid());
         ASSERT_NE(nullptr, participant_impl_);
 
         local_prefix_ = participant_->getGuid().guidPrefix;
@@ -631,7 +598,7 @@ TEST_F(MessageReceiverTests, nack_frag_with_unknown_reader_id_is_ignored)
 }
 
 } // namespace rtps
-} // namespace fastdds
+} // namespace fastrtps
 } // namespace eprosima
 
 int main(

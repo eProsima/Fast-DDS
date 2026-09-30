@@ -18,6 +18,7 @@
 #include <future>
 #include <thread>
 
+#include <asio/steady_timer.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
@@ -59,7 +60,6 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
     , strand_write_(make_strand(context))
     , secure_socket_(socket)
 {
-    set_tls_verify_mode(parent->configuration());
     set_tls_sni(parent->configuration());
 }
 
@@ -88,13 +88,13 @@ void TCPChannelResourceSecure::connect(
 
             TCPTransportInterface* parent = parent_;
             secure_socket_ = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(context_, ssl_context_);
-            set_tls_verify_mode(parent->configuration());
             set_tls_sni(parent->configuration());
             std::weak_ptr<TCPChannelResource> channel_weak_ptr = myself;
             const auto secure_socket = secure_socket_;
+            io_context* context = &context_;
 
             asio::async_connect(secure_socket_->lowest_layer(), endpoints,
-                    [secure_socket, channel_weak_ptr, parent](const std::error_code& error, ip::tcp::endpoint)
+                    [secure_socket, channel_weak_ptr, parent, context](const std::error_code& error, ip::tcp::endpoint)
                     {
                         if (!error)
                         {
@@ -105,7 +105,7 @@ void TCPChannelResourceSecure::connect(
                             }
 
                             secure_socket->async_handshake(role,
-                            [channel_weak_ptr, parent](const std::error_code& error)
+                            [channel_weak_ptr, parent, context](const std::error_code& error)
                             {
                                 if (!error)
                                 {
@@ -114,8 +114,16 @@ void TCPChannelResourceSecure::connect(
                                 else
                                 {
                                     EPROSIMA_LOG_ERROR(RTCP_TLS, "Handshake failed: " << error.message());
-                                    std::this_thread::sleep_for(std::chrono::seconds(5)); // Retry, but after a big while
-                                    parent->SocketConnected(channel_weak_ptr, error);
+                                    // Retry after a big wait without blocking the io_context thread.
+                                    // The channel stays in eConnecting until then, so sends do not trigger new connects.
+                                    std::shared_ptr<asio::steady_timer> retry_timer =
+                                    std::make_shared<asio::steady_timer>(*context);
+                                    retry_timer->expires_after(std::chrono::seconds(5));
+                                    retry_timer->async_wait(
+                                        [retry_timer, channel_weak_ptr, parent, error](const std::error_code&)
+                                        {
+                                            parent->SocketConnected(channel_weak_ptr, error);
+                                        });
                                 }
                             });
                         }
@@ -289,38 +297,6 @@ void TCPChannelResourceSecure::set_options(
         const TCPTransportDescriptor* options)
 {
     set_socket_options(secure_socket_->lowest_layer(), options);
-}
-
-void TCPChannelResourceSecure::set_tls_verify_mode(
-        const TCPTransportDescriptor* options)
-{
-    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
-
-    if (options->apply_security)
-    {
-        if (options->tls_config.verify_mode != TLSVerifyMode::UNUSED)
-        {
-            ssl::verify_mode vm = 0x00;
-            if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_NONE))
-            {
-                vm |= ssl::verify_none;
-            }
-            else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_PEER))
-            {
-                vm |= ssl::verify_peer;
-            }
-            else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT))
-            {
-                vm |= ssl::verify_fail_if_no_peer_cert;
-            }
-            else if (options->tls_config.get_verify_mode(TLSVerifyMode::VERIFY_CLIENT_ONCE))
-            {
-                vm |= ssl::verify_client_once;
-            }
-            secure_socket_->set_verify_mode(vm);
-        }
-
-    }
 }
 
 void TCPChannelResourceSecure::set_tls_sni(
