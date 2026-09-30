@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
 #include <limits>
 #include <memory>
 #include <thread>
@@ -32,6 +33,9 @@
 
 #include <rtps/transport/tcp/RTCPHeader.h>
 #include <rtps/transport/TCPv4Transport.h>
+#if TLS_FOUND
+#include <rtps/transport/TCPAcceptorSecure.h>
+#endif // if TLS_FOUND
 #include <utils/Semaphore.hpp>
 
 using namespace eprosima::fastdds;
@@ -839,7 +843,8 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_server_verifies)
     sendDescriptor.tls_config.cert_chain_file = "fastdds.crt";
     sendDescriptor.tls_config.private_key_file = "fastdds.key";
     sendDescriptor.tls_config.tmp_dh_file = "dh_params.pem";
-    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    // Client (recvDescriptor) has no certificate, so the TLS server must not require one
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
     sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
     sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
     sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
@@ -1131,6 +1136,475 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_untrusted)
         senderThread->join();
         sem.wait();
     }
+}
+
+// Checks that the TLS handshake is rejected: no data is exchanged and no channel is established.
+// If check_acceptor is true, it also checks that the accepting side never creates a channel.
+static void check_secure_connection_rejected(
+        const TCPv4TransportDescriptor& recvDescriptor,
+        const TCPv4TransportDescriptor& sendDescriptor,
+        bool check_acceptor)
+{
+    MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    ASSERT_TRUE(receiveTransportUnderTest.init());
+    MockTCPv4Transport sendTransportUnderTest(sendDescriptor);
+    ASSERT_TRUE(sendTransportUnderTest.init());
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    LocatorList_t locator_list;
+    locator_list.push_back(inputLocator);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+    std::atomic<bool> received{false};
+    msg_recv->setCallback([&received]()
+            {
+                received.store(true);
+            });
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::vector<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.emplace_back(&message[i], 1);
+    }
+
+    bool sent = false;
+    for (int count = 0; !sent && count < 30; ++count)
+    {
+        Locators input_begin(locator_list.begin());
+        Locators input_end(locator_list.end());
+        sent = send_resource_list.at(0)->send(buffer_list, 5, &input_begin, &input_end,
+                        (std::chrono::steady_clock::now() + std::chrono::microseconds(100)), 0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    EXPECT_FALSE(sent);
+    EXPECT_FALSE(received.load());
+
+    for (const auto& channel : sendTransportUnderTest.get_channel_resources())
+    {
+        EXPECT_FALSE(channel.second->connection_established());
+    }
+
+    if (check_acceptor)
+    {
+        EXPECT_TRUE(receiveTransportUnderTest.get_unbound_channel_resources().empty());
+        EXPECT_TRUE(receiveTransportUnderTest.get_channel_resources().empty());
+    }
+}
+
+/**
+ * @test Accepting side acting as TLS server with VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT
+ * must reject a client without certificate before creating any channel.
+ */
+TEST_F(TCPv4Tests, secure_server_rejects_client_without_certificate)
+{
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "testkey";
+    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "maincacert.pem";
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+
+    // Client trusts the server, but has no certificate
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.verify_file = "maincacert.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+
+    check_secure_connection_rejected(recvDescriptor, sendDescriptor, true);
+}
+
+/**
+ * @test Accepting side acting as TLS server with VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT
+ * must reject a client whose certificate is not signed by the trusted CA.
+ */
+TEST_F(TCPv4Tests, secure_server_rejects_client_with_untrusted_certificate)
+{
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "testkey";
+    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "maincacert.pem";
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+
+    // Client trusts the server, but its certificate is signed by a CA unknown to the server
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.password = "fastddspwd";
+    sendDescriptor.tls_config.cert_chain_file = "fastdds.crt";
+    sendDescriptor.tls_config.private_key_file = "fastdds.key";
+    sendDescriptor.tls_config.verify_file = "maincacert.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+
+    check_secure_connection_rejected(recvDescriptor, sendDescriptor, true);
+}
+
+/**
+ * @test Connecting side acting as TLS server (swapped handshake_role) with
+ * VERIFY_PEER | VERIFY_FAIL_IF_NO_PEER_CERT must reject a TLS client without certificate.
+ */
+TEST_F(TCPv4Tests, secure_server_role_on_connecting_side_rejects_client_without_certificate)
+{
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
+
+    // TLS client trusts the TLS server, but has no certificate
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.handshake_role = TLSHSRole::CLIENT;
+    recvDescriptor.tls_config.verify_file = "maincacert.pem";
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.handshake_role = TLSHSRole::SERVER;
+    sendDescriptor.tls_config.password = "testkey";
+    sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    sendDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    sendDescriptor.tls_config.verify_file = "maincacert.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+
+    // With TLS 1.3 the TLS client may consider the handshake finished before the server rejects it,
+    // so the accepting side may briefly create a channel. Only the connecting side is checked.
+    check_secure_connection_rejected(recvDescriptor, sendDescriptor, false);
+}
+
+/**
+ * @test Regression: an idle connection that never starts the TLS handshake must not block the TLS listener
+ * from accepting other connections, and must be closed after TCPAcceptorSecure::handshake_timeout_ms.
+ */
+TEST_F(TCPv4Tests, secure_idle_connection_does_not_block_listener)
+{
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using clock = std::chrono::steady_clock;
+
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    recvDescriptor.apply_security = true;
+    recvDescriptor.tls_config.password = "testkey";
+    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    recvDescriptor.tls_config.verify_file = "maincacert.pem";
+    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
+    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    ASSERT_TRUE(receiveTransportUnderTest.init());
+
+    TCPv4TransportDescriptor sendDescriptor;
+    sendDescriptor.apply_security = true;
+    sendDescriptor.tls_config.password = "testkey";
+    sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    sendDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    sendDescriptor.tls_config.verify_file = "maincacert.pem";
+    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport sendTransportUnderTest(sendDescriptor);
+    ASSERT_TRUE(sendTransportUnderTest.init());
+
+    Locator_t inputLocator;
+    inputLocator.kind = LOCATOR_KIND_TCPv4;
+    inputLocator.port = g_default_port;
+    IPLocator::setIPv4(inputLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(inputLocator, 7410);
+
+    LocatorList_t locator_list;
+    locator_list.push_back(inputLocator);
+
+    Locator_t outputLocator;
+    outputLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(outputLocator, 127, 0, 0, 1);
+    outputLocator.port = g_default_port;
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
+    MockMessageReceiver* msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
+    ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
+
+    std::atomic<bool> received{false};
+    msg_recv->setCallback([&received]()
+            {
+                received.store(true);
+            });
+
+    // Idle connection: plain TCP, never starts the TLS handshake
+    asio::io_context idle_context;
+    asio::ip::tcp::socket idle_socket(idle_context);
+    std::error_code ec;
+    idle_socket.connect(asio::ip::tcp::endpoint(asio::ip::address_v4::loopback(), g_default_port), ec);
+    ASSERT_FALSE(ec);
+    const auto idle_start = clock::now();
+
+    // A legitimate connection must succeed while the idle one is pending, well before the handshake timeout
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::vector<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.emplace_back(&message[i], 1);
+    }
+
+    const auto legit_deadline = idle_start + std::chrono::milliseconds(TCPAcceptorSecure::handshake_timeout_ms / 2);
+    bool sent = false;
+    while (!(sent && received.load()) && clock::now() < legit_deadline)
+    {
+        Locators input_begin(locator_list.begin());
+        Locators input_end(locator_list.end());
+        sent = send_resource_list.at(0)->send(buffer_list, 5, &input_begin, &input_end,
+                        (clock::now() + std::chrono::microseconds(100)), 0) || sent;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    EXPECT_TRUE(sent);
+    EXPECT_TRUE(received.load());
+
+    // The idle connection must be closed by the listener once the handshake timeout expires
+    bool read_done = false;
+    std::error_code read_error;
+    char byte = 0;
+    idle_socket.async_read_some(asio::buffer(&byte, 1),
+            [&read_done, &read_error](const std::error_code& error, size_t)
+            {
+                read_error = error;
+                read_done = true;
+            });
+    idle_context.run_for(std::chrono::milliseconds(TCPAcceptorSecure::handshake_timeout_ms + 5000));
+    const auto idle_elapsed = clock::now() - idle_start;
+
+    ASSERT_TRUE(read_done);
+    EXPECT_TRUE(static_cast<bool>(read_error));
+    EXPECT_GE(idle_elapsed, std::chrono::milliseconds(TCPAcceptorSecure::handshake_timeout_ms - 500));
+}
+
+// Exposes the protected connection status of a channel. Never instantiated.
+struct TCPChannelStatusAccessor : public TCPChannelResource
+{
+    static bool is_connecting(
+            const std::shared_ptr<TCPChannelResource>& channel)
+    {
+        return eConnectionStatus::eConnecting == channel->connection_status();
+    }
+
+};
+
+/**
+ * @test Regression: a failed outgoing TLS handshake must not block the transport io_context while waiting to retry,
+ * so the transport keeps accepting connections. The channel must stay in eConnecting during the retry delay,
+ * so sends do not trigger new connection attempts.
+ */
+TEST_F(TCPv4Tests, secure_failed_handshake_retry_does_not_block_transport)
+{
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using clock = std::chrono::steady_clock;
+
+    const uint16_t a_port = g_default_port;
+    const uint16_t b_port = static_cast<uint16_t>(g_default_port + 1);
+
+    // Transport A: listens, and connects to B. It only trusts maincacert
+    TCPv4TransportDescriptor aDescriptor;
+    aDescriptor.add_listener_port(a_port);
+    aDescriptor.apply_security = true;
+    aDescriptor.tls_config.password = "testkey";
+    aDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
+    aDescriptor.tls_config.private_key_file = "mainpubkey.pem";
+    aDescriptor.tls_config.verify_file = "maincacert.pem";
+    aDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    aDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    aDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    aDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    aDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    aDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    MockTCPv4Transport aTransport(aDescriptor);
+    ASSERT_TRUE(aTransport.init());
+
+    // Transport B: TLS server with a certificate that A does not trust
+    TCPv4TransportDescriptor bDescriptor;
+    bDescriptor.add_listener_port(b_port);
+    bDescriptor.apply_security = true;
+    bDescriptor.tls_config.password = "fastddspwd";
+    bDescriptor.tls_config.cert_chain_file = "fastdds.crt";
+    bDescriptor.tls_config.private_key_file = "fastdds.key";
+    bDescriptor.tls_config.tmp_dh_file = "dh_params.pem";
+    bDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    bDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    bDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    TCPv4Transport bTransport(bDescriptor);
+    ASSERT_TRUE(bTransport.init());
+
+    // Transport C: client trusted by A
+    TCPv4TransportDescriptor cDescriptor;
+    cDescriptor.apply_security = true;
+    cDescriptor.tls_config.password = "testkey";
+    cDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
+    cDescriptor.tls_config.private_key_file = "mainsubkey.pem";
+    cDescriptor.tls_config.verify_file = "maincacert.pem";
+    cDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    cDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    cDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    cDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    cDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    cDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
+    TCPv4Transport cTransport(cDescriptor);
+    ASSERT_TRUE(cTransport.init());
+
+    Locator_t aLocator;
+    aLocator.kind = LOCATOR_KIND_TCPv4;
+    aLocator.port = a_port;
+    IPLocator::setIPv4(aLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(aLocator, 7410);
+
+    Locator_t bLocator;
+    bLocator.kind = LOCATOR_KIND_TCPv4;
+    bLocator.port = b_port;
+    IPLocator::setIPv4(bLocator, 127, 0, 0, 1);
+    IPLocator::setLogicalPort(bLocator, 7410);
+
+    LocatorList_t a_locator_list;
+    a_locator_list.push_back(aLocator);
+    LocatorList_t b_locator_list;
+    b_locator_list.push_back(bLocator);
+
+    MockReceiverResource aReceiver(aTransport, aLocator);
+    MockMessageReceiver* a_msg_recv = dynamic_cast<MockMessageReceiver*>(aReceiver.CreateMessageReceiver());
+    ASSERT_TRUE(aTransport.IsInputChannelOpen(aLocator));
+    MockReceiverResource bReceiver(bTransport, bLocator);
+    ASSERT_TRUE(bTransport.IsInputChannelOpen(bLocator));
+
+    std::atomic<bool> received{false};
+    a_msg_recv->setCallback([&received]()
+            {
+                received.store(true);
+            });
+
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::vector<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.emplace_back(&message[i], 1);
+    }
+
+    // A connects to B: the handshake fails on A side within a few ms and the 5 s retry delay starts.
+    // connect_start approximates the start of that delay.
+    SendResourceList a_send_resource_list;
+    ASSERT_TRUE(aTransport.OpenOutputChannel(a_send_resource_list, bLocator));
+    ASSERT_FALSE(a_send_resource_list.empty());
+    const auto connect_start = clock::now();
+
+    std::shared_ptr<TCPChannelResource> a_to_b_channel;
+    {
+        const auto& channels = aTransport.get_channel_resources();
+        auto it = channels.find(IPLocator::toPhysicalLocator(bLocator));
+        ASSERT_NE(it, channels.end());
+        a_to_b_channel = it->second;
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    ASSERT_TRUE(TCPChannelStatusAccessor::is_connecting(a_to_b_channel));
+
+    auto send_a_to_b = [&]()
+            {
+                Locators input_begin(b_locator_list.begin());
+                Locators input_end(b_locator_list.end());
+                return a_send_resource_list.at(0)->send(buffer_list, 5, &input_begin, &input_end,
+                               (clock::now() + std::chrono::microseconds(100)), 0);
+            };
+
+    // C must connect to A during the retry delay. Sends from A to B must not restart the connection.
+    SendResourceList c_send_resource_list;
+    ASSERT_TRUE(cTransport.OpenOutputChannel(c_send_resource_list, aLocator));
+    ASSERT_FALSE(c_send_resource_list.empty());
+
+    // Maximum deadline. The loop ends as soon as C has sent and A has received.
+    const auto c_deadline = clock::now() + std::chrono::seconds(2);
+    bool sent = false;
+    while (!(sent && received.load()) && clock::now() < c_deadline)
+    {
+        Locators input_begin(a_locator_list.begin());
+        Locators input_end(a_locator_list.end());
+        sent = c_send_resource_list.at(0)->send(buffer_list, 5, &input_begin, &input_end,
+                        (clock::now() + std::chrono::microseconds(100)), 0) || sent;
+        EXPECT_FALSE(send_a_to_b());
+        EXPECT_TRUE(TCPChannelStatusAccessor::is_connecting(a_to_b_channel));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    EXPECT_TRUE(sent);
+    EXPECT_TRUE(received.load());
+
+    // Channel stays in eConnecting during the retry delay. Checked up to 4 s, 1 s before the expected expiry,
+    // to avoid races with the timer.
+    while (clock::now() < connect_start + std::chrono::seconds(4))
+    {
+        EXPECT_FALSE(send_a_to_b());
+        EXPECT_TRUE(TCPChannelStatusAccessor::is_connecting(a_to_b_channel));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    // Once the retry delay expires, the channel leaves eConnecting. 2 s margin after the expected expiry
+    // for the timer and the posted disconnect to run.
+    std::this_thread::sleep_until(connect_start + std::chrono::seconds(7));
+    EXPECT_FALSE(TCPChannelStatusAccessor::is_connecting(a_to_b_channel));
 }
 
 TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
