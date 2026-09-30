@@ -26,6 +26,7 @@
 #include <fastdds/rtps/reader/RTPSReader.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.hpp>
 
+#include <rtps/messages/MaxAsioBuffers.hpp>
 #include <rtps/messages/RTPSGapBuilder.hpp>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/participant/RTPSParticipantImpl.hpp>
@@ -34,11 +35,7 @@
 
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
-#ifdef FASTDDS_STATISTICS
-const size_t max_boost_buffers = 61; // ... + SubMsg header + SubMsg body + Statistics message
-#else
-const size_t max_boost_buffers = 62; // ... + SubMsg header + SubMsg body
-#endif // ifdef FASTDDS_STATISTICS
+using eprosima::fastdds::rtps::detail::max_boost_buffers;
 
 namespace eprosima {
 namespace fastdds {
