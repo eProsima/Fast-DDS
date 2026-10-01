@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+#include <cstdint>
 #include <memory>
 #include <regex>
 

@@ -19,6 +19,7 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPREDICATE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERPREDICATE_HPP_
 
+#include <cstdint>
 #include <memory>
 
 #include "DDSFilterCondition.hpp"
