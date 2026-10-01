@@ -36,6 +36,9 @@ public:
 
     CLIParser() = delete;
 
+    //! History depth used when no samples limit is given through the CLI
+    static constexpr int32_t DEFAULT_HISTORY_DEPTH = 400;
+
     //! Entity kind enumeration
     enum class EntityKind : uint8_t
     {

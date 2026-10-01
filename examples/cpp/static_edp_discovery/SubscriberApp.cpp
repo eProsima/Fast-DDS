@@ -95,7 +95,7 @@ SubscriberApp::SubscriberApp(
     uint32_t max_samples = samples_;
     if (max_samples == 0)
     {
-        max_samples = DATAREADER_QOS_DEFAULT.resource_limits().max_samples_per_instance;
+        max_samples = CLIParser::DEFAULT_HISTORY_DEPTH;
     }
     // Create the reader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
