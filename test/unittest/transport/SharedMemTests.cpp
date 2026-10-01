@@ -871,6 +871,62 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     sem.disable();
 }
 
+// Opening a healthy port must not wait for the next listener heartbeat.
+// The watchdog task that verifies the listeners leaves last_verified_counter
+// equal to counter, so a health check performed right afterwards finds no
+// evidence of progress and used to wait for port_wait_timeout_ms (333 ms with
+// the default 1000 ms timeout) even though the listener was healthy.
+TEST_F(SHMTransportTests, healthy_idle_port_open_latency)
+{
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+    SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
+
+    shared_mem_global->remove_port(0);
+
+    auto port = shared_mem_global->open_port(0, 4, 1000,
+                    SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    uint32_t listener_index;
+    auto listener = port->create_listener(&listener_index);
+    std::atomic<bool> is_listener_closed(false);
+    std::thread listener_thread([&]
+            {
+                port->wait_pop(*listener, is_listener_closed, listener_index);
+            }
+            );
+
+    double worst_ms = 0;
+    for (unsigned i = 0; i < 100; ++i)
+    {
+        // Let the watchdog verify the listener in between, which is what makes
+        // the counter equality permanent for the opener.
+        std::this_thread::sleep_for(std::chrono::milliseconds(23));
+
+        auto start = std::chrono::steady_clock::now();
+
+        // A sender that does not know the port yet has to open it.
+        auto sender_port = shared_mem_global->open_port(0, 4, 1000,
+                        SharedMemGlobal::Port::OpenMode::Write);
+
+        const double elapsed_ms = std::chrono::duration<double, std::milli>(
+            std::chrono::steady_clock::now() - start).count();
+        worst_ms = (std::max)(worst_ms, elapsed_ms);
+
+        sender_port.reset();
+    }
+
+    is_listener_closed.exchange(true);
+    port->close_listener(&is_listener_closed);
+    listener_thread.join();
+    port->unregister_listener(&listener, listener_index);
+    port.reset();
+    shared_mem_global->remove_port(0);
+
+    // The wait timeout is healthy_check_timeout_ms / 3, so a regression shows
+    // up as ~333 ms. Keep a wide margin over the microseconds of a healthy
+    // open to avoid depending on machine load.
+    EXPECT_LT(worst_ms, 100.0) << "worst port open was " << worst_ms << " ms";
+}
+
 TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 {
     auto shared_mem_manager = SharedMemManager::create(domain_name);
