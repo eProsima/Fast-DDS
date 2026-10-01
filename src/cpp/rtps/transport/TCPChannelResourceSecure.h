@@ -21,7 +21,8 @@
 #define OPENSSL_API_COMPAT 10101
 
 #include "../network/asio.hpp"
-#include <asio/ssl.hpp>
+#include <asio/ssl/context.hpp>
+#include <asio/ssl/stream.hpp>
 #include <asio/strand.hpp>
 #include <rtps/transport/TCPChannelResource.h>
 
