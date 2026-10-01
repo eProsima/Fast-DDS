@@ -79,7 +79,15 @@ public:
     //CDR Serialization and Deserialization of KeyMaterials
     std::vector<uint8_t> KeyMaterialCDRSerialize(
             KeyMaterial_AES_GCM_GMAC& key);
-    void KeyMaterialCDRDeserialize(
+    /**
+     * Deserializes a KeyMaterial_AES_GCM_GMAC received in a CryptoToken.
+     *
+     * @param [out] buffer Deserialized key material. Must not be used if false is returned.
+     * @param CDR Serialized key material, as produced by KeyMaterialCDRSerialize.
+     * @return true on success, false if the transformation kind is missing or unknown,
+     *         or required key fields are truncated or malformed.
+     */
+    bool KeyMaterialCDRDeserialize(
             KeyMaterial_AES_GCM_GMAC& buffer,
             std::vector<uint8_t>* CDR);
 
