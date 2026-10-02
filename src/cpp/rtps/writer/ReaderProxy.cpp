@@ -260,13 +260,8 @@ void ReaderProxy::add_change(
     if (changes_for_reader_.push_back(change) == nullptr)
     {
         // This should never happen
-<<<<<<< HEAD
-        logError(RTPS_READER_PROXY, "Error adding change " << change.getSequenceNumber()
+        logError(RTPS_READER_PROXY, "Error adding change " << seq_num
                                                            << " to reader proxy " << guid());
-=======
-        EPROSIMA_LOG_ERROR(RTPS_READER_PROXY, "Error adding change " << seq_num
-                                                                     << " to reader proxy " << guid());
->>>>>>> ae46652 (Fix GAP messages are not sent when there is no Reader requesting the DATA (#6181) (#6198))
         eprosima::fastdds::dds::Log::Flush();
         assert(false);
     }
