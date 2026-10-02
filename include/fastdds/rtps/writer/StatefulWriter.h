@@ -168,8 +168,6 @@ public:
             const SequenceNumber_t& first_seq,
             const SequenceNumber_t& last_seq);
 
-<<<<<<< HEAD:include/fastdds/rtps/writer/StatefulWriter.h
-=======
     /**
      * @brief Sends a heartbeat directly to an intraprocess reader.
      *
@@ -180,7 +178,6 @@ public:
      *
      * @return True on success.
      */
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542)):src/cpp/rtps/writer/StatefulWriter.hpp
     bool intraprocess_heartbeat(
             ReaderProxy* reader_proxy,
             bool liveliness = false,
@@ -219,7 +216,7 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
-    template <typename Function>
+    template<typename Function>
     Function for_each_reader_proxy(
             Function f) const
     {

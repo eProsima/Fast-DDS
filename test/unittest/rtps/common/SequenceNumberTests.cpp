@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
 #include <fastrtps/rtps/common/SequenceNumber.h>
-=======
-#include <algorithm>
-#include <climits>
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
 
+#include <algorithm>
 #include <climits>
 #include <gtest/gtest.h>
 
@@ -450,7 +446,7 @@ TEST(SequenceNumberSet, AddOperation)
     ASSERT_TRUE(set.add(seq));
 
     seq += 3;
-    
+
     ASSERT_FALSE(set.add(seq));
 
 }
@@ -495,9 +491,6 @@ TEST(SequenceNumberSet, GetMaxSeqNumOperation)
     ASSERT_EQ(set.max(), expected_seq);
 }
 
-<<<<<<< HEAD
-int main(int argc, char **argv)
-=======
 /*!
  * @fn TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
  * @brief This test checks the unknown sequence number is always lower than any other sequence number.
@@ -519,7 +512,6 @@ TEST(SequenceNumberSet, ComparisonForUnknownSeqNum)
 int main(
         int argc,
         char** argv)
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

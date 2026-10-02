@@ -19,7 +19,6 @@
 
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-<<<<<<< HEAD
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
@@ -38,14 +37,6 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastdds/rtps/history/WriterHistory.h>
-=======
-#include <algorithm>
-#include <mutex>
-#include <stdexcept>
-#include <vector>
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
-
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/TimeConversion.h>
 
@@ -60,6 +51,7 @@
 
 #include "../flowcontrol/FlowController.hpp"
 
+#include <algorithm>
 #include <mutex>
 #include <vector>
 #include <stdexcept>
@@ -550,12 +542,12 @@ bool StatefulWriter::change_removed_by_history(
     // Take note of biggest removed sequence number to improve sending of gaps
     if (sequence_number > biggest_removed_sequence_number_)
     {
-<<<<<<< HEAD
-        biggest_removed_sequence_number_ = sequence_number;
-=======
+            << << << < HEAD
+            biggest_removed_sequence_number_ = sequence_number;
+        == == == =
 
-        // Take note of biggest removed sequence number to improve sending of gaps
-        if (sequence_number > biggest_removed_sequence_number_)
+                // Take note of biggest removed sequence number to improve sending of gaps
+                if (sequence_number > biggest_removed_sequence_number_)
         {
             biggest_removed_sequence_number_ = sequence_number;
         }
@@ -602,7 +594,7 @@ bool StatefulWriter::change_removed_by_history(
         may_remove_change_cond_.notify_one();
 
         ret_value = true;
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
+        >> >> >> > 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
     }
 
     // Invalidate CacheChange pointer in ReaderProxies.
@@ -664,12 +656,13 @@ void StatefulWriter::send_heartbeat_to_all_readers()
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
-<<<<<<< HEAD
-            add_gaps_for_holes_in_history_(group);
+                << << << < HEAD
+                    add_gaps_for_holes_in_history_(group);
 
-=======
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
-            send_heartbeat_nts_(locator_selector_general_.all_remote_readers.size(), group, disable_positive_acks_);
+            == == == =
+                    >> >> >> > 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
+                    send_heartbeat_nts_(locator_selector_general_.all_remote_readers.size(), group,
+                            disable_positive_acks_);
 
             add_gaps_for_holes_in_history(group);
         }
@@ -766,72 +759,73 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
         {
             SequenceNumber_t gap_seq;
             FragmentNumber_t next_unsent_frag = 0;
-<<<<<<< HEAD
-=======
+                << << << < HEAD
+                == == == =
 
-            if (SequenceNumber_t::unknown() != (*remote_reader)->first_irrelevant_removed())
-            {
-                // Send GAP with irrelevant changes that are not in history.
-                group.sender(this, (*remote_reader)->message_sender());
-                send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                add_gaps_for_removed_irrelevants(**remote_reader, group);
-                group.sender(this, &locator_selector);             // This makes the flush_and_reset().
-            }
-
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
-            if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq, get_seq_num_min(),
-                    need_reactivate_periodic_heartbeat) &&
-                    (0 == n_fragments || min_unsent_fragment >= next_unsent_frag))
-            {
-                if (min_unsent_fragment > next_unsent_frag)
-                {
-                    locator_selector.locator_selector.reset(false);
-                    first_relevant_reader = remote_reader;
-                    min_unsent_fragment = next_unsent_frag;
+                    if (SequenceNumber_t::unknown() != (*remote_reader)->first_irrelevant_removed())
+                    {
+                    // Send GAP with irrelevant changes that are not in history.
+                    group.sender(this, (*remote_reader)->message_sender());
+                    send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                    add_gaps_for_removed_irrelevants(**remote_reader, group);
+                    group.sender(this, &locator_selector);         // This makes the flush_and_reset().
                 }
 
-                (*remote_reader)->active(true);
-                locator_selector.locator_selector.enable((*remote_reader)->guid());
-                should_be_sent = true;
-                inline_qos |= (*remote_reader)->expects_inline_qos();
-
-                // If there is a hole (removed from history or not relevants) between previous sample and this one,
-                // send it a personal GAP.
-                if (SequenceNumber_t::unknown() != gap_seq)
-                {
-                    if (SequenceNumber_t::unknown() == gap_seq_for_all)     // Calculate if the hole is for all readers
+                >> >> >> > 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
+                if ((*remote_reader)->change_is_unsent(change->sequenceNumber, next_unsent_frag, gap_seq,
+                    get_seq_num_min(),
+                    need_reactivate_periodic_heartbeat) &&
+                    (0 == n_fragments || min_unsent_fragment >= next_unsent_frag))
                     {
-                        History::const_iterator chit = mp_history->find_change_nts(change);
+                    if (min_unsent_fragment > next_unsent_frag)
+                    {
+                        locator_selector.locator_selector.reset(false);
+                        first_relevant_reader = remote_reader;
+                        min_unsent_fragment = next_unsent_frag;
+                    }
 
-                        if (chit == mp_history->changesBegin())
-                        {
-                            gap_seq_for_all = gap_seq;
-                        }
-                        else
-                        {
-                            SequenceNumber_t prev = (*std::prev(chit))->sequenceNumber + 1;
+                    (*remote_reader)->active(true);
+                    locator_selector.locator_selector.enable((*remote_reader)->guid());
+                    should_be_sent = true;
+                    inline_qos |= (*remote_reader)->expects_inline_qos();
 
-                            if (prev == gap_seq)
+                    // If there is a hole (removed from history or not relevants) between previous sample and this one,
+                    // send it a personal GAP.
+                    if (SequenceNumber_t::unknown() != gap_seq)
+                    {
+                        if (SequenceNumber_t::unknown() == gap_seq_for_all) // Calculate if the hole is for all readers
+                        {
+                            History::const_iterator chit = mp_history->find_change_nts(change);
+
+                            if (chit == mp_history->changesBegin())
                             {
                                 gap_seq_for_all = gap_seq;
                             }
+                            else
+                            {
+                                SequenceNumber_t prev = (*std::prev(chit))->sequenceNumber + 1;
+
+                                if (prev == gap_seq)
+                                {
+                                    gap_seq_for_all = gap_seq;
+                                }
+                            }
+                        }
+
+                        if (gap_seq_for_all != gap_seq) // If it is an individual GAP, sent it to repective reader.
+                        {
+                            group.sender(this, (*remote_reader)->message_sender());
+                            send_heartbeat_nts_(1u, group, disable_positive_acks_);
+                            group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber),
+                                    (*remote_reader)->guid());
+                            group.sender(this, &locator_selector); // This makes the flush_and_reset().
                         }
                     }
-
-                    if (gap_seq_for_all != gap_seq)     // If it is an individual GAP, sent it to repective reader.
-                    {
-                        group.sender(this, (*remote_reader)->message_sender());
-                        send_heartbeat_nts_(1u, group, disable_positive_acks_);
-                        group.add_gap(gap_seq, SequenceNumberSet_t(change->sequenceNumber),
-                                (*remote_reader)->guid());
-                        group.sender(this, &locator_selector);     // This makes the flush_and_reset().
-                    }
                 }
-            }
-            else
-            {
-                (*remote_reader)->active(false);
-            }
+                else
+                    {
+                    (*remote_reader)->active(false);
+                }
         }
 
         bool should_send_global_gap = SequenceNumber_t::unknown() != gap_seq_for_all;
