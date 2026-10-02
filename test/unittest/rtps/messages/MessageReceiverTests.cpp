@@ -44,6 +44,7 @@
 
 #include <rtps/flowcontrol/FlowController.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
+#include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -596,6 +597,26 @@ TEST_F(MessageReceiverTests, nack_frag_with_unknown_reader_id_is_ignored)
     }
     EXPECT_EQ(1u, writer_->nack_frag_count);
 }
+
+#ifdef FASTDDS_STATISTICS
+
+/**
+ * @test A statistics network submessage (0x80) that is not the last submessage must not cause the
+ * submessages after it to be dropped.
+ */
+TEST_F(MessageReceiverTests, statistics_submessage_not_last_keeps_following_submessages)
+{
+    CDRMessage_t msg(1000);
+    RTPSMessageCreator::addHeader(&msg, remote_prefix_);
+    fastdds::statistics::rtps::add_statistics_submessage(&msg);
+    SequenceNumberSet_t gap_list(SequenceNumber_t(0, 2));
+    RTPSMessageCreator::addSubmessageGap(&msg, SequenceNumber_t(0, 1), gap_list, local_reader_id_, remote_writer_id_);
+    process(msg);
+
+    EXPECT_EQ(1u, reader_->gap_count);
+}
+
+#endif  // FASTDDS_STATISTICS
 
 } // namespace rtps
 } // namespace fastrtps
