@@ -205,7 +205,7 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
-    template <typename Function>
+    template<typename Function>
     Function for_each_reader_proxy(
             Function f) const
     {
@@ -462,7 +462,13 @@ private:
      */
     bool ack_timer_expired();
 
-    void send_heartbeat_to_all_readers();
+    /*!
+     * Send heartbeat to all the remote readers.
+     * @param force_separating True to send the heartbeat separately for each reader.
+     * False to send a unique heartbeat to all the readers.
+     */
+    void send_heartbeat_to_all_readers(
+            bool force_separating);
 
     void deliver_sample_to_intraprocesses(
             CacheChange_t* change);
@@ -478,6 +484,10 @@ private:
 
     void prepare_datasharing_delivery(
             CacheChange_t* change);
+
+    void add_gaps_for_removed_irrelevants(
+            ReaderProxy& remoteReaderProxy,
+            RTPSMessageGroup& group);
 
     /**
      * Check the StatefulWriter's sequence numbers and add the required GAP messages to the provided message group.
