@@ -962,23 +962,60 @@ bool StatefulReader::process_gap_msg(
 
     if (acceptMsgFrom(writerGUID, &pWP) && pWP)
     {
-        History::const_iterator history_iterator = history_->changesBegin();
-        auto remove_fn = [this, &writerGUID, &history_iterator](const SequenceNumber_t& seq)
+        SequenceNumber_t firstSN = gapStart;
+        SequenceNumberSet_t gapSet = gapList;
+        if (pWP->process_gap(gapStart, gapList, firstSN, gapSet))
+        {
+            // Traverse the history and remove any fragmented changes present in the received gap.
+            // We only remove fragmented changes because fully assembled changes are already considered as received.
+            History::const_iterator history_iterator = history_->changesBegin();
+            while (history_iterator != history_->changesEnd())
+            {
+                CacheChange_t* change = *history_iterator;
+                if (change->writerGUID != writerGUID)
                 {
-                    CacheChange_t* to_remove = nullptr;
-                    auto ret_iterator = find_cache_in_fragmented_process(seq, writerGUID, to_remove, history_iterator);
-                    if (to_remove != nullptr)
-                    {
-                        // we call the History version to avoid callbacks
-                        history_iterator = history_->History::remove_change_nts(ret_iterator);
-                    }
-                    else if (ret_iterator != history_->changesEnd())
-                    {
-                        history_iterator = ret_iterator;
-                    }
-                };
+                    // Not the same writer, skip to next change
+                    ++history_iterator;
+                    continue;
+                }
 
-        pWP->process_gap(gapStart, gapList, remove_fn);
+                SequenceNumber_t seq = change->sequenceNumber;
+
+                if (seq < firstSN)
+                {
+                    // Not yet at the beginning of the gap, skip to next change
+                    ++history_iterator;
+                    continue;
+                }
+
+                if (seq >= gapSet.base())
+                {
+                    if (gapSet.empty() || (seq > gapSet.max()))
+                    {
+                        // Past the end of the gap, no more changes to remove
+                        break;
+                    }
+
+                    if (!gapSet.is_set(seq))
+                    {
+                        // Not in the gap, skip to next change
+                        ++history_iterator;
+                        continue;
+                    }
+                }
+
+                if (change->is_fully_assembled())
+                {
+                    // We only remove fragmented changes, so skip to next change
+                    ++history_iterator;
+                    continue;
+                }
+
+                // Fragmented change present in the gap, so remove it.
+                // We call the History overload to avoid callbacks
+                history_iterator = history_->History::remove_change_nts(history_iterator);
+            }
+        }
 
         // Maybe now we have to notify user from new CacheChanges.
         NotifyChanges(pWP);
@@ -1275,11 +1312,8 @@ void StatefulReader::NotifyChanges(
         on_data_notify(statistics_source_guid, aux_ch->sourceTimestamp);
 
         ++it;
-        do
-        {
-            next_seq = prox->next_cache_change_to_be_notified();
-        }
-        while (next_seq != c_SequenceNumber_Unknown && next_seq <= aux_ch->sequenceNumber);
+        prox->consider_all_notified_up_to(aux_ch->sequenceNumber);
+        next_seq = prox->next_cache_change_to_be_notified();
     }
     // Ensure correct state of proxy when max_seq is not present in history
     prox->consider_all_notified();
