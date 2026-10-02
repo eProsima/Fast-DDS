@@ -172,8 +172,6 @@ public:
             const SequenceNumber_t& first_seq,
             const SequenceNumber_t& last_seq);
 
-<<<<<<< HEAD:include/fastdds/rtps/writer/StatefulWriter.h
-=======
     /**
      * @brief Sends a heartbeat directly to an intraprocess reader.
      *
@@ -184,7 +182,6 @@ public:
      *
      * @return True on success.
      */
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542)):src/cpp/rtps/writer/StatefulWriter.hpp
     bool intraprocess_heartbeat(
             ReaderProxy* reader_proxy,
             bool liveliness = false,

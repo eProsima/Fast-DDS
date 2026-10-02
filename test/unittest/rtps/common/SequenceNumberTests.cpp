@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
 #include <fastrtps/rtps/common/SequenceNumber.h>
-=======
-#include <algorithm>
-#include <climits>
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
 
+#include <algorithm>
 #include <climits>
 #include <gtest/gtest.h>
 
