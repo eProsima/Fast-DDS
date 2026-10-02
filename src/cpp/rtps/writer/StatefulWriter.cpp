@@ -17,12 +17,7 @@
  *
  */
 
-<<<<<<< HEAD
-=======
-#include "StatefulWriter.hpp"
-
 #include <algorithm>
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
 #include <mutex>
 #include <stdexcept>
 #include <vector>
@@ -637,14 +632,9 @@ void StatefulWriter::send_heartbeat_to_all_readers(
                 (SequenceNumber_t::unknown() != get_seq_num_min() &&
                 SequenceNumber_t::unknown() != get_seq_num_max()));
 
-<<<<<<< HEAD
-            add_gaps_for_holes_in_history_(group);
-
-=======
->>>>>>> 27aa507 (Fix volatile reader desync after initial positioning GAP (#6542))
             send_heartbeat_nts_(locator_selector_general_.all_remote_readers.size(), group, disable_positive_acks_);
 
-            add_gaps_for_holes_in_history(group);
+            add_gaps_for_holes_in_history_(group);
         }
     }
 }
