@@ -84,8 +84,7 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
         ++low;
         if (low == 0)
         {
-            assert(std::numeric_limits<decltype(high)>::max() > high);
-            ++high;
+            increase_high_or_cap(*this);
         }
 
         return *this;
@@ -113,8 +112,7 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
         if (low < aux_low)
         {
             // Being the type of the parameter an 'int', the increment of 'high' will be as much as 1.
-            assert(std::numeric_limits<decltype(high)>::max() > high);
-            ++high;
+            increase_high_or_cap(*this);
         }
 
         return *this;
@@ -123,6 +121,32 @@ struct FASTDDS_EXPORTED_API SequenceNumber_t
     static SequenceNumber_t unknown() noexcept
     {
         return {-1, 0};
+    }
+
+    static inline void increase_high_or_cap(
+            SequenceNumber_t& seq) noexcept
+    {
+        if (seq.high < std::numeric_limits<int32_t>::max())
+        {
+            ++seq.high;
+        }
+        else
+        {
+            seq.low = std::numeric_limits<uint32_t>::max();
+        }
+    }
+
+    static void decrease_high_or_cap(
+            SequenceNumber_t& seq) noexcept
+    {
+        if (seq.high > 0)
+        {
+            --seq.high;
+        }
+        else
+        {
+            seq.low = 0;
+        }
     }
 
 };
@@ -242,8 +266,7 @@ inline SequenceNumber_t operator -(
     if (inc > seq.low)
     {
         // Being the type of the parameter an 'uint32_t', the decrement of 'high' will be as much as 1.
-        assert(0 < res.high);
-        --res.high;
+        SequenceNumber_t::decrease_high_or_cap(res);
     }
 
     return res;
@@ -264,8 +287,7 @@ inline SequenceNumber_t operator +(
     if (res.low < seq.low)
     {
         // Being the type of the parameter an 'uint32_t', the increment of 'high' will be as much as 1.
-        assert(std::numeric_limits<decltype(res.high)>::max() > res.high);
-        ++res.high;
+        SequenceNumber_t::increase_high_or_cap(res);
     }
 
     return res;
@@ -286,8 +308,7 @@ inline SequenceNumber_t operator -(
 
     if (minuend.low < subtrahend.low)
     {
-        assert(0 < res.high);
-        --res.high;
+        SequenceNumber_t::decrease_high_or_cap(res);
     }
 
     return res;
