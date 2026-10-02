@@ -791,8 +791,8 @@ TEST(WriterProxyTests, GapIgnoredUntilHeartbeat)
     StatefulReader readerMock;
     EXPECT_CALL(readerMock, getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
-    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initial_acknack_delay)).Times(1u);
-    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeat_response_delay)).Times(1u);
+    EXPECT_CALL(*wproxy.initial_acknack_, update_interval(readerMock.getTimes().initialAcknackDelay)).Times(1u);
+    EXPECT_CALL(*wproxy.heartbeat_response_, update_interval(readerMock.getTimes().heartbeatResponseDelay)).Times(1u);
     EXPECT_CALL(*wproxy.initial_acknack_, restart_timer()).Times(1u);
     EXPECT_CALL(*wproxy.heartbeat_response_, restart_timer()).Times(::testing::AnyNumber());
     wproxy.start(wattr, SequenceNumber_t());
