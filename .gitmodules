@@ -13,3 +13,6 @@
 [submodule "thirdparty/dds-types-test"]
 	path = thirdparty/dds-types-test
 	url = https://github.com/eProsima/dds-types-test
+[submodule "thirdparty/foonathan_memory"]
+	path = thirdparty/foonathan_memory
+	url = https://github.com/foonathan/memory
