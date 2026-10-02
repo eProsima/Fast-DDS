@@ -1400,12 +1400,17 @@ const Publisher* DataWriterImpl::get_publisher() const
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_writer_matched(
-        RTPSWriter* /*writer*/,
+        RTPSWriter* writer,
         const MatchingInfo& info)
 {
     std::lock_guard<std::mutex> scoped_lock(matching_info_mutex_);
 
-    data_writer_->update_publication_matched_status(info);
+    {
+        // get_publication_matched_status() reads and resets these counters while
+        // holding the writer mutex, so updating them needs the same protection.
+        std::lock_guard<RecursiveTimedMutex> status_lock(writer->getMutex());
+        data_writer_->update_publication_matched_status(info);
+    }
 
     StatusMask notify_status = StatusMask::publication_matched();
     DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
