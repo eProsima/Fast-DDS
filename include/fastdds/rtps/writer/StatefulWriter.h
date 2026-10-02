@@ -205,7 +205,7 @@ public:
     bool is_acked_by_all(
             const CacheChange_t* a_change) const override;
 
-    template <typename Function>
+    template<typename Function>
     Function for_each_reader_proxy(
             Function f) const
     {
