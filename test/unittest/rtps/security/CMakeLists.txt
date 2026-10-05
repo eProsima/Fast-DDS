@@ -104,8 +104,11 @@ target_include_directories(SecurityAuthentication PRIVATE
     )
 target_link_libraries(SecurityAuthentication
     fastcdr
-    fastdds::log
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     )
+fastdds_target_link_object_groups(SecurityAuthentication
+    fastdds::log
+    )
+
 gtest_discover_tests(SecurityAuthentication)

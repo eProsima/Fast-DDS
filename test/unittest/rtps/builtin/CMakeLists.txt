@@ -85,7 +85,6 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
     )
 target_link_libraries(BuiltinDataSerializationTests
     fastcdr
-    fastdds::log
     foonathan_memory
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -93,5 +92,9 @@ target_link_libraries(BuiltinDataSerializationTests
     $<$<BOOL:${QNX}>:socket>
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(BuiltinDataSerializationTests
+    fastdds::log
+    )
+
 
 gtest_discover_tests(BuiltinDataSerializationTests)

@@ -63,10 +63,13 @@ target_include_directories(DDSSQLFilterTests PRIVATE
     )
 target_link_libraries(DDSSQLFilterTests
     fastcdr
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     )
+fastdds_target_link_object_groups(DDSSQLFilterTests
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(DDSSQLFilterTests)

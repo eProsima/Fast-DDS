@@ -58,9 +58,12 @@ target_include_directories(ConditionTests PRIVATE
     )
 target_link_libraries(ConditionTests
     fastcdr
-    fastdds::log
     GTest::gtest
     )
+fastdds_target_link_object_groups(ConditionTests
+    fastdds::log
+    )
+
 gtest_discover_tests(ConditionTests)
 
 ### ConditionNotifier ###
@@ -99,10 +102,13 @@ target_include_directories(ConditionNotifierTests PRIVATE
     )
 target_link_libraries(ConditionNotifierTests
     fastcdr
-    fastdds::log
     GTest::gtest
     GTest::gmock
     )
+fastdds_target_link_object_groups(ConditionNotifierTests
+    fastdds::log
+    )
+
 gtest_discover_tests(ConditionNotifierTests)
 
 ### StatusConditionImpl ###
@@ -142,10 +148,13 @@ target_include_directories(StatusConditionImplTests PRIVATE
     )
 target_link_libraries(StatusConditionImplTests
     fastcdr
-    fastdds::log
     GTest::gtest
     GTest::gmock
     )
+fastdds_target_link_object_groups(StatusConditionImplTests
+    fastdds::log
+    )
+
 gtest_discover_tests(StatusConditionImplTests)
 
 ### WaitSetImpl ###
@@ -184,8 +193,11 @@ target_include_directories(WaitSetImplTests PRIVATE
     )
 target_link_libraries(WaitSetImplTests
     fastcdr
-    fastdds::log
     GTest::gtest
     GTest::gmock
     )
+fastdds_target_link_object_groups(WaitSetImplTests
+    fastdds::log
+    )
+
 gtest_discover_tests(WaitSetImplTests)

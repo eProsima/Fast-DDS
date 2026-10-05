@@ -45,7 +45,10 @@ target_include_directories(LoanableSequenceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LoanableSequenceTests
     fastcdr
-    fastdds::log
     GTest::gtest
     )
+fastdds_target_link_object_groups(LoanableSequenceTests
+    fastdds::log
+    )
+
 gtest_discover_tests(LoanableSequenceTests)

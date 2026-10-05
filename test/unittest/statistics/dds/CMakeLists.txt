@@ -129,11 +129,14 @@ if (FASTDDS_STATISTICS)
     target_link_libraries(DomainParticipantStatisticsListenerTests
         ${TINYXML2_LIBRARY}
         fastcdr
-        fastdds::log
-        fastdds::xtypes::type-representation
-        fastdds::xtypes::dynamic-types::impl
         GTest::gmock
         )
+    fastdds_target_link_object_groups(DomainParticipantStatisticsListenerTests
+        fastdds::log
+        fastdds::xtypes::dynamic-types::impl
+        fastdds::xtypes::type-representation
+        )
+
     gtest_discover_tests(DomainParticipantStatisticsListenerTests)
 endif()
 
@@ -615,9 +618,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
     target_link_libraries(StatisticsDomainParticipantMockTests PRIVATE
         fastcdr
-        fastdds::log
-        fastdds::xtypes::dynamic-types::impl
-        fastdds::xtypes::type-representation
         foonathan_memory
         GTest::gmock
         ${CMAKE_DL_LIBS}
@@ -627,6 +627,12 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
         )
+    fastdds_target_link_object_groups(StatisticsDomainParticipantMockTests
+        fastdds::log
+        fastdds::xtypes::dynamic-types::impl
+        fastdds::xtypes::type-representation
+        )
+
 
     gtest_discover_tests(StatisticsDomainParticipantMockTests)
 
@@ -660,9 +666,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
     target_link_libraries(StatisticsDomainParticipantStatusQueryableTests PRIVATE
         fastcdr
-        fastdds::log
-        fastdds::xtypes::dynamic-types::impl
-        fastdds::xtypes::type-representation
         foonathan_memory
         GTest::gmock
         ${CMAKE_DL_LIBS}
@@ -672,6 +675,12 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
         )
+    fastdds_target_link_object_groups(StatisticsDomainParticipantStatusQueryableTests
+        fastdds::log
+        fastdds::xtypes::dynamic-types::impl
+        fastdds::xtypes::type-representation
+        )
+
 
     gtest_discover_tests(StatisticsDomainParticipantStatusQueryableTests)
 

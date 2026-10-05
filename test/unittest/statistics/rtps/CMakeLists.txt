@@ -158,13 +158,16 @@ target_include_directories(MonitorServiceTests PRIVATE
 
 target_link_libraries(MonitorServiceTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     GTest::gtest
     GTest::gmock
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${QNX}>:socket>
     )
+fastdds_target_link_object_groups(MonitorServiceTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 
 gtest_discover_tests(MonitorServiceTests)

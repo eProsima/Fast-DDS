@@ -105,7 +105,6 @@ target_link_libraries(AccessControlTests
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     fastcdr
-    fastdds::log
     foonathan_memory
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
@@ -113,6 +112,10 @@ target_link_libraries(AccessControlTests
     ${TINYXML2_LIBRARY}
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
+fastdds_target_link_object_groups(AccessControlTests
+    fastdds::log
+    )
+
 
 gtest_discover_tests(AccessControlTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
@@ -169,8 +172,11 @@ target_include_directories(
 
 target_link_libraries(${DISTINGUISHEDNAME_TEST_NAME}
     fastcdr
-    fastdds::log
     GTest::gtest
 )
+fastdds_target_link_object_groups(${DISTINGUISHEDNAME_TEST_NAME}
+    fastdds::log
+    )
+
 
 gtest_discover_tests( ${DISTINGUISHEDNAME_TEST_NAME})

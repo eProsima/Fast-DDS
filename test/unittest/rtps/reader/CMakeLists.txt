@@ -66,12 +66,15 @@ target_include_directories(WriterProxyTests PRIVATE
     )
 target_link_libraries(WriterProxyTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(WriterProxyTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(WriterProxyTests)
 
 ###########################################################################
@@ -125,12 +128,15 @@ target_include_directories(WriterProxyStopTest PRIVATE
     )
 target_link_libraries(WriterProxyStopTest
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(WriterProxyStopTest
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(WriterProxyStopTest)
 
 ###########################################################################
@@ -183,12 +189,15 @@ target_include_directories(WriterProxyAcknackTests PRIVATE
     )
 target_link_libraries(WriterProxyAcknackTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(WriterProxyAcknackTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(WriterProxyAcknackTests)
 
 ###########################################################################
@@ -442,9 +451,6 @@ target_include_directories(StatefulReaderTests PRIVATE
     )
 target_link_libraries(StatefulReaderTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
@@ -454,6 +460,12 @@ target_link_libraries(StatefulReaderTests
     ${THIRDPARTY_BOOST_LINK_LIBS}
     eProsima_atomic
     )
+fastdds_target_link_object_groups(StatefulReaderTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(StatefulReaderTests)
 
 ###########################################################################
@@ -707,9 +719,6 @@ target_include_directories(StatelessReaderTests PRIVATE
     )
 target_link_libraries(StatelessReaderTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
@@ -719,4 +728,10 @@ target_link_libraries(StatelessReaderTests
     ${THIRDPARTY_BOOST_LINK_LIBS}
     eProsima_atomic
     )
+fastdds_target_link_object_groups(StatelessReaderTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(StatelessReaderTests)

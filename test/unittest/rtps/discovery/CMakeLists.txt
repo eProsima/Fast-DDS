@@ -78,15 +78,18 @@ target_include_directories(EdpTests PRIVATE
     )
 target_link_libraries(EdpTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::type-representation
-    fastdds::xtypes::dynamic-types::impl
     foonathan_memory
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(EdpTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 
 gtest_discover_tests(EdpTests)
 
@@ -191,7 +194,6 @@ target_include_directories(PDPTests PRIVATE
 
 target_link_libraries(PDPTests
     fastcdr
-    fastdds::log
     foonathan_memory
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -199,5 +201,9 @@ target_link_libraries(PDPTests
     $<$<BOOL:${QNX}>:socket>
     ${CMAKE_DL_LIBS}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+fastdds_target_link_object_groups(PDPTests
+    fastdds::log
+    )
+
 
 gtest_discover_tests(PDPTests)

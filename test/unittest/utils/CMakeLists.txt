@@ -95,11 +95,14 @@ target_include_directories(StringMatchingTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(StringMatchingTests
     fastcdr
-    fastdds::log
     GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${MOCKS}
     )
+fastdds_target_link_object_groups(StringMatchingTests
+    fastdds::log
+    )
+
 gtest_discover_tests(StringMatchingTests)
 
 
@@ -136,11 +139,14 @@ target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LocatorTests
     fastcdr
-    fastdds::log
     GTest::gtest
     $<$<BOOL:${QNX}>:socket>
     ${MOCKS}
     )
+fastdds_target_link_object_groups(LocatorTests
+    fastdds::log
+    )
+
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     message(STATUS "Ignoring 'LocatorDNSTests*'")
     set(IGNORE_COMMAND "-LocatorDNSTests*")
@@ -166,9 +172,12 @@ target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SystemInfoTests
     fastcdr
-    fastdds::log
     GTest::gtest
     )
+fastdds_target_link_object_groups(SystemInfoTests
+    fastdds::log
+    )
+
 gtest_discover_tests(SystemInfoTests)
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)

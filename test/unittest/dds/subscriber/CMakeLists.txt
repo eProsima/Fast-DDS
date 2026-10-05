@@ -139,8 +139,11 @@ target_include_directories(DataReaderHistoryTests PRIVATE
     )
 target_link_libraries(DataReaderHistoryTests
     fastcdr
-    fastdds::log
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(DataReaderHistoryTests
+    fastdds::log
+    )
+
 gtest_discover_tests(DataReaderHistoryTests)

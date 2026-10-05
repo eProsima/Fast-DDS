@@ -86,9 +86,12 @@ target_include_directories(TypeLookupServiceTests PUBLIC
 
 target_link_libraries(TypeLookupServiceTests
     fastcdr
-    fastdds::log
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     )
+fastdds_target_link_object_groups(TypeLookupServiceTests
+    fastdds::log
+    )
+
 gtest_discover_tests(TypeLookupServiceTests)

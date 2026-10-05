@@ -81,11 +81,14 @@ target_include_directories( ${SERVER_ATTRIBUTES_TESTS_EXEC} PRIVATE
 
 target_link_libraries(${SERVER_ATTRIBUTES_TESTS_EXEC}
     fastcdr
-    fastdds::log
     GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(${SERVER_ATTRIBUTES_TESTS_EXEC}
+    fastdds::log
+    )
+
 
 gtest_discover_tests(${SERVER_ATTRIBUTES_TESTS_EXEC}
     TEST_PREFIX "ServerAttributesTests."

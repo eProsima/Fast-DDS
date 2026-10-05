@@ -95,11 +95,14 @@ target_include_directories(GuidUtilsTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
 target_link_libraries(GuidUtilsTests
     fastcdr
-    fastdds::log
     GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     )
+fastdds_target_link_object_groups(GuidUtilsTests
+    fastdds::log
+    )
+
 gtest_discover_tests(GuidUtilsTests)
 
 add_executable(SerializedPayloadTests ${SERIALIZEDPAYLOADTESTS_SOURCE})
@@ -135,9 +138,12 @@ target_include_directories(PortParametersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(PortParametersTests
     fastcdr
-    fastdds::log
     GTest::gtest
     )
+fastdds_target_link_object_groups(PortParametersTests
+    fastdds::log
+    )
+
 gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")
 
 ###################

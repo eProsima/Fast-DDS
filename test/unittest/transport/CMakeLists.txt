@@ -354,13 +354,16 @@ target_include_directories(UDPv4Tests PRIVATE
     )
 target_link_libraries(UDPv4Tests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${QNX}>:socket>
 )
+fastdds_target_link_object_groups(UDPv4Tests
+    fastdds::log
+    )
+
 gtest_discover_tests(UDPv4Tests)
 
 ##########################
@@ -388,13 +391,16 @@ if(NOT DISABLE_UDPV6_TESTS)
         )
     target_link_libraries(UDPv6Tests
         fastcdr
-        fastdds::log
         GTest::gtest
         ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         $<$<BOOL:${QNX}>:socket>
     )
+    fastdds_target_link_object_groups(UDPv6Tests
+        fastdds::log
+        )
+
     gtest_discover_tests(UDPv6Tests)
 
     ##########################
@@ -419,13 +425,16 @@ if(NOT DISABLE_UDPV6_TESTS)
         )
     target_link_libraries(TCPv6Tests
         fastcdr
-        fastdds::log
         GTest::gtest
         ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         $<$<BOOL:${QNX}>:socket>
     )
+    fastdds_target_link_object_groups(TCPv6Tests
+        fastdds::log
+        )
+
     gtest_discover_tests(TCPv6Tests)
 endif()
 
@@ -451,13 +460,16 @@ target_include_directories(TCPv4Tests PRIVATE
     )
 target_link_libraries(TCPv4Tests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${QNX}>:socket>
 )
+fastdds_target_link_object_groups(TCPv4Tests
+    fastdds::log
+    )
+
 gtest_discover_tests(TCPv4Tests)
 
 ##########################
@@ -486,7 +498,6 @@ if(IS_THIRDPARTY_BOOST_OK)
     target_link_libraries(SharedMemTests
         foonathan_memory
         fastcdr
-        fastdds::log
         GTest::gtest
         ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
@@ -495,6 +506,10 @@ if(IS_THIRDPARTY_BOOST_OK)
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
         )
+    fastdds_target_link_object_groups(SharedMemTests
+        fastdds::log
+        )
+
     gtest_discover_tests(SharedMemTests)
 endif()
 
@@ -552,11 +567,14 @@ target_include_directories(AsioHelpersTests PRIVATE
     )
 target_link_libraries(AsioHelpersTests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${QNX}>:socket>
 )
+fastdds_target_link_object_groups(AsioHelpersTests
+    fastdds::log
+    )
+
 gtest_discover_tests(AsioHelpersTests)

@@ -67,10 +67,13 @@ target_include_directories(BuiltinAESGCMGMAC PRIVATE
 
 target_link_libraries(BuiltinAESGCMGMAC
     fastcdr
-    fastdds::log
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     )
+fastdds_target_link_object_groups(BuiltinAESGCMGMAC
+    fastdds::log
+    )
+
 
 gtest_discover_tests(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

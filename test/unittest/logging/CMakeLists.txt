@@ -58,11 +58,14 @@ target_include_directories(LogTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogTests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
+fastdds_target_link_object_groups(LogTests
+    fastdds::log
+    )
+
 gtest_discover_tests(LogTests)
 
 # LOG FILE TEST
@@ -100,6 +103,9 @@ target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${TINYXML2_LIBRARY}
     fastcdr
+    )
+fastdds_target_link_object_groups(LogFileTests
     fastdds::log
     )
+
 gtest_discover_tests(LogFileTests)

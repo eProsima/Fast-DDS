@@ -55,8 +55,11 @@ target_include_directories(BuiltinLogging PRIVATE
     )
 target_link_libraries(BuiltinLogging
     fastcdr
-    fastdds::log
     GTest::gtest
     ${OPENSSL_LIBRARIES}
     )
+fastdds_target_link_object_groups(BuiltinLogging
+    fastdds::log
+    )
+
 gtest_discover_tests(BuiltinLogging)

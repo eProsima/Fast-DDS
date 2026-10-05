@@ -68,11 +68,14 @@ target_include_directories(ReaderProxyTests PRIVATE
     )
 target_link_libraries(ReaderProxyTests
     fastcdr
-    fastdds::log
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS})
+fastdds_target_link_object_groups(ReaderProxyTests
+    fastdds::log
+    )
+
 gtest_discover_tests(ReaderProxyTests)
 
 set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
@@ -110,9 +113,12 @@ target_include_directories(LivelinessManagerTests PRIVATE
     )
 target_link_libraries(LivelinessManagerTests PRIVATE
     fastcdr
-    fastdds::log
     GTest::gmock
     )
+fastdds_target_link_object_groups(LivelinessManagerTests
+    fastdds::log
+    )
+
 gtest_discover_tests(LivelinessManagerTests)
 
 if(NOT QNX)

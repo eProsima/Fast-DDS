@@ -115,9 +115,12 @@ target_include_directories(ReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(ReaderHistoryTests
     fastcdr
-    fastdds::log
     GTest::gmock
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(ReaderHistoryTests
+    fastdds::log
+    )
+
 gtest_discover_tests(ReaderHistoryTests)
 
 add_executable(BasicPoolsTests ${BASICPOOLSTESTS_SOURCE})
@@ -133,9 +136,12 @@ target_include_directories(BasicPoolsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(BasicPoolsTests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(BasicPoolsTests
+    fastdds::log
+    )
+
 gtest_discover_tests(BasicPoolsTests)
 
 add_executable(CacheChangePoolTests ${CACHECHANGEPOOLTESTS_SOURCE})
@@ -151,9 +157,12 @@ target_include_directories(CacheChangePoolTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(CacheChangePoolTests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(CacheChangePoolTests
+    fastdds::log
+    )
+
 gtest_discover_tests(CacheChangePoolTests)
 
 add_executable(TopicPayloadPoolTests ${TOPICPAYLOADPOOLTESTS_SOURCE})
@@ -170,9 +179,12 @@ target_include_directories(TopicPayloadPoolTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(TopicPayloadPoolTests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(TopicPayloadPoolTests
+    fastdds::log
+    )
+
 gtest_discover_tests(TopicPayloadPoolTests)
 
 add_executable(WriterHistoryTests ${WRITERHISTORYTESTS_SOURCE})

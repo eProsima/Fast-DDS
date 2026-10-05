@@ -59,8 +59,11 @@ target_include_directories(TimedEventTests PRIVATE
     )
 target_link_libraries(TimedEventTests
     fastcdr
-    fastdds::log
     GTest::gtest
     ${CMAKE_DL_LIBS}
     )
+fastdds_target_link_object_groups(TimedEventTests
+    fastdds::log
+    )
+
 gtest_discover_tests(TimedEventTests)

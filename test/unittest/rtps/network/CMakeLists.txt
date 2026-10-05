@@ -99,12 +99,15 @@ target_include_directories(NetworkFactoryTests PRIVATE
     )
 target_link_libraries(NetworkFactoryTests
     fastcdr
-    fastdds::log
     foonathan_memory
     GTest::gtest ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     $<$<BOOL:${QNX}>:socket>
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(NetworkFactoryTests
+    fastdds::log
+    )
+
 
 add_executable(ExternalLocatorsTests
     ExternalLocatorsTests.cpp
@@ -153,11 +156,14 @@ target_include_directories(ExternalLocatorsTests PRIVATE
     )
 target_link_libraries(ExternalLocatorsTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
     GTest::gmock
     $<$<BOOL:${QNX}>:socket>
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
+fastdds_target_link_object_groups(ExternalLocatorsTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    )
+
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)

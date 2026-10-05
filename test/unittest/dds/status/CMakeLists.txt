@@ -188,9 +188,6 @@ target_include_directories(ListenerTests PRIVATE
 
 target_link_libraries(ListenerTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     ${TINYXML2_LIBRARY}
     GTest::gmock
@@ -200,5 +197,11 @@ target_link_libraries(ListenerTests
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS}
     )
+fastdds_target_link_object_groups(ListenerTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 
 gtest_discover_tests(ListenerTests)

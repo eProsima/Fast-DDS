@@ -61,10 +61,13 @@ target_include_directories(FlowControllerFactoryTests PRIVATE
     )
 target_link_libraries(FlowControllerFactoryTests
     fastcdr
-    fastdds::log
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
+fastdds_target_link_object_groups(FlowControllerFactoryTests
+    fastdds::log
+    )
+
 gtest_discover_tests(FlowControllerFactoryTests)
 
 set(FLOWCONTROLLERPUBLISHMODESTESTS_SOURCE
@@ -95,10 +98,13 @@ target_include_directories(FlowControllerPublishModesTests PRIVATE
     )
 target_link_libraries(FlowControllerPublishModesTests
     fastcdr
-    fastdds::log
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
+fastdds_target_link_object_groups(FlowControllerPublishModesTests
+    fastdds::log
+    )
+
 gtest_discover_tests(FlowControllerPublishModesTests)
 
 set(FLOWCONTROLLERSCHEDULERSTESTS_SOURCE
@@ -125,8 +131,11 @@ target_include_directories(FlowControllerSchedulersTests PRIVATE
     )
 target_link_libraries(FlowControllerSchedulersTests
     fastcdr
-    fastdds::log
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
+fastdds_target_link_object_groups(FlowControllerSchedulersTests
+    fastdds::log
+    )
+
 gtest_discover_tests(FlowControllerSchedulersTests)

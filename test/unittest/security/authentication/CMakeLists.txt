@@ -81,11 +81,14 @@ target_link_libraries(BuiltinPKIDH
     GTest::gtest
     ${OPENSSL_LIBRARIES}
     fastcdr
-    fastdds::log
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
+fastdds_target_link_object_groups(BuiltinPKIDH
+    fastdds::log
+    )
+
 gtest_discover_tests(BuiltinPKIDH
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

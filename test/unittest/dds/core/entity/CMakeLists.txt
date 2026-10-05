@@ -61,6 +61,9 @@ target_include_directories(EntityTests PRIVATE
 )
 target_link_libraries(EntityTests
     fastcdr
-    fastdds::log
     GTest::gtest)
+fastdds_target_link_object_groups(EntityTests
+    fastdds::log
+    )
+
 gtest_discover_tests(EntityTests)

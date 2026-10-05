@@ -158,13 +158,16 @@ target_include_directories(XMLProfileParserTests PRIVATE
 
 target_link_libraries(XMLProfileParserTests
     fastcdr
-    fastdds::xtypes::dynamic-types::impl
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     ${TINYXML2_LIBRARY}
     )
+fastdds_target_link_object_groups(XMLProfileParserTests
+    fastdds::xtypes::dynamic-types::impl
+    )
+
 gtest_discover_tests(XMLProfileParserTests)
 ###################################  XMLProfileParserTests  ####################################################
 
@@ -248,14 +251,17 @@ target_include_directories(XMLParserTests PRIVATE
 
 target_link_libraries(XMLParserTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     ${TINYXML2_LIBRARY}
     )
+fastdds_target_link_object_groups(XMLParserTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    )
+
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     message(STATUS "Ignoring 'getXMLLocatorDNS*'")
     set(IGNORE_COMMAND "-getXMLLocatorDNS*")
@@ -375,14 +381,17 @@ target_include_directories(XMLEndpointParserTests PRIVATE
 
 target_link_libraries(XMLEndpointParserTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     ${TINYXML2_LIBRARY}
     )
+fastdds_target_link_object_groups(XMLEndpointParserTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    )
+
 gtest_discover_tests(XMLEndpointParserTests)
 
 ######################################  XMLLoadFileTests  ######################################################
@@ -467,12 +476,15 @@ target_include_directories(XMLLoadFileTests PRIVATE
 target_link_libraries(XMLLoadFileTests
     $<$<BOOL:${QNX}>:socket>
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
     GTest::gmock
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${QNX}>:socket>
     ${TINYXML2_LIBRARY}
     )
+fastdds_target_link_object_groups(XMLLoadFileTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    )
+
 gtest_discover_tests(XMLLoadFileTests)

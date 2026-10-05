@@ -54,12 +54,15 @@ if(SQLITE3_SUPPORT)
         )
     target_link_libraries(PersistenceTests
         fastcdr
-        fastdds::log
         foonathan_memory
         GTest::gmock
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${CMAKE_DL_LIBS}
         )
+    fastdds_target_link_object_groups(PersistenceTests
+        fastdds::log
+        )
+
     gtest_discover_tests(PersistenceTests)
 
 endif(SQLITE3_SUPPORT)

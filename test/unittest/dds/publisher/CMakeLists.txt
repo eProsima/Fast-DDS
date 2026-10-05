@@ -367,9 +367,6 @@ target_include_directories(DataWriterTests PRIVATE
     )
 target_link_libraries(DataWriterTests
     fastcdr
-    fastdds::log
-    fastdds::xtypes::dynamic-types::impl
-    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
@@ -381,5 +378,11 @@ target_link_libraries(DataWriterTests
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     eProsima_atomic
     )
+fastdds_target_link_object_groups(DataWriterTests
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    )
+
 gtest_discover_tests(DataWriterTests
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
