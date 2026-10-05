@@ -570,3 +570,32 @@ fastdds_declare_object_group(fastdds-rtps-transport-shm
     )
 
 #}}}
+
+#{{{ Interface library for grouping the SQLite3 persistence service
+
+add_library(fastdds-rtps-persistence INTERFACE)
+
+add_library(fastdds::rtps::persistence ALIAS fastdds-rtps-persistence)
+
+target_compile_features(fastdds-rtps-persistence INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-persistence INTERFACE
+    persistence/PersistenceFactory.cpp
+    persistence/sqlite3.c
+    persistence/SQLite3PersistenceService.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-persistence
+    MOCKS
+        rtps/Log
+        rtps/WriterHistory
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}

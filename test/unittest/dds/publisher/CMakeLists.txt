@@ -24,12 +24,6 @@ set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)
 
 file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp)
 
-#SQLITE3 persistence service sources
-set(sqlite3_source_files
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
-    )
-
 set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${DDSSQLFILTER_SOURCES}
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
@@ -100,7 +94,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -121,12 +114,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/XMLProfileManager.cpp
     )
 
-    if(SQLITE3_SUPPORT)
-        list(APPEND DATAWRITERTESTS_SOURCE ${sqlite3_source_files})
-        # sqlite.c requires a C compiler
-        enable_language(C)
-    endif()
-
     if (FASTDDS_STATISTICS)
 
         set(statistics_sources
@@ -135,12 +122,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/subscriber/qos/DataReaderQos.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
             )
 
         list(APPEND DATAWRITERTESTS_SOURCE ${statistics_sources})
@@ -157,22 +138,10 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/LoggingLevel.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/DistinguishedName.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/CommonParser.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/GovernanceParser.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/PermissionsParser.cpp
             ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/LogTopic.cpp
             )
     endif()
@@ -256,6 +225,12 @@ fastdds_target_link_object_groups(DataWriterTests
     fastdds::rtps::net-interface
     fastdds::time
     fastdds::rtps::netmask-filter
+    fastdds::statistics::types
+    fastdds::statistics::monitor-service
+    fastdds::security::pki
+    fastdds::security::access-control
+    fastdds::security::crypto
+    fastdds::rtps::persistence
     )
 
 gtest_discover_tests(DataWriterTests

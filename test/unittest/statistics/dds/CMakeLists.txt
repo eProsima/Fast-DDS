@@ -82,10 +82,6 @@ if (FASTDDS_STATISTICS)
     add_executable(DomainParticipantStatisticsListenerTests
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
         ${TINYXML2_SOURCES}
         ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
@@ -109,6 +105,7 @@ if (FASTDDS_STATISTICS)
         fastdds::xtypes::type-representation
         fastdds::rtps::host-net
         fastdds::time
+        fastdds::statistics::types
         )
 
     gtest_discover_tests(DomainParticipantStatisticsListenerTests)
@@ -194,9 +191,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -209,12 +203,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
@@ -296,9 +284,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -311,12 +296,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/fastdds/publisher/qos/DataWriterQos.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
@@ -400,6 +379,12 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         fastdds::rtps::net-interface
         fastdds::time
         fastdds::rtps::netmask-filter
+        fastdds::statistics::types
+        fastdds::statistics::monitor-service
+        fastdds::security::pki
+        fastdds::security::access-control
+        fastdds::security::crypto
+        fastdds::rtps::persistence
         )
 
 
@@ -444,6 +429,12 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         fastdds::rtps::net-interface
         fastdds::time
         fastdds::rtps::netmask-filter
+        fastdds::statistics::types
+        fastdds::statistics::monitor-service
+        fastdds::security::pki
+        fastdds::security::access-control
+        fastdds::security::crypto
+        fastdds::rtps::persistence
         )
 
 

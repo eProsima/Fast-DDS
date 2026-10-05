@@ -61,9 +61,6 @@ set(MESSAGE_RECEIVER_TESTS_SOURCE MessageReceiverTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -100,12 +97,6 @@ set(MESSAGE_RECEIVER_TESTS_SOURCE MessageReceiverTests.cpp
 if (FASTDDS_STATISTICS)
 
     set(statistics_sources
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
 
         # Monitor service is using a DataWriterHistory
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/DataWriterHistory.cpp
@@ -185,6 +176,12 @@ fastdds_target_link_object_groups(MessageReceiverTests
     fastdds::rtps::net-interface
     fastdds::time
     fastdds::rtps::netmask-filter
+    fastdds::statistics::types
+    fastdds::statistics::monitor-service
+    fastdds::security::pki
+    fastdds::security::access-control
+    fastdds::security::crypto
+    fastdds::rtps::persistence
     )
 
 gtest_discover_tests(MessageReceiverTests)

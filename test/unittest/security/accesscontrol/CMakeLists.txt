@@ -44,17 +44,9 @@ if(TINYXML2_INCLUDE_DIR)
 endif(TINYXML2_INCLUDE_DIR)
 
 add_executable(AccessControlTests ${COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/CommonParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/GovernanceParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/Permissions.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/DistinguishedName.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/PermissionsParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AccessControlTests.cpp)
@@ -90,6 +82,8 @@ fastdds_target_link_object_groups(AccessControlTests
     fastdds::rtps::net-interface
     fastdds::time
     fastdds::rtps::netmask-filter
+    fastdds::security::pki
+    fastdds::security::access-control
     )
 
 

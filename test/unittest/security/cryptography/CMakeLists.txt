@@ -19,11 +19,7 @@ set(COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyExchange.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_KeyFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Transform.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC.cpp
     )
 
 add_executable(BuiltinAESGCMGMAC ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
@@ -52,6 +48,7 @@ fastdds_target_link_object_groups(BuiltinAESGCMGMAC
     fastdds::rtps::net-interface
     fastdds::time
     fastdds::rtps::netmask-filter
+    fastdds::security::crypto
     )
 
 

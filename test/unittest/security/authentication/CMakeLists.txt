@@ -35,11 +35,7 @@ set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
     )
 
 add_executable(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIDH.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIIdentityHandle.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/authentication/PKIHandshakeHandle.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/FileProvider.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/security/artifact_providers/Pkcs11Provider.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
 target_include_directories(BuiltinPKIDH PRIVATE
     ${Asio_INCLUDE_DIR}
@@ -65,6 +61,7 @@ fastdds_target_link_object_groups(BuiltinPKIDH
     fastdds::rtps::net-interface
     fastdds::time
     fastdds::rtps::netmask-filter
+    fastdds::security::pki
     )
 
 gtest_discover_tests(BuiltinPKIDH
