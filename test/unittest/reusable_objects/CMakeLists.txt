@@ -17,7 +17,8 @@
 #
 # This directory is added last on purpose: every fastdds_target_link_object_groups()
 # call has already run, so the full set of flavours is known, and the libraries
-# are created in a directory with no test specific settings of its own.
+# are created in a directory with no test specific settings of its own. The
+# definitions common to all unit tests are inherited from test/unittest.
 ###############################################################################
 
 fastdds_create_reusable_objects()

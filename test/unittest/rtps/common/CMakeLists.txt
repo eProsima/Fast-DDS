@@ -70,10 +70,6 @@ set(TIMETESTS_SOURCE TimeTests.cpp
 set(VENDORIDTESTS_SOURCE VendorIdTests.cpp)
 
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
-target_compile_definitions(CacheChangeTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(CacheChangeTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/include
@@ -82,12 +78,6 @@ target_link_libraries(CacheChangeTests GTest::gtest)
 gtest_discover_tests(CacheChangeTests)
 
 add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
-target_compile_definitions(GuidUtilsTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(GuidUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
@@ -106,32 +96,18 @@ fastdds_target_link_object_groups(GuidUtilsTests
 gtest_discover_tests(GuidUtilsTests)
 
 add_executable(SerializedPayloadTests ${SERIALIZEDPAYLOADTESTS_SOURCE})
-target_compile_definitions(SerializedPayloadTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(SerializedPayloadTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SerializedPayloadTests GTest::gtest)
 gtest_discover_tests(SerializedPayloadTests)
 
 add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
-target_compile_definitions(SequenceNumberTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(SequenceNumberTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SequenceNumberTests GTest::gtest)
 gtest_discover_tests(SequenceNumberTests)
 
 add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
-target_compile_definitions(PortParametersTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(PortParametersTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
@@ -153,10 +129,6 @@ gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")
 set(GUIDPREFIXTESTS_SOURCE GuidPrefixTests.cpp)
 
 add_executable(GuidPrefixTests ${GUIDPREFIXTESTS_SOURCE})
-target_compile_definitions(GuidPrefixTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(GuidPrefixTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
@@ -170,10 +142,6 @@ gtest_discover_tests(GuidPrefixTests PROPERTIES LABELS "NoMemoryCheck")
 set(ENTITYIDTESTS_SOURCE EntityIdTests.cpp)
 
 add_executable(EntityIdTests ${ENTITYIDTESTS_SOURCE})
-target_compile_definitions(EntityIdTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(EntityIdTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
@@ -187,10 +155,6 @@ gtest_discover_tests(EntityIdTests PROPERTIES LABELS "NoMemoryCheck")
 set(GUIDTESTS_SOURCE GuidTests.cpp)
 
 add_executable(GuidTests ${GUIDTESTS_SOURCE})
-target_compile_definitions(GuidTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
@@ -202,10 +166,6 @@ gtest_discover_tests(GuidTests PROPERTIES LABELS "NoMemoryCheck")
 #############
 
 add_executable(TimeTests ${TIMETESTS_SOURCE})
-target_compile_definitions(TimeTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/include
@@ -218,10 +178,6 @@ gtest_discover_tests(TimeTests PROPERTIES LABELS "NoMemoryCheck")
 ###################
 
 add_executable(VendorIDTests ${VENDORIDTESTS_SOURCE})
-target_compile_definitions(VendorIDTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(VendorIDTests PRIVATE ${GTEST_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(VendorIDTests GTest::gtest)

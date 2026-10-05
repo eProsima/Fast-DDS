@@ -46,21 +46,10 @@ set(TYPELOOKUPSERVICETESTS_SOURCE TypeLookupServiceTests.cpp
 )
 
 if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
     set_source_files_properties(TypeLookupServiceTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
 endif()
 
 add_executable(TypeLookupServiceTests ${TYPELOOKUPSERVICETESTS_SOURCE})
-target_compile_definitions(TypeLookupServiceTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    ASIO_DISABLE_VISIBILITY
-    SQLITE_WIN32_GETVERSIONEX=0
-    $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-    )
 target_include_directories(TypeLookupServiceTests PUBLIC
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory

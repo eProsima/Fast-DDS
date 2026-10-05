@@ -279,6 +279,8 @@ endfunction()
 # Materialize every object library requested so far.  Call it once, from a
 # dedicated directory added after all the test directories, so the libraries do
 # not inherit directory level settings of whichever test happened to ask first.
+# They do inherit the definitions common to every unit test, set by the parent
+# directory (test/unittest/CMakeLists.txt).
 function(fastdds_create_reusable_objects)
     if(NOT FASTDDS_REUSE_TEST_OBJECTS)
         return()
@@ -317,21 +319,12 @@ function(fastdds_create_reusable_objects)
             ${TINYXML2_INCLUDE_DIR}
             )
 
-        target_compile_definitions(${_objlib} PRIVATE
-            ${_defines}
-            FASTDDS_NO_LIB
-            BOOST_ASIO_STANDALONE
-            ASIO_STANDALONE
-            ASIO_DISABLE_VISIBILITY
-            SQLITE_WIN32_GETVERSIONEX=0
-            $<$<BOOL:${WIN32}>:_WIN32_WINNT=0x0601>
-            $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-            $<$<BOOL:${MSVC}>:NOMINMAX>
-            $<$<BOOL:${MSVC}>:_CRT_SECURE_NO_WARNINGS>
-            $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-            $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-            $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG>
-            )
+        # Only the flavour definitions. The common ones are inherited from the
+        # directory, which must be the same one setting them for the test
+        # targets (test/unittest), so objects and tests compile alike.
+        if(_defines)
+            target_compile_definitions(${_objlib} PRIVATE ${_defines})
+        endif()
 
         # Only for the usage requirements (include directories) of the headers
         # these sources pull in.

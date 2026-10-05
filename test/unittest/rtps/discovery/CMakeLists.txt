@@ -41,17 +41,7 @@ set(EDPTESTS_SOURCE EdpTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(EdpTests ${EDPTESTS_SOURCE})
-target_compile_definitions(EdpTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(EdpTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators
@@ -161,12 +151,6 @@ set(PDPTESTS_SOURCE PDPTests.cpp
 
 add_executable(PDPTests ${PDPTESTS_SOURCE})
 
-target_compile_definitions(PDPTests PRIVATE FASTDDS_NO_LIB
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(PDPTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/BuiltinProtocols
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators

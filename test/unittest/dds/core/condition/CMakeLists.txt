@@ -16,10 +16,6 @@ set(LOG_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 set(CONDITION_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
@@ -44,12 +40,6 @@ set(CONDITION_TESTS_SOURCE
     ConditionTests.cpp)
 
 add_executable(ConditionTests ${CONDITION_TESTS_SOURCE})
-target_compile_definitions(ConditionTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(ConditionTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include
@@ -86,12 +76,6 @@ set(CONDITION_NOTIFIER_TESTS_SOURCE
     ConditionNotifierTests.cpp)
 
 add_executable(ConditionNotifierTests ${CONDITION_NOTIFIER_TESTS_SOURCE})
-target_compile_definitions(ConditionNotifierTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(ConditionNotifierTests PRIVATE
     ${Asio_INCLUDE_DIR}
     mock/WaitSetImpl
@@ -132,12 +116,6 @@ set(STATUS_CONDITION_IMPL_TESTS_SOURCE
     StatusConditionImplTests.cpp)
 
 add_executable(StatusConditionImplTests ${STATUS_CONDITION_IMPL_TESTS_SOURCE})
-target_compile_definitions(StatusConditionImplTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(StatusConditionImplTests PRIVATE
     ${Asio_INCLUDE_DIR}
     mock/ConditionNotifier
@@ -177,12 +155,6 @@ set(WAITSET_IMPL_TESTS_SOURCE
     WaitSetImplTests.cpp)
 
 add_executable(WaitSetImplTests ${WAITSET_IMPL_TESTS_SOURCE})
-target_compile_definitions(WaitSetImplTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(WaitSetImplTests PRIVATE
     ${Asio_INCLUDE_DIR}
     mock/ConditionNotifier

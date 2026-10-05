@@ -23,7 +23,28 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
     message(STATUS "Applied GCC 13 workaround to all unit tests")
 endif()
 
-add_compile_definitions(FASTDDS_NO_LIB)
+# Definitions shared by every unit test target, and by the reusable OBJECT
+# libraries created in reusable_objects/. Keeping them in a single place
+# guarantees that a library source compiles identically in every suite, which
+# is what allows its objects to be shared (see cmake/common/reusable_objects.cmake).
+# Only definitions a test really needs on its own belong in its CMakeLists.
+add_compile_definitions(
+    FASTDDS_NO_LIB
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    ASIO_DISABLE_VISIBILITY
+    SQLITE_WIN32_GETVERSIONEX=0
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
+    $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
+    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
+    $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
+    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
+    $<$<BOOL:${WIN32}>:NOMINMAX>
+    $<$<BOOL:${WIN32}>:_CRT_SECURE_NO_WARNINGS>
+    $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
+    )
 
 add_subdirectory(cmake)
 add_subdirectory(dds/collections)

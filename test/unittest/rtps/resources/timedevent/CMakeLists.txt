@@ -32,10 +32,6 @@ set(TIMEDEVENTTESTS_SOURCE mock/MockEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp)
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 if(ANDROID)
     if (ANDROID_NATIVE_API_LEVEL LESS 24)
         list(APPEND TIMEDEVENTTESTS_SOURCE
@@ -45,12 +41,6 @@ if(ANDROID)
 endif()
 
 add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
-target_compile_definitions(TimedEventTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TimedEventTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include

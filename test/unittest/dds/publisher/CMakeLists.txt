@@ -300,14 +300,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
     )
 
-if(WIN32)
-    add_definitions(
-        -D_WIN32_WINNT=0x0601
-        -D_CRT_SECURE_NO_WARNINGS
-        -DNOMINMAX
-        )
-endif()
-
 if(ANDROID)
     if (ANDROID_NATIVE_API_LEVEL LESS 24)
         list(APPEND PUBLISHERTESTS_SOURCE
@@ -320,12 +312,6 @@ if(ANDROID)
 endif()
 
 add_executable(PublisherTests ${PUBLISHERTESTS_SOURCE})
-target_compile_definitions(PublisherTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(PublisherTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
@@ -340,22 +326,6 @@ target_link_libraries(PublisherTests fastdds fastcdr foonathan_memory
 gtest_discover_tests(PublisherTests)
 
 add_executable(DataWriterTests ${DATAWRITERTESTS_SOURCE})
-target_compile_definitions(DataWriterTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    ASIO_DISABLE_VISIBILITY
-    SQLITE_WIN32_GETVERSIONEX=0
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:_WIN32_WINNT=0x0603>
-    $<$<AND:$<BOOL:${WIN32}>,$<NOT:$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>>:_WIN32_WINNT=0x0601>
-    $<$<AND:$<BOOL:${WIN32}>,$<STREQUAL:"${CMAKE_SYSTEM_NAME}","WindowsStore">>:SQLITE_OS_WINRT>
-    $<$<AND:$<BOOL:${ANDROID}>,$<NOT:$<BOOL:${HAVE_CXX14}>>,$<NOT:$<BOOL:${HAVE_CXX1Y}>>>:ASIO_DISABLE_STD_STRING_VIEW>
-    $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-    $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
-    $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
-    $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
-)
 target_include_directories(DataWriterTests PRIVATE
     $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
     ${PROJECT_SOURCE_DIR}/test/mock/dds/DataWriterHistory

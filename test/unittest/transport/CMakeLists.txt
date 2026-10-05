@@ -12,14 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(WIN32)
-    add_definitions(
-        -D_WIN32_WINNT=0x0601
-        -D_CRT_SECURE_NO_WARNINGS
-        -DNOMINMAX
-        )
-endif()
-
 # Copy certs
 if(TLS_FOUND)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
@@ -338,12 +330,6 @@ include_directories(mock/)
 # UDPv4 tests
 ##########################
 add_executable(UDPv4Tests ${UDPV4TESTS_SOURCE})
-target_compile_definitions(UDPv4Tests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(UDPv4Tests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -376,12 +362,6 @@ if(NOT DISABLE_UDPV6_TESTS)
     # UDPv6 tests
     ##########################
     add_executable(UDPv6Tests ${UDPV6TESTS_SOURCE})
-    target_compile_definitions(UDPv6Tests PRIVATE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        )
     target_include_directories(UDPv6Tests PRIVATE
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
@@ -407,12 +387,6 @@ if(NOT DISABLE_UDPV6_TESTS)
     # TCPv6 tests
     ##########################
     add_executable(TCPv6Tests ${TCPV6TESTS_SOURCE})
-    target_compile_definitions(TCPv6Tests PRIVATE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        )
     target_include_directories(TCPv6Tests PRIVATE
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
@@ -442,12 +416,6 @@ endif()
 # TCPv4 tests
 ##########################
 add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
-target_compile_definitions(TCPv4Tests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(TCPv4Tests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
@@ -477,14 +445,6 @@ gtest_discover_tests(TCPv4Tests)
 ##########################
 if(IS_THIRDPARTY_BOOST_OK)
     add_executable(SharedMemTests ${SHAREDMEMTESTS_SOURCE})
-
-    target_compile_definitions(SharedMemTests PRIVATE
-        BOOST_ASIO_STANDALONE
-        ASIO_STANDALONE
-        $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
-        $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-        $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-        )
 
     target_include_directories(SharedMemTests PRIVATE
         ${Asio_INCLUDE_DIR}
@@ -531,11 +491,6 @@ set(PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET PortBasedTransportDescriptorTests
 add_executable(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
     ${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_SOURCES})
 
-target_compile_definitions(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
-    PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG>)
-
 target_include_directories(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET}
     PRIVATE
     ${PROJECT_SOURCE_DIR}/include
@@ -551,12 +506,6 @@ gtest_discover_tests(${PORTBASED_TRANSPORTDESCRIPTOR_TESTS_TARGET})
 # AsioHelpers tests
 #####################################
 add_executable(AsioHelpersTests ${ASIOHELPERSTESTS_SOURCE})
-target_compile_definitions(AsioHelpersTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(AsioHelpersTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver

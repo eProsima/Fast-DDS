@@ -12,23 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 set(STATISTICS_RTPS_TESTS_SOURCE
     RTPSStatisticsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     )
 
 add_executable(RTPSStatisticsTests ${STATISTICS_RTPS_TESTS_SOURCE})
-
-target_compile_definitions(RTPSStatisticsTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
-    )
 
 target_include_directories(RTPSStatisticsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
@@ -117,13 +106,6 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     )
 
 add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
-
-target_compile_definitions(MonitorServiceTests PRIVATE FASTDDS_NO_LIB
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
-    )
 
 target_include_directories(MonitorServiceTests PRIVATE
     mock/Publisher

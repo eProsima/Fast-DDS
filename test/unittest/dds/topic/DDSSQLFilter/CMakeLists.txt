@@ -37,21 +37,11 @@ file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 add_executable(DDSSQLFilterTests
     ${DDSSQLFILTERTEST_SOURCES}
     ${DDSSQLFILTER_TYPE_SOURCES}
     ${DDSSQLFILTER_SOURCES}
     ${DDSSQLFILTER_LIB_SOURCES}
-    )
-target_compile_definitions(DDSSQLFilterTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DDSSQLFilterTests PRIVATE
     ${Asio_INCLUDE_DIR}

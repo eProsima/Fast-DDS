@@ -19,10 +19,6 @@
 set(MAXASIOBUFFERSTESTS_SOURCE MaxAsioBuffersTests.cpp)
 
 add_executable(MaxAsioBuffersTests ${MAXASIOBUFFERSTESTS_SOURCE})
-target_compile_definitions(MaxAsioBuffersTests PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
 target_include_directories(MaxAsioBuffersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
@@ -32,11 +28,6 @@ target_link_libraries(MaxAsioBuffersTests
     $<$<BOOL:${QNX}>:socket>
     )
 gtest_discover_tests(MaxAsioBuffersTests PROPERTIES LABELS "NoMemoryCheck")
-
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-    add_definitions(-DNOMINMAX)
-endif()
 
 # Target sources may be relative to src/cpp. Make them absolute.
 get_property(fastdds_target_sources_files TARGET ${PROJECT_NAME} PROPERTY SOURCES)
