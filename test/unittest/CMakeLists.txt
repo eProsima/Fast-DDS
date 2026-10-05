@@ -74,3 +74,6 @@ endif()
 if(FASTDDS_STATISTICS)
     add_subdirectory(statistics/rtps)
 endif(FASTDDS_STATISTICS)
+
+# Must be the last one: it creates the OBJECT libraries shared by the suites above.
+add_subdirectory(reusable_objects)
