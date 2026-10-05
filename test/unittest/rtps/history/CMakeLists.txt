@@ -17,19 +17,16 @@ set(READERHISTORYTESTS_SOURCE ReaderHistoryTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/History.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/ReaderHistory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(BASICPOOLSTESTS_SOURCE BasicPoolsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(CACHECHANGEPOOLTESTS_SOURCE CacheChangePoolTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(TOPICPAYLOADPOOLTESTS_SOURCE
@@ -37,7 +34,6 @@ set(TOPICPAYLOADPOOLTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(WRITERHISTORYTESTS_SOURCE WriterHistoryTests.cpp)
@@ -68,6 +64,7 @@ fastdds_target_link_object_groups(ReaderHistoryTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(ReaderHistoryTests)
@@ -86,6 +83,7 @@ fastdds_target_link_object_groups(BasicPoolsTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(BasicPoolsTests)
@@ -104,6 +102,7 @@ fastdds_target_link_object_groups(CacheChangePoolTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(CacheChangePoolTests)
@@ -123,6 +122,7 @@ fastdds_target_link_object_groups(TopicPayloadPoolTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(TopicPayloadPoolTests)

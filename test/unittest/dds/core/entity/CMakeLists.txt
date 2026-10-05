@@ -19,7 +19,6 @@ set(ENTITY_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusConditionImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     EntityTests.cpp)
 
 if(ANDROID)
@@ -45,6 +44,7 @@ fastdds_target_link_object_groups(EntityTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(EntityTests)

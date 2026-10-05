@@ -18,7 +18,6 @@ set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/SubscriptionBuiltinTopicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/ReaderProxy.cpp
     )
@@ -55,12 +54,12 @@ fastdds_target_link_object_groups(ReaderProxyTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(ReaderProxyTests)
 
 set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -84,6 +83,7 @@ fastdds_target_link_object_groups(LivelinessManagerTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LivelinessManagerTests)

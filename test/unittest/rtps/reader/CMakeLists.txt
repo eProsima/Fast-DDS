@@ -19,7 +19,6 @@ set(WRITERPROXYTESTS_SOURCE WriterProxyTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/PublicationBuiltinTopicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 add_executable(WriterProxyTests ${WRITERPROXYTESTS_SOURCE})
@@ -53,6 +52,7 @@ fastdds_target_link_object_groups(WriterProxyTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(WriterProxyTests)
@@ -64,7 +64,6 @@ set(WRITERPROXYSTOPTEST_SOURCE WriterProxyStopTest.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/PublicationBuiltinTopicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
@@ -100,6 +99,7 @@ fastdds_target_link_object_groups(WriterProxyStopTest
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(WriterProxyStopTest)
@@ -111,7 +111,6 @@ set(WRITERPROXYACKNACKTESTS_SOURCE WriterProxyAcknackTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/PublicationBuiltinTopicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
     )
@@ -146,6 +145,7 @@ fastdds_target_link_object_groups(WriterProxyAcknackTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(WriterProxyAcknackTests)
@@ -179,7 +179,6 @@ set(STATEFUL_READER_TESTS_SOURCE StatefulReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
@@ -303,6 +302,7 @@ fastdds_target_link_object_groups(StatefulReaderTests
     fastdds::rtps::transport-shm
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(StatefulReaderTests)
@@ -336,7 +336,6 @@ set(STATELESS_READER_TESTS_SOURCE StatelessReaderTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
@@ -460,6 +459,7 @@ fastdds_target_link_object_groups(StatelessReaderTests
     fastdds::rtps::transport-shm
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(StatelessReaderTests)

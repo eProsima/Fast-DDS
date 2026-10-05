@@ -16,7 +16,6 @@ set(FLOWCONTROLLER_COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     )
 
@@ -47,6 +46,7 @@ fastdds_target_link_object_groups(FlowControllerFactoryTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(FlowControllerFactoryTests)
@@ -81,6 +81,7 @@ fastdds_target_link_object_groups(FlowControllerPublishModesTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(FlowControllerPublishModesTests)
@@ -111,6 +112,7 @@ fastdds_target_link_object_groups(FlowControllerSchedulersTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(FlowControllerSchedulersTests)

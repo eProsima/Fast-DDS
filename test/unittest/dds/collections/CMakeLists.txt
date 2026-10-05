@@ -13,7 +13,6 @@
 # limitations under the License.
 
 set(LOANABLE_SEQUENCE_TESTS_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     LoanableSequenceTests.cpp)
 
 add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
@@ -30,6 +29,7 @@ fastdds_target_link_object_groups(LoanableSequenceTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LoanableSequenceTests)

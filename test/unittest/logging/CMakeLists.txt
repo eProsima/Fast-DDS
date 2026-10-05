@@ -14,15 +14,10 @@
 
 add_subdirectory(log_macros)
 
-set(LOG_COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    )
-
 # LOG TEST
 set(LOGTESTS_TEST_SOURCE LogTests.cpp)
 
 set(LOGTESTS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGTESTS_TEST_SOURCE})
 
 include_directories(mock/)
@@ -47,6 +42,7 @@ fastdds_target_link_object_groups(LogTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogTests)
@@ -55,7 +51,6 @@ gtest_discover_tests(LogTests)
 set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
 
 set(LOGFILETESTS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGFILETESTS_TEST_SOURCE}
     )
 
@@ -86,6 +81,7 @@ fastdds_target_link_object_groups(LogFileTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogFileTests)

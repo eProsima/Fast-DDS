@@ -28,7 +28,6 @@
 #include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
-#include <rtps/builtin/data/ParticipantProxyData.hpp>
 #include <rtps/network/utils/netmask_filter.hpp>
 
 namespace eprosima {

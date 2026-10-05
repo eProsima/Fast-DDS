@@ -21,7 +21,6 @@ if(SQLITE3_SUPPORT)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/CacheChangePool.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
@@ -46,6 +45,7 @@ if(SQLITE3_SUPPORT)
         fastdds::rtps::host-net
         fastdds::rtps::net-interface
         fastdds::time
+        fastdds::rtps::netmask-filter
         )
 
     gtest_discover_tests(PersistenceTests)

@@ -59,6 +59,32 @@ fastdds_declare_object_group(fastdds-rtps-net-interface
 
 #}}}
 
+#{{{ Interface library for grouping the netmask filter utilities
+
+add_library(fastdds-rtps-netmask-filter INTERFACE)
+
+add_library(fastdds::rtps::netmask-filter ALIAS fastdds-rtps-netmask-filter)
+
+target_compile_features(fastdds-rtps-netmask-filter INTERFACE cxx_std_11)
+
+target_sources(fastdds-rtps-netmask-filter INTERFACE
+    network/utils/netmask_filter.cpp
+    )
+
+# Settings this group's code is sensitive to. See cmake/common/reusable_objects.cmake.
+fastdds_declare_object_group(fastdds-rtps-netmask-filter
+    MOCKS
+        rtps/Log
+    DEFINES
+        ENABLE_OLD_LOG_MACROS_
+        FASTDDS_ENFORCE_LOG_INFO
+        HAVE_LOG_NO_ERROR
+        HAVE_LOG_NO_INFO
+        HAVE_LOG_NO_WARNING
+    )
+
+#}}}
+
 #{{{ Interface library for grouping the host, locator and network utilities
 
 add_library(fastdds-rtps-host-net INTERFACE)

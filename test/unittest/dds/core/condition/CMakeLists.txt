@@ -20,7 +20,6 @@ set(CONDITION_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusConditionImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSet.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ConditionTests.cpp)
 
 add_executable(ConditionTests ${CONDITION_TESTS_SOURCE})
@@ -39,6 +38,7 @@ fastdds_target_link_object_groups(ConditionTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(ConditionTests)
@@ -47,7 +47,6 @@ gtest_discover_tests(ConditionTests)
 set(CONDITION_NOTIFIER_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/ConditionNotifier.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ConditionNotifierTests.cpp)
 
 add_executable(ConditionNotifierTests ${CONDITION_NOTIFIER_TESTS_SOURCE})
@@ -69,6 +68,7 @@ fastdds_target_link_object_groups(ConditionNotifierTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(ConditionNotifierTests)
@@ -78,7 +78,6 @@ set(STATUS_CONDITION_IMPL_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusCondition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/StatusConditionImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     StatusConditionImplTests.cpp)
 
 add_executable(StatusConditionImplTests ${STATUS_CONDITION_IMPL_TESTS_SOURCE})
@@ -100,6 +99,7 @@ fastdds_target_link_object_groups(StatusConditionImplTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(StatusConditionImplTests)
@@ -108,7 +108,6 @@ gtest_discover_tests(StatusConditionImplTests)
 set(WAITSET_IMPL_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/Condition.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     WaitSetImplTests.cpp)
 
 add_executable(WaitSetImplTests ${WAITSET_IMPL_TESTS_SOURCE})
@@ -130,6 +129,7 @@ fastdds_target_link_object_groups(WaitSetImplTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(WaitSetImplTests)

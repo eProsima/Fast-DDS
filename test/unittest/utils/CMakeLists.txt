@@ -14,7 +14,6 @@
 
 set(STRINGMATCHINGTESTS_SOURCE
     StringMatchingTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
     )
 
@@ -26,7 +25,6 @@ set(RESOURCELIMITEDVECTORTESTS_SOURCE
 
 set(LOCATORTESTS_SOURCE
     LocatorTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(FIXEDSIZEQUEUETESTS_SOURCE
@@ -34,7 +32,6 @@ set(FIXEDSIZEQUEUETESTS_SOURCE
 
 set(SYSTEMINFOTESTS_SOURCE
     SystemInfoTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(TREETESTS_SOURCE
@@ -61,6 +58,7 @@ fastdds_target_link_object_groups(StringMatchingTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(StringMatchingTests)
@@ -94,6 +92,7 @@ fastdds_target_link_object_groups(LocatorTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
@@ -122,6 +121,7 @@ fastdds_target_link_object_groups(SystemInfoTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(SystemInfoTests)

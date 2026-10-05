@@ -17,7 +17,6 @@ set(CACHECHANGETESTS_SOURCE CacheChangeTests.cpp
     )
 set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 if(ANDROID)
@@ -37,7 +36,6 @@ set(SERIALIZEDPAYLOADTESTS_SOURCE SerializedPayloadTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp)
 set(SEQUENCENUMBERTESTS_SOURCE SequenceNumberTests.cpp)
 set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 set(TIMETESTS_SOURCE TimeTests.cpp
@@ -74,6 +72,7 @@ fastdds_target_link_object_groups(GuidUtilsTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(GuidUtilsTests)
@@ -104,6 +103,7 @@ fastdds_target_link_object_groups(PortParametersTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")

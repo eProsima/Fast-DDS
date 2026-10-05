@@ -12,15 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(LOG_COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
-    )
-
 # MACROS LOG TEST ALL
 set(LOGMACROS_ALL_TEST_SOURCE LogMacrosAllActiveTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_ALL_TEST_SOURCE})
 
 add_executable(LogMacrosAllActiveTests ${LOGMACROS_SOURCE})
@@ -39,6 +34,7 @@ fastdds_target_link_object_groups(LogMacrosAllActiveTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogMacrosAllActiveTests)
@@ -48,7 +44,6 @@ gtest_discover_tests(LogMacrosAllActiveTests)
 set(LOGMACROS_NOINFO_TEST_SOURCE LogMacrosNoInfoTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_NOINFO_TEST_SOURCE})
 
 add_executable(LogMacrosNoInfoTests ${LOGMACROS_SOURCE})
@@ -67,6 +62,7 @@ fastdds_target_link_object_groups(LogMacrosNoInfoTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogMacrosNoInfoTests)
@@ -76,7 +72,6 @@ gtest_discover_tests(LogMacrosNoInfoTests)
 set(LOGMACROS_NOWARNING_TEST_SOURCE LogMacrosNoWarningTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_NOWARNING_TEST_SOURCE})
 
 add_executable(LogMacrosNoWarningTests ${LOGMACROS_SOURCE})
@@ -95,6 +90,7 @@ fastdds_target_link_object_groups(LogMacrosNoWarningTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogMacrosNoWarningTests)
@@ -104,7 +100,6 @@ gtest_discover_tests(LogMacrosNoWarningTests)
 set(LOGMACROS_NOERROR_TEST_SOURCE LogMacrosNoErrorTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_NOERROR_TEST_SOURCE})
 
 add_executable(LogMacrosNoErrorTests ${LOGMACROS_SOURCE})
@@ -123,6 +118,7 @@ fastdds_target_link_object_groups(LogMacrosNoErrorTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogMacrosNoErrorTests)
@@ -132,7 +128,6 @@ gtest_discover_tests(LogMacrosNoErrorTests)
 set(LOGMACROS_DEFAULT_TEST_SOURCE LogMacrosDefaultTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_DEFAULT_TEST_SOURCE})
 
 add_executable(LogMacrosDefaultTests ${LOGMACROS_SOURCE})
@@ -151,6 +146,7 @@ fastdds_target_link_object_groups(LogMacrosDefaultTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogMacrosDefaultTests)
@@ -162,7 +158,6 @@ gtest_discover_tests(LogMacrosDefaultTests)
 set(LOGMACROS_INTERNALDEBUG_TEST_SOURCE LogMacrosInternalDebugOffTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_INTERNALDEBUG_TEST_SOURCE})
 
 add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
@@ -181,6 +176,7 @@ fastdds_target_link_object_groups(LogMacrosInternalDebugOffTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(LogMacrosInternalDebugOffTests)
@@ -189,7 +185,6 @@ gtest_discover_tests(LogMacrosInternalDebugOffTests)
 set(LOGMACROS_ALL_TEST_SOURCE OldLogMacrosTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_ALL_TEST_SOURCE})
 
 add_executable(OldLogMacrosTests ${LOGMACROS_SOURCE})
@@ -208,6 +203,7 @@ fastdds_target_link_object_groups(OldLogMacrosTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(OldLogMacrosTests)
@@ -217,7 +213,6 @@ gtest_discover_tests(OldLogMacrosTests)
 set(LOGMACROS_ALL_TEST_SOURCE OldLogMacrosDisableTests.cpp)
 
 set(LOGMACROS_SOURCE
-    ${LOG_COMMON_SOURCE}
     ${LOGMACROS_ALL_TEST_SOURCE})
 
 add_executable(OldLogMacrosDisableTests ${LOGMACROS_SOURCE})
@@ -236,6 +231,7 @@ fastdds_target_link_object_groups(OldLogMacrosDisableTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(OldLogMacrosDisableTests)

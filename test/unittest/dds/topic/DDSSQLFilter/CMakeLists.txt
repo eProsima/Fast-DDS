@@ -22,7 +22,6 @@ file(GLOB DDSSQLFILTER_SOURCES
 file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/SerializedPayload.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
     )
 
 add_executable(DDSSQLFilterTests
@@ -51,6 +50,7 @@ fastdds_target_link_object_groups(DDSSQLFilterTests
     fastdds::rtps::host-net
     fastdds::rtps::net-interface
     fastdds::time
+    fastdds::rtps::netmask-filter
     )
 
 gtest_discover_tests(DDSSQLFilterTests)

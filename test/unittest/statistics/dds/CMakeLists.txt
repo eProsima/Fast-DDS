@@ -194,7 +194,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
@@ -296,7 +295,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/CDRMessage.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/external_locators.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/PersistenceFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/sqlite3.c
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/persistence/SQLite3PersistenceService.cpp
@@ -400,6 +398,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         fastdds::rtps::transport-shm
         fastdds::rtps::net-interface
         fastdds::time
+        fastdds::rtps::netmask-filter
         )
 
 
@@ -444,6 +443,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         fastdds::rtps::transport-shm
         fastdds::rtps::net-interface
         fastdds::time
+        fastdds::rtps::netmask-filter
         )
 
 
