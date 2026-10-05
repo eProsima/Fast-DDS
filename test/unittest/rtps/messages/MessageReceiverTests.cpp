@@ -19,6 +19,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
@@ -59,6 +60,12 @@ void register_types_type_objects()
 
 namespace eprosima {
 namespace fastdds {
+namespace dds {
+
+const InstanceHandle_t HANDLE_NIL;
+
+} // namespace dds
+
 namespace rtps {
 
 //! Flow controller doing nothing, needed to build a writer outside of the participant.
